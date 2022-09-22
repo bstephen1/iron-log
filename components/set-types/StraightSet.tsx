@@ -4,11 +4,12 @@ import { useState } from 'react';
 interface Props {
     weight?: number,
     reps?: number,
+    rpe?: number,
 }
 export default function StraightSet(props: Props) {
     const [weight, setWeight] = useState(props.weight || undefined)
     const [reps, setReps] = useState(props.reps || undefined)
-    const [rpe, setRpe] = useState<number | undefined>(undefined)
+    const [rpe, setRpe] = useState(props.rpe || undefined)
 
     return (
         <Paper sx={{ my: 1 }}>

@@ -1,0 +1,11 @@
+{
+    "typescript.preferences.quoteStyle": "single",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "html.autoClosingTags": false,
+    "typescript.autoClosingTags": false,
+    "editor.formatOnSave": true,
+    "files.autoSave": "onFocusChange",
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
+}
