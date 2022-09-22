@@ -21,12 +21,8 @@ export default function LiftTable(props: Props) {
             </Box>
             <Collapse in={open}>
                 <Box>
-                    <Table>
-                        <TableBody>
-                            <StraightSet />
-                            <StraightSet />
-                        </TableBody>
-                    </Table>
+                    <StraightSet />
+                    <StraightSet />
                 </Box>
             </Collapse>
         </Paper>
