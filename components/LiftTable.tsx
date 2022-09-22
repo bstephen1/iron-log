@@ -1,5 +1,5 @@
-import { Box, Collapse, Paper, Table, TableBody } from '@mui/material';
-import { useState } from 'react';
+import { Box, Collapse, ListItemButton, Paper, Table, TableBody } from '@mui/material';
+import { useState, useRef } from 'react';
 import StraightSet from './set-types/StraightSet';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -11,20 +11,26 @@ interface Props {
 }
 export default function LiftTable(props: Props) {
     const [open, setOpen] = useState(true)
+    const listItemButton = useRef(null)
+
+    const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
 
 
     return (
-        <Paper elevation={5} sx={{ my: 1, px: 1 }}>
-            <Box onClick={() => setOpen(!open)} p={2} display='flex' justifyContent='space-between'>
-                {props.lift}
-                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </Box>
-            <Collapse in={open}>
-                <Box>
-                    <StraightSet />
-                    <StraightSet />
+        <ListItemButton ref={listItemButton} onClick={() => setOpen(!open)} sx={{ my: 1, p: 0, borderRadius: 1 }} id='clickableArea'>
+            <Paper elevation={3} sx={{ px: 1, width: 1 }}>
+                <Box p={2} display='flex' justifyContent='space-between'>
+                    {props.lift}
+                    {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                 </Box>
-            </Collapse>
-        </Paper>
+                {/* onMouseDown disables mui Button ripple; onClick disables activating the button */}
+                <Collapse in={open} onMouseDown={disableButtonEffects} onClick={disableButtonEffects} style={{ cursor: 'default' }}>
+                    <Box>
+                        <StraightSet />
+                        <StraightSet />
+                    </Box>
+                </Collapse>
+            </Paper>
+        </ListItemButton>
     )
 }
