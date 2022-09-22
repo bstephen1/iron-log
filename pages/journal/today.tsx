@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import DayTable from '../../components/DayTable'
+import DayRecord from '../../components/DayRecord'
 
 
 export default function Today() {
@@ -8,8 +8,7 @@ export default function Today() {
     return (
         <>
             <main>
-                <Box>today is {today.getMonth() + 1}/{today.getDate()}</Box>
-                <DayTable liftRows={[{ lift: 'pull' }, { lift: 'push' }]} />
+                <DayRecord date={today} liftRows={[{ lift: 'pull' }, { lift: 'push' }]} />
             </main>
         </>
     )
