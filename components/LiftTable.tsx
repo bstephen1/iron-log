@@ -1,6 +1,8 @@
-import { Box, Collapse, Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { Box, Collapse, Paper, Table, TableBody } from '@mui/material';
 import { useState } from 'react';
 import StraightSet from './set-types/StraightSet';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 interface Props {
     lift: string,
@@ -12,26 +14,21 @@ export default function LiftTable(props: Props) {
 
 
     return (
-        <>
-            <TableRow key={0} onClick={() => setOpen(!open)}>
-                <TableCell>
-                    {props.lift}
-                </TableCell>
-            </TableRow>
-            <TableRow key={1}>
-                <TableCell>
-                    <Collapse in={open}>
-                        <Box sx={{ margin: 1 }}>
-                            <Table>
-                                <TableBody>
-                                    <StraightSet />
-                                    <StraightSet />
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
-        </>
+        <Paper elevation={5} sx={{ my: 1, px: 1 }}>
+            <Box onClick={() => setOpen(!open)} p={2} display='flex' justifyContent='space-between'>
+                {props.lift}
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </Box>
+            <Collapse in={open}>
+                <Box>
+                    <Table>
+                        <TableBody>
+                            <StraightSet />
+                            <StraightSet />
+                        </TableBody>
+                    </Table>
+                </Box>
+            </Collapse>
+        </Paper>
     )
 }

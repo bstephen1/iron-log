@@ -1,4 +1,4 @@
-import { Table, TableBody } from '@mui/material';
+import { Paper, Table, TableBody } from '@mui/material';
 import LiftTable from './LiftTable';
 
 interface Props {
@@ -7,10 +7,8 @@ interface Props {
 
 export default function DayTable(props: Props) {
     return (
-        <Table>
-            <TableBody>
-                {props.liftRows.map((liftRow: { lift: string }) => <LiftTable lift={liftRow.lift} />)}
-            </TableBody>
-        </Table>
+        <>
+            {props.liftRows.map((liftRow: { lift: string }) => <LiftTable lift={liftRow.lift} />)}
+        </>
     )
 }
