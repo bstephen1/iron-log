@@ -1,18 +1,18 @@
 import { Box, Button } from '@mui/material';
 import { useState } from 'react';
+import Exercise from '../../models/Exercise';
 import ExerciseInput from './ExerciseInput';
 
 interface Props {
     date: Date,
-    exerciseRows: { exercise: string }[]
+    exercises: Exercise[],
 }
 export default function DayView(props: Props) {
-    const { date, exerciseRows } = props
-    const [exercises, setExercises] = useState(exerciseRows)
+    const { date } = props
+    const [exercises, setExercises] = useState<(Exercise | undefined)[]>(props.exercises)
 
     const handleAddExercise = () => {
-        //@ts-ignore
-        setExercises(exercises.concat({}))
+        setExercises(exercises.concat(undefined))
     }
 
     //only show year if not current year
@@ -20,7 +20,7 @@ export default function DayView(props: Props) {
     return (
         <>
             <Box>{date.getMonth() + 1}/{date.getDate()}/{date.getFullYear()}</Box>
-            {exercises.map((exerciseRow: { exercise: string }, i) => <ExerciseInput exercise={exerciseRow.exercise} startOpen={i === 0} />)}
+            {exercises.map((exercise, i) => <ExerciseInput exercise={exercise} startOpen={i === 0} />)}
             <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
         </>
     )

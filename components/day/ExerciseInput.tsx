@@ -3,24 +3,28 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Autocomplete, Box, Collapse, ListItemButton, Paper, TextField, Button } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useRef, useState } from 'react';
+import { dummyExercises, dummySetTypes } from '../../dummyData';
+import Exercise from '../../models/Exercise';
+import Modifier from '../../models/Modifier';
+import StraightSet from '../../models/sets/StraightSet';
+import SetType from '../../models/SetType';
 import StraightSetInput from './sets/StraightSetInput';
 
 interface Props {
-    exercise?: string,
-    modifiers?: string[], //band, pause
-    type?: string, //straight sets, myo
+    exercise?: Exercise,
+    setType?: SetType,
     startOpen?: boolean,
 }
 export default function ExerciseInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
-    const [exercise, setExercise] = useState(props.exercise || '')
-    const [sets, setSets] = useState([{ weight: 150, reps: 5, rpe: 8 }])
+    const [exercise, setExercise] = useState(props.exercise)
+    const [sets, setSets] = useState<StraightSet[]>([{ weight: 150, reps: 5, rpe: 8 }])
     const listItemButton = useRef(null)
 
     const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
     const handleAddSet = () => {
         const last = sets[sets.length - 1]
-        //@ts-ignore have to define a StraightSet 
+        //straight sets usually will be the same weight/reps as the last set
         setSets(sets.concat({ ...last, rpe: undefined }))
     }
 
@@ -29,20 +33,24 @@ export default function ExerciseInput(props: Props) {
             <Paper elevation={3} sx={{ px: 1, width: 1 }}>
                 <Box p={2} display='flex' justifyContent='space-between' >
                     <Stack direction='row' onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2}>
-                        <TextField
-                            value={exercise}
-                            onChange={(e) => setExercise(e.target.value)}
-                            label='Exercise'
-                            variant='standard'
+                        <Autocomplete
+                            options={dummyExercises}
+                            getOptionLabel={option => option.name}
                             sx={{ width: 250 }}
+                            //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
+                            value={exercise}
+                            onChange={(e, value) => setExercise(value || undefined)}
+                            renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
                         />
                         <Autocomplete
-                            options={['straight']}
+                            options={dummySetTypes}
+                            getOptionLabel={option => option.name}
                             sx={{ width: 250 }}
                             renderInput={(params) => <TextField {...params} variant='standard' label='Set Type' />}
                         />
                         <Autocomplete
-                            options={['band', 'pause', 'belt']}
+                            options={exercise?.modifiers || []}
+                            getOptionLabel={option => option.name}
                             multiple
                             fullWidth
                             renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}

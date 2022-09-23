@@ -1,15 +1,11 @@
 import { Paper, Stack, TextField } from '@mui/material';
 import { useState } from 'react';
+import StraightSet from '../../../models/sets/StraightSet';
 
-interface Props {
-    weight?: number,
-    reps?: number,
-    rpe?: number,
-}
-export default function StraightSetInput(props: Props) {
-    const [weight, setWeight] = useState(props.weight || undefined)
-    const [reps, setReps] = useState(props.reps || undefined)
-    const [rpe, setRpe] = useState(props.rpe || undefined)
+export default function StraightSetInput(props: StraightSet) {
+    const [weight, setWeight] = useState(props.weight)
+    const [reps, setReps] = useState(props.reps)
+    const [rpe, setRpe] = useState(props.rpe)
 
     return (
         <Paper sx={{ my: 1 }}>
