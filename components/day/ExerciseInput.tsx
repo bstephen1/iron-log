@@ -34,7 +34,7 @@ export default function ExerciseInput(props: Props) {
                 <Box p={2} display='flex' justifyContent='space-between' >
                     <Stack direction='row' onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2}>
                         <Autocomplete
-                            options={dummyExercises}
+                            options={dummyExercises.filter(exercise => exercise.active)}
                             getOptionLabel={option => option.name}
                             sx={{ width: 250 }}
                             //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
