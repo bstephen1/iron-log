@@ -6,13 +6,13 @@ import { useRef, useState } from 'react';
 import StraightSet from './set-types/StraightSet';
 
 interface Props {
-    lift?: string,
+    exercise?: string,
     modifiers?: string[], //band, pause
     type?: string, //straight sets, myo 
 }
-export default function LiftRecord(props: Props) {
+export default function ExerciseRecord(props: Props) {
     const [open, setOpen] = useState(true)
-    const [lift, setLift] = useState(props.lift || '')
+    const [exercise, setExercise] = useState(props.exercise || '')
     const [sets, setSets] = useState([{ weight: 150, reps: 5, rpe: 8 }])
     const listItemButton = useRef(null)
 
@@ -29,8 +29,8 @@ export default function LiftRecord(props: Props) {
                 <Box p={2} display='flex' justifyContent='space-between' >
                     <Stack direction='row' onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2}>
                         <TextField
-                            value={lift}
-                            onChange={(e) => setLift(e.target.value)}
+                            value={exercise}
+                            onChange={(e) => setExercise(e.target.value)}
                             label='Movement'
                             variant='standard'
                             sx={{ width: 250 }}

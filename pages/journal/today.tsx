@@ -8,7 +8,7 @@ export default function Today() {
     return (
         <>
             <main>
-                <DayRecord date={today} liftRows={[{ lift: 'pull' }, { lift: 'push' }]} />
+                <DayRecord date={today} exerciseRows={[{ exercise: 'pull' }, { exercise: 'push' }]} />
             </main>
         </>
     )

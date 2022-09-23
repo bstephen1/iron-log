@@ -1,19 +1,28 @@
-import { Box } from '@mui/material';
-import LiftRecord from './LiftRecord';
+import { Box, Button } from '@mui/material';
+import { useState } from 'react';
+import ExerciseRecord from './ExerciseRecord';
 
 interface Props {
     date: Date,
-    liftRows: { lift: string }[]
+    exerciseRows: { exercise: string }[]
 }
 
 export default function DayRecord(props: Props) {
-    const { date, liftRows } = props
+    const { date, exerciseRows } = props
+    const [exercises, setExercises] = useState(exerciseRows)
+
+    const handleAddExercise = () => {
+        //@ts-ignore
+        setExercises(exercises.concat({}))
+    }
+
     //only show year if not current year
     //Day name top left; date top right; timer underneath
     return (
         <>
             <Box>{date.getMonth() + 1}/{date.getDate()}/{date.getFullYear()}</Box>
-            {liftRows.map((liftRow: { lift: string }) => <LiftRecord lift={liftRow.lift} />)}
+            {exercises.map((exerciseRow: { exercise: string }) => <ExerciseRecord exercise={exerciseRow.exercise} />)}
+            <Button variant='contained' onClick={handleAddExercise}>Add Movement</Button>
         </>
     )
 }
