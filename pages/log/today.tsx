@@ -1,4 +1,4 @@
-import DayView from '../../components/day/DayView'
+import LogEntry from '../../components/log-entry/LogEntry'
 import Navbar from '../../components/Navbar'
 import { dummyExercises } from '../../dummyData'
 
@@ -9,7 +9,7 @@ export default function Today() {
     return (
         <>
             <main>
-                <DayView date={today} exercises={dummyExercises} />
+                <LogEntry date={today} exercises={dummyExercises} />
             </main>
         </>
     )

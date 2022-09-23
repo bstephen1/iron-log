@@ -17,7 +17,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <Box>Welcome</Box>
         <Button>
-          <Link href={'/journal/today/'}>
+          <Link href={'/log/today/'}>
             <a>Start</a>
           </Link>
         </Button>

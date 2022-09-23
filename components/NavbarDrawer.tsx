@@ -12,6 +12,7 @@ export default function NavbarDrawer() {
                 <Menu />
             </IconButton>
             {/* todo: manage exercises, graphs, light/dark toggle, program management, user account (in top right navbar) */}
+            {/* todo: settings -- kg/lbs  */}
             <Drawer anchor='left' open={open} onClose={toggleOpen}>
                 <List sx={{ px: 2 }}>
                     <ListItem>Item 1</ListItem>

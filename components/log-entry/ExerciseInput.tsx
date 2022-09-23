@@ -30,6 +30,7 @@ export default function ExerciseInput(props: Props) {
 
     //todo: don't show toggle or any sets until a set type is selected (or default to straight?)
     //todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
+    //todo: select input units (if you display in kg units, you can input in lbs and it will convert)
     return (
         <ListItemButton ref={listItemButton} onClick={() => setOpen(!open)} sx={{ my: 1, p: 0, borderRadius: 1 }} id='clickableArea'>
             <Paper elevation={3} sx={{ px: 1, width: 1 }}>

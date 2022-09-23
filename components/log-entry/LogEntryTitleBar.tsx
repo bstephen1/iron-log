@@ -3,7 +3,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
 import { useState } from 'react';
 
-export default function DayViewTitleBar() {
+export default function LogEntryTitleBar() {
     const [date, setDate] = useState<Dayjs | null>(null)
 
     return (
@@ -14,7 +14,7 @@ export default function DayViewTitleBar() {
             possibly give days a 'type' instead of title, with an associated icon;
             could also highlight different programs / meso cycles */}
             <DatePicker
-                label='Select Day'
+                label='Date'
                 value={date}
                 onChange={newDate => setDate(newDate)}
                 renderInput={(params) => <TextField {...params} />}

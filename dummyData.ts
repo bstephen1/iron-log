@@ -6,7 +6,9 @@ export let dummyModifiers: Modifier[] = [
     addModifier('belt'),
     addModifier('band'),
     addModifier('pause'),
-    addModifier('L/R split'),
+    addModifier('L/R split'), //add L/R rows
+    addModifier('AMRAP'), //or set type?
+    addModifier('bodyweight'), //add BW column
 ]
 
 export let dummyExercises: Exercise[] = [
@@ -15,6 +17,7 @@ export let dummyExercises: Exercise[] = [
     addExercise('zercher squat', false, 'pain', [dummyModifiers[0]]),
 ]
 
+//todo: myo, super, rep range (?), weigh-in
 export let dummySetTypes: SetType[] = [
     addSetType('straight'),
 ]

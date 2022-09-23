@@ -1,14 +1,14 @@
 import { Box, Button, Stack } from '@mui/material';
 import { useState } from 'react';
 import Exercise from '../../models/Exercise';
-import DayViewTitleBar from './DayViewTitleBar';
+import LogEntryTitleBar from './LogEntryTitleBar';
 import ExerciseInput from './ExerciseInput';
 
 interface Props {
     date: Date,
     exercises: Exercise[],
 }
-export default function DayView(props: Props) {
+export default function LogEntry(props: Props) {
     const { date } = props
     const [exercises, setExercises] = useState<(Exercise | undefined)[]>(props.exercises)
 
@@ -21,7 +21,7 @@ export default function DayView(props: Props) {
     return (
         // todo: change to grid so exercise button can be smaller
         <Stack spacing={2}>
-            <DayViewTitleBar />
+            <LogEntryTitleBar />
             {exercises.map((exercise, i) => <ExerciseInput exercise={exercise} startOpen={i === 0} />)}
             <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
         </Stack>

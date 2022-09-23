@@ -8,7 +8,7 @@ export default function Navbar() {
             <Toolbar>
                 <NavbarDrawer />
                 <Typography variant='h5'>
-                    Iron Journal
+                    Iron Log
                 </Typography>
             </Toolbar>
         </AppBar>
