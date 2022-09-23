@@ -4,7 +4,7 @@ import NavbarDrawer from './NavbarDrawer';
 export default function Navbar() {
 
     return (
-        <AppBar position='sticky'>
+        <AppBar position='sticky' sx={{ mb: 2 }}>
             <Toolbar>
                 <NavbarDrawer />
                 <Typography variant='h5'>

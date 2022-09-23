@@ -28,10 +28,13 @@ export default function ExerciseInput(props: Props) {
         setSets(sets.concat({ ...last, rpe: undefined }))
     }
 
+    //todo: don't show toggle or any sets until a set type is selected (or default to straight?)
+    //todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
     return (
         <ListItemButton ref={listItemButton} onClick={() => setOpen(!open)} sx={{ my: 1, p: 0, borderRadius: 1 }} id='clickableArea'>
             <Paper elevation={3} sx={{ px: 1, width: 1 }}>
                 <Box p={2} display='flex' justifyContent='space-between' >
+                    {/* todo: change to grid; put modifiers on a second row for small screens */}
                     <Stack direction='row' onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2}>
                         <Autocomplete
                             options={dummyExercises.filter(exercise => exercise.active)}

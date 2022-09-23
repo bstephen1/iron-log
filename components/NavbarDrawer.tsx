@@ -11,7 +11,7 @@ export default function NavbarDrawer() {
             <IconButton onClick={toggleOpen} aria-label='open navbar menu drawer'>
                 <Menu />
             </IconButton>
-
+            {/* todo: manage exercises, graphs, light/dark toggle, program management, user account (in top right navbar) */}
             <Drawer anchor='left' open={open} onClose={toggleOpen}>
                 <List sx={{ px: 2 }}>
                     <ListItem>Item 1</ListItem>
