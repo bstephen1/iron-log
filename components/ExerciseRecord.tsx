@@ -8,10 +8,11 @@ import StraightSet from './set-types/StraightSet';
 interface Props {
     exercise?: string,
     modifiers?: string[], //band, pause
-    type?: string, //straight sets, myo 
+    type?: string, //straight sets, myo
+    startOpen?: boolean,
 }
 export default function ExerciseRecord(props: Props) {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(props.startOpen)
     const [exercise, setExercise] = useState(props.exercise || '')
     const [sets, setSets] = useState([{ weight: 150, reps: 5, rpe: 8 }])
     const listItemButton = useRef(null)
@@ -31,7 +32,7 @@ export default function ExerciseRecord(props: Props) {
                         <TextField
                             value={exercise}
                             onChange={(e) => setExercise(e.target.value)}
-                            label='Movement'
+                            label='Exercise'
                             variant='standard'
                             sx={{ width: 250 }}
                         />

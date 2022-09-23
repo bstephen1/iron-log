@@ -6,7 +6,6 @@ interface Props {
     date: Date,
     exerciseRows: { exercise: string }[]
 }
-
 export default function DayRecord(props: Props) {
     const { date, exerciseRows } = props
     const [exercises, setExercises] = useState(exerciseRows)
@@ -21,8 +20,8 @@ export default function DayRecord(props: Props) {
     return (
         <>
             <Box>{date.getMonth() + 1}/{date.getDate()}/{date.getFullYear()}</Box>
-            {exercises.map((exerciseRow: { exercise: string }) => <ExerciseRecord exercise={exerciseRow.exercise} />)}
-            <Button variant='contained' onClick={handleAddExercise}>Add Movement</Button>
+            {exercises.map((exerciseRow: { exercise: string }, i) => <ExerciseRecord exercise={exerciseRow.exercise} startOpen={i === 0} />)}
+            <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
         </>
     )
 }
