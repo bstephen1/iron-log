@@ -1,4 +1,5 @@
 import { Box, Button } from '@mui/material'
+import dayjs from 'dayjs'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -17,8 +18,8 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <Box>Welcome</Box>
         <Button>
-          <Link href={'/log/today/'}>
-            <a>Start</a>
+          <Link href={`/log/${dayjs()}/`}>
+            <a>Today's Log</a>
           </Link>
         </Button>
       </main>
