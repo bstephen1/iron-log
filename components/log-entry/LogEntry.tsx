@@ -3,9 +3,10 @@ import { useState } from 'react';
 import Exercise from '../../models/Exercise';
 import LogEntryTitleBar from './LogEntryTitleBar';
 import ExerciseInput from './ExerciseInput';
+import { Dayjs } from 'dayjs';
 
 interface Props {
-    date: Date,
+    date: Dayjs,
     exercises: Exercise[],
 }
 export default function LogEntry(props: Props) {
@@ -21,7 +22,7 @@ export default function LogEntry(props: Props) {
     return (
         // todo: change to grid so exercise button can be smaller
         <Stack spacing={2}>
-            <LogEntryTitleBar />
+            <LogEntryTitleBar date={date} />
             {exercises.map((exercise, i) => <ExerciseInput exercise={exercise} startOpen={i === 0} />)}
             <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
         </Stack>

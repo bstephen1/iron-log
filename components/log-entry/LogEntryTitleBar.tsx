@@ -1,10 +1,21 @@
 import { Box, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
-export default function LogEntryTitleBar() {
-    const [date, setDate] = useState<Dayjs | null>(null)
+interface Props {
+    date?: Dayjs | null
+}
+export default function LogEntryTitleBar(props: Props) {
+    const [date, setDate] = useState(props.date)
+    const router = useRouter()
+
+    useEffect(() => {
+        if (date) {
+            router.push(`/log/${date.format('YYYY-MM-DD')}`)
+        }
+    }, [date])
 
     return (
         <Box display='flex' justifyContent='space-between'>

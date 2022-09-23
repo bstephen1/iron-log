@@ -1,4 +1,5 @@
 import { AppBar, Toolbar, Typography } from '@mui/material';
+import Link from 'next/link';
 import NavbarDrawer from './NavbarDrawer';
 
 export default function Navbar() {
@@ -8,7 +9,9 @@ export default function Navbar() {
             <Toolbar>
                 <NavbarDrawer />
                 <Typography variant='h5'>
-                    Iron Log
+                    <Link href={'/'}>
+                        <a>Iron Log</a>
+                    </Link>
                 </Typography>
             </Toolbar>
         </AppBar>
