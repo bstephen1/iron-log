@@ -6,7 +6,7 @@ interface Props {
     reps?: number,
     rpe?: number,
 }
-export default function StraightSet(props: Props) {
+export default function StraightSetInput(props: Props) {
     const [weight, setWeight] = useState(props.weight || undefined)
     const [reps, setReps] = useState(props.reps || undefined)
     const [rpe, setRpe] = useState(props.rpe || undefined)

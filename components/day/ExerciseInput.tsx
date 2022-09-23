@@ -3,7 +3,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Autocomplete, Box, Collapse, ListItemButton, Paper, TextField, Button } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useRef, useState } from 'react';
-import StraightSet from './set-types/StraightSet';
+import StraightSetInput from './sets/StraightSetInput';
 
 interface Props {
     exercise?: string,
@@ -11,7 +11,7 @@ interface Props {
     type?: string, //straight sets, myo
     startOpen?: boolean,
 }
-export default function ExerciseRecord(props: Props) {
+export default function ExerciseInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
     const [exercise, setExercise] = useState(props.exercise || '')
     const [sets, setSets] = useState([{ weight: 150, reps: 5, rpe: 8 }])
@@ -53,7 +53,7 @@ export default function ExerciseRecord(props: Props) {
                 {/* onMouseDown disables mui Button ripple; onClick disables activating the button */}
                 <Collapse in={open} onMouseDown={disableButtonEffects} onClick={disableButtonEffects} sx={{ mx: 5, pb: 2, cursor: 'default' }}>
                     <Stack spacing={1}>
-                        {sets.map(set => <StraightSet {...set} />)}
+                        {sets.map(set => <StraightSetInput {...set} />)}
                         <Button variant='contained' onClick={handleAddSet}>Add Set</Button>
                     </Stack>
                 </Collapse>

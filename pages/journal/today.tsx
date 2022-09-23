@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import DayRecord from '../../components/DayRecord'
+import DayView from '../../components/day/DayView'
 
 
 export default function Today() {
@@ -8,7 +8,7 @@ export default function Today() {
     return (
         <>
             <main>
-                <DayRecord date={today} exerciseRows={[{ exercise: 'pull' }, { exercise: 'push' }]} />
+                <DayView date={today} exerciseRows={[{ exercise: 'pull' }, { exercise: 'push' }]} />
             </main>
         </>
     )
