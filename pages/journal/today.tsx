@@ -1,4 +1,5 @@
 import DayView from '../../components/day/DayView'
+import Navbar from '../../components/Navbar'
 import { dummyExercises } from '../../dummyData'
 
 
