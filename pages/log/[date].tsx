@@ -9,11 +9,10 @@ import { dummyExercises } from '../../dummyData';
 //or, add separate sessions to the same day?
 export default function Log() {
     const router = useRouter()
-    // const [year, month, day] = router.query.split('-')
-    console.log(router.query)
+    //todo: can route by directly entering a url
+    //todo: there's a split second when linking from homepage that has an expanded dayjs object as the url
     //@ts-ignore
     const date = dayjs(router.query.date)
-    console.log(date)
     return (
         <>
             <Head>

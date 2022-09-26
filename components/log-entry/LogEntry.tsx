@@ -23,7 +23,8 @@ export default function LogEntry(props: Props) {
         // todo: change to grid so exercise button can be smaller
         <Stack spacing={2}>
             <LogEntryTitleBar date={date} />
-            {exercises.map((exercise, i) => <ExerciseInput exercise={exercise} startOpen={i === 0} />)}
+            {/* todo: use a unique key so they can be rearranged */}
+            {exercises.map((exercise, i) => { return exercise?.active && <ExerciseInput exercise={exercise} startOpen={i === 0} key={i} /> })}
             <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
         </Stack>
     )
