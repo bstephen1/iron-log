@@ -12,7 +12,7 @@ export default function LogEntryTitleBar(props: Props) {
     const router = useRouter()
 
     useEffect(() => {
-        if (date) {
+        if (date?.isValid()) {
             router.push(`/log/${date.format('YYYY-MM-DD')}`)
         }
     }, [date])
