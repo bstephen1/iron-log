@@ -1,3 +1,3 @@
-export default interface SetType {
-    name: string,
+export enum SetType {
+    STRAIGHT = 'Straight',
 }

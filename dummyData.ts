@@ -1,6 +1,6 @@
 import Exercise from './models/Exercise';
 import Modifier from './models/Modifier';
-import SetType from './models/SetType';
+import { SetType } from './models/SetType';
 
 export let dummyModifiers: Modifier[] = [
     addModifier('belt'),
@@ -19,7 +19,7 @@ export let dummyExercises: Exercise[] = [
 
 //todo: myo, super, rep range (?), weigh-in
 export let dummySetTypes: SetType[] = [
-    addSetType('straight'),
+    SetType.STRAIGHT,
 ]
 
 
@@ -29,8 +29,4 @@ function addModifier(name: string): Modifier {
 
 function addExercise(name: string, active: boolean, comments: string, modifiers: Modifier[]): Exercise {
     return { name, active, comments, modifiers }
-}
-
-function addSetType(name: string): SetType {
-    return { name }
 }

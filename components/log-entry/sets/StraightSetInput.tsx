@@ -11,9 +11,9 @@ export default function StraightSetInput(props: StraightSet) {
         <Paper sx={{ my: 1 }}>
             <Stack direction='row'>
                 {/* use type tel instead of number so there's no increment on scroll */}
-                <TextField type='tel' variant='filled' label="weight" value={weight} onChange={e => setWeight(e.target.value as unknown as number)} />
-                <TextField type='tel' variant='filled' label="reps" value={reps} onChange={e => setReps(e.target.value as unknown as number)} />
-                <TextField type='tel' variant='filled' label="rpe" value={rpe} onChange={e => setRpe(e.target.value as unknown as number)} />
+                <TextField type='tel' variant='filled' label="weight" value={weight} onChange={e => setWeight(Number(e.target.value))} />
+                <TextField type='tel' variant='filled' label="reps" value={reps} onChange={e => setReps(Number(e.target.value))} />
+                <TextField type='tel' variant='filled' label="rpe" value={rpe} onChange={e => setRpe(Number(e.target.value))} />
             </Stack>
         </Paper>
     )
