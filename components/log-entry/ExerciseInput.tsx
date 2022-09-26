@@ -45,7 +45,7 @@ export default function ExerciseInput(props: Props) {
     //todo: select input units (if you display in kg units, you can input in lbs and it will convert)
     //todo: preserve state when changing set type?
     return (
-        <ListItemButton ref={listItemButton} onClick={() => setOpen(!open)} sx={{ my: 1, p: 0, borderRadius: 1 }} id='clickableArea'>
+        <ListItemButton ref={listItemButton} onClick={() => setOpen(!open)} sx={{ p: 0, borderRadius: 1 }} id='clickableArea'>
             <Paper elevation={3} sx={{ px: 1, width: 1 }}>
                 <Box p={2} display='flex' justifyContent='space-between' >
                     {/* todo: change to grid; put modifiers on a second row for small screens */}

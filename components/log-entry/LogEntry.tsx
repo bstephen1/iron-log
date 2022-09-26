@@ -1,9 +1,9 @@
-import { Box, Button, Stack } from '@mui/material';
+import { Button, Grid } from '@mui/material';
+import { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import Exercise from '../../models/Exercise';
-import LogEntryTitleBar from './LogEntryTitleBar';
 import ExerciseInput from './ExerciseInput';
-import { Dayjs } from 'dayjs';
+import LogEntryTitleBar from './LogEntryTitleBar';
 
 interface Props {
     date: Dayjs,
@@ -21,11 +21,22 @@ export default function LogEntry(props: Props) {
     //todo: compare with last of this day type
     return (
         // todo: change to grid so exercise button can be smaller
-        <Stack spacing={2}>
-            <LogEntryTitleBar date={date} />
+        <Grid container spacing={2} direction='column'>
+            <Grid item>
+                <LogEntryTitleBar date={date} />
+            </Grid>
             {/* todo: use a unique key so they can be rearranged */}
-            {exercises.map((exercise, i) => { return exercise?.active && <ExerciseInput exercise={exercise} startOpen={i === 0} key={i} /> })}
-            <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
-        </Stack>
+            {exercises.map((exercise, i) => {
+                return (
+                    <Grid item>
+                        <ExerciseInput exercise={exercise} startOpen={i === 0} key={i} />
+                    </Grid>
+                )
+            })}
+
+            <Grid item container justifyContent='center'>
+                <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
+            </Grid>
+        </Grid>
     )
 }
