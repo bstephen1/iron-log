@@ -81,6 +81,7 @@ export default function ExerciseInput(props: Props) {
                 {/* onMouseDown disables mui Button ripple; onClick disables activating the button */}
                 {!!type && <Collapse in={open} onMouseDown={disableButtonEffects} onClick={disableButtonEffects} sx={{ mx: 5, pb: 2, cursor: 'default' }}>
                     <Stack spacing={1}>
+                        {/* todo: unique key */}
                         {sets.map(set => getSetInputComponent(set))}
                         <Button variant='contained' onClick={handleAddSet}>Add Set</Button>
                     </Stack>

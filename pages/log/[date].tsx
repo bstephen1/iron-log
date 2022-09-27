@@ -19,8 +19,7 @@ export default function Log() {
                 <title>Log</title>
             </Head>
             <main>
-                {/* todo: get exercise data for the given day */}
-                <LogEntry date={date} exercises={dummyExercises.filter(exercise => exercise.active)} />
+                <LogEntry date={date} />
             </main>
         </>
     )

@@ -3,19 +3,22 @@ import { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import Exercise from '../../models/Exercise';
 import ExerciseInput from './ExerciseInput';
+import LogEntryStopwatch from './LogEntryClock';
 import LogEntryTitleBar from './LogEntryTitleBar';
 
 interface Props {
     date: Dayjs,
-    exercises: Exercise[],
 }
 export default function LogEntry(props: Props) {
     const { date } = props
-    const [exercises, setExercises] = useState<(Exercise | undefined)[]>(props.exercises)
+    //todo: this should be controlled, but is uncontrolled when init'd as undefined
+    const [exercises, setExercises] = useState<(Exercise | undefined)[]>([undefined])
 
     const handleAddExercise = () => {
         setExercises(exercises.concat(undefined))
     }
+
+    //todo: fetch exercises for the given date
 
     //todo: timer underneath title
     //todo: compare with last of this day type
@@ -24,6 +27,9 @@ export default function LogEntry(props: Props) {
         <Grid container spacing={2} direction='column'>
             <Grid item>
                 <LogEntryTitleBar date={date} />
+            </Grid>
+            <Grid item>
+                <LogEntryStopwatch />
             </Grid>
             {/* todo: use a unique key so they can be rearranged */}
             {exercises.map((exercise, i) => {
