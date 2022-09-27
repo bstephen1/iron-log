@@ -20,10 +20,8 @@ export default function LogEntry(props: Props) {
 
     //todo: fetch exercises for the given date
 
-    //todo: timer underneath title
     //todo: compare with last of this day type
     return (
-        // todo: change to grid so exercise button can be smaller
         <Grid container spacing={2} direction='column'>
             <Grid item>
                 <LogEntryTitleBar date={date} />

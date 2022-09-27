@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Autocomplete, Box, Button, Collapse, ListItemButton, Paper, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useRef, useState } from 'react';
 import { dummyExercises, dummySetTypes } from '../../dummyData';
@@ -49,36 +49,42 @@ export default function ExerciseInput(props: Props) {
             <Paper elevation={3} sx={{ px: 1, width: 1 }}>
                 <Box p={2} display='flex' justifyContent='space-between' >
                     {/* todo: change to grid; put modifiers on a second row for small screens */}
-                    <Stack direction='row' onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2}>
-                        <Autocomplete
-                            options={dummyExercises.filter(exercise => exercise.isActive)}
-                            getOptionLabel={option => option.name}
-                            sx={{ width: 250 }}
-                            //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
-                            value={exercise}
-                            //specify undefined so it doesn't set to null when blank
-                            onChange={(e, value) => setExercise(value || undefined)}
-                            renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
-                        />
-                        <Autocomplete
-                            options={dummySetTypes}
-                            getOptionLabel={option => option}
-                            sx={{ width: 250 }}
-                            value={type}
-                            onChange={(e, value) => setType(value || undefined)}
-                            renderInput={(params) => <TextField {...params} variant='standard' label='Set Type' />}
-                        />
-                        <Autocomplete
-                            options={exercise?.modifiers || []}
-                            getOptionLabel={option => option.name}
-                            multiple
-                            fullWidth
-                            renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}
-                        />
-                    </Stack>
-                    {!!type && (open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />)}
+                    {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
+                    <Grid container onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2} sx={{ cursor: 'default' }}>
+                        <Grid item xs={6} md={3}>
+                            <Autocomplete
+                                options={dummyExercises.filter(exercise => exercise.isActive)}
+                                getOptionLabel={option => option.name}
+                                //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
+                                value={exercise}
+                                //specify undefined so it doesn't set to null when blank
+                                onChange={(e, value) => setExercise(value || undefined)}
+                                renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
+                            />
+                        </Grid>
+                        <Grid item xs={6} md={3}>
+                            <Autocomplete
+                                options={dummySetTypes}
+                                getOptionLabel={option => option}
+                                value={type}
+                                onChange={(e, value) => setType(value || undefined)}
+                                renderInput={(params) => <TextField {...params} variant='standard' label='Set Type' />}
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Autocomplete
+                                options={exercise?.modifiers || []}
+                                getOptionLabel={option => option.name}
+                                multiple
+                                fullWidth
+                                renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Box pl={2} display='flex' alignItems='center' width={24}>
+                        {!!type && (open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />)}
+                    </Box>
                 </Box>
-                {/* onMouseDown disables mui Button ripple; onClick disables activating the button */}
                 {!!type && <Collapse in={open} onMouseDown={disableButtonEffects} onClick={disableButtonEffects} sx={{ mx: 5, pb: 2, cursor: 'default' }}>
                     <Stack spacing={1}>
                         {/* todo: unique key */}
