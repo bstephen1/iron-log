@@ -27,6 +27,6 @@ function addModifier(name: string): Modifier {
     return { name }
 }
 
-function addExercise(name: string, active: boolean, comments: string, modifiers: Modifier[]): Exercise {
-    return { name, active, comments, modifiers }
+function addExercise(name: string, isActive: boolean, comments: string, modifiers: Modifier[]): Exercise {
+    return { name, isActive, comments, modifiers }
 }

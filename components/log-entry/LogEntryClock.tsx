@@ -1,35 +1,35 @@
 import { Button, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
+
+//this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
+function clockReducer(state: any, action: { type: any; }) {
+    const time = dayjs().valueOf()
+    switch (action.type) {
+        case 'start':
+            return { ...state, initialTime: time, initialRestTime: time, isRunning: true }
+        case 'resetRest':
+            return { ...state, deltaRestTime: 0, initialRestTime: dayjs().valueOf() }
+        case 'tick':
+            return { ...state, deltaTime: time - state.initialTime, deltaRestTime: time - state.initialRestTime }
+        default:
+            return state
+    }
+}
 
 export default function LogEntryClock() {
-    const [initialTime, setInitialTime] = useState(dayjs().valueOf())
-    const [initialRestTime, setInitialRestTime] = useState(dayjs().valueOf())
-    const [running, setRunning] = useState(false)
-    const [deltaTime, setDeltaTime] = useState(0)
-    const [deltaRestTime, setDeltaRestTime] = useState(0)
-    const millisecondsPerInterval = 1000 //can be off by ~15ms based on when interval executes
-
-    function startClock() {
-        setInitialTime(dayjs().valueOf())
-        setInitialRestTime(dayjs().valueOf())
-        setRunning(true)
+    const initialClockState = {
+        initialTime: dayjs().valueOf(),
+        initialRestTime: dayjs().valueOf(),
+        isRunning: false,
+        deltaTime: 0,
+        deltaRestTime: 0,
     }
 
-    function stopClock() {
-        setRunning(false)
-    }
-
-    function resetClock() {
-        setDeltaTime(0)
-        setDeltaRestTime(0)
-        setRunning(false)
-    }
-
-    function resetRestClock() {
-        setInitialRestTime(dayjs().valueOf())
-        setDeltaRestTime(0)
-    }
+    const [state, dispatch] = useReducer(clockReducer, initialClockState)
+    const { isRunning, deltaTime, deltaRestTime } = state
+    //this needs to be <1000 so the rest time can tick out of sync with the total time
+    const millisecondsPerInterval = 100
 
     function formatDeltaTime(milliseconds: number) {
         const totalSeconds = milliseconds / 1000
@@ -41,33 +41,29 @@ export default function LogEntryClock() {
     }
 
     useEffect(() => {
-        if (!running) return
+        if (!isRunning) return
 
         const interval = setInterval(() => {
             //calculating a delta is more accurate and reliable than incrementing the time 
             //based on the interval (esp when the app loses focus)
-            setDeltaTime(dayjs().valueOf() - initialTime)
-            setDeltaRestTime(dayjs().valueOf() - initialRestTime)
+            dispatch({ type: 'tick' })
         }, millisecondsPerInterval)
 
         return () => clearInterval(interval)
-    }, [running])
+    }, [isRunning])
 
+    return (<>
+        {!isRunning && !deltaTime
+            ? <Stack direction='row' justifyContent='center'>
+                <Button onClick={() => dispatch({ type: 'start' })}>Start Session Clock</Button>
+            </Stack>
+            : <Stack direction='row' justifyContent='space-between'>
+                <Typography>Total time: {formatDeltaTime(deltaTime)}</Typography>
+                <Button onClick={() => dispatch({ type: 'resetRest' })}>Reset Rest Time</Button>
+                <Typography>Rest time: {formatDeltaTime(deltaRestTime)}</Typography>
+            </Stack>
+        }
 
-    useEffect(() => {
-        console.log(initialRestTime)
-        console.log(deltaRestTime)
-    }, [deltaRestTime])
-
-    return (
-        <Stack direction='row'>
-            <Typography>Total time: {formatDeltaTime(deltaTime)}</Typography>
-            <Typography>Rest time: {formatDeltaTime(deltaRestTime)}</Typography>
-            <Button onClick={startClock}>Start Session Clock</Button>
-            <Button onClick={stopClock}>Pause Clock</Button>
-            <Button onClick={resetClock}>Reset Clock</Button>
-            <Button onClick={resetRestClock}>Reset Rest Clock</Button>
-        </Stack>
+    </>
     )
-
 }

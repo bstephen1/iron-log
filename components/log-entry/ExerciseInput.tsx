@@ -51,7 +51,7 @@ export default function ExerciseInput(props: Props) {
                     {/* todo: change to grid; put modifiers on a second row for small screens */}
                     <Stack direction='row' onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2}>
                         <Autocomplete
-                            options={dummyExercises.filter(exercise => exercise.active)}
+                            options={dummyExercises.filter(exercise => exercise.isActive)}
                             getOptionLabel={option => option.name}
                             sx={{ width: 250 }}
                             //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted

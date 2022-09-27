@@ -3,7 +3,7 @@ import { Dayjs } from 'dayjs';
 import { useState } from 'react';
 import Exercise from '../../models/Exercise';
 import ExerciseInput from './ExerciseInput';
-import LogEntryStopwatch from './LogEntryClock';
+import LogEntryClock from './LogEntryClock';
 import LogEntryTitleBar from './LogEntryTitleBar';
 
 interface Props {
@@ -29,7 +29,7 @@ export default function LogEntry(props: Props) {
                 <LogEntryTitleBar date={date} />
             </Grid>
             <Grid item>
-                <LogEntryStopwatch />
+                <LogEntryClock />
             </Grid>
             {/* todo: use a unique key so they can be rearranged */}
             {exercises.map((exercise, i) => {
