@@ -1,13 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { createMongoConnection, fetchCollection } from '../../lib/mongoService'
 
-type Data = {
-  name: string
-}
+// type Data = {
+//   name: string
+// }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
-  res.status(200).json({ name: 'John Doe' })
+
+  res.status(200).json(await fetchCollection('logs'))
 }
