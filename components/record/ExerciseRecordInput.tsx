@@ -49,7 +49,7 @@ export default function ExerciseRecordInput(props: Props) {
     }
 
     if (!exercises) {
-        return <>Loading...</>
+        return <></>
     }
 
     //todo: don't show toggle or any sets until a set type is selected (or default to straight?)

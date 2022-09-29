@@ -4,14 +4,8 @@ import Exercise from '../../models/Exercise'
 import { DayRecord } from '../../models/record/DayRecord'
 import { DATE_FORMAT } from './utils'
 
-const fetcher = async (
-    input: RequestInfo,
-    init: RequestInit,
-    ...args: any[]
-) => {
-    const res = await fetch(input, init);
-    return res.json();
-};
+
+const fetcher = (url: any) => fetch(url).then(r => r.json())
 
 export function useRecord(date: Dayjs) {
     const { data, error } = useSWR<DayRecord, any>('/api/records/' + date.format(DATE_FORMAT), fetcher)

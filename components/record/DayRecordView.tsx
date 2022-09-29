@@ -10,11 +10,12 @@ interface Props {
 }
 export default function DayRecordView(props: Props) {
     const { date } = props
-    const { record, isError } = useRecord(date)
+    const res = useRecord(date)
+    const { record, isError } = res
 
     const handleAddExercise = () => {
-        // if (!dayRecord) {
-        //     setDayRecord(new DayRecord(date.format(DATE_FORMAT)))
+        // if (!record) {
+        //     mutate(new DayRecord(date.format(DATE_FORMAT)))
         // } else {
         //     setDayRecord({ ...dayRecord, exerciseRecords: [] })
         // }
@@ -24,8 +25,9 @@ export default function DayRecordView(props: Props) {
         return <>Error fetching data</>
     }
 
-    if (!record) {
-        return <>Loading</>
+    //when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
+    if (record === undefined) {
+        return <>Loading...</>
     }
 
     //todo: compare with last of this day type
@@ -38,7 +40,7 @@ export default function DayRecordView(props: Props) {
                 <DayRecordClock />
             </Grid>
             {/* todo: use a unique key so they can be rearranged */}
-            {record.exerciseRecords.map((exerciseRecord, i) => {
+            {record && record.exerciseRecords.map((exerciseRecord, i) => {
                 return (
                     <Grid item>
                         <ExerciseRecordInput
