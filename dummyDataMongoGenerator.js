@@ -31,34 +31,34 @@ let straightSets2 = [
     addStraightSetLog(30, 10, undefined)
 ]
 
-let exerciseLog1 = [
-    addExerciseLog('squat', 'straight', ['belt', 'pause'], straightSets1),
-    addExerciseLog('curls', 'straight', [], straightSets2)
+let exerciseRecord1 = [
+    addExerciseRecord(exercises[0], 'straight', [modifiers[0], modifiers[2]], straightSets1),
+    addExerciseRecord(exercises[1], 'straight', [], straightSets2)
 ]
 
-let logs = [
-    addLog('2022-09-26', exerciseLog1)
+let dayRecords = [
+    addDayRecord('2022-09-26', exerciseRecord1)
 ]
 
 function addName(name) {
     return { name }
 }
 
-function addExercise(name, isActive, comments, modifiers) {
-    return { name, isActive, comments, modifiers }
+function addExercise(name, isActive, comments, validModifiers) {
+    return { name, isActive, comments, validModifiers }
 }
 
 function addStraightSetLog(weight, reps, rpe) {
     return { weight, reps, rpe }
 }
 
-function addExerciseLog(name, type, modifiers, sets) {
-    return { name, type, modifiers, sets }
+function addExerciseRecord(exercise, type, modifiers, sets) {
+    return { exercise, type, modifiers, sets }
 }
 
 //todo: sessionType and program
-function addLog(date, exercises) {
-    return { date, exercises }
+function addDayRecord(date, exerciseRecords) {
+    return { date, exerciseRecords }
 }
 
 function addToCollection(objects, collection) {
@@ -72,6 +72,6 @@ db.dropDatabase()
 addToCollection(modifiers, 'modifiers')
 addToCollection(exercises, 'exercises')
 addToCollection(setTypes, 'setTypes')
-addToCollection(logs, 'logs')
+addToCollection(dayRecords, 'records')
 
 

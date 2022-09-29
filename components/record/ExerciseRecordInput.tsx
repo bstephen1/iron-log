@@ -2,31 +2,47 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useRef, useState } from 'react';
-import { dummyExercises, dummySetTypes } from '../../dummyData';
+import { useEffect, useRef, useState } from 'react';
 import Exercise from '../../models/Exercise';
+import { ExerciseRecord } from '../../models/record/ExerciseRecord';
 import { AbstractSet } from '../../models/sets/AbstractSet';
 import StraightSet from '../../models/sets/StraightSet';
 import { SetType } from '../../models/SetType';
 import StraightSetInput from './sets/StraightSetInput';
 
 interface Props {
-    exercise?: Exercise,
-    type?: SetType,
+    exerciseRecord: ExerciseRecord,
+    exercisesAvailable: Exercise[],
     startOpen?: boolean,
 }
-export default function ExerciseInput(props: Props) {
+export default function ExerciseRecordInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
-    const [exercise, setExercise] = useState(props.exercise)
-    const [type, setType] = useState(props.type)
-    const [sets, setSets] = useState<AbstractSet[]>([])
+    const [exerciseRecord, setExerciseRecord] = useState(props.exerciseRecord)
+    const { exercisesAvailable } = props
+    const { exercise, type, modifiers, sets } = exerciseRecord
+
+    useEffect(() => {
+        console.log(exerciseRecord)
+    }, [exerciseRecord])
+
+    useEffect(() => {
+        console.log(exercisesAvailable)
+    }, [exercisesAvailable])
+
     const listItemButton = useRef(null)
 
     const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
     const handleAddSet = () => {
         const last = sets[sets.length - 1]
         //todo: init first set, and possibly have different behavior when adding different types of sets?
-        setSets(sets.concat({ ...last, rpe: undefined }))
+        setExerciseRecord({ ...exerciseRecord, sets: sets.concat({ ...last, rpe: undefined }) })
+    }
+
+    function getModifiersForSelectedExercise() {
+        const selectedExercise = exercisesAvailable.find(
+            exercise => exercise.name === exerciseRecord.exercise?.name
+        )
+        return selectedExercise?.validModifiers || []
     }
 
     function getSetInputComponent(set: AbstractSet) {
@@ -53,28 +69,30 @@ export default function ExerciseInput(props: Props) {
                     <Grid container onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2} sx={{ cursor: 'default' }}>
                         <Grid item xs={6} md={3}>
                             <Autocomplete
-                                options={dummyExercises.filter(exercise => exercise.isActive)}
+                                options={exercisesAvailable}
                                 getOptionLabel={option => option.name}
                                 //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
-                                value={exercise}
+                                //@ts-ignore
+                                value={{ exercise } || null}
                                 //specify undefined so it doesn't set to null when blank
-                                onChange={(e, value) => setExercise(value || undefined)}
+                                onChange={(e, exercise) => setExerciseRecord({ ...exerciseRecord, exercise: exercise || undefined })}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
                             />
                         </Grid>
                         <Grid item xs={6} md={3}>
                             <Autocomplete
-                                options={dummySetTypes}
+                                options={Object.values(SetType)}
                                 getOptionLabel={option => option}
                                 value={type}
-                                onChange={(e, value) => setType(value || undefined)}
+                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, type: value || undefined })}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Set Type' />}
                             />
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Autocomplete
-                                options={exercise?.modifiers || []}
+                                options={getModifiersForSelectedExercise()}
                                 getOptionLabel={option => option.name}
+                                value={modifiers}
                                 multiple
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}

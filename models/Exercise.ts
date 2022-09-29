@@ -2,7 +2,7 @@ import Modifier from './Modifier';
 
 export default interface Exercise {
     name: string,
-    isActive?: boolean,
+    isActive: boolean,
     comments?: string,
-    modifiers?: Modifier[],
+    validModifiers: Modifier[],
 }

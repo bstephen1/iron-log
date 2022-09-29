@@ -17,7 +17,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <Box>Welcome</Box>
         <Button>
-          <Link href={`/log/${dayjs()}/`}>
+          <Link href={`/records/${dayjs('2022-09-26')}/`}>
             <a>Today's Log</a>
           </Link>
         </Button>

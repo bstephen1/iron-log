@@ -3,17 +3,18 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { DATE_FORMAT } from '../../lib/utils';
 
 interface Props {
     date?: Dayjs | null
 }
-export default function LogEntryTitleBar(props: Props) {
+export default function DayRecordTitleBar(props: Props) {
     const [date, setDate] = useState(props.date)
     const router = useRouter()
 
     useEffect(() => {
         if (date?.isValid()) {
-            router.push(`/log/${date.format('YYYY-MM-DD')}`)
+            router.push(`/records/${date.format(DATE_FORMAT)}`)
         }
     }, [date])
 

@@ -1,3 +1,4 @@
+import { Dayjs } from 'dayjs';
 import { Document, MongoClient, WithId } from 'mongodb';
 
 const url = 'mongodb://localhost:27017'
@@ -19,4 +20,9 @@ export async function fetchCollection(name: string) {
     await collection.find({}, { projection: { _id: false } }).forEach(document => { documents.push(document) })
 
     return documents
+}
+
+export async function fetchRecord(date: string) {
+    const db = await createMongoConnection()
+    return await db.collection('records').findOne({ date: date }, { projection: { _id: false } })
 }
