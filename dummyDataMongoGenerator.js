@@ -32,8 +32,8 @@ let straightSets2 = [
 ]
 
 let exerciseRecord1 = [
-    addExerciseRecord(exercises[0], 'straight', [modifiers[0], modifiers[2]], straightSets1),
-    addExerciseRecord(exercises[1], 'straight', [], straightSets2)
+    addExerciseRecord(exercises[0], 'Straight', [modifiers[0], modifiers[2]], straightSets1),
+    addExerciseRecord(exercises[1], 'Straight', [], straightSets2)
 ]
 
 let dayRecords = [

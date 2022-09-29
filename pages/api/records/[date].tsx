@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { fetchCollection, fetchRecord } from '../../../lib/mongoService'
+import { fetchRecord } from '../../../lib/backend/mongoService'
 
 export default async function handler(
     req: NextApiRequest,

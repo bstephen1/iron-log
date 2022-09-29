@@ -2,7 +2,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
 import { AbstractSet } from '../../models/sets/AbstractSet';
@@ -12,22 +13,13 @@ import StraightSetInput from './sets/StraightSetInput';
 
 interface Props {
     exerciseRecord: ExerciseRecord,
-    exercisesAvailable: Exercise[],
     startOpen?: boolean,
 }
 export default function ExerciseRecordInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
     const [exerciseRecord, setExerciseRecord] = useState(props.exerciseRecord)
-    const { exercisesAvailable } = props
+    const { exercises } = useExercises()
     const { exercise, type, modifiers, sets } = exerciseRecord
-
-    useEffect(() => {
-        console.log(exerciseRecord)
-    }, [exerciseRecord])
-
-    useEffect(() => {
-        console.log(exercisesAvailable)
-    }, [exercisesAvailable])
 
     const listItemButton = useRef(null)
 
@@ -38,8 +30,8 @@ export default function ExerciseRecordInput(props: Props) {
         setExerciseRecord({ ...exerciseRecord, sets: sets.concat({ ...last, rpe: undefined }) })
     }
 
-    function getModifiersForSelectedExercise() {
-        const selectedExercise = exercisesAvailable.find(
+    function getModifiersForSelectedExercise(exercises: Exercise[]) {
+        const selectedExercise = exercises.find(
             exercise => exercise.name === exerciseRecord.exercise?.name
         )
         return selectedExercise?.validModifiers || []
@@ -56,6 +48,10 @@ export default function ExerciseRecordInput(props: Props) {
         }
     }
 
+    if (!exercises) {
+        return <>Loading...</>
+    }
+
     //todo: don't show toggle or any sets until a set type is selected (or default to straight?)
     //todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
     //todo: select input units (if you display in kg units, you can input in lbs and it will convert)
@@ -69,11 +65,11 @@ export default function ExerciseRecordInput(props: Props) {
                     <Grid container onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2} sx={{ cursor: 'default' }}>
                         <Grid item xs={6} md={3}>
                             <Autocomplete
-                                options={exercisesAvailable}
+                                options={exercises}
                                 getOptionLabel={option => option.name}
                                 //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
                                 //@ts-ignore
-                                value={{ exercise } || null}
+                                value={exercise}
                                 //specify undefined so it doesn't set to null when blank
                                 onChange={(e, exercise) => setExerciseRecord({ ...exerciseRecord, exercise: exercise || undefined })}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
@@ -90,7 +86,7 @@ export default function ExerciseRecordInput(props: Props) {
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Autocomplete
-                                options={getModifiersForSelectedExercise()}
+                                options={getModifiersForSelectedExercise(exercises)}
                                 getOptionLabel={option => option.name}
                                 value={modifiers}
                                 multiple

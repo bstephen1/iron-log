@@ -1,4 +1,3 @@
-import { Dayjs } from 'dayjs';
 import { Document, MongoClient, WithId } from 'mongodb';
 
 const url = 'mongodb://localhost:27017'
