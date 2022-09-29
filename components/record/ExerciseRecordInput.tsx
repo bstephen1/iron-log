@@ -65,10 +65,9 @@ export default function ExerciseRecordInput(props: Props) {
                     <Grid container onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2} sx={{ cursor: 'default' }}>
                         <Grid item xs={6} md={3}>
                             <Autocomplete
-                                options={exercises}
+                                options={exercises.filter(exercise => exercise.isActive)}
                                 getOptionLabel={option => option.name}
                                 //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
-                                //@ts-ignore
                                 value={exercise}
                                 //specify undefined so it doesn't set to null when blank
                                 onChange={(e, exercise) => setExerciseRecord({ ...exerciseRecord, exercise: exercise || undefined })}
@@ -89,6 +88,7 @@ export default function ExerciseRecordInput(props: Props) {
                                 options={getModifiersForSelectedExercise(exercises)}
                                 getOptionLabel={option => option.name}
                                 value={modifiers}
+                                onChange={(e, value) => console.log(value)}
                                 multiple
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}

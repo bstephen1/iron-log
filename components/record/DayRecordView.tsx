@@ -1,6 +1,10 @@
 import { Button, Grid } from '@mui/material';
 import { Dayjs } from 'dayjs';
-import { useRecord } from '../../lib/frontend/restService';
+import { useEffect } from 'react';
+import { createRecord, useRecord } from '../../lib/frontend/restService';
+import { DATE_FORMAT } from '../../lib/frontend/constants';
+import { DayRecord } from '../../models/record/DayRecord';
+import { ExerciseRecord } from '../../models/record/ExerciseRecord';
 import DayRecordClock from './DayRecordClock';
 import DayRecordTitleBar from './DayRecordTitleBar';
 import ExerciseRecordInput from './ExerciseRecordInput';
@@ -10,16 +14,22 @@ interface Props {
 }
 export default function DayRecordView(props: Props) {
     const { date } = props
-    const res = useRecord(date)
-    const { record, isError } = res
+    const { record, isError, mutate } = useRecord(date)
 
-    const handleAddExercise = () => {
-        // if (!record) {
-        //     mutate(new DayRecord(date.format(DATE_FORMAT)))
-        // } else {
-        //     setDayRecord({ ...dayRecord, exerciseRecords: [] })
-        // }
+    const handleAddExercise = async () => {
+        let newRecord;
+        if (!record) {
+            newRecord = new DayRecord(date.format(DATE_FORMAT), [new ExerciseRecord()])
+            await createRecord(newRecord)
+        } else {
+            newRecord = { ...record, exerciseRecords: [...record.exerciseRecords, new ExerciseRecord()] }
+        }
+        mutate(newRecord)
     }
+
+    useEffect(() => {
+        console.log(record)
+    }, [record])
 
     if (isError) {
         return <>Error fetching data</>

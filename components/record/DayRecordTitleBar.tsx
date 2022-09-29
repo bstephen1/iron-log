@@ -3,7 +3,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { Dayjs } from 'dayjs';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { DATE_FORMAT } from '../../lib/frontend/utils';
+import { DATE_FORMAT } from '../../lib/frontend/constants';
 
 interface Props {
     date?: Dayjs | null
