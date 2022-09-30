@@ -1,7 +1,7 @@
 import { Button, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useReducer } from 'react';
-import { DayRecord } from '../../models/record/DayRecord';
+import { Record } from '../../models/record/Record';
 
 //this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
 function clockReducer(state: any, action: { type: any; }) {
@@ -18,7 +18,7 @@ function clockReducer(state: any, action: { type: any; }) {
     }
 }
 
-export default function DayRecordClock() {
+export default function RecordViewClock() {
     const initialClockState = {
         initialTime: dayjs().valueOf(),
         initialRestTime: dayjs().valueOf(),

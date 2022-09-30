@@ -3,23 +3,23 @@ import { Dayjs } from 'dayjs';
 import { useEffect } from 'react';
 import { createRecord, updateRecord, useRecord } from '../../lib/frontend/restService';
 import { DATE_FORMAT } from '../../lib/frontend/constants';
-import { DayRecord } from '../../models/record/DayRecord';
+import { Record } from '../../models/record/Record';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
-import DayRecordClock from './DayRecordClock';
-import DayRecordTitleBar from './DayRecordTitleBar';
+import RecordViewClock from './RecordViewClock';
+import RecordViewTitleBar from './RecordViewTitleBar';
 import ExerciseRecordInput from './ExerciseRecordInput';
 
 interface Props {
     date: Dayjs,
 }
-export default function DayRecordView(props: Props) {
+export default function RecordView(props: Props) {
     const { date } = props
     const { record, isError, mutate } = useRecord(date)
 
     const handleAddExercise = async () => {
         let newRecord;
         if (!record) {
-            newRecord = new DayRecord(date.format(DATE_FORMAT), [new ExerciseRecord()])
+            newRecord = new Record(date.format(DATE_FORMAT), [new ExerciseRecord()])
             await createRecord(newRecord)
         } else {
             newRecord = { ...record, exerciseRecords: [...record.exerciseRecords, new ExerciseRecord()] }
@@ -42,10 +42,10 @@ export default function DayRecordView(props: Props) {
     return (
         <Grid container spacing={2} direction='column'>
             <Grid item>
-                <DayRecordTitleBar date={date} />
+                <RecordViewTitleBar date={date} />
             </Grid>
             <Grid item>
-                <DayRecordClock />
+                <RecordViewClock />
             </Grid>
             {/* todo: use a unique key so they can be rearranged */}
             {record && record.exerciseRecords.map((exerciseRecord, i) => {

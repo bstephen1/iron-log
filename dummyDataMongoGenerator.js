@@ -36,8 +36,8 @@ let exerciseRecord1 = [
     addExerciseRecord(exercises[1], 'basic', [], basicSets2)
 ]
 
-let dayRecords = [
-    addDayRecord('2022-09-26', exerciseRecord1)
+let records = [
+    addRecord('2022-09-26', exerciseRecord1)
 ]
 
 function addName(name) {
@@ -57,7 +57,7 @@ function addExerciseRecord(exercise, type, modifiers, sets) {
 }
 
 //todo: sessionType and program
-function addDayRecord(date, exerciseRecords) {
+function addRecord(date, exerciseRecords) {
     return { date, exerciseRecords }
 }
 
@@ -72,6 +72,6 @@ db.dropDatabase()
 addToCollection(modifiers, 'modifiers')
 addToCollection(exercises, 'exercises')
 addToCollection(setTypes, 'setTypes')
-addToCollection(dayRecords, 'records')
+addToCollection(records, 'records')
 
 

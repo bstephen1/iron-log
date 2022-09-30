@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import DayRecordView from '../../components/record/DayRecordView';
+import RecordView from '../../components/record/RecordView';
 
 
 //I guess a separate session number in case you want to do multiple sessions in one day
@@ -18,7 +18,7 @@ export default function Log() {
                 <title>Log</title>
             </Head>
             <main>
-                <DayRecordView date={date} />
+                <RecordView date={date} />
             </main>
         </>
     )

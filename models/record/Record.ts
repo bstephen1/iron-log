@@ -1,6 +1,6 @@
 import { ExerciseRecord } from './ExerciseRecord';
 
-export class DayRecord {
+export class Record {
     constructor(
         readonly date: string,
         public exerciseRecords: ExerciseRecord[] = []

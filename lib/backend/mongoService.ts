@@ -1,5 +1,5 @@
 import { Document, MongoClient, WithId } from 'mongodb';
-import { DayRecord } from '../../models/record/DayRecord';
+import { Record } from '../../models/record/Record';
 
 const uri = 'mongodb://localhost:27017'
 const client = new MongoClient(uri);
@@ -20,12 +20,12 @@ export async function fetchRecord(date: string) {
     return await client.db(dbName).collection('records').findOne({ date: date }, { projection: { _id: false } })
 }
 
-export async function createRecord(record: DayRecord) {
+export async function createRecord(record: Record) {
     const client = await clientPromise
     return await client.db(dbName).collection('records').insertOne(record)
 }
 
-export async function updateRecord(record: DayRecord) {
+export async function updateRecord(record: Record) {
     const client = await clientPromise
     return await client.db(dbName).collection('records').updateOne({ date: record.date }, { $set: { exerciseRecords: record.exerciseRecords } })
 }
