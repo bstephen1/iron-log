@@ -88,7 +88,7 @@ export default function ExerciseRecordInput(props: Props) {
                                 options={getModifiersForSelectedExercise(exercises)}
                                 getOptionLabel={option => option.name}
                                 value={modifiers}
-                                onChange={(e, value) => console.log(value)}
+                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, modifiers: value })}
                                 multiple
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}

@@ -1,13 +1,12 @@
 import { Button, Grid } from '@mui/material';
 import { Dayjs } from 'dayjs';
-import { useEffect } from 'react';
-import { createRecord, updateRecord, useRecord } from '../../lib/frontend/restService';
 import { DATE_FORMAT } from '../../lib/frontend/constants';
-import { Record } from '../../models/record/Record';
+import { createRecord, updateRecord, useRecord } from '../../lib/frontend/restService';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
+import { Record } from '../../models/record/Record';
+import ExerciseRecordInput from './ExerciseRecordInput';
 import RecordViewClock from './RecordViewClock';
 import RecordViewTitleBar from './RecordViewTitleBar';
-import ExerciseRecordInput from './ExerciseRecordInput';
 
 interface Props {
     date: Dayjs,
@@ -15,6 +14,10 @@ interface Props {
 export default function RecordView(props: Props) {
     const { date } = props
     const { record, isError, mutate } = useRecord(date)
+    //when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
+    //it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
+    //so for now we just hide the add exercise button so the records don't pop in above it
+    const isLoading = record === undefined
 
     const handleAddExercise = async () => {
         let newRecord;
@@ -30,12 +33,7 @@ export default function RecordView(props: Props) {
     }
 
     if (isError) {
-        return <>Error fetching data</>
-    }
-
-    //when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
-    if (record === undefined) {
-        return <>Loading...</>
+        return <>Error fetching data!</>
     }
 
     //todo: compare with last of this day type
@@ -47,7 +45,6 @@ export default function RecordView(props: Props) {
             <Grid item>
                 <RecordViewClock />
             </Grid>
-            {/* todo: use a unique key so they can be rearranged */}
             {record && record.exerciseRecords.map((exerciseRecord, i) => {
                 return (
                     <Grid item>
@@ -61,7 +58,7 @@ export default function RecordView(props: Props) {
             })}
 
             <Grid item container justifyContent='center'>
-                <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>
+                {!isLoading && <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>}
             </Grid>
         </Grid>
     )

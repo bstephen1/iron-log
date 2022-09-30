@@ -12,6 +12,8 @@ export default function RecordViewTitleBar(props: Props) {
     const [date, setDate] = useState(props.date)
     const router = useRouter()
 
+    //todo: it's keeping the old mongo data when switching pages
+    //todo: reloading switches to current date
     useEffect(() => {
         if (date?.isValid()) {
             router.push(`/records/${date.format(DATE_FORMAT)}`)

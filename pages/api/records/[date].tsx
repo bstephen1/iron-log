@@ -11,7 +11,7 @@ export default async function handler(
         res.status(400).json({ message: 'invalid date' })
         return
     }
-    console.info(`Incoming ${req.method} ${req.body}`)
+    console.info(`Incoming ${req.method} (${req.query.date}) ${req.body}`)
 
     switch (req.method) {
         case 'GET':
