@@ -33,5 +33,13 @@ export async function createRecord(record: DayRecord) {
         method: 'POST',
         body: JSON.stringify(record)
     })
-        .then(res => console.log(res))
+        .catch(e => console.error(e))
+}
+
+export async function updateRecord(newRecord: DayRecord) {
+    fetch(URI_RECORDS + newRecord.date, {
+        method: 'PUT',
+        body: JSON.stringify(newRecord)
+    })
+        .catch(e => console.error(e))
 }

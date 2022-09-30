@@ -1,7 +1,7 @@
 import { Button, Grid } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { useEffect } from 'react';
-import { createRecord, useRecord } from '../../lib/frontend/restService';
+import { createRecord, updateRecord, useRecord } from '../../lib/frontend/restService';
 import { DATE_FORMAT } from '../../lib/frontend/constants';
 import { DayRecord } from '../../models/record/DayRecord';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
@@ -23,13 +23,11 @@ export default function DayRecordView(props: Props) {
             await createRecord(newRecord)
         } else {
             newRecord = { ...record, exerciseRecords: [...record.exerciseRecords, new ExerciseRecord()] }
+            await updateRecord(newRecord)
         }
+        //mutate is like useState for the useSWR hook. It changes the local value, then refetches the data to confirm it has updated
         mutate(newRecord)
     }
-
-    useEffect(() => {
-        console.log(record)
-    }, [record])
 
     if (isError) {
         return <>Error fetching data</>
