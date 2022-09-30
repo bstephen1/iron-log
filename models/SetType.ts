@@ -1,3 +1,3 @@
 export enum SetType {
-    STRAIGHT = 'Straight',
+    BASIC = 'basic',
 }

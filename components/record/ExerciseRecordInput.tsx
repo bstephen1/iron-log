@@ -7,9 +7,9 @@ import { useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
 import { AbstractSet } from '../../models/sets/AbstractSet';
-import StraightSet from '../../models/sets/StraightSet';
+import BasicSet from '../../models/sets/BasicSet';
 import { SetType } from '../../models/SetType';
-import StraightSetInput from './sets/StraightSetInput';
+import BasicSetInput from './sets/BasicSetInput';
 
 interface Props {
     exerciseRecord: ExerciseRecord,
@@ -41,8 +41,8 @@ export default function ExerciseRecordInput(props: Props) {
         if (!type) return <></>
 
         switch (type) {
-            case SetType.STRAIGHT:
-                return <StraightSetInput {...set as StraightSet} />
+            case SetType.BASIC:
+                return <BasicSetInput {...set as BasicSet} />
             default:
                 return <></>
         }
@@ -52,7 +52,7 @@ export default function ExerciseRecordInput(props: Props) {
         return <></>
     }
 
-    //todo: don't show toggle or any sets until a set type is selected (or default to straight?)
+    //todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
     //todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
     //todo: select input units (if you display in kg units, you can input in lbs and it will convert)
     //todo: preserve state when changing set type?

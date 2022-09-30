@@ -16,24 +16,24 @@ let exercises = [
 
 //todo: myo, super, rep range (?), weigh-in
 let setTypes = [
-    addName('straight')
+    addName('basic')
 ]
 
-let straightSets1 = [
-    addStraightSetLog(100, 5, 8),
-    addStraightSetLog(110, 5, 9),
-    addStraightSetLog(120, 5, 10)
+let basicSets1 = [
+    addBasicSetRecord(100, 5, 8),
+    addBasicSetRecord(110, 5, 9),
+    addBasicSetRecord(120, 5, 10)
 ]
 
-let straightSets2 = [
-    addStraightSetLog(25, 15, undefined),
-    addStraightSetLog(30, 12, undefined),
-    addStraightSetLog(30, 10, undefined)
+let basicSets2 = [
+    addBasicSetRecord(25, 15, undefined),
+    addBasicSetRecord(30, 12, undefined),
+    addBasicSetRecord(30, 10, undefined)
 ]
 
 let exerciseRecord1 = [
-    addExerciseRecord(exercises[0], 'Straight', [modifiers[0], modifiers[2]], straightSets1),
-    addExerciseRecord(exercises[1], 'Straight', [], straightSets2)
+    addExerciseRecord(exercises[0], 'basic', [modifiers[0], modifiers[2]], basicSets1),
+    addExerciseRecord(exercises[1], 'basic', [], basicSets2)
 ]
 
 let dayRecords = [
@@ -48,7 +48,7 @@ function addExercise(name, isActive, comments, validModifiers) {
     return { name, isActive, comments, validModifiers }
 }
 
-function addStraightSetLog(weight, reps, rpe) {
+function addBasicSetRecord(weight, reps, rpe) {
     return { weight, reps, rpe }
 }
 

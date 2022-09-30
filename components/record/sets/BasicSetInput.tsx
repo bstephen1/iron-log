@@ -1,8 +1,8 @@
 import { Stack, TextField } from '@mui/material';
 import { useState } from 'react';
-import StraightSet from '../../../models/sets/StraightSet';
+import BasicSet from '../../../models/sets/BasicSet';
 
-export default function StraightSetInput(props: StraightSet) {
+export default function BasicSetInput(props: BasicSet) {
     const [weight, setWeight] = useState(props.weight)
     const [reps, setReps] = useState(props.reps)
     const [rpe, setRpe] = useState(props.rpe)
