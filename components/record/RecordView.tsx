@@ -53,11 +53,10 @@ export default function RecordView(props: Props) {
             </Grid>
             {record && record.exerciseRecords.map((exerciseRecord, i) => {
                 return (
-                    <Grid item>
+                    <Grid item key={i}>
                         <ExerciseRecordInput
                             exerciseRecord={exerciseRecord}
                             startOpen={i === 0}
-                            key={i}
                         />
                     </Grid>
                 )

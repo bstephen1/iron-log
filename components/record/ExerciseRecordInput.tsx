@@ -37,12 +37,12 @@ export default function ExerciseRecordInput(props: Props) {
         return selectedExercise?.validModifiers || []
     }
 
-    function getSetInputComponent(set: AbstractSet) {
+    function getSetInputComponent(set: AbstractSet, i: number) {
         if (!type) return <></>
 
         switch (type) {
             case SetType.BASIC:
-                return <BasicSetInput {...set as BasicSet} />
+                return <BasicSetInput {...set as BasicSet} key={i} />
             default:
                 return <></>
         }
@@ -102,7 +102,7 @@ export default function ExerciseRecordInput(props: Props) {
                 {!!type && <Collapse in={open} onMouseDown={disableButtonEffects} onClick={disableButtonEffects} sx={{ mx: 5, pb: 2, cursor: 'default' }}>
                     <Stack spacing={2}>
                         {/* todo: unique key */}
-                        {sets.map(set => getSetInputComponent(set))}
+                        {sets.map((set, i) => getSetInputComponent(set, i))}
                         <Button variant='contained' onClick={handleAddSet}>Add Set</Button>
                     </Stack>
                 </Collapse>}
