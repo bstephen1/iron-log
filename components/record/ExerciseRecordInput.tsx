@@ -2,7 +2,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
@@ -19,8 +19,9 @@ export default function ExerciseRecordInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
     const [exerciseRecord, setExerciseRecord] = useState(props.exerciseRecord)
     const { exercises } = useExercises()
-    const { exercise, type, modifiers, sets } = exerciseRecord
+    const { exerciseRef, type, activeModifiers, sets } = exerciseRecord
 
+    const exercise = exercises?.find(exercise => exercise._id === exerciseRef)
     const listItemButton = useRef(null)
 
     const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
@@ -28,13 +29,6 @@ export default function ExerciseRecordInput(props: Props) {
         const last = sets[sets.length - 1]
         //todo: init first set, and possibly have different behavior when adding different types of sets?
         setExerciseRecord({ ...exerciseRecord, sets: sets.concat({ ...last, rpe: undefined }) })
-    }
-
-    function getModifiersForSelectedExercise(exercises: Exercise[]) {
-        const selectedExercise = exercises.find(
-            exercise => exercise.name === exerciseRecord.exercise?.name
-        )
-        return selectedExercise?.validModifiers || []
     }
 
     function getSetInputComponent(set: AbstractSet, i: number) {
@@ -70,7 +64,7 @@ export default function ExerciseRecordInput(props: Props) {
                                 //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
                                 value={exercise}
                                 //specify undefined so it doesn't set to null when blank
-                                onChange={(e, exercise) => setExerciseRecord({ ...exerciseRecord, exercise: exercise || undefined })}
+                                onChange={(e, exercise) => setExerciseRecord({ ...exerciseRecord, exerciseRef: exercise?._id || undefined })}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
                             />
                         </Grid>
@@ -85,13 +79,13 @@ export default function ExerciseRecordInput(props: Props) {
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Autocomplete
-                                options={getModifiersForSelectedExercise(exercises)}
+                                options={exercise?.validModifiers || []}
                                 getOptionLabel={option => option.name}
-                                value={modifiers}
-                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, modifiers: value })}
+                                value={activeModifiers}
+                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, activeModifiers: value })}
                                 multiple
                                 fullWidth
-                                renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}
+                                renderInput={(params) => <TextField {...params} variant='standard' label='Active Modifiers' />}
                             />
                         </Grid>
                     </Grid>
