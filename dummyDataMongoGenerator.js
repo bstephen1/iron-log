@@ -14,7 +14,7 @@ let exercises = [
     addExercise('zercher squat', false, 'pain', [modifiers[0]]),
 ]
 
-//todo: myo, super, rep range (?), weigh-in
+//todo: myo, super, rep range (?), weigh-in, cardio
 let setTypes = [
     addName('basic')
 ]

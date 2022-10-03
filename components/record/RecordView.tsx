@@ -42,7 +42,7 @@ export default function RecordView(props: Props) {
     }
 
     //todo: compare with last of this day type
-    //todo: drag and drop (react-beautiful-dnd?)
+    //todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
     return (
         <Grid container spacing={2} direction='column'>
             <Grid item>
