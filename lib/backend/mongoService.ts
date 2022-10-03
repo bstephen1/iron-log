@@ -31,3 +31,4 @@ export async function updateRecord(record: Record) {
 }
 
 //todo: seperate methods for updating specific fields? To reduce data load on small updates?
+//todo: make exercise in exerciseRecords a reference to exercises table

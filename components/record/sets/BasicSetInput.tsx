@@ -2,6 +2,8 @@ import { Stack, TextField } from '@mui/material';
 import { useState } from 'react';
 import BasicSet from '../../../models/sets/BasicSet';
 
+//todo: indicator for failing a rep
+//todo: fix NaN from tel 
 export default function BasicSetInput(props: BasicSet) {
     const [weight, setWeight] = useState(props.weight)
     const [reps, setReps] = useState(props.reps)
