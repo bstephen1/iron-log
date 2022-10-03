@@ -9,7 +9,7 @@ const fetcher = (url: any) => fetch(url).then(r => r.json())
 
 //'use' is useSWR's convention for 'get'
 export function useRecord(date: Dayjs) {
-    const { data, error, mutate } = useSWR<Record, any>(URI_RECORDS + date.format(DATE_FORMAT), fetcher)
+    const { data, error, mutate } = useSWR<Record>(URI_RECORDS + date.format(DATE_FORMAT), fetcher)
 
     return {
         record: data,
@@ -19,7 +19,7 @@ export function useRecord(date: Dayjs) {
 }
 
 export function useExercises() {
-    const { data, error, mutate } = useSWR<Exercise[], any>(URI_EXERCISES, fetcher)
+    const { data, error, mutate } = useSWR<Exercise[]>(URI_EXERCISES, fetcher)
 
     return {
         exercises: data,

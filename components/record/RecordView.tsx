@@ -32,11 +32,17 @@ export default function RecordView(props: Props) {
         mutate(newRecord)
     }
 
+    const handleUpdateExercise = async (exercise: ExerciseRecord) => {
+
+    }
+
+    //todo: this is a placeholder
     if (isError) {
         return <>Error fetching data!</>
     }
 
     //todo: compare with last of this day type
+    //todo: drag and drop (react-beautiful-dnd?)
     return (
         <Grid container spacing={2} direction='column'>
             <Grid item>
