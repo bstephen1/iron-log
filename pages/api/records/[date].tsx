@@ -1,17 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRecord, fetchRecord, updateRecord } from '../../../lib/backend/mongoService'
+import { validDateStringRegex } from '../../../lib/frontend/constants'
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
     const date = req.query.date
-    const validDateRegex = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/
-    if (!date || typeof date !== 'string' || !date.match(validDateRegex)) {
+
+    if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
         res.status(400).json({ message: 'invalid date' })
         return
     }
-    console.info(`Incoming ${req.method} (${req.query.date}) ${req.body}`)
+    console.log(`Incoming ${req.method} (${req.query.date}) ${req.body}`)
 
     switch (req.method) {
         case 'GET':

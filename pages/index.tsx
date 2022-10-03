@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import { DATE_FORMAT } from '../lib/frontend/constants'
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
@@ -17,7 +18,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <Box>Welcome</Box>
         <Button>
-          <Link href={`/records/${dayjs('2022-09-26')}/`}>
+          <Link href={`/records/${dayjs().format(DATE_FORMAT)}/`}>
             <a>Today's Log</a>
           </Link>
         </Button>
