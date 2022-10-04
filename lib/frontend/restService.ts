@@ -1,13 +1,14 @@
 import { Dayjs } from 'dayjs'
 import useSWR from 'swr'
 import Exercise from '../../models/Exercise'
+import Modifier from '../../models/Modifier'
 import { Record } from '../../models/record/Record'
-import { DATE_FORMAT, URI_EXERCISES, URI_RECORDS } from './constants'
+import { DATE_FORMAT, URI_EXERCISES, URI_MODIFIERS, URI_RECORDS } from './constants'
 
 
 const fetcher = (url: any) => fetch(url).then(r => r.json())
 
-//'use' is useSWR's convention for 'get'
+//'use' is SWR's convention for 'get'
 export function useRecord(date: Dayjs) {
     const { data, error, mutate } = useSWR<Record>(URI_RECORDS + date.format(DATE_FORMAT), fetcher)
 
@@ -23,6 +24,16 @@ export function useExercises() {
 
     return {
         exercises: data,
+        isError: error,
+        mutate: mutate,
+    }
+}
+
+export function useModifiers() {
+    const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS, fetcher)
+
+    return {
+        modifiers: data,
         isError: error,
         mutate: mutate,
     }

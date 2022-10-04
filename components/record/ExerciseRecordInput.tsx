@@ -2,9 +2,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useEffect, useRef, useState } from 'react';
-import { useExercises } from '../../lib/frontend/restService';
-import Exercise from '../../models/Exercise';
+import { useRef, useState } from 'react';
+import { useExercises, useModifiers } from '../../lib/frontend/restService';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
 import { AbstractSet } from '../../models/sets/AbstractSet';
 import BasicSet from '../../models/sets/BasicSet';
@@ -19,9 +18,13 @@ export default function ExerciseRecordInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
     const [exerciseRecord, setExerciseRecord] = useState(props.exerciseRecord)
     const { exercises } = useExercises()
-    const { exerciseRef, type, activeModifiers, sets } = exerciseRecord
+    const { modifiers } = useModifiers()
+    const { exerciseRef, type, activeModifierRefs, sets } = exerciseRecord
 
     const exercise = exercises?.find(exercise => exercise._id === exerciseRef)
+    //todo: see if there's a better way to do this. Also this ensures modifiers are rendered in the same list order rather than appended to the end. Desireable?
+    const validModifiers = modifiers?.filter(modifier => exercise?.validModifierRefs?.find(id => id === modifier._id)) || []
+    const activeModifiers = modifiers?.filter(modifier => activeModifierRefs?.find(id => id === modifier._id)) || []
     const listItemButton = useRef(null)
 
     const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
@@ -79,10 +82,10 @@ export default function ExerciseRecordInput(props: Props) {
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Autocomplete
-                                options={exercise?.validModifiers || []}
+                                options={validModifiers}
                                 getOptionLabel={option => option.name}
                                 value={activeModifiers}
-                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, activeModifiers: value })}
+                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, activeModifierRefs: value.map(modifier => modifier._id) })}
                                 multiple
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Active Modifiers' />}

@@ -6,9 +6,9 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        const exercises = await fetchCollection('exercises')
-        res.status(200).json(exercises)
+        const modifiers = await fetchCollection('modifiers')
+        res.status(200).json(modifiers)
     } catch (e) {
-        res.status(500).json({ error: 'error fetching exercises' })
+        res.status(500).json({ error: 'error fetching modifiers' })
     }
 }
