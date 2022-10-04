@@ -19,7 +19,7 @@ export default function RecordView(props: Props) {
     //so for now we just hide the add exercise button so the records don't pop in above it
     const isLoading = record === undefined
 
-    const handleAddExercise = async () => {
+    const addExercise = async () => {
         let newRecord;
         if (!record) {
             newRecord = new Record(date.format(DATE_FORMAT), [new ExerciseRecord()])
@@ -32,7 +32,18 @@ export default function RecordView(props: Props) {
         mutate(newRecord)
     }
 
-    const handleUpdateExercise = async (exercise: ExerciseRecord) => {
+    //todo: use _id? index is fragile if we want to change order  
+    const updateExerciseRecord = async (exerciseRecord: ExerciseRecord, index: number) => {
+        //should definitely not be in a state of updating nonexistant records, so let's just return
+        if (!record || !record.exerciseRecords || !record.exerciseRecords[index]) {
+            return
+        }
+
+        let newRecord = { ...record }
+        newRecord.exerciseRecords[index] = exerciseRecord
+        await updateRecord(newRecord)
+
+        mutate(newRecord)
 
     }
 
@@ -56,6 +67,8 @@ export default function RecordView(props: Props) {
                     <Grid item key={i}>
                         <ExerciseRecordInput
                             exerciseRecord={exerciseRecord}
+                            updateExerciseRecord={updateExerciseRecord}
+                            index={i}
                             startOpen={i === 0}
                         />
                     </Grid>
@@ -63,7 +76,7 @@ export default function RecordView(props: Props) {
             })}
 
             <Grid item container justifyContent='center'>
-                {!isLoading && <Button variant='contained' onClick={handleAddExercise}>Add Exercise</Button>}
+                {!isLoading && <Button variant='contained' onClick={addExercise}>Add Exercise</Button>}
             </Grid>
         </Grid>
     )

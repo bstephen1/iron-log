@@ -2,7 +2,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useExercises, useModifiers } from '../../lib/frontend/restService';
 import { ExerciseRecord } from '../../models/record/ExerciseRecord';
 import { AbstractSet } from '../../models/sets/AbstractSet';
@@ -12,6 +12,8 @@ import BasicSetInput from './sets/BasicSetInput';
 
 interface Props {
     exerciseRecord: ExerciseRecord,
+    index: number,
+    updateExerciseRecord: Function,
     startOpen?: boolean,
 }
 export default function ExerciseRecordInput(props: Props) {
@@ -33,6 +35,10 @@ export default function ExerciseRecordInput(props: Props) {
         //todo: init first set, and possibly have different behavior when adding different types of sets?
         setExerciseRecord({ ...exerciseRecord, sets: sets.concat({ ...last, rpe: undefined }) })
     }
+
+    useEffect(() => {
+        props.updateExerciseRecord(exerciseRecord, props.index)
+    }, [exerciseRecord])
 
     function getSetInputComponent(set: AbstractSet, i: number) {
         if (!type) return <></>
@@ -88,7 +94,7 @@ export default function ExerciseRecordInput(props: Props) {
                                 onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, activeModifierRefs: value.map(modifier => modifier._id) })}
                                 multiple
                                 fullWidth
-                                renderInput={(params) => <TextField {...params} variant='standard' label='Active Modifiers' />}
+                                renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}
                             />
                         </Grid>
                     </Grid>
