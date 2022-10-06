@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "dummyDataMongoGenerator.js"
+    "scripts/dummyDataMongoGenerator.js"
   ],
   "exclude": [
     "node_modules"
