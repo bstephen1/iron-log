@@ -23,7 +23,7 @@ export default function ExerciseRecordInput(props: Props) {
     const { modifiers } = useModifiers()
     const { exerciseRef, type, activeModifierRefs, sets } = exerciseRecord
 
-    const exercise = exercises?.find(exercise => exercise._id === exerciseRef)
+    const exercise = exercises?.find(exercise => exercise.id === exerciseRef)
     //todo: see if there's a better way to do this. Also this ensures modifiers are rendered in the same list order rather than appended to the end. Desireable?
     const validModifiers = modifiers?.filter(modifier => exercise?.validModifierRefs?.find(id => id === modifier._id)) || []
     const activeModifiers = modifiers?.filter(modifier => activeModifierRefs?.find(id => id === modifier._id)) || []
@@ -68,12 +68,12 @@ export default function ExerciseRecordInput(props: Props) {
                     <Grid container onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2} sx={{ cursor: 'default' }}>
                         <Grid item xs={6} md={3}>
                             <Autocomplete
-                                options={exercises.filter(exercise => exercise.isActive)}
+                                options={exercises}
                                 getOptionLabel={option => option.name}
                                 //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
                                 value={exercise}
                                 //specify undefined so it doesn't set to null when blank
-                                onChange={(e, exercise) => setExerciseRecord({ ...exerciseRecord, exerciseRef: exercise?._id || undefined })}
+                                onChange={(e, exercise) => setExerciseRecord({ ...exerciseRecord, exerciseRef: exercise?.id || undefined })}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
                             />
                         </Grid>

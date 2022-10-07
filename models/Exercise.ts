@@ -1,8 +1,9 @@
+import { ExerciseStatus } from './ExerciseStatus';
 
 export default interface Exercise {
-    _id: string,
+    id: string,
     name: string,
-    isActive: boolean,
-    comments?: string,
-    validModifierRefs: string[],
+    status: ExerciseStatus,
+    cues?: string,
+    validModifierRefs?: string[], //todo -- return from db
 }
