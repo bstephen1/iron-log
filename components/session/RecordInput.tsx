@@ -4,19 +4,18 @@ import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextF
 import { Stack } from '@mui/system';
 import { useEffect, useRef, useState } from 'react';
 import { useExercises, useModifiers } from '../../lib/frontend/restService';
-import { ExerciseRecord } from '../../models/record/ExerciseRecord';
-import { AbstractSet } from '../../models/sets/AbstractSet';
-import BasicSet from '../../models/sets/BasicSet';
+import { Record } from '../../models/Record';
+import Set from '../../models/Set';
 import { SetType } from '../../models/SetType';
-import BasicSetInput from './sets/BasicSetInput';
+import SetInput from './SetInput';
 
 interface Props {
-    exerciseRecord: ExerciseRecord,
+    exerciseRecord: Record,
     index: number,
     updateExerciseRecord: Function,
     startOpen?: boolean,
 }
-export default function ExerciseRecordInput(props: Props) {
+export default function RecordInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
     const [exerciseRecord, setExerciseRecord] = useState(props.exerciseRecord)
     const { exercises } = useExercises()
@@ -25,8 +24,8 @@ export default function ExerciseRecordInput(props: Props) {
 
     const exercise = exercises?.find(exercise => exercise.id === exerciseRef)
     //todo: see if there's a better way to do this. Also this ensures modifiers are rendered in the same list order rather than appended to the end. Desireable?
-    const validModifiers = modifiers?.filter(modifier => exercise?.validModifierRefs?.find(id => id === modifier._id)) || []
-    const activeModifiers = modifiers?.filter(modifier => activeModifierRefs?.find(id => id === modifier._id)) || []
+    const validModifiers = modifiers?.filter(modifier => exercise?.validModifiers?.find(id => id === modifier.id)) || []
+    const activeModifiers = modifiers?.filter(modifier => activeModifierRefs?.find(id => id === modifier.id)) || []
     const listItemButton = useRef(null)
 
     const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
@@ -39,17 +38,6 @@ export default function ExerciseRecordInput(props: Props) {
     useEffect(() => {
         props.updateExerciseRecord(exerciseRecord, props.index)
     }, [exerciseRecord])
-
-    function getSetInputComponent(set: AbstractSet, i: number) {
-        if (!type) return <></>
-
-        switch (type) {
-            case SetType.BASIC:
-                return <BasicSetInput {...set as BasicSet} key={i} />
-            default:
-                return <></>
-        }
-    }
 
     if (!exercises) {
         return <></>
@@ -91,7 +79,7 @@ export default function ExerciseRecordInput(props: Props) {
                                 options={validModifiers}
                                 getOptionLabel={option => option.name}
                                 value={activeModifiers}
-                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, activeModifierRefs: value.map(modifier => modifier._id) })}
+                                onChange={(e, value) => setExerciseRecord({ ...exerciseRecord, activeModifierRefs: value.map(modifier => modifier.id) })}
                                 multiple
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}
@@ -105,7 +93,7 @@ export default function ExerciseRecordInput(props: Props) {
                 {!!type && <Collapse in={open} onMouseDown={disableButtonEffects} onClick={disableButtonEffects} sx={{ mx: 5, pb: 2, cursor: 'default' }}>
                     <Stack spacing={2}>
                         {/* todo: unique key */}
-                        {sets.map((set, i) => getSetInputComponent(set, i))}
+                        {sets.map((set, i) => <SetInput {...set} key={i} />)}
                         <Button variant='contained' onClick={handleAddSet}>Add Set</Button>
                     </Stack>
                 </Collapse>}

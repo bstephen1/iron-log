@@ -2,7 +2,7 @@ import { Dayjs } from 'dayjs'
 import useSWR from 'swr'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
-import { Record } from '../../models/record/Record'
+import { Session } from '../../models/Session'
 import { DATE_FORMAT, URI_EXERCISES, URI_MODIFIERS, URI_RECORDS } from './constants'
 
 
@@ -10,7 +10,7 @@ const fetcher = (url: any) => fetch(url).then(r => r.json())
 
 //'use' is SWR's convention for 'get'
 export function useRecord(date: Dayjs) {
-    const { data, error, mutate } = useSWR<Record>(URI_RECORDS + date.format(DATE_FORMAT), fetcher)
+    const { data, error, mutate } = useSWR<Session>(URI_RECORDS + date.format(DATE_FORMAT), fetcher)
 
     return {
         record: data,
@@ -39,7 +39,7 @@ export function useModifiers() {
     }
 }
 
-export async function createRecord(record: Record) {
+export async function createRecord(record: Session) {
     fetch(URI_RECORDS + record.date, {
         method: 'POST',
         body: JSON.stringify(record)
@@ -47,7 +47,7 @@ export async function createRecord(record: Record) {
         .catch(e => console.error(e))
 }
 
-export async function updateRecord(newRecord: Record) {
+export async function updateRecord(newRecord: Session) {
     fetch(URI_RECORDS + newRecord.date, {
         method: 'PUT',
         body: JSON.stringify(newRecord)

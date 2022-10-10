@@ -2,16 +2,16 @@ import { Button, Grid } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { DATE_FORMAT } from '../../lib/frontend/constants';
 import { createRecord, updateRecord, useRecord } from '../../lib/frontend/restService';
-import { ExerciseRecord } from '../../models/record/ExerciseRecord';
-import { Record } from '../../models/record/Record';
-import ExerciseRecordInput from './ExerciseRecordInput';
-import RecordViewClock from './RecordViewClock';
-import RecordViewTitleBar from './RecordViewTitleBar';
+import { Record } from '../../models/Record';
+import { Session } from '../../models/Session';
+import RecordInput from './RecordInput';
+import SessionViewClock from './SessionViewClock';
+import SessionViewTitleBar from './SessionViewTitleBar';
 
 interface Props {
     date: Dayjs,
 }
-export default function RecordView(props: Props) {
+export default function SessionView(props: Props) {
     const { date } = props
     const { record, isError, mutate } = useRecord(date)
     //when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
@@ -22,10 +22,10 @@ export default function RecordView(props: Props) {
     const addExercise = async () => {
         let newRecord;
         if (!record) {
-            newRecord = new Record(date.format(DATE_FORMAT), [new ExerciseRecord()])
+            newRecord = new Session(date.format(DATE_FORMAT), [new Record()])
             await createRecord(newRecord)
         } else {
-            newRecord = { ...record, exerciseRecords: [...record.exerciseRecords, new ExerciseRecord()] }
+            newRecord = { ...record, records: [...record.records, new Record()] }
             await updateRecord(newRecord)
         }
         //mutate is like useState for the useSWR hook. It changes the local value, then refetches the data to confirm it has updated
@@ -33,14 +33,14 @@ export default function RecordView(props: Props) {
     }
 
     //todo: use _id? index is fragile if we want to change order  
-    const updateExerciseRecord = async (exerciseRecord: ExerciseRecord, index: number) => {
+    const updateExerciseRecord = async (exerciseRecord: Record, index: number) => {
         //should definitely not be in a state of updating nonexistant records, so let's just return
-        if (!record || !record.exerciseRecords || !record.exerciseRecords[index]) {
+        if (!record || !record.records || !record.records[index]) {
             return
         }
 
         let newRecord = { ...record }
-        newRecord.exerciseRecords[index] = exerciseRecord
+        newRecord.records[index] = exerciseRecord
         await updateRecord(newRecord)
 
         mutate(newRecord)
@@ -57,15 +57,15 @@ export default function RecordView(props: Props) {
     return (
         <Grid container spacing={2} direction='column'>
             <Grid item>
-                <RecordViewTitleBar date={date} />
+                <SessionViewTitleBar date={date} />
             </Grid>
             <Grid item>
-                <RecordViewClock />
+                <SessionViewClock />
             </Grid>
-            {record && record.exerciseRecords.map((exerciseRecord, i) => {
+            {record && record.records.map((exerciseRecord, i) => {
                 return (
                     <Grid item key={i}>
-                        <ExerciseRecordInput
+                        <RecordInput
                             exerciseRecord={exerciseRecord}
                             updateExerciseRecord={updateExerciseRecord}
                             index={i}

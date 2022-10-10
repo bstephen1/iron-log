@@ -8,7 +8,7 @@ import { DATE_FORMAT } from '../../lib/frontend/constants';
 interface Props {
     date?: Dayjs | null
 }
-export default function RecordViewTitleBar(props: Props) {
+export default function SessionViewTitleBar(props: Props) {
     const [date, setDate] = useState(props.date)
     const router = useRouter()
 

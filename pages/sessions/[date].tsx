@@ -3,7 +3,7 @@ import Error from 'next/error';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import RecordView from '../../components/record/RecordView';
+import SessionView from '../../components/session/SessionView';
 import { validDateStringRegex } from '../../lib/frontend/constants';
 
 
@@ -30,7 +30,7 @@ export default function RecordPage() {
                 <title>Record for {date}</title>
             </Head>
             <main>
-                <RecordView date={dayjs(date)} />
+                <SessionView date={dayjs(date)} />
             </main>
         </>
     )

@@ -1,5 +1,5 @@
 import { Document, MongoClient, ObjectId, WithId } from 'mongodb';
-import { Record } from '../../models/record/Record';
+import { Session } from '../../models/Session';
 
 const uri = 'mongodb://localhost:27017'
 const unconnectedClient = new MongoClient(uri);
@@ -28,14 +28,14 @@ export async function fetchExercise(id: ObjectId) {
     return await client.db(dbName).collection('exercises').findOne({ _id: id }, { projection: { _id: false } })
 }
 
-export async function createRecord(record: Record) {
+export async function createRecord(record: Session) {
     const client = await clientPromise
     return await client.db(dbName).collection('records').insertOne(record)
 }
 
-export async function updateRecord(record: Record) {
+export async function updateRecord(record: Session) {
     const client = await clientPromise
-    return await client.db(dbName).collection('records').updateOne({ date: record.date }, { $set: { exerciseRecords: record.exerciseRecords } })
+    return await client.db(dbName).collection('records').updateOne({ date: record.date }, { $set: { exerciseRecords: record.records } })
 }
 
 //todo: seperate methods for updating specific fields? To reduce data load on small updates?
