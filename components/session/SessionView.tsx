@@ -39,12 +39,11 @@ export default function SessionView(props: Props) {
             return
         }
 
-        let newRecord = { ...session }
-        newRecord.records[index] = record
-        await updateSession(newRecord)
+        let newSession = { ...session, records: [...session.records] }
+        newSession.records[index] = record
+        await updateSession(newSession)
 
-        mutate(newRecord)
-
+        mutate(newSession)
     }
 
     //todo: this is a placeholder

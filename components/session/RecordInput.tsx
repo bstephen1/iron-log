@@ -11,26 +11,23 @@ import SetInput from './SetInput';
 interface Props {
     record: Record,
     index: number,
-    updateRecord: Function,
+    updateRecord: (newRecord: Record, index: number) => void,
     startOpen?: boolean,
 }
 export default function RecordInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
-    const { activeExercises } = useActiveExercises()
-    const [record, setRecord] = useState(props.record)
+    const { activeExercises } = useActiveExercises() //SWR caches this, so it won't need to call the API every render
+    const { record, updateRecord, index } = props
     const { exerciseName, type, activeModifiers, validModifiers, sets } = record
     const listItemButton = useRef(null)
 
     const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
-    const handleAddSet = () => {
+
+    const addSet = () => {
         const last = sets[sets.length - 1]
         //todo: init first set, and possibly have different behavior when adding different types of sets?
-        setRecord({ ...record, sets: sets.concat({ ...last, rpe: undefined }) })
+        updateRecord({ ...record, sets: sets.concat({ ...last, rpe: undefined }) }, index)
     }
-
-    useEffect(() => {
-        props.updateRecord(record, props.index)
-    }, [record])
 
     if (!activeExercises) {
         return <></>
@@ -44,7 +41,6 @@ export default function RecordInput(props: Props) {
         <ListItemButton ref={listItemButton} onClick={() => setOpen(!open)} sx={{ p: 0, borderRadius: 1 }} id='clickableArea'>
             <Paper elevation={3} sx={{ px: 1, width: 1 }}>
                 <Box p={2} display='flex' justifyContent='space-between' >
-                    {/* todo: change to grid; put modifiers on a second row for small screens */}
                     {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
                     <Grid container onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2} sx={{ cursor: 'default' }}>
                         <Grid item xs={6} md={3}>
@@ -54,7 +50,7 @@ export default function RecordInput(props: Props) {
                                 //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
                                 value={activeExercises.find(ex => ex.name === exerciseName)}
                                 //specify undefined so it doesn't set to null when blank
-                                onChange={(e, newExercise) => setRecord({ ...record, exerciseName: newExercise?.name || undefined })}
+                                onChange={(e, newExercise) => updateRecord({ ...record, exerciseName: newExercise?.name || undefined }, index)}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
                             />
                         </Grid>
@@ -63,7 +59,7 @@ export default function RecordInput(props: Props) {
                                 options={Object.values(SetType)}
                                 getOptionLabel={option => option}
                                 value={type}
-                                onChange={(e, newType) => setRecord({ ...record, type: newType || undefined })}
+                                onChange={(e, newType) => updateRecord({ ...record, type: newType || undefined }, index)}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Set Type' />}
                             />
                         </Grid>
@@ -71,7 +67,7 @@ export default function RecordInput(props: Props) {
                             <Autocomplete
                                 options={validModifiers}
                                 value={activeModifiers}
-                                onChange={(e, newActiveModifiers) => setRecord({ ...record, activeModifiers: newActiveModifiers })}
+                                onChange={(e, newActiveModifiers) => updateRecord({ ...record, activeModifiers: newActiveModifiers }, index)}
                                 multiple
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}
@@ -86,7 +82,7 @@ export default function RecordInput(props: Props) {
                     <Stack spacing={2}>
                         {/* todo: unique key */}
                         {sets.map((set, i) => <SetInput {...set} key={i} />)}
-                        <Button variant='contained' onClick={handleAddSet}>Add Set</Button>
+                        <Button variant='contained' onClick={addSet}>Add Set</Button>
                     </Stack>
                 </Collapse>}
             </Paper>
