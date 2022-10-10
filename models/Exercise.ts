@@ -4,6 +4,6 @@ export default interface Exercise {
     id: string,
     name: string,
     status: ExerciseStatus,
-    cues?: string,
-    validModifierRefs?: string[], //todo -- return from db
+    cues: string[],
+    validModifiers: { name: string }[],
 }
