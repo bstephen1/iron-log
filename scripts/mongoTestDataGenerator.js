@@ -22,25 +22,25 @@ let setTypes = [
     addName('basic')
 ]
 
-let basicSets1 = [
-    addBasicSetRecord(100, 5, 8),
-    addBasicSetRecord(110, 5, 9),
-    addBasicSetRecord(120, 5, 10)
+let sets1 = [
+    addSet(100, 5, 8),
+    addSet(110, 5, 9),
+    addSet(120, 5, 10)
 ]
 
-let basicSets2 = [
-    addBasicSetRecord(25, 15, undefined),
-    addBasicSetRecord(30, 12, undefined),
-    addBasicSetRecord(30, 10, undefined)
+let sets2 = [
+    addSet(25, 15, undefined),
+    addSet(30, 12, undefined),
+    addSet(30, 10, undefined)
 ]
 
 let record1 = [
-    addExerciseRecord('basic', ['belt'], basicSets1),
-    addExerciseRecord('basic', ['bodyweight'], basicSets2)
+    addRecord('basic', 'squats', ['belt'], ['belt', 'pause'], sets1),
+    addRecord('basic', 'curls', ['belt', 'AMRAP'], ['belt', 'AMRAP', 'L/R split', 'bodyweight'], sets2)
 ]
 
 let sessions = [
-    addRecord('2022-09-26', record1)
+    addSessions('2022-09-26', record1)
 ]
 
 function addModifier(name, status, canDelete) {
@@ -55,17 +55,17 @@ function addExercise(name, status, cues, validModifiers) {
     return { name, status, cues, validModifiers }
 }
 
-function addBasicSetRecord(weight, reps, rpe) {
+function addSet(weight, reps, rpe) {
     return { weight, reps, rpe }
 }
 
-function addExerciseRecord(type, activeModifiers, sets) {
-    return { type, activeModifiers, sets }
+function addRecord(type, exerciseName, activeModifiers, validModifiers, sets) {
+    return { type, exerciseName, activeModifiers, validModifiers, sets }
 }
 
 //todo: sessionType and program
-function addRecord(date, exerciseRecords) {
-    return { date, exerciseRecords }
+function addSessions(date, records) {
+    return { date, records }
 }
 
 function addToCollection(objects, collection) {

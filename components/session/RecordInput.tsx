@@ -18,9 +18,7 @@ export default function RecordInput(props: Props) {
     const [open, setOpen] = useState(props.startOpen)
     const { activeExercises } = useActiveExercises()
     const [record, setRecord] = useState(props.record)
-    const { exerciseRef, type, activeModifiers, sets } = record
-
-    const exercise = activeExercises?.find(exercise => exercise.id === exerciseRef)
+    const { exerciseName, type, activeModifiers, validModifiers, sets } = record
     const listItemButton = useRef(null)
 
     const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) => e.stopPropagation()
@@ -54,10 +52,9 @@ export default function RecordInput(props: Props) {
                                 options={activeExercises}
                                 getOptionLabel={option => option.name}
                                 //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
-                                // value={activeExercises.find(e => e.id === exercise?.id)}
-                                value={exercise}
+                                value={activeExercises.find(ex => ex.name === exerciseName)}
                                 //specify undefined so it doesn't set to null when blank
-                                onChange={(e, exercise) => setRecord({ ...record, exerciseRef: exercise?.id || undefined })}
+                                onChange={(e, newExercise) => setRecord({ ...record, exerciseName: newExercise?.name || undefined })}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
                             />
                         </Grid>
@@ -66,16 +63,15 @@ export default function RecordInput(props: Props) {
                                 options={Object.values(SetType)}
                                 getOptionLabel={option => option}
                                 value={type}
-                                onChange={(e, value) => setRecord({ ...record, type: value || undefined })}
+                                onChange={(e, newType) => setRecord({ ...record, type: newType || undefined })}
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Set Type' />}
                             />
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Autocomplete
-                                options={exercise?.validModifiers}
-                                getOptionLabel={option => option.name}
+                                options={validModifiers}
                                 value={activeModifiers}
-                                onChange={(e, value) => setRecord({ ...record, activeModifierRefs: value.map(modifier => modifier.id) })}
+                                onChange={(e, newActiveModifiers) => setRecord({ ...record, activeModifiers: newActiveModifiers })}
                                 multiple
                                 fullWidth
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Modifiers' />}

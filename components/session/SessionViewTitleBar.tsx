@@ -16,7 +16,7 @@ export default function SessionViewTitleBar(props: Props) {
     //todo: reloading switches to current date
     useEffect(() => {
         if (date?.isValid()) {
-            router.push(`/records/${date.format(DATE_FORMAT)}`)
+            router.push(`/sessions/${date.format(DATE_FORMAT)}`)
         }
     }, [date])
 
