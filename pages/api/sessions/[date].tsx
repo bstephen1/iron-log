@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createRecord, fetchRecord, updateRecord } from '../../../lib/backend/mongoService'
+import { fetchSession } from '../../../lib/backend/postgresService'
 import { validDateStringRegex } from '../../../lib/frontend/constants'
 
 export default async function handler(
@@ -17,7 +18,7 @@ export default async function handler(
     switch (req.method) {
         case 'GET':
             try {
-                const record = await fetchRecord(date)
+                const record = await fetchSession(date)
                 res.status(200).json(record)
             } catch (e) {
                 res.status(500).json({ message: 'could not fetch data' })

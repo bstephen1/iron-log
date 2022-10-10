@@ -3,17 +3,17 @@ import useSWR from 'swr'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import { Session } from '../../models/Session'
-import { DATE_FORMAT, URI_EXERCISES, URI_MODIFIERS, URI_RECORDS } from './constants'
+import { DATE_FORMAT, URI_EXERCISES, URI_MODIFIERS, URI_SESSIONS } from './constants'
 
 
 const fetcher = (url: any) => fetch(url).then(r => r.json())
 
 //'use' is SWR's convention for 'get'
-export function useRecord(date: Dayjs) {
-    const { data, error, mutate } = useSWR<Session>(URI_RECORDS + date.format(DATE_FORMAT), fetcher)
+export function useSession(date: Dayjs) {
+    const { data, error, mutate } = useSWR<Session>(URI_SESSIONS + date.format(DATE_FORMAT), fetcher)
 
     return {
-        record: data,
+        session: data,
         isError: error,
         mutate: mutate,
     }
@@ -29,6 +29,16 @@ export function useExercises() {
     }
 }
 
+export function useActiveExercises() {
+    const { data, error, mutate } = useSWR<Exercise[]>(URI_EXERCISES + '?status=active', fetcher)
+
+    return {
+        activeExercises: data,
+        isError: error,
+        mutate: mutate,
+    }
+}
+
 export function useModifiers() {
     const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS, fetcher)
 
@@ -39,18 +49,18 @@ export function useModifiers() {
     }
 }
 
-export async function createRecord(record: Session) {
-    fetch(URI_RECORDS + record.date, {
+export async function createSession(session: Session) {
+    fetch(URI_SESSIONS + session.date, {
         method: 'POST',
-        body: JSON.stringify(record)
+        body: JSON.stringify(session)
     })
         .catch(e => console.error(e))
 }
 
-export async function updateRecord(newRecord: Session) {
-    fetch(URI_RECORDS + newRecord.date, {
+export async function updateSession(newSesson: Session) {
+    fetch(URI_SESSIONS + newSesson.date, {
         method: 'PUT',
-        body: JSON.stringify(newRecord)
+        body: JSON.stringify(newSesson)
     })
         .catch(e => console.error(e))
 }

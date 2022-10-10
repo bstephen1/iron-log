@@ -5,7 +5,7 @@ export class Record {
     constructor(
         public exerciseRef?: string,
         public type?: SetType,
-        public activeModifierRefs: string[] = [],
+        public activeModifiers: string[] = [],
         public sets: Set[] = [],
     ) { }
 }
