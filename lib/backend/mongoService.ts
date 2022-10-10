@@ -6,37 +6,37 @@ const unconnectedClient = new MongoClient(uri);
 let clientPromise = unconnectedClient.connect()
 const dbName = 'test'
 
-export async function fetchCollection(name: string) {
+export async function fetchCollection(name: string, constraints: { [key: string]: string } = {}) {
     const client = await clientPromise
     const collection = client.db(dbName).collection(name)
     //we need to construct the array because find() returns a cursor
     let documents: WithId<Document>[] = []
-    await collection.find({}).forEach(document => { documents.push(document) })
+    await collection.find(constraints).forEach(document => { documents.push(document) })
     // await collection.find({}, { projection: { _id: false } }).forEach(document => { documents.push(document) })
 
     return documents
 }
 
-export async function fetchRecord(date: string) {
+export async function fetchSession(date: string) {
     const client = await clientPromise
-    return await client.db(dbName).collection('records').findOne({ date: date }, { projection: { _id: false } })
+    return await client.db(dbName).collection('sessions').findOne({ date: date }, { projection: { _id: false } })
 
 }
 
-export async function fetchExercise(id: ObjectId) {
+export async function fetchExercise(name: string) {
     const client = await clientPromise
-    return await client.db(dbName).collection('exercises').findOne({ _id: id }, { projection: { _id: false } })
+    return await client.db(dbName).collection('exercises').findOne({ name: name }, { projection: { _id: false } })
 }
 
-export async function createRecord(record: Session) {
+export async function createSession(session: Session) {
     const client = await clientPromise
-    return await client.db(dbName).collection('records').insertOne(record)
+    return await client.db(dbName).collection('sessions').insertOne(session)
 }
 
-export async function updateRecord(record: Session) {
+export async function updateSession(session: Session) {
     const client = await clientPromise
-    return await client.db(dbName).collection('records').updateOne({ date: record.date }, { $set: { exerciseRecords: record.records } })
+    return await client.db(dbName).collection('sessions').updateOne({ date: session.date }, { $set: { records: session.records } })
 }
 
 //todo: seperate methods for updating specific fields? To reduce data load on small updates?
-//todo: make exercise in exerciseRecords a reference to exercises table
+//todo: make exercise in exercisesessions a reference to exercises table
