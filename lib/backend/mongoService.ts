@@ -2,12 +2,11 @@ import { Document, MongoClient, ObjectId, WithId } from 'mongodb';
 import { Session } from '../../models/Session';
 
 const uri = 'mongodb://localhost:27017'
-const unconnectedClient = new MongoClient(uri);
-let clientPromise = unconnectedClient.connect()
+const rawClient = new MongoClient(uri)
+let client = await rawClient.connect()
 const dbName = 'test'
 
 export async function fetchCollection(name: string, constraints: { [key: string]: string } = {}) {
-    const client = await clientPromise
     const collection = client.db(dbName).collection(name)
     //we need to construct the array because find() returns a cursor
     let documents: WithId<Document>[] = []
@@ -18,23 +17,19 @@ export async function fetchCollection(name: string, constraints: { [key: string]
 }
 
 export async function fetchSession(date: string) {
-    const client = await clientPromise
     return await client.db(dbName).collection('sessions').findOne({ date: date }, { projection: { _id: false } })
 
 }
 
 export async function fetchExercise(name: string) {
-    const client = await clientPromise
     return await client.db(dbName).collection('exercises').findOne({ name: name }, { projection: { _id: false } })
 }
 
 export async function createSession(session: Session) {
-    const client = await clientPromise
     return await client.db(dbName).collection('sessions').insertOne(session)
 }
 
 export async function updateSession(session: Session) {
-    const client = await clientPromise
     return await client.db(dbName).collection('sessions').updateOne({ date: session.date }, { $set: { records: session.records } })
 }
 
