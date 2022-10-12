@@ -68,17 +68,13 @@ function addSessions(date, records) {
     return { date, records }
 }
 
-function addToCollection(objects, collection) {
-    objects.map(object => db[collection].insertOne(object))
-}
-
 // START OPERATIONS
 
 db.dropDatabase()
 
-addToCollection(modifiers, 'modifiers')
-addToCollection(exercises, 'exercises')
-addToCollection(setTypes, 'setTypes')
-addToCollection(sessions, 'sessions')
+db.modifiers.insertMany(modifiers)
+db.exercises.insertMany(exercises)
+db.setTypes.insertMany(setTypes)
+db.sessions.insertMany(sessions)
 
 
