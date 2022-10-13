@@ -4,8 +4,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Autocomplete, Box, Checkbox, Divider, Grid, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import { mutate } from 'swr';
-import { useExercises, useModifiers } from '../lib/frontend/restService';
+import { updateExercise, useExercises, useModifiers } from '../lib/frontend/restService';
 import Exercise from '../models/Exercise';
 import { ExerciseStatus } from '../models/ExerciseStatus';
 
@@ -27,11 +26,11 @@ export default function ManageExercisesPage() {
 
     function updateStatus(newStatus: ExerciseStatus) {
         if (exercise === null) return
-        setExercise({ ...exercise, status: newStatus })
-        console.log(newStatus)
-        //this does nothing because nothing is being sent to the db
-        //mutate is saying to hold "exercises" as the result of GET /api/exercises
-        //but we haven't updated "exercises" since the state is updating with a new object
+        const newExercise = { ...exercise, status: newStatus }
+        updateExercise(newExercise)
+        
+
+        //exercise isn't being updated, so this should be showing the stale data, then re-fetching from db
         mutate(exercises)
     }
 

@@ -1,4 +1,4 @@
-import { Document, MongoClient, WithId } from 'mongodb';
+import { Document, MongoClient, ObjectId, WithId } from 'mongodb';
 import Exercise from '../../models/Exercise';
 import { Session } from '../../models/Session';
 
@@ -28,20 +28,22 @@ export async function createSession(session: Session) {
 }
 
 export async function updateSession(session: Session) {
-    return await client.db(dbName).collection('sessions').updateOne({ date: session.date }, { $set: { records: session.records } })
+    return await client.db(dbName).collection('sessions').replaceOne({ date: session.date }, session )
 }
 
 export async function fetchExercise(name: string) {
     return await client.db(dbName).collection('exercises').findOne({ name: name }, { projection: { _id: false } })
 }
 
+//we don't want to create with a mongo id on the front end... or do we...?
 export async function createExercise(exercise: Exercise) {
-    return await client.db(dbName).collection('exercises').insertOne(exercise)
+    // return await client.db(dbName).collection('exercises').insertOne(exercise)
+    return
 }
 
-//todo: test if this overwrites id
 export async function updateExercise(exercise: Exercise) {
-    return await client.db(dbName).collection('exercises').replaceOne({ name: exercise.name }, exercise)
+    exercise._id = new ObjectId(exercise._id) //the ObjectId gets treated as a string afterJSONifying, so we need to convert it back
+    return await client.db(dbName).collection('exercises').replaceOne({ _id: exercise._id }, exercise)
 }
 //todo: seperate methods for updating specific fields? To reduce data load on small updates?
 //todo: make exercise in exercisesessions a reference to exercises table
