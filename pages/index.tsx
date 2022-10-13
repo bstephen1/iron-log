@@ -18,7 +18,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <Box>Welcome</Box>
         <Button>
-          <Link href={`/records/${dayjs().format(DATE_FORMAT)}/`}>
+          <Link href={`/sessions/${dayjs().format(DATE_FORMAT)}/`}>
             <a>Today's Log</a>
           </Link>
         </Button>
