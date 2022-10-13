@@ -2,15 +2,16 @@ import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CircleIcon from '@mui/icons-material/Circle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Autocomplete, Box, Checkbox, Divider, Grid, Input, InputAdornment, List, ListItem, MenuItem, OutlinedInput, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Checkbox, Divider, Grid, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
+import { mutate } from 'swr';
 import { useExercises, useModifiers } from '../lib/frontend/restService';
 import Exercise from '../models/Exercise';
 import { ExerciseStatus } from '../models/ExerciseStatus';
 
 
 export default function ManageExercisesPage() {
-    const { exercises } = useExercises()
+    const { exercises, mutate } = useExercises()
     const { modifiers } = useModifiers()
     const [edit, setEdit] = useState(false)
     const [exercise, setExercise] = useState<Exercise | null>(null)
@@ -19,6 +20,20 @@ export default function ManageExercisesPage() {
     //     console.log(exercise)
     //     console.log(exercise?.status === ExerciseStatus.ACTIVE)
     // }, [exercise])
+
+    // function updateExercise(newExercise: Exercise) {
+    //     if (isInvalid)
+    // }
+
+    function updateStatus(newStatus: ExerciseStatus) {
+        if (exercise === null) return
+        setExercise({ ...exercise, status: newStatus })
+        console.log(newStatus)
+        //this does nothing because nothing is being sent to the db
+        //mutate is saying to hold "exercises" as the result of GET /api/exercises
+        //but we haven't updated "exercises" since the state is updating with a new object
+        mutate(exercises)
+    }
 
     if (!exercises || !modifiers) {
         return <></>
@@ -29,7 +44,7 @@ export default function ManageExercisesPage() {
             <Grid item xs={12} md={3}>
                 <Autocomplete
                     // open={true}
-                    options={exercises}
+                    options={exercises} //should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
                     groupBy={exercise => exercise.status}
                     getOptionLabel={option => option.name}
                     value={exercise}
@@ -40,8 +55,15 @@ export default function ManageExercisesPage() {
             <Grid item xs={12} md={9}>
                 {/* form */}
                 <Stack direction='row' justifyContent='space-between'>
-                    <TextField label='Name' required value={exercise?.name} InputLabelProps={{ shrink: true }} />
-                    <TextField select label='Status' required value={exercise?.status} sx={{ width: 150 }}>
+                    <TextField label='Name' required value={exercise?.name} InputLabelProps={{ shrink: true }} onChange={(e) => console.log(e.target.value)} />
+                    <TextField
+                        select
+                        required
+                        label='Status'
+                        value={exercise?.status}
+                        sx={{ width: 150 }}
+                        onChange={(e) => updateStatus(e.target.value as ExerciseStatus)}
+                    >
                         {Object.values(ExerciseStatus).map(status => (
                             <MenuItem key={status} value={status}>
                                 {status}
