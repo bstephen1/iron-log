@@ -4,6 +4,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Autocomplete, Box, Checkbox, Divider, Grid, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
+import StyledDivider from '../components/StyledDivider';
 import { updateExercise, useExercises, useModifiers } from '../lib/frontend/restService';
 import Exercise from '../models/Exercise';
 import { ExerciseStatus } from '../models/ExerciseStatus';
@@ -84,7 +85,9 @@ export default function ManageExercisesPage() {
                     renderInput={(params) => <TextField {...params} label='Exercise' />}
                 />
             </Grid>
-            {/* todo: horizonatl divider on xs */}
+            <Grid item xs={12}>
+                <StyledDivider />
+            </Grid>
             <Grid item container xs={12} md={9} spacing={2}>
                 <Grid item xs={6}>
                     <Stack spacing={2}>
