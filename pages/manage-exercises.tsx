@@ -2,7 +2,7 @@ import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CircleIcon from '@mui/icons-material/Circle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Autocomplete, Box, Checkbox, Divider, Grid, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, Divider, Grid, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import StyledDivider from '../components/StyledDivider';
 import { updateExercise, useExercises, useModifiers } from '../lib/frontend/restService';
@@ -17,29 +17,41 @@ export default function ManageExercisesPage() {
     const [edit, setEdit] = useState(false)
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
-    interface ModifiedName {
-        name: string,
+    interface DirtyNameValidity {
         isValid: boolean,
         reason: string,
     }
-    const [modifiedName, setModifiedName] = useState<ModifiedName>()
+    const [dirtyNameValidity, setDirtyNameValidity] = useState<DirtyNameValidity>()
+    const [dirtyExercise, setDirtyExercise] = useState<Exercise | null>(null)
     const statuses = Object.values(ExerciseStatus)
     //todo: confirmation when you try to leave page or switch exercise that Name change will be discarded if error
-    //I think this is the only field with a constraint, so everything else can save instantly
-    const isNameError = !!exercise && !modifiedName?.isValid
+    const isNameError = !!exercise && !dirtyNameValidity?.isValid
+    const INVISIBLE_HELPER_TEXT = ' ' //use this to keep height constant when there's no helper text
+
+
+    function handleReset() {
+        setDirtyExercise(exercise)
+    }
+
+    //todo: let ts know that dirtyExercise can't be null if exercise is populated
+    function handleSubmit() {
+        updateExercise(dirtyExercise)
+        setExercise(dirtyExercise)
+        mutate(exercises)
+    }
 
     function handleExerciseChange(newExercise: Exercise | null) {
+        setDirtyExercise(newExercise)
         setExercise(newExercise)
-        setModifiedName({
-            name: newExercise?.name || '',
+        setDirtyNameValidity({
             isValid: true,
-            reason: '',
+            reason: INVISIBLE_HELPER_TEXT,
         })
     }
 
-    function handleModifiedNameChange(newName: string) {
+    function handleDirtyNameChange(newName: string) {
         let isValid = true
-        let reason = ' ' //invisible HelperText to keep the height constant
+        let reason = INVISIBLE_HELPER_TEXT
 
         if (!newName) {
             isValid = false
@@ -51,27 +63,18 @@ export default function ManageExercisesPage() {
             reason = 'This exercise already exists!'
         }
 
-        setModifiedName({
-            name: newName,
+        setDirtyExercise({ ...dirtyExercise, name: newName })
+        setDirtyNameValidity({
             isValid: isValid,
             reason: reason,
         })
-
-        if (isValid && exercise) {
-            updateExercise({ ...exercise, name: newName })
-            setExercise({ ...exercise, name: newName })
-            mutate(exercises)
-        }
     }
 
     function handleStatusChange(newStatus: ExerciseStatus) {
-        if (exercise === null) return
-        const newExercise = { ...exercise, status: newStatus }
-        setExercise(newExercise)
-        updateExercise(newExercise)
+        if (!dirtyExercise) return
 
-        //todo: exercise isn't being updated, so this should be showing the stale data, then re-fetching from db
-        mutate(exercises)
+        const newExercise = { ...dirtyExercise, status: newStatus }
+        setDirtyExercise(newExercise)
     }
 
     if (!exercises || !modifiers) {
@@ -102,18 +105,18 @@ export default function ManageExercisesPage() {
                             required
                             label='Name'
                             error={isNameError}
-                            helperText={modifiedName?.reason || ' '}
-                            value={modifiedName?.name}
-                            InputLabelProps={{ shrink: !!modifiedName?.name }}
-                            onChange={(e) => handleModifiedNameChange(e.target.value)}
+                            helperText={dirtyNameValidity?.reason || INVISIBLE_HELPER_TEXT}
+                            value={dirtyExercise?.name} //todo: this doesn't rerender after it turns null
+                            InputLabelProps={{ shrink: !!dirtyExercise?.name }}
+                            onChange={(e) => handleDirtyNameChange(e.target.value)}
                         />
                         <TextField
                             select
                             required
                             label='Status'
-                            helperText={' '} //to keep consistent spacing with Name field
-                            value={exercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
-                            InputLabelProps={{ shrink: !!exercise?.status }}
+                            helperText={INVISIBLE_HELPER_TEXT}
+                            value={dirtyExercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
+                            InputLabelProps={{ shrink: !!dirtyExercise?.status }}
                             onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
                         >
                             {statuses.map(status => (
@@ -166,6 +169,10 @@ export default function ManageExercisesPage() {
                         ))}
                     </List>
                 </Grid>
+            </Grid>
+            <Grid item xs={12}>
+                <Button onClick={handleReset}>Reset</Button>
+                <Button variant='contained' disabled={false} onClick={handleSubmit}>Submit</Button>
             </Grid>
         </Grid >
     )
