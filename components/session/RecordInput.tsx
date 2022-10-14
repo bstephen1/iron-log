@@ -1,8 +1,9 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Autocomplete, Box, Button, Collapse, Grid, ListItemButton, Paper, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, Collapse, ListItemButton, Paper, TextField } from '@mui/material';
 import { Stack } from '@mui/system';
-import { useEffect, useRef, useState } from 'react';
+import Grid from '@mui/system/Unstable_Grid';
+import { useRef, useState } from 'react';
 import { useActiveExercises } from '../../lib/frontend/restService';
 import { Record } from '../../models/Record';
 import { SetType } from '../../models/SetType';
@@ -43,7 +44,7 @@ export default function RecordInput(props: Props) {
                 <Box p={2} display='flex' justifyContent='space-between' >
                     {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
                     <Grid container onMouseDown={disableButtonEffects} onClick={disableButtonEffects} spacing={2} sx={{ cursor: 'default' }}>
-                        <Grid item xs={6} md={3}>
+                        <Grid xs={6} md={3}>
                             <Autocomplete
                                 options={activeExercises}
                                 getOptionLabel={option => option.name}
@@ -54,7 +55,7 @@ export default function RecordInput(props: Props) {
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Exercise' />}
                             />
                         </Grid>
-                        <Grid item xs={6} md={3}>
+                        <Grid xs={6} md={3}>
                             <Autocomplete
                                 options={Object.values(SetType)}
                                 getOptionLabel={option => option}
@@ -63,7 +64,7 @@ export default function RecordInput(props: Props) {
                                 renderInput={(params) => <TextField {...params} variant='standard' label='Set Type' />}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid xs={12} md={6}>
                             <Autocomplete
                                 options={validModifiers}
                                 value={activeModifiers}

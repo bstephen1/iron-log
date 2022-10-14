@@ -2,7 +2,8 @@ import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CircleIcon from '@mui/icons-material/Circle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Autocomplete, Box, Button, Checkbox, Divider, Grid, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Checkbox, Divider, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import Grid from '@mui/system/Unstable_Grid';
 import { useState } from 'react';
 import StyledDivider from '../components/StyledDivider';
 import { updateExercise, useExercises, useModifiers } from '../lib/frontend/restService';
@@ -84,7 +85,7 @@ export default function ManageExercisesPage() {
     return (
         <Grid container spacing={2}>
             {/* todo: big screens. Switch to side by side? vertical divider? */}
-            <Grid item xs={12} md={3}>
+            <Grid xs={12} md={3}>
                 <Autocomplete
                     options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
                     groupBy={exercise => exercise.status}
@@ -94,11 +95,11 @@ export default function ManageExercisesPage() {
                     renderInput={(params) => <TextField {...params} label='Exercise' />}
                 />
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
                 <StyledDivider />
             </Grid>
-            <Grid item container xs={12} md={9} spacing={2}>
-                <Grid item xs={6}>
+            <Grid container xs={12} md={9} spacing={2}>
+                <Grid xs={6}>
                     <Stack spacing={2}>
                         {/* todo: save after X ms of no typing, or on blur */}
                         <TextField
@@ -149,7 +150,7 @@ export default function ManageExercisesPage() {
                         />
                     </Stack>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid xs={6}>
                     {/* todo: center text? outline? divider style in the middle? */}
                     <Typography variant='h6'>
                         Cues
@@ -170,7 +171,7 @@ export default function ManageExercisesPage() {
                     </List>
                 </Grid>
             </Grid>
-            <Grid item xs={12}>
+            <Grid xs={12}>
                 <Button onClick={handleReset}>Reset</Button>
                 <Button variant='contained' disabled={false} onClick={handleSubmit}>Submit</Button>
             </Grid>

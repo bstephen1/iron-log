@@ -1,4 +1,5 @@
-import { Button, Grid } from '@mui/material';
+import { Button } from '@mui/material';
+import Grid from '@mui/system/Unstable_Grid';
 import { Dayjs } from 'dayjs';
 import { DATE_FORMAT } from '../../lib/frontend/constants';
 import { createSession, updateSession, useSession } from '../../lib/frontend/restService';
@@ -55,15 +56,15 @@ export default function SessionView(props: Props) {
     //todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
     return (
         <Grid container spacing={2} direction='column'>
-            <Grid item>
+            <Grid>
                 <SessionViewTitleBar date={date} />
             </Grid>
-            <Grid item>
+            <Grid>
                 <SessionViewClock />
             </Grid>
             {session && session.records.map((record, i) => {
                 return (
-                    <Grid item key={i}>
+                    <Grid key={i}>
                         <RecordInput
                             record={record}
                             updateRecord={updateRecord}
@@ -74,7 +75,7 @@ export default function SessionView(props: Props) {
                 )
             })}
 
-            <Grid item container justifyContent='center'>
+            <Grid container justifyContent='center'>
                 {!isLoading && <Button variant='contained' onClick={addRecord}>Add Exercise</Button>}
             </Grid>
         </Grid>
