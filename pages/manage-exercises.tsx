@@ -73,9 +73,9 @@ export default function ManageExercisesPage() {
 
     return (
         <Grid container spacing={2}>
+            {/* todo: big screens. Switch to side by side? vertical divider? */}
             <Grid item xs={12} md={3}>
                 <Autocomplete
-                    // open={true}
                     options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
                     groupBy={exercise => exercise.status}
                     getOptionLabel={option => option.name}
@@ -84,76 +84,75 @@ export default function ManageExercisesPage() {
                     renderInput={(params) => <TextField {...params} label='Exercise' />}
                 />
             </Grid>
-            <Grid item xs={12} md={9}>
-                <Stack direction='row' justifyContent='space-between'>
-                    <TextField
-                        required
-                        label='Name'
-                        error={isNameError}
-                        helperText={modifiedName?.reason || ''}
-                        value={modifiedName?.name}
-                        InputLabelProps={{ shrink: !!modifiedName?.name }}
-                        onChange={(e) => handleModifiedNameChange(e.target.value)}
-                    />
-                    <TextField
-                        select
-                        required
-                        label='Status'
-                        value={exercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
-                        sx={{ width: 150 }}
-                        InputLabelProps={{ shrink: !!exercise?.status }}
-                        onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
-                    >
-                        {statuses.map(status => (
-                            <MenuItem key={status} value={status}>
-                                {status}
-                            </MenuItem>
+            {/* todo: horizonatl divider on xs */}
+            <Grid item container xs={12} md={9} spacing={2}>
+                <Grid item xs={6}>
+                    <Stack spacing={2}>
+                        <TextField
+                            required
+                            label='Name'
+                            error={isNameError}
+                            helperText={modifiedName?.reason || ''}
+                            value={modifiedName?.name}
+                            InputLabelProps={{ shrink: !!modifiedName?.name }}
+                            onChange={(e) => handleModifiedNameChange(e.target.value)}
+                        />
+                        <TextField
+                            select
+                            required
+                            label='Status'
+                            value={exercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
+                            InputLabelProps={{ shrink: !!exercise?.status }}
+                            onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
+                        >
+                            {statuses.map(status => (
+                                <MenuItem key={status} value={status}>
+                                    {status}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <Autocomplete
+                            options={modifiers}
+                            value={[]}
+                            getOptionLabel={modifier => modifier.name}
+                            // groupBy={modifier => modifier.status}
+                            // onChange={(e, newActiveModifiers) => updateRecord({ ...record, activeModifiers: newActiveModifiers }, index)}
+                            multiple
+                            fullWidth
+                            disableCloseOnSelect
+                            renderInput={(params) => <TextField {...params} variant='outlined' label='Modifiers' />}
+                            renderOption={(props, option, { selected }) => (
+                                <li {...props}>
+                                    <Checkbox
+                                        icon={<CheckBoxOutlineBlank />}
+                                        checkedIcon={<CheckBoxIcon />}
+                                        style={{ marginRight: 8 }}
+                                        checked={selected}
+                                    />
+                                    {option.name}
+                                </li>
+                            )}
+                        />
+                    </Stack>
+                </Grid>
+                <Grid item xs={6}>
+                    <Typography variant='h6'>
+                        Cues
+                    </Typography>
+                    <List>
+                        {exercise?.cues.map(cue => (
+                            <ListItem>
+                                <Box onClick={() => setEdit(!edit)}>
+                                    {edit
+                                        ? <Input value={cue} multiline endAdornment={<InputAdornment position='end'><DeleteIcon /></InputAdornment>} />
+                                        : <Typography><CircleIcon sx={{ height: 7 }} /> {cue}</Typography>
+                                    }
+                                </Box>
+                                <Divider />
+                            </ListItem>
                         ))}
-                    </TextField>
-                </Stack>
-            </Grid>
-            <Grid item xs={6}>
-                {/* list for cues */}
-                <Typography variant='h6'>
-                    Cues
-                </Typography>
-                <List>
-                    {exercise?.cues.map(cue => (
-                        <ListItem>
-                            <Box onClick={() => setEdit(!edit)}>
-                                {edit
-                                    ? <Input value={cue} multiline endAdornment={<InputAdornment position='end'><DeleteIcon /></InputAdornment>} />
-                                    : <Typography><CircleIcon sx={{ height: 7 }} /> {cue}</Typography>
-                                }
-                            </Box>
-                            <Divider />
-                        </ListItem>
-                    ))}
-                </List>
-            </Grid>
-            <Grid item xs={6}>
-                <Autocomplete
-                    options={modifiers}
-                    value={[]}
-                    getOptionLabel={modifier => modifier.name}
-                    // groupBy={modifier => modifier.status}
-                    // onChange={(e, newActiveModifiers) => updateRecord({ ...record, activeModifiers: newActiveModifiers }, index)}
-                    multiple
-                    fullWidth
-                    disableCloseOnSelect
-                    renderInput={(params) => <TextField {...params} variant='outlined' label='Modifiers' />}
-                    renderOption={(props, option, { selected }) => (
-                        <li {...props}>
-                            <Checkbox
-                                icon={<CheckBoxOutlineBlank />}
-                                checkedIcon={<CheckBoxIcon />}
-                                style={{ marginRight: 8 }}
-                                checked={selected}
-                            />
-                            {option.name}
-                        </li>
-                    )}
-                />
+                    </List>
+                </Grid>
             </Grid>
         </Grid >
     )
