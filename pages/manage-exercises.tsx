@@ -57,7 +57,7 @@ export default function ManageExercisesPage() {
         })
     }
 
-    function updateStatus(newStatus: ExerciseStatus) {
+    function handleStatusChange(newStatus: ExerciseStatus) {
         if (exercise === null) return
         const newExercise = { ...exercise, status: newStatus }
         setExercise(newExercise)
@@ -85,7 +85,6 @@ export default function ManageExercisesPage() {
                 />
             </Grid>
             <Grid item xs={12} md={9}>
-                {/* form */}
                 <Stack direction='row' justifyContent='space-between'>
                     <TextField
                         required
@@ -103,7 +102,7 @@ export default function ManageExercisesPage() {
                         value={exercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
                         sx={{ width: 150 }}
                         InputLabelProps={{ shrink: !!exercise?.status }}
-                        onChange={(e) => updateStatus(e.target.value as ExerciseStatus)}
+                        onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
                     >
                         {statuses.map(status => (
                             <MenuItem key={status} value={status}>
