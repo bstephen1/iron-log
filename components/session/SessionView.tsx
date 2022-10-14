@@ -9,11 +9,7 @@ import RecordInput from './RecordInput';
 import SessionViewClock from './SessionViewClock';
 import SessionViewTitleBar from './SessionViewTitleBar';
 
-interface Props {
-    date: Dayjs,
-}
-export default function SessionView(props: Props) {
-    const { date } = props
+export default function SessionView({ date }: { date: Dayjs }) {
     const { session, isError, mutate } = useSession(date)
     //when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
     //it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
