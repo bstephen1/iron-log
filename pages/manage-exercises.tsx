@@ -56,6 +56,12 @@ export default function ManageExercisesPage() {
             isValid: isValid,
             reason: reason,
         })
+
+        if (isValid && exercise) {
+            updateExercise({ ...exercise, name: newName })
+            setExercise({ ...exercise, name: newName })
+            mutate(exercises)
+        }
     }
 
     function handleStatusChange(newStatus: ExerciseStatus) {
@@ -91,6 +97,7 @@ export default function ManageExercisesPage() {
             <Grid item container xs={12} md={9} spacing={2}>
                 <Grid item xs={6}>
                     <Stack spacing={2}>
+                        {/* todo: save after X ms of no typing, or on blur */}
                         <TextField
                             required
                             label='Name'
@@ -140,9 +147,11 @@ export default function ManageExercisesPage() {
                     </Stack>
                 </Grid>
                 <Grid item xs={6}>
+                    {/* todo: center text? outline? divider style in the middle? */}
                     <Typography variant='h6'>
                         Cues
                     </Typography>
+                    {/* todo: Component for each ListItem. drag n drop? */}
                     <List>
                         {exercise?.cues.map(cue => (
                             <ListItem>
