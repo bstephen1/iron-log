@@ -20,16 +20,15 @@ export default function ManageExercisesPage() {
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
     interface DirtyNameValidity {
-        isValid: boolean,
+        isError: boolean,
         reason: string,
     }
     const [dirtyNameValidity, setDirtyNameValidity] = useState<DirtyNameValidity>()
     const [dirtyExercise, setDirtyExercise] = useState<Exercise | null>(null)
     const statuses = Object.values(ExerciseStatus)
     //todo: confirmation when you try to leave page or switch exercise that Name change will be discarded if error
-    const isNameError = !!exercise && !dirtyNameValidity?.isValid
+    const isNameError = !!exercise && dirtyNameValidity?.isError
     const INVISIBLE_HELPER_TEXT = ' ' //use this to keep height constant when there's no helper text
-
 
     function handleReset() {
         setDirtyExercise(exercise)
@@ -46,28 +45,28 @@ export default function ManageExercisesPage() {
         setDirtyExercise(newExercise)
         setExercise(newExercise)
         setDirtyNameValidity({
-            isValid: true,
+            isError: false,
             reason: INVISIBLE_HELPER_TEXT,
         })
     }
 
     function handleDirtyNameChange(newName: string) {
-        let isValid = true
+        let isError = false
         let reason = INVISIBLE_HELPER_TEXT
 
         if (!newName) {
-            isValid = false
+            isError = true
             reason = `Can't have an empty name!`
         } else if (exercise?.name === newName) {
             //valid -- explicity stated to avoid unnecessary find()
         } else if (exercises?.find(e => e.name === newName)) {
-            isValid = false
+            isError = true
             reason = 'This exercise already exists!'
         }
 
         setDirtyExercise({ ...dirtyExercise, name: newName })
         setDirtyNameValidity({
-            isValid: isValid,
+            isError: isError,
             reason: reason,
         })
     }
@@ -107,8 +106,9 @@ export default function ManageExercisesPage() {
                             required
                             label='Name'
                             error={isNameError}
+                            disabled={!exercise} //todo: is there really not a way to disable the whole form at once?
                             helperText={dirtyNameValidity?.reason || INVISIBLE_HELPER_TEXT}
-                            value={dirtyExercise?.name} //todo: this doesn't rerender after it turns null
+                            value={dirtyExercise?.name || ''} //this has to be an empty string, not null, or it gets buggy with stale data when unselecting an exercise
                             InputLabelProps={{ shrink: !!dirtyExercise?.name }}
                             onChange={(e) => handleDirtyNameChange(e.target.value)}
                         />
@@ -116,8 +116,9 @@ export default function ManageExercisesPage() {
                             select
                             required
                             label='Status'
+                            disabled={!exercise}
                             helperText={INVISIBLE_HELPER_TEXT}
-                            value={dirtyExercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
+                            value={dirtyExercise?.status || ''}
                             InputLabelProps={{ shrink: !!dirtyExercise?.status }}
                             onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
                         >
@@ -128,12 +129,14 @@ export default function ManageExercisesPage() {
                             ))}
                         </TextField>
                         <Autocomplete
+                            multiple
+                            fullWidth
+                            disabled={!exercise}
                             options={modifierNames}
+                            //todo: not updating correctly. Says the value is invalid 
                             value={dirtyExercise?.validModifiers || []}
                             // groupBy={modifier => modifier.status}
                             // onChange={(e, newActiveModifiers) => updateRecord({ ...record, activeModifiers: newActiveModifiers }, index)}
-                            multiple
-                            fullWidth
                             disableCloseOnSelect
                             onChange={(e, newModifiers) => setDirtyExercise({ ...dirtyExercise, validModifiers: newModifiers })}
                             renderInput={(params) => <TextField {...params} variant='outlined' label='Valid Modifiers' />}
@@ -173,8 +176,9 @@ export default function ManageExercisesPage() {
                 </Grid>
             </Grid>
             <Grid xs={12}>
-                <Button onClick={handleReset}>Reset</Button>
-                <Button variant='contained' disabled={false} onClick={handleSubmit}>Submit</Button>
+                <Button onClick={handleReset} disabled={!exercise}>Reset</Button>
+                {/* todo: disable when no changes */}
+                <Button variant='contained' disabled={!exercise || isNameError} onClick={handleSubmit}>Save Changes</Button>
             </Grid>
         </Grid >
     )
