@@ -8,29 +8,62 @@ import { updateExercise, useExercises, useModifiers } from '../lib/frontend/rest
 import Exercise from '../models/Exercise';
 import { ExerciseStatus } from '../models/ExerciseStatus';
 
-
+//todo: disable form stuff unless exercise is selected
+//todo: ui element showing "changes saved"
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const { modifiers } = useModifiers()
     const [edit, setEdit] = useState(false)
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
-    // useEffect(() => {
-    //     console.log(exercise)
-    //     console.log(exercise?.status === ExerciseStatus.ACTIVE)
-    // }, [exercise])
+    interface ModifiedName {
+        name: string,
+        isValid: boolean,
+        reason: string,
+    }
+    const [modifiedName, setModifiedName] = useState<ModifiedName>()
+    const statuses = Object.values(ExerciseStatus)
+    //todo: confirmation when you try to leave page or switch exercise that Name change will be discarded if error
+    //I think this is the only field with a constraint, so everything else can save instantly
+    const isNameError = !!exercise && !modifiedName?.isValid
 
-    // function updateExercise(newExercise: Exercise) {
-    //     if (isInvalid)
-    // }
+    function handleExerciseChange(newExercise: Exercise | null) {
+        setExercise(newExercise)
+        setModifiedName({
+            name: newExercise?.name || '',
+            isValid: true,
+            reason: '',
+        })
+    }
+
+    function handleModifiedNameChange(newName: string) {
+        let isValid = true
+        let reason = ' ' //invisible HelperText to keep the height constant
+
+        if (!newName) {
+            isValid = false
+            reason = `Can't have an empty name!`
+        } else if (exercise?.name === newName) {
+            //valid -- explicity stated to avoid unnecessary find()
+        } else if (exercises?.find(e => e.name === newName)) {
+            isValid = false
+            reason = 'This exercise already exists!'
+        }
+
+        setModifiedName({
+            name: newName,
+            isValid: isValid,
+            reason: reason,
+        })
+    }
 
     function updateStatus(newStatus: ExerciseStatus) {
         if (exercise === null) return
         const newExercise = { ...exercise, status: newStatus }
+        setExercise(newExercise)
         updateExercise(newExercise)
-        
 
-        //exercise isn't being updated, so this should be showing the stale data, then re-fetching from db
+        //todo: exercise isn't being updated, so this should be showing the stale data, then re-fetching from db
         mutate(exercises)
     }
 
@@ -43,27 +76,36 @@ export default function ManageExercisesPage() {
             <Grid item xs={12} md={3}>
                 <Autocomplete
                     // open={true}
-                    options={exercises} //should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
+                    options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
                     groupBy={exercise => exercise.status}
                     getOptionLabel={option => option.name}
                     value={exercise}
-                    onChange={(e, newExercise) => setExercise(newExercise)}
+                    onChange={(e, newExercise) => handleExerciseChange(newExercise)}
                     renderInput={(params) => <TextField {...params} label='Exercise' />}
                 />
             </Grid>
             <Grid item xs={12} md={9}>
                 {/* form */}
                 <Stack direction='row' justifyContent='space-between'>
-                    <TextField label='Name' required value={exercise?.name} InputLabelProps={{ shrink: true }} onChange={(e) => console.log(e.target.value)} />
+                    <TextField
+                        required
+                        label='Name'
+                        error={isNameError}
+                        helperText={modifiedName?.reason || ''}
+                        value={modifiedName?.name}
+                        InputLabelProps={{ shrink: !!modifiedName?.name }}
+                        onChange={(e) => handleModifiedNameChange(e.target.value)}
+                    />
                     <TextField
                         select
                         required
                         label='Status'
-                        value={exercise?.status}
+                        value={exercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
                         sx={{ width: 150 }}
+                        InputLabelProps={{ shrink: !!exercise?.status }}
                         onChange={(e) => updateStatus(e.target.value as ExerciseStatus)}
                     >
-                        {Object.values(ExerciseStatus).map(status => (
+                        {statuses.map(status => (
                             <MenuItem key={status} value={status}>
                                 {status}
                             </MenuItem>
