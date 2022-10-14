@@ -15,6 +15,7 @@ import { ExerciseStatus } from '../models/ExerciseStatus';
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const { modifiers } = useModifiers()
+    const modifierNames = modifiers?.map(modifier => modifier.name) || []
     const [edit, setEdit] = useState(false)
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
@@ -127,15 +128,15 @@ export default function ManageExercisesPage() {
                             ))}
                         </TextField>
                         <Autocomplete
-                            options={modifiers}
-                            value={[]}
-                            getOptionLabel={modifier => modifier.name}
+                            options={modifierNames}
+                            value={dirtyExercise?.validModifiers || []}
                             // groupBy={modifier => modifier.status}
                             // onChange={(e, newActiveModifiers) => updateRecord({ ...record, activeModifiers: newActiveModifiers }, index)}
                             multiple
                             fullWidth
                             disableCloseOnSelect
-                            renderInput={(params) => <TextField {...params} variant='outlined' label='Modifiers' />}
+                            onChange={(e, newModifiers) => setDirtyExercise({ ...dirtyExercise, validModifiers: newModifiers })}
+                            renderInput={(params) => <TextField {...params} variant='outlined' label='Valid Modifiers' />}
                             renderOption={(props, option, { selected }) => (
                                 <li {...props}>
                                     <Checkbox
@@ -144,7 +145,7 @@ export default function ManageExercisesPage() {
                                         style={{ marginRight: 8 }}
                                         checked={selected}
                                     />
-                                    {option.name}
+                                    {option}
                                 </li>
                             )}
                         />

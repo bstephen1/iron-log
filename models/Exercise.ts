@@ -6,5 +6,5 @@ export default interface Exercise {
     name: string,
     status: ExerciseStatus,
     cues: string[],
-    validModifiers: { name: string }[],
+    validModifiers: string[],
 }
