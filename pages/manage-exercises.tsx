@@ -95,7 +95,7 @@ export default function ManageExercisesPage() {
                             required
                             label='Name'
                             error={isNameError}
-                            helperText={modifiedName?.reason || ''}
+                            helperText={modifiedName?.reason || ' '}
                             value={modifiedName?.name}
                             InputLabelProps={{ shrink: !!modifiedName?.name }}
                             onChange={(e) => handleModifiedNameChange(e.target.value)}
@@ -104,6 +104,7 @@ export default function ManageExercisesPage() {
                             select
                             required
                             label='Status'
+                            helperText={' '} //to keep consistent spacing with Name field
                             value={exercise?.status || null} //for some reason this NEEDS to specify null, unlike normal TextField
                             InputLabelProps={{ shrink: !!exercise?.status }}
                             onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
