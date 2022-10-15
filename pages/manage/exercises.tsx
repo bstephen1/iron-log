@@ -17,7 +17,7 @@ export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const { modifiers } = useModifiers()
     const modifierNames = modifiers?.map(modifier => modifier.name) || []
-    const [edit, setEdit] = useState(false)
+    const [editCuesList, setEditCuesList] = useState(false)
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
     interface DirtyNameValidity {
@@ -74,9 +74,16 @@ export default function ManageExercisesPage() {
     }
 
     function handleStatusChange(newStatus: ExerciseStatus) {
-        if (!dirtyExercise) return
-
         const newExercise = { ...dirtyExercise, status: newStatus }
+        setDirtyExercise(newExercise)
+    }
+
+    function handleDeleteCue(i: number) {
+        const newCues = dirtyExercise.cues.slice(0, i).concat(dirtyExercise.cues.slice(i + 1))
+        console.log(i)
+        console.log(dirtyExercise.cues.slice(0, i))
+        console.log(dirtyExercise.cues.slice(i + 1))
+        const newExercise = { ...dirtyExercise, cues: newCues }
         setDirtyExercise(newExercise)
     }
 
@@ -162,11 +169,17 @@ export default function ManageExercisesPage() {
                     </Divider>
                     {/* todo: Component for each ListItem. drag n drop? */}
                     <Stack direction='row' justifyContent='space-between'>
-                        <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: dirtyExercise.cues.concat('') })}>Edit</Button>
-                        <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: dirtyExercise.cues.concat('') })}>Add</Button>
+                        <Button onClick={() => setEditCuesList(!editCuesList)}>{editCuesList ? 'Done' : 'Edit'}</Button>
+                        <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: dirtyExercise.cues.concat('cue') })}>Add</Button>
                     </Stack>
                     <List>
-                        {dirtyExercise?.cues.map(cue => <EditableListItem key={cue} value={cue} />)}
+                        {dirtyExercise?.cues.map((cue, i) => (
+                            <EditableListItem
+                                index={i}
+                                value={cue}
+                                editToggle={editCuesList}
+                                handleDelete={handleDeleteCue}
+                            />))}
                     </List>
                 </Grid>
             </Grid>

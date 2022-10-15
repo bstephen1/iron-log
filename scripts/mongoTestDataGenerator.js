@@ -39,7 +39,7 @@ let modifiers = [
 
 let exercises = [
     addExercise('squats', 'active', 'Milk and squats.', ['knees out', 'chest up'], ['belt', 'band']),
-    addExercise('curls', 'active', 'curl curl curl', [], ['bodyweight', 'unilateral']),
+    addExercise('curls', 'active', 'curl curl curl', ['a', 'b', 'c', 'd', 'f', 'e'], ['bodyweight', 'unilateral']),
     addExercise('zercher squat', 'archived', 'never again', ['pain'], ['AMRAP']),
 ]
 
