@@ -2,8 +2,8 @@ import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Autocomplete, Button, Checkbox, Divider, MenuItem, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
-import { useState } from 'react';
-import EditableListItem from '../../components/EditableListItem';
+import { useEffect, useState } from 'react';
+import CueInput from '../../components/CueInput';
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises, useModifiers } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
@@ -17,7 +17,6 @@ export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const { modifiers } = useModifiers()
     const modifierNames = modifiers?.map(modifier => modifier.name) || []
-    const [editCuesList, setEditCuesList] = useState(false)
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
     interface DirtyNameValidity {
@@ -80,12 +79,22 @@ export default function ManageExercisesPage() {
 
     function handleDeleteCue(i: number) {
         const newCues = dirtyExercise.cues.slice(0, i).concat(dirtyExercise.cues.slice(i + 1))
-        console.log(i)
-        console.log(dirtyExercise.cues.slice(0, i))
-        console.log(dirtyExercise.cues.slice(i + 1))
         const newExercise = { ...dirtyExercise, cues: newCues }
         setDirtyExercise(newExercise)
     }
+
+    function handleCueUpdate(newCue: string, i: number) {
+        const newCues = dirtyExercise.cues.slice(0, i).concat(newCue).concat(dirtyExercise?.cues.slice(i + 1))
+        console.log('updating...')
+        console.log(newCues)
+        setDirtyExercise({ ...dirtyExercise, cues: newCues })
+    }
+
+    //todo: remove (for testing)
+    useEffect(() => {
+        console.log(dirtyExercise)
+        console.log(dirtyExercise?.cues)
+    }, [dirtyExercise])
 
     if (!exercises || !modifiers) {
         return <></>
@@ -168,14 +177,19 @@ export default function ManageExercisesPage() {
                         Cues
                     </Divider>
                     {/* todo: Component for each ListItem. drag n drop? */}
-                    <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: ['', ...dirtyExercise.cues] })}>Add</Button>
+                    <Button
+                        disabled={!exercise}
+                        onClick={() => setDirtyExercise({ ...dirtyExercise, cues: ['', ...dirtyExercise.cues] })}
+                    >
+                        Add
+                    </Button>
                     <Stack spacing={2}>
                         {dirtyExercise?.cues.map((cue, i) => (
-                            <EditableListItem
+                            <CueInput
                                 index={i}
                                 value={cue}
-                                editToggle={editCuesList}
                                 handleDelete={handleDeleteCue}
+                                handleUpdate={handleCueUpdate}
                             />))}
                     </Stack>
 

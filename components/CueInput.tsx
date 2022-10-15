@@ -7,17 +7,27 @@ import { useEffect, useState } from 'react';
 interface Props {
     index: number,
     value: string,
-    editToggle?: boolean,
     handleDelete: (key: any) => void,
+    handleUpdate: (value: string, index: number) => void,
 }
-export default function EditableListItem(props: Props) {
-    const { index, editToggle, handleDelete, handleClick } = props
-    const [edit, setEdit] = useState(editToggle || props.value === '')
+export default function CueInput(props: Props) {
+    const { index, handleDelete, handleUpdate } = props
     const [value, setValue] = useState(props.value)
 
-    useEffect(() => {
-        setEdit(editToggle)
-    }, [editToggle])
+    function handleBlur() {
+        //no edits. Note this means a fresh, blank cue will not be deleted on blur
+        if (value === props.value) {
+            return
+        }
+
+        //todo: do we want to automatically delete an empty cue here? Or wait til submit?
+        if (!value) {
+            handleDelete(index)
+        } else {
+            handleUpdate(value, index)
+        }
+    }
+
 
     //props.value will change when deleting an element or switching exercise,
     //but the EditableListItems will not rerender because they still exist in the new screen.
@@ -36,8 +46,11 @@ export default function EditableListItem(props: Props) {
             <InputBase
                 sx={{ ml: 1, flex: 1 }}
                 placeholder='Add cue'
+                autoFocus={!value}
                 multiline
                 value={value}
+                onBlur={handleBlur}
+                onKeyDown={(e) => e.key === 'Enter' && (document.activeElement as HTMLElement).blur()}
                 onChange={(e) => setValue(e.target.value)}
                 inputProps={{ 'aria-label': 'Add cue' }}
             />
