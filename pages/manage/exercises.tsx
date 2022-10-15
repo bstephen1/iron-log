@@ -1,10 +1,9 @@
 import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CircleIcon from '@mui/icons-material/Circle';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Autocomplete, Box, Button, Checkbox, Divider, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Autocomplete, Button, Checkbox, Divider, List, MenuItem, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useState } from 'react';
+import EditableListItem from '../../components/EditableListItem';
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises, useModifiers } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
@@ -162,18 +161,12 @@ export default function ManageExercisesPage() {
                         Cues
                     </Divider>
                     {/* todo: Component for each ListItem. drag n drop? */}
+                    <Stack direction='row' justifyContent='space-between'>
+                        <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: dirtyExercise.cues.concat('') })}>Edit</Button>
+                        <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: dirtyExercise.cues.concat('') })}>Add</Button>
+                    </Stack>
                     <List>
-                        {exercise?.cues.map(cue => (
-                            <ListItem key={cue}>
-                                <Box onClick={() => setEdit(!edit)}>
-                                    {edit
-                                        ? <Input value={cue} multiline endAdornment={<InputAdornment position='end'><DeleteIcon /></InputAdornment>} />
-                                        : <Typography><CircleIcon sx={{ height: 7 }} /> {cue}</Typography>
-                                    }
-                                </Box>
-                                <Divider />
-                            </ListItem>
-                        ))}
+                        {dirtyExercise?.cues.map(cue => <EditableListItem key={cue} value={cue} />)}
                     </List>
                 </Grid>
             </Grid>
