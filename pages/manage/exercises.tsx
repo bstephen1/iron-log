@@ -1,6 +1,6 @@
 import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { Autocomplete, Button, Checkbox, Divider, List, MenuItem, Stack, TextField } from '@mui/material';
+import { Autocomplete, Button, Checkbox, Divider, MenuItem, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useState } from 'react';
 import EditableListItem from '../../components/EditableListItem';
@@ -168,11 +168,8 @@ export default function ManageExercisesPage() {
                         Cues
                     </Divider>
                     {/* todo: Component for each ListItem. drag n drop? */}
-                    <Stack direction='row' justifyContent='space-between'>
-                        <Button onClick={() => setEditCuesList(!editCuesList)}>{editCuesList ? 'Done' : 'Edit'}</Button>
-                        <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: dirtyExercise.cues.concat('cue') })}>Add</Button>
-                    </Stack>
-                    <List>
+                    <Button onClick={() => setDirtyExercise({ ...dirtyExercise, cues: ['', ...dirtyExercise.cues] })}>Add</Button>
+                    <Stack spacing={2}>
                         {dirtyExercise?.cues.map((cue, i) => (
                             <EditableListItem
                                 index={i}
@@ -180,7 +177,8 @@ export default function ManageExercisesPage() {
                                 editToggle={editCuesList}
                                 handleDelete={handleDeleteCue}
                             />))}
-                    </List>
+                    </Stack>
+
                 </Grid>
             </Grid>
             <Grid xs={12}>
