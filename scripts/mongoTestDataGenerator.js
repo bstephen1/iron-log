@@ -10,8 +10,8 @@ function addName(name) {
     return { name }
 }
 
-function addExercise(name, status, cues, validModifiers) {
-    return { name, status, cues, validModifiers }
+function addExercise(name, status, notes, cues, validModifiers) {
+    return { name, status, notes, cues, validModifiers }
 }
 
 function addSet(weight, reps, rpe) {
@@ -38,9 +38,9 @@ let modifiers = [
 
 
 let exercises = [
-    addExercise('squats', 'active', ['knees out', 'chest up'], ['belt', 'band']),
-    addExercise('curls', 'active', [], ['bodyweight', 'unilateral']),
-    addExercise('zercher squat', 'archived', ['pain'], ['AMRAP']),
+    addExercise('squats', 'active', 'Milk and squats.', ['knees out', 'chest up'], ['belt', 'band']),
+    addExercise('curls', 'active', 'curl curl curl', [], ['bodyweight', 'unilateral']),
+    addExercise('zercher squat', 'archived', 'never again', ['pain'], ['AMRAP']),
 ]
 
 //todo: myo, super, rep range (?), weigh-in, cardio

@@ -12,6 +12,7 @@ import { ExerciseStatus } from '../../models/ExerciseStatus';
 
 //todo: disable form stuff unless exercise is selected
 //todo: ui element showing "changes saved"
+//todo: add/delete exercise
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const { modifiers } = useModifiers()
@@ -162,7 +163,7 @@ export default function ManageExercisesPage() {
                     {/* todo: Component for each ListItem. drag n drop? */}
                     <List>
                         {exercise?.cues.map(cue => (
-                            <ListItem>
+                            <ListItem key={cue}>
                                 <Box onClick={() => setEdit(!edit)}>
                                     {edit
                                         ? <Input value={cue} multiline endAdornment={<InputAdornment position='end'><DeleteIcon /></InputAdornment>} />
@@ -174,6 +175,16 @@ export default function ManageExercisesPage() {
                         ))}
                     </List>
                 </Grid>
+            </Grid>
+            <Grid xs={12}>
+                <TextField
+                    multiline
+                    fullWidth
+                    disabled={!exercise}
+                    value={dirtyExercise?.notes || ''}
+                    onChange={(e) => setDirtyExercise({ ...dirtyExercise, notes: e.target.value })}
+                    label='Notes'
+                />
             </Grid>
             <Grid xs={12}>
                 <Button onClick={handleReset} disabled={!exercise}>Reset</Button>
