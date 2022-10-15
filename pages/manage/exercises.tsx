@@ -35,6 +35,7 @@ export default function ManageExercisesPage() {
     }
 
     //todo: let ts know that dirtyExercise can't be null if exercise is populated
+    //todo: validate (drop empty cues)
     function handleSubmit() {
         console.log(dirtyExercise)
         updateExercise(dirtyExercise)
@@ -186,6 +187,7 @@ export default function ManageExercisesPage() {
                     <Stack spacing={2}>
                         {dirtyExercise?.cues.map((cue, i) => (
                             <CueInput
+                                key={i}
                                 index={i}
                                 value={cue}
                                 handleDelete={handleDeleteCue}
