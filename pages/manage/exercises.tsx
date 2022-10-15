@@ -5,10 +5,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Autocomplete, Box, Button, Checkbox, Divider, Input, InputAdornment, List, ListItem, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useState } from 'react';
-import StyledDivider from '../components/StyledDivider';
-import { updateExercise, useExercises, useModifiers } from '../lib/frontend/restService';
-import Exercise from '../models/Exercise';
-import { ExerciseStatus } from '../models/ExerciseStatus';
+import StyledDivider from '../../components/StyledDivider';
+import { updateExercise, useExercises, useModifiers } from '../../lib/frontend/restService';
+import Exercise from '../../models/Exercise';
+import { ExerciseStatus } from '../../models/ExerciseStatus';
 
 //todo: disable form stuff unless exercise is selected
 //todo: ui element showing "changes saved"
@@ -36,6 +36,7 @@ export default function ManageExercisesPage() {
 
     //todo: let ts know that dirtyExercise can't be null if exercise is populated
     function handleSubmit() {
+        console.log(dirtyExercise)
         updateExercise(dirtyExercise)
         setExercise(dirtyExercise)
         mutate(exercises)
@@ -133,14 +134,13 @@ export default function ManageExercisesPage() {
                             fullWidth
                             disabled={!exercise}
                             options={modifierNames}
-                            //todo: not updating correctly. Says the value is invalid 
                             value={dirtyExercise?.validModifiers || []}
                             // groupBy={modifier => modifier.status}
                             // onChange={(e, newActiveModifiers) => updateRecord({ ...record, activeModifiers: newActiveModifiers }, index)}
                             disableCloseOnSelect
                             onChange={(e, newModifiers) => setDirtyExercise({ ...dirtyExercise, validModifiers: newModifiers })}
                             renderInput={(params) => <TextField {...params} variant='outlined' label='Valid Modifiers' />}
-                            renderOption={(props, option, { selected }) => (
+                            renderOption={(props, modifierName, { selected }) => (
                                 <li {...props}>
                                     <Checkbox
                                         icon={<CheckBoxOutlineBlank />}
@@ -148,7 +148,7 @@ export default function ManageExercisesPage() {
                                         style={{ marginRight: 8 }}
                                         checked={selected}
                                     />
-                                    {option}
+                                    {modifierName}
                                 </li>
                             )}
                         />
