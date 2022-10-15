@@ -10,9 +10,10 @@ import { updateExercise, useExercises, useModifiers } from '../../lib/frontend/r
 import Exercise from '../../models/Exercise';
 import { ExerciseStatus } from '../../models/ExerciseStatus';
 
-//todo: disable form stuff unless exercise is selected
-//todo: ui element showing "changes saved"
-//todo: add/delete exercise
+//todo: disable form stuff when no changes
+//todo: ui element showing "changes saved". Snackbar?
+//todo: add/delete exercise. Delete only for unused exercises?
+//todo: filter exercise list by status?
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const { modifiers } = useModifiers()
@@ -157,9 +158,9 @@ export default function ManageExercisesPage() {
                 </Grid>
                 <Grid xs={6}>
                     {/* todo: center text? outline? divider style in the middle? */}
-                    <Typography variant='h6'>
+                    <Divider textAlign='center'>
                         Cues
-                    </Typography>
+                    </Divider>
                     {/* todo: Component for each ListItem. drag n drop? */}
                     <List>
                         {exercise?.cues.map(cue => (
