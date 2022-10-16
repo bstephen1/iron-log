@@ -1,12 +1,11 @@
-import { CheckBoxOutlineBlank } from '@mui/icons-material';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { Autocomplete, Button, Checkbox, Divider, Stack, TextField } from '@mui/material';
+import { Autocomplete, Button, Divider, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useEffect, useState } from 'react';
 import CueInput from '../../components/CueInput';
-import ExerciseFormStatusField from '../../components/exercise-form/ExerciseFormStatusField';
+import ModifiersFieldInput from '../../components/exercise-form/ModifiersFieldInput';
+import StatusFieldInput from '../../components/exercise-form/StatusFieldInput';
 import StyledDivider from '../../components/StyledDivider';
-import { updateExercise, useExercises, useModifiers } from '../../lib/frontend/restService';
+import { updateExercise, useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
 import { ExerciseStatus } from '../../models/ExerciseStatus';
 
@@ -16,8 +15,7 @@ import { ExerciseStatus } from '../../models/ExerciseStatus';
 //todo: filter exercise list by status?
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
-    const { modifiers } = useModifiers()
-    const modifierNames = modifiers?.map(modifier => modifier.name) || []
+
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
     interface DirtyNameValidity {
@@ -74,9 +72,13 @@ export default function ManageExercisesPage() {
         })
     }
 
+    //todo: really want to try to avoid the non-null assertion. How to let ts know this can't be called if dirtyExercise is null?
     function handleStatusChange(newStatus: ExerciseStatus) {
-        const newExercise = { ...dirtyExercise as Exercise, status: newStatus }
-        setDirtyExercise(newExercise)
+        setDirtyExercise({ ...dirtyExercise!, status: newStatus })
+    }
+
+    function handleChangeModifiers(newModifiers: string[]) {
+        setDirtyExercise({ ...dirtyExercise!, validModifiers: newModifiers })
     }
 
     function handleDeleteCue(i: number) {
@@ -98,7 +100,7 @@ export default function ManageExercisesPage() {
         console.log(dirtyExercise?.cues)
     }, [dirtyExercise])
 
-    if (!exercises || !modifiers) {
+    if (!exercises) {
         return <></>
     }
 
@@ -131,32 +133,13 @@ export default function ManageExercisesPage() {
                             InputLabelProps={{ shrink: !!dirtyExercise?.name }}
                             onChange={(e) => handleDirtyNameChange(e.target.value)}
                         />
-                        <ExerciseFormStatusField
+                        <StatusFieldInput
                             status={dirtyExercise?.status}
-                            handleStatusChange={handleStatusChange}
+                            handleChange={handleStatusChange}
                         />
-                        <Autocomplete
-                            multiple
-                            fullWidth
-                            disabled={!exercise}
-                            options={modifierNames}
-                            value={dirtyExercise?.validModifiers || []}
-                            // groupBy={modifier => modifier.status}
-                            // onChange={(e, newActiveModifiers) => updateRecord({ ...record, activeModifiers: newActiveModifiers }, index)}
-                            disableCloseOnSelect
-                            onChange={(e, newModifiers) => setDirtyExercise({ ...dirtyExercise, validModifiers: newModifiers })}
-                            renderInput={(params) => <TextField {...params} variant='outlined' label='Valid Modifiers' />}
-                            renderOption={(props, modifierName, { selected }) => (
-                                <li {...props}>
-                                    <Checkbox
-                                        icon={<CheckBoxOutlineBlank />}
-                                        checkedIcon={<CheckBoxIcon />}
-                                        style={{ marginRight: 8 }}
-                                        checked={selected}
-                                    />
-                                    {modifierName}
-                                </li>
-                            )}
+                        <ModifiersFieldInput
+                            selectedModifiers={dirtyExercise?.validModifiers}
+                            handleChange={handleChangeModifiers}
                         />
                     </Stack>
                 </Grid>

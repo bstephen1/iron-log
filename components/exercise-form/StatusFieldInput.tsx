@@ -3,9 +3,9 @@ import { ExerciseStatus } from '../../models/ExerciseStatus';
 
 interface Props {
     status?: ExerciseStatus,
-    handleStatusChange: (status: ExerciseStatus) => void,
+    handleChange: (status: ExerciseStatus) => void,
 }
-export default function ExerciseFormStatusField({ status, handleStatusChange }: Props) {
+export default function StatusFieldInput({ status, handleChange }: Props) {
     const statuses = Object.values(ExerciseStatus)
 
     return (
@@ -16,7 +16,7 @@ export default function ExerciseFormStatusField({ status, handleStatusChange }: 
             disabled={!status}
             helperText=' ' //for padding
             value={status || ''}
-            onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
+            onChange={(e) => handleChange(e.target.value as ExerciseStatus)}
         >
             {statuses.map(status => (
                 <MenuItem key={status} value={status}>
