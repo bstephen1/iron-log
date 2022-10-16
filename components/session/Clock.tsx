@@ -13,7 +13,7 @@ function clockReducer(state: any, action: { type: any; }) {
         case 'tick':
             return { ...state, deltaTime: time - state.initialTime, deltaRestTime: time - state.initialRestTime }
         default:
-            return state
+            throw new Error('unexpected action type given to reducer')
     }
 }
 
@@ -63,7 +63,6 @@ export default function Clock() {
                 <Typography>Rest time: {formatDeltaTime(deltaRestTime)}</Typography>
             </Stack>
         }
-
     </>
     )
 }
