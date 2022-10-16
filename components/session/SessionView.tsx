@@ -6,8 +6,8 @@ import { createSession, updateSession, useSession } from '../../lib/frontend/res
 import { Record } from '../../models/Record';
 import { Session } from '../../models/Session';
 import RecordInput from './RecordInput';
-import SessionViewClock from './SessionViewClock';
-import SessionViewTitleBar from './SessionViewTitleBar';
+import Clock from './Clock';
+import TitleBar from './TitleBar';
 
 export default function SessionView({ date }: { date: Dayjs }) {
     const { session, isError, mutate } = useSession(date)
@@ -53,10 +53,10 @@ export default function SessionView({ date }: { date: Dayjs }) {
     return (
         <Grid container spacing={2} direction='column'>
             <Grid>
-                <SessionViewTitleBar date={date} />
+                <TitleBar date={date} />
             </Grid>
             <Grid>
-                <SessionViewClock />
+                <Clock />
             </Grid>
             {session && session.records.map((record, i) => {
                 return (

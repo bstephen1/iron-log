@@ -1,7 +1,6 @@
 import { Button, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useReducer } from 'react';
-import { Session } from '../../models/Session';
 
 //this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
 function clockReducer(state: any, action: { type: any; }) {
@@ -18,7 +17,7 @@ function clockReducer(state: any, action: { type: any; }) {
     }
 }
 
-export default function SessionViewClock() {
+export default function Clock() {
     const initialClockState = {
         initialTime: dayjs().valueOf(),
         initialRestTime: dayjs().valueOf(),
