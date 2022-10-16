@@ -8,7 +8,7 @@ interface Props {
     selectedModifiers?: string[],
     handleChange: (newModifiers: string[]) => void,
 }
-export default function ModifiersFieldInput({ selectedModifiers, handleChange }: Props) {
+export default function ModifiersInput({ selectedModifiers, handleChange }: Props) {
     const { modifiers } = useModifiers()
     const modifierNames = modifiers?.map(modifier => modifier.name) || []
     const [open, setOpen] = useState(false) //need this to show loading only while open

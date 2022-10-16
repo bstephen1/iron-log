@@ -5,7 +5,7 @@ interface Props {
     status?: ExerciseStatus,
     handleChange: (status: ExerciseStatus) => void,
 }
-export default function StatusFieldInput({ status, handleChange }: Props) {
+export default function StatusInput({ status, handleChange }: Props) {
     const statuses = Object.values(ExerciseStatus)
 
     return (

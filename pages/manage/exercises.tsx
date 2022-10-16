@@ -1,9 +1,9 @@
 import { Autocomplete, Button, Divider, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useEffect, useState } from 'react';
-import CuesFieldInput from '../../components/exercise-form/CuesFieldInput';
-import ModifiersFieldInput from '../../components/exercise-form/ModifiersFieldInput';
-import StatusFieldInput from '../../components/exercise-form/StatusFieldInput';
+import CuesInput from '../../components/exercise-form/CuesInput';
+import ModifiersInput from '../../components/exercise-form/ModifiersInput';
+import StatusInput from '../../components/exercise-form/StatusInput';
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
@@ -77,7 +77,7 @@ export default function ManageExercisesPage() {
         setDirtyExercise({ ...dirtyExercise!, status: newStatus })
     }
 
-    function handleChangeModifiers(newModifiers: string[]) {
+    function handleModifiersChange(newModifiers: string[]) {
         setDirtyExercise({ ...dirtyExercise!, validModifiers: newModifiers })
     }
 
@@ -133,13 +133,13 @@ export default function ManageExercisesPage() {
                             InputLabelProps={{ shrink: !!dirtyExercise?.name }}
                             onChange={(e) => handleDirtyNameChange(e.target.value)}
                         />
-                        <StatusFieldInput
+                        <StatusInput
                             status={dirtyExercise?.status}
                             handleChange={handleStatusChange}
                         />
-                        <ModifiersFieldInput
+                        <ModifiersInput
                             selectedModifiers={dirtyExercise?.validModifiers}
-                            handleChange={handleChangeModifiers}
+                            handleChange={handleModifiersChange}
                         />
                     </Stack>
                 </Grid>
@@ -157,7 +157,7 @@ export default function ManageExercisesPage() {
                     </Button>
                     <Stack spacing={2}>
                         {dirtyExercise?.cues.map((cue, i) => (
-                            <CuesFieldInput
+                            <CuesInput
                                 key={i}
                                 index={i}
                                 value={cue}

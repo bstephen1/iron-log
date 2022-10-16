@@ -10,7 +10,7 @@ interface Props {
     handleDelete: (key: any) => void,
     handleUpdate: (value: string, index: number) => void,
 }
-export default function CuesFieldInput(props: Props) {
+export default function CuesInput(props: Props) {
     const { index, handleDelete, handleUpdate } = props
     const [value, setValue] = useState(props.value)
 
