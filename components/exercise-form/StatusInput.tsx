@@ -1,12 +1,12 @@
 import { MenuItem, TextField } from '@mui/material';
+import { useContext } from 'react';
 import { ExerciseStatus } from '../../models/ExerciseStatus';
+import { ExerciseFormContext } from './useExerciseForm';
 
-interface Props {
-    status?: ExerciseStatus,
-    handleChange: (status: ExerciseStatus) => void,
-}
-export default function StatusInput({ status, handleChange }: Props) {
+
+export default function StatusInput() {
     const statuses = Object.values(ExerciseStatus)
+    const { status, setField, disabled } = useContext(ExerciseFormContext)
 
     return (
         <TextField
@@ -15,8 +15,8 @@ export default function StatusInput({ status, handleChange }: Props) {
             label='Status'
             disabled={!status}
             helperText=' ' //for padding
-            value={status || ''}
-            onChange={(e) => handleChange(e.target.value as ExerciseStatus)}
+            value={status ?? ''}
+            onChange={(e) => setField('status', e.target.value as ExerciseStatus)}
         >
             {statuses.map(status => (
                 <MenuItem key={status} value={status}>

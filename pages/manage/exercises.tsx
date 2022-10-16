@@ -5,6 +5,7 @@ import CueInput from '../../components/exercise-form/CueInput';
 import ModifiersInput from '../../components/exercise-form/ModifiersInput';
 import NameInput from '../../components/exercise-form/NameInput';
 import StatusInput from '../../components/exercise-form/StatusInput';
+import { ExerciseFormProvider } from '../../components/exercise-form/useExerciseForm';
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
@@ -89,79 +90,78 @@ export default function ManageExercisesPage() {
     }
 
     return (
-        <Grid container spacing={2}>
-            {/* todo: big screens. Switch to side by side? vertical divider? */}
-            <Grid xs={12} md={3}>
-                <Autocomplete
-                    options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
-                    groupBy={exercise => exercise.status}
-                    getOptionLabel={option => option.name}
-                    value={exercise}
-                    onChange={(e, newExercise) => handleExerciseChange(newExercise)}
-                    renderInput={(params) => <TextField {...params} label='Exercise' />}
-                />
-            </Grid>
-            <Grid xs={12}>
-                <StyledDivider />
-            </Grid>
-            <Grid container xs={12} md={9} spacing={2}>
-                <Grid xs={6}>
-                    <Stack spacing={2}>
-                        <NameInput
-                            cleanName={exercise?.name}
-                            dirtyName={dirtyExercise?.name}
-                            handleChange={handleNameChange}
-                        />
-                        <StatusInput
-                            status={dirtyExercise?.status}
-                            handleChange={handleStatusChange}
-                        />
-                        <ModifiersInput
-                            selectedModifiers={dirtyExercise?.validModifiers}
-                            handleChange={handleModifiersChange}
-                        />
-                    </Stack>
+        <ExerciseFormProvider exercise={exercise}>
+            <Grid container spacing={2}>
+                {/* todo: big screens. Switch to side by side? vertical divider? */}
+                <Grid xs={12} md={3}>
+                    <Autocomplete
+                        options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
+                        groupBy={exercise => exercise.status}
+                        getOptionLabel={option => option.name}
+                        value={exercise}
+                        onChange={(e, newExercise) => handleExerciseChange(newExercise)}
+                        renderInput={(params) => <TextField {...params} label='Exercise' />}
+                    />
                 </Grid>
-                <Grid xs={6}>
-                    {/* todo: center text? outline? divider style in the middle? */}
-                    <Divider textAlign='center'>
-                        Cues
-                    </Divider>
-                    {/* todo: Component for each ListItem. drag n drop? */}
-                    <Button
+                <Grid xs={12}>
+                    <StyledDivider />
+                </Grid>
+                <Grid container xs={12} md={9} spacing={2}>
+                    <Grid xs={6}>
+                        <Stack spacing={2}>
+                            <NameInput
+                                cleanName={exercise?.name}
+                                dirtyName={dirtyExercise?.name}
+                                handleChange={handleNameChange}
+                            />
+                            <StatusInput />
+                            <ModifiersInput
+                                selectedModifiers={dirtyExercise?.validModifiers}
+                                handleChange={handleModifiersChange}
+                            />
+                        </Stack>
+                    </Grid>
+                    <Grid xs={6}>
+                        {/* todo: center text? outline? divider style in the middle? */}
+                        <Divider textAlign='center'>
+                            Cues
+                        </Divider>
+                        {/* todo: Component for each ListItem. drag n drop? */}
+                        <Button
+                            disabled={!exercise}
+                            onClick={() => setDirtyExercise({ ...dirtyExercise, cues: ['', ...dirtyExercise.cues] })}
+                        >
+                            Add
+                        </Button>
+                        <Stack spacing={2}>
+                            {dirtyExercise?.cues.map((cue, i) => (
+                                <CueInput
+                                    key={i}
+                                    index={i}
+                                    value={cue}
+                                    handleDelete={handleDeleteCue}
+                                    handleUpdate={handleCueUpdate}
+                                />))}
+                        </Stack>
+                    </Grid>
+                </Grid>
+                <Grid xs={12}>
+                    <TextField
+                        multiline
+                        fullWidth
                         disabled={!exercise}
-                        onClick={() => setDirtyExercise({ ...dirtyExercise, cues: ['', ...dirtyExercise.cues] })}
-                    >
-                        Add
-                    </Button>
-                    <Stack spacing={2}>
-                        {dirtyExercise?.cues.map((cue, i) => (
-                            <CueInput
-                                key={i}
-                                index={i}
-                                value={cue}
-                                handleDelete={handleDeleteCue}
-                                handleUpdate={handleCueUpdate}
-                            />))}
-                    </Stack>
+                        value={dirtyExercise?.notes || ''}
+                        onChange={(e) => setDirtyExercise({ ...dirtyExercise, notes: e.target.value })}
+                        label='Notes'
+                    />
                 </Grid>
-            </Grid>
-            <Grid xs={12}>
-                <TextField
-                    multiline
-                    fullWidth
-                    disabled={!exercise}
-                    value={dirtyExercise?.notes || ''}
-                    onChange={(e) => setDirtyExercise({ ...dirtyExercise, notes: e.target.value })}
-                    label='Notes'
-                />
-            </Grid>
-            <Grid xs={12}>
-                <Button onClick={handleReset} disabled={!exercise}>Reset</Button>
-                {/* todo: disable when no changes */}
-                <Button variant='contained' disabled={!exercise || isNameError} onClick={handleSubmit}>Save Changes</Button>
-            </Grid>
-        </Grid >
+                <Grid xs={12}>
+                    <Button onClick={handleReset} disabled={!exercise}>Reset</Button>
+                    {/* todo: disable when no changes */}
+                    <Button variant='contained' disabled={!exercise || isNameError} onClick={handleSubmit}>Save Changes</Button>
+                </Grid>
+            </Grid >
+        </ExerciseFormProvider>
     )
 
 }

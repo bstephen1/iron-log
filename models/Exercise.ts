@@ -1,11 +1,15 @@
-import { ObjectId } from 'mongodb';
 import { ExerciseStatus } from './ExerciseStatus';
 
-export default interface Exercise {
-    _id: ObjectId, //this is seen as a string after JSONifying
-    name: string,
-    status: ExerciseStatus,
-    notes: string,
-    cues: string[],
-    validModifiers: string[],
+export default class Exercise {
+    constructor(
+        public name: string,
+        //todo: this is required, but we also can't generate it for a new Exercise made on the front end
+        public readonly _id?: String, //this gets stripped to a string after JSONifying
+        public status: ExerciseStatus = ExerciseStatus.ACTIVE,
+        public notes: string = '',
+        public cues: string[] = [],
+        public validModifiers: string[] = [],
+    ) {
+
+    }
 }
