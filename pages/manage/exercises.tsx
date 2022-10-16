@@ -1,9 +1,10 @@
 import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { Autocomplete, Button, Checkbox, Divider, MenuItem, Stack, TextField } from '@mui/material';
+import { Autocomplete, Button, Checkbox, Divider, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useEffect, useState } from 'react';
 import CueInput from '../../components/CueInput';
+import ExerciseFormStatusField from '../../components/exercise-form/ExerciseFormStatusField';
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises, useModifiers } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
@@ -74,7 +75,7 @@ export default function ManageExercisesPage() {
     }
 
     function handleStatusChange(newStatus: ExerciseStatus) {
-        const newExercise = { ...dirtyExercise, status: newStatus }
+        const newExercise = { ...dirtyExercise as Exercise, status: newStatus }
         setDirtyExercise(newExercise)
     }
 
@@ -120,7 +121,6 @@ export default function ManageExercisesPage() {
             <Grid container xs={12} md={9} spacing={2}>
                 <Grid xs={6}>
                     <Stack spacing={2}>
-                        {/* todo: save after X ms of no typing, or on blur */}
                         <TextField
                             required
                             label='Name'
@@ -131,22 +131,10 @@ export default function ManageExercisesPage() {
                             InputLabelProps={{ shrink: !!dirtyExercise?.name }}
                             onChange={(e) => handleDirtyNameChange(e.target.value)}
                         />
-                        <TextField
-                            select
-                            required
-                            label='Status'
-                            disabled={!exercise}
-                            helperText={INVISIBLE_HELPER_TEXT}
-                            value={dirtyExercise?.status || ''}
-                            InputLabelProps={{ shrink: !!dirtyExercise?.status }}
-                            onChange={(e) => handleStatusChange(e.target.value as ExerciseStatus)}
-                        >
-                            {statuses.map(status => (
-                                <MenuItem key={status} value={status}>
-                                    {status}
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                        <ExerciseFormStatusField
+                            status={dirtyExercise?.status}
+                            handleStatusChange={handleStatusChange}
+                        />
                         <Autocomplete
                             multiple
                             fullWidth
