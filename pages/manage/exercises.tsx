@@ -1,7 +1,7 @@
 import { Autocomplete, Button, Divider, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useEffect, useState } from 'react';
-import CueInput from '../../components/CueInput';
+import CuesFieldInput from '../../components/exercise-form/CuesFieldInput';
 import ModifiersFieldInput from '../../components/exercise-form/ModifiersFieldInput';
 import StatusFieldInput from '../../components/exercise-form/StatusFieldInput';
 import StyledDivider from '../../components/StyledDivider';
@@ -157,7 +157,7 @@ export default function ManageExercisesPage() {
                     </Button>
                     <Stack spacing={2}>
                         {dirtyExercise?.cues.map((cue, i) => (
-                            <CueInput
+                            <CuesFieldInput
                                 key={i}
                                 index={i}
                                 value={cue}

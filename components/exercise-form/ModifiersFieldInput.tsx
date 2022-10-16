@@ -26,6 +26,7 @@ export default function ModifiersFieldInput({ selectedModifiers, handleChange }:
             loadingText='Loading...'
             value={selectedModifiers || []}
             disableCloseOnSelect
+            autoHighlight
             onChange={(e, newModifiers) => handleChange(newModifiers)}
             renderInput={(params) => (
                 <TextField
