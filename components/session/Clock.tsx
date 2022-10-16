@@ -2,8 +2,20 @@ import { Button, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useReducer } from 'react';
 
+interface State {
+    isRunning: boolean,
+    deltaTime: number,
+    deltaRestTime: number,
+    initialTime: number,
+    initialRestTime: number,
+}
+
+interface Action {
+    type: 'start' | 'resetRest' | 'tick'
+}
+
 //this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
-function clockReducer(state: any, action: { type: any; }) {
+function clockReducer(state: State, action: Action) {
     const time = dayjs().valueOf()
     switch (action.type) {
         case 'start':
@@ -18,7 +30,7 @@ function clockReducer(state: any, action: { type: any; }) {
 }
 
 export default function Clock() {
-    const initialClockState = {
+    const initialClockState: State = {
         initialTime: dayjs().valueOf(),
         initialRestTime: dayjs().valueOf(),
         isRunning: false,
