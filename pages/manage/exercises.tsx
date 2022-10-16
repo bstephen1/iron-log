@@ -1,8 +1,9 @@
 import { Autocomplete, Button, Divider, Stack, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useEffect, useState } from 'react';
-import CuesInput from '../../components/exercise-form/CuesInput';
+import CueInput from '../../components/exercise-form/CueInput';
 import ModifiersInput from '../../components/exercise-form/ModifiersInput';
+import NameInput from '../../components/exercise-form/NameInput';
 import StatusInput from '../../components/exercise-form/StatusInput';
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises } from '../../lib/frontend/restService';
@@ -15,7 +16,6 @@ import { ExerciseStatus } from '../../models/ExerciseStatus';
 //todo: filter exercise list by status?
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
-
     const [exercise, setExercise] = useState<Exercise | null>(null)
 
     interface DirtyNameValidity {
@@ -24,7 +24,6 @@ export default function ManageExercisesPage() {
     }
     const [dirtyNameValidity, setDirtyNameValidity] = useState<DirtyNameValidity>()
     const [dirtyExercise, setDirtyExercise] = useState<Exercise | null>(null)
-    const statuses = Object.values(ExerciseStatus)
     //todo: confirmation when you try to leave page or switch exercise that Name change will be discarded if error
     const isNameError = !!exercise && dirtyNameValidity?.isError
     const INVISIBLE_HELPER_TEXT = ' ' //use this to keep height constant when there's no helper text
@@ -51,26 +50,7 @@ export default function ManageExercisesPage() {
         })
     }
 
-    function handleDirtyNameChange(newName: string) {
-        let isError = false
-        let reason = INVISIBLE_HELPER_TEXT
 
-        if (!newName) {
-            isError = true
-            reason = `Can't have an empty name!`
-        } else if (exercise?.name === newName) {
-            //valid -- explicity stated to avoid unnecessary find()
-        } else if (exercises?.find(e => e.name === newName)) {
-            isError = true
-            reason = 'This exercise already exists!'
-        }
-
-        setDirtyExercise({ ...dirtyExercise, name: newName })
-        setDirtyNameValidity({
-            isError: isError,
-            reason: reason,
-        })
-    }
 
     //todo: really want to try to avoid the non-null assertion. How to let ts know this can't be called if dirtyExercise is null?
     function handleStatusChange(newStatus: ExerciseStatus) {
@@ -79,6 +59,10 @@ export default function ManageExercisesPage() {
 
     function handleModifiersChange(newModifiers: string[]) {
         setDirtyExercise({ ...dirtyExercise!, validModifiers: newModifiers })
+    }
+
+    function handleNameChange(newName: string) {
+        setDirtyExercise({ ...dirtyExercise!, name: newName })
     }
 
     function handleDeleteCue(i: number) {
@@ -123,15 +107,10 @@ export default function ManageExercisesPage() {
             <Grid container xs={12} md={9} spacing={2}>
                 <Grid xs={6}>
                     <Stack spacing={2}>
-                        <TextField
-                            required
-                            label='Name'
-                            error={isNameError}
-                            disabled={!exercise} //todo: is there really not a way to disable the whole form at once?
-                            helperText={dirtyNameValidity?.reason || INVISIBLE_HELPER_TEXT}
-                            value={dirtyExercise?.name || ''} //this has to be an empty string, not null, or it gets buggy with stale data when unselecting an exercise
-                            InputLabelProps={{ shrink: !!dirtyExercise?.name }}
-                            onChange={(e) => handleDirtyNameChange(e.target.value)}
+                        <NameInput
+                            cleanName={exercise?.name}
+                            dirtyName={dirtyExercise?.name}
+                            handleChange={handleNameChange}
                         />
                         <StatusInput
                             status={dirtyExercise?.status}
@@ -157,7 +136,7 @@ export default function ManageExercisesPage() {
                     </Button>
                     <Stack spacing={2}>
                         {dirtyExercise?.cues.map((cue, i) => (
-                            <CuesInput
+                            <CueInput
                                 key={i}
                                 index={i}
                                 value={cue}
@@ -165,7 +144,6 @@ export default function ManageExercisesPage() {
                                 handleUpdate={handleCueUpdate}
                             />))}
                     </Stack>
-
                 </Grid>
             </Grid>
             <Grid xs={12}>
