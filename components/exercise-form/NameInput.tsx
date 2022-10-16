@@ -50,7 +50,7 @@ export default function NameInput({ cleanName = '', dirtyName, handleChange }: P
             disabled={dirtyName == undefined}
             helperText={validity.reason} //always keep at least a single space to keep consistent padding
             value={dirtyName}
-            // InputLabelProps={{ shrink: !!dirtyExercise?.name }}
+            InputLabelProps={{ shrink: !!dirtyName }}
             onChange={(e) => validateChange(e.target.value)}
         />
     )
