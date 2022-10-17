@@ -115,10 +115,7 @@ export default function ManageExercisesPage() {
                                 handleChange={handleNameChange}
                             />
                             <StatusInput />
-                            <ModifiersInput
-                                selectedModifiers={dirtyExercise?.validModifiers}
-                                handleChange={handleModifiersChange}
-                            />
+                            <ModifiersInput />
                         </Stack>
                     </Grid>
                     <Grid xs={6}>

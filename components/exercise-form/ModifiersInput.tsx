@@ -1,15 +1,13 @@
 import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Autocomplete, Checkbox, CircularProgress, TextField } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useModifiers } from '../../lib/frontend/restService';
+import { ExerciseFormContext } from './useExerciseForm';
 
-interface Props {
-    selectedModifiers?: string[],
-    handleChange: (newModifiers: string[]) => void,
-}
-export default function ModifiersInput({ selectedModifiers, handleChange }: Props) {
+export default function ModifiersInput() {
     const { modifiers } = useModifiers()
+    const { validModifiers, setField } = useContext(ExerciseFormContext)
     const modifierNames = modifiers?.map(modifier => modifier.name) || []
     const [open, setOpen] = useState(false) //need this to show loading only while open
     const loading = !modifiers && open //probably unlikely to ever see this since it's nested deep in the form
@@ -18,16 +16,16 @@ export default function ModifiersInput({ selectedModifiers, handleChange }: Prop
         <Autocomplete
             multiple
             fullWidth
-            disabled={!selectedModifiers}
+            disabled={!validModifiers}
             options={modifierNames}
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
             loading={loading}
             loadingText='Loading...'
-            value={selectedModifiers || []}
+            value={validModifiers || []}
             disableCloseOnSelect
             autoHighlight
-            onChange={(e, newModifiers) => handleChange(newModifiers)}
+            onChange={(e, newModifiers) => setField('validModifiers', newModifiers)}
             renderInput={(params) => (
                 <TextField
                     {...params}
