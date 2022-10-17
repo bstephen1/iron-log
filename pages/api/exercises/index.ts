@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { fetchCollection } from '../../../lib/backend/mongoService'
+import { fetchExercises } from '../../../lib/backend/mongoService'
+import { ExerciseStatus } from '../../../models/ExerciseStatus'
 import { ExerciseParams } from '../../../models/rest/ExerciseParams'
 
 export default async function handler(
@@ -11,9 +12,14 @@ export default async function handler(
 
     try {
         const { status } = req.query as ExerciseParams
-        const exercises = await (status ? fetchCollection('exercises', { status: status }) : fetchCollection('exercises'))
+
+        if (status && !Object.values(ExerciseStatus).includes(status as ExerciseStatus)) {
+            res.status(400).json({ message: 'invalid status' })
+        }
+
+        const exercises = await (status ? fetchExercises({ status: status }) : fetchExercises())
         res.status(200).json(exercises)
     } catch (e) {
-        res.status(500).json({ error: 'error fetching exercises' })
+        res.status(500).json({ isError: true, message: 'error fetching exercises' })
     }
 }
