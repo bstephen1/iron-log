@@ -1,15 +1,11 @@
-import { Autocomplete, Button, Divider, Stack, TextField } from '@mui/material';
+import { Autocomplete, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useEffect, useState } from 'react';
-import CueInput from '../../components/exercise-form/CueInput';
-import ModifiersInput from '../../components/exercise-form/ModifiersInput';
-import NameInput from '../../components/exercise-form/NameInput';
-import StatusInput from '../../components/exercise-form/StatusInput';
+import ExerciseForm from '../../components/exercise-form/ExerciseForm';
 import { ExerciseFormProvider } from '../../components/exercise-form/useExerciseForm';
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
-import { ExerciseStatus } from '../../models/ExerciseStatus';
 
 //todo: disable form stuff when no changes
 //todo: ui element showing "changes saved". Snackbar?
@@ -18,20 +14,11 @@ import { ExerciseStatus } from '../../models/ExerciseStatus';
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const [exercise, setExercise] = useState<Exercise | null>(null)
+    // const { dirtyExercise, formValidity, resetExercise } = useContext(ExerciseFormContext)
 
-    interface DirtyNameValidity {
-        isError: boolean,
-        reason: string,
-    }
-    const [dirtyNameValidity, setDirtyNameValidity] = useState<DirtyNameValidity>()
-    const [dirtyExercise, setDirtyExercise] = useState<Exercise | null>(null)
-    //todo: confirmation when you try to leave page or switch exercise that Name change will be discarded if error
-    const isNameError = !!exercise && dirtyNameValidity?.isError
-    const INVISIBLE_HELPER_TEXT = ' ' //use this to keep height constant when there's no helper text
-
-    function handleReset() {
-        setDirtyExercise(exercise)
-    }
+    //todo: tmp vars to not break stuff
+    const dirtyExercise = { cues: [] }
+    const resetExercise = () => { }
 
     //todo: let ts know that dirtyExercise can't be null if exercise is populated
     //todo: validate (drop empty cues)
@@ -40,30 +27,6 @@ export default function ManageExercisesPage() {
         updateExercise(dirtyExercise)
         setExercise(dirtyExercise)
         mutate(exercises)
-    }
-
-    function handleExerciseChange(newExercise: Exercise | null) {
-        setDirtyExercise(newExercise)
-        setExercise(newExercise)
-        setDirtyNameValidity({
-            isError: false,
-            reason: INVISIBLE_HELPER_TEXT,
-        })
-    }
-
-
-
-    //todo: really want to try to avoid the non-null assertion. How to let ts know this can't be called if dirtyExercise is null?
-    function handleStatusChange(newStatus: ExerciseStatus) {
-        setDirtyExercise({ ...dirtyExercise!, status: newStatus })
-    }
-
-    function handleModifiersChange(newModifiers: string[]) {
-        setDirtyExercise({ ...dirtyExercise!, validModifiers: newModifiers })
-    }
-
-    function handleNameChange(newName: string) {
-        setDirtyExercise({ ...dirtyExercise!, name: newName })
     }
 
     function handleDeleteCue(i: number) {
@@ -90,75 +53,27 @@ export default function ManageExercisesPage() {
     }
 
     return (
-        <ExerciseFormProvider exercise={exercise}>
-            <Grid container spacing={2}>
-                {/* todo: big screens. Switch to side by side? vertical divider? */}
-                <Grid xs={12} md={3}>
-                    <Autocomplete
-                        options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
-                        groupBy={exercise => exercise.status}
-                        getOptionLabel={option => option.name}
-                        value={exercise}
-                        onChange={(e, newExercise) => handleExerciseChange(newExercise)}
-                        renderInput={(params) => <TextField {...params} label='Exercise' />}
-                    />
-                </Grid>
-                <Grid xs={12}>
-                    <StyledDivider />
-                </Grid>
-                <Grid container xs={12} md={9} spacing={2}>
-                    <Grid xs={6}>
-                        <Stack spacing={2}>
-                            <NameInput
-                                cleanName={exercise?.name}
-                                dirtyName={dirtyExercise?.name}
-                                handleChange={handleNameChange}
-                            />
-                            <StatusInput />
-                            <ModifiersInput />
-                        </Stack>
-                    </Grid>
-                    <Grid xs={6}>
-                        {/* todo: center text? outline? divider style in the middle? */}
-                        <Divider textAlign='center'>
-                            Cues
-                        </Divider>
-                        {/* todo: Component for each ListItem. drag n drop? */}
-                        <Button
-                            disabled={!exercise}
-                            onClick={() => setDirtyExercise({ ...dirtyExercise, cues: ['', ...dirtyExercise.cues] })}
-                        >
-                            Add
-                        </Button>
-                        <Stack spacing={2}>
-                            {dirtyExercise?.cues.map((cue, i) => (
-                                <CueInput
-                                    key={i}
-                                    index={i}
-                                    value={cue}
-                                    handleDelete={handleDeleteCue}
-                                    handleUpdate={handleCueUpdate}
-                                />))}
-                        </Stack>
-                    </Grid>
-                </Grid>
-                <Grid xs={12}>
-                    <TextField
-                        multiline
-                        fullWidth
-                        disabled={!exercise}
-                        value={dirtyExercise?.notes || ''}
-                        onChange={(e) => setDirtyExercise({ ...dirtyExercise, notes: e.target.value })}
-                        label='Notes'
-                    />
-                </Grid>
-                <Grid xs={12}>
-                    <Button onClick={handleReset} disabled={!exercise}>Reset</Button>
-                    {/* todo: disable when no changes */}
-                    <Button variant='contained' disabled={!exercise || isNameError} onClick={handleSubmit}>Save Changes</Button>
-                </Grid>
-            </Grid >
-        </ExerciseFormProvider>
+        <Grid container spacing={2}>
+            <Grid xs={12} md={3}>
+                <Autocomplete
+                    options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
+                    groupBy={exercise => exercise.status}
+                    getOptionLabel={option => option.name}
+                    value={exercise}
+                    onChange={(e, newExercise) => setExercise(newExercise)}
+                    renderInput={(params) => <TextField {...params} label='Exercise' />}
+                />
+            </Grid>
+            {/* todo: vertical on md */}
+            <Grid xs={12} md={1}>
+                <StyledDivider />
+            </Grid>
+            <Grid container xs={12} md={8}>
+                <ExerciseFormProvider cleanExercise={exercise}>
+                    <ExerciseForm exercise={exercise} />
+                </ExerciseFormProvider>
+            </Grid>
+        </Grid >
     )
 
 }
