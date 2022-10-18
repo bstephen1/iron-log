@@ -6,7 +6,7 @@ import { ExerciseFormContext } from './useExerciseForm';
 
 export default function StatusInput() {
     const statuses = Object.values(ExerciseStatus)
-    const { status, setField, disabled } = useContext(ExerciseFormContext)
+    const { status, setField } = useContext(ExerciseFormContext)
 
     return (
         <TextField
