@@ -34,7 +34,7 @@ export default function NameInput() {
             disabled={name == null}
             helperText={formValidity.name?.reason ?? ' '} //always keep at least a single space to keep consistent padding
             value={name}
-            // InputLabelProps={{ shrink: !!name }} //doesn't always recognize a name exists when switching exercises
+            InputLabelProps={{ shrink: !!name }} //doesn't always recognize a name exists when switching exercises
             onChange={(e) => validateChange(e.target.value)}
         />
     )

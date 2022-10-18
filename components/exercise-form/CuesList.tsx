@@ -1,7 +1,49 @@
 import ClearIcon from '@mui/icons-material/Clear';
-import { IconButton, InputBase, Paper } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Button, Divider, IconButton, InputBase, Paper, Stack } from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
+import { ExerciseFormContext } from './useExerciseForm';
 
+
+export default function CuesList() {
+    // todo: this has lost its type! (and other context fields)
+    const { cues, cleanExercise, setField } = useContext(ExerciseFormContext)
+
+    function handleDeleteCue(i: number) {
+        const newCues = cues.slice(0, i).concat(cues.slice(i + 1))
+        setField('cues', newCues)
+    }
+
+    function handleUpdateCue(newCue: string, i: number) {
+        const newCues = cues.slice(0, i).concat(newCue).concat(cues.slice(i + 1))
+        setField('cues', newCues)
+    }
+
+    return (
+        <>
+            {/* todo: center text? outline? divider style in the middle? */}
+            <Divider textAlign='center'>
+                Cues
+            </Divider>
+            {/* todo: Component for each ListItem. drag n drop? */}
+            <Button
+                disabled={!cleanExercise}
+                onClick={() => setField('cues', ['', ...cues])}
+            >
+                Add
+            </Button>
+            <Stack spacing={2}>
+                {cues?.map((cue, i) => (
+                    <CueInput
+                        key={i}
+                        index={i}
+                        value={cue}
+                        handleDelete={handleDeleteCue}
+                        handleUpdate={handleUpdateCue}
+                    />))}
+            </Stack>
+        </>
+    )
+}
 
 
 interface Props {
@@ -10,7 +52,7 @@ interface Props {
     handleDelete: (key: any) => void,
     handleUpdate: (value: string, index: number) => void,
 }
-export default function CueInput(props: Props) {
+function CueInput(props: Props) {
     const { index, handleDelete, handleUpdate } = props
     const [value, setValue] = useState(props.value)
 
@@ -36,8 +78,6 @@ export default function CueInput(props: Props) {
         setValue(props.value)
     }, [props.value])
 
-    //todo: cursor position at end of input on mount, or where mouse is clicking
-    //todo: input is shrinking width compared with text only
     return (
         <Paper
             component='form'
@@ -62,8 +102,6 @@ export default function CueInput(props: Props) {
             >
                 <ClearIcon />
             </IconButton>
-
         </Paper>
-
     )
 }
