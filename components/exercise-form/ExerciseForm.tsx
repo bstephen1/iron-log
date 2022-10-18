@@ -1,11 +1,11 @@
-import { Button, Divider, Stack, TextField } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useContext } from 'react';
 import Exercise from '../../models/Exercise';
 import CuesList from './CuesList';
-import CueInput from './CuesList';
 import ModifiersInput from './ModifiersInput';
 import NameInput from './NameInput';
+import NotesInput from './NotesInput';
 import StatusInput from './StatusInput';
 import { ExerciseFormContext } from './useExerciseForm';
 
@@ -29,14 +29,7 @@ export default function ExerciseForm({ exercise }: Props) {
                 <CuesList />
             </Grid>
             <Grid xs={12}>
-                <TextField
-                    multiline
-                    fullWidth
-                    disabled={!exercise}
-                    value={dirtyExercise?.notes || ''}
-                    // onChange={(e) => setDirtyExercise({ ...dirtyExercise, notes: e.target.value })}
-                    label='Notes'
-                />
+                <NotesInput />
             </Grid>
             <Grid xs={12}>
                 <Button onClick={resetExercise} disabled={!exercise}>Reset</Button>
