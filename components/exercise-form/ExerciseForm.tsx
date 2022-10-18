@@ -21,7 +21,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
 
     //todo: let ts know that dirtyExercise can't be null if exercise is populated
     //todo: validate (drop empty cues)
-    function validateChanges() {
+    function validateAndSubmit() {
         isFormValid && handleSubmit(dirtyExercise)
     }
 
@@ -43,7 +43,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
             <Grid xs={12}>
                 <Button onClick={resetExercise} disabled={!exercise}>Reset</Button>
                 {/* todo: disable when no changes */}
-                <Button variant='contained' disabled={!exercise || !isFormValid} onClick={validateChanges}>Save Changes</Button>
+                <Button variant='contained' disabled={!exercise || !isFormValid} onClick={validateAndSubmit}>Save Changes</Button>
                 {/* put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
             </Grid>
         </Grid>

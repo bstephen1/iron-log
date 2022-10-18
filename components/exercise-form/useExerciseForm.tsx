@@ -32,10 +32,6 @@ export function ExerciseFormProvider({ children, cleanExercise }: Props) {
     }
 
     useEffect(() => {
-        console.log(invalidFields)
-    }, [invalidFields])
-
-    useEffect(() => {
         setDirtyExercise(cleanExercise)
         setInvalidFields({})
     }, [cleanExercise])

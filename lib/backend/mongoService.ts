@@ -47,7 +47,7 @@ export async function createExercise(exercise: Exercise) {
 
 export async function updateExercise(exercise: Exercise) {
     const convertedId = new ObjectId(exercise._id) //the ObjectId gets treated as a string afterJSONifying, so we need to convert it back
-    return await exercises.replaceOne({ _id: exercise._id }, { ...exercise, _id: convertedId })
+    return await exercises.replaceOne({ _id: convertedId }, { ...exercise, _id: convertedId }, { upsert: true })
 }
 
 
