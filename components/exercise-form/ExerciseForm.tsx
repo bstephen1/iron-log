@@ -11,10 +11,19 @@ import { ExerciseFormContext } from './useExerciseForm';
 
 interface Props {
     exercise: Exercise | null,
+    handleSubmit: (exercise: Exercise) => void
 }
-export default function ExerciseForm({ exercise }: Props) {
-    const { dirtyExercise, formValidity, resetExercise } = useContext(ExerciseFormContext)
+export default function ExerciseForm({ exercise, handleSubmit }: Props) {
+    const { dirtyExercise, invalidFields, resetExercise } = useContext(ExerciseFormContext)
 
+    //if a field was once invalid but now valid, it will be undefined
+    const isFormValid = Object.keys(invalidFields).every((key) => !invalidFields[key])
+
+    //todo: let ts know that dirtyExercise can't be null if exercise is populated
+    //todo: validate (drop empty cues)
+    function validateChanges() {
+        isFormValid && handleSubmit(dirtyExercise)
+    }
 
     return (
         <Grid container spacing={2}>
@@ -34,7 +43,8 @@ export default function ExerciseForm({ exercise }: Props) {
             <Grid xs={12}>
                 <Button onClick={resetExercise} disabled={!exercise}>Reset</Button>
                 {/* todo: disable when no changes */}
-                <Button variant='contained' disabled={!exercise} onClick={undefined}>Save Changes</Button>
+                <Button variant='contained' disabled={!exercise || !isFormValid} onClick={validateChanges}>Save Changes</Button>
+                {/* put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
             </Grid>
         </Grid>
     )

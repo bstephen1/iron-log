@@ -5,24 +5,24 @@ import { ExerciseFormContext } from './useExerciseForm';
 
 export default function NameInput() {
     const { exercises } = useExercises() //this should be cached from the top level form (so no additional network request)
-    const { name, setField, cleanExercise, formValidity, setValidity } = useContext(ExerciseFormContext)
+    const { name, setField, cleanExercise, invalidFields, setValidity } = useContext(ExerciseFormContext)
 
     function validateChange(newName: string) {
-        let isError = false
-        let reason = ' '
+        let isValid = true
+        let reason = ''
 
         if (!newName) {
-            isError = true
+            isValid = false
             reason = `Can't have an empty name!`
         } else if (cleanExercise.name === newName) {
             //valid -- explicity stated to avoid unnecessary find()
         } else if (exercises?.find(e => e.name === newName)) {
-            isError = true
+            isValid = false
             reason = 'This exercise already exists!'
         }
 
         setField('name', newName)
-        setValidity('name', { isError: isError, reason: reason, })
+        setValidity('name', isValid, reason)
     }
 
     //todo: when null-ing exercise, the name remains
@@ -30,9 +30,9 @@ export default function NameInput() {
         <TextField
             required
             label='Name'
-            error={formValidity.name?.isError}
+            error={!!invalidFields.name}
             disabled={name == null}
-            helperText={formValidity.name?.reason ?? ' '} //always keep at least a single space to keep consistent padding
+            helperText={invalidFields.name ?? ' '} //always keep at least a single space to keep consistent padding
             value={name}
             InputLabelProps={{ shrink: !!name }} //doesn't always recognize a name exists when switching exercises
             onChange={(e) => validateChange(e.target.value)}

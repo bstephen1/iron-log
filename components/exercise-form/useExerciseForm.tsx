@@ -5,13 +5,8 @@ import Exercise from '../../models/Exercise';
 export const ExerciseFormContext = createContext<any>(null)
 
 //actually need to use a type here over interface (called a mapped type)
-export type FormValidity = {
-    [field in keyof Exercise]?: FieldValidity
-}
-export interface FieldValidity {
-    field: keyof Exercise,
-    isValid: boolean,
-    reason: string,
+export type InvalidFields = {
+    [field in keyof Exercise]?: string
 }
 
 interface Props {
@@ -20,18 +15,31 @@ interface Props {
 }
 export function ExerciseFormProvider({ children, cleanExercise }: Props) {
     const [dirtyExercise, setDirtyExercise] = useState<Exercise | null>(cleanExercise)
-    const [formValidity, setFormValidity] = useState<FormValidity>({})
+    const [invalidFields, setInvalidFields] = useState<InvalidFields>({})
 
     //todo: value type. Should be something like typeof Exercise[field]
     const setField = (field: keyof Exercise, value: any) => dirtyExercise && setDirtyExercise({ ...dirtyExercise, [field]: value })
-    const setValidity = (field: keyof Exercise, validity: FieldValidity) => setFormValidity({ ...formValidity, [field]: validity })
-    const resetExercise = () => setDirtyExercise(cleanExercise)
+
+    const resetExercise = () => {
+        setDirtyExercise(cleanExercise)
+        setInvalidFields({})
+    }
+
+    const setValidity = (field: keyof Exercise, isValid: boolean, reason: string) => {
+        isValid
+            ? invalidFields[field] && setInvalidFields({ ...invalidFields, [field]: undefined })
+            : setInvalidFields({ ...invalidFields, [field]: reason })
+    }
+
+    useEffect(() => {
+        console.log(invalidFields)
+    }, [invalidFields])
+
     useEffect(() => {
         setDirtyExercise(cleanExercise)
-        setFormValidity({})
+        setInvalidFields({})
     }, [cleanExercise])
 
-    //todo: add validity field
     return (
         <ExerciseFormContext.Provider
             value={{
@@ -39,7 +47,7 @@ export function ExerciseFormProvider({ children, cleanExercise }: Props) {
                 dirtyExercise,
                 ...dirtyExercise, //spread lets each component select only the fields they use
                 setField,
-                formValidity,
+                invalidFields,
                 setValidity,
                 resetExercise,
             }}

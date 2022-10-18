@@ -18,35 +18,12 @@ export default function ManageExercisesPage() {
 
     //todo: tmp vars to not break stuff
     const dirtyExercise = { cues: [] }
-    const resetExercise = () => { }
 
-    //todo: let ts know that dirtyExercise can't be null if exercise is populated
-    //todo: validate (drop empty cues)
-    function handleSubmit() {
-        console.log(dirtyExercise)
-        updateExercise(dirtyExercise)
-        setExercise(dirtyExercise)
+    function handleSubmit(exercise: Exercise) {
+        updateExercise(exercise)
+        setExercise(exercise)
         mutate(exercises)
     }
-
-    function handleDeleteCue(i: number) {
-        const newCues = dirtyExercise.cues.slice(0, i).concat(dirtyExercise.cues.slice(i + 1))
-        const newExercise = { ...dirtyExercise, cues: newCues }
-        setDirtyExercise(newExercise)
-    }
-
-    function handleCueUpdate(newCue: string, i: number) {
-        const newCues = dirtyExercise.cues.slice(0, i).concat(newCue).concat(dirtyExercise?.cues.slice(i + 1))
-        console.log('updating...')
-        console.log(newCues)
-        setDirtyExercise({ ...dirtyExercise, cues: newCues })
-    }
-
-    //todo: remove (for testing)
-    useEffect(() => {
-        console.log(dirtyExercise)
-        console.log(dirtyExercise?.cues)
-    }, [dirtyExercise])
 
     if (!exercises) {
         return <></>
@@ -70,7 +47,7 @@ export default function ManageExercisesPage() {
             </Grid>
             <Grid container xs={12} md={8}>
                 <ExerciseFormProvider cleanExercise={exercise}>
-                    <ExerciseForm exercise={exercise} />
+                    <ExerciseForm exercise={exercise} handleSubmit={handleSubmit} />
                 </ExerciseFormProvider>
             </Grid>
         </Grid >
