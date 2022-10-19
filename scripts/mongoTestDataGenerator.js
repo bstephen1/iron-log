@@ -30,10 +30,6 @@ function addName(name) {
     return { name }
 }
 
-function addExercise(name, status, notes, cues, validModifiers) {
-    return { name, status, notes, cues, validModifiers }
-}
-
 function addSet(weight, reps, rpe) {
     return { weight, reps, rpe }
 }
