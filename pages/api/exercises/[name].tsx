@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createExercise, fetchExercise, updateExercise } from '../../../lib/backend/mongoService'
+import { addExercise, fetchExercise, updateExercise } from '../../../lib/backend/mongoService'
 
 export default async function handler(
     req: NextApiRequest,
@@ -25,7 +25,7 @@ export default async function handler(
             break
         case 'POST':
             try {
-                await createExercise(JSON.parse(req.body))
+                await addExercise(JSON.parse(req.body))
                 res.status(201).end()
             } catch (e) {
                 res.status(500).json({ message: 'could not create exercise' })

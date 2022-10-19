@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createSession, fetchSession, updateSession } from '../../../lib/backend/mongoService'
+import { addSession, fetchSession, updateSession } from '../../../lib/backend/mongoService'
 import { validDateStringRegex } from '../../../lib/frontend/constants'
 
 export default async function handler(
@@ -25,7 +25,7 @@ export default async function handler(
             break
         case 'POST':
             try {
-                await createSession(JSON.parse(req.body))
+                await addSession(JSON.parse(req.body))
                 res.status(201).end()
             } catch (e) {
                 res.status(500).json({ message: 'could not create record' })
