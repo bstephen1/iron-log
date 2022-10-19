@@ -21,7 +21,6 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     const hasNoUnchangedFields = true
     const isFormValid = dirtyExercise && hasNoInvalidFields && hasNoUnchangedFields
 
-    //todo: let ts know that dirtyExercise can't be null if exercise is populated
     //todo: validate (drop empty cues)
     function validateAndSubmit() {
         isFormValid && handleSubmit(dirtyExercise)

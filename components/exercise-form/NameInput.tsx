@@ -24,7 +24,6 @@ export default function NameInput() {
         setValidity('name', isValid, reason)
     }
 
-    //todo: when null-ing exercise, the name remains
     return (
         <TextField
             required
