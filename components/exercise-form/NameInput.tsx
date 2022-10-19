@@ -32,7 +32,7 @@ export default function NameInput() {
             error={!!invalidFields.name}
             disabled={name == null}
             helperText={invalidFields.name ?? ' '} //always keep at least a single space to keep consistent padding
-            value={name}
+            value={name ?? ''}
             InputLabelProps={{ shrink: !!name }} //doesn't always recognize a name exists when switching exercises
             onChange={(e) => validateChange(e.target.value)}
         />

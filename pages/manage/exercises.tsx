@@ -1,6 +1,6 @@
 import { Autocomplete, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ExerciseForm from '../../components/exercise-form/ExerciseForm';
 import { ExerciseFormProvider } from '../../components/exercise-form/useExerciseForm';
 import StyledDivider from '../../components/StyledDivider';
