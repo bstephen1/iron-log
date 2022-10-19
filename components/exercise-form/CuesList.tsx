@@ -1,12 +1,11 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import { Button, Divider, IconButton, InputBase, Paper, Stack } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
-import { ExerciseFormContext } from './useExerciseForm';
-
+import { useEffect, useState } from 'react';
+import { useExerciseFormContext } from './useExerciseForm';
 
 export default function CuesList() {
-    // todo: this has lost its type! (and other context fields)
-    const { cues, cleanExercise, setField } = useContext(ExerciseFormContext)
+    const { dirtyExercise, cleanExercise, setField } = useExerciseFormContext()
+    const cues = dirtyExercise?.cues ?? []
 
     function handleDeleteCue(i: number) {
         const newCues = cues.slice(0, i).concat(cues.slice(i + 1))
@@ -32,7 +31,7 @@ export default function CuesList() {
                 Add
             </Button>
             <Stack spacing={2}>
-                {cues?.map((cue, i) => (
+                {cues.map((cue, i) => (
                     <CueInput
                         key={i}
                         index={i}
@@ -72,8 +71,8 @@ function CueInput(props: Props) {
 
 
     //props.value will change when deleting an element or switching exercise,
-    //but the EditableListItems will not rerender because they still exist in the new screen.
-    //So we have to let them know to update value's state with the new props
+    //but this component will not rerender when it still exists in the new screen (depends on list length).
+    //So we have to let it know to update state
     useEffect(() => {
         setValue(props.value)
     }, [props.value])
@@ -90,7 +89,7 @@ function CueInput(props: Props) {
                 multiline
                 value={value}
                 onBlur={handleBlur}
-                onKeyDown={(e) => e.key === 'Enter' && (document.activeElement as HTMLElement).blur()}
+                onKeyDown={(e) => e.key === 'Enter' && (document.activeElement as HTMLElement).blur()} //todo: not sure about this behavior
                 onChange={(e) => setValue(e.target.value)}
                 inputProps={{ 'aria-label': 'Add cue' }}
             />

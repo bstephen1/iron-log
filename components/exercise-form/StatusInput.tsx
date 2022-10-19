@@ -1,12 +1,10 @@
 import { MenuItem, TextField } from '@mui/material';
-import { useContext } from 'react';
 import { ExerciseStatus } from '../../models/ExerciseStatus';
-import { ExerciseFormContext } from './useExerciseForm';
-
+import { useExerciseFormContext } from './useExerciseForm';
 
 export default function StatusInput() {
+    const { status, setField } = useExerciseFormContext()
     const statuses = Object.values(ExerciseStatus)
-    const { status, setField } = useContext(ExerciseFormContext)
 
     return (
         <TextField

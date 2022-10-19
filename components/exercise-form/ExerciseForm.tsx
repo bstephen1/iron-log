@@ -1,23 +1,25 @@
 import { Button, Stack } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
-import { useContext } from 'react';
 import Exercise from '../../models/Exercise';
 import CuesList from './CuesList';
 import ModifiersInput from './ModifiersInput';
 import NameInput from './NameInput';
 import NotesInput from './NotesInput';
 import StatusInput from './StatusInput';
-import { ExerciseFormContext } from './useExerciseForm';
+import { useExerciseFormContext } from './useExerciseForm';
 
 interface Props {
     exercise: Exercise | null,
     handleSubmit: (exercise: Exercise) => void
 }
 export default function ExerciseForm({ exercise, handleSubmit }: Props) {
-    const { dirtyExercise, invalidFields, resetExercise } = useContext(ExerciseFormContext)
+    const { dirtyExercise, invalidFields, resetExercise } = useExerciseFormContext()
 
-    //if a field was once invalid but now valid, it will be undefined
-    const isFormValid = Object.keys(invalidFields).every((key) => !invalidFields[key])
+    //any field with a reason string is invalid
+    const hasNoInvalidFields = Object.values(invalidFields).every((value) => !value)
+    //todo: unchanged fields
+    const hasNoUnchangedFields = true
+    const isFormValid = dirtyExercise && hasNoInvalidFields && hasNoUnchangedFields
 
     //todo: let ts know that dirtyExercise can't be null if exercise is populated
     //todo: validate (drop empty cues)
@@ -42,9 +44,8 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
             </Grid>
             <Grid xs={12}>
                 <Button onClick={resetExercise} disabled={!exercise}>Reset</Button>
-                {/* todo: disable when no changes */}
-                <Button variant='contained' disabled={!exercise || !isFormValid} onClick={validateAndSubmit}>Save Changes</Button>
-                {/* put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
+                <Button variant='contained' disabled={!isFormValid} onClick={validateAndSubmit}>Save Changes</Button>
+                {/* todo: put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
             </Grid>
         </Grid>
     )

@@ -1,17 +1,18 @@
 import { CheckBoxOutlineBlank } from '@mui/icons-material';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Autocomplete, Checkbox, CircularProgress, TextField } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useModifiers } from '../../lib/frontend/restService';
-import { ExerciseFormContext } from './useExerciseForm';
+import { useExerciseFormContext } from './useExerciseForm';
 
 export default function ModifiersInput() {
     const { modifiers } = useModifiers()
-    const { validModifiers, setField } = useContext(ExerciseFormContext)
+    const { validModifiers, setField } = useExerciseFormContext()
     const modifierNames = modifiers?.map(modifier => modifier.name) || []
     const [open, setOpen] = useState(false) //need this to show loading only while open
     const loading = !modifiers && open //probably unlikely to ever see this since it's nested deep in the form
 
+    //todo: can the loader be extracted to a component? Could use it for other autocompletes
     return (
         <Autocomplete
             multiple

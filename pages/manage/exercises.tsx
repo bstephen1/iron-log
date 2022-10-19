@@ -14,10 +14,6 @@ import Exercise from '../../models/Exercise';
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const [exercise, setExercise] = useState<Exercise | null>(null)
-    // const { dirtyExercise, formValidity, resetExercise } = useContext(ExerciseFormContext)
-
-    //todo: tmp vars to not break stuff
-    const dirtyExercise = { cues: [] }
 
     function handleSubmit(exercise: Exercise) {
         updateExercise(exercise)
@@ -52,5 +48,4 @@ export default function ManageExercisesPage() {
             </Grid>
         </Grid >
     )
-
 }

@@ -1,10 +1,8 @@
 import { TextField } from '@mui/material';
-import { useContext } from 'react';
-import { ExerciseFormContext } from './useExerciseForm';
-
+import { useExerciseFormContext } from './useExerciseForm';
 
 export default function NotesInput() {
-    const { notes, setField } = useContext(ExerciseFormContext)
+    const { notes, setField } = useExerciseFormContext()
 
     return (
         <TextField

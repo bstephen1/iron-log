@@ -1,11 +1,10 @@
 import { TextField } from '@mui/material';
-import { useContext } from 'react';
 import { useExercises } from '../../lib/frontend/restService';
-import { ExerciseFormContext } from './useExerciseForm';
+import { useExerciseFormContext } from './useExerciseForm';
 
 export default function NameInput() {
     const { exercises } = useExercises() //this should be cached from the top level form (so no additional network request)
-    const { name, setField, cleanExercise, invalidFields, setValidity } = useContext(ExerciseFormContext)
+    const { name, setField, cleanExercise, invalidFields, setValidity } = useExerciseFormContext()
 
     function validateChange(newName: string) {
         let isValid = true
@@ -14,7 +13,7 @@ export default function NameInput() {
         if (!newName) {
             isValid = false
             reason = `Can't have an empty name!`
-        } else if (cleanExercise.name === newName) {
+        } else if (cleanExercise?.name === newName) {
             //valid -- explicity stated to avoid unnecessary find()
         } else if (exercises?.find(e => e.name === newName)) {
             isValid = false
