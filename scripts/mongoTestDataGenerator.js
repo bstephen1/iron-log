@@ -1,5 +1,25 @@
+const { randomUUID } = require('crypto')
 
 const db = connect('mongodb://localhost:27017/test')
+
+
+//todo: REALLY don't like having to redefine this here, but it doesn't seem to be able to import the .ts class
+class Exercise {
+    constructor(
+        name,
+        status = 'active',
+        notes = '',
+        cues = [],
+        validModifiers = [],
+    ) {
+        this.name = name,
+            this.status = status,
+            this.notes = notes,
+            this.cues = cues,
+            this.validModifiers = validModifiers,
+            this._id = randomUUID()
+    }
+}
 
 
 function addModifier(name, status, canDelete) {
@@ -38,9 +58,9 @@ let modifiers = [
 
 
 let exercises = [
-    addExercise('squats', 'active', 'Milk and squats.', ['knees out', 'chest up'], ['belt', 'band']),
-    addExercise('curls', 'active', 'curl curl curl', ['a', 'b', 'c', 'd', 'f', 'e'], ['bodyweight', 'unilateral']),
-    addExercise('zercher squat', 'archived', 'never again', ['pain'], ['AMRAP']),
+    new Exercise('squats', 'active', 'Milk and squats.', ['knees out', 'chest up'], ['belt', 'band']),
+    new Exercise('curls', 'active', 'curl curl curl', ['a', 'b', 'c', 'd', 'f', 'e'], ['bodyweight', 'unilateral']),
+    new Exercise('zercher squat', 'archived', 'never again', ['pain'], ['AMRAP']),
 ]
 
 //todo: myo, super, rep range (?), weigh-in, cardio
@@ -78,4 +98,8 @@ db.exercises.insertMany(exercises)
 db.setTypes.insertMany(setTypes)
 db.sessions.insertMany(sessions)
 
-
+console.log('')
+console.log('-----------------------------')
+console.log('Script finished successfully!')
+console.log('-----------------------------')
+console.log('')
