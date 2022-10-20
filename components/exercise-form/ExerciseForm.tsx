@@ -37,10 +37,10 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
                 </Stack>
             </Grid>
             <Grid xs={12} sm={6}>
-                <CuesList />
+                <NotesInput />
             </Grid>
             <Grid xs={12}>
-                <NotesInput />
+                <CuesList />
             </Grid>
             <Grid xs={12}>
                 <Button onClick={resetExercise} disabled={!exercise}>Reset</Button>
