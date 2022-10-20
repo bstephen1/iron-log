@@ -1,4 +1,4 @@
-import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
+import { Autocomplete, CircularProgress, createFilterOptions, TextField } from '@mui/material';
 import Grid from '@mui/system/Unstable_Grid';
 import { useState } from 'react';
 import ExerciseForm from '../../components/exercise-form/ExerciseForm';
@@ -14,6 +14,8 @@ import Exercise from '../../models/Exercise';
 export default function ManageExercisesPage() {
     const { exercises, mutate } = useExercises()
     const [exercise, setExercise] = useState<Exercise | null>(null)
+    const [open, setOpen] = useState(false) //need this to show loading only while open
+    const loading = !exercises && open
     const filter = createFilterOptions<Exercise | NewExerciseStub>()
 
     //temporarily store the current input in a stub and only create a true Exercise if the stub is selected
@@ -32,10 +34,8 @@ export default function ManageExercisesPage() {
         mutate(exercises)
     }
 
-    if (!exercises) {
-        return <></>
-    }
 
+    //todo: move autocomplete to a component for this + session view
     //todo: when typing, if string becomes empty it disables the form, even if not submitted
     // todo: names should be case insensitive. 'Squats' === 'squats'
     return (
@@ -47,11 +47,14 @@ export default function ManageExercisesPage() {
                     handleHomeEndKeys
                     autoSelect
                     autoHighlight
-                    options={exercises} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
+                    onOpen={() => setOpen(true)}
+                    onClose={() => setOpen(false)}
+                    loading={loading}
+                    loadingText='Loading...'
+                    options={exercises || []} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
                     groupBy={option => option.status}
                     value={exercise}
                     onChange={(e, option) => (option && !('_id' in option)) ? setExercise(new Exercise(option.name)) : setExercise(option)}
-                    renderInput={(params) => <TextField {...params} label='Exercise' />}
                     getOptionLabel={option => option.name}
                     filterOptions={(options, params) => {
                         //was going to pull this out to a separate function but the param type definitions are long and annoying
@@ -68,6 +71,21 @@ export default function ManageExercisesPage() {
 
                         return filtered
                     }}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label='Exercise'
+                            InputProps={{
+                                ...params.InputProps,
+                                endAdornment: (
+                                    <>
+                                        {loading && <CircularProgress color="inherit" size={20} />}
+                                        {params.InputProps.endAdornment}
+                                    </>
+                                ),
+                            }}
+                        />
+                    )}
                 />
             </Grid>
             {/* todo: vertical on md */}

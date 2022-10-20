@@ -48,7 +48,6 @@ export default function RecordInput(props: Props) {
                             <Autocomplete
                                 options={activeExercises}
                                 getOptionLabel={option => option.name}
-                                //value/onChange update when a valid value is selected from the Autocomplete, not whenever a key is inputted
                                 value={activeExercises.find(ex => ex.name === exerciseName)}
                                 //specify undefined so it doesn't set to null when blank
                                 onChange={(e, newExercise) => updateRecord({ ...record, exerciseName: newExercise?.name || undefined }, index)}
