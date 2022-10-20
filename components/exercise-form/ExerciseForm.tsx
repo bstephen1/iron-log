@@ -43,7 +43,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
             </Grid>
             <Grid xs={12}>
                 <Button onClick={resetExercise} disabled={!exercise}>Reset</Button>
-                <Button variant='contained' disabled={!isFormValid} onClick={validateAndSubmit}>Save Changes</Button>
+                <Button variant='contained' disabled={!isFormValid} onClick={validateAndSubmit}>Save</Button>
                 {/* todo: put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
             </Grid>
         </Grid>
