@@ -1,5 +1,6 @@
-import { randomUUID } from 'crypto';
+import { v4 as uuid } from 'uuid';
 import { ExerciseStatus } from './ExerciseStatus';
+
 
 export default class Exercise {
     constructor(
@@ -8,6 +9,6 @@ export default class Exercise {
         public notes: string = '',
         public cues: string[] = [],
         public validModifiers: string[] = [],
-        public readonly _id: string = randomUUID(), //uuid
+        public readonly _id: string = uuid(),
     ) { }
 }
