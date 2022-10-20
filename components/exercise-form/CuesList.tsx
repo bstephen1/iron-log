@@ -52,8 +52,6 @@ export default function CuesList() {
 }
 
 //todo: Add cue on clear() is actually adding because it's blurring!
-//todo: clear() should be disabled when empty 
-//todo: addcue should be disabled when no exercise
 
 interface AddProps {
     handleAdd: (newCue: string) => void,
@@ -96,7 +94,7 @@ interface BaseProps {
 }
 function CueInputBase(props: BaseProps) {
     const { handleClear, handleConfirm, placeholder } = props
-    const { cues } = useExerciseFormContext()
+    const { cues, cleanExercise } = useExerciseFormContext()
     const [value, setValue] = useState(props.value)
 
     //reset state whenever the cues list changes. 
@@ -114,6 +112,7 @@ function CueInputBase(props: BaseProps) {
                 sx={{ ml: 1, flex: 1 }}
                 placeholder={placeholder}
                 autoFocus={!value}
+                disabled={!cleanExercise}
                 multiline //allow it to be multiline if it gets that long, but don't allow manual newlines
                 value={value}
                 onBlur={() => handleConfirm(value)}
@@ -133,17 +132,19 @@ function CueInputBase(props: BaseProps) {
                                 <CheckIcon />
                             </IconButton>
                         </Grow>
-                        <IconButton
-                            type='button'
-                            sx={{ p: '10px' }}
-                            aria-label='clear input'
-                            onClick={() => {
-                                setValue('')
-                                handleClear()
-                            }}
-                        >
-                            <ClearIcon />
-                        </IconButton>
+                        <Grow in={!!value}>
+                            <IconButton
+                                type='button'
+                                sx={{ p: '10px' }}
+                                aria-label='clear input'
+                                onClick={() => {
+                                    setValue('')
+                                    handleClear()
+                                }}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        </Grow>
                     </>
                 )}
             />
