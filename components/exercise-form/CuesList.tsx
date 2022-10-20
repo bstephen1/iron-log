@@ -24,7 +24,7 @@ export default function CuesList() {
     function handleAddCue(newCue: string) {
         if (!newCue) return
 
-        setField('cues', [...cues, newCue])
+        setField('cues', [newCue, ...cues])
     }
 
     return (
@@ -35,6 +35,9 @@ export default function CuesList() {
             </Divider>
             {/* todo: drag n drop? */}
             <Stack spacing={2}>
+                <CueInputAdd
+                    handleAdd={handleAddCue}
+                />
                 {cues.map((cue, i) => (
                     <CueInputListItem
                         key={i}
@@ -42,10 +45,8 @@ export default function CuesList() {
                         value={cue}
                         handleDelete={handleDeleteCue}
                         handleUpdate={handleUpdateCue}
-                    />))}
-                <CueInputAdd
-                    handleAdd={handleAddCue}
-                />
+                    />
+                ))}
             </Stack>
         </>
     )
