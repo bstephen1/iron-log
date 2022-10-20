@@ -52,6 +52,7 @@ export default function CuesList() {
     )
 }
 
+//todo: useRef to focus on add cue again after inputting something
 //todo: Add cue on clear() is actually adding because it's blurring!
 
 interface AddProps {
