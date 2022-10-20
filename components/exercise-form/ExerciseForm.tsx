@@ -26,6 +26,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
         isFormValid && handleSubmit(dirtyExercise)
     }
 
+    //todo: bring some of the smaller children into this file?
     return (
         <Grid container spacing={2}>
             <Grid xs={12} sm={6}>

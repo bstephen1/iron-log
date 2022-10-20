@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useExerciseFormContext } from './useExerciseForm';
 
 export default function CuesList() {
-    const { cleanExercise, dirtyExercise, setField } = useExerciseFormContext()
+    const { dirtyExercise, setField } = useExerciseFormContext()
     const cues = dirtyExercise?.cues ?? []
 
     function handleDeleteCue(i: number) {
@@ -14,8 +14,17 @@ export default function CuesList() {
     }
 
     function handleUpdateCue(newCue: string, i: number) {
+        if (newCue === cues[i]) return //don't update to the same thing!
+        if (!newCue) return handleDeleteCue(i) //delete empty cues //todo: maybe a toast "deleted empty cue"
+
         const newCues = cues.slice(0, i).concat(newCue).concat(cues.slice(i + 1))
         setField('cues', newCues)
+    }
+
+    function handleAddCue(newCue: string) {
+        if (!newCue) return
+
+        setField('cues', [...cues, newCue])
     }
 
     return (
@@ -24,10 +33,10 @@ export default function CuesList() {
             <Divider textAlign='center'>
                 Cues
             </Divider>
-            {/* todo: Component for each ListItem. drag n drop? */}
+            {/* todo: drag n drop? */}
             <Stack spacing={2}>
                 {cues.map((cue, i) => (
-                    <CueInputBase
+                    <CueInputListItem
                         key={i}
                         index={i}
                         value={cue}
@@ -35,110 +44,66 @@ export default function CuesList() {
                         handleUpdate={handleUpdateCue}
                     />))}
                 <CueInputAdd
-                    watcher={cleanExercise?.name}
-                    handleAdd={(newCue: string) => {
-                        console.log(newCue)
-                        setField('cues', [...cues, newCue])
-                    }}
+                    handleAdd={handleAddCue}
                 />
             </Stack>
         </>
     )
 }
 
+//todo: Add cue on clear() is actually adding because it's blurring!
+//todo: clear() should be disabled when empty 
+//todo: addcue should be disabled when no exercise
+
 interface AddProps {
-    watcher: any,
     handleAdd: (newCue: string) => void,
 }
-function CueInputAdd(props: AddProps) {
-    const { watcher, handleAdd } = props
-    const [value, setValue] = useState('')
+function CueInputAdd({ handleAdd }: AddProps) {
+    return (
+        <CueInputBase
+            value={''}
+            handleClear={() => { }}
+            handleConfirm={(value: string) => handleAdd(value)}
+            placeholder='Add Cue'
+        />
+    )
+}
 
-    const handleClear = () => setValue('')
-    function handleAddAndClear() {
-        handleClear()
-        handleAdd(value)
-    }
-
-    useEffect(() => {
-        handleClear()
-    }, [watcher])
+interface ListItemProps {
+    index: number,
+    value: string,
+    handleDelete: (index: number) => void,
+    handleUpdate: (newCue: string, index: number) => void,
+}
+function CueInputListItem(props: ListItemProps) {
+    const { index, value, handleDelete, handleUpdate } = props
 
     return (
-        <Paper
-            component='form'
-            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
-        >
-            <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder='Add cue'
-                autoFocus={!value}
-                multiline
-                value={value}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        (document.activeElement as HTMLElement).blur()
-                        handleAddAndClear()
-                    }
-                }}
-                onChange={(e) => setValue(e.target.value)}
-                inputProps={{ 'aria-label': 'Add cue' }}
-            />
-            <Grow in={!!value}>
-                <IconButton
-                    type='button'
-                    sx={{ p: '10px' }}
-                    disabled={!value}
-                    aria-label='add cue'
-                    onClick={handleAddAndClear}
-                >
-                    <CheckIcon />
-                </IconButton>
-            </Grow>
-            <IconButton
-                type='button'
-                sx={{ p: '10px' }}
-                disabled={!value}
-                aria-label='clear cue'
-                onClick={handleClear}
-            >
-                <ClearIcon />
-            </IconButton>
-        </Paper>
+        <CueInputBase
+            value={value}
+            handleClear={() => handleDelete(index)}
+            handleConfirm={(value: string) => handleUpdate(value, index)}
+            placeholder='Edit Cue'
+        />
     )
 }
 
 interface BaseProps {
-    index: number,
     value: string,
-    handleDelete: (key: any) => void,
-    handleUpdate: (value: string, index: number) => void,
+    handleClear: any,
+    handleConfirm: any,
+    placeholder?: string,
 }
 function CueInputBase(props: BaseProps) {
-    const { index, handleDelete, handleUpdate } = props
+    const { handleClear, handleConfirm, placeholder } = props
+    const { cues } = useExerciseFormContext()
     const [value, setValue] = useState(props.value)
 
-    function handleBlur() {
-        //no edits. Note this means a fresh, blank cue will not be deleted on blur
-        if (value === props.value) {
-            return
-        }
-
-        //todo: do we want to automatically delete an empty cue here? Or wait til submit?
-        if (!value) {
-            handleDelete(index)
-        } else {
-            handleUpdate(value, index)
-        }
-    }
-
-
-    //props.value will change when deleting an element or switching exercise,
-    //but this component will not rerender when it still exists in the new screen (depends on list length).
-    //So we have to let it know to update state
+    //reset state whenever the cues list changes. 
+    //This handles switching exercises, clearing the Add Cue bar after confirming, and any other weirdness (hopefully)
     useEffect(() => {
         setValue(props.value)
-    }, [props.value])
+    }, [cues])
 
     return (
         <Paper
@@ -147,23 +112,41 @@ function CueInputBase(props: BaseProps) {
         >
             <InputBase
                 sx={{ ml: 1, flex: 1 }}
-                placeholder='Add cue'
+                placeholder={placeholder}
                 autoFocus={!value}
-                multiline
+                multiline //allow it to be multiline if it gets that long, but don't allow manual newlines
                 value={value}
-                onBlur={handleBlur}
-                onKeyDown={(e) => e.key === 'Enter' && (document.activeElement as HTMLElement).blur()} //todo: not sure about this behavior
+                onBlur={() => handleConfirm(value)}
+                onKeyDown={(e) => e.key === 'Enter' && (document.activeElement as HTMLElement).blur()}
                 onChange={(e) => setValue(e.target.value)}
-                inputProps={{ 'aria-label': 'Add cue' }}
+                inputProps={{ 'aria-label': 'edit cue' }}
+                endAdornment={(
+                    <>
+                        <Grow in={!!value && value !== props.value}>
+                            <IconButton
+                                type='button'
+                                sx={{ p: '10px' }}
+                                disabled={!value}
+                                aria-label='add cue'
+                                onClick={() => handleConfirm(value)}
+                            >
+                                <CheckIcon />
+                            </IconButton>
+                        </Grow>
+                        <IconButton
+                            type='button'
+                            sx={{ p: '10px' }}
+                            aria-label='clear input'
+                            onClick={() => {
+                                setValue('')
+                                handleClear()
+                            }}
+                        >
+                            <ClearIcon />
+                        </IconButton>
+                    </>
+                )}
             />
-            <IconButton
-                type='button'
-                sx={{ p: '10px' }}
-                aria-label='delete cue'
-                onClick={() => handleDelete(index)}
-            >
-                <ClearIcon />
-            </IconButton>
         </Paper>
     )
 }
