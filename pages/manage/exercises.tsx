@@ -6,6 +6,7 @@ import { ExerciseFormProvider } from '../../components/exercise-form/useExercise
 import StyledDivider from '../../components/StyledDivider';
 import { updateExercise, useExercises } from '../../lib/frontend/restService';
 import Exercise from '../../models/Exercise';
+import { ExerciseStatusOrder } from '../../models/ExerciseStatus';
 
 //todo: disable form stuff when no changes
 //todo: ui element showing "changes saved". Snackbar?
@@ -51,7 +52,7 @@ export default function ManageExercisesPage() {
                     onClose={() => setOpen(false)}
                     loading={loading}
                     loadingText='Loading...'
-                    options={exercises || []} //todo: should sort. localeCompare? Some kind of hardcoded list (eg, favorites > active > archived)?
+                    options={exercises?.sort((a, b) => ExerciseStatusOrder[a.status] - ExerciseStatusOrder[b.status]) || []}
                     groupBy={option => option.status}
                     value={exercise}
                     onChange={(e, option) => (option && !('_id' in option)) ? setExercise(new Exercise(option.name)) : setExercise(option)}
