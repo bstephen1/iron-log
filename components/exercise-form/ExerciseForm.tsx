@@ -51,7 +51,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
           Reset
         </Button>
         <Button
-          variant='contained'
+          variant="contained"
           disabled={!isFormValid}
           onClick={validateAndSubmit}
         >

@@ -27,7 +27,7 @@ export default function ModifiersInput() {
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       loading={loading}
-      loadingText='Loading...'
+      loadingText="Loading..."
       value={validModifiers || []}
       disableCloseOnSelect
       autoHighlight
@@ -35,12 +35,12 @@ export default function ModifiersInput() {
       renderInput={(params) => (
         <TextField
           {...params}
-          label='Valid Modifiers'
+          label="Valid Modifiers"
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <>
-                {loading && <CircularProgress color='inherit' size={20} />}
+                {loading && <CircularProgress color="inherit" size={20} />}
                 {params.InputProps.endAdornment}
               </>
             ),

@@ -40,7 +40,7 @@ export default function CuesList() {
   return (
     <>
       {/* todo: center text? outline? divider style in the middle? */}
-      <Divider textAlign='center'>Cues</Divider>
+      <Divider textAlign="center">Cues</Divider>
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         <CueInputAdd handleAdd={handleAddCue} />
@@ -70,7 +70,7 @@ function CueInputAdd({ handleAdd }: AddProps) {
       value={''}
       handleClear={() => {}}
       handleConfirm={(value: string) => handleAdd(value)}
-      placeholder='Add Cue'
+      placeholder="Add Cue"
     />
   )
 }
@@ -89,7 +89,7 @@ function CueInputListItem(props: ListItemProps) {
       value={value}
       handleClear={() => handleDelete(index)}
       handleConfirm={(value: string) => handleUpdate(value, index)}
-      placeholder='Edit Cue'
+      placeholder="Edit Cue"
     />
   )
 }
@@ -113,7 +113,7 @@ function CueInputBase(props: BaseProps) {
 
   return (
     <Paper
-      component='form'
+      component="form"
       sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
     >
       <InputBase
@@ -133,10 +133,10 @@ function CueInputBase(props: BaseProps) {
           <>
             <Grow in={!!value && value !== props.value}>
               <IconButton
-                type='button'
+                type="button"
                 sx={{ p: '10px' }}
                 disabled={!value}
-                aria-label='add cue'
+                aria-label="add cue"
                 onClick={() => handleConfirm(value)}
               >
                 <CheckIcon />
@@ -144,9 +144,9 @@ function CueInputBase(props: BaseProps) {
             </Grow>
             <Grow in={!!value}>
               <IconButton
-                type='button'
+                type="button"
                 sx={{ p: '10px' }}
-                aria-label='clear input'
+                aria-label="clear input"
                 onClick={() => {
                   setValue('')
                   handleClear()

@@ -11,7 +11,7 @@ export default function NotesInput() {
       disabled={notes == null}
       value={notes ?? ''}
       onChange={(e) => setField('notes', e.target.value)}
-      label='Notes'
+      label="Notes"
     />
   )
 }

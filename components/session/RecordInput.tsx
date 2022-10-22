@@ -55,10 +55,10 @@ export default function RecordInput(props: Props) {
       ref={listItemButton}
       onClick={() => setOpen(!open)}
       sx={{ p: 0, borderRadius: 1 }}
-      id='clickableArea'
+      id="clickableArea"
     >
       <Paper elevation={3} sx={{ px: 1, width: 1 }}>
-        <Box p={2} display='flex' justifyContent='space-between'>
+        <Box p={2} display="flex" justifyContent="space-between">
           {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
           <Grid
             container
@@ -80,7 +80,7 @@ export default function RecordInput(props: Props) {
                   )
                 }
                 renderInput={(params) => (
-                  <TextField {...params} variant='standard' label='Exercise' />
+                  <TextField {...params} variant="standard" label="Exercise" />
                 )}
               />
             </Grid>
@@ -93,7 +93,7 @@ export default function RecordInput(props: Props) {
                   updateRecord({ ...record, type: newType || undefined }, index)
                 }
                 renderInput={(params) => (
-                  <TextField {...params} variant='standard' label='Set Type' />
+                  <TextField {...params} variant="standard" label="Set Type" />
                 )}
               />
             </Grid>
@@ -110,12 +110,12 @@ export default function RecordInput(props: Props) {
                 multiple
                 fullWidth
                 renderInput={(params) => (
-                  <TextField {...params} variant='standard' label='Modifiers' />
+                  <TextField {...params} variant="standard" label="Modifiers" />
                 )}
               />
             </Grid>
           </Grid>
-          <Box pl={2} display='flex' alignItems='center' width={24}>
+          <Box pl={2} display="flex" alignItems="center" width={24}>
             {!!type &&
               (open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />)}
           </Box>
@@ -132,7 +132,7 @@ export default function RecordInput(props: Props) {
               {sets.map((set, i) => (
                 <SetInput {...set} key={i} />
               ))}
-              <Button variant='contained' onClick={addSet}>
+              <Button variant="contained" onClick={addSet}>
                 Add Set
               </Button>
             </Stack>

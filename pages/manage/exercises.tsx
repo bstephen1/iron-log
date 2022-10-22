@@ -55,7 +55,7 @@ export default function ManageExercisesPage() {
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
           loading={loading}
-          loadingText='Loading...'
+          loadingText="Loading..."
           options={
             exercises?.sort(
               (a, b) =>
@@ -90,12 +90,12 @@ export default function ManageExercisesPage() {
           renderInput={(params) => (
             <TextField
               {...params}
-              label='Exercise'
+              label="Exercise"
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
                   <>
-                    {loading && <CircularProgress color='inherit' size={20} />}
+                    {loading && <CircularProgress color="inherit" size={20} />}
                     {params.InputProps.endAdornment}
                   </>
                 ),

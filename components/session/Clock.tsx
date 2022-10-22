@@ -76,13 +76,13 @@ export default function Clock() {
   return (
     <>
       {!isRunning && !deltaTime ? (
-        <Stack direction='row' justifyContent='center'>
+        <Stack direction="row" justifyContent="center">
           <Button onClick={() => dispatch({ type: 'start' })}>
             Start Session Clock
           </Button>
         </Stack>
       ) : (
-        <Stack direction='row' justifyContent='space-between'>
+        <Stack direction="row" justifyContent="space-between">
           <Typography>Total time: {formatDeltaTime(deltaTime)}</Typography>
           <Button onClick={() => dispatch({ type: 'resetRest' })}>
             Reset Rest Time

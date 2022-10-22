@@ -28,7 +28,7 @@ export default function NameInput() {
   return (
     <TextField
       required
-      label='Name'
+      label="Name"
       error={!!invalidFields.name}
       disabled={name == null}
       helperText={invalidFields.name ?? ' '} //always keep at least a single space to keep consistent padding

@@ -35,7 +35,6 @@
   },
   "prettier": {
     "semi": false,
-    "singleQuote": true,
-    "jsxSingleQuote": true
+    "singleQuote": true
   }
 }

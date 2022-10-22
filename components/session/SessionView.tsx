@@ -55,7 +55,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   //todo: compare with last of this day type
   //todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
   return (
-    <Grid container spacing={2} direction='column'>
+    <Grid container spacing={2} direction="column">
       <Grid>
         <TitleBar date={date} />
       </Grid>
@@ -76,9 +76,9 @@ export default function SessionView({ date }: { date: Dayjs }) {
           )
         })}
 
-      <Grid container justifyContent='center'>
+      <Grid container justifyContent="center">
         {!isLoading && (
-          <Button variant='contained' onClick={addRecord}>
+          <Button variant="contained" onClick={addRecord}>
             Add Exercise
           </Button>
         )}

@@ -21,14 +21,14 @@ export default function TitleBar(props: Props) {
   }, [date])
 
   return (
-    <Box display='flex' justifyContent='space-between'>
+    <Box display="flex" justifyContent="space-between">
       {/* todo: change this to a data type which is user defined per program, or freestyle/unstructured type*/}
-      <TextField label='Session Type' />
+      <TextField label="Session Type" />
       {/* todo: customize to show days that have a record; possibly show title; 
             possibly give days a 'type' instead of title, with an associated icon;
             could also highlight different programs / meso cycles */}
       <DatePicker
-        label='Date'
+        label="Date"
         value={date}
         onChange={(newDate) => setDate(newDate)}
         renderInput={(params) => <TextField {...params} />}
