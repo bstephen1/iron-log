@@ -1,8 +1,5 @@
-import { Record } from './Record';
+import { Record } from './Record'
 
 export class Session {
-    constructor(
-        readonly date: string,
-        public records: Record[] = []
-    ) { }
+  constructor(readonly date: string, public records: Record[] = []) {}
 }
