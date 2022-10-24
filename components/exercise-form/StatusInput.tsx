@@ -12,7 +12,7 @@ export default function StatusInput() {
       required
       label="Status"
       disabled={!status}
-      helperText=" " //for padding
+      helperText=" " // for padding
       value={status ?? ''}
       onChange={(e) => setField('status', e.target.value as ExerciseStatus)}
     >

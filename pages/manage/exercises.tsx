@@ -13,18 +13,18 @@ import { updateExercise, useExercises } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatusOrder } from '../../models/ExerciseStatus'
 
-//todo: disable form stuff when no changes
-//todo: ui element showing "changes saved". Snackbar?
-//todo: add/delete exercise. Delete only for unused exercises?
-//todo: filter exercise list by status?
+// todo: disable form stuff when no changes
+// todo: ui element showing "changes saved". Snackbar?
+// todo: add/delete exercise. Delete only for unused exercises?
+// todo: filter exercise list by status?
 export default function ManageExercisesPage() {
   const { exercises, mutate } = useExercises()
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const [open, setOpen] = useState(false) //need this to show loading only while open
+  const [open, setOpen] = useState(false) // need this to show loading only while open
   const loading = !exercises && open
   const filter = createFilterOptions<Exercise | NewExerciseStub>()
 
-  //temporarily store the current input in a stub and only create a true Exercise if the stub is selected
+  // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
   class NewExerciseStub {
     name: string
     status: string
@@ -40,8 +40,8 @@ export default function ManageExercisesPage() {
     mutate(exercises)
   }
 
-  //todo: move autocomplete to a component for this + session view
-  //todo: when typing, if string becomes empty it disables the form, even if not submitted
+  // todo: move autocomplete to a component for this + session view
+  // todo: when typing, if string becomes empty it disables the form, even if not submitted
   // todo: names should be case insensitive. 'Squats' === 'squats'
   return (
     <Grid container spacing={2}>
@@ -71,13 +71,13 @@ export default function ManageExercisesPage() {
           }
           getOptionLabel={(option) => option.name}
           filterOptions={(options, params) => {
-            //was going to pull this out to a separate function but the param type definitions are long and annoying
+            // was going to pull this out to a separate function but the param type definitions are long and annoying
             const filtered = filter(options, params)
             const { inputValue } = params
 
-            //todo: filter based on status? add filtering adornment?
+            // todo: filter based on status? add filtering adornment?
 
-            //append an option to add the current input
+            // append an option to add the current input
             const isExisting = options.some(
               (option) => inputValue === option.name
             )

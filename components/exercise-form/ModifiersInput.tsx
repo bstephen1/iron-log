@@ -14,10 +14,10 @@ export default function ModifiersInput() {
   const { modifiers } = useModifiers()
   const { validModifiers, setField } = useExerciseFormContext()
   const modifierNames = modifiers?.map((modifier) => modifier.name) || []
-  const [open, setOpen] = useState(false) //need this to show loading only while open
-  const loading = !modifiers && open //probably unlikely to ever see this since it's nested deep in the form
+  const [open, setOpen] = useState(false) // need this to show loading only while open
+  const loading = !modifiers && open // probably unlikely to ever see this since it's nested deep in the form
 
-  //todo: can the loader be extracted to a component? Could use it for other autocompletes
+  // todo: can the loader be extracted to a component? Could use it for other autocompletes
   return (
     <Autocomplete
       multiple

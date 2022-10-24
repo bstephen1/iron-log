@@ -21,8 +21,8 @@ export default function CuesList() {
   }
 
   function handleUpdateCue(newCue: string, i: number) {
-    if (newCue === cues[i]) return //don't update to the same thing!
-    if (!newCue) return handleDeleteCue(i) //delete empty cues //todo: maybe a toast "deleted empty cue"
+    if (newCue === cues[i]) return // don't update to the same thing!
+    if (!newCue) return handleDeleteCue(i) // delete empty cues // todo: maybe a toast "deleted empty cue"
 
     const newCues = cues
       .slice(0, i)
@@ -58,8 +58,8 @@ export default function CuesList() {
   )
 }
 
-//todo: useRef to focus on add cue again after inputting something
-//todo: Add cue on clear() is actually adding because it's blurring!
+// todo: useRef to focus on add cue again after inputting something
+// todo: Add cue on clear() is actually adding because it's blurring!
 
 interface AddProps {
   handleAdd: (newCue: string) => void
@@ -105,8 +105,8 @@ function CueInputBase(props: BaseProps) {
   const { cues, cleanExercise } = useExerciseFormContext()
   const [value, setValue] = useState(props.value)
 
-  //reset state whenever the cues list changes.
-  //This handles switching exercises, clearing the Add Cue bar after confirming, and any other weirdness (hopefully)
+  // reset state whenever the cues list changes.
+  // This handles switching exercises, clearing the Add Cue bar after confirming, and any other weirdness (hopefully)
   useEffect(() => {
     setValue(props.value)
   }, [props.value])
@@ -121,7 +121,7 @@ function CueInputBase(props: BaseProps) {
         placeholder={placeholder}
         autoFocus={!value}
         disabled={!cleanExercise}
-        multiline //allow it to be multiline if it gets that long, but don't allow manual newlines
+        multiline // allow it to be multiline if it gets that long, but don't allow manual newlines
         value={value}
         onBlur={() => handleConfirm(value)}
         onKeyDown={(e) =>

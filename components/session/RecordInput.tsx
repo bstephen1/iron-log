@@ -25,7 +25,7 @@ interface Props {
 }
 export default function RecordInput(props: Props) {
   const [open, setOpen] = useState(props.startOpen)
-  const { activeExercises } = useActiveExercises() //SWR caches this, so it won't need to call the API every render
+  const { activeExercises } = useActiveExercises() // SWR caches this, so it won't need to call the API every render
   const { record, updateRecord, index } = props
   const { exerciseName, type, activeModifiers, validModifiers, sets } = record
   const listItemButton = useRef(null)
@@ -35,7 +35,7 @@ export default function RecordInput(props: Props) {
 
   const addSet = () => {
     const last = sets[sets.length - 1]
-    //todo: init first set, and possibly have different behavior when adding different types of sets?
+    // todo: init first set, and possibly have different behavior when adding different types of sets?
     updateRecord(
       { ...record, sets: sets.concat({ ...last, rpe: undefined }) },
       index
@@ -46,10 +46,10 @@ export default function RecordInput(props: Props) {
     return <></>
   }
 
-  //todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
-  //todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
-  //todo: select input units (if you display in kg units, you can input in lbs and it will convert)
-  //todo: preserve state when changing set type?
+  // todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
+  // todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
+  // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
+  // todo: preserve state when changing set type?
   return (
     <ListItemButton
       ref={listItemButton}
@@ -72,7 +72,7 @@ export default function RecordInput(props: Props) {
                 options={activeExercises}
                 getOptionLabel={(option) => option.name}
                 value={activeExercises.find((ex) => ex.name === exerciseName)}
-                //specify undefined so it doesn't set to null when blank
+                // specify undefined so it doesn't set to null when blank
                 onChange={(e, newExercise) =>
                   updateRecord(
                     { ...record, exerciseName: newExercise?.name || undefined },

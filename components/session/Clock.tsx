@@ -14,7 +14,7 @@ interface Action {
   type: 'start' | 'resetRest' | 'tick'
 }
 
-//this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
+// this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
 function clockReducer(state: State, action: Action) {
   const time = dayjs().valueOf()
   switch (action.type) {
@@ -49,7 +49,7 @@ export default function Clock() {
 
   const [state, dispatch] = useReducer(clockReducer, initialClockState)
   const { isRunning, deltaTime, deltaRestTime } = state
-  //this needs to be <1000 so the rest time can tick out of sync with the total time
+  // this needs to be <1000 so the rest time can tick out of sync with the total time
   const millisecondsPerInterval = 100
 
   function formatDeltaTime(milliseconds: number) {
@@ -65,8 +65,8 @@ export default function Clock() {
     if (!isRunning) return
 
     const interval = setInterval(() => {
-      //calculating a delta is more accurate and reliable than incrementing the time
-      //based on the interval (esp when the app loses focus)
+      // calculating a delta is more accurate and reliable than incrementing the time
+      // based on the interval (esp when the app loses focus)
       dispatch({ type: 'tick' })
     }, millisecondsPerInterval)
 

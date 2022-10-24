@@ -3,7 +3,7 @@ import { useExercises } from '../../lib/frontend/restService'
 import { useExerciseFormContext } from './useExerciseForm'
 
 export default function NameInput() {
-  const { exercises } = useExercises() //this should be cached from the top level form (so no additional network request)
+  const { exercises } = useExercises() // this should be cached from the top level form (so no additional network request)
   const { name, setField, cleanExercise, invalidFields, setValidity } =
     useExerciseFormContext()
 
@@ -15,7 +15,7 @@ export default function NameInput() {
       isValid = false
       reason = `Can't have an empty name!`
     } else if (cleanExercise?.name === newName) {
-      //valid -- explicity stated to avoid unnecessary find()
+      // valid -- explicity stated to avoid unnecessary find()
     } else if (exercises?.find((e) => e.name === newName)) {
       isValid = false
       reason = 'This exercise already exists!'
@@ -31,9 +31,9 @@ export default function NameInput() {
       label="Name"
       error={!!invalidFields.name}
       disabled={name == null}
-      helperText={invalidFields.name ?? ' '} //always keep at least a single space to keep consistent padding
+      helperText={invalidFields.name ?? ' '} // always keep at least a single space to keep consistent padding
       value={name ?? ''}
-      InputLabelProps={{ shrink: !!name }} //doesn't always recognize a name exists when switching exercises
+      InputLabelProps={{ shrink: !!name }} // doesn't always recognize a name exists when switching exercises
       onChange={(e) => validateChange(e.target.value)}
     />
   )

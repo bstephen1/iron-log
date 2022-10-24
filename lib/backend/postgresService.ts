@@ -1,7 +1,7 @@
 import { Pool } from 'pg'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 
-//pool handles managing the client connections
+// pool handles managing the client connections
 const pool = new Pool()
 
 export async function fetchExercises() {

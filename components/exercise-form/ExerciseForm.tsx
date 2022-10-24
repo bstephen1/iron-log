@@ -16,21 +16,21 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   const { dirtyExercise, invalidFields, resetExercise } =
     useExerciseFormContext()
 
-  //any field with a reason string is invalid
+  // any field with a reason string is invalid
   const hasNoInvalidFields = Object.values(invalidFields).every(
     (value) => !value
   )
-  //todo: unchanged fields
+  // todo: unchanged fields
   const hasNoUnchangedFields = true
   const isFormValid =
     dirtyExercise && hasNoInvalidFields && hasNoUnchangedFields
 
-  //todo: validate (drop empty cues)
+  // todo: validate (drop empty cues)
   function validateAndSubmit() {
     isFormValid && handleSubmit(dirtyExercise)
   }
 
-  //todo: bring some of the smaller children into this file?
+  // todo: bring some of the smaller children into this file?
   return (
     <Grid container spacing={2}>
       <Grid xs={12} sm={6}>

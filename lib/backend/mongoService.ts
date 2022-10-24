@@ -15,7 +15,7 @@ async function fetchCollection<T extends Document>(
   collection: Collection<T>,
   constraints: Filter<T> = {}
 ) {
-  //we need to construct the array because find() returns a cursor
+  // we need to construct the array because find() returns a cursor
   let documents: WithId<T>[] = []
   await collection.find(constraints).forEach((document) => {
     documents.push(document)
@@ -70,4 +70,4 @@ export async function fetchModifiers(constraints?: { [key: string]: string }) {
   return await fetchCollection(modifiers, constraints)
 }
 
-//todo: seperate methods for updating specific fields? To reduce data load on small updates?
+// todo: seperate methods for updating specific fields? To reduce data load on small updates?
