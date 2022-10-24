@@ -41,7 +41,7 @@
     "singleQuote": true
   },
   "lint-staged": {
-    "*.{ts, tsx, js, json}": [
+    "*.{ts,tsx,js}": [
       "npx eslint --fix --max-warnings=0",
       "npx prettier --write -u"
     ]
