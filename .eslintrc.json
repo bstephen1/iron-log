@@ -6,6 +6,7 @@
       {
         "forbid": [">", "}"]
       }
-    ]
+    ],
+    "spaced-comment": ["error", "always", { "exceptions": ["-", "*"] }]
   }
 }

@@ -56,7 +56,7 @@ export async function fetchExercise(name: string) {
 }
 
 export async function updateExercise(exercise: Exercise) {
-  //upsert creates a new record if it couldn't find one to update
+  // upsert creates a new record if it couldn't find one to update
   return await exercises.replaceOne({ _id: exercise._id }, exercise, {
     upsert: true,
   })
