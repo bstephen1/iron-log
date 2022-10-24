@@ -1,12 +1,13 @@
 
-#prettier specific files
+# prettier specific files
 
-/yarn.lock
-/package-lock.json
+yarn.lock
+package-lock.json
 
 
 
-#gitignore files
+
+# gitignore files
 
 # dependencies
 /node_modules
