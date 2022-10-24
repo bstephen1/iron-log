@@ -12,7 +12,6 @@ import {
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json())
 
-// 'use' is SWR's convention for 'get'
 export function useSession(date: Dayjs) {
   const { data, error, mutate } = useSWR<Session>(
     URI_SESSIONS + date.format(DATE_FORMAT),
