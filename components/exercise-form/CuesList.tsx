@@ -109,7 +109,7 @@ function CueInputBase(props: BaseProps) {
   //This handles switching exercises, clearing the Add Cue bar after confirming, and any other weirdness (hopefully)
   useEffect(() => {
     setValue(props.value)
-  }, [cues])
+  }, [props.value])
 
   return (
     <Paper
