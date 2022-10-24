@@ -2,7 +2,7 @@ import { Box, TextField } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 
 interface Props {
@@ -10,13 +10,13 @@ interface Props {
 }
 export default function TitleBar(props: Props) {
   const [date, setDate] = useState(props.date)
-  const router = useRouter()
+  const router = useRef(useRouter())
 
-  //todo: it's keeping the old mongo data when switching pages
-  //todo: reloading switches to current date
   useEffect(() => {
     if (date?.isValid()) {
-      router.push(`/sessions/${date.format(DATE_FORMAT)}`)
+      // can either useRef here or add router to dep array
+      // not sure which is better. I don't know why router would ever change value
+      router.current.push(`/sessions/${date.format(DATE_FORMAT)}`)
     }
   }, [date])
 
