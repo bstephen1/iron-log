@@ -44,7 +44,7 @@
   "lint-staged": {
     "*.{ts,tsx,js}": [
       "npx eslint --fix --max-warnings=0",
-      "npx prettier --write -u"
+      "npx prettier --write"
     ]
   }
 }
