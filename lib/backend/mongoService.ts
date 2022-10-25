@@ -1,5 +1,6 @@
 import { Collection, Document, Filter, MongoClient, WithId } from 'mongodb'
 import Exercise from '../../models/Exercise'
+import Modifier from '../../models/Modifier'
 import { Session } from '../../models/Session'
 
 const uri = 'mongodb://localhost:27017'
@@ -9,7 +10,7 @@ const db = client.db(process.env.DB_NAME)
 
 const sessions = db.collection('sessions')
 const exercises = db.collection<Exercise>('exercises')
-const modifiers = db.collection('modifiers')
+const modifiers = db.collection<Modifier>('modifiers')
 
 async function fetchCollection<T extends Document>(
   collection: Collection<T>,
@@ -66,8 +67,23 @@ export async function updateExercise(exercise: Exercise) {
 // MODIFIER
 //----------
 
-export async function fetchModifiers(constraints?: { [key: string]: string }) {
-  return await fetchCollection(modifiers, constraints)
+export async function addModifier(modifier: Modifier) {
+  return await modifiers.insertOne(modifier)
+}
+
+export async function fetchModifiers(filter?: Filter<Modifier>) {
+  return await fetchCollection(modifiers, filter)
+}
+
+export async function fetchModifier(name: string) {
+  return await modifiers.findOne({ name: name }, { projection: { _id: false } })
+}
+
+export async function updateModifier(modifier: Modifier) {
+  // upsert creates a new record if it couldn't find one to update
+  return await modifiers.replaceOne({ _id: modifier._id }, modifier, {
+    upsert: true,
+  })
 }
 
 // todo: seperate methods for updating specific fields? To reduce data load on small updates?

@@ -16,11 +16,11 @@ export default async function handler(
       status &&
       !Object.values(ExerciseStatus).includes(status as ExerciseStatus)
     ) {
-      res.status(400).json({ message: 'invalid status' })
+      res.status(400).json({ isError: true, message: 'invalid status' })
     }
 
     const exercises = await (status
-      ? fetchExercises({ status: status })
+      ? fetchExercises({ status: status as ExerciseStatus }) // should not have to explicity assert this but ts isn't recognizing the if check above
       : fetchExercises())
     res.status(200).json(exercises)
   } catch (e) {
