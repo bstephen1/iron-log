@@ -78,3 +78,10 @@ export async function updateExercise(newExercise: Exercise) {
     body: JSON.stringify(newExercise),
   }).catch((e) => console.error(e))
 }
+
+export async function updateModifier(newModifier: Modifier) {
+  fetch(URI_MODIFIERS + newModifier.name, {
+    method: 'PUT',
+    body: JSON.stringify(newModifier),
+  }).catch((e) => console.error(e))
+}
