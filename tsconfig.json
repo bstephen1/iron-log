@@ -20,6 +20,6 @@
     "**/*.ts",
     "**/*.tsx",
     "scripts/dummyDataMongoGenerator.js"
-  ],
+, "pages/manage/test.jsx", "components/testForm.jsx"  ],
   "exclude": ["node_modules"]
 }
