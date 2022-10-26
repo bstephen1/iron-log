@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import * as Yup from 'Yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
-import FormikTextField from '../FormikTextField'
+import InputField from '../form/InputField'
 import { useExerciseFormContext } from './useExerciseForm'
 
 interface Props {
@@ -94,7 +94,7 @@ export default function ExerciseForm({ exercise }: Props) {
       <Grid container spacing={2}>
         <Grid xs={12} sm={6}>
           <Stack>
-            <FormikTextField
+            <InputField
               label="Name"
               name="name"
               register={register}
@@ -117,7 +117,7 @@ export default function ExerciseForm({ exercise }: Props) {
           </Stack>
         </Grid>
         <Grid xs={12} sm={6}>
-          <FormikTextField
+          <InputField
             label="Notes"
             name="notes"
             register={register}
