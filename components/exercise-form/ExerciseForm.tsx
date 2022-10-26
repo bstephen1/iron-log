@@ -5,7 +5,9 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import * as Yup from 'Yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
+import { ExerciseStatus } from '../../models/ExerciseStatus'
 import InputField from '../form/InputField'
+import SelectField from '../form/SelectField'
 import { useExerciseFormContext } from './useExerciseForm'
 
 interface Props {
@@ -51,20 +53,17 @@ export default function ExerciseForm({ exercise }: Props) {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({ mode: 'onBlur' })
+  } = useForm({
+    mode: 'onBlur',
+  })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
     console.log(data)
   }
 
   // useEffect(() => {
-  //   console.log('hi')
-  //   console.log(formState.errors)
-  // }, [formState])
-
-  useEffect(() => {
-    console.log(errors)
-  }, [errors])
+  //   console.log(errors)
+  // }, [errors])
 
   // console.log(watch('name'))
 
@@ -102,12 +101,13 @@ export default function ExerciseForm({ exercise }: Props) {
               required // all this does is put an asterisk at the end of the label...
               fullWidth
             />
-            {/* <FormikSelectField
-                  label="Status"
-                  name="status"
-                  options={Object.values(ExerciseStatus)}
-                  fullWidth
-                /> */}
+            <SelectField
+              label="Status"
+              name="status"
+              register={register}
+              options={Object.values(ExerciseStatus)}
+              fullWidth
+            />
             {/* <FormikAsyncComboBoxField
                   label="Valid Modifiers"
                   name="modifiers"

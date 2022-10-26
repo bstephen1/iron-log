@@ -28,8 +28,8 @@ export default function InputField(props: Props & TextFieldProps) {
   return (
     <TextField
       label={label}
-      defaultValue="hellllo"
       error={!!error}
+      defaultValue=""
       // autoComplete="off"
       helperText={error ?? defaultHelperText}
       inputProps={{
