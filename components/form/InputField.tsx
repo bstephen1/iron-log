@@ -32,15 +32,7 @@ export default function InputField(props: Props & TextFieldProps) {
       defaultValue=""
       // autoComplete="off"
       helperText={error ?? defaultHelperText}
-      inputProps={{
-        ...register(name, {
-          required: {
-            value: !!textFieldProps.required,
-            message: 'cannot be blank',
-          },
-          maxLength: { value: 5, message: 'too long' },
-        }),
-      }}
+      inputProps={{ ...register(name) }}
       {...textFieldProps}
     />
   )

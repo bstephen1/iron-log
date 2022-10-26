@@ -9,6 +9,7 @@ import { ExerciseStatus } from '../../models/ExerciseStatus'
 import InputField from '../form/InputField'
 import SelectField from '../form/SelectField'
 import { useExerciseFormContext } from './useExerciseForm'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 interface Props {
   exercise: Exercise | null
@@ -55,6 +56,7 @@ export default function ExerciseForm({ exercise }: Props) {
     formState: { errors },
   } = useForm({
     mode: 'onBlur',
+    resolver: yupResolver(validationSchema),
   })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
