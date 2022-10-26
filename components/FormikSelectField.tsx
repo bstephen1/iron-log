@@ -1,6 +1,7 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material'
 import { useField } from 'formik'
 
+// todo: make label optional, default to capitalized name
 interface Props {
   label: string // purely visual label
   name: string // the internal formik id of this field

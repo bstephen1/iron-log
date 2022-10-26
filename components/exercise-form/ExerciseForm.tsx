@@ -6,9 +6,9 @@ import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import FormikAsyncComboBoxField from '../FormikAsyncComboBoxField'
+import FormikInputListField from '../FormikInputListField'
 import FormikSelectField from '../FormikSelectField'
 import FormikTextField from '../FormikTextField'
-import CuesList from './CuesList'
 import { useExerciseFormContext } from './useExerciseForm'
 
 interface Props {
@@ -46,12 +46,19 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     status: Yup.string(),
     modifiers: Yup.array(),
     notes: Yup.string(),
+    cues: Yup.array(),
   })
 
   // todo: bring some of the smaller children into this file?
   return (
     <Formik
-      initialValues={{ name: '', notes: '', status: '', modifiers: ['amrap'] }}
+      initialValues={{
+        name: '',
+        notes: '',
+        status: '',
+        modifiers: ['amrap'],
+        cues: ['cue1'],
+      }}
       validationSchema={validationSchema}
       onSubmit={(values, props) => {
         console.log('submit')
@@ -86,7 +93,11 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
             <FormikTextField label="Notes" name="notes" multiline fullWidth />
           </Grid>
           <Grid xs={12}>
-            <CuesList />
+            <FormikInputListField
+              label="Cues"
+              name="cues"
+              placeholder="Add Cue"
+            />
           </Grid>
           <Grid xs={12}>
             <Button type="reset">Reset</Button>
