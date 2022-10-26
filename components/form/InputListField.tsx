@@ -16,7 +16,7 @@ interface Props {
   name: string // the internal formik id of this field
   placeholder: string
 }
-export default function FormikInputListField(props: Props) {
+export default function InputListField(props: Props) {
   const { label, name } = props
   const [field, meta, helpers] = useField(name)
   const cues = field.value ?? ([] as string[])

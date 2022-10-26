@@ -9,7 +9,7 @@ interface Props {
   defaultHelperText?: string
 }
 
-export default function FormikSelectField(props: Props & TextFieldProps) {
+export default function SelectField(props: Props & TextFieldProps) {
   const {
     label,
     defaultHelperText = ' ',

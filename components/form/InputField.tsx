@@ -10,7 +10,7 @@ interface Props {
   defaultHelperText?: string
 }
 
-export default function FormikTextField(props: Props & TextFieldProps) {
+export default function InputField(props: Props & TextFieldProps) {
   const {
     label,
     register,

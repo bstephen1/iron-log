@@ -16,9 +16,7 @@ interface Props {
   options?: string[]
 }
 
-export default function FormikAsyncComboBoxField(
-  props: Props & TextFieldProps
-) {
+export default function AsyncComboBoxField(props: Props & TextFieldProps) {
   const { label, name, options, ...textFieldProps } = props
   const [field, _, helpers] = useField({ name: name, multiple: true })
   const [open, setOpen] = useState(false)
