@@ -21,7 +21,7 @@ export default function FormikSelectField(props: Props & TextFieldProps) {
   return (
     <TextField
       select
-      id={field.value}
+      id={field.name}
       value={field.value}
       label={label}
       error={!!meta.error}

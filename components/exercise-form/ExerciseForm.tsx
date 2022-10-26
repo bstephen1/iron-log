@@ -2,13 +2,13 @@ import { Button, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { Form, Formik } from 'formik'
 import * as Yup from 'Yup'
-import { useExercises } from '../../lib/frontend/restService'
+import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
+import FormikAsyncComboBoxField from '../FormikAsyncComboBoxField'
 import FormikSelectField from '../FormikSelectField'
 import FormikTextField from '../FormikTextField'
 import CuesList from './CuesList'
-import ModifiersInput from './ModifiersInput'
 import { useExerciseFormContext } from './useExerciseForm'
 
 interface Props {
@@ -19,6 +19,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   const { dirtyExercise, invalidFields, resetExercise } =
     useExerciseFormContext()
   const { exercises } = useExercises()
+  const { modifiers } = useModifiers()
 
   // any field with a reason string is invalid
   const hasNoInvalidFields = Object.values(invalidFields).every(
@@ -43,13 +44,14 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   const validationSchema = Yup.object({
     name: Yup.string().required("Name can't be blank!"),
     status: Yup.string(),
+    modifiers: Yup.array(),
     notes: Yup.string(),
   })
 
   // todo: bring some of the smaller children into this file?
   return (
     <Formik
-      initialValues={{ name: '', notes: '', status: '' }}
+      initialValues={{ name: '', notes: '', status: '', modifiers: [] }}
       validationSchema={validationSchema}
       onSubmit={() => {
         console.log('submit')
@@ -70,7 +72,12 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
                 options={Object.values(ExerciseStatus)}
                 fullWidth
               />
-              <ModifiersInput />
+              <FormikAsyncComboBoxField
+                label="Valid Modifiers"
+                name="modifiers"
+                fullWidth
+                options={['belt', 'band', 'amrap', 'these are fake', 'yes']}
+              />
             </Stack>
           </Grid>
           <Grid xs={12} sm={6}>

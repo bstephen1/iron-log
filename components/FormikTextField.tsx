@@ -13,7 +13,7 @@ export default function FormikTextField(props: Props & TextFieldProps) {
 
   return (
     <TextField
-      id={field.value}
+      id={field.name}
       value={field.value}
       label={label}
       error={!!meta.error}
