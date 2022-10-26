@@ -1,12 +1,14 @@
 import { Button, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { Form, Formik } from 'formik'
-import * as Yup from 'yup'
+import * as Yup from 'Yup'
+import { useExercises } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
+import { ExerciseStatus } from '../../models/ExerciseStatus'
+import FormikSelectField from '../FormikSelectField'
 import FormikTextField from '../FormikTextField'
 import CuesList from './CuesList'
 import ModifiersInput from './ModifiersInput'
-import StatusInput from './StatusInput'
 import { useExerciseFormContext } from './useExerciseForm'
 
 interface Props {
@@ -16,6 +18,7 @@ interface Props {
 export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   const { dirtyExercise, invalidFields, resetExercise } =
     useExerciseFormContext()
+  const { exercises } = useExercises()
 
   // any field with a reason string is invalid
   const hasNoInvalidFields = Object.values(invalidFields).every(
@@ -31,15 +34,22 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     isFormValid && handleSubmit(dirtyExercise)
   }
 
+  // Yup.addMethod(Yup.array, 'unique', function (message, mapper = a => a) {
+  //   return this.test('unique', message, function (list) {
+  //     return list.length === new Set(list.map(mapper)).size;
+  //   });
+  // });
+
   const validationSchema = Yup.object({
     name: Yup.string().required("Name can't be blank!"),
+    status: Yup.string(),
     notes: Yup.string(),
   })
 
   // todo: bring some of the smaller children into this file?
   return (
     <Formik
-      initialValues={{ name: 'test', notes: 'hello' }}
+      initialValues={{ name: '', notes: '', status: '' }}
       validationSchema={validationSchema}
       onSubmit={() => {
         console.log('submit')
@@ -53,13 +63,18 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
         <Grid container spacing={2}>
           <Grid xs={12} sm={6}>
             <Stack>
-              <FormikTextField label="Name" name="name" required />
-              <StatusInput />
+              <FormikTextField label="Name" name="name" required fullWidth />
+              <FormikSelectField
+                label="Status"
+                name="status"
+                options={Object.values(ExerciseStatus)}
+                fullWidth
+              />
               <ModifiersInput />
             </Stack>
           </Grid>
           <Grid xs={12} sm={6}>
-            <FormikTextField label="Notes" name="notes" multiline />
+            <FormikTextField label="Notes" name="notes" multiline fullWidth />
           </Grid>
           <Grid xs={12}>
             <CuesList />
