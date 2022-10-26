@@ -1,5 +1,4 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material'
-import { useField } from 'formik'
 import { UseFormRegister } from 'react-hook-form'
 
 // todo: make label optional, default to capitalized name
@@ -29,7 +28,7 @@ export default function SelectField(props: Props & TextFieldProps) {
       label={label}
       error={!!error}
       helperText={error ?? defaultHelperText}
-      inputProps={{ ...register }}
+      inputProps={{ ...register(name) }}
       {...textFieldProps}
     >
       {options.map((option) => (
