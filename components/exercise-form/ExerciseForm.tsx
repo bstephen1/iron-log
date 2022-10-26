@@ -51,13 +51,15 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   // todo: bring some of the smaller children into this file?
   return (
     <Formik
-      initialValues={{ name: '', notes: '', status: '', modifiers: [] }}
+      initialValues={{ name: '', notes: '', status: '', modifiers: ['amrap'] }}
       validationSchema={validationSchema}
-      onSubmit={() => {
+      onSubmit={(values, props) => {
         console.log('submit')
+        console.log(values)
       }}
-      onReset={() => {
+      onReset={(_, props) => {
         console.log('reset')
+        props.resetForm()
       }}
     >
       {/* noValidate disables just the default browser validation popup */}
@@ -76,7 +78,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
                 label="Valid Modifiers"
                 name="modifiers"
                 fullWidth
-                options={['belt', 'band', 'amrap', 'these are fake', 'yes']}
+                options={modifiers?.map((modifier) => modifier.name)}
               />
             </Stack>
           </Grid>
