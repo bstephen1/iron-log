@@ -1,21 +1,18 @@
 import { Button, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { Form, Formik } from 'formik'
+import { useEffect } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import * as Yup from 'Yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
-import FormikAsyncComboBoxField from '../FormikAsyncComboBoxField'
-import FormikInputListField from '../FormikInputListField'
-import FormikSelectField from '../FormikSelectField'
 import FormikTextField from '../FormikTextField'
 import { useExerciseFormContext } from './useExerciseForm'
 
 interface Props {
   exercise: Exercise | null
-  handleSubmit: (exercise: Exercise) => void
+  handleSubmit?: (exercise: Exercise) => void
 }
-export default function ExerciseForm({ exercise, handleSubmit }: Props) {
+export default function ExerciseForm({ exercise }: Props) {
   const { dirtyExercise, invalidFields, resetExercise } =
     useExerciseFormContext()
   const { exercises } = useExercises()
@@ -32,7 +29,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
 
   // todo: validate (drop empty cues)
   function validateAndSubmit() {
-    isFormValid && handleSubmit(dirtyExercise)
+    // isFormValid && handleSubmit(dirtyExercise)
   }
 
   // Yup.addMethod(Yup.array, 'unique', function (message, mapper = a => a) {
@@ -49,69 +46,107 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     cues: Yup.array(),
   })
 
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({ mode: 'onBlur' })
+
+  const onSubmit: SubmitHandler<any> = (data: any) => {
+    console.log(data)
+  }
+
+  // useEffect(() => {
+  //   console.log('hi')
+  //   console.log(formState.errors)
+  // }, [formState])
+
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
+
+  // console.log(watch('name'))
+
   // todo: bring some of the smaller children into this file?
   return (
-    <Formik
-      initialValues={{
-        name: '',
-        notes: '',
-        status: '',
-        modifiers: ['amrap'],
-        cues: ['cue1'],
-      }}
-      validationSchema={validationSchema}
-      onSubmit={(values, props) => {
-        console.log('submit')
-        console.log(values)
-      }}
-      onReset={(_, props) => {
-        console.log('reset')
-        props.resetForm()
-      }}
-    >
-      {/* noValidate disables just the default browser validation popup */}
-      <Form noValidate>
-        <Grid container spacing={2}>
-          <Grid xs={12} sm={6}>
-            <Stack>
-              <FormikTextField label="Name" name="name" required fullWidth />
-              <FormikSelectField
-                label="Status"
-                name="status"
-                options={Object.values(ExerciseStatus)}
-                fullWidth
-              />
-              <FormikAsyncComboBoxField
-                label="Valid Modifiers"
-                name="modifiers"
-                fullWidth
-                options={modifiers?.map((modifier) => modifier.name)}
-              />
-            </Stack>
-          </Grid>
-          <Grid xs={12} sm={6}>
-            <FormikTextField label="Notes" name="notes" multiline fullWidth />
-          </Grid>
-          <Grid xs={12}>
-            <FormikInputListField
-              label="Cues"
-              name="cues"
-              placeholder="Add Cue"
+    // <Formik
+    //   initialValues={{
+    //     name: '',
+    //     notes: '',
+    //     status: '',
+    //     modifiers: ['amrap'],
+    //     cues: ['cue1'],
+    //   }}
+    //   validationSchema={validationSchema}
+    //   onSubmit={(values, props) => {
+    //     console.log('submit')
+    //     console.log(values)
+    //   }}
+    //   onReset={(_, props) => {
+    //     console.log('reset')
+    //     props.resetForm()
+    //   }}
+    // >
+    // {/* noValidate disables just the default browser validation popup */}
+    // <Form noValidate>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container spacing={2}>
+        <Grid xs={12} sm={6}>
+          <Stack>
+            <FormikTextField
+              label="Name"
+              name="name"
+              register={register}
+              error={errors.name?.message}
+              required // all this does is put an asterisk at the end of the label...
+              fullWidth
             />
-          </Grid>
-          <Grid xs={12}>
-            <Button type="reset">Reset</Button>
-            <Button
-              variant="contained"
-              // disabled={!isFormValid}
-              type="submit"
-            >
-              Save
-            </Button>
-            {/* todo: put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
-          </Grid>
+            {/* <FormikSelectField
+                  label="Status"
+                  name="status"
+                  options={Object.values(ExerciseStatus)}
+                  fullWidth
+                /> */}
+            {/* <FormikAsyncComboBoxField
+                  label="Valid Modifiers"
+                  name="modifiers"
+                  fullWidth
+                  options={modifiers?.map((modifier) => modifier.name)}
+                /> */}
+          </Stack>
         </Grid>
-      </Form>
-    </Formik>
+        <Grid xs={12} sm={6}>
+          <FormikTextField
+            label="Notes"
+            name="notes"
+            register={register}
+            // errors={errors.notes}
+            multiline
+            fullWidth
+          />
+        </Grid>
+        <Grid xs={12}>
+          {/* <FormikInputListField
+                label="Cues"
+                name="cues"
+                placeholder="Add Cue"
+              /> */}
+        </Grid>
+        <Grid xs={12}>
+          <Button type="reset">Reset</Button>
+          <Button
+            variant="contained"
+            // disabled={!isFormValid}
+            type="submit"
+          >
+            Save
+          </Button>
+          {/* todo: put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
+        </Grid>
+      </Grid>
+    </form>
+    // {/* </Form> */}
+    // </Formik>
   )
 }
