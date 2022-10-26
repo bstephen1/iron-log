@@ -6,8 +6,6 @@ import Exercise from '../../models/Exercise'
 import FormikTextField from '../FormikTextField'
 import CuesList from './CuesList'
 import ModifiersInput from './ModifiersInput'
-import NameInput from './NameInput'
-import NotesInput from './NotesInput'
 import StatusInput from './StatusInput'
 import { useExerciseFormContext } from './useExerciseForm'
 
@@ -34,41 +32,44 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   }
 
   const validationSchema = Yup.object({
-    // name: Yup.string().required("Name can't be blank!")
-    test: Yup.string().required("Can't be blank!"),
+    name: Yup.string().required("Name can't be blank!"),
+    notes: Yup.string(),
   })
 
   // todo: bring some of the smaller children into this file?
   return (
     <Formik
-      initialValues={{ test: '' }}
+      initialValues={{ name: 'test', notes: 'hello' }}
       validationSchema={validationSchema}
-      onSubmit={() => {}}
+      onSubmit={() => {
+        console.log('submit')
+      }}
+      onReset={() => {
+        console.log('reset')
+      }}
     >
-      <Form>
+      {/* noValidate disables just the default browser validation popup */}
+      <Form noValidate>
         <Grid container spacing={2}>
           <Grid xs={12} sm={6}>
             <Stack>
-              <FormikTextField label="Testing" name="test" type="text" />
-              <NameInput />
+              <FormikTextField label="Name" name="name" required />
               <StatusInput />
               <ModifiersInput />
             </Stack>
           </Grid>
           <Grid xs={12} sm={6}>
-            <NotesInput />
+            <FormikTextField label="Notes" name="notes" multiline />
           </Grid>
           <Grid xs={12}>
             <CuesList />
           </Grid>
           <Grid xs={12}>
-            <Button onClick={resetExercise} disabled={!exercise}>
-              Reset
-            </Button>
+            <Button type="reset">Reset</Button>
             <Button
               variant="contained"
-              disabled={!isFormValid}
-              onClick={validateAndSubmit}
+              // disabled={!isFormValid}
+              type="submit"
             >
               Save
             </Button>
