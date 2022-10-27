@@ -1,8 +1,22 @@
-import { capitalize, Divider, Stack } from '@mui/material'
-import { createContext, useEffect } from 'react'
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import ClearIcon from '@mui/icons-material/Clear'
+import {
+  capitalize,
+  Divider,
+  Grow,
+  IconButton,
+  InputBase,
+  Paper,
+  Stack,
+} from '@mui/material'
+import { useEffect } from 'react'
+import {
+  useController,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form'
 import InputAdd from './InputAddTmp'
-import InputListItem from './InputListItemTmp'
+import InputBaseStyle from './InputListItemTmp'
 
 interface Props {
   label?: string
@@ -44,5 +58,55 @@ export default function InputListField(props: Props) {
         ))}
       </Stack>
     </>
+  )
+}
+
+interface ListItemProps {
+  name: string
+  index: number
+  handleDelete: Function
+  placeholder?: string
+}
+function InputListItem(props: ListItemProps) {
+  const { placeholder = '', index, name, handleDelete } = props
+  const { register } = useFormContext()
+  const {
+    field,
+    fieldState: { isDirty },
+  } = useController({ name: `${name}.${index}` })
+  let { value, onBlur } = field
+
+  // thinking instead of this, try to extract common fields and set up the differences as individual props
+  // eg, extract inputProps values and pass them in as props
+  return StyledInput({
+    placeholder: placeholder,
+    inputProps: {
+      'aria-label': 'edit',
+      ...register(`cues.${index}`),
+    },
+    endAdornment: (
+      <>
+        <Grow in={!!value}>
+          <IconButton
+            type="button"
+            sx={{ p: '10px' }}
+            aria-label="clear input"
+            onClick={() => {
+              handleDelete(index)
+            }}
+          >
+            <ClearIcon />
+          </IconButton>
+        </Grow>
+      </>
+    ),
+  })
+}
+
+function StyledInput(props: any) {
+  return (
+    <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
+      <InputBase sx={{ ml: 1, flex: 1 }} multiline {...props} />
+    </Paper>
   )
 }

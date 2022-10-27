@@ -8,7 +8,7 @@ interface BaseProps {
   handleDelete: Function
   placeholder?: string
 }
-export default function InputListItem(props: BaseProps) {
+export default function InputBaseStyle(props: BaseProps) {
   const { placeholder, index, name, handleDelete } = props
   const { register } = useFormContext()
   const {
