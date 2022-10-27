@@ -1,30 +1,32 @@
-import { TextField, TextFieldProps } from '@mui/material'
-import { useEffect } from 'react'
-import { useForm, UseFormRegister } from 'react-hook-form'
+import { capitalize, TextField, TextFieldProps } from '@mui/material'
+import { useFormContext, UseFormRegister } from 'react-hook-form'
 
 interface Props {
-  label: string
+  label?: string
   name: string
-  register: UseFormRegister<any>
-  error?: string
   defaultHelperText?: string
 }
 
 export default function InputField(props: Props & TextFieldProps) {
+  // this is uncontrolled (uses register instead of control)
   const {
-    label,
     register,
+    formState: { errors },
+  } = useFormContext()
+  const {
+    label = capitalize(props.name),
     defaultHelperText = ' ',
-    error,
     name,
     ...textFieldProps
   } = props
+  const error = errors[name]?.message as string
 
   return (
     <TextField
       label={label}
       error={!!error}
       defaultValue=""
+      autoComplete="off"
       helperText={error ?? defaultHelperText}
       inputProps={{ ...register(name) }}
       {...textFieldProps}

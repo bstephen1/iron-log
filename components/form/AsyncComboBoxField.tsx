@@ -2,27 +2,36 @@ import { CheckBoxOutlineBlank } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import {
   Autocomplete,
+  capitalize,
   Checkbox,
   CircularProgress,
   TextField,
   TextFieldProps,
 } from '@mui/material'
 import { useState } from 'react'
-import { useController } from 'react-hook-form'
+import { useController, useFormContext } from 'react-hook-form'
 
 interface Props {
-  label: string // purely visual label
-  name: string // the internal formik id of this field
+  label?: string
+  name: string
   options: string[]
-  control: any
-  error?: string
 }
 
 export default function AsyncComboBoxField(props: Props & TextFieldProps) {
-  const { label, name, control, options, ...textFieldProps } = props
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext()
+  const {
+    label = capitalize(props.name),
+    name,
+    options,
+    ...textFieldProps
+  } = props
   const [open, setOpen] = useState(false)
   const { field } = useController({ name, control })
   const loading = open && !options
+  const error = errors[name]?.message as string
 
   return (
     <Autocomplete

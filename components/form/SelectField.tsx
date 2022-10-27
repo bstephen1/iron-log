@@ -1,26 +1,27 @@
-import { MenuItem, TextField, TextFieldProps } from '@mui/material'
-import { UseFormRegister } from 'react-hook-form'
+import { capitalize, MenuItem, TextField, TextFieldProps } from '@mui/material'
+import { useFormContext, UseFormRegister } from 'react-hook-form'
 
 // todo: make label optional, default to capitalized name
 // todo: this for sure can be combined with InputField
 interface Props {
-  label: string
+  label?: string
   name: string
-  register: UseFormRegister<any>
   options: string[]
-  error?: string
   defaultHelperText?: string
 }
 export default function SelectField(props: Props & TextFieldProps) {
   const {
-    label,
+    register,
+    formState: { errors },
+  } = useFormContext()
+  const {
+    label = capitalize(props.name),
     defaultHelperText = ' ',
     name,
     options,
-    error,
-    register,
     ...textFieldProps
   } = props
+  const error = errors[name]?.message as string // todo: can we define the fields or something to not have to force to string?
 
   return (
     <TextField

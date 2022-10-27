@@ -1,16 +1,14 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { useEffect } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import * as Yup from 'Yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
+import AsyncComboBoxField from '../form/AsyncComboBoxField'
 import InputField from '../form/InputField'
 import SelectField from '../form/SelectField'
-import { useExerciseFormContext } from './useExerciseForm'
-import { yupResolver } from '@hookform/resolvers/yup'
-import AsyncComboBoxField from '../form/AsyncComboBoxField'
 
 interface Props {
   exercise: Exercise | null
@@ -37,13 +35,7 @@ export default function ExerciseForm({ exercise }: Props) {
     cues: Yup.array(),
   })
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm({
+  const methods = useForm({
     mode: 'onBlur', // todo: this is weird; think I want onChange but only after first onBlur instead
     resolver: yupResolver(validationSchema),
     defaultValues: { modifiers: ['band'] },
@@ -60,64 +52,59 @@ export default function ExerciseForm({ exercise }: Props) {
   // console.log(watch('name'))
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container spacing={2}>
-        <Grid xs={12} sm={6}>
-          <Stack>
-            {/* register === uncontrolled; control === controlled */}
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <Grid container spacing={2}>
+          <Grid xs={12} sm={6}>
+            <Stack>
+              {/* register === uncontrolled; control === controlled */}
+              <InputField
+                name="name"
+                required // all this does is put an asterisk at the end of the label...
+                fullWidth
+              />
+              <SelectField
+                name="status"
+                options={Object.values(ExerciseStatus)}
+                fullWidth
+              />
+              <AsyncComboBoxField
+                label="Valid Modifiers"
+                name="modifiers"
+                fullWidth
+                options={modifierNames}
+              />
+            </Stack>
+          </Grid>
+          <Grid xs={12} sm={6}>
             <InputField
-              label="Name"
-              name="name"
-              register={register}
-              error={errors.name?.message} // todo: think this is because form type isn't defined
-              required // all this does is put an asterisk at the end of the label...
+              label="Notes"
+              name="notes"
+              // errors={errors.notes}
+              multiline
               fullWidth
             />
-            <SelectField
-              label="Status"
-              name="status"
-              register={register}
-              options={Object.values(ExerciseStatus)}
-              fullWidth
-            />
-            <AsyncComboBoxField
-              label="Valid Modifiers"
-              name="modifiers"
-              control={control}
-              fullWidth
-              options={modifierNames}
-            />
-          </Stack>
-        </Grid>
-        <Grid xs={12} sm={6}>
-          <InputField
-            label="Notes"
-            name="notes"
-            register={register}
-            // errors={errors.notes}
-            multiline
-            fullWidth
-          />
-        </Grid>
-        <Grid xs={12}>
-          {/* <FormikInputListField
+          </Grid>
+          <Grid xs={12}>
+            {/* <FormikInputListField
                 label="Cues"
                 name="cues"
                 placeholder="Add Cue"
               /> */}
+          </Grid>
+          <Grid xs={12}>
+            <Button type="reset">Reset</Button>
+            <Button
+              variant="contained"
+              // disabled={!isFormValid}
+              type="submit"
+            >
+              Save
+            </Button>
+            {/* todo: put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
+          </Grid>
         </Grid>
-        <Grid xs={12}>
-          <Button type="reset">Reset</Button>
-          <Button
-            variant="contained"
-            // disabled={!isFormValid}
-            type="submit"
-          >
-            Save
-          </Button>
-          {/* todo: put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
-        </Grid>
-      </Grid>
-    </form>
+      </form>
+    </FormProvider>
   )
 }
