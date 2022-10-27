@@ -17,24 +17,11 @@ interface Props {
   handleSubmit?: (exercise: Exercise) => void
 }
 export default function ExerciseForm({ exercise }: Props) {
-  const { dirtyExercise, invalidFields, resetExercise } =
-    useExerciseFormContext()
   const { exercises } = useExercises()
   const { modifiers } = useModifiers()
-
-  // any field with a reason string is invalid
-  const hasNoInvalidFields = Object.values(invalidFields).every(
-    (value) => !value
-  )
-  // todo: unchanged fields
-  const hasNoUnchangedFields = true
-  const isFormValid =
-    dirtyExercise && hasNoInvalidFields && hasNoUnchangedFields
+  const modifierNames = modifiers?.map((modifier) => modifier.name) || []
 
   // todo: validate (drop empty cues)
-  function validateAndSubmit() {
-    // isFormValid && handleSubmit(dirtyExercise)
-  }
 
   // Yup.addMethod(Yup.array, 'unique', function (message, mapper = a => a) {
   //   return this.test('unique', message, function (list) {
@@ -57,7 +44,7 @@ export default function ExerciseForm({ exercise }: Props) {
     watch,
     formState: { errors },
   } = useForm({
-    mode: 'onBlur',
+    mode: 'onBlur', // todo: this is weird; think I want onChange but only after first onBlur instead
     resolver: yupResolver(validationSchema),
     defaultValues: { modifiers: ['band'] },
   })
@@ -72,37 +59,17 @@ export default function ExerciseForm({ exercise }: Props) {
 
   // console.log(watch('name'))
 
-  // todo: bring some of the smaller children into this file?
   return (
-    // <Formik
-    //   initialValues={{
-    //     name: '',
-    //     notes: '',
-    //     status: '',
-    //     modifiers: ['amrap'],
-    //     cues: ['cue1'],
-    //   }}
-    //   validationSchema={validationSchema}
-    //   onSubmit={(values, props) => {
-    //     console.log('submit')
-    //     console.log(values)
-    //   }}
-    //   onReset={(_, props) => {
-    //     console.log('reset')
-    //     props.resetForm()
-    //   }}
-    // >
-    // {/* noValidate disables just the default browser validation popup */}
-    // <Form noValidate>
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={2}>
         <Grid xs={12} sm={6}>
           <Stack>
+            {/* register === uncontrolled; control === controlled */}
             <InputField
               label="Name"
               name="name"
               register={register}
-              error={errors.name?.message}
+              error={errors.name?.message} // todo: think this is because form type isn't defined
               required // all this does is put an asterisk at the end of the label...
               fullWidth
             />
@@ -118,8 +85,7 @@ export default function ExerciseForm({ exercise }: Props) {
               name="modifiers"
               control={control}
               fullWidth
-              register={register}
-              options={modifiers?.map((modifier) => modifier.name) || []}
+              options={modifierNames}
             />
           </Stack>
         </Grid>
@@ -153,7 +119,5 @@ export default function ExerciseForm({ exercise }: Props) {
         </Grid>
       </Grid>
     </form>
-    // {/* </Form> */}
-    // </Formik>
   )
 }

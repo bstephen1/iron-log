@@ -8,7 +8,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import { useState } from 'react'
-import { useController, UseFormRegister } from 'react-hook-form'
+import { useController } from 'react-hook-form'
 
 interface Props {
   label: string // purely visual label
@@ -16,22 +16,19 @@ interface Props {
   options: string[]
   control: any
   error?: string
-  register: UseFormRegister<any>
 }
 
 export default function AsyncComboBoxField(props: Props & TextFieldProps) {
-  const { label, name, control, options, register, ...textFieldProps } = props
+  const { label, name, control, options, ...textFieldProps } = props
   const [open, setOpen] = useState(false)
-  const {
-    field: { value, onChange },
-  } = useController({ name, control })
+  const { field } = useController({ name, control })
   const loading = open && !options
 
   return (
     <Autocomplete
-      value={value}
+      {...field}
       // need to manually handle onChange because the Chips are seperate from the base input
-      onChange={(_, value) => onChange(value)}
+      onChange={(_, value) => field.onChange(value)}
       fullWidth
       multiple
       options={options ?? []}

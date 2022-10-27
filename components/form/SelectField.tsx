@@ -2,9 +2,10 @@ import { MenuItem, TextField, TextFieldProps } from '@mui/material'
 import { UseFormRegister } from 'react-hook-form'
 
 // todo: make label optional, default to capitalized name
+// todo: this for sure can be combined with InputField
 interface Props {
-  label: string // purely visual label
-  name: string // the internal formik id of this field
+  label: string
+  name: string
   register: UseFormRegister<any>
   options: string[]
   error?: string
@@ -24,7 +25,7 @@ export default function SelectField(props: Props & TextFieldProps) {
   return (
     <TextField
       select
-      defaultValue="" // have to explicitly define the default -- undefined === error // also, this doesn't work in parent useForm()
+      defaultValue="" // have to explicitly define the default: undefined === error // also, this doesn't work in parent useForm()
       label={label}
       error={!!error}
       helperText={error ?? defaultHelperText}
