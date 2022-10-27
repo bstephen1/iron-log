@@ -8,6 +8,7 @@ import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form/AsyncComboBoxField'
 import InputField from '../form/InputField'
+import InputListField from '../form/InputListField'
 import SelectField from '../form/SelectField'
 
 interface Props {
@@ -38,11 +39,15 @@ export default function ExerciseForm({ exercise }: Props) {
   const methods = useForm({
     mode: 'onBlur', // todo: this is weird; think I want onChange but only after first onBlur instead
     resolver: yupResolver(validationSchema),
-    defaultValues: { modifiers: ['band'] },
+    defaultValues: {
+      name: 'I am name',
+      modifiers: ['band'],
+      cues: ['test1', 'another', 'yat'],
+    },
   })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
-    console.log(data)
+    console.log(data.cues)
   }
 
   // useEffect(() => {
@@ -86,11 +91,10 @@ export default function ExerciseForm({ exercise }: Props) {
             />
           </Grid>
           <Grid xs={12}>
-            {/* <FormikInputListField
-                label="Cues"
-                name="cues"
-                placeholder="Add Cue"
-              /> */}
+            <InputListField
+              name="cues"
+              // placeholder="Add Cue"
+            />
           </Grid>
           <Grid xs={12}>
             <Button type="reset">Reset</Button>

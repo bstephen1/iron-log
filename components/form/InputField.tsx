@@ -25,7 +25,7 @@ export default function InputField(props: Props & TextFieldProps) {
     <TextField
       label={label}
       error={!!error}
-      defaultValue=""
+      // defaultValue=""
       autoComplete="off"
       helperText={error ?? defaultHelperText}
       inputProps={{ ...register(name) }}

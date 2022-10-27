@@ -1,6 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 import {
+  capitalize,
   Divider,
   Grow,
   IconButton,
@@ -8,40 +9,49 @@ import {
   Paper,
   Stack,
 } from '@mui/material'
-import { useField } from 'formik'
-import { useEffect, useState } from 'react'
+import {
+  ControllerRenderProps,
+  useController,
+  UseControllerReturn,
+  useFieldArray,
+  useFormContext,
+  UseFormRegisterReturn,
+} from 'react-hook-form'
 
 interface Props {
-  label: string // purely visual label
-  name: string // the internal formik id of this field
-  placeholder: string
+  label?: string
+  name: string
+  placeholder?: string
 }
 export default function InputListField(props: Props) {
-  const { label, name } = props
-  const [field, meta, helpers] = useField(name)
-  const cues = field.value ?? ([] as string[])
+  const { label = capitalize(props.name), name } = props
+  const {
+    formState: { errors },
+  } = useFormContext()
+  // const error = errors[name]?.message as string
+  const { fields } = useFieldArray({ name })
 
-  function handleDeleteCue(i: number) {
-    const newCues = cues.slice(0, i).concat(cues.slice(i + 1))
-    helpers.setValue(newCues)
-  }
+  // function handleDeleteCue(i: number) {
+  //   const newCues = cues.slice(0, i).concat(cues.slice(i + 1))
+  //   helpers.setValue(newCues)
+  // }
 
-  function handleUpdateCue(newCue: string, i: number) {
-    if (newCue === cues[i]) return // don't update to the same thing!
-    if (!newCue) return handleDeleteCue(i) // delete empty cues // todo: maybe a toast "deleted empty cue"
+  // function handleUpdateCue(newCue: string, i: number) {
+  //   if (newCue === cues[i]) return // don't update to the same thing!
+  //   if (!newCue) return handleDeleteCue(i) // delete empty cues // todo: maybe a toast "deleted empty cue"
 
-    const newCues = cues
-      .slice(0, i)
-      .concat(newCue)
-      .concat(cues.slice(i + 1))
-    helpers.setValue(newCues)
-  }
+  //   const newCues = cues
+  //     .slice(0, i)
+  //     .concat(newCue)
+  //     .concat(cues.slice(i + 1))
+  //   helpers.setValue(newCues)
+  // }
 
-  function handleAddCue(newCue: string) {
-    if (!newCue) return
+  // function handleAddCue(newCue: string) {
+  //   if (!newCue) return
 
-    helpers.setValue([newCue, ...cues])
-  }
+  //   helpers.setValue([newCue, ...cues])
+  // }
 
   return (
     <>
@@ -49,97 +59,104 @@ export default function InputListField(props: Props) {
       <Divider textAlign="center">{label}</Divider>
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
-        <CueInputAdd handleAdd={handleAddCue} />
-        {cues.map((cue, i) => (
-          <CueInputListItem
-            key={i}
-            index={i}
-            value={cue}
-            handleDelete={handleDeleteCue}
-            handleUpdate={handleUpdateCue}
-          />
+        {/* <InputAdd
+          name={name}
+
+          placeholder={`Add ${label}`}
+        /> */}
+        {fields.map((field, i) => (
+          <InputListItem name={name} key={field.id} index={i} />
         ))}
       </Stack>
     </>
   )
 }
 
-interface AddProps {
-  handleAdd: (newCue: string) => void
-}
-function CueInputAdd({ handleAdd }: AddProps) {
-  return (
-    <CueInputBase
-      value={''}
-      handleClear={() => {}}
-      handleConfirm={(value: string) => handleAdd(value)}
-      placeholder="Add Cue"
-    />
-  )
-}
+// function InputAdd({ name }: { name: string }) {
+
+//   return (
+//     <CueInputBase
+//       name={name}
+//       value={''}
+//       handleClear={() => { }}
+//       handleConfirm={(value: string) => handleAdd(value)}
+//       placeholder="Add Cue"
+//     />
+//   )
+// }
 
 interface ListItemProps {
+  name: string
   index: number
+  placeholder?: string
   value: string
   handleDelete: (index: number) => void
   handleUpdate: (newCue: string, index: number) => void
 }
-function CueInputListItem(props: ListItemProps) {
-  const { index, value, handleDelete, handleUpdate } = props
+function InputListItem(props: ListItemProps) {
+  const { placeholder, index, name } = props
+  // const { fields, remove, update } = useFieldArray({ name })
+  const controller = useController({ name: `${name}.${index}` })
 
   return (
-    <CueInputBase
-      value={value}
-      handleClear={() => handleDelete(index)}
-      handleConfirm={(value: string) => handleUpdate(value, index)}
+    <InputBaseStyle
+      controller={controller}
+      handleClear={() => remove(index)}
+      handleConfirm={(value: string) => update(value, index)}
       placeholder="Edit Cue"
+      // register={register(`${name}.${index}.value`)}
     />
   )
 }
 
 interface BaseProps {
-  value: string
+  controller: UseControllerReturn
+  name: string
+  index: number
   handleClear: any
   handleConfirm: any
   placeholder?: string
+  register?: UseFormRegisterReturn<any>
 }
-function CueInputBase(props: BaseProps) {
-  const { handleClear, handleConfirm, placeholder } = props
-  const [value, setValue] = useState(props.value)
-
-  // reset state whenever the cues list changes.
-  // This handles switching exercises, clearing the Add Cue bar after confirming, and any other weirdness (hopefully)
-  useEffect(() => {
-    setValue(props.value)
-  }, [props.value])
+function InputBaseStyle(props: BaseProps) {
+  const {
+    placeholder,
+    controller: {
+      field,
+      fieldState: { isDirty },
+    },
+    handleClear,
+    handleConfirm,
+    index,
+    name,
+    register,
+  } = props
+  const { value, onBlur } = field
 
   return (
-    <Paper
-      component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
-    >
+    <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
       <InputBase
+        {...field}
         sx={{ ml: 1, flex: 1 }}
         placeholder={placeholder}
-        autoFocus={!value}
+        // autoFocus={!value}
         // disabled={!cleanExercise}
         multiline // allow it to be multiline if it gets that long, but don't allow manual newlines
-        value={value}
-        onBlur={() => handleConfirm(value)}
-        onKeyDown={(e) =>
-          e.key === 'Enter' && (document.activeElement as HTMLElement).blur()
-        }
-        onChange={(e) => setValue(e.target.value)}
-        inputProps={{ 'aria-label': 'edit cue' }}
+        // onBlur={() => handleConfirm(value)}
+        // onKeyDown={(e) =>
+        //   e.key === 'Enter' && (document.activeElement as HTMLElement).blur()
+        // }
+        // onChange={(e) => setValue(e.target.value)}
+        // inputProps={{ 'aria-label': 'edit cue', ...register }}
         endAdornment={
           <>
-            <Grow in={!!value && value !== props.value}>
+            <Grow in={!!value && isDirty}>
               <IconButton
                 type="button"
                 sx={{ p: '10px' }}
                 disabled={!value}
                 aria-label="add cue"
-                onClick={() => handleConfirm(value)}
+                onClick={onBlur} // ??
               >
                 <CheckIcon />
               </IconButton>
@@ -150,8 +167,8 @@ function CueInputBase(props: BaseProps) {
                 sx={{ p: '10px' }}
                 aria-label="clear input"
                 onClick={() => {
-                  setValue('')
-                  handleClear()
+                  // setValue('')
+                  // handleClear()
                 }}
               >
                 <ClearIcon />

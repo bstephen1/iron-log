@@ -19,7 +19,6 @@ interface Props {
 
 export default function AsyncComboBoxField(props: Props & TextFieldProps) {
   const {
-    control,
     formState: { errors },
   } = useFormContext()
   const {
@@ -29,7 +28,7 @@ export default function AsyncComboBoxField(props: Props & TextFieldProps) {
     ...textFieldProps
   } = props
   const [open, setOpen] = useState(false)
-  const { field } = useController({ name, control })
+  const { field } = useController({ name })
   const loading = open && !options
   const error = errors[name]?.message as string
 
