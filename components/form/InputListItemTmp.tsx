@@ -1,25 +1,15 @@
-import CheckIcon from '@mui/icons-material/Check'
-
 import ClearIcon from '@mui/icons-material/Clear'
 import { Grow, IconButton, InputBase, Paper } from '@mui/material'
-import { useField } from 'formik'
-import { useContext } from 'react'
-import {
-  useController,
-  useFieldArray,
-  useFormContext,
-  UseFormRegisterReturn,
-} from 'react-hook-form'
-import { InputListFieldContext } from './InputListField'
+import { useController, useFormContext } from 'react-hook-form'
 
 interface BaseProps {
   name: string
   index: number
+  handleDelete: Function
   placeholder?: string
 }
 export default function InputListItem(props: BaseProps) {
-  const { handleDelete } = useContext(InputListFieldContext)
-  const { placeholder, index, name } = props
+  const { placeholder, index, name, handleDelete } = props
   const { register } = useFormContext()
   const {
     field,
