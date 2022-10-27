@@ -39,11 +39,7 @@ export default function ExerciseForm({ exercise }: Props) {
   const methods = useForm({
     mode: 'onBlur', // todo: this is weird; think I want onChange but only after first onBlur instead
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-      name: 'I am name',
-      modifiers: ['band'],
-      cues: ['test1', 'another', 'yat'],
-    },
+    defaultValues: { name: "I am name", modifiers: ['band'], cues: ['test1', 'another', 'yat'] },
   })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
@@ -93,7 +89,7 @@ export default function ExerciseForm({ exercise }: Props) {
           <Grid xs={12}>
             <InputListField
               name="cues"
-              // placeholder="Add Cue"
+            // placeholder="Add Cue"
             />
           </Grid>
           <Grid xs={12}>
