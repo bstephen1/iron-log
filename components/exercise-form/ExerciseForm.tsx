@@ -10,6 +10,7 @@ import InputField from '../form/InputField'
 import SelectField from '../form/SelectField'
 import { useExerciseFormContext } from './useExerciseForm'
 import { yupResolver } from '@hookform/resolvers/yup'
+import AsyncComboBoxField from '../form/AsyncComboBoxField'
 
 interface Props {
   exercise: Exercise | null
@@ -50,6 +51,7 @@ export default function ExerciseForm({ exercise }: Props) {
   })
 
   const {
+    control,
     register,
     handleSubmit,
     watch,
@@ -57,6 +59,7 @@ export default function ExerciseForm({ exercise }: Props) {
   } = useForm({
     mode: 'onBlur',
     resolver: yupResolver(validationSchema),
+    // defaultValues: { modifiers: [] },
   })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
@@ -110,12 +113,14 @@ export default function ExerciseForm({ exercise }: Props) {
               options={Object.values(ExerciseStatus)}
               fullWidth
             />
-            {/* <FormikAsyncComboBoxField
-                  label="Valid Modifiers"
-                  name="modifiers"
-                  fullWidth
-                  options={modifiers?.map((modifier) => modifier.name)}
-                /> */}
+            <AsyncComboBoxField
+              label="Valid Modifiers"
+              name="modifiers"
+              control={control}
+              fullWidth
+              register={register}
+              options={modifiers?.map((modifier) => modifier.name)}
+            />
           </Stack>
         </Grid>
         <Grid xs={12} sm={6}>
