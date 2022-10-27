@@ -38,7 +38,7 @@ function InputBaseStyle(props: BaseProps) {
   const {
     field,
     fieldState: { isDirty },
-  } = useController({ name: `${name}.${index}` })
+  } = useController({ name: `cues.${index}` })
   let { value, onBlur } = field
 
   return (
