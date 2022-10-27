@@ -13,7 +13,7 @@ import { Controller, UseFormRegister } from 'react-hook-form'
 interface Props {
   label: string // purely visual label
   name: string // the internal formik id of this field
-  options?: string[]
+  options: string[]
   control: any
   error?: string
   register: UseFormRegister<any>
@@ -28,9 +28,11 @@ export default function AsyncComboBoxField(props: Props & TextFieldProps) {
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field: { value, onChange } }) => (
         <Autocomplete
-          {...field}
+          value={value}
+          // need to manually handle onChange because the Chips are seperate from the base input
+          onChange={(_, value) => onChange(value)}
           fullWidth
           multiple
           options={options ?? []}
@@ -45,7 +47,6 @@ export default function AsyncComboBoxField(props: Props & TextFieldProps) {
               {...params}
               name={name}
               label={label}
-              // inputProps={{ ...register(name) }}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (

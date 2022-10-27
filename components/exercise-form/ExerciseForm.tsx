@@ -59,7 +59,7 @@ export default function ExerciseForm({ exercise }: Props) {
   } = useForm({
     mode: 'onBlur',
     resolver: yupResolver(validationSchema),
-    // defaultValues: { modifiers: [] },
+    defaultValues: { modifiers: ['band'] },
   })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
@@ -119,7 +119,7 @@ export default function ExerciseForm({ exercise }: Props) {
               control={control}
               fullWidth
               register={register}
-              options={modifiers?.map((modifier) => modifier.name)}
+              options={modifiers?.map((modifier) => modifier.name) || []}
             />
           </Stack>
         </Grid>
