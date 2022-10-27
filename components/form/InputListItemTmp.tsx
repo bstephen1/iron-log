@@ -2,10 +2,12 @@ import CheckIcon from '@mui/icons-material/Check'
 
 import ClearIcon from '@mui/icons-material/Clear'
 import { Grow, IconButton, InputBase, Paper } from '@mui/material'
+import { useField } from 'formik'
 import { useContext } from 'react'
 import {
   useController,
   useFieldArray,
+  useFormContext,
   UseFormRegisterReturn,
 } from 'react-hook-form'
 import { InputListFieldContext } from './InputListField'
@@ -35,6 +37,7 @@ interface BaseProps {
 function InputBaseStyle(props: BaseProps) {
   const { handleDelete } = useContext(InputListFieldContext)
   const { placeholder, index } = props
+  const { register } = useFormContext()
   const {
     field,
     fieldState: { isDirty },
@@ -44,8 +47,8 @@ function InputBaseStyle(props: BaseProps) {
   return (
     <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
       <InputBase
-        {...field}
-        value={value}
+        // {...field}
+        // value={value}
         sx={{ ml: 1, flex: 1 }}
         placeholder={placeholder}
         // autoFocus={!value}
@@ -56,7 +59,10 @@ function InputBaseStyle(props: BaseProps) {
         //   e.key === 'Enter' && (document.activeElement as HTMLElement).blur()
         // }
         // onChange={(e) => setValue(e.target.value)}
-        // inputProps={{ 'aria-label': 'edit cue', ...register }}
+        inputProps={{
+          'aria-label': 'edit',
+          ...register(`cues.${index}`),
+        }}
         endAdornment={
           <>
             <Grow in={!!value}>
