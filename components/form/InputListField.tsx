@@ -27,8 +27,8 @@ export default function InputListField(props: Props) {
     console.log(watchedFields)
   }, [watchedFields])
 
-  const handleAdd = (value) => prepend(value)
-  const handleDelete = (i) => remove(i)
+  const handleAdd = (value: string) => prepend(value)
+  const handleDelete = (i: number) => remove(i)
 
   return (
     <InputListFieldContext.Provider value={{ handleAdd, handleDelete }}>
@@ -37,13 +37,9 @@ export default function InputListField(props: Props) {
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         {/* todo: this is adding, but the fields don't */}
-        <InputAdd
-          name={name}
-          handleConfirm={handleAdd}
-          placeholder={`Add ${label}`}
-        />
+        <InputAdd handleConfirm={handleAdd} placeholder={`Add ${label}`} />
         {fields?.map((field, i) => (
-          <InputListItem key={field.id} index={i} />
+          <InputListItem key={field.id} name={name} index={i} />
         ))}
       </Stack>
     </InputListFieldContext.Provider>

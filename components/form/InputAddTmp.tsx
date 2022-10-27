@@ -1,27 +1,18 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 import { Grow, IconButton, InputBase, Paper } from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useContext } from 'react'
+import { FieldValues, useForm } from 'react-hook-form'
 import { InputListFieldContext } from './InputListField'
-
-export default function InputAdd({ placeholder, handleConfirm }: any) {
-  return (
-    <InputBaseStyleTmp
-      handleConfirm={handleConfirm}
-      placeholder={placeholder}
-    />
-  )
-}
 
 interface BasePropsTmp {
   handleConfirm: any
   placeholder?: string
 }
-function InputBaseStyleTmp(props: BasePropsTmp) {
+export default function InputAdd(props: BasePropsTmp) {
   const { placeholder } = props
   const { handleAdd } = useContext(InputListFieldContext)
-  const { register, handleSubmit, watch, reset, isSubmiss } = useForm()
+  const { register, handleSubmit, watch, reset } = useForm()
 
   const resetAdd = () => {
     reset((fields) => ({
@@ -29,7 +20,7 @@ function InputBaseStyleTmp(props: BasePropsTmp) {
       add: '',
     }))
   }
-  const onSubmit = (fields) => {
+  const onSubmit = (fields: FieldValues) => {
     console.log(fields)
     handleAdd(fields.add)
     resetAdd()

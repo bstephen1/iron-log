@@ -12,36 +12,19 @@ import {
 } from 'react-hook-form'
 import { InputListFieldContext } from './InputListField'
 
-interface ListItemProps {
-  index: number
-}
-
-// todo: after cleanup it seems the intermediary components are superfluous
-// the only potential snag is what to do about the hooks...
-export default function InputListItem(props: ListItemProps) {
-  const { index } = props
-
-  return (
-    <InputBaseStyle
-      index={index}
-      // register={register(`${name}.${index}.value`)}
-    />
-  )
-}
-
 interface BaseProps {
+  name: string
   index: number
   placeholder?: string
-  register?: UseFormRegisterReturn<any>
 }
-function InputBaseStyle(props: BaseProps) {
+export default function InputListItem(props: BaseProps) {
   const { handleDelete } = useContext(InputListFieldContext)
-  const { placeholder, index } = props
+  const { placeholder, index, name } = props
   const { register } = useFormContext()
   const {
     field,
     fieldState: { isDirty },
-  } = useController({ name: `cues.${index}` })
+  } = useController({ name: `${name}.${index}` }) // todo: props the name
   let { value, onBlur } = field
 
   return (
