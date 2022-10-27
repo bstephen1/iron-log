@@ -43,7 +43,7 @@ export default function InputListField(props: Props) {
           placeholder={`Add ${label}`}
         />
         {fields?.map((field, i) => (
-          <InputListItem name={name} key={field.id} index={i} />
+          <InputListItem key={field.id} index={i} />
         ))}
       </Stack>
     </InputListFieldContext.Provider>

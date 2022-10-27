@@ -11,44 +11,34 @@ import {
 import { InputListFieldContext } from './InputListField'
 
 interface ListItemProps {
-  name: string
   index: number
-  placeholder?: string
-  value: string
-  handleDelete: (index: number) => void
-  handleUpdate: (newCue: string, index: number) => void
 }
+
+// todo: after cleanup it seems the intermediary components are superfluous
+// the only potential snag is what to do about the hooks...
 export default function InputListItem(props: ListItemProps) {
-  const { placeholder, index, name } = props
-  const { fields, remove, update } = useFieldArray({ name })
-  const controller = useController({ name: `${name}.${index}` })
+  const { index } = props
 
   return (
     <InputBaseStyle
-      controller={controller}
       index={index}
-      placeholder="Edit Cue"
       // register={register(`${name}.${index}.value`)}
     />
   )
 }
 
 interface BaseProps {
-  controller: any
   index: number
   placeholder?: string
   register?: UseFormRegisterReturn<any>
 }
 function InputBaseStyle(props: BaseProps) {
   const { handleDelete } = useContext(InputListFieldContext)
+  const { placeholder, index } = props
   const {
-    placeholder,
-    controller: {
-      field,
-      fieldState: { isDirty },
-    },
-    index,
-  } = props
+    field,
+    fieldState: { isDirty },
+  } = useController({ name: `${name}.${index}` })
   let { value, onBlur } = field
 
   return (
