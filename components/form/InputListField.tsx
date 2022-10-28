@@ -5,6 +5,7 @@ import {
   Grow,
   IconButton,
   InputBase,
+  InputBaseProps,
   Paper,
   Stack,
 } from '@mui/material'
@@ -16,7 +17,6 @@ import {
   useWatch,
 } from 'react-hook-form'
 import InputAdd from './InputAddTmp'
-import InputBaseStyle from './InputListItemTmp'
 
 interface Props {
   label?: string
@@ -53,7 +53,7 @@ export default function InputListField(props: Props) {
             handleDelete={handleDelete}
             name={name}
             index={i}
-            placeholder="Delete empty cue"
+            placeholder="Empty cue (will be deleted)"
           />
         ))}
       </Stack>
@@ -76,8 +76,6 @@ function InputListItem(props: ListItemProps) {
   } = useController({ name: `${name}.${index}` })
   let { value, onBlur } = field
 
-  // thinking instead of this, try to extract common fields and set up the differences as individual props
-  // eg, extract inputProps values and pass them in as props
   return StyledInput({
     placeholder: placeholder,
     inputProps: {
@@ -86,27 +84,51 @@ function InputListItem(props: ListItemProps) {
     },
     endAdornment: (
       <>
-        <Grow in={!!value}>
-          <IconButton
-            type="button"
-            sx={{ p: '10px' }}
-            aria-label="clear input"
-            onClick={() => {
-              handleDelete(index)
-            }}
-          >
-            <ClearIcon />
-          </IconButton>
-        </Grow>
+        <InputButton
+          isVisible={!!value}
+          handleClick={() => handleDelete(index)}
+          Icon={ClearIcon}
+          ariaLabel="clear input"
+        />
       </>
     ),
   })
 }
 
-function StyledInput(props: any) {
+function StyledInput(inputBaseProps: InputBaseProps) {
   return (
     <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
-      <InputBase sx={{ ml: 1, flex: 1 }} multiline {...props} />
+      <InputBase sx={{ ml: 1, flex: 1 }} multiline {...inputBaseProps} />
     </Paper>
   )
 }
+
+interface ButtonProps {
+  handleClick: any
+  isVisible: boolean
+  Icon: any
+  ariaLabel?: string
+}
+function InputButton({ handleClick, isVisible, Icon, ariaLabel }: ButtonProps) {
+  return (
+    <Grow in={isVisible}>
+      <IconButton
+        type="button"
+        sx={{ p: '10px' }}
+        aria-label={ariaLabel}
+        onClick={handleClick}
+      >
+        <Icon />
+      </IconButton>
+    </Grow>
+  )
+}
+
+/*
+  placeholder
+  defaultValue ? (can define in register for add; defined in parent form for listItem)
+  inputProps
+  button clicks: check and x buttons
+    -- do we want a check on listItem? (mmm, don't think so)
+    -- can conditionally render check only if onConfirm is present
+*/
