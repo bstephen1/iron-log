@@ -1,3 +1,4 @@
+import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 import {
   capitalize,
@@ -11,12 +12,13 @@ import {
 } from '@mui/material'
 import { useEffect } from 'react'
 import {
+  FieldValues,
   useController,
   useFieldArray,
+  useForm,
   useFormContext,
   useWatch,
 } from 'react-hook-form'
-import InputAdd from './InputAddTmp'
 
 interface Props {
   label?: string
@@ -87,9 +89,56 @@ function InputListItem(props: ListItemProps) {
         <InputButton
           isVisible={!!value}
           handleClick={() => handleDelete(index)}
-          Icon={ClearIcon}
           ariaLabel="clear input"
-        />
+        >
+          <ClearIcon />
+        </InputButton>
+      </>
+    ),
+  })
+}
+
+interface AddProps {
+  placeholder?: string
+  handleAdd: Function
+}
+function InputAdd({ placeholder, handleAdd }: AddProps) {
+  const { register, handleSubmit, watch, reset } = useForm()
+  const addName = 'add'
+  const isEmpty = !watch(addName)
+  const resetAdd = () => {
+    reset((fields) => ({
+      ...fields,
+      add: '',
+    }))
+  }
+  const onSubmit = (fields: FieldValues) => {
+    console.log(fields)
+    handleAdd(fields.add)
+    resetAdd()
+  }
+
+  return StyledInput({
+    placeholder: placeholder,
+    defaultValue: '',
+    inputProps: { ...register('add') },
+    endAdornment: (
+      <>
+        <InputButton
+          isVisible={!isEmpty}
+          handleClick={handleSubmit(onSubmit)}
+          ariaLabel="add cue"
+        >
+          <CheckIcon />
+        </InputButton>
+        {/* todo: this actually adds to list, bc onBlur */}
+        <InputButton
+          isVisible={!isEmpty}
+          handleClick={resetAdd}
+          ariaLabel="clear input"
+        >
+          <ClearIcon />
+        </InputButton>
       </>
     ),
   })
@@ -106,10 +155,15 @@ function StyledInput(inputBaseProps: InputBaseProps) {
 interface ButtonProps {
   handleClick: any
   isVisible: boolean
-  Icon: any
   ariaLabel?: string
+  children?: JSX.Element
 }
-function InputButton({ handleClick, isVisible, Icon, ariaLabel }: ButtonProps) {
+function InputButton({
+  handleClick,
+  isVisible,
+  ariaLabel,
+  children,
+}: ButtonProps) {
   return (
     <Grow in={isVisible}>
       <IconButton
@@ -118,7 +172,7 @@ function InputButton({ handleClick, isVisible, Icon, ariaLabel }: ButtonProps) {
         aria-label={ariaLabel}
         onClick={handleClick}
       >
-        <Icon />
+        {children}
       </IconButton>
     </Grow>
   )
