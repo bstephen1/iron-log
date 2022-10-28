@@ -8,7 +8,7 @@ import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form/AsyncComboBoxField'
 import InputField from '../form/InputField'
-import InputListField from '../form/InputListField'
+import InputListField from '../form/InputListField/InputListField'
 import SelectField from '../form/SelectField'
 
 interface Props {
@@ -39,7 +39,11 @@ export default function ExerciseForm({ exercise }: Props) {
   const methods = useForm({
     mode: 'onBlur', // todo: this is weird; think I want onChange but only after first onBlur instead
     resolver: yupResolver(validationSchema),
-    defaultValues: { name: "I am name", modifiers: ['band'], cues: ['test1', 'another', 'yat'] },
+    defaultValues: {
+      name: 'I am name',
+      modifiers: ['band'],
+      cues: ['test1', 'another', 'yat'],
+    },
   })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
@@ -79,7 +83,6 @@ export default function ExerciseForm({ exercise }: Props) {
           </Grid>
           <Grid xs={12} sm={6}>
             <InputField
-              label="Notes"
               name="notes"
               // errors={errors.notes}
               multiline
@@ -89,7 +92,7 @@ export default function ExerciseForm({ exercise }: Props) {
           <Grid xs={12}>
             <InputListField
               name="cues"
-            // placeholder="Add Cue"
+              // placeholder="Add Cue"
             />
           </Grid>
           <Grid xs={12}>
