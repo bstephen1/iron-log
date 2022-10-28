@@ -16,11 +16,13 @@ export default function ListItemInput(props: Props) {
     field,
     fieldState: { isDirty },
   } = useController({ name: `${name}.${index}` })
-  let { value, onBlur } = field
+  let { value } = field
 
   return (
     <OutlinedInput
       placeholder={placeholder}
+      autoComplete="off"
+      onBlur={() => !value && handleDelete(index)} // delete empty items
       inputProps={{
         'aria-label': 'edit',
         ...register(`cues.${index}`),
