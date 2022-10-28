@@ -6,10 +6,10 @@ import * as yup from 'yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
-import AsyncComboBoxField from '../form/AsyncComboBoxField'
-import InputField from '../form/InputField'
-import InputListField from '../form/InputListField'
-import SelectField from '../form/SelectField'
+import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
+import InputField from '../form-fields/InputField'
+import InputListField from '../form-fields/InputListField'
+import SelectField from '../form-fields/SelectField'
 
 interface Props {
   exercise: Exercise | null
