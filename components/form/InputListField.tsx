@@ -78,24 +78,26 @@ function InputListItem(props: ListItemProps) {
   } = useController({ name: `${name}.${index}` })
   let { value, onBlur } = field
 
-  return StyledInput({
-    placeholder: placeholder,
-    inputProps: {
-      'aria-label': 'edit',
-      ...register(`cues.${index}`),
-    },
-    endAdornment: (
-      <>
-        <InputButton
-          isVisible={!!value}
-          handleClick={() => handleDelete(index)}
-          ariaLabel="clear input"
-        >
-          <ClearIcon />
-        </InputButton>
-      </>
-    ),
-  })
+  return (
+    <StyledInput
+      placeholder={placeholder}
+      inputProps={{
+        'aria-label': 'edit',
+        ...register(`cues.${index}`),
+      }}
+      endAdornment={
+        <>
+          <AdornmentButton
+            isVisible={!!value}
+            handleClick={() => handleDelete(index)}
+            ariaLabel="clear input"
+          >
+            <ClearIcon />
+          </AdornmentButton>
+        </>
+      }
+    />
+  )
 }
 
 interface AddProps {
@@ -118,30 +120,32 @@ function InputAdd({ placeholder, handleAdd }: AddProps) {
     resetAdd()
   }
 
-  return StyledInput({
-    placeholder: placeholder,
-    defaultValue: '',
-    inputProps: { ...register('add') },
-    endAdornment: (
-      <>
-        <InputButton
-          isVisible={!isEmpty}
-          handleClick={handleSubmit(onSubmit)}
-          ariaLabel="add cue"
-        >
-          <CheckIcon />
-        </InputButton>
-        {/* todo: this actually adds to list, bc onBlur */}
-        <InputButton
-          isVisible={!isEmpty}
-          handleClick={resetAdd}
-          ariaLabel="clear input"
-        >
-          <ClearIcon />
-        </InputButton>
-      </>
-    ),
-  })
+  return (
+    <StyledInput
+      placeholder={placeholder}
+      defaultValue=""
+      inputProps={{ ...register('add') }}
+      endAdornment={
+        <>
+          <AdornmentButton
+            isVisible={!isEmpty}
+            handleClick={handleSubmit(onSubmit)}
+            ariaLabel="add cue"
+          >
+            <CheckIcon />
+          </AdornmentButton>
+          {/* todo: this actually adds to list, bc onBlur */}
+          <AdornmentButton
+            isVisible={!isEmpty}
+            handleClick={resetAdd}
+            ariaLabel="clear input"
+          >
+            <ClearIcon />
+          </AdornmentButton>
+        </>
+      }
+    />
+  )
 }
 
 function StyledInput(inputBaseProps: InputBaseProps) {
@@ -158,7 +162,7 @@ interface ButtonProps {
   ariaLabel?: string
   children?: JSX.Element
 }
-function InputButton({
+function AdornmentButton({
   handleClick,
   isVisible,
   ariaLabel,
@@ -177,12 +181,3 @@ function InputButton({
     </Grow>
   )
 }
-
-/*
-  placeholder
-  defaultValue ? (can define in register for add; defined in parent form for listItem)
-  inputProps
-  button clicks: check and x buttons
-    -- do we want a check on listItem? (mmm, don't think so)
-    -- can conditionally render check only if onConfirm is present
-*/
