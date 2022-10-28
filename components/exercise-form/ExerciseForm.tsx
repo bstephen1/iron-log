@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import * as Yup from 'Yup'
+import * as yup from 'yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
@@ -22,18 +22,18 @@ export default function ExerciseForm({ exercise }: Props) {
 
   // todo: validate (drop empty cues)
 
-  // Yup.addMethod(Yup.array, 'unique', function (message, mapper = a => a) {
+  // yup.addMethod(yup.array, 'unique', function (message, mapper = a => a) {
   //   return this.test('unique', message, function (list) {
   //     return list.length === new Set(list.map(mapper)).size;
   //   });
   // });
 
-  const validationSchema = Yup.object({
-    name: Yup.string().required("Name can't be blank!"),
-    status: Yup.string(),
-    modifiers: Yup.array(),
-    notes: Yup.string(),
-    cues: Yup.array(),
+  const validationSchema = yup.object({
+    name: yup.string().required("Name can't be blank!"),
+    status: yup.string(),
+    modifiers: yup.array(),
+    notes: yup.string(),
+    cues: yup.array(),
   })
 
   const methods = useForm({

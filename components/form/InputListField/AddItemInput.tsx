@@ -3,7 +3,7 @@ import { useForm, FieldValues } from 'react-hook-form'
 import AdornmentButton from './AdornmentButton'
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
-import * as Yup from 'Yup'
+import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 interface Props {
@@ -11,8 +11,8 @@ interface Props {
   handleAdd: (s: any) => void
 }
 export default function AddItemInput({ placeholder, handleAdd }: Props) {
-  const schema = Yup.object({
-    add: Yup.string(),
+  const schema = yup.object({
+    add: yup.string(),
   })
 
   // Use a new useForm to separate this from the main form.
