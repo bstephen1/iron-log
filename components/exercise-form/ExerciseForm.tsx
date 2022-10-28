@@ -8,7 +8,7 @@ import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form/AsyncComboBoxField'
 import InputField from '../form/InputField'
-import InputListField from '../form/InputListField/InputListField'
+import InputListField from '../form/InputListField'
 import SelectField from '../form/SelectField'
 
 interface Props {
