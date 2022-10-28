@@ -1,9 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
+import { useEffect } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
-import { useExercises, useModifiers } from '../../lib/frontend/restService'
+import { useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
@@ -13,10 +14,18 @@ import SelectField from '../form-fields/SelectField'
 
 interface Props {
   exercise: Exercise | null
-  handleSubmit?: (exercise: Exercise) => void
+  handleSubmit: (exercise: Exercise) => void
 }
-export default function ExerciseForm({ exercise }: Props) {
-  const { exercises } = useExercises()
+export default function ExerciseForm({ exercise, handleSubmit }: Props) {
+  // todo: find a better way to set up default values?
+  const { _id, ...exerciseKeyless } = exercise || {
+    _id: null,
+    name: '',
+    status: '',
+    notes: '',
+    validModifiers: [],
+    cues: [],
+  }
   const { modifiers } = useModifiers()
   const modifierNames = modifiers?.map((modifier) => modifier.name) || []
 
@@ -28,33 +37,31 @@ export default function ExerciseForm({ exercise }: Props) {
   //   });
   // });
 
+  // todo: define react form type ?
+
+  // todo: can we enumerate the Exercise fields instead of hardcoding?
   const validationSchema = yup.object({
     name: yup.string().required("Name can't be blank!"),
     status: yup.string(),
-    modifiers: yup.array(),
     notes: yup.string(),
+    validModifiers: yup.array(),
     cues: yup.array(),
   })
 
   const methods = useForm({
     mode: 'onBlur', // todo: this is weird; think I want onChange but only after first onBlur instead
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-      name: 'I am name',
-      modifiers: ['band'],
-      cues: ['test1', 'another', 'yat'],
-    },
+    defaultValues: { ...exerciseKeyless },
   })
 
   const onSubmit: SubmitHandler<any> = (data: any) => {
-    console.log(data.cues)
+    handleSubmit({ _id, ...data } as Exercise)
   }
 
-  // useEffect(() => {
-  //   console.log(errors)
-  // }, [errors])
-
-  // console.log(watch('name'))
+  useEffect(() => {
+    console.log('resetting')
+    methods.reset({ ...exerciseKeyless })
+  }, [exercise]) // todo: this CAN'T be exerciseKeyless; it renders infinitely. Maybe needs a useRef
 
   return (
     <FormProvider {...methods}>
@@ -75,7 +82,7 @@ export default function ExerciseForm({ exercise }: Props) {
               />
               <AsyncComboBoxField
                 label="Valid Modifiers"
-                name="modifiers"
+                name="validModifiers"
                 fullWidth
                 options={modifierNames}
               />

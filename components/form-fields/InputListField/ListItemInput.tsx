@@ -13,10 +13,9 @@ export default function ListItemInput(props: Props) {
   const { placeholder = '', index, name, handleDelete } = props
   const { register } = useFormContext()
   const {
-    field,
+    field: { value },
     fieldState: { isDirty },
   } = useController({ name: `${name}.${index}` })
-  let { value } = field
 
   return (
     <OutlinedInput
