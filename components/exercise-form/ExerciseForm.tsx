@@ -92,7 +92,8 @@ export default function ExerciseForm({ exercise }: Props) {
           <Grid xs={12}>
             <InputListField
               name="cues"
-              // placeholder="Add Cue"
+              addItemPlaceholder="Add Cue"
+              listItemPlaceholder="Edit Cue"
             />
           </Grid>
           <Grid xs={12}>

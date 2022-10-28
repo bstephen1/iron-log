@@ -1,30 +1,21 @@
-import CheckIcon from '@mui/icons-material/Check'
-import ClearIcon from '@mui/icons-material/Clear'
-import {
-  capitalize,
-  Divider,
-  Grow,
-  IconButton,
-  OutlinedInput,
-  Stack,
-} from '@mui/material'
-import {
-  FieldValues,
-  useController,
-  useFieldArray,
-  useForm,
-  useFormContext,
-} from 'react-hook-form'
+import { capitalize, Divider, Stack } from '@mui/material'
+import { useFieldArray } from 'react-hook-form'
 import AddItemInput from './AddItemInput'
 import ListItemInput from './ListItemInput'
 
 interface Props {
   label?: string
   name: string
-  placeholder?: string
+  addItemPlaceholder?: string
+  listItemPlaceholder?: string
 }
 export default function InputListField(props: Props) {
-  const { label = capitalize(props.name), name } = props
+  const {
+    label = capitalize(props.name),
+    name,
+    addItemPlaceholder,
+    listItemPlaceholder,
+  } = props
   const { fields, prepend, remove } = useFieldArray({ name })
 
   // we need to save these as functions in the parent component
@@ -39,14 +30,14 @@ export default function InputListField(props: Props) {
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
-        <AddItemInput handleAdd={handleAdd} placeholder={`Add ${label}`} />
+        <AddItemInput handleAdd={handleAdd} placeholder={addItemPlaceholder} />
         {fields?.map((field, i) => (
           <ListItemInput
             key={field.id}
             handleDelete={handleDelete}
             name={name}
             index={i}
-            placeholder="Empty cue (will be deleted)"
+            placeholder={listItemPlaceholder}
           />
         ))}
       </Stack>
