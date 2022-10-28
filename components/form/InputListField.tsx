@@ -5,19 +5,15 @@ import {
   Divider,
   Grow,
   IconButton,
-  InputBase,
-  InputBaseProps,
-  Paper,
+  OutlinedInput,
   Stack,
 } from '@mui/material'
-import { useEffect } from 'react'
 import {
   FieldValues,
   useController,
   useFieldArray,
   useForm,
   useFormContext,
-  useWatch,
 } from 'react-hook-form'
 
 interface Props {
@@ -27,17 +23,10 @@ interface Props {
 }
 export default function InputListField(props: Props) {
   const { label = capitalize(props.name), name } = props
-  const {
-    formState: { errors },
-  } = useFormContext()
-  // const error = errors[name]?.message as string
   const { fields, prepend, remove } = useFieldArray({ name })
-  const watchedFields = useWatch({ name })
 
-  useEffect(() => {
-    console.log(watchedFields)
-  }, [watchedFields])
-
+  // we need to save these as functions in the parent component
+  // or the list won't be able to properly rerender on change
   const handleAdd = (value: string) => prepend(value)
   const handleDelete = (i: number) => remove(i)
 
@@ -47,7 +36,6 @@ export default function InputListField(props: Props) {
       <Divider textAlign="center">{label}</Divider>
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
-        {/* todo: this is adding, but the fields don't */}
         <InputAdd handleAdd={handleAdd} placeholder={`Add ${label}`} />
         {fields?.map((field, i) => (
           <InputListItem
@@ -79,7 +67,7 @@ function InputListItem(props: ListItemProps) {
   let { value, onBlur } = field
 
   return (
-    <StyledInput
+    <OutlinedInput
       placeholder={placeholder}
       inputProps={{
         'aria-label': 'edit',
@@ -121,7 +109,7 @@ function InputAdd({ placeholder, handleAdd }: AddProps) {
   }
 
   return (
-    <StyledInput
+    <OutlinedInput
       placeholder={placeholder}
       defaultValue=""
       inputProps={{ ...register('add') }}
@@ -145,14 +133,6 @@ function InputAdd({ placeholder, handleAdd }: AddProps) {
         </>
       }
     />
-  )
-}
-
-function StyledInput(inputBaseProps: InputBaseProps) {
-  return (
-    <Paper sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
-      <InputBase sx={{ ml: 1, flex: 1 }} multiline {...inputBaseProps} />
-    </Paper>
   )
 }
 
