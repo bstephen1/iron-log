@@ -2,46 +2,45 @@ import { CheckBoxOutlineBlank } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import {
   Autocomplete,
-  capitalize,
   Checkbox,
   CircularProgress,
   TextField,
   TextFieldProps,
 } from '@mui/material'
 import { useState } from 'react'
-import { useController, useFormContext } from 'react-hook-form'
 
 interface Props {
-  label?: string
-  name: string
+  label: string
   options: string[]
+  initialValue?: string[]
+  onSubmit: Function
 }
 
 export default function AsyncComboBoxField(props: Props & TextFieldProps) {
-  const {
-    formState: { errors },
-  } = useFormContext()
-  const {
-    label = capitalize(props.name),
-    name,
-    options,
-    ...textFieldProps
-  } = props
+  const { label, options, initialValue, onSubmit, ...textFieldProps } = props
   const [open, setOpen] = useState(false)
-  const { field } = useController({ name })
   const loading = open && !options
-  const error = errors[name]?.message as string
+  const [value, setValue] = useState(initialValue)
 
+  const handleClose = () => {
+    setOpen(false)
+    onSubmit(value)
+  }
+
+  // This needs to be controlled due to complex behavior between the inner input and Chips.
+  // The useField() hook currently only supports uncontrolled inputs. May have to modify it
+  // if debounceSubmit is desired, but that may not be necessary for this. Seems like the
+  // debounce has to be a lot longer. onClose + onBlur may be enough.
   return (
     <Autocomplete
-      {...field}
-      // need to manually handle onChange because the Chips are seperate from the base input
-      onChange={(_, value) => field.onChange(value)}
+      onChange={(_, value) => setValue(value)}
+      onBlur={() => onSubmit(value)}
+      value={value || []}
       fullWidth
       multiple
       options={options ?? []}
       onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       loading={loading}
       loadingText="Loading..."
       disableCloseOnSelect
@@ -49,7 +48,6 @@ export default function AsyncComboBoxField(props: Props & TextFieldProps) {
       renderInput={(params) => (
         <TextField
           {...params}
-          name={name}
           label={label}
           InputProps={{
             ...params.InputProps,

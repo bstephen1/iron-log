@@ -5,6 +5,7 @@ import * as yup from 'yup'
 import { useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
+import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
 import InputFieldAutosave from '../form-fields/InputFieldAutosave'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
@@ -77,12 +78,13 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
               handleUpdate('status', value as ExerciseStatus)
             }
           />
-          {/* <AsyncComboBoxField
+          <AsyncComboBoxField
             label="Valid Modifiers"
-            name="validModifiers"
+            initialValue={exercise?.validModifiers}
             fullWidth
             options={modifierNames}
-          /> */}
+            onSubmit={(value) => handleUpdate('validModifiers', value)}
+          />
         </Stack>
       </Grid>
       <Grid xs={12} sm={6}>
