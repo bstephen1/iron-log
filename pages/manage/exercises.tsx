@@ -109,9 +109,7 @@ export default function ManageExercisesPage() {
         <StyledDivider />
       </Grid>
       <Grid container xs={12} md={8}>
-        <ExerciseFormProvider cleanExercise={exercise}>
-          <ExerciseForm exercise={exercise} handleSubmit={handleSubmit} />
-        </ExerciseFormProvider>
+        <ExerciseForm exercise={exercise} handleSubmit={handleSubmit} />
       </Grid>
     </Grid>
   )

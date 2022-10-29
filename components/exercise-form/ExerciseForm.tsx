@@ -58,7 +58,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   }
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} xs={12}>
       <Grid xs={12} sm={6}>
         <Stack>
           <InputFieldAutosave
@@ -66,14 +66,12 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
             defaultValue={exercise?.name}
             onSubmit={(value) => handleUpdate('name', value)}
             validator={yup.reach(validationSchema, 'name')}
-            fullWidth
             required
           />
           <SelectFieldAutosave
             label="Status"
             options={Object.values(ExerciseStatus)}
             initialValue={exercise?.status}
-            fullWidth
             handleSubmit={(value) =>
               handleUpdate('status', value as ExerciseStatus)
             }
@@ -81,7 +79,6 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
           <AsyncComboBoxField
             label="Valid Modifiers"
             initialValue={exercise?.validModifiers}
-            fullWidth
             options={modifierNames}
             onSubmit={(value) => handleUpdate('validModifiers', value)}
           />
