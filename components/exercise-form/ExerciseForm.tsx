@@ -45,10 +45,20 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   const validationSchema = yup.object({
     name: yup.string().required('Must have a name'), // todo: validate uniqueness
     status: yup.string().required('Must have a status'),
-    notes: yup.string(),
+    notes: yup
+      .string()
+      .required("y'all better have notes")
+      .max(20, 'way too long bro'),
     validModifiers: yup.array(),
     cues: yup.array(),
   })
+
+  const test = { name: 'ok' }
+  const test2 = { name: '' }
+
+  // validate a single field from a form
+  // yup.reach(validationSchema, 'name').validate('name')
+  // yup.reach(validationSchema, 'name').validate('')
 
   const methods = useForm({
     mode: 'onBlur', // todo: this is weird; think I want onChange but only after first onBlur instead
@@ -124,6 +134,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
           defaultValue={exercise?.notes}
           fullWidth
           onSubmit={(value) => handleUpdate('notes', value)}
+          validate={yup.reach(validationSchema, 'notes')}
         />
       </Grid>
       {/* <Grid xs={12}>
