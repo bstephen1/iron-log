@@ -13,6 +13,7 @@ import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
 import InputField from '../form-fields/InputField'
+import InputFieldAutosave from '../form-fields/InputFieldAutosave'
 import InputListField from '../form-fields/InputListField'
 import SelectField from '../form-fields/SelectField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
@@ -103,7 +104,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
               <SelectFieldAutosave
                 label="Status"
                 options={Object.values(ExerciseStatus)}
-                value={exercise?.status}
+                initialValue={exercise?.status}
                 fullWidth
                 handleSubmit={(value) =>
                   handleUpdate('status', value as ExerciseStatus)
@@ -123,6 +124,12 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
               // errors={errors.notes}
               multiline
               fullWidth
+            />
+            <InputFieldAutosave
+              label="Notes"
+              initialValue={exercise?.notes}
+              fullWidth
+              handleSubmit={(value) => handleUpdate('notes', value)}
             />
           </Grid>
           <Grid xs={12}>

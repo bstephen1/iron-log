@@ -1,4 +1,4 @@
-import { MenuItem, TextField, TextFieldProps } from '@mui/material'
+import { TextField, TextFieldProps } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 
@@ -7,33 +7,33 @@ import { ExerciseStatus } from '../../models/ExerciseStatus'
 interface Props {
   label: string
   initialValue?: ExerciseStatus
-  options: string[]
   defaultHelperText?: string
   handleSubmit: (value: string) => void
   // yup validator
 }
-export default function SelectFieldAutosave(props: Props & TextFieldProps) {
+export default function InputFieldAutosave(props: Props & TextFieldProps) {
   const {
     label,
     defaultHelperText = ' ',
-    options,
-    initialValue = '',
     handleSubmit,
+    initialValue,
     ...textFieldProps
   } = props
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(initialValue || '')
 
   // todo: extract to a hook
   let timer: NodeJS.Timeout
 
   const handleChange = (value: string) => {
     clearTimeout(timer)
+    console.log(value)
     setValue(value)
-
-    timer = setTimeout(() => {
-      handleSubmit(value)
-    }, 500)
+    // timer = setTimeout(() => {
+    //   handleSubmit(value)
+    // }, 500)
   }
+
+  console.log(textFieldProps)
 
   useEffect(() => {
     setValue(initialValue || '')
@@ -41,21 +41,15 @@ export default function SelectFieldAutosave(props: Props & TextFieldProps) {
 
   return (
     <TextField
-      select
       label={label}
       value={value}
       onBlur={() => handleSubmit(value)}
       onChange={(e) => handleChange(e.target.value)}
+      InputLabelProps={{ shrink: !!value }}
       // error={!!error}
       // helperText={error ?? defaultHelperText}
       // inputProps={{ ...register(name) }}
       {...textFieldProps}
-    >
-      {options.map((option) => (
-        <MenuItem key={option} value={option}>
-          {option}
-        </MenuItem>
-      ))}
-    </TextField>
+    />
   )
 }
