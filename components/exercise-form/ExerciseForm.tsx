@@ -134,7 +134,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
           defaultValue={exercise?.notes}
           fullWidth
           onSubmit={(value) => handleUpdate('notes', value)}
-          validate={yup.reach(validationSchema, 'notes')}
+          validator={yup.reach(validationSchema, 'notes')}
         />
       </Grid>
       {/* <Grid xs={12}>
