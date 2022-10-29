@@ -1,12 +1,12 @@
-import { capitalize, MenuItem, TextField, TextFieldProps } from '@mui/material'
-import { useRef } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { MenuItem, TextField, TextFieldProps } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { ExerciseStatus } from '../../models/ExerciseStatus'
 
 // todo: make label optional, default to capitalized name
 // todo: this for sure can be combined with InputField
 interface Props {
   label: string
-  defaultValue?: string
+  value?: ExerciseStatus
   options: string[]
   defaultHelperText?: string
   handleSubmit: (value: string) => void
@@ -15,26 +15,39 @@ interface Props {
 export default function SelectFieldAutosave(props: Props & TextFieldProps) {
   const {
     label,
-    defaultValue = '',
     defaultHelperText = ' ',
     options,
     handleSubmit,
     ...textFieldProps
   } = props
+  const [value, setValue] = useState(props.value || '')
 
-  const inputRef = useRef()
+  // todo: extract to a hook
+  let timer: NodeJS.Timeout
+
+  const handleChange = (value: string) => {
+    clearTimeout(timer)
+
+    timer = setTimeout(() => {
+      handleSubmit(value)
+    }, 500)
+  }
+
+  useEffect(() => {
+    console.log(props.value)
+    setValue(props.value || '')
+  }, [props.value])
 
   return (
     <TextField
       select
-      defaultValue={defaultValue} // have to explicitly define the default: undefined === error // also, this doesn't work in parent useForm()
       label={label}
-      onBlur={() => handleSubmit(inputRef.current?.value)}
-      // onChange={() => handleSubmit(inputRef.current?.value)}
+      value={value}
+      onBlur={() => handleSubmit(value)}
+      onChange={(e) => handleChange(e.target.value)}
       // error={!!error}
       // helperText={error ?? defaultHelperText}
       // inputProps={{ ...register(name) }}
-      inputRef={inputRef}
       {...textFieldProps}
     >
       {options.map((option) => (

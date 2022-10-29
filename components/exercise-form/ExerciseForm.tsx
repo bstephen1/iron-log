@@ -103,6 +103,7 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
               <SelectFieldAutosave
                 label="Status"
                 options={Object.values(ExerciseStatus)}
+                value={exercise?.status}
                 fullWidth
                 handleSubmit={(value) =>
                   handleUpdate('status', value as ExerciseStatus)
