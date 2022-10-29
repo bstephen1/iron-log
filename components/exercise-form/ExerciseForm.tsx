@@ -1,4 +1,4 @@
-import { Button, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
@@ -101,17 +101,6 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
           listItemPlaceholder="Empty Cue (will be deleted)"
         />
       </Grid> */}
-      <Grid xs={12}>
-        <Button type="reset">Reset</Button>
-        <Button
-          variant="contained"
-          // disabled={!isFormValid}
-          type="submit"
-        >
-          Save
-        </Button>
-        {/* todo: put a warning / error icon if there is warning (no changes) or error (invalid changes)? */}
-      </Grid>
     </Grid>
   )
 }
