@@ -39,6 +39,10 @@ export default function SelectFieldAutosave(props: Props & TextFieldProps) {
     setValue(initialValue || '')
   }, [initialValue])
 
+  // useEffect(() => {
+  //   console.log(value);
+  // }, [value]);
+
   return (
     <TextField
       select

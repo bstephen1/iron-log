@@ -1,51 +1,58 @@
 import { TextField, TextFieldProps } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { useForm } from 'react-hook-form'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 
 // todo: make label optional, default to capitalized name
 // todo: this for sure can be combined with InputField
 interface Props {
   label: string
-  initialValue?: ExerciseStatus
+  defaultValue?: ExerciseStatus
   defaultHelperText?: string
-  handleSubmit: (value: string) => void
+  onSubmit: any
   // yup validator
 }
 export default function InputFieldAutosave(props: Props & TextFieldProps) {
   const {
     label,
     defaultHelperText = ' ',
-    handleSubmit,
-    initialValue,
+    defaultValue,
+    onSubmit,
     ...textFieldProps
   } = props
-  const [value, setValue] = useState(initialValue || '')
 
   // todo: extract to a hook
-  let timer: NodeJS.Timeout
+  let timer = useRef<NodeJS.Timeout>()
 
-  const handleChange = (value: string) => {
-    clearTimeout(timer)
-    console.log(value)
-    setValue(value)
-    // timer = setTimeout(() => {
-    //   handleSubmit(value)
-    // }, 500)
+  // const schema = yup.object({
+  //   notes: yup.string(),
+  // })
+
+  const { register, setValue, watch } = useForm()
+
+  const handleChange = () => {
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => {
+      onSubmit(watch('notes'))
+    }, 500)
   }
 
-  console.log(textFieldProps)
-
   useEffect(() => {
-    setValue(initialValue || '')
-  }, [initialValue])
+    console.log()
+    setValue('notes', defaultValue)
+  }, [defaultValue])
 
   return (
     <TextField
       label={label}
-      value={value}
-      onBlur={() => handleSubmit(value)}
-      onChange={(e) => handleChange(e.target.value)}
-      InputLabelProps={{ shrink: !!value }}
+      defaultValue={defaultValue}
+      onBlur={() => onSubmit(watch('notes'))}
+      // onBlur={() => handleSubmit(value)}
+      onKeyDown={handleChange} // seems to work better than onChange (eg, user could be holding down bksp)
+      // InputLabelProps={{ shrink: !!inputRef.current.value }}
+      inputProps={{
+        ...register('notes', {}),
+      }}
       // error={!!error}
       // helperText={error ?? defaultHelperText}
       // inputProps={{ ...register(name) }}
