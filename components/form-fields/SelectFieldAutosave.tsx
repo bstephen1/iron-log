@@ -1,8 +1,8 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
+import useField from './useField'
 
-// todo: make label optional, default to capitalized name
 // todo: this for sure can be combined with InputField
 interface Props {
   label: string
@@ -10,7 +10,6 @@ interface Props {
   options: string[]
   defaultHelperText?: string
   handleSubmit: (value: string) => void
-  // yup validator
 }
 export default function SelectFieldAutosave(props: Props & TextFieldProps) {
   const {
@@ -21,38 +20,17 @@ export default function SelectFieldAutosave(props: Props & TextFieldProps) {
     handleSubmit,
     ...textFieldProps
   } = props
-  const [value, setValue] = useState(initialValue)
 
-  // todo: extract to a hook
-  let timer: NodeJS.Timeout
-
-  const handleChange = (value: string) => {
-    clearTimeout(timer)
-    setValue(value)
-
-    timer = setTimeout(() => {
-      handleSubmit(value)
-    }, 500)
-  }
-
-  useEffect(() => {
-    setValue(initialValue || '')
-  }, [initialValue])
-
-  // useEffect(() => {
-  //   console.log(value);
-  // }, [value]);
+  const { register } = useField({
+    onSubmit: handleSubmit,
+    defaultValue: initialValue,
+  })
 
   return (
     <TextField
       select
       label={label}
-      value={value}
-      onBlur={() => handleSubmit(value)}
-      onChange={(e) => handleChange(e.target.value)}
-      // error={!!error}
-      // helperText={error ?? defaultHelperText}
-      // inputProps={{ ...register(name) }}
+      inputProps={{ ...register() }}
       {...textFieldProps}
     >
       {options.map((option) => (

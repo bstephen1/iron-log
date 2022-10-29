@@ -20,7 +20,7 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
     validator,
     ...textFieldProps
   } = props
-  const { register, error, value } = useField({
+  const { register, error, isEmpty } = useField({
     yupValidator: validator,
     onSubmit: onSubmit,
     defaultValue: defaultValue,
@@ -32,7 +32,7 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
       inputProps={{ ...register() }}
       error={!!error}
       helperText={error ?? defaultHelperText}
-      InputLabelProps={{ shrink: !!value }}
+      InputLabelProps={{ shrink: !isEmpty }}
       {...textFieldProps}
     />
   )

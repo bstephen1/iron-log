@@ -15,7 +15,7 @@ import * as yup from 'yup'
 
 interface Props {
   // the validator should be for a single field. Run reach() to specify the field to use.
-  yupValidator: ReturnType<typeof yup.reach>
+  yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
   onSubmit: (value: any) => void // generic with ref?
   defaultValue?: any // generic?
@@ -45,6 +45,8 @@ export default function useField({
   }
 
   const validate = () => {
+    if (!yupValidator) return
+
     yupValidator
       .validate(ref.current.value)
       .then(setError(''))
@@ -72,6 +74,6 @@ export default function useField({
     validate,
     submit,
     error,
-    value: ref.current.value,
+    isEmpty: !ref.current.value,
   }
 }
