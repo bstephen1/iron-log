@@ -26,7 +26,10 @@ export default function InputListField(props: Props) {
   return (
     <>
       {/* todo: center text? outline? divider style in the middle? */}
-      <Divider textAlign="center">{label}</Divider>
+      {/* todo: style divider line w/ theme color? (see dad) */}
+      <Divider textAlign="center" sx={{ pb: 2 }}>
+        {label}
+      </Divider>
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}

@@ -37,12 +37,16 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   //   });
   // });
 
+  // todo: disable form when exercise is null
+
   // todo: define react form type ?
+
+  // todo: status isn't populating
 
   // todo: can we enumerate the Exercise fields instead of hardcoding?
   const validationSchema = yup.object({
-    name: yup.string().required("Name can't be blank!"),
-    status: yup.string(),
+    name: yup.string().required('Must have a name'), // todo: validate uniqueness
+    status: yup.string().required('Must have a status'),
     notes: yup.string(),
     validModifiers: yup.array(),
     cues: yup.array(),
