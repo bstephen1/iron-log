@@ -79,6 +79,17 @@ export async function updateExercise(newExercise: Exercise) {
   }).catch((e) => console.error(e))
 }
 
+export async function updateExerciseField<T extends keyof Exercise>(
+  exercise: Exercise,
+  field: T,
+  value: Exercise[T]
+) {
+  fetch(URI_EXERCISES + exercise.name, {
+    method: 'PATCH',
+    body: JSON.stringify({ exercise, field, value }),
+  }).catch((e) => console.error(e))
+}
+
 export async function updateModifier(newModifier: Modifier) {
   fetch(URI_MODIFIERS + newModifier.name, {
     method: 'PUT',

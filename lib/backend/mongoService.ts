@@ -28,6 +28,7 @@ async function fetchCollection<T extends Document>(
 // SESSION
 //---------
 
+// todo: change function names to mirror mongo function used? Or keep a separate convention to not associate with db provider?
 export async function addSession(session: Session) {
   return await sessions.insertOne(session)
 }
@@ -61,6 +62,22 @@ export async function updateExercise(exercise: Exercise) {
   return await exercises.replaceOne({ _id: exercise._id }, exercise, {
     upsert: true,
   })
+}
+
+interface updateExerciseFieldProps<T extends keyof Exercise> {
+  exercise: Exercise
+  field: T
+  value: Exercise[T] | any // todo
+}
+export async function updateExerciseField<T extends keyof Exercise>({
+  exercise,
+  field,
+  value,
+}: updateExerciseFieldProps<T>) {
+  return await exercises.updateOne(
+    { _id: exercise._id },
+    { $set: { [field]: value } }
+  )
 }
 
 //----------

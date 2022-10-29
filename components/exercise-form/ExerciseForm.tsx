@@ -3,14 +3,19 @@ import { Button, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useEffect } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { mutate } from 'swr'
 import * as yup from 'yup'
-import { useModifiers } from '../../lib/frontend/restService'
+import {
+  updateExerciseField,
+  useModifiers,
+} from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
 import InputField from '../form-fields/InputField'
 import InputListField from '../form-fields/InputListField'
 import SelectField from '../form-fields/SelectField'
+import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
 interface Props {
   exercise: Exercise | null
@@ -62,6 +67,17 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     handleSubmit({ _id, ...data } as Exercise)
   }
 
+  const handleUpdate = <T extends keyof Exercise>(
+    field: T,
+    value: Exercise[T]
+  ) => {
+    if (!exercise) return
+
+    const newExercise = { ...exercise, [field]: value }
+    updateExerciseField(exercise, field, value)
+    mutate(newExercise)
+  }
+
   useEffect(() => {
     console.log('resetting')
     methods.reset({ ...exerciseKeyless })
@@ -83,6 +99,14 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
                 name="status"
                 options={Object.values(ExerciseStatus)}
                 fullWidth
+              />
+              <SelectFieldAutosave
+                label="Status"
+                options={Object.values(ExerciseStatus)}
+                fullWidth
+                handleSubmit={(value) =>
+                  handleUpdate('status', value as ExerciseStatus)
+                }
               />
               <AsyncComboBoxField
                 label="Valid Modifiers"

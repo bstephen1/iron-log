@@ -3,6 +3,7 @@ import {
   addExercise,
   fetchExercise,
   updateExercise,
+  updateExerciseField,
 } from '../../../lib/backend/mongoService'
 
 export default async function handler(
@@ -38,6 +39,14 @@ export default async function handler(
     case 'PUT':
       try {
         await updateExercise(JSON.parse(req.body))
+        res.status(200).end()
+      } catch (e) {
+        console.error(e)
+        res.status(500).json({ message: 'could not update exercise', error: e })
+      }
+    case 'PATCH':
+      try {
+        await updateExerciseField(JSON.parse(req.body))
         res.status(200).end()
       } catch (e) {
         console.error(e)
