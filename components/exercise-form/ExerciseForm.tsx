@@ -94,7 +94,6 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     <Grid container spacing={2}>
       <Grid xs={12} sm={6}>
         <Stack>
-          {/* register === uncontrolled; control === controlled */}
           {/* <InputField
             name="name"
             required // all this does is put an asterisk at the end of the label...
@@ -105,6 +104,14 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
             options={Object.values(ExerciseStatus)}
             fullWidth
           /> */}
+          <InputFieldAutosave
+            label="Name"
+            defaultValue={exercise?.name}
+            onSubmit={(value) => handleUpdate('name', value)}
+            validator={yup.reach(validationSchema, 'name')}
+            fullWidth
+            required
+          />
           <SelectFieldAutosave
             label="Status"
             options={Object.values(ExerciseStatus)}

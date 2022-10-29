@@ -74,6 +74,6 @@ export default function useField({
     validate,
     submit,
     error,
-    isEmpty: !ref.current.value,
+    isEmpty: !ref.current?.value, // todo
   }
 }
