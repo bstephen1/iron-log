@@ -41,11 +41,6 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     cues: yup.array(),
   })
 
-  const onSubmit: SubmitHandler<any> = (data: any) => {
-    console.log(data)
-    // handleSubmit({ _id, ...data } as Exercise)
-  }
-
   const handleUpdate = <T extends keyof Exercise>(
     field: T,
     value: Exercise[T]
