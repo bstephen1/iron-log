@@ -14,11 +14,11 @@ interface Props {
   label: string
   options: string[]
   initialValue?: string[]
-  onSubmit: Function
+  onSubmit: (value: string[]) => void
 }
 
 // fixme: infinite rerenders if exercise is null
-export default function AsyncComboBoxField(props: Props & TextFieldProps) {
+export default function AsyncComboBoxField(props: Props) {
   const {
     label,
     options,
@@ -34,10 +34,10 @@ export default function AsyncComboBoxField(props: Props & TextFieldProps) {
     onSubmit(value)
   }
 
-  const { control, value, setValue } = useField({
+  const { control, value, setValue } = useField<string[]>({
     onSubmit,
     initialValue,
-    onChange: (_, value) => setValue(value),
+    onChange: (_: any, value: string[]) => setValue(value),
   })
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.

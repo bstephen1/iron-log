@@ -15,27 +15,30 @@ import * as yup from 'yup'
  *
  */
 
-interface Props {
+interface Props<T = string> {
   // the validator should be for a single field. Run reach() to specify the field to use.
   yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
   onChange?: any
-  onBlur?: any
-  onSubmit: (value: any) => void // todo: generic with ref?
-  initialValue?: any
+  onBlur?: () => void
+  onSubmit: (value: T) => void // todo: generic with ref?
+  initialValue: T // required so we can determine the type. Cannot be undefined!
   useDebounce?: boolean
 }
-export default function useField({
+export default function useField<T>({
   yupValidator,
   debounceMilliseconds = 800,
   onSubmit,
-  initialValue = '',
   useDebounce = true,
   ...props
-}: Props) {
+}: Props<T>) {
+  // If initialValue is an empty array / object, React will create a new object
+  // every render, thus triggering the useEffect to reset to the new initialValue infinitely.
+  // useRef persists the object between renders to avoid this problem.
+  const initialValue = useRef(props.initialValue)
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(initialValue.current)
   const [isTouched, setIsTouched] = useState(false)
 
   // Spread this into an input component to set up the value.
@@ -56,7 +59,7 @@ export default function useField({
   }
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setValue(e.target.value)
+    setValue(e.target.value as T) // todo: tell ts this is for strings only
     useDebounce && debouncedSubmit()
   }
 
@@ -81,15 +84,16 @@ export default function useField({
     onSubmit(value)
   }
 
-  const reset = (value) => {
+  const reset = (value: T) => {
     setError('')
     setValue(value)
     setIsTouched(false)
   }
 
   useEffect(() => {
-    reset(initialValue)
-  }, [initialValue])
+    console.log(initialValue.current)
+    reset(initialValue.current)
+  }, [initialValue.current])
 
   // todo: validator is running twice after error
   useEffect(() => {
