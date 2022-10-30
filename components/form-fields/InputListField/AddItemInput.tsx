@@ -12,19 +12,19 @@ interface Props {
 export default function AddItemInput({ placeholder, handleAdd }: Props) {
   const onSubmit = (value: string) => {
     handleAdd(value)
-    reset()
+    reset('')
   }
-  const { register, isEmpty, reset, submit } = useField({
+  const { control, isEmpty, reset, submit } = useField({
     onSubmit,
-    onChange: () => {},
-    onBlur: () => {},
+    useDebounce: false,
   })
 
   // todo: submit on Enter
+  // todo: keep focus on input on clear (and submit?)
   return (
     <OutlinedInput
+      {...control()}
       placeholder={placeholder}
-      inputProps={{ ...register() }}
       endAdornment={
         <>
           <AdornmentButton
@@ -37,7 +37,7 @@ export default function AddItemInput({ placeholder, handleAdd }: Props) {
           {/* todo: this actually adds to list, bc onBlur submits. Should it? Or just clicking check mark? */}
           <AdornmentButton
             isVisible={!isEmpty}
-            handleClick={() => reset()}
+            handleClick={() => reset('')}
             ariaLabel="clear input"
           >
             <ClearIcon />

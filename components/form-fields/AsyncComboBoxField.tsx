@@ -17,6 +17,7 @@ interface Props {
   onSubmit: Function
 }
 
+// fixme: infinite rerenders if exercise is null
 export default function AsyncComboBoxField(props: Props & TextFieldProps) {
   const {
     label,

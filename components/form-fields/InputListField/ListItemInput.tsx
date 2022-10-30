@@ -20,19 +20,19 @@ export default function ListItemInput(props: Props) {
   } = props
 
   const onSubmit = (value: string) => handleUpdate(index, value)
-  const { register, isEmpty } = useField({
+  const { control, isEmpty } = useField({
     onSubmit,
-    defaultValue,
+    initialValue: defaultValue,
     onBlur: () => isEmpty && handleDelete(index), // delete empty items
   })
 
   return (
     <OutlinedInput
+      {...control()}
       placeholder={placeholder}
       autoComplete="off"
       inputProps={{
         'aria-label': 'edit',
-        ...register(),
       }}
       endAdornment={
         <>

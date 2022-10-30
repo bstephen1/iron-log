@@ -23,12 +23,14 @@ interface Props {
   onBlur?: any
   onSubmit: (value: any) => void // todo: generic with ref?
   initialValue?: any
+  useDebounce?: boolean
 }
 export default function useField({
   yupValidator,
   debounceMilliseconds = 800,
   onSubmit,
   initialValue = '',
+  useDebounce = true,
   ...props
 }: Props) {
   const timerRef = useRef<NodeJS.Timeout>()
@@ -55,7 +57,7 @@ export default function useField({
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setValue(e.target.value)
-    debouncedSubmit()
+    useDebounce && debouncedSubmit()
   }
 
   const debouncedSubmit = () => {
