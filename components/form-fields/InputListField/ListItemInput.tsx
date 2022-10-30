@@ -1,37 +1,45 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
-import { useController, useFormContext } from 'react-hook-form'
+import useField from '../useField'
 import AdornmentButton from './AdornmentButton'
 
 interface Props {
-  name: string
+  defaultValue: string
   index: number
   handleDelete: (index: number) => void
+  handleUpdate: (index: number, value: string) => void
   placeholder?: string
 }
 export default function ListItemInput(props: Props) {
-  const { placeholder = '', index, name, handleDelete } = props
-  const { register } = useFormContext()
   const {
-    field: { value },
-    fieldState: { isDirty },
-  } = useController({ name: `${name}.${index}` })
+    defaultValue,
+    placeholder = '',
+    index,
+    handleDelete,
+    handleUpdate,
+  } = props
+
+  const onSubmit = (value: string) => handleUpdate(index, value)
+  const { register, isEmpty } = useField({
+    onSubmit,
+    defaultValue,
+    onBlur: () => isEmpty && handleDelete(index), // delete empty items
+  })
 
   return (
     <OutlinedInput
       placeholder={placeholder}
       autoComplete="off"
-      onBlur={() => !value && handleDelete(index)} // delete empty items
       inputProps={{
         'aria-label': 'edit',
-        ...register(`cues.${index}`),
+        ...register(),
       }}
       endAdornment={
         <>
           <AdornmentButton
-            isVisible={!!value}
+            isVisible={!isEmpty}
             handleClick={() => handleDelete(index)}
-            ariaLabel="clear input"
+            ariaLabel="delete item"
           >
             <ClearIcon />
           </AdornmentButton>

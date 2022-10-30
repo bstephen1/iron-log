@@ -1,5 +1,4 @@
-import { capitalize, Divider, Stack } from '@mui/material'
-import { useFieldArray } from 'react-hook-form'
+import { Divider, Stack } from '@mui/material'
 import AddItemInput from './AddItemInput'
 import ListItemInput from './ListItemInput'
 
@@ -23,7 +22,17 @@ export default function InputListField(props: Props) {
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
   const handleAdd = (value: string) => handleSubmit([value, ...values])
-  const handleDelete = (i: number) => remove(i)
+  const handleDelete = (i: number) => {
+    handleSubmit(values.slice(0, i).concat(values.slice(i + 1)))
+  }
+  const handleUpdate = (i: number, value: string) => {
+    handleSubmit(
+      values
+        .slice(0, i)
+        .concat(value)
+        .concat(values.slice(i + 1))
+    )
+  }
 
   return (
     <>
@@ -36,15 +45,16 @@ export default function InputListField(props: Props) {
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
         <AddItemInput handleAdd={handleAdd} placeholder={addItemPlaceholder} />
-        {/* {fields?.map((field, i) => (
+        {values?.map((value, i) => (
           <ListItemInput
-            key={field.id}
+            key={i}
             handleDelete={handleDelete}
-            name={name}
+            handleUpdate={handleUpdate}
             index={i}
+            defaultValue={value}
             placeholder={listItemPlaceholder}
           />
-        ))} */}
+        ))}
       </Stack>
     </>
   )
