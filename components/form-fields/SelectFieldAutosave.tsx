@@ -16,20 +16,21 @@ export default function SelectFieldAutosave(props: Props & TextFieldProps) {
     label,
     defaultHelperText = ' ',
     options,
-    initialValue = '',
+    initialValue,
     handleSubmit,
     ...textFieldProps
   } = props
 
   const { control } = useField({
     onSubmit: handleSubmit,
-    initialValue: initialValue,
+    initialValue: initialValue || '',
   })
 
   return (
     <TextField
       {...control(label)}
       select
+      disabled={initialValue == null}
       helperText={defaultHelperText}
       // inputProps={{ ...register() }}
       {...textFieldProps}

@@ -1,6 +1,5 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
 import { useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
@@ -12,9 +11,8 @@ import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
 interface Props {
   exercise: Exercise | null
-  handleSubmit: (exercise: Exercise) => void
 }
-export default function ExerciseForm({ exercise, handleSubmit }: Props) {
+export default function ExerciseForm({ exercise }: Props) {
   const { modifiers } = useModifiers()
   const modifierNames = modifiers?.map((modifier) => modifier.name) || []
 
@@ -27,10 +25,6 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
   // });
 
   // todo: disable form when exercise is null
-
-  // todo: define react form type ?
-
-  // todo: status isn't populating
 
   // todo: can we enumerate the Exercise fields instead of hardcoding?
   const validationSchema = yup.object({
@@ -57,11 +51,13 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
     <Grid container spacing={2} xs={12}>
       <Grid xs={12} sm={6}>
         <Stack>
+          {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
+            Export the schema and have the hook pull it in?  */}
           <InputFieldAutosave
             label="Name"
-            defaultValue={exercise?.name}
-            onSubmit={(value) => handleUpdate('name', value)}
-            validator={yup.reach(validationSchema, 'name')}
+            initialValue={exercise?.name}
+            onSubmit={(value: string) => handleUpdate('name', value)}
+            yupValidator={yup.reach(validationSchema, 'name')}
             required
           />
           <SelectFieldAutosave
@@ -85,10 +81,10 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
       <Grid xs={12} sm={6}>
         <InputFieldAutosave
           label="Notes"
-          defaultValue={exercise?.notes}
+          initialValue={exercise?.notes}
           fullWidth
           onSubmit={(value) => handleUpdate('notes', value)}
-          validator={yup.reach(validationSchema, 'notes')}
+          yupValidator={yup.reach(validationSchema, 'notes')}
         />
       </Grid>
       <Grid xs={12}>

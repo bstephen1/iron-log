@@ -7,15 +7,21 @@ import AdornmentButton from './AdornmentButton'
 interface Props {
   placeholder?: string
   handleAdd: (s: any) => void
+  disabled: boolean
 }
 // This Input is a temporary value that we don't want to include in the list until/unless it is submitted.
-export default function AddItemInput({ placeholder, handleAdd }: Props) {
+export default function AddItemInput({
+  placeholder,
+  handleAdd,
+  disabled,
+}: Props) {
   const onSubmit = (value: string) => {
     handleAdd(value)
     reset('')
   }
   const { control, isEmpty, reset, submit } = useField({
     onSubmit,
+    initialValue: '',
     useDebounce: false,
   })
 
@@ -25,6 +31,7 @@ export default function AddItemInput({ placeholder, handleAdd }: Props) {
     <OutlinedInput
       {...control()}
       placeholder={placeholder}
+      disabled={disabled}
       endAdornment={
         <>
           <AdornmentButton

@@ -1,29 +1,30 @@
 import { TextField, TextFieldProps } from '@mui/material'
 import { useEffect } from 'react'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
+import * as yup from 'yup'
 import useField from './useField'
 
 // todo: this for sure can be combined with InputField
 interface Props {
   label: string
-  defaultValue?: ExerciseStatus
+  initialValue?: string
   defaultHelperText?: string
-  onSubmit: any
-  validator: any
+  onSubmit: (value: string) => void
+  yupValidator: ReturnType<typeof yup.reach>
 }
 export default function InputFieldAutosave(props: Props & TextFieldProps) {
   const {
     label,
     defaultHelperText = ' ',
-    defaultValue = '',
+    initialValue,
     onSubmit,
-    validator,
+    yupValidator,
     ...textFieldProps
   } = props
   const { control, error, isEmpty } = useField({
-    yupValidator: validator,
+    // @ts-ignore useField is annoyingly inferring some random HTML type instead of string which is explicitly specificed but whatever
+    initialValue: initialValue || '',
+    yupValidator: yupValidator,
     onSubmit: onSubmit,
-    initialValue: defaultValue,
   })
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
   return (
     <TextField
       {...control(label)}
+      disabled={initialValue == null}
       error={!!error}
       helperText={error || defaultHelperText}
       InputLabelProps={{ shrink: !isEmpty }}

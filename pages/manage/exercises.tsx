@@ -7,9 +7,8 @@ import {
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
 import ExerciseForm from '../../components/exercise-form/ExerciseForm'
-import { ExerciseFormProvider } from '../../components/exercise-form/useExerciseForm'
 import StyledDivider from '../../components/StyledDivider'
-import { updateExercise, useExercises } from '../../lib/frontend/restService'
+import { useExercises } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatusOrder } from '../../models/ExerciseStatus'
 
@@ -32,12 +31,6 @@ export default function ManageExercisesPage() {
       this.name = name
       this.status = 'Add New'
     }
-  }
-
-  function handleSubmit(exercise: Exercise) {
-    updateExercise(exercise)
-    setExercise(exercise)
-    mutate(exercises)
   }
 
   // todo: move autocomplete to a component for this + session view
@@ -109,7 +102,7 @@ export default function ManageExercisesPage() {
         <StyledDivider />
       </Grid>
       <Grid container xs={12} md={8}>
-        <ExerciseForm exercise={exercise} handleSubmit={handleSubmit} />
+        <ExerciseForm exercise={exercise} />
       </Grid>
     </Grid>
   )

@@ -25,7 +25,7 @@ interface Props<T = string> {
   initialValue: T // required so we can determine the type. Cannot be undefined!
   useDebounce?: boolean
 }
-export default function useField<T>({
+export default function useField<T = string>({
   yupValidator,
   debounceMilliseconds = 800,
   onSubmit,

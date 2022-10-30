@@ -19,13 +19,7 @@ interface Props {
 
 // fixme: infinite rerenders if exercise is null
 export default function AsyncComboBoxField(props: Props) {
-  const {
-    label,
-    options,
-    initialValue = [],
-    onSubmit,
-    ...textFieldProps
-  } = props
+  const { label, options, initialValue, onSubmit, ...textFieldProps } = props
   const [open, setOpen] = useState(false)
   const loading = open && !options
 
@@ -36,7 +30,7 @@ export default function AsyncComboBoxField(props: Props) {
 
   const { control, value, setValue } = useField<string[]>({
     onSubmit,
-    initialValue,
+    initialValue: initialValue || [],
     onChange: (_: any, value: string[]) => setValue(value),
   })
 
@@ -49,6 +43,7 @@ export default function AsyncComboBoxField(props: Props) {
       {...control()}
       fullWidth
       multiple
+      disabled={initialValue == null}
       options={options ?? []}
       onOpen={() => setOpen(true)}
       onClose={handleClose}

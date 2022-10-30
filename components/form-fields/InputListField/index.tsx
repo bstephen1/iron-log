@@ -7,17 +7,11 @@ interface Props {
   addItemPlaceholder?: string
   listItemPlaceholder?: string
   handleSubmit: any
-  values: string[]
+  values?: string[]
 }
 export default function InputListField(props: Props) {
-  const {
-    label,
-    addItemPlaceholder,
-    listItemPlaceholder,
-    handleSubmit,
-    values,
-  } = props
-  // const { fields, prepend, remove } = useFieldArray({ name })
+  const { label, addItemPlaceholder, listItemPlaceholder, handleSubmit } = props
+  const values = props.values ?? []
 
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
@@ -44,7 +38,11 @@ export default function InputListField(props: Props) {
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
-        <AddItemInput handleAdd={handleAdd} placeholder={addItemPlaceholder} />
+        <AddItemInput
+          handleAdd={handleAdd}
+          placeholder={addItemPlaceholder}
+          disabled={props.values == null}
+        />
         {values?.map((value, i) => (
           <ListItemInput
             key={i}
