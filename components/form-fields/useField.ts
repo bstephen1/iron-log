@@ -17,12 +17,16 @@ interface Props {
   // the validator should be for a single field. Run reach() to specify the field to use.
   yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
+  onChange?: any
+  onBlur?: any
   onSubmit: (value: any) => void // generic with ref?
   defaultValue?: any // generic?
 }
 export default function useField({
   yupValidator,
   debounceMilliseconds = 800,
+  onChange,
+  onBlur,
   onSubmit,
   defaultValue = '',
 }: Props) {
@@ -30,11 +34,13 @@ export default function useField({
   const ref = useRef<any>()
   const [error, setError] = useState('')
 
-  // spread this into an input, or inputProps in a MUI component
+  // spread this into an input, or inputProps in a MUI component.
+  // As a function rather than a direct object it's a bit easier to work with
+  // (an object would need to be defined after all of the values it uses)
   const register = () => ({
     ref: ref,
-    onBlur: submit,
-    onChange: debouncedSubmit,
+    onBlur: onBlur ?? submit,
+    onChange: onChange ?? debouncedSubmit,
     defaultValue: defaultValue,
   })
 
@@ -74,6 +80,7 @@ export default function useField({
     validate,
     submit,
     error,
+    reset,
     isEmpty: !ref.current?.value, // todo
   }
 }

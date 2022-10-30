@@ -7,6 +7,7 @@ import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
 import InputFieldAutosave from '../form-fields/InputFieldAutosave'
+import InputListField from '../form-fields/InputListField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
 interface Props {
@@ -93,13 +94,15 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
           validator={yup.reach(validationSchema, 'notes')}
         />
       </Grid>
-      {/* <Grid xs={12}>
+      <Grid xs={12}>
         <InputListField
-          name="cues"
+          label="Cues"
           addItemPlaceholder="Add Cue"
           listItemPlaceholder="Empty Cue (will be deleted)"
+          values={exercise?.cues}
+          handleSubmit={(value) => handleUpdate('cues', value)}
         />
-      </Grid> */}
+      </Grid>
     </Grid>
   )
 }
