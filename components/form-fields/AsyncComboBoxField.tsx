@@ -18,17 +18,22 @@ interface Props {
 }
 
 export default function AsyncComboBoxField(props: Props & TextFieldProps) {
-  const { label, options, initialValue, onSubmit, ...textFieldProps } = props
+  const {
+    label,
+    options,
+    initialValue = [],
+    onSubmit,
+    ...textFieldProps
+  } = props
   const [open, setOpen] = useState(false)
   const loading = open && !options
-  const [value, setValue] = useState(initialValue)
 
   const handleClose = () => {
     setOpen(false)
     onSubmit(value)
   }
 
-  const { control } = useField({
+  const { control, value, setValue } = useField({
     onSubmit,
     initialValue,
     onChange: (_, value) => setValue(value),

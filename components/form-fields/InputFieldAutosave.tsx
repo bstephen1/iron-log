@@ -15,7 +15,7 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
   const {
     label,
     defaultHelperText = ' ',
-    defaultValue,
+    defaultValue = '',
     onSubmit,
     validator,
     ...textFieldProps

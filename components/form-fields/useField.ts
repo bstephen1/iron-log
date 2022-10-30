@@ -79,7 +79,7 @@ export default function useField({
     onSubmit(value)
   }
 
-  const reset = (value = '') => {
+  const reset = (value) => {
     setError('')
     setValue(value)
     setIsTouched(false)
@@ -101,6 +101,8 @@ export default function useField({
     submit,
     error,
     reset,
+    value,
+    setValue,
     isEmpty: !value,
   }
 }
