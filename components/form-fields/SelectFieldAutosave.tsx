@@ -1,4 +1,5 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import useField from './useField'
 
@@ -20,17 +21,17 @@ export default function SelectFieldAutosave(props: Props & TextFieldProps) {
     ...textFieldProps
   } = props
 
-  const { register } = useField({
+  const { control } = useField({
     onSubmit: handleSubmit,
-    defaultValue: initialValue,
+    initialValue: initialValue,
   })
 
   return (
     <TextField
+      {...control(label)}
       select
-      label={label}
       helperText={defaultHelperText}
-      inputProps={{ ...register() }}
+      // inputProps={{ ...register() }}
       {...textFieldProps}
     >
       {options.map((option) => (

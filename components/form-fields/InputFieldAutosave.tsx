@@ -1,4 +1,5 @@
 import { TextField, TextFieldProps } from '@mui/material'
+import { useEffect } from 'react'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import useField from './useField'
 
@@ -19,16 +20,19 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
     validator,
     ...textFieldProps
   } = props
-  const { register, error, isEmpty } = useField({
+  const { control, error, isEmpty } = useField({
     yupValidator: validator,
     onSubmit: onSubmit,
-    defaultValue: defaultValue,
+    initialValue: defaultValue,
   })
+
+  useEffect(() => {
+    console.log('ERROR ' + error)
+  }, [error])
 
   return (
     <TextField
-      label={label}
-      inputProps={{ ...register() }}
+      {...control(label)}
       error={!!error}
       helperText={error || defaultHelperText}
       InputLabelProps={{ shrink: !isEmpty }}

@@ -8,6 +8,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import { useState } from 'react'
+import useField from './useField'
 
 interface Props {
   label: string
@@ -27,15 +28,19 @@ export default function AsyncComboBoxField(props: Props & TextFieldProps) {
     onSubmit(value)
   }
 
+  const { control } = useField({
+    onSubmit,
+    initialValue,
+    onChange: (_, value) => setValue(value),
+  })
+
   // This needs to be controlled due to complex behavior between the inner input and Chips.
   // The useField() hook currently only supports uncontrolled inputs. May have to modify it
   // if debounceSubmit is desired, but that may not be necessary for this. Seems like the
   // debounce has to be a lot longer. onClose + onBlur may be enough.
   return (
     <Autocomplete
-      onChange={(_, value) => setValue(value)}
-      onBlur={() => onSubmit(value)}
-      value={value || []}
+      {...control()}
       fullWidth
       multiple
       options={options ?? []}

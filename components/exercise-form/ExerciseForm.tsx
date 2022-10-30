@@ -72,12 +72,12 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
               handleUpdate('status', value as ExerciseStatus)
             }
           />
-          <AsyncComboBoxField
+          {/* <AsyncComboBoxField
             label="Valid Modifiers"
             initialValue={exercise?.validModifiers}
             options={modifierNames}
             onSubmit={(value) => handleUpdate('validModifiers', value)}
-          />
+          /> */}
         </Stack>
       </Grid>
       <Grid xs={12} sm={6}>
@@ -90,13 +90,13 @@ export default function ExerciseForm({ exercise, handleSubmit }: Props) {
         />
       </Grid>
       <Grid xs={12}>
-        <InputListField
+        {/* <InputListField
           label="Cues"
           addItemPlaceholder="Add Cue"
           listItemPlaceholder="Empty Cue (will be deleted)"
           values={exercise?.cues}
           handleSubmit={(value) => handleUpdate('cues', value)}
-        />
+        /> */}
       </Grid>
     </Grid>
   )

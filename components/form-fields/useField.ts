@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import * as yup from 'yup'
 
 /*
@@ -8,8 +8,10 @@ import * as yup from 'yup'
  *  - Autosaving onBlur or after debounce if validation passes
  *  - Reset to defaultValue if it changes
  *
- * Additionally, the hook strives to follow react-hook-form in preferring to use
- * uncontrolled fields to minimize re-renders.
+ * Initially this was following react-hook-form's philosophy of using uncontrolled
+ * inputs, which should be theoretically more performant as they minimizes re-renders.
+ * However, it was having issues with updating defaultValues properly so it was
+ * replaced with using controlled values, which are easier to work with.
  *
  */
 
@@ -19,42 +21,47 @@ interface Props {
   debounceMilliseconds?: number
   onChange?: any
   onBlur?: any
-  onSubmit: (value: any) => void // generic with ref?
-  defaultValue?: any // generic?
+  onSubmit: (value: any) => void // todo: generic with ref?
+  initialValue?: any
 }
 export default function useField({
   yupValidator,
   debounceMilliseconds = 800,
-  onChange,
-  onBlur,
   onSubmit,
-  defaultValue = '',
+  initialValue = '',
+  ...props
 }: Props) {
   const timerRef = useRef<NodeJS.Timeout>()
-  const ref = useRef<any>()
   const [error, setError] = useState('')
+  const [value, setValue] = useState(initialValue)
 
-  // spread this into an input, or inputProps in a MUI component.
-  // As a function rather than a direct object it's a bit easier to work with
-  // (an object would need to be defined after all of the values it uses)
-  const register = () => ({
-    ref: ref,
-    onBlur: onBlur ?? submit,
-    onChange: onChange ?? debouncedSubmit,
-    defaultValue: defaultValue,
-  })
+  // Spread this into an input component to set up the value.
+  // If the input is simple this may be all that's needed!
+  const control = (label?: string) => {
+    return {
+      label,
+      value,
+      onBlur: props.onBlur ?? submit,
+      onChange: props.onChange ?? onChange,
+    }
+  }
+
+  const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setValue(e.target.value)
+    debouncedSubmit()
+  }
 
   const debouncedSubmit = () => {
     clearTimeout(timerRef.current)
     validate()
-    timerRef.current = setTimeout(submit, debounceMilliseconds)
+    timerRef.current = setTimeout(() => onSubmit(value), debounceMilliseconds)
   }
 
   const validate = () => {
     if (!yupValidator) return
 
     yupValidator
-      .validate(ref.current.value)
+      .validate(value)
       .then(setError(''))
       .catch((e: yup.ValidationError) => setError(e.message))
   }
@@ -62,25 +69,30 @@ export default function useField({
   const submit = () => {
     validate()
     // todo: don't think this stops submitting if validate() fails
-    onSubmit(ref.current.value)
+    onSubmit(value)
   }
 
-  const reset = (value?: string) => {
-    ref.current.value = value ?? ''
+  const reset = (value = '') => {
+    setValue(value)
     setError('')
   }
 
   useEffect(() => {
-    reset(defaultValue)
-  }, [defaultValue])
+    reset(initialValue)
+  }, [initialValue])
+
+  // todo: validator is running twice after error; also don't validate until touched
+  useEffect(() => {
+    validate()
+  }, [value])
 
   return {
-    register,
+    control,
     debouncedSubmit,
     validate,
     submit,
     error,
     reset,
-    isEmpty: !ref.current?.value, // todo
+    isEmpty: !value,
   }
 }
