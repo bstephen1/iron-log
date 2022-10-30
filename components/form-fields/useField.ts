@@ -34,6 +34,7 @@ export default function useField({
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
   const [value, setValue] = useState(initialValue)
+  const [isTouched, setIsTouched] = useState(false)
 
   // Spread this into an input component to set up the value.
   // If the input is simple this may be all that's needed!
@@ -41,9 +42,15 @@ export default function useField({
     return {
       label,
       value,
-      onBlur: props.onBlur ?? submit,
+      onBlur,
       onChange: props.onChange ?? onChange,
     }
+  }
+
+  // providing an onBlur() won't override updating isTouched
+  const onBlur = () => {
+    setIsTouched(true)
+    if (props.onBlur) props.onBlur()
   }
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,7 +65,7 @@ export default function useField({
   }
 
   const validate = () => {
-    if (!yupValidator) return
+    if (!yupValidator || !isTouched) return
 
     yupValidator
       .validate(value)
@@ -73,15 +80,16 @@ export default function useField({
   }
 
   const reset = (value = '') => {
-    setValue(value)
     setError('')
+    setValue(value)
+    setIsTouched(false)
   }
 
   useEffect(() => {
     reset(initialValue)
   }, [initialValue])
 
-  // todo: validator is running twice after error; also don't validate until touched
+  // todo: validator is running twice after error
   useEffect(() => {
     validate()
   }, [value])
