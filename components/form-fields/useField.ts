@@ -22,23 +22,24 @@ interface Props<T = string> {
   onChange?: any
   onBlur?: () => void
   onSubmit: (value: T) => void // todo: generic with ref?
-  initialValue: T // required so we can determine the type. Cannot be undefined!
+
+  // required so we can determine the type. Cannot be undefined.
+  // Note: If T is an array/object, use a const defined outside the component for
+  // empty values or useEffect will infinitely re-render with a new object every render
+  initialValue: T
   useDebounce?: boolean
 }
 export default function useField<T = string>({
   yupValidator,
   debounceMilliseconds = 800,
   onSubmit,
+  initialValue,
   useDebounce = true,
   ...props
 }: Props<T>) {
-  // If initialValue is an empty array / object, React will create a new object
-  // every render, thus triggering the useEffect to reset to the new initialValue infinitely.
-  // useRef persists the object between renders to avoid this problem.
-  const initialValue = useRef(props.initialValue)
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
-  const [value, setValue] = useState(initialValue.current)
+  const [value, setValue] = useState(initialValue)
   const [hasValidated, setHasValidated] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -101,12 +102,8 @@ export default function useField<T = string>({
   }
 
   useEffect(() => {
-    // this avoids the problem of infinite re-renders with empty strings / arrays
-    if (props.initialValue !== initialValue.current) {
-      initialValue.current = props.initialValue
-      reset(initialValue.current)
-    }
-  }, [props.initialValue])
+    reset(initialValue)
+  }, [initialValue])
 
   useEffect(() => {
     if (isSubmitting && hasValidated && !error) {
