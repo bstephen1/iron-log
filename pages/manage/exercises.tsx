@@ -8,7 +8,10 @@ import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
 import ExerciseForm from '../../components/exercise-form/ExerciseForm'
 import StyledDivider from '../../components/StyledDivider'
-import { useExercises } from '../../lib/frontend/restService'
+import {
+  updateExerciseField,
+  useExercises,
+} from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatusOrder } from '../../models/ExerciseStatus'
 
@@ -31,6 +34,23 @@ export default function ManageExercisesPage() {
       this.name = name
       this.status = 'Add New'
     }
+  }
+
+  const handleUpdate = <T extends keyof Exercise>(
+    field: T,
+    value: Exercise[T]
+  ) => {
+    if (!exercise) return
+
+    console.log(`updating ${field}: ${value}`)
+    const newExercise = { ...exercise, [field]: value }
+    updateExerciseField(exercise, field, value)
+    // todo: not sure I like this... can we just mutate the selected exercise?
+    const newExercises = exercises?.map((exercise) =>
+      exercise._id === newExercise._id ? newExercise : exercise
+    )
+    mutate(newExercises)
+    setExercise(newExercise)
   }
 
   // todo: move autocomplete to a component for this + session view
@@ -102,7 +122,7 @@ export default function ManageExercisesPage() {
         <StyledDivider />
       </Grid>
       <Grid container xs={12} md={8}>
-        <ExerciseForm exercise={exercise} />
+        <ExerciseForm exercise={exercise} handleUpdate={handleUpdate} />
       </Grid>
     </Grid>
   )

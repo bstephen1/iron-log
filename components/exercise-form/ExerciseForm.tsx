@@ -11,8 +11,9 @@ import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
 interface Props {
   exercise: Exercise | null
+  handleUpdate: any
 }
-export default function ExerciseForm({ exercise }: Props) {
+export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
   const modifierNames = modifiers?.map((modifier) => modifier.name) || []
 
@@ -34,18 +35,6 @@ export default function ExerciseForm({ exercise }: Props) {
     validModifiers: yup.array(),
     cues: yup.array(),
   })
-
-  const handleUpdate = <T extends keyof Exercise>(
-    field: T,
-    value: Exercise[T]
-  ) => {
-    if (!exercise) return
-    console.log(field)
-    console.log(value)
-    // const newExercise = { ...exercise, [field]: value }
-    // updateExerciseField(exercise, field, value)
-    // mutate(newExercise)
-  }
 
   return (
     <Grid container spacing={2} xs={12}>
