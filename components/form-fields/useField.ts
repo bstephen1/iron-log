@@ -39,7 +39,8 @@ export default function useField<T = string>({
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
   const [value, setValue] = useState(initialValue.current)
-  const [isTouched, setIsTouched] = useState(false)
+  const [hasValidated, setHasValidated] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Spread this into an input component to set up the value.
   // If the input is simple this may be all that's needed!
@@ -52,42 +53,51 @@ export default function useField<T = string>({
     }
   }
 
-  // providing an onBlur() won't override updating isTouched
+  // initial we tracked isTouched but that behavior isn't fluid with an autosaving field
+  // the only benefit of onBlur is that we can immediately submit rather than wait for the debounce
   const onBlur = () => {
-    setIsTouched(true)
-    if (props.onBlur) props.onBlur()
+    clearTimeout(timerRef.current)
+    submit()
   }
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setValue(e.target.value as T) // todo: tell ts this is for strings only
+    validate(e.target.value as T)
     useDebounce && debouncedSubmit()
   }
 
   const debouncedSubmit = () => {
     clearTimeout(timerRef.current)
-    validate()
-    timerRef.current = setTimeout(() => onSubmit(value), debounceMilliseconds)
+    timerRef.current = setTimeout(
+      () => setIsSubmitting(true),
+      debounceMilliseconds
+    )
   }
 
-  const validate = () => {
-    if (!yupValidator || !isTouched) return
+  const validate = (value: T) => {
+    console.log('validating: ' + value)
+    if (!yupValidator) {
+      setHasValidated(true)
+      return
+    }
 
     yupValidator
       .validate(value)
       .then(setError(''))
       .catch((e: yup.ValidationError) => setError(e.message))
+      .finally(setHasValidated(true))
   }
 
   const submit = () => {
-    validate()
-    // todo: don't think this stops submitting if validate() fails
-    onSubmit(value)
+    validate(value)
+    setIsSubmitting(true)
   }
 
   const reset = (value: T) => {
     setError('')
     setValue(value)
-    setIsTouched(false)
+    setIsSubmitting(false)
+    setHasValidated(false)
   }
 
   useEffect(() => {
@@ -95,10 +105,13 @@ export default function useField<T = string>({
     reset(initialValue.current)
   }, [initialValue.current])
 
-  // todo: validator is running twice after error
   useEffect(() => {
-    validate()
-  }, [value])
+    if (isSubmitting && hasValidated && !error) {
+      onSubmit(value)
+      setIsSubmitting(false)
+      setHasValidated(false)
+    }
+  }, [hasValidated, isSubmitting, error])
 
   return {
     control,

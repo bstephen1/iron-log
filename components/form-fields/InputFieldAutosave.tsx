@@ -35,6 +35,7 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
     <TextField
       {...control(label)}
       disabled={initialValue == null}
+      autoComplete="off"
       error={!!error}
       helperText={error || defaultHelperText}
       InputLabelProps={{ shrink: !isEmpty }}
