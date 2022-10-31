@@ -72,6 +72,13 @@ export async function updateSession(newSesson: Session) {
   }).catch((e) => console.error(e))
 }
 
+export async function addExercise(newExercise: Exercise) {
+  fetch(URI_EXERCISES + newExercise.name, {
+    method: 'POST',
+    body: JSON.stringify(newExercise),
+  }).catch((e) => console.error(e))
+}
+
 export async function updateExercise(newExercise: Exercise) {
   fetch(URI_EXERCISES + newExercise.name, {
     method: 'PUT',

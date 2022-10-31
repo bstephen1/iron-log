@@ -9,6 +9,7 @@ import { useState } from 'react'
 import ExerciseForm from '../../components/exercise-form/ExerciseForm'
 import StyledDivider from '../../components/StyledDivider'
 import {
+  addExercise,
   updateExerciseField,
   useExercises,
 } from '../../lib/frontend/restService'
@@ -78,11 +79,16 @@ export default function ManageExercisesPage() {
           }
           groupBy={(option) => option.status}
           value={exercise}
-          onChange={(_, option) =>
-            option && !('_id' in option)
-              ? setExercise(new Exercise(option.name))
-              : setExercise(option)
-          }
+          onChange={(_, option) => {
+            if (option && !('_id' in option)) {
+              const newExercise = new Exercise(option.name)
+              mutate(exercises?.concat(newExercise))
+              addExercise(newExercise)
+              setExercise(newExercise)
+            } else {
+              setExercise(option)
+            }
+          }}
           getOptionLabel={(option) => option.name}
           filterOptions={(options, params) => {
             // was going to pull this out to a separate function but the param type definitions are long and annoying
