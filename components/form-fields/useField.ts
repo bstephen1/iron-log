@@ -101,9 +101,12 @@ export default function useField<T = string>({
   }
 
   useEffect(() => {
-    console.log(initialValue.current)
-    reset(initialValue.current)
-  }, [initialValue.current])
+    // this avoids the problem of infinite re-renders with empty strings / arrays
+    if (props.initialValue !== initialValue.current) {
+      initialValue.current = props.initialValue
+      reset(initialValue.current)
+    }
+  }, [props.initialValue])
 
   useEffect(() => {
     if (isSubmitting && hasValidated && !error) {
