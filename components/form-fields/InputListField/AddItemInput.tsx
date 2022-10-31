@@ -1,6 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
+import { useRef } from 'react'
 import useField from '../useField'
 import AdornmentButton from './AdornmentButton'
 
@@ -9,29 +10,36 @@ interface Props {
   handleAdd: (s: any) => void
   disabled: boolean
 }
-// This Input is a temporary value that we don't want to include in the list until/unless it is submitted.
+// This Input is a temporary value that isn't include in the list until/unless it is submitted.
 export default function AddItemInput({
   placeholder,
   handleAdd,
   disabled,
 }: Props) {
+  const inputRef = useRef<HTMLInputElement>()
   const onSubmit = (value: string) => {
     handleAdd(value)
-    reset('')
+    onReset()
   }
+  const onReset = () => {
+    reset('')
+    inputRef.current?.focus()
+  }
+
   const { control, isEmpty, reset, submit } = useField({
     onSubmit,
     initialValue: '',
     useDebounce: false,
+    onBlur: () => {},
   })
 
-  // todo: submit on Enter
-  // todo: keep focus on input on clear (and submit?)
   return (
     <OutlinedInput
       {...control()}
       placeholder={placeholder}
       disabled={disabled}
+      onKeyDown={(e) => e.code === 'Enter' && submit()}
+      inputRef={inputRef}
       endAdornment={
         <>
           <AdornmentButton
@@ -41,10 +49,9 @@ export default function AddItemInput({
           >
             <CheckIcon />
           </AdornmentButton>
-          {/* todo: this actually adds to list, bc onBlur submits. Should it? Or just clicking check mark? */}
           <AdornmentButton
             isVisible={!isEmpty}
-            handleClick={() => reset('')}
+            handleClick={onReset}
             ariaLabel="clear input"
           >
             <ClearIcon />

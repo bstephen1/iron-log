@@ -21,7 +21,7 @@ interface Props {
   onSubmit: (value: string[]) => void
 }
 
-// fixme: infinite rerenders if exercise is null
+// todo: doesn't send to db if clicking X on chips
 export default function AsyncComboBoxField(props: Props) {
   const { label, options, initialValue, onSubmit, ...textFieldProps } = props
   const [open, setOpen] = useState(false)

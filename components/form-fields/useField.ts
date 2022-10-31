@@ -49,7 +49,7 @@ export default function useField<T = string>({
     return {
       label,
       value,
-      onBlur,
+      onBlur: props.onBlur ?? onBlur,
       onChange: props.onChange ?? onChange,
     }
   }
