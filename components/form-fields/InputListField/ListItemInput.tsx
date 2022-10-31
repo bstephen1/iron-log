@@ -1,5 +1,6 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
+import { useRef } from 'react'
 import useField from '../useField'
 import AdornmentButton from './AdornmentButton'
 
@@ -19,11 +20,14 @@ export default function ListItemInput(props: Props) {
     handleUpdate,
   } = props
 
+  const inputRef = useRef<HTMLInputElement>()
+  // todo: circular refernce with isEmpty
+  const onBlur = () => isEmpty && handleDelete(index)
   const onSubmit = (value: string) => handleUpdate(index, value)
   const { control, isEmpty } = useField({
     onSubmit,
     initialValue: defaultValue,
-    onBlur: () => isEmpty && handleDelete(index), // delete empty items
+    onBlur,
   })
 
   return (
@@ -31,6 +35,8 @@ export default function ListItemInput(props: Props) {
       {...control()}
       placeholder={placeholder}
       autoComplete="off"
+      onKeyDown={(e) => e.code === 'Enter' && inputRef.current?.blur()}
+      inputRef={inputRef}
       inputProps={{
         'aria-label': 'edit',
       }}
@@ -41,6 +47,7 @@ export default function ListItemInput(props: Props) {
             handleClick={() => handleDelete(index)}
             ariaLabel="delete item"
           >
+            {/* todo: should this be a different icon so clear button => clear, not delete? */}
             <ClearIcon />
           </AdornmentButton>
         </>
