@@ -65,6 +65,7 @@ export default function ManageExercisesPage() {
           handleHomeEndKeys
           autoSelect
           autoHighlight
+          isOptionEqualToValue={(a, b) => a.name === b.name}
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
           loading={loading}
