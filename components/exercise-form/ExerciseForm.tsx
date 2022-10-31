@@ -93,7 +93,7 @@ export default function ExerciseForm({ exercise }: Props) {
           addItemPlaceholder="Add Cue"
           listItemPlaceholder="Empty Cue (will be deleted)"
           values={exercise?.cues}
-          handleSubmit={(value) => handleUpdate('cues', value)}
+          handleSubmit={(value: string[]) => handleUpdate('cues', value)}
         />
       </Grid>
     </Grid>

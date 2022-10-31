@@ -22,6 +22,7 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
   } = props
   const { control, error, isEmpty } = useField({
     // @ts-ignore useField is annoyingly inferring some random HTML type instead of string which is explicitly specificed but whatever
+    // todo: it's coming from TextFieldProps extension for some reason only on Name (validator?)
     initialValue: initialValue || '',
     yupValidator: yupValidator,
     onSubmit: onSubmit,

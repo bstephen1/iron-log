@@ -57,7 +57,7 @@ export default function ManageExercisesPage() {
           }
           groupBy={(option) => option.status}
           value={exercise}
-          onChange={(e, option) =>
+          onChange={(_, option) =>
             option && !('_id' in option)
               ? setExercise(new Exercise(option.name))
               : setExercise(option)
