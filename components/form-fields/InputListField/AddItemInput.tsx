@@ -2,8 +2,8 @@ import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
 import { useRef } from 'react'
+import TransitionIconButton from '../../TransitionIconButton'
 import useField from '../useField'
-import AdornmentButton from './AdornmentButton'
 
 interface Props {
   placeholder?: string
@@ -42,20 +42,20 @@ export default function AddItemInput({
       inputRef={inputRef}
       endAdornment={
         <>
-          <AdornmentButton
+          <TransitionIconButton
             isVisible={!isEmpty}
-            handleClick={submit}
-            ariaLabel="add cue"
+            onClick={submit}
+            aria-label="add cue"
           >
             <CheckIcon />
-          </AdornmentButton>
-          <AdornmentButton
+          </TransitionIconButton>
+          <TransitionIconButton
             isVisible={!isEmpty}
-            handleClick={onReset}
-            ariaLabel="clear input"
+            onClick={onReset}
+            aria-label="clear input"
           >
             <ClearIcon />
-          </AdornmentButton>
+          </TransitionIconButton>
         </>
       }
     />

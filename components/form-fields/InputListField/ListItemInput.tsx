@@ -1,8 +1,8 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
 import { useRef } from 'react'
+import TransitionIconButton from '../../TransitionIconButton'
 import useField from '../useField'
-import AdornmentButton from './AdornmentButton'
 
 interface Props {
   defaultValue: string
@@ -42,14 +42,14 @@ export default function ListItemInput(props: Props) {
       }}
       endAdornment={
         <>
-          <AdornmentButton
+          <TransitionIconButton
             isVisible={!isEmpty}
             handleClick={() => handleDelete(index)}
             ariaLabel="delete item"
           >
             {/* todo: should this be a different icon so clear button => clear, not delete? */}
             <ClearIcon />
-          </AdornmentButton>
+          </TransitionIconButton>
         </>
       }
     />
