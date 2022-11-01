@@ -5,7 +5,7 @@ import TransitionIconButton from '../../TransitionIconButton'
 import useField from '../useField'
 
 interface Props {
-  defaultValue: string
+  initialValue: string
   index: number
   handleDelete: (index: number) => void
   handleUpdate: (index: number, value: string) => void
@@ -13,7 +13,7 @@ interface Props {
 }
 export default function ListItemInput(props: Props) {
   const {
-    defaultValue,
+    initialValue,
     placeholder = '',
     index,
     handleDelete,
@@ -21,18 +21,16 @@ export default function ListItemInput(props: Props) {
   } = props
 
   const inputRef = useRef<HTMLInputElement>()
-  // todo: circular refernce with isEmpty
-  const onBlur = () => isEmpty && handleDelete(index)
   const onSubmit = (value: string) => handleUpdate(index, value)
   const { control, isEmpty } = useField({
     onSubmit,
-    initialValue: defaultValue,
-    onBlur,
+    initialValue,
   })
 
   return (
     <OutlinedInput
       {...control()}
+      onBlur={() => isEmpty && handleDelete(index)}
       placeholder={placeholder}
       autoComplete="off"
       onKeyDown={(e) => e.code === 'Enter' && inputRef.current?.blur()}

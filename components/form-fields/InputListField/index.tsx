@@ -54,7 +54,7 @@ export default function InputListField(props: Props) {
             handleDelete={handleDelete}
             handleUpdate={handleUpdate}
             index={i}
-            defaultValue={value}
+            initialValue={value}
             placeholder={listItemPlaceholder}
           />
         ))}
