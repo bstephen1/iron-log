@@ -7,6 +7,7 @@ import {
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
 import ExerciseForm from '../../components/exercise-form/ExerciseForm'
+import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import StyledDivider from '../../components/StyledDivider'
 import {
   addExercise,
@@ -128,8 +129,12 @@ export default function ManageExercisesPage() {
       <Grid xs={12} md={1}>
         <StyledDivider />
       </Grid>
-      <Grid container xs={12} md={8}>
-        <ExerciseForm exercise={exercise} handleUpdate={handleUpdate} />
+      <Grid container xs={12} md={8} justifyContent="center">
+        {exercise ? (
+          <ExerciseForm exercise={exercise} handleUpdate={handleUpdate} />
+        ) : (
+          <ManageWelcomeCard />
+        )}
       </Grid>
     </Grid>
   )
