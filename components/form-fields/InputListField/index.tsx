@@ -7,11 +7,16 @@ interface Props {
   addItemPlaceholder?: string
   listItemPlaceholder?: string
   handleSubmit: any
-  values?: string[]
+  values: string[]
 }
 export default function InputListField(props: Props) {
-  const { label, addItemPlaceholder, listItemPlaceholder, handleSubmit } = props
-  const values = props.values ?? []
+  const {
+    label,
+    values,
+    addItemPlaceholder,
+    listItemPlaceholder,
+    handleSubmit,
+  } = props
 
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change

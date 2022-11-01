@@ -11,7 +11,7 @@ import InputListField from '../form-fields/InputListField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
 interface Props {
-  exercise: Exercise | null
+  exercise: Exercise
   handleUpdate: any
 }
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
@@ -50,7 +50,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             Export the schema and have the hook pull it in?  */}
           <InputFieldAutosave
             label="Name"
-            initialValue={exercise?.name}
+            initialValue={exercise.name}
             onSubmit={(value: string) => handleUpdate('name', value)}
             yupValidator={yup.reach(validationSchema, 'name')}
             required
@@ -58,14 +58,14 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           <SelectFieldAutosave
             label="Status"
             options={Object.values(ExerciseStatus)}
-            initialValue={exercise?.status}
+            initialValue={exercise.status}
             handleSubmit={(value) =>
               handleUpdate('status', value as ExerciseStatus)
             }
           />
           <AsyncComboBoxField
             label="Valid Modifiers"
-            initialValue={exercise?.validModifiers}
+            initialValue={exercise.validModifiers}
             options={modifierNames}
             onSubmit={(value: string[]) =>
               handleUpdate('validModifiers', value)
@@ -76,7 +76,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       <Grid xs={12} sm={6}>
         <InputFieldAutosave
           label="Notes"
-          initialValue={exercise?.notes}
+          initialValue={exercise.notes}
           fullWidth
           onSubmit={(value) => handleUpdate('notes', value)}
           yupValidator={yup.reach(validationSchema, 'notes')}
@@ -87,7 +87,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Cues"
           addItemPlaceholder="Add Cue"
           listItemPlaceholder="Empty Cue (will be deleted)"
-          values={exercise?.cues}
+          values={exercise.cues}
           handleSubmit={(value: string[]) => handleUpdate('cues', value)}
         />
       </Grid>

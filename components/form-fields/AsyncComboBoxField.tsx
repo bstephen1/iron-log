@@ -9,15 +9,10 @@ import {
 import { useState } from 'react'
 import useField from './useField'
 
-// If the array is empty, React will create a new array every render
-// thus triggering useEffect in the hook to reset to the new initialValue infinitely.
-// Using a const outside the component persists the array between renders.
-const EMPTY: string[] = []
-
 interface Props {
   label: string
   options: string[]
-  initialValue?: string[]
+  initialValue: string[]
   onSubmit: (value: string[]) => void
 }
 
@@ -34,7 +29,7 @@ export default function AsyncComboBoxField(props: Props) {
 
   const { control, value, setValue } = useField<string[]>({
     onSubmit,
-    initialValue: initialValue || EMPTY,
+    initialValue: initialValue,
     onChange: (_: any, value: string[]) => setValue(value),
   })
 

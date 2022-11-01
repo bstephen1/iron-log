@@ -6,7 +6,7 @@ import useField from './useField'
 // todo: this for sure can be combined with InputField
 interface Props {
   label: string
-  initialValue?: ExerciseStatus
+  initialValue: ExerciseStatus
   options: string[]
   defaultHelperText?: string
   handleSubmit: (value: string) => void
@@ -23,7 +23,7 @@ export default function SelectFieldAutosave(props: Props & TextFieldProps) {
 
   const { control } = useField({
     onSubmit: handleSubmit,
-    initialValue: initialValue || '',
+    initialValue: initialValue,
   })
 
   return (
@@ -32,7 +32,6 @@ export default function SelectFieldAutosave(props: Props & TextFieldProps) {
       select
       disabled={initialValue == null}
       helperText={defaultHelperText}
-      // inputProps={{ ...register() }}
       {...textFieldProps}
     >
       {options.map((option) => (

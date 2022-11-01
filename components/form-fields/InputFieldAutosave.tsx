@@ -6,7 +6,7 @@ import useField from './useField'
 // todo: this for sure can be combined with InputField
 interface Props {
   label: string
-  initialValue?: string
+  initialValue: string
   defaultHelperText?: string
   onSubmit: (value: string) => void
   yupValidator: ReturnType<typeof yup.reach>
@@ -23,7 +23,7 @@ export default function InputFieldAutosave(props: Props & TextFieldProps) {
   const { control, error, isEmpty } = useField({
     // @ts-ignore useField is annoyingly inferring some random HTML type instead of string which is explicitly specificed but whatever
     // todo: it's coming from TextFieldProps extension for some reason only on Name (validator?)
-    initialValue: initialValue || '',
+    initialValue: initialValue,
     yupValidator: yupValidator,
     onSubmit: onSubmit,
   })
