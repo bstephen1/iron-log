@@ -15,12 +15,7 @@ export default function AdornmentButton({
 }: Props) {
   return (
     <Grow in={isVisible}>
-      <IconButton
-        type="button"
-        sx={{ p: '10px' }}
-        aria-label={ariaLabel}
-        onClick={handleClick}
-      >
+      <IconButton type="button" aria-label={ariaLabel} onClick={handleClick}>
         {children}
       </IconButton>
     </Grow>

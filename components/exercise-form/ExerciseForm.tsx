@@ -1,8 +1,9 @@
-import { Stack } from '@mui/material'
+import { Edit } from '@mui/icons-material'
+import { IconButton, Stack, TextField } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useMemo } from 'react'
 import * as yup from 'yup'
-import { useModifiers } from '../../lib/frontend/restService'
+import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
@@ -16,26 +17,39 @@ interface Props {
 }
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
+  const { exercises } = useExercises()
 
-  // memoize the map so it doesn't have to rerun every render
+  // memoize the maps so they don't have to rerun every render
   const modifierNames = useMemo(
     () => modifiers?.map((modifier) => modifier.name) || [],
     [modifiers]
   )
 
+  const exerciseNames = useMemo(
+    () => exercises?.map((exercise) => exercise.name) || [],
+    [exercises]
+  )
+
   // todo: validate (drop empty cues)
 
-  // yup.addMethod(yup.array, 'unique', function (message, mapper = a => a) {
-  //   return this.test('unique', message, function (list) {
-  //     return list.length === new Set(list.map(mapper)).size;
-  //   });
-  // });
-
-  // todo: disable form when exercise is null
+  // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
+  // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
+  yup.addMethod(
+    yup.string,
+    'unique',
+    function (message: string, list: string[]) {
+      return this.test('unique', message, function (value) {
+        return !!value && list.length !== new Set(list.concat(value)).size
+      })
+    }
+  )
 
   // todo: can we enumerate the Exercise fields instead of hardcoding?
   const validationSchema = yup.object({
-    name: yup.string().required('Must have a name'), // todo: validate uniqueness
+    name: yup
+      .string()
+      .required('Must have a name')
+      .unique('This exercise already exists!', exerciseNames),
     status: yup.string().required('Must have a status'),
     notes: yup.string(),
     validModifiers: yup.array(),
@@ -48,12 +62,21 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         <Stack>
           {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
             Export the schema and have the hook pull it in?  */}
-          <InputFieldAutosave
+          <TextField
             label="Name"
-            initialValue={exercise.name}
-            onSubmit={(value: string) => handleUpdate('name', value)}
-            yupValidator={yup.reach(validationSchema, 'name')}
+            value={exercise.name}
+            helperText=" "
+            // onSubmit={(value: string) => handleUpdate('name', value)}
+            // yupValidator={yup.reach(validationSchema, 'name')}
             required
+            InputProps={{
+              readOnly: true,
+              endAdornment: (
+                <IconButton onClick={() => {}}>
+                  <Edit />
+                </IconButton>
+              ),
+            }}
           />
           <SelectFieldAutosave
             label="Status"
