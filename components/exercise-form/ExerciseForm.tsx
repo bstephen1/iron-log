@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import * as yup from 'yup'
 import { useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
@@ -18,9 +18,10 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
 
   // memoize the map so it doesn't have to rerun every render
-  const modifierNames = useMemo(() => {
-    modifiers?.map((modifier) => modifier.name) || []
-  }, [modifiers])
+  const modifierNames = useMemo(
+    () => modifiers?.map((modifier) => modifier.name) || [],
+    [modifiers]
+  )
 
   // todo: validate (drop empty cues)
 
