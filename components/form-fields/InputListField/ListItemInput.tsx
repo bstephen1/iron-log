@@ -46,6 +46,7 @@ export default function ListItemInput(props: Props) {
             aria-label="delete item"
           >
             {/* todo: should this be a different icon so clear button => clear, not delete? */}
+            {/* NotInterestedIcon ? */}
             <ClearIcon />
           </TransitionIconButton>
         </>

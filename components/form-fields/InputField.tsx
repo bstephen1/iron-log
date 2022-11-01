@@ -41,6 +41,12 @@ export default function InputField(props: Props & TextFieldProps) {
       error={!!error}
       autoComplete="off"
       helperText={error || defaultHelperText}
+      onKeyDown={(e) => {
+        if (e.code === 'Enter') {
+          submit()
+          inputRef.current?.blur()
+        }
+      }}
       inputRef={inputRef}
       InputProps={{
         endAdornment: (
