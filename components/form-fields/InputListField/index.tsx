@@ -48,6 +48,7 @@ export default function InputListField(props: Props) {
           placeholder={addItemPlaceholder}
           disabled={props.values == null}
         />
+        {/* todo: transitionGroup (see https://mui.com/material-ui/transitions/#transitiongroup) */}
         {values?.map((value, i) => (
           <ListItemInput
             key={i}
