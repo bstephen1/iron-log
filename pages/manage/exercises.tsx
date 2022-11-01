@@ -65,7 +65,6 @@ export default function ManageExercisesPage() {
           selectOnFocus
           clearOnBlur
           handleHomeEndKeys
-          autoSelect
           autoHighlight
           isOptionEqualToValue={(a, b) => a.name === b.name}
           onOpen={() => setOpen(true)}
