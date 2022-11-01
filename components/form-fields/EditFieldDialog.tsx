@@ -14,7 +14,7 @@ interface Props {
   open: boolean
   name: string
   label?: string
-  valu?: any
+  value?: any
   onSubmit?: any
 }
 // A standard form with a submit button to use as an alternative to an autosaving field

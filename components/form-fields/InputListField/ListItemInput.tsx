@@ -44,8 +44,8 @@ export default function ListItemInput(props: Props) {
         <>
           <TransitionIconButton
             isVisible={!isEmpty}
-            handleClick={() => handleDelete(index)}
-            ariaLabel="delete item"
+            onClick={() => handleDelete(index)}
+            aria-label="delete item"
           >
             {/* todo: should this be a different icon so clear button => clear, not delete? */}
             <ClearIcon />

@@ -1,13 +1,13 @@
-import { Edit } from '@mui/icons-material'
-import { IconButton, Stack, TextField } from '@mui/material'
+import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
-import EditFieldDialog from '../form-fields/EditFieldDialog'
+import InputField from '../form-fields/InputField'
 import InputFieldAutosave from '../form-fields/InputFieldAutosave'
 import InputListField from '../form-fields/InputListField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
@@ -19,7 +19,6 @@ interface Props {
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
   const { exercises } = useExercises()
-  const [editNameOpen, setEditNameOpen] = useState(false)
 
   // memoize the maps so they don't have to rerun every render
   const modifierNames = useMemo(
@@ -59,74 +58,54 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   })
 
   return (
-    <>
-      <Grid container spacing={2} xs={12}>
-        <Grid xs={12} sm={6}>
-          <Stack>
-            {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
+    <Grid container spacing={2} xs={12}>
+      <Grid xs={12} sm={6}>
+        <Stack>
+          {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
             Export the schema and have the hook pull it in?  */}
-            <TextField
-              label="Name"
-              value={exercise.name}
-              helperText=" "
-              // onSubmit={(value: string) => handleUpdate('name', value)}
-              // yupValidator={yup.reach(validationSchema, 'name')}
-              required
-              InputProps={{
-                readOnly: true,
-                endAdornment: (
-                  <IconButton
-                    onClick={() => {
-                      setEditNameOpen(true)
-                    }}
-                  >
-                    <Edit />
-                  </IconButton>
-                ),
-              }}
-            />
-            <SelectFieldAutosave
-              label="Status"
-              options={Object.values(ExerciseStatus)}
-              initialValue={exercise.status}
-              handleSubmit={(value) =>
-                handleUpdate('status', value as ExerciseStatus)
-              }
-            />
-            <AsyncComboBoxField
-              label="Valid Modifiers"
-              initialValue={exercise.validModifiers}
-              options={modifierNames}
-              onSubmit={(value: string[]) =>
-                handleUpdate('validModifiers', value)
-              }
-            />
-          </Stack>
-        </Grid>
-        <Grid xs={12} sm={6}>
-          <InputFieldAutosave
-            label="Notes"
-            initialValue={exercise.notes}
-            fullWidth
-            onSubmit={(value) => handleUpdate('notes', value)}
-            yupValidator={yup.reach(validationSchema, 'notes')}
+          <InputField
+            label="Name"
+            initialValue={exercise.name}
+            required
+            onSubmit={(value) => handleUpdate('name', value)}
+            yupValidator={yup.reach(validationSchema, 'name')}
           />
-        </Grid>
-        <Grid xs={12}>
-          <InputListField
-            label="Cues"
-            addItemPlaceholder="Add Cue"
-            listItemPlaceholder="Empty Cue (will be deleted)"
-            values={exercise.cues}
-            handleSubmit={(value: string[]) => handleUpdate('cues', value)}
+          <SelectFieldAutosave
+            label="Status"
+            options={Object.values(ExerciseStatus)}
+            initialValue={exercise.status}
+            handleSubmit={(value) =>
+              handleUpdate('status', value as ExerciseStatus)
+            }
           />
-        </Grid>
+          <AsyncComboBoxField
+            label="Valid Modifiers"
+            initialValue={exercise.validModifiers}
+            options={modifierNames}
+            onSubmit={(value: string[]) =>
+              handleUpdate('validModifiers', value)
+            }
+          />
+        </Stack>
       </Grid>
-      <EditFieldDialog
-        open={editNameOpen}
-        name="name"
-        onClose={() => setEditNameOpen(false)}
-      />
-    </>
+      <Grid xs={12} sm={6}>
+        <InputFieldAutosave
+          label="Notes"
+          initialValue={exercise.notes}
+          fullWidth
+          onSubmit={(value) => handleUpdate('notes', value)}
+          yupValidator={yup.reach(validationSchema, 'notes')}
+        />
+      </Grid>
+      <Grid xs={12}>
+        <InputListField
+          label="Cues"
+          addItemPlaceholder="Add Cue"
+          listItemPlaceholder="Empty Cue (will be deleted)"
+          values={exercise.cues}
+          handleSubmit={(value: string[]) => handleUpdate('cues', value)}
+        />
+      </Grid>
+    </Grid>
   )
 }

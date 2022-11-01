@@ -29,8 +29,7 @@ export default function AddItemInput({
   const { control, isEmpty, reset, submit } = useField({
     onSubmit,
     initialValue: '',
-    useDebounce: false,
-    onBlur: () => {},
+    autoSubmit: false,
   })
 
   return (

@@ -19,22 +19,20 @@ interface Props<T = string> {
   // the validator should be for a single field. Run reach() to specify the field to use.
   yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
-  onChange?: any
-  onBlur?: () => void
-  onSubmit: (value: T) => void // todo: generic with ref?
+  onSubmit: (value: T) => void
 
   // required so we can determine the type. Cannot be undefined.
   // Note: If T is an array/object, use a const defined outside the component for
   // empty values or useEffect will infinitely re-render with a new object every render
   initialValue: T
-  useDebounce?: boolean
+  autoSubmit?: boolean
 }
 export default function useField<T = string>({
   yupValidator,
   debounceMilliseconds = 800,
   onSubmit,
   initialValue,
-  useDebounce = true,
+  autoSubmit = true,
   ...props
 }: Props<T>) {
   const timerRef = useRef<NodeJS.Timeout>()
@@ -49,22 +47,26 @@ export default function useField<T = string>({
     return {
       label,
       value,
-      onBlur: props.onBlur ?? onBlur,
-      onChange: props.onChange ?? onChange,
+      onBlur,
+      onChange,
     }
   }
+
+  // todo: there's some weird behavior right after validating an error (debounce stops working)
 
   // initial we tracked isTouched but that behavior isn't fluid with an autosaving field
   // the only benefit of onBlur is that we can immediately submit rather than wait for the debounce
   const onBlur = () => {
     clearTimeout(timerRef.current)
-    submit()
+
+    autoSubmit && submit()
   }
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setValue(e.target.value as T) // todo: tell ts this is for strings only
     validate(e.target.value as T)
-    useDebounce && debouncedSubmit()
+
+    autoSubmit && debouncedSubmit()
   }
 
   const debouncedSubmit = () => {
@@ -123,5 +125,6 @@ export default function useField<T = string>({
     value,
     setValue,
     isEmpty: !value,
+    isDirty: value !== initialValue,
   }
 }

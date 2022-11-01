@@ -30,7 +30,6 @@ export default function AsyncComboBoxField(props: Props) {
   const { control, value, setValue } = useField<string[]>({
     onSubmit,
     initialValue: initialValue,
-    onChange: (_: any, value: string[]) => setValue(value),
   })
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.
@@ -40,6 +39,7 @@ export default function AsyncComboBoxField(props: Props) {
   return (
     <Autocomplete
       {...control()}
+      onChange={(_, value) => setValue(value)}
       fullWidth
       multiple
       disabled={initialValue == null}
