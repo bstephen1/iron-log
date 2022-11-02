@@ -30,11 +30,11 @@ interface Props<T = string> {
 export default function useField<T = string>({
   yupValidator,
   debounceMilliseconds = 800,
-  onSubmit,
   initialValue,
   autoSubmit = true,
   ...props
 }: Props<T>) {
+  const onSubmit = useRef(props.onSubmit)
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
   const [value, setValue] = useState(initialValue)
@@ -54,8 +54,8 @@ export default function useField<T = string>({
 
   // todo: there's some weird behavior right after validating an error (debounce stops working)
 
-  // initial we tracked isTouched but that behavior isn't fluid with an autosaving field
-  // the only benefit of onBlur is that we can immediately submit rather than wait for the debounce
+  // initial we tracked isTouched but that behavior isn't fluid with an autosaving field.
+  // The only benefit of onBlur is that we can immediately submit rather than wait for the debounce
   const onBlur = () => {
     clearTimeout(timerRef.current)
 
@@ -96,20 +96,22 @@ export default function useField<T = string>({
     setIsSubmitting(true)
   }
 
-  const reset = (value: T) => {
+  const reset = useRef((value: T) => {
     setError('')
     setValue(value)
     setIsSubmitting(false)
     setHasValidated(false)
-  }
+  })
 
   useEffect(() => {
-    reset(initialValue)
+    reset.current(initialValue)
   }, [initialValue])
 
+  // todo: definitely DON'T want this to needlessly trigger every time value changes.
+  // maybe this https://stackoverflow.com/questions/69331438/wise-to-exclude-this-useeffect-dependency-array-variable-lint-recommends-3-but
   useEffect(() => {
     if (isSubmitting && hasValidated && !error) {
-      onSubmit(value)
+      onSubmit.current(value)
       setIsSubmitting(false)
       setHasValidated(false)
     }
@@ -121,7 +123,7 @@ export default function useField<T = string>({
     validate,
     submit,
     error,
-    reset,
+    reset: reset.current,
     value,
     setValue,
     isEmpty: !value,
