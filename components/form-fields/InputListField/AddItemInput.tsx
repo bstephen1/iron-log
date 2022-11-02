@@ -7,7 +7,7 @@ import useField from '../useField'
 
 interface Props {
   placeholder?: string
-  handleAdd: (s: any) => void
+  handleAdd: (value: string) => void
   disabled: boolean
 }
 // This Input is a temporary value that isn't include in the list until/unless it is submitted.

@@ -6,26 +6,21 @@ interface Props {
   label?: string
   addItemPlaceholder?: string
   listItemPlaceholder?: string
-  handleSubmit: any
+  onSubmit: (values: string[]) => void
   values: string[]
 }
 export default function InputListField(props: Props) {
-  const {
-    label,
-    values,
-    addItemPlaceholder,
-    listItemPlaceholder,
-    handleSubmit,
-  } = props
+  const { label, values, addItemPlaceholder, listItemPlaceholder, onSubmit } =
+    props
 
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
-  const handleAdd = (value: string) => handleSubmit([value, ...values])
+  const handleAdd = (value: string) => onSubmit([value, ...values])
   const handleDelete = (i: number) => {
-    handleSubmit(values.slice(0, i).concat(values.slice(i + 1)))
+    onSubmit(values.slice(0, i).concat(values.slice(i + 1)))
   }
   const handleUpdate = (i: number, value: string) => {
-    handleSubmit(
+    onSubmit(
       values
         .slice(0, i)
         .concat(value)

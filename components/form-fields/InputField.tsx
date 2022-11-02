@@ -1,18 +1,19 @@
 import { Check, RestartAlt } from '@mui/icons-material'
-import { capitalize, TextField, TextFieldProps } from '@mui/material'
+import { TextField, TextFieldProps } from '@mui/material'
 import { useRef } from 'react'
 import { reach } from 'yup'
 import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
 
-interface Props {
+// have to omit onSubmit because TextFieldProps has this as an undocumented property (and handleSubmit!)
+interface Props extends Omit<TextFieldProps, 'onSubmit'> {
   label: string
   initialValue?: string
   defaultHelperText?: string
   onSubmit: (value: string) => void
   yupValidator: ReturnType<typeof reach>
 }
-export default function InputField(props: Props & TextFieldProps) {
+export default function InputField(props: Props) {
   const {
     label,
     initialValue = '',

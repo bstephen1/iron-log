@@ -13,7 +13,7 @@ import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
 interface Props {
   exercise: Exercise
-  handleUpdate: any
+  handleUpdate: <T extends keyof Exercise>(field: T, value: Exercise[T]) => void
 }
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
@@ -100,7 +100,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           addItemPlaceholder="Add Cue"
           listItemPlaceholder="Empty Cue (will be deleted)"
           values={exercise.cues}
-          handleSubmit={(value: string[]) => handleUpdate('cues', value)}
+          onSubmit={(values: string[]) => handleUpdate('cues', values)}
         />
       </Grid>
     </Grid>

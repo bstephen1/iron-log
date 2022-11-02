@@ -67,7 +67,7 @@ export async function updateExercise(exercise: Exercise) {
 interface updateExerciseFieldProps<T extends keyof Exercise> {
   exercise: Exercise
   field: T
-  value: Exercise[T] | any // todo
+  value: Exercise[T] | any // todo $set is complaining bc it adds fields for each array index
 }
 export async function updateExerciseField<T extends keyof Exercise>({
   exercise,

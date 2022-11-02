@@ -2,7 +2,7 @@ import { MenuItem, TextField, TextFieldProps } from '@mui/material'
 import * as yup from 'yup'
 import useField from './useField'
 
-interface Props<T> {
+interface Props<T> extends Omit<TextFieldProps, 'onSubmit'> {
   label: string
   initialValue: T
   options: T[]
@@ -10,9 +10,7 @@ interface Props<T> {
   onSubmit: (value: T) => void
   yupValidator?: ReturnType<typeof yup.reach>
 }
-export default function SelectFieldAutosave<T extends string>(
-  props: Props<T> & TextFieldProps
-) {
+export default function SelectFieldAutosave<T extends string>(props: Props<T>) {
   const {
     label,
     defaultHelperText = ' ',
