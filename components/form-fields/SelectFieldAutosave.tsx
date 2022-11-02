@@ -1,29 +1,32 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
+import * as yup from 'yup'
 import useField from './useField'
 
-// todo: this for sure can be combined with InputField
-interface Props {
+interface Props<T> {
   label: string
-  initialValue: ExerciseStatus
-  options: string[]
+  initialValue: T
+  options: T[]
   defaultHelperText?: string
-  handleSubmit: (value: string) => void
+  onSubmit: (value: T) => void
+  yupValidator?: ReturnType<typeof yup.reach>
 }
-export default function SelectFieldAutosave(props: Props & TextFieldProps) {
+export default function SelectFieldAutosave<T extends string>(
+  props: Props<T> & TextFieldProps
+) {
   const {
     label,
     defaultHelperText = ' ',
     options,
     initialValue,
-    handleSubmit,
+    onSubmit,
+    yupValidator,
     ...textFieldProps
   } = props
 
-  const { control } = useField({
-    onSubmit: handleSubmit,
-    initialValue: initialValue,
+  const { control } = useField<T>({
+    onSubmit,
+    initialValue,
+    yupValidator,
   })
 
   return (

@@ -9,7 +9,7 @@ interface Props {
   label: string
   initialValue?: string
   defaultHelperText?: string
-  onSubmit: (value: any) => void
+  onSubmit: (value: string) => void
   yupValidator: ReturnType<typeof reach>
 }
 export default function InputField(props: Props & TextFieldProps) {

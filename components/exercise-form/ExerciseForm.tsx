@@ -1,7 +1,6 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useMemo } from 'react'
-import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
@@ -50,11 +49,10 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
     name: yup
       .string()
       .required('Must have a name')
+      // todo: ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
+      // @ts-ignore
       .unique('This exercise already exists!', exerciseNames),
     status: yup.string().required('Must have a status'),
-    notes: yup.string(),
-    validModifiers: yup.array(),
-    cues: yup.array(),
   })
 
   return (
@@ -74,9 +72,9 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             label="Status"
             options={Object.values(ExerciseStatus)}
             initialValue={exercise.status}
-            handleSubmit={(value) =>
-              handleUpdate('status', value as ExerciseStatus)
-            }
+            required
+            yupValidator={yup.reach(validationSchema, 'status')}
+            onSubmit={(value) => handleUpdate('status', value)}
           />
           <AsyncComboBoxField
             label="Valid Modifiers"
@@ -94,7 +92,6 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           initialValue={exercise.notes}
           fullWidth
           onSubmit={(value) => handleUpdate('notes', value)}
-          yupValidator={yup.reach(validationSchema, 'notes')}
         />
       </Grid>
       <Grid xs={12}>
