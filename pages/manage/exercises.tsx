@@ -1,9 +1,3 @@
-import {
-  Autocomplete,
-  CircularProgress,
-  createFilterOptions,
-  TextField,
-} from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
 import ExerciseForm from '../../components/exercise-form/ExerciseForm'
@@ -11,12 +5,10 @@ import { ExerciseSelector } from '../../components/ExerciseSelector'
 import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import StyledDivider from '../../components/StyledDivider'
 import {
-  addExercise,
   updateExerciseField,
   useExercises,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
-import { ExerciseStatusOrder } from '../../models/ExerciseStatus'
 
 // todo: disable form stuff when no changes
 // todo: ui element showing "changes saved". Snackbar?

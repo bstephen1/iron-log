@@ -19,7 +19,7 @@ import { ComponentProps, useState } from 'react'
  */
 // todo: typing this is such a pain. Outer function should be the component, inner should be its props. Component extends Autocomplete.
 export function withAsync<T extends typeof Autocomplete>(Component: T) {
-  return function AsyncAutocomplete(props: ComponentProps<T>) {
+  return function (props: ComponentProps<T>) {
     const [open, setOpen] = useState(false)
     const loading = open && !props.options
 
