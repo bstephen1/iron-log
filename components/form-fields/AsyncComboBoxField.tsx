@@ -1,12 +1,7 @@
 import { CheckBoxOutlineBlank } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
-import {
-  Autocomplete,
-  Checkbox,
-  CircularProgress,
-  TextField,
-} from '@mui/material'
-import { useState } from 'react'
+import { Autocomplete, Checkbox, TextField } from '@mui/material'
+import { withAsync } from '../withAsync'
 import useField from './useField'
 
 interface Props {
@@ -15,22 +10,20 @@ interface Props {
   initialValue: string[]
   onSubmit: (value: string[]) => void
 }
-
 // todo: doesn't send to db if clicking X on chips
-export default function AsyncComboBoxField(props: Props) {
-  const { label, options, initialValue, onSubmit, ...textFieldProps } = props
-  const [open, setOpen] = useState(false)
-  const loading = open && !options
-
-  const handleClose = () => {
-    setOpen(false)
-    onSubmit(value)
-  }
+// todo: such a headache extending autocompleteProps
+export function ComboBoxField(props: Props & any) {
+  const { label, options, initialValue, onSubmit, ...autocompleteProps } = props
 
   const { control, value, setValue } = useField<string[]>({
     onSubmit,
     initialValue: initialValue,
   })
+
+  const handleClose = () => {
+    onSubmit(value)
+    props.onClose && props.onClose()
+  }
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.
   // The useField() hook currently only supports uncontrolled inputs. May have to modify it
@@ -39,32 +32,20 @@ export default function AsyncComboBoxField(props: Props) {
   return (
     <Autocomplete
       {...control()}
-      onChange={(_, value) => setValue(value)}
+      {...autocompleteProps}
+      onChange={(_, value: string[]) => setValue(value)} // todo: shouldn't need to assert type
       fullWidth
       multiple
+      onClose={handleClose}
       disabled={initialValue == null}
       options={options ?? []}
-      onOpen={() => setOpen(true)}
-      onClose={handleClose}
-      loading={loading}
-      loadingText="Loading..."
       disableCloseOnSelect
       autoHighlight
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label={label}
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {loading && <CircularProgress color="inherit" size={20} />}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-        />
-      )}
+      renderInput={
+        props.renderInput
+          ? props.renderInput
+          : (params) => <TextField {...params} label={props.label} />
+      }
       renderOption={(props, modifierName, { selected }) => (
         <li {...props}>
           <Checkbox
@@ -79,3 +60,5 @@ export default function AsyncComboBoxField(props: Props) {
     />
   )
 }
+
+export const ComboBoxFieldWithAsync = withAsync(ComboBoxField)

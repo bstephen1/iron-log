@@ -5,7 +5,7 @@ import * as yup from 'yup'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
-import AsyncComboBoxField from '../form-fields/AsyncComboBoxField'
+import { ComboBoxFieldWithAsync } from '../form-fields/AsyncComboBoxField'
 import InputField from '../form-fields/InputField'
 import InputFieldAutosave from '../form-fields/InputFieldAutosave'
 import InputListField from '../form-fields/InputListField'
@@ -76,7 +76,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             yupValidator={yup.reach(validationSchema, 'status')}
             onSubmit={(value) => handleUpdate('status', value)}
           />
-          <AsyncComboBoxField
+          <ComboBoxFieldWithAsync
             label="Valid Modifiers"
             initialValue={exercise.validModifiers}
             options={modifierNames}
