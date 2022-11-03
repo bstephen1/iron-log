@@ -1,14 +1,10 @@
 import { Dayjs } from 'dayjs'
 import useSWR from 'swr'
+import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import { Session } from '../../models/Session'
-import {
-  DATE_FORMAT,
-  URI_EXERCISES,
-  URI_MODIFIERS,
-  URI_SESSIONS,
-} from './constants'
+import { DATE_FORMAT } from './constants'
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json())
 
@@ -30,6 +26,16 @@ export function useExercises() {
 
   return {
     exercises: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
+export function useCategories() {
+  const { data, error, mutate } = useSWR<Category[]>(URI_CATEGORIES, fetcher)
+
+  return {
+    categories: data,
     isError: error,
     mutate: mutate,
   }
@@ -103,3 +109,8 @@ export async function updateModifier(newModifier: Modifier) {
     body: JSON.stringify(newModifier),
   }).catch((e) => console.error(e))
 }
+
+export const URI_SESSIONS = '/api/sessions/'
+export const URI_EXERCISES = '/api/exercises/'
+export const URI_MODIFIERS = '/api/modifiers'
+export const URI_CATEGORIES = '/api/categories'
