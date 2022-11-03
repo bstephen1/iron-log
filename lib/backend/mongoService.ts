@@ -1,4 +1,5 @@
 import { Collection, Document, Filter, MongoClient, WithId } from 'mongodb'
+import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import { Session } from '../../models/Session'
@@ -11,6 +12,7 @@ const db = client.db(process.env.DB_NAME)
 const sessions = db.collection('sessions')
 const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<Modifier>('modifiers')
+const categories = db.collection<Category>('categories')
 
 async function fetchCollection<T extends Document>(
   collection: Collection<T>,
@@ -103,4 +105,28 @@ export async function updateModifier(modifier: Modifier) {
   })
 }
 
-// todo: seperate methods for updating specific fields? To reduce data load on small updates?
+//----------
+// CATEGORY
+//----------
+
+export async function addCategory(category: Category) {
+  return await categories.insertOne(category)
+}
+
+export async function fetchCategorys(filter?: Filter<Category>) {
+  return await fetchCollection(categories, filter)
+}
+
+export async function fetchCategory(name: string) {
+  return await categories.findOne(
+    { name: name },
+    { projection: { _id: false } }
+  )
+}
+
+export async function updateCategory(category: Category) {
+  // upsert creates a new record if it couldn't find one to update
+  return await categories.replaceOne({ _id: category._id }, category, {
+    upsert: true,
+  })
+}
