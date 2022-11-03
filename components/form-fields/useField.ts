@@ -114,6 +114,7 @@ export default function useField<T = string>({
       setIsSubmitting(false)
       setHasValidated(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasValidated, isSubmitting, error])
 
   return {
