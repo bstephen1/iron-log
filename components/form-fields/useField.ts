@@ -32,9 +32,8 @@ export default function useField<T = string>({
   debounceMilliseconds = 800,
   initialValue,
   autoSubmit = true,
-  ...props
+  onSubmit,
 }: Props<T>) {
-  const onSubmit = useRef(props.onSubmit)
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
   const [value, setValue] = useState(initialValue)
@@ -111,7 +110,7 @@ export default function useField<T = string>({
   // maybe this https://stackoverflow.com/questions/69331438/wise-to-exclude-this-useeffect-dependency-array-variable-lint-recommends-3-but
   useEffect(() => {
     if (isSubmitting && hasValidated && !error) {
-      onSubmit.current(value)
+      onSubmit(value)
       setIsSubmitting(false)
       setHasValidated(false)
     }
