@@ -9,12 +9,14 @@ class Exercise {
     status = 'active',
     notes = '',
     cues = [],
+    categories = [],
     validModifiers = []
   ) {
     ;(this.name = name),
       (this.status = status),
       (this.notes = notes),
       (this.cues = cues),
+      (this.categories = categories),
       (this.validModifiers = validModifiers),
       (this._id = randomUUID())
   }
