@@ -113,7 +113,7 @@ export async function addCategory(category: Category) {
   return await categories.insertOne(category)
 }
 
-export async function fetchCategorys(filter?: Filter<Category>) {
+export async function fetchCategories(filter?: Filter<Category>) {
   return await fetchCollection(categories, filter)
 }
 
