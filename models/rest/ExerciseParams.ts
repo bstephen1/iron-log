@@ -1,4 +1,7 @@
+import { ExerciseStatus } from '../ExerciseStatus'
+
+// valid params to use in the API call.
 export interface ExerciseParams {
-  // filter based on status value. An invalid status will return an empty array
-  status?: string
+  status?: ExerciseStatus
+  category?: string
 }

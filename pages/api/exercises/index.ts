@@ -10,18 +10,18 @@ export default async function handler(
   console.log(`Incoming ${req.method} on exercises`)
 
   try {
-    const { status } = req.query as ExerciseParams
+    const { status, category } = req.query as ExerciseParams
 
-    if (
-      status &&
-      !Object.values(ExerciseStatus).includes(status as ExerciseStatus)
-    ) {
+    if (status && !Object.values(ExerciseStatus).includes(status)) {
       res.status(400).json({ isError: true, message: 'invalid status' })
     }
 
-    const exercises = await (status
-      ? fetchExercises({ status: status as ExerciseStatus }) // should not have to explicity assert this but ts isn't recognizing the if check above
-      : fetchExercises())
+    // todo: this is a bit of a hack to make the api param singular despite the mongo field being plural. Ideally status/categories could accept arrays.
+    const query = {} as any
+    if (status) query.status = status
+    if (category) query.categories = category
+
+    const exercises = await fetchExercises(query)
     res.status(200).json(exercises)
   } catch (e) {
     res.status(500).json({ isError: true, message: 'error fetching exercises' })
