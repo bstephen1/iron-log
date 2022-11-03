@@ -4,6 +4,8 @@ import { Autocomplete, Checkbox, TextField } from '@mui/material'
 import { withAsync } from '../withAsync'
 import useField from './useField'
 
+export const ComboBoxField = withAsync(ComboBoxFieldBase)
+
 interface Props {
   label: string
   options: string[]
@@ -12,7 +14,7 @@ interface Props {
 }
 // todo: doesn't send to db if clicking X on chips
 // todo: such a headache extending autocompleteProps
-export function ComboBoxField(props: Props & any) {
+function ComboBoxFieldBase(props: Props & any) {
   const { label, options, initialValue, onSubmit, ...autocompleteProps } = props
 
   const { control, value, setValue } = useField<string[]>({
@@ -60,5 +62,3 @@ export function ComboBoxField(props: Props & any) {
     />
   )
 }
-
-export const ComboBoxFieldWithAsync = withAsync(ComboBoxField)
