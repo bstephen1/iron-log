@@ -77,8 +77,10 @@ export default function useField<T = string>({
   }
 
   const validate = (value: T) => {
-    console.log('validating: ' + value)
-    if (!yupValidator) {
+    console.log(
+      `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
+    )
+    if (!yupValidator || value === initialValue) {
       setHasValidated(true)
       return
     }
