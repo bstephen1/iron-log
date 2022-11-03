@@ -6,8 +6,6 @@ import Exercise from '../models/Exercise'
 import { ExerciseStatusOrder } from '../models/ExerciseStatus'
 import { withAsync } from './withAsync'
 
-export const ExerciseSelector = withAsync(ExerciseSelectorBase)
-
 function ExerciseSelectorBase({
   exercise,
   setExercise,
@@ -72,3 +70,8 @@ function ExerciseSelectorBase({
     />
   )
 }
+
+const withDefaults = (Component) => (props) =>
+  <Component {...props} label="Exercises" />
+
+export const ExerciseSelector = withDefaults(withAsync(ExerciseSelectorBase))
