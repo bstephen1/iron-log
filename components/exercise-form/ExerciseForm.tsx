@@ -2,7 +2,11 @@ import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useMemo } from 'react'
 import * as yup from 'yup'
-import { useExercises, useModifiers } from '../../lib/frontend/restService'
+import {
+  useCategories,
+  useExercises,
+  useModifiers,
+} from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
@@ -17,8 +21,10 @@ interface Props {
 }
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
+  const { categories } = useCategories()
   const { exercises } = useExercises()
 
+  // todo: I smell an extractable function...
   // memoize the maps so they don't have to rerun every render
   const modifierNames = useMemo(
     () => modifiers?.map((modifier) => modifier.name) || [],
@@ -28,6 +34,11 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const exerciseNames = useMemo(
     () => exercises?.map((exercise) => exercise.name) || [],
     [exercises]
+  )
+
+  const categoryNames = useMemo(
+    () => categories?.map((category) => category.name) || [],
+    [categories]
   )
 
   // todo: validate (drop empty cues)
@@ -87,12 +98,21 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         </Stack>
       </Grid>
       <Grid xs={12} sm={6}>
-        <InputFieldAutosave
-          label="Notes"
-          initialValue={exercise.notes}
-          fullWidth
-          onSubmit={(value) => handleUpdate('notes', value)}
-        />
+        <Stack>
+          <InputFieldAutosave
+            label="Notes"
+            initialValue={exercise.notes}
+            fullWidth
+            onSubmit={(value) => handleUpdate('notes', value)}
+          />
+          <ComboBoxField
+            label="Categories"
+            initialValue={exercise.categories}
+            options={categoryNames}
+            fullWidth
+            onSubmit={(value: string[]) => handleUpdate('categories', value)}
+          />
+        </Stack>
       </Grid>
       <Grid xs={12}>
         <InputListField

@@ -37,6 +37,7 @@ function ComboBoxFieldBase(props: Props & any) {
       {...autocompleteProps}
       onChange={(_, value: string[]) => setValue(value)} // todo: shouldn't need to assert type
       fullWidth
+      // size="small"  // todo: use small sizes?
       multiple
       onClose={handleClose}
       disabled={initialValue == null}
