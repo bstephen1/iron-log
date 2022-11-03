@@ -1,8 +1,8 @@
 const { randomUUID } = require('crypto')
 
-const db = connect('mongodb://localhost:27017/test')
+const db = connect('mongodb:// localhost:27017/test')
 
-//todo: REALLY don't like having to redefine this here, but it doesn't seem to be able to import the .ts class
+// todo: REALLY don't like having to redefine this here, but it doesn't seem to be able to import the .ts class
 class Exercise {
   constructor(
     name,
@@ -36,7 +36,7 @@ function addRecord(type, exerciseName, activeModifiers, validModifiers, sets) {
   return { type, exerciseName, activeModifiers, validModifiers, sets }
 }
 
-//todo: sessionType and program
+// todo: sessionType and program
 function addSessions(date, records) {
   return { date, records }
 }
@@ -45,9 +45,9 @@ let modifiers = [
   addModifier('belt', 'active', true),
   addModifier('band', 'archived', true),
   addModifier('pause', 'active', true),
-  addModifier('unilateral', 'active', false), //add L/R rows
-  addModifier('AMRAP', 'active', false), //or set type?
-  addModifier('bodyweight', 'active', false), //add BW column
+  addModifier('unilateral', 'active', false), // add L/R rows
+  addModifier('AMRAP', 'active', false), // or set type?
+  addModifier('bodyweight', 'active', false), // add BW column
 ]
 
 let exercises = [
@@ -68,7 +68,7 @@ let exercises = [
   new Exercise('zercher squat', 'archived', 'never again', ['pain'], ['AMRAP']),
 ]
 
-//todo: myo, super, rep range (?), weigh-in, cardio
+// todo: myo, super, rep range (?), weigh-in, cardio
 let setTypes = [addName('basic')]
 
 let sets1 = [addSet(100, 5, 8), addSet(110, 5, 9), addSet(120, 5, 10)]
@@ -92,7 +92,7 @@ let record1 = [
 
 let sessions = [addSessions('2022-09-26', record1)]
 
-// START OPERATIONS
+//  START OPERATIONS
 
 db.dropDatabase()
 
