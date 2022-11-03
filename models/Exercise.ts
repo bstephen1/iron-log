@@ -7,6 +7,7 @@ export default class Exercise {
     public status: ExerciseStatus = ExerciseStatus.ACTIVE,
     public notes: string = '',
     public cues: string[] = [],
+    public categories: string[] = [],
     public validModifiers: string[] = [],
     public readonly _id: string = uuid()
   ) {}

@@ -1,6 +1,6 @@
 const { randomUUID } = require('crypto')
 
-const db = connect('mongodb:// localhost:27017/test')
+const db = connect('mongodb://localhost:27017/test')
 
 // todo: REALLY don't like having to redefine this here, but it doesn't seem to be able to import the .ts class
 class Exercise {
@@ -41,6 +41,14 @@ function addSessions(date, records) {
   return { date, records }
 }
 
+let categories = [
+  addName('quads'),
+  addName('squat'),
+  addName('side delts'),
+  addName('biceps'),
+  addName('hamstrings'),
+]
+
 let modifiers = [
   addModifier('belt', 'active', true),
   addModifier('band', 'archived', true),
@@ -52,10 +60,11 @@ let modifiers = [
 
 let exercises = [
   new Exercise(
-    'squats',
+    'high bar squats',
     'active',
     'Milk and squats.',
     ['knees out', 'chest up'],
+    ['squat'],
     ['belt', 'band']
   ),
   new Exercise(
@@ -63,9 +72,28 @@ let exercises = [
     'active',
     'curl curl curl',
     ['a', 'b', 'c', 'd', 'f', 'e'],
+    ['biceps'],
     ['bodyweight', 'unilateral']
   ),
-  new Exercise('zercher squat', 'archived', 'never again', ['pain'], ['AMRAP']),
+  new Exercise(
+    'multi grip bench press',
+    'active',
+    '',
+    [
+      'tucked, middle grip => great triceps',
+      'flared, narrow grip => great chest',
+    ],
+    ['bench press', 'chest', 'triceps'],
+    ['flared', 'tucked', 'wide', 'narrow', 'middle', 'belt', 'wraps']
+  ),
+  new Exercise(
+    'zercher squat',
+    'archived',
+    'never again',
+    ['pain'],
+    ['squat'],
+    ['AMRAP']
+  ),
 ]
 
 // todo: myo, super, rep range (?), weigh-in, cardio
@@ -97,6 +125,7 @@ let sessions = [addSessions('2022-09-26', record1)]
 db.dropDatabase()
 
 db.modifiers.insertMany(modifiers)
+db.categories.insertMany(categories)
 db.exercises.insertMany(exercises)
 db.setTypes.insertMany(setTypes)
 db.sessions.insertMany(sessions)
