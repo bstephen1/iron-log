@@ -110,7 +110,7 @@ let exercises = [
 ]
 
 // todo: myo, super, rep range (?), weigh-in, cardio
-let setTypes = [addName('basic')]
+let setTypes = [addName('standard')]
 
 let sets1 = [addSet(100, 5, 8), addSet(110, 5, 9), addSet(120, 5, 10)]
 
@@ -121,9 +121,9 @@ let sets2 = [
 ]
 
 let record1 = [
-  addRecord('basic', 'squats', ['belt'], ['belt', 'pause'], sets1),
+  addRecord('standard', 'squats', ['belt'], ['belt', 'pause'], sets1),
   addRecord(
-    'basic',
+    'standard',
     'curls',
     ['belt', 'AMRAP'],
     ['belt', 'AMRAP', 'unilateral', 'bodyweight'],

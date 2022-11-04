@@ -1,3 +1,4 @@
+// todo: keep this in the db, surely
 export enum SetType {
-  BASIC = 'basic',
+  STANDARD = 'standard',
 }
