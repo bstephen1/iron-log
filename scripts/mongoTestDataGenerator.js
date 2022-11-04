@@ -2,6 +2,8 @@ const { randomUUID } = require('crypto')
 
 const db = connect('mongodb://localhost:27017/test')
 
+// todo: look into seeing if this script can be made less fragile with denormalized values
+
 // todo: REALLY don't like having to redefine this here, but it doesn't seem to be able to import the .ts class
 class Exercise {
   constructor(
@@ -49,12 +51,21 @@ let categories = [
   addName('side delts'),
   addName('biceps'),
   addName('hamstrings'),
+  addName('bench press'),
+  addName('chest'),
+  addName('triceps'),
 ]
 
 let modifiers = [
   addModifier('belt', 'active', true),
   addModifier('band', 'archived', true),
   addModifier('pause', 'active', true),
+  addModifier('flared', 'active', true),
+  addModifier('tucked', 'active', true),
+  addModifier('wide', 'active', true),
+  addModifier('narrow', 'active', true),
+  addModifier('wraps', 'active', true),
+  addModifier('middle', 'active', true),
   addModifier('unilateral', 'active', false), // add L/R rows
   addModifier('AMRAP', 'active', false), // or set type?
   addModifier('bodyweight', 'active', false), // add BW column
