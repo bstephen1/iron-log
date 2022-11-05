@@ -1,5 +1,6 @@
 // @ts-nocheck
 // todo: typing
+import { FilterAltOutlined, FilterList } from '@mui/icons-material'
 import { Autocomplete, createFilterOptions } from '@mui/material'
 import { addExercise } from '../lib/frontend/restService'
 import Exercise from '../models/Exercise'
@@ -71,7 +72,16 @@ function ExerciseSelectorBase({
   )
 }
 
-const withDefaults = (Component) => (props) =>
-  <Component {...props} label="Exercises" />
+// Autocomplete nests a Textfield as a prop, so a second HOC wrapper is needed to add default props
+const withInputRender = (Component) => (props) =>
+  (
+    <Component
+      {...props}
+      label="Exercises"
+      // or <FilterAltOutlined />
+      category={<FilterList />}
+    />
+  )
+// todo: filter is an Icon button that opens a Checkbox Popper (?) which can filter based on status (basically what the ComboBox has)
 
-export const ExerciseSelector = withDefaults(withAsync(ExerciseSelectorBase))
+export const ExerciseSelector = withInputRender(withAsync(ExerciseSelectorBase))

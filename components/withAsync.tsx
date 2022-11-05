@@ -36,6 +36,12 @@ export function withAsync<T extends typeof Autocomplete>(Component: T) {
             label={props.label}
             InputProps={{
               ...params.InputProps,
+              startAdornment: (
+                <>
+                  {props.category}
+                  {params.InputProps.startAdornment}
+                </>
+              ),
               endAdornment: (
                 <>
                   {loading && <CircularProgress color="inherit" size={20} />}
