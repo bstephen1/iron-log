@@ -1,15 +1,22 @@
 import { CategoryOutlined } from '@mui/icons-material'
 import { Chip, IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { useCategories } from '../lib/frontend/restService'
+import Category from '../models/Category'
 
 interface Props {
   anchorEl?: HTMLElement
+  categories: Category[]
+  category: Category
+  setCategory: Dispatch<SetStateAction<Category | null>>
 }
-export default function CategoryFilter(props: Props) {
+export default function CategoryFilter({
+  categories,
+  category,
+  setCategory,
+  ...props
+}: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const [category, setCategory] = useState('')
-  const { categories: options } = useCategories()
 
   const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(props.anchorEl ? props.anchorEl : e.currentTarget)
@@ -22,9 +29,9 @@ export default function CategoryFilter(props: Props) {
     <>
       {!!category ? (
         <Chip
-          label={category}
+          label={category.name}
           onClick={handleOpen}
-          onDelete={() => setCategory('')}
+          onDelete={() => setCategory(null)}
         />
       ) : (
         <Tooltip title="Select Category">
@@ -43,18 +50,18 @@ export default function CategoryFilter(props: Props) {
           horizontal: 'left',
         }}
       >
-        {!!options &&
-          options.map((option, i) => (
+        {!!categories &&
+          categories.map((category, i) => (
             <MenuItem
-              key={option.name}
-              value={option.name}
+              key={category.name}
+              value={category.name}
               // for some reason e.target.value is NOT returning the value, even though it is visible in e.target
               onClick={(_) => {
-                setCategory(option.name)
+                setCategory(category)
                 setAnchorEl(null)
               }}
             >
-              {option.name}
+              {category.name}
             </MenuItem>
           ))}
       </Menu>
