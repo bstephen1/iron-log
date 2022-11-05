@@ -1,12 +1,8 @@
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import {
   Autocomplete,
-  Box,
   Button,
-  Collapse,
-  ListItemButton,
-  Paper,
+  Card,
+  CardContent,
   TextField,
 } from '@mui/material'
 import { Stack } from '@mui/system'
@@ -51,94 +47,73 @@ export default function RecordInput(props: Props) {
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
   return (
-    <ListItemButton
-      ref={listItemButton}
-      onClick={() => setOpen(!open)}
-      sx={{ p: 0, borderRadius: 1 }}
-      id="clickableArea"
-    >
-      <Paper elevation={3} sx={{ px: 1, width: 1 }}>
-        <Box p={2} display="flex" justifyContent="space-between">
-          {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
-          <Grid
-            container
-            onMouseDown={disableButtonEffects}
-            onClick={disableButtonEffects}
-            spacing={2}
-            sx={{ cursor: 'default' }}
-          >
-            <Grid xs={6} md={3}>
-              <Autocomplete
-                options={activeExercises}
-                getOptionLabel={(option) => option.name}
-                value={activeExercises.find((ex) => ex.name === exerciseName)}
-                // specify undefined so it doesn't set to null when blank
-                onChange={(e, newExercise) =>
-                  updateRecord(
-                    { ...record, exerciseName: newExercise?.name || undefined },
-                    index
-                  )
-                }
-                renderInput={(params) => (
-                  <TextField {...params} variant="standard" label="Exercise" />
-                )}
-              />
-            </Grid>
-            <Grid xs={6} md={3}>
-              <Autocomplete
-                options={Object.values(SetType)}
-                getOptionLabel={(option) => option}
-                value={type}
-                onChange={(e, newType) =>
-                  updateRecord({ ...record, type: newType || undefined }, index)
-                }
-                renderInput={(params) => (
-                  <TextField {...params} variant="standard" label="Set Type" />
-                )}
-              />
-            </Grid>
-            <Grid xs={12} md={6}>
-              <Autocomplete
-                options={validModifiers}
-                value={activeModifiers}
-                onChange={(e, newActiveModifiers) =>
-                  updateRecord(
-                    { ...record, activeModifiers: newActiveModifiers },
-                    index
-                  )
-                }
-                multiple
-                fullWidth
-                renderInput={(params) => (
-                  <TextField {...params} variant="standard" label="Modifiers" />
-                )}
-              />
-            </Grid>
+    <Card>
+      {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
+      <CardContent>
+        <Grid
+          container
+          onMouseDown={disableButtonEffects}
+          onClick={disableButtonEffects}
+          spacing={2}
+          sx={{ pt: 2, cursor: 'default' }}
+        >
+          <Grid xs={6} md={3}>
+            <Autocomplete
+              options={activeExercises}
+              getOptionLabel={(option) => option.name}
+              value={activeExercises.find((ex) => ex.name === exerciseName)}
+              // specify undefined so it doesn't set to null when blank
+              onChange={(e, newExercise) =>
+                updateRecord(
+                  { ...record, exerciseName: newExercise?.name || undefined },
+                  index
+                )
+              }
+              renderInput={(params) => (
+                <TextField {...params} variant="standard" label="Exercise" />
+              )}
+            />
           </Grid>
-          <Box pl={2} display="flex" alignItems="center" width={24}>
-            {!!type &&
-              (open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />)}
-          </Box>
-        </Box>
-        {!!type && (
-          <Collapse
-            in={open}
-            onMouseDown={disableButtonEffects}
-            onClick={disableButtonEffects}
-            sx={{ mx: 5, pb: 2, cursor: 'default' }}
-          >
-            <Stack spacing={2}>
-              {/* todo: unique key */}
-              {sets.map((set, i) => (
-                <SetInput {...set} key={i} />
-              ))}
-              <Button variant="contained" onClick={addSet}>
-                Add Set
-              </Button>
-            </Stack>
-          </Collapse>
-        )}
-      </Paper>
-    </ListItemButton>
+          <Grid xs={6} md={3}>
+            <Autocomplete
+              options={Object.values(SetType)}
+              getOptionLabel={(option) => option}
+              value={type}
+              onChange={(e, newType) =>
+                updateRecord({ ...record, type: newType || undefined }, index)
+              }
+              renderInput={(params) => (
+                <TextField {...params} variant="standard" label="Set Type" />
+              )}
+            />
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Autocomplete
+              options={validModifiers}
+              value={activeModifiers}
+              onChange={(e, newActiveModifiers) =>
+                updateRecord(
+                  { ...record, activeModifiers: newActiveModifiers },
+                  index
+                )
+              }
+              multiple
+              fullWidth
+              renderInput={(params) => (
+                <TextField {...params} variant="standard" label="Modifiers" />
+              )}
+            />
+          </Grid>
+        </Grid>
+
+        <Stack spacing={2} sx={{ px: 4, pt: 2 }}>
+          {/* todo: unique key */}
+          {sets.map((set, i) => (
+            <SetInput {...set} key={i} />
+          ))}
+          <Button onClick={addSet}>Add Set</Button>
+        </Stack>
+      </CardContent>
+    </Card>
   )
 }
