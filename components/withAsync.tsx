@@ -19,7 +19,12 @@ import { ComponentProps, useState } from 'react'
  */
 // todo: typing this is such a pain. Outer function should be the component, inner should be its props. Component extends Autocomplete.
 export function withAsync<T extends typeof Autocomplete>(Component: T) {
-  return function (props: ComponentProps<T>) {
+  return function ({
+    label,
+    startAdornment,
+    placeholder,
+    ...props
+  }: ComponentProps<T>) {
     const [open, setOpen] = useState(false)
     const loading = open && !props.options
 
@@ -33,12 +38,13 @@ export function withAsync<T extends typeof Autocomplete>(Component: T) {
         renderInput={(params: AutocompleteRenderInputParams) => (
           <TextField
             {...params}
-            label={props.label}
+            placeholder={placeholder}
+            label={label}
             InputProps={{
               ...params.InputProps,
               startAdornment: (
                 <>
-                  {props.category}
+                  {startAdornment}
                   {params.InputProps.startAdornment}
                 </>
               ),

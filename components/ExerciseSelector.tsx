@@ -1,10 +1,10 @@
 // @ts-nocheck
 // todo: typing
-import { FilterAltOutlined, FilterList } from '@mui/icons-material'
 import { Autocomplete, createFilterOptions } from '@mui/material'
 import { addExercise } from '../lib/frontend/restService'
 import Exercise from '../models/Exercise'
 import { ExerciseStatusOrder } from '../models/ExerciseStatus'
+import CategoryFilter from './CategoryFilter'
 import { withAsync } from './withAsync'
 
 function ExerciseSelectorBase({
@@ -73,15 +73,19 @@ function ExerciseSelectorBase({
 }
 
 // Autocomplete nests a Textfield as a prop, so a second HOC wrapper is needed to add default props
-const withInputRender = (Component) => (props) =>
-  (
+const withInputRender = (Component) => (props) => {
+  // const inputRef = useRef<HTMLElement>(null)
+  return (
     <Component
       {...props}
       label="Exercises"
-      // or <FilterAltOutlined />
-      category={<FilterList />}
+      placeholder="Select or Add an Exercise"
+      // inputRef={inputRef}
+      // todo: anchor to the bottom of the input?
+      // todo: any way to get label to offset and not shrink with startAdornment? Not officially supported by mui bc "too hard" apparently. Is placeholder an ok comrpromise?
+      startAdornment={<CategoryFilter />}
     />
   )
-// todo: filter is an Icon button that opens a Checkbox Popper (?) which can filter based on status (basically what the ComboBox has)
+}
 
 export const ExerciseSelector = withInputRender(withAsync(ExerciseSelectorBase))
