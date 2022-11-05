@@ -1,4 +1,8 @@
-import { CategoryOutlined } from '@mui/icons-material'
+import {
+  CategoryOutlined,
+  FilterAltOutlined,
+  FilterOutlined,
+} from '@mui/icons-material'
 import { Chip, IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useCategories } from '../lib/frontend/restService'
@@ -36,7 +40,7 @@ export default function CategoryFilter({
       ) : (
         <Tooltip title="Select Category">
           <IconButton onClick={handleOpen} sx={{ p: '4px' }}>
-            <CategoryOutlined />
+            <FilterAltOutlined />
           </IconButton>
         </Tooltip>
       )}
