@@ -39,7 +39,7 @@ function addSet(weight, reps, rpe) {
 function addRecord(
   date,
   type,
-  exerciseName,
+  exercise,
   activeModifiers,
   validModifiers,
   sets,
@@ -48,7 +48,7 @@ function addRecord(
   return {
     date,
     type,
-    exerciseName,
+    exercise,
     activeModifiers,
     validModifiers,
     sets,

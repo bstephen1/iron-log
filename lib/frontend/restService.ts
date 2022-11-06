@@ -97,9 +97,10 @@ export async function updateExerciseField<T extends keyof Exercise>(
   field: T,
   value: Exercise[T]
 ) {
+  const id = exercise._id
   fetch(URI_EXERCISES + exercise.name, {
     method: 'PATCH',
-    body: JSON.stringify({ exercise, field, value }),
+    body: JSON.stringify({ id, field, value }),
   }).catch((e) => console.error(e))
 }
 

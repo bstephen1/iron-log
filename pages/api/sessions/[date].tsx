@@ -13,7 +13,7 @@ export default async function handler(
   const date = req.query.date
 
   if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).json({ message: 'invalid date' })
+    res.status(400).json({ message: 'invalid date format' })
     return
   }
   console.log(

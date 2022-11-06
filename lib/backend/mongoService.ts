@@ -2,17 +2,19 @@ import { Collection, Document, Filter, MongoClient, WithId } from 'mongodb'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
-import { Session } from '../../models/Session'
+import Session from '../../models/Session'
+import Record from '../../models/Record'
 
 const uri = 'mongodb://localhost:27017'
 const rawClient = new MongoClient(uri)
 let client = await rawClient.connect()
 const db = client.db(process.env.DB_NAME)
 
-const sessions = db.collection('sessions')
+const sessions = db.collection<Session>('sessions')
 const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<Modifier>('modifiers')
 const categories = db.collection<Category>('categories')
+const records = db.collection<Record>('records')
 
 async function fetchCollection<T extends Document>(
   collection: Collection<T>,
@@ -30,7 +32,6 @@ async function fetchCollection<T extends Document>(
 // SESSION
 //---------
 
-// todo: change function names to mirror mongo function used? Or keep a separate convention to not associate with db provider?
 export async function addSession(session: Session) {
   return await sessions.insertOne(session)
 }
@@ -41,6 +42,41 @@ export async function fetchSession(date: string) {
 
 export async function updateSession(session: Session) {
   return await sessions.replaceOne({ date: session.date }, session)
+}
+
+//--------
+// RECORD
+//--------
+
+export async function addRecord(record: Record) {
+  return await records.insertOne(record)
+}
+
+export async function fetchRecords(filter?: Filter<Record>) {
+  return await fetchCollection(records, filter)
+}
+
+export async function fetchRecord(filter: Filter<Record>) {
+  return await records.findOne({ filter })
+}
+
+export async function updateRecord(record: Record) {
+  return await records.replaceOne({ _id: record._id }, record, {
+    upsert: true,
+  })
+}
+
+interface updateRecordFieldProps<T extends keyof Record> {
+  id: Record['_id']
+  field: T
+  value: Record[T] | any
+}
+export async function updateRecordField<T extends keyof Record>({
+  id,
+  field,
+  value,
+}: updateRecordFieldProps<T>) {
+  return await records.updateOne({ _id: id }, { $set: { [field]: value } })
 }
 
 //----------
@@ -67,19 +103,16 @@ export async function updateExercise(exercise: Exercise) {
 }
 
 interface updateExerciseFieldProps<T extends keyof Exercise> {
-  exercise: Exercise
+  id: Exercise['_id']
   field: T
   value: Exercise[T] | any // todo $set is complaining bc it adds fields for each array index
 }
 export async function updateExerciseField<T extends keyof Exercise>({
-  exercise,
+  id,
   field,
   value,
 }: updateExerciseFieldProps<T>) {
-  return await exercises.updateOne(
-    { _id: exercise._id },
-    { $set: { [field]: value } }
-  )
+  return await exercises.updateOne({ _id: id }, { $set: { [field]: value } })
 }
 
 //----------
