@@ -4,6 +4,7 @@ import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import Session from '../../models/Session'
+import Record from '../../models/Record'
 import { DATE_FORMAT } from './constants'
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json())
@@ -26,6 +27,16 @@ export function useExercises() {
 
   return {
     exercises: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
+export function useRecord(id: Record['_id']) {
+  const { data, error, mutate } = useSWR<Exercise[]>(URI_RECORDS + id, fetcher)
+
+  return {
+    record: data,
     isError: error,
     mutate: mutate,
   }
@@ -113,5 +124,6 @@ export async function updateModifier(newModifier: Modifier) {
 
 export const URI_SESSIONS = '/api/sessions/'
 export const URI_EXERCISES = '/api/exercises/'
-export const URI_MODIFIERS = '/api/modifiers'
-export const URI_CATEGORIES = '/api/categories'
+export const URI_MODIFIERS = '/api/modifiers/'
+export const URI_CATEGORIES = '/api/categories/'
+export const URI_RECORDS = '/api/records/'

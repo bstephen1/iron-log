@@ -56,8 +56,8 @@ export async function fetchRecords(filter?: Filter<Record>) {
   return await fetchCollection(records, filter)
 }
 
-export async function fetchRecord(filter: Filter<Record>) {
-  return await records.findOne({ filter })
+export async function fetchRecord(id: Record['_id']) {
+  return await records.findOne({ _id: id })
 }
 
 export async function updateRecord(record: Record) {
