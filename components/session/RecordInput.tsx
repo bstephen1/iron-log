@@ -1,46 +1,44 @@
-import {
-  Autocomplete,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-} from '@mui/material'
+import { Card, CardContent } from '@mui/material'
 import { Stack } from '@mui/system'
 import Grid from '@mui/system/Unstable_Grid'
-import { useRef, useState } from 'react'
-import { useActiveExercises } from '../../lib/frontend/restService'
+import {
+  updateRecordField,
+  useExercises,
+  useRecord,
+} from '../../lib/frontend/restService'
+import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
 import { SetType } from '../../models/SetType'
+import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import SetInput from './SetInput'
 
 interface Props {
-  record: Record
-  index: number
-  updateRecord: (newRecord: Record, index: number) => void
-  startOpen?: boolean
+  id: Record['_id']
 }
-export default function RecordInput(props: Props) {
-  const [open, setOpen] = useState(props.startOpen)
-  const { activeExercises } = useActiveExercises() // SWR caches this, so it won't need to call the API every render
-  const { record, updateRecord, index } = props
-  const { exercise, type, activeModifiers, modifiers, sets } = record
-  const listItemButton = useRef(null)
+export default function RecordInput({ id }: Props) {
+  const { record, isError, mutate } = useRecord(id)
+  const { exercises } = useExercises({ status: ExerciseStatus.ACTIVE }) // SWR caches this, so it won't need to call the API every render
 
-  const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) =>
-    e.stopPropagation()
-
-  const addSet = () => {
-    const last = sets[sets.length - 1]
-    // todo: init first set, and possibly have different behavior when adding different types of sets?
-    updateRecord(
-      { ...record, sets: sets.concat({ ...last, rpe: undefined }) },
-      index
-    )
-  }
-
-  if (!activeExercises) {
+  if (isError) {
+    console.error('Could not fetch record!')
     return <></>
   }
+
+  // todo: skeleton?
+  if (!record) {
+    return <></>
+  }
+
+  // const addSet = () => {
+  //   const last = sets[sets.length - 1]
+  //   // todo: init first set, and possibly have different behavior when adding different types of sets?
+  //   updateRecord(
+  //     { ...record, sets: sets.concat({ ...last, rpe: undefined }) },
+  //     index
+  //   )
+  // }
+
+  const { exercise, type, activeModifiers, modifiers, sets, _id } = record
 
   // todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
   // todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
@@ -49,20 +47,13 @@ export default function RecordInput(props: Props) {
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
   return (
     <Card>
-      {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
       <CardContent>
-        <Grid
-          container
-          onMouseDown={disableButtonEffects}
-          onClick={disableButtonEffects}
-          spacing={2}
-          sx={{ pt: 2, cursor: 'default' }}
-        >
+        <Grid container spacing={2} sx={{ pt: 2 }}>
           <Grid xs={6} md={3}>
-            <Autocomplete
-              options={activeExercises}
+            {/* <Autocomplete
+              options={exercises}
               getOptionLabel={(option) => option.name}
-              value={activeExercises.find((ex) => ex.name === exercise)}
+              value={exercises.find((ex) => ex.name === exercise)}
               // specify undefined so it doesn't set to null when blank
               onChange={(e, newExercise) =>
                 updateRecord(
@@ -73,10 +64,17 @@ export default function RecordInput(props: Props) {
               renderInput={(params) => (
                 <TextField {...params} variant="standard" label="Exercise" />
               )}
-            />
+            /> */}
           </Grid>
           <Grid xs={6} md={3}>
-            <Autocomplete
+            <SelectFieldAutosave
+              label="Set Type"
+              initialValue={type}
+              fullWidth
+              options={Object.values(SetType)}
+              onSubmit={(value) => updateRecordField(_id, 'type', value)}
+            />
+            {/* <Autocomplete
               options={Object.values(SetType)}
               getOptionLabel={(option) => option}
               value={type}
@@ -86,24 +84,21 @@ export default function RecordInput(props: Props) {
               renderInput={(params) => (
                 <TextField {...params} variant="standard" label="Set Type" />
               )}
-            />
+            /> */}
           </Grid>
           <Grid xs={12} md={6}>
-            <Autocomplete
+            {/* <Autocomplete
               options={modifiers}
               value={activeModifiers}
               onChange={(e, newActiveModifiers) =>
-                updateRecord(
-                  { ...record, activeModifiers: newActiveModifiers },
-                  index
-                )
+                updateRecordField(_id, 'activeModifiers', newActiveModifiers)
               }
               multiple
               fullWidth
               renderInput={(params) => (
                 <TextField {...params} variant="standard" label="Modifiers" />
               )}
-            />
+            /> */}
           </Grid>
         </Grid>
 
@@ -112,7 +107,7 @@ export default function RecordInput(props: Props) {
           {sets.map((set, i) => (
             <SetInput {...set} key={i} />
           ))}
-          <Button onClick={addSet}>Add Set</Button>
+          {/* <Button onClick={addSet}>Add Set</Button> */}
         </Stack>
       </CardContent>
     </Card>

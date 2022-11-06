@@ -9,8 +9,8 @@ import {
 } from '../../lib/frontend/restService'
 import Record from '../../models/Record'
 import Session from '../../models/Session'
-import RecordInput from './RecordInput'
 import Clock from './Clock'
+import RecordInput from './RecordInput'
 import TitleBar from './TitleBar'
 
 export default function SessionView({ date }: { date: Dayjs }) {
@@ -62,18 +62,13 @@ export default function SessionView({ date }: { date: Dayjs }) {
       <Grid>
         <Clock />
       </Grid>
+      {/* todo: session only handles updating index order */}
       {session &&
-        session.records.map((record, i) => {
-          return (
-            <Grid key={i}>
-              <RecordInput
-                record={record}
-                updateRecord={updateRecord}
-                index={i}
-              />
-            </Grid>
-          )
-        })}
+        session.records.map((id) => (
+          <Grid key={id}>
+            <RecordInput id={id} />
+          </Grid>
+        ))}
 
       <Grid container justifyContent="center">
         {!isLoading && (

@@ -2,9 +2,10 @@ import { Dayjs } from 'dayjs'
 import useSWR from 'swr'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
+import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Modifier from '../../models/Modifier'
-import Session from '../../models/Session'
 import Record from '../../models/Record'
+import Session from '../../models/Session'
 import { DATE_FORMAT } from './constants'
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json())
@@ -22,8 +23,14 @@ export function useSession(date: Dayjs) {
   }
 }
 
-export function useExercises() {
-  const { data, error, mutate } = useSWR<Exercise[]>(URI_EXERCISES, fetcher)
+// todo: make params more robust
+export function useExercises({ status }: { status?: ExerciseStatus }) {
+  const params = status ? '?status=' + status : ''
+
+  const { data, error, mutate } = useSWR<Exercise[]>(
+    URI_EXERCISES + params,
+    fetcher
+  )
 
   return {
     exercises: data,
@@ -33,7 +40,7 @@ export function useExercises() {
 }
 
 export function useRecord(id: Record['_id']) {
-  const { data, error, mutate } = useSWR<Exercise[]>(URI_RECORDS + id, fetcher)
+  const { data, error, mutate } = useSWR<Record>(URI_RECORDS + id, fetcher)
 
   return {
     record: data,
@@ -47,19 +54,6 @@ export function useCategories() {
 
   return {
     categories: data,
-    isError: error,
-    mutate: mutate,
-  }
-}
-
-export function useActiveExercises() {
-  const { data, error, mutate } = useSWR<Exercise[]>(
-    URI_EXERCISES + '?status=active',
-    fetcher
-  )
-
-  return {
-    activeExercises: data,
     isError: error,
     mutate: mutate,
   }
@@ -110,6 +104,18 @@ export async function updateExerciseField<T extends keyof Exercise>(
 ) {
   const id = exercise._id
   fetch(URI_EXERCISES + exercise.name, {
+    method: 'PATCH',
+    body: JSON.stringify({ id, field, value }),
+  }).catch((e) => console.error(e))
+}
+
+// todo: make this {[field]: value} instead of 2 args?
+export async function updateRecordField<T extends keyof Record>(
+  id: Record['_id'],
+  field: T,
+  value: Record[T]
+) {
+  fetch(URI_RECORDS + id, {
     method: 'PATCH',
     body: JSON.stringify({ id, field, value }),
   }).catch((e) => console.error(e))
