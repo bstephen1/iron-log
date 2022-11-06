@@ -1,7 +1,7 @@
 import { generateId } from '../lib/util'
-import { Record } from './Record'
+import Record from './Record'
 
-export class Session {
+export default class Session {
   constructor(
     public readonly date: string,
     public records: Record[] = [],

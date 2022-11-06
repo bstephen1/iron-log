@@ -52,7 +52,7 @@ export default function ManageExercisesPage() {
       </Grid>
       <Grid container xs={12} md={8} justifyContent="center">
         {exercise ? (
-          <ExerciseForm exercise={exercise} handleUpdate={handleUpdate} />
+          <ExerciseForm {...{ exercise, handleUpdate }} />
         ) : (
           <ManageWelcomeCard />
         )}

@@ -2,7 +2,7 @@ import { generateId } from '../lib/util'
 import Set from './Set'
 import { SetType } from './SetType'
 
-export class Record {
+export default class Record {
   constructor(
     public exerciseName?: string,
     public type?: SetType,
