@@ -46,6 +46,7 @@ export default function RecordInput(props: Props) {
   // todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
+  // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
   return (
     <Card>
       {/* disable ListItemButton effects: onMouseDown disables ripple; onClick disables activating the button */}
