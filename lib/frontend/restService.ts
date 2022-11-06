@@ -3,7 +3,7 @@ import useSWR from 'swr'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
-import { Session } from '../../models/Session'
+import Session from '../../models/Session'
 import { DATE_FORMAT } from './constants'
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json())

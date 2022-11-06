@@ -4,8 +4,9 @@ import { SetType } from './SetType'
 
 export default class Record {
   constructor(
-    public exerciseName?: string,
-    public type?: SetType,
+    public date: string,
+    public exercise: string,
+    public type: SetType = SetType.STANDARD,
     public validModifiers: string[] = [],
     public activeModifiers: string[] = [],
     public sets: Set[] = [],

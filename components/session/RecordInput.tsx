@@ -9,7 +9,7 @@ import { Stack } from '@mui/system'
 import Grid from '@mui/system/Unstable_Grid'
 import { useRef, useState } from 'react'
 import { useActiveExercises } from '../../lib/frontend/restService'
-import { Record } from '../../models/Record'
+import Record from '../../models/Record'
 import { SetType } from '../../models/SetType'
 import SetInput from './SetInput'
 
@@ -23,7 +23,7 @@ export default function RecordInput(props: Props) {
   const [open, setOpen] = useState(props.startOpen)
   const { activeExercises } = useActiveExercises() // SWR caches this, so it won't need to call the API every render
   const { record, updateRecord, index } = props
-  const { exerciseName, type, activeModifiers, validModifiers, sets } = record
+  const { exercise, type, activeModifiers, validModifiers, sets } = record
   const listItemButton = useRef(null)
 
   const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) =>
@@ -62,11 +62,11 @@ export default function RecordInput(props: Props) {
             <Autocomplete
               options={activeExercises}
               getOptionLabel={(option) => option.name}
-              value={activeExercises.find((ex) => ex.name === exerciseName)}
+              value={activeExercises.find((ex) => ex.name === exercise)}
               // specify undefined so it doesn't set to null when blank
               onChange={(e, newExercise) =>
                 updateRecord(
-                  { ...record, exerciseName: newExercise?.name || undefined },
+                  { ...record, exercise: newExercise?.name || undefined },
                   index
                 )
               }

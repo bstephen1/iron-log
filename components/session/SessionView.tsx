@@ -7,8 +7,8 @@ import {
   updateSession,
   useSession,
 } from '../../lib/frontend/restService'
-import { Record } from '../../models/Record'
-import { Session } from '../../models/Session'
+import Record from '../../models/Record'
+import Session from '../../models/Session'
 import RecordInput from './RecordInput'
 import Clock from './Clock'
 import TitleBar from './TitleBar'
