@@ -1,5 +1,10 @@
+import { generateId } from '../lib/util'
 import { Record } from './Record'
 
 export class Session {
-  constructor(readonly date: string, public records: Record[] = []) {}
+  constructor(
+    public readonly _id = generateId(),
+    public readonly date: string,
+    public records: Record[] = []
+  ) {}
 }

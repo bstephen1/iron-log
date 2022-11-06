@@ -36,13 +36,20 @@ function addSet(weight, reps, rpe) {
   return { weight, reps, rpe }
 }
 
-function addRecord(type, exerciseName, activeModifiers, validModifiers, sets) {
-  return { type, exerciseName, activeModifiers, validModifiers, sets }
+function addRecord(
+  type,
+  exerciseName,
+  activeModifiers,
+  validModifiers,
+  sets,
+  _id
+) {
+  return { type, exerciseName, activeModifiers, validModifiers, sets, _id }
 }
 
 // todo: sessionType and program
-function addSessions(date, records) {
-  return { date, records }
+function addSessions(date, records, _id) {
+  return { date, records, _id }
 }
 
 let categories = [
@@ -121,17 +128,25 @@ let sets2 = [
 ]
 
 let record1 = [
-  addRecord('standard', 'squats', ['belt'], ['belt', 'pause'], sets1),
+  addRecord(
+    'standard',
+    'squats',
+    ['belt'],
+    ['belt', 'pause'],
+    sets1,
+    randomUUID()
+  ),
   addRecord(
     'standard',
     'curls',
     ['belt', 'AMRAP'],
     ['belt', 'AMRAP', 'unilateral', 'bodyweight'],
-    sets2
+    sets2,
+    randomUUID()
   ),
 ]
 
-let sessions = [addSessions('2022-09-26', record1)]
+let sessions = [addSessions('2022-09-26', record1, randomUUID())]
 
 //  START OPERATIONS
 

@@ -1,5 +1,8 @@
-import { v4 as uuid } from 'uuid'
+import { generateId } from '../lib/util'
 
 export default class Category {
-  constructor(public name: string, public readonly _id: string = uuid()) {}
+  constructor(
+    public readonly _id: string = generateId(),
+    public name: string
+  ) {}
 }

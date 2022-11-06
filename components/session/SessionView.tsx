@@ -70,7 +70,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
                 record={record}
                 updateRecord={updateRecord}
                 index={i}
-                startOpen={i === 0}
               />
             </Grid>
           )
