@@ -23,7 +23,7 @@ export default function RecordInput(props: Props) {
   const [open, setOpen] = useState(props.startOpen)
   const { activeExercises } = useActiveExercises() // SWR caches this, so it won't need to call the API every render
   const { record, updateRecord, index } = props
-  const { exercise, type, activeModifiers, validModifiers, sets } = record
+  const { exercise, type, activeModifiers, modifiers, sets } = record
   const listItemButton = useRef(null)
 
   const disableButtonEffects = (e: React.MouseEvent<HTMLElement, MouseEvent>) =>
@@ -90,7 +90,7 @@ export default function RecordInput(props: Props) {
           </Grid>
           <Grid xs={12} md={6}>
             <Autocomplete
-              options={validModifiers}
+              options={modifiers}
               value={activeModifiers}
               onChange={(e, newActiveModifiers) =>
                 updateRecord(

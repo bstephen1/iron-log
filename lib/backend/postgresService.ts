@@ -12,7 +12,7 @@ export async function fetchExercises() {
     await Promise.all(
       res.rows.map(
         async (exercise) =>
-          (exercise.validModifiers = await fetchValidModifiersForExercise(
+          (exercise.modifiers = await fetchValidModifiersForExercise(
             exercise.id
           ))
       )
@@ -37,7 +37,7 @@ export async function fetchExercisesWithStatus(status: string) {
     await Promise.all(
       res.rows.map(
         async (exercise) =>
-          (exercise.validModifiers = await fetchValidModifiersForExercise(
+          (exercise.modifiers = await fetchValidModifiersForExercise(
             exercise.id
           ))
       )

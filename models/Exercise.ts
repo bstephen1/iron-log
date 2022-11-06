@@ -8,7 +8,7 @@ export default class Exercise {
     public notes: string = '',
     public cues: string[] = [],
     public categories: string[] = [],
-    public validModifiers: string[] = [],
+    public modifiers: string[] = [],
     public readonly _id: string = uuid()
   ) {}
 }

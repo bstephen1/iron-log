@@ -37,6 +37,7 @@ function addSet(weight, reps, rpe) {
 }
 
 function addRecord(
+  date,
   type,
   exerciseName,
   activeModifiers,
@@ -44,7 +45,15 @@ function addRecord(
   sets,
   _id
 ) {
-  return { type, exerciseName, activeModifiers, validModifiers, sets, _id }
+  return {
+    date,
+    type,
+    exerciseName,
+    activeModifiers,
+    validModifiers,
+    sets,
+    _id,
+  }
 }
 
 // todo: sessionType and program
@@ -127,8 +136,9 @@ let sets2 = [
   addSet(30, 10, undefined),
 ]
 
-let record1 = [
+let records = [
   addRecord(
+    '2022-09-26',
     'standard',
     'squats',
     ['belt'],
@@ -137,6 +147,7 @@ let record1 = [
     randomUUID()
   ),
   addRecord(
+    '2022-09-26',
     'standard',
     'curls',
     ['belt', 'AMRAP'],
@@ -146,7 +157,9 @@ let record1 = [
   ),
 ]
 
-let sessions = [addSessions('2022-09-26', record1, randomUUID())]
+let sessions = [
+  addSessions('2022-09-26', [records[0]._id, records[1]._id], randomUUID()),
+]
 
 //  START OPERATIONS
 
@@ -157,6 +170,7 @@ db.categories.insertMany(categories)
 db.exercises.insertMany(exercises)
 db.setTypes.insertMany(setTypes)
 db.sessions.insertMany(sessions)
+db.records.insertMany(records)
 
 console.log('')
 console.log('-----------------------------')

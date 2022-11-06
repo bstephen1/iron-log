@@ -89,11 +89,9 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           />
           <ComboBoxField
             label="Valid Modifiers"
-            initialValue={exercise.validModifiers}
+            initialValue={exercise.modifiers}
             options={modifierNames}
-            onSubmit={(value: string[]) =>
-              handleUpdate('validModifiers', value)
-            }
+            onSubmit={(value: string[]) => handleUpdate('modifiers', value)}
           />
         </Stack>
       </Grid>
