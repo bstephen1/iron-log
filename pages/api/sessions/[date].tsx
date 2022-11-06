@@ -13,7 +13,7 @@ export default async function handler(
   const date = req.query.date
 
   if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).json({ message: 'invalid date format' })
+    res.status(400).json({ isError: true, message: 'invalid date format' })
     return
   }
   console.log(
@@ -26,7 +26,7 @@ export default async function handler(
         const record = await fetchSession(date)
         res.status(200).json(record)
       } catch (e) {
-        res.status(500).json({ message: 'could not fetch data' })
+        res.status(500).json({ isError: true, message: 'could not fetch data' })
       }
       break
     case 'POST':
@@ -34,7 +34,9 @@ export default async function handler(
         await addSession(JSON.parse(req.body))
         res.status(201).end()
       } catch (e) {
-        res.status(500).json({ message: 'could not create record' })
+        res
+          .status(500)
+          .json({ isError: true, message: 'could not create record' })
       }
       break
     case 'PUT':
@@ -42,7 +44,9 @@ export default async function handler(
         await updateSession(JSON.parse(req.body))
         res.status(200).end()
       } catch (e) {
-        res.status(500).json({ message: 'could not update record' })
+        res
+          .status(500)
+          .json({ isError: true, message: 'could not update record' })
       }
   }
 }
