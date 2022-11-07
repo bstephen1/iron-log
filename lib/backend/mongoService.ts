@@ -59,8 +59,22 @@ export async function fetchRecords(filter?: Filter<Record>) {
   return await records.find({ ...filter }).toArray()
 }
 
+// todo: update record if exercise has been modified since last fetch
 export async function fetchRecord(id: Record['_id']) {
-  return await records.findOne({ _id: id })
+  return await records
+    .aggregate([
+      { $match: { _id: id } },
+      {
+        $lookup: {
+          from: 'exercises',
+          localField: 'exercise._id',
+          foreignField: '_id',
+          as: 'exercise',
+        },
+      },
+      { $unwind: '$exercise' },
+    ])
+    .toArray()
 }
 
 export async function updateRecord(record: Record) {

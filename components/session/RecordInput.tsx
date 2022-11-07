@@ -6,6 +6,7 @@ import {
   useExercises,
   useRecord,
 } from '../../lib/frontend/restService'
+import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
 import { SetType } from '../../models/SetType'
@@ -27,7 +28,7 @@ export default function RecordInput({ id }: Props) {
   }
 
   // todo: skeleton?
-  if (!record) {
+  if (!record || !exercises) {
     return <></>
   }
 
@@ -42,6 +43,7 @@ export default function RecordInput({ id }: Props) {
 
   // todo: this exercise is a string. May want to change to an exercise ID and pull from db with Record.
   const { exercise, type, activeModifiers, modifiers, sets, _id } = record
+  console.log(record)
 
   // todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
   // todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
@@ -58,8 +60,8 @@ export default function RecordInput({ id }: Props) {
               {...{
                 exercise,
                 exercises,
-                changeExercise: (exercise) =>
-                  updateRecordField(_id, 'exercise', exercise.name),
+                changeExercise: (exercise: Exercise) =>
+                  updateRecordField(_id, 'exercise', exercise),
               }}
             />
           </Grid>
@@ -76,7 +78,7 @@ export default function RecordInput({ id }: Props) {
           <Grid xs={12} md={6}>
             <ComboBoxField
               label="Modifiers"
-              options={modifiers}
+              options={exercise.modifiers}
               initialValue={activeModifiers}
               variant="standard"
               onSubmit={(value) =>

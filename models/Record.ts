@@ -6,7 +6,7 @@ import { SetType } from './SetType'
 export default class Record {
   constructor(
     public date: string,
-    public exercise: Exercise['name'],
+    public exercise: Exercise,
     public type: SetType = SetType.STANDARD,
     public modifiers: string[] = [],
     public activeModifiers: string[] = [],
