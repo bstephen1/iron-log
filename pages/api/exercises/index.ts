@@ -10,7 +10,7 @@ export default async function handler(
   console.log(`Incoming ${req.method} on exercises`)
 
   try {
-    const { status, category } = req.query as ExerciseParams
+    const { status, category, name } = req.query as ExerciseParams
 
     if (status && !Object.values(ExerciseStatus).includes(status)) {
       res.status(400).json({ isError: true, message: 'invalid status' })
@@ -20,6 +20,7 @@ export default async function handler(
     const query = {} as any
     if (status) query.status = status
     if (category) query.categories = category
+    if (name) query.name = name
 
     const exercises = await fetchExercises(query)
     res.status(200).json(exercises)

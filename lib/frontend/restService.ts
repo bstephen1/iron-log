@@ -39,6 +39,16 @@ export function useExercises({ status }: { status?: ExerciseStatus }) {
   }
 }
 
+export function useExercise(id: Exercise['_id']) {
+  const { data, error, mutate } = useSWR<Exercise>(URI_EXERCISES + id, fetcher)
+
+  return {
+    exercise: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
 export function useRecord(id: Record['_id']) {
   const { data, error, mutate } = useSWR<Record>(URI_RECORDS + id, fetcher)
 

@@ -10,11 +10,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const name = req.query.name
+  const id = req.query.id
 
-  console.log(`Incoming ${req.method} on exercise "${name}"`)
+  console.log(`Incoming ${req.method} on exercise "${id}"`)
 
-  if (!name || typeof name !== 'string') {
+  if (!id || typeof id !== 'string') {
     res.status(400).json({ isError: true, message: 'invalid exercise' })
     return
   }
@@ -22,7 +22,7 @@ export default async function handler(
   switch (req.method) {
     case 'GET':
       try {
-        const exercise = await fetchExercise(name)
+        const exercise = await fetchExercise(id)
         res.status(200).json(exercise)
       } catch (e) {
         res

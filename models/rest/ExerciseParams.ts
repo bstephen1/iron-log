@@ -4,4 +4,5 @@ import { ExerciseStatus } from '../ExerciseStatus'
 export interface ExerciseParams {
   status?: ExerciseStatus
   category?: string
+  name?: string
 }

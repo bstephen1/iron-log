@@ -94,8 +94,8 @@ export async function fetchExercises(filter?: Filter<Exercise>) {
   return await fetchCollection(exercises, filter)
 }
 
-export async function fetchExercise(name: string) {
-  return await exercises.findOne({ name: name }, { projection: { _id: false } })
+export async function fetchExercise(id: string) {
+  return await exercises.findOne({ _id: id })
 }
 
 export async function updateExercise(exercise: Exercise) {
