@@ -40,6 +40,7 @@ export default function RecordInput({ id }: Props) {
   //   )
   // }
 
+  // todo: this exercise is a string. May want to change to an exercise ID and pull from db with Record.
   const { exercise, type, activeModifiers, modifiers, sets, _id } = record
 
   // todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
@@ -57,8 +58,8 @@ export default function RecordInput({ id }: Props) {
               {...{
                 exercise,
                 exercises,
-                changeExercise: (value) =>
-                  updateRecordField(_id, 'exercise', value),
+                changeExercise: (exercise) =>
+                  updateRecordField(_id, 'exercise', exercise.name),
               }}
             />
           </Grid>
