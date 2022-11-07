@@ -12,14 +12,14 @@ class Exercise {
     notes = '',
     cues = [],
     categories = [],
-    validModifiers = []
+    modifiers = []
   ) {
     ;(this.name = name),
       (this.status = status),
       (this.notes = notes),
       (this.cues = cues),
       (this.categories = categories),
-      (this.validModifiers = validModifiers),
+      (this.modifiers = modifiers),
       (this._id = randomUUID())
   }
 }
@@ -41,7 +41,7 @@ function addRecord(
   type,
   exercise,
   activeModifiers,
-  validModifiers,
+  modifiers,
   sets,
   _id
 ) {
@@ -50,7 +50,7 @@ function addRecord(
     type,
     exercise,
     activeModifiers,
-    validModifiers,
+    modifiers,
     sets,
     _id,
   }

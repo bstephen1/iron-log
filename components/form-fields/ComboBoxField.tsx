@@ -35,8 +35,6 @@ function ComboBoxFieldBase(props: Props & any) {
     initialValue: initialValue,
   })
 
-  console.log(props.renderInput)
-
   const handleClose = () => {
     onSubmit(value)
     props.onClose && props.onClose()
