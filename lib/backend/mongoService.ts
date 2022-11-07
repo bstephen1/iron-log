@@ -74,7 +74,8 @@ export async function fetchRecord(id: Record['_id']) {
       },
       { $unwind: '$exercise' },
     ])
-    .toArray()
+    // return just the first (there's only the one)
+    .next()
 }
 
 export async function updateRecord(record: Record) {
