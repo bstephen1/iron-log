@@ -36,21 +36,12 @@ function addSet(weight, reps, rpe) {
   return { weight, reps, rpe }
 }
 
-function addRecord(
-  date,
-  type,
-  exercise,
-  activeModifiers,
-  modifiers,
-  sets,
-  _id
-) {
+function addRecord(date, type, exercise, activeModifiers, sets, _id) {
   return {
     date,
     type,
     exercise,
     activeModifiers,
-    modifiers,
     sets,
     _id,
   }
@@ -142,7 +133,6 @@ let records = [
     'standard',
     { ...exercises[0] },
     ['belt'],
-    ['belt', 'pause'],
     sets1,
     randomUUID()
   ),
@@ -151,7 +141,6 @@ let records = [
     'standard',
     { ...exercises[1] },
     ['belt', 'AMRAP'],
-    ['belt', 'AMRAP', 'unilateral', 'bodyweight'],
     sets2,
     randomUUID()
   ),

@@ -42,7 +42,7 @@ export default function RecordInput({ id }: Props) {
   // }
 
   // todo: this exercise is a string. May want to change to an exercise ID and pull from db with Record.
-  const { exercise, type, activeModifiers, modifiers, sets, _id } = record
+  const { exercise, type, activeModifiers, sets, _id } = record
   console.log(record)
 
   // todo: don't show toggle or any sets until a set type is selected (or default to basic set?)

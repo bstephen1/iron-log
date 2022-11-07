@@ -8,7 +8,6 @@ export default class Record {
     public date: string,
     public exercise: Exercise,
     public type: SetType = SetType.STANDARD,
-    public modifiers: string[] = [],
     public activeModifiers: string[] = [],
     public sets: Set[] = [],
     public readonly _id: string = generateId()
