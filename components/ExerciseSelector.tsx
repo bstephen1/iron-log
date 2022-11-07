@@ -13,7 +13,7 @@ const filter = createFilterOptions<Exercise | NewExerciseStub>()
 
 function ExerciseSelectorBase({
   exercise,
-  setExercise,
+  changeExercise,
   options: exercises,
   categoryFilter,
   mutate,
@@ -52,9 +52,9 @@ function ExerciseSelectorBase({
           const newExercise = new Exercise(option.name)
           mutate(exercises?.concat(newExercise))
           addExercise(newExercise)
-          setExercise(newExercise)
+          changeExercise(newExercise)
         } else {
-          setExercise(option)
+          changeExercise(option)
         }
       }}
       getOptionLabel={(option) => option.name}
@@ -97,6 +97,7 @@ const withDefaults = (Component) => (props) => {
   return (
     <Component
       {...props}
+      options={props.exercises}
       label="Exercises"
       placeholder="Select or Add an Exercise"
       categoryFilter={category}

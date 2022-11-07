@@ -15,7 +15,7 @@ import Exercise from '../../models/Exercise'
 // todo: add/delete exercise. Delete only for unused exercises?
 // todo: filter exercise list by status?
 export default function ManageExercisesPage() {
-  const { exercises, mutate } = useExercises()
+  const { exercises, mutate } = useExercises({})
   const [exercise, setExercise] = useState<Exercise | null>(null)
 
   const handleUpdate = <T extends keyof Exercise>(
@@ -43,7 +43,12 @@ export default function ManageExercisesPage() {
       <Grid xs={12} md={3}>
         {/* @ts-ignore  withAsync() has renderInput prop */}
         <ExerciseSelector
-          {...{ exercise, setExercise, options: exercises, mutate }}
+          {...{
+            exercise,
+            changeExercise: setExercise,
+            exercises,
+            mutate,
+          }}
         />
       </Grid>
       {/* todo: vertical on md */}

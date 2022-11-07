@@ -9,6 +9,7 @@ import {
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
 import { SetType } from '../../models/SetType'
+import { ExerciseSelector } from '../ExerciseSelector'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import SetInput from './SetInput'
@@ -51,21 +52,15 @@ export default function RecordInput({ id }: Props) {
       <CardContent>
         <Grid container spacing={2} sx={{ pt: 2 }}>
           <Grid xs={6} md={3}>
-            {/* <Autocomplete
-              options={exercises}
-              getOptionLabel={(option) => option.name}
-              value={exercises.find((ex) => ex.name === exercise)}
-              // specify undefined so it doesn't set to null when blank
-              onChange={(e, newExercise) =>
-                updateRecord(
-                  { ...record, exercise: newExercise?.name || undefined },
-                  index
-                )
-              }
-              renderInput={(params) => (
-                <TextField {...params} variant="standard" label="Exercise" />
-              )}
-            /> */}
+            <ExerciseSelector
+              variant="standard"
+              {...{
+                exercise,
+                exercises,
+                changeExercise: (value) =>
+                  updateRecordField(_id, 'exercise', value),
+              }}
+            />
           </Grid>
           <Grid xs={6} md={3}>
             <SelectFieldAutosave

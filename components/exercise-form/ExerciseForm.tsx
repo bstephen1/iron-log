@@ -22,7 +22,7 @@ interface Props {
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
   const { categories } = useCategories()
-  const { exercises } = useExercises()
+  const { exercises } = useExercises({})
 
   // todo: I smell an extractable function...
   // memoize the maps so they don't have to rerun every render
@@ -88,7 +88,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             onSubmit={(value) => handleUpdate('status', value)}
           />
           <ComboBoxField
-            label="Valid Modifiers"
+            label="Modifiers"
             initialValue={exercise.modifiers}
             options={modifierNames}
             onSubmit={(value: string[]) => handleUpdate('modifiers', value)}
