@@ -16,6 +16,7 @@ const modifiers = db.collection<Modifier>('modifiers')
 const categories = db.collection<Category>('categories')
 const records = db.collection<Record>('records')
 
+// todo: can use toArray() for iterators instead of pushing
 async function fetchCollection<T extends Document>(
   collection: Collection<T>,
   constraints: Filter<T> = {}
@@ -53,11 +54,37 @@ export async function addRecord(record: Record) {
 }
 
 export async function fetchRecords(filter?: Filter<Record>) {
-  return await fetchCollection(records, filter)
+  // replace exercise ID with full exercise
+  return await records
+    .aggregate([
+      {
+        $lookup: {
+          from: 'exercises',
+          localField: 'exercise',
+          foreignField: '_id',
+          as: 'exercise',
+        },
+      },
+      { $unwind: '$exercise' },
+    ])
+    .toArray()
 }
 
 export async function fetchRecord(id: Record['_id']) {
-  return await records.findOne({ _id: id })
+  return await records
+    .aggregate([
+      { $match: { _id: id } },
+      {
+        $lookup: {
+          from: 'exercises',
+          localField: 'exercise',
+          foreignField: '_id',
+          as: 'exercise',
+        },
+      },
+      { $unwind: '$exercise' },
+    ])
+    .toArray()
 }
 
 export async function updateRecord(record: Record) {

@@ -140,7 +140,7 @@ let records = [
   addRecord(
     '2022-09-26',
     'standard',
-    'squats',
+    exercises[0]._id,
     ['belt'],
     ['belt', 'pause'],
     sets1,
@@ -149,7 +149,7 @@ let records = [
   addRecord(
     '2022-09-26',
     'standard',
-    'curls',
+    exercises[1]._id,
     ['belt', 'AMRAP'],
     ['belt', 'AMRAP', 'unilateral', 'bodyweight'],
     sets2,
