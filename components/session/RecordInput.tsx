@@ -9,6 +9,7 @@ import {
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
 import { SetType } from '../../models/SetType'
+import { ComboBoxField } from '../form-fields/ComboBoxField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import SetInput from './SetInput'
 
@@ -71,34 +72,21 @@ export default function RecordInput({ id }: Props) {
               label="Set Type"
               initialValue={type}
               fullWidth
+              variant="standard"
               options={Object.values(SetType)}
               onSubmit={(value) => updateRecordField(_id, 'type', value)}
             />
-            {/* <Autocomplete
-              options={Object.values(SetType)}
-              getOptionLabel={(option) => option}
-              value={type}
-              onChange={(e, newType) =>
-                updateRecord({ ...record, type: newType || undefined }, index)
-              }
-              renderInput={(params) => (
-                <TextField {...params} variant="standard" label="Set Type" />
-              )}
-            /> */}
           </Grid>
           <Grid xs={12} md={6}>
-            {/* <Autocomplete
+            <ComboBoxField
+              label="Modifiers"
               options={modifiers}
-              value={activeModifiers}
-              onChange={(e, newActiveModifiers) =>
-                updateRecordField(_id, 'activeModifiers', newActiveModifiers)
+              initialValue={activeModifiers}
+              variant="standard"
+              onSubmit={(value) =>
+                updateRecordField(_id, 'activeModifiers', value)
               }
-              multiple
-              fullWidth
-              renderInput={(params) => (
-                <TextField {...params} variant="standard" label="Modifiers" />
-              )}
-            /> */}
+            />
           </Grid>
         </Grid>
 

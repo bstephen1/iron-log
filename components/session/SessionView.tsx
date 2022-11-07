@@ -20,31 +20,18 @@ export default function SessionView({ date }: { date: Dayjs }) {
   // so for now we just hide the add exercise button so the records don't pop in above it
   const isLoading = session === undefined
 
+  // todo: have an extra card for adding? Like Add Cue? Or just an input for the name with a submit button?
   const addRecord = async () => {
-    let newSession
-    if (!session) {
-      newSession = new Session(date.format(DATE_FORMAT), [new Record()])
-      await createSession(newSession)
-    } else {
-      newSession = { ...session, records: [...session.records, new Record()] }
-      await updateSession(newSession)
-    }
-    // mutate is like useState for the useSWR hook. It changes the local value, then refetches the data to confirm it has updated
-    mutate(newSession)
-  }
-
-  // todo: use _id? index is fragile if we want to change order
-  const updateRecord = async (record: Record, index: number) => {
-    // should definitely not be in a state of updating nonexistant records, so let's just return
-    if (!session || !session.records || !session.records[index]) {
-      return
-    }
-
-    let newSession = { ...session, records: [...session.records] }
-    newSession.records[index] = record
-    await updateSession(newSession)
-
-    mutate(newSession)
+    // let newSession
+    // if (!session) {
+    //   newSession = new Session(date.format(DATE_FORMAT), [new Record()])
+    //   await createSession(newSession)
+    // } else {
+    //   newSession = { ...session, records: [...session.records, new Record()] }
+    //   await updateSession(newSession)
+    // }
+    // // mutate is like useState for the useSWR hook. It changes the local value, then refetches the data to confirm it has updated
+    // mutate(newSession)
   }
 
   // todo: this is a placeholder

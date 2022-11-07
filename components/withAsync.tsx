@@ -23,6 +23,7 @@ export function withAsync<T extends typeof Autocomplete>(Component: T) {
     label,
     startAdornment,
     placeholder,
+    variant = 'outlined',
     ...props
   }: ComponentProps<T>) {
     const [open, setOpen] = useState(false)
@@ -40,6 +41,7 @@ export function withAsync<T extends typeof Autocomplete>(Component: T) {
             {...params}
             placeholder={placeholder}
             label={label}
+            variant={variant}
             InputProps={{
               ...params.InputProps,
               startAdornment: (

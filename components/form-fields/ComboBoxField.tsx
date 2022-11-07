@@ -1,6 +1,11 @@
 import { CheckBoxOutlineBlank } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
-import { Autocomplete, Checkbox, TextField } from '@mui/material'
+import {
+  Autocomplete,
+  Checkbox,
+  TextField,
+  TextFieldProps,
+} from '@mui/material'
 import { withAsync } from '../withAsync'
 import useField from './useField'
 
@@ -11,16 +16,26 @@ interface Props {
   options: string[]
   initialValue: string[]
   onSubmit: (value: string[]) => void
+  TextFieldProps?: Partial<TextFieldProps>
 }
 // todo: doesn't send to db if clicking X on chips
 // todo: such a headache extending autocompleteProps
 function ComboBoxFieldBase(props: Props & any) {
-  const { label, options, initialValue, onSubmit, ...autocompleteProps } = props
+  const {
+    label,
+    options,
+    initialValue,
+    onSubmit,
+    TextFieldProps,
+    ...autocompleteProps
+  } = props
 
   const { control, value, setValue } = useField<string[]>({
     onSubmit,
     initialValue: initialValue,
   })
+
+  console.log(props.renderInput)
 
   const handleClose = () => {
     onSubmit(value)
