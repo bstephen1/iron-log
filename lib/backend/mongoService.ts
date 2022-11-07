@@ -2,8 +2,8 @@ import { Collection, Document, Filter, MongoClient, WithId } from 'mongodb'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
-import Session from '../../models/Session'
 import Record from '../../models/Record'
+import Session from '../../models/Session'
 
 const uri = 'mongodb://localhost:27017'
 const rawClient = new MongoClient(uri)
@@ -53,38 +53,14 @@ export async function addRecord(record: Record) {
   return await records.insertOne(record)
 }
 
+// todo: aggregate doesn't work with Filter
 export async function fetchRecords(filter?: Filter<Record>) {
   // replace exercise ID with full exercise
-  return await records
-    .aggregate([
-      {
-        $lookup: {
-          from: 'exercises',
-          localField: 'exercise',
-          foreignField: '_id',
-          as: 'exercise',
-        },
-      },
-      { $unwind: '$exercise' },
-    ])
-    .toArray()
+  return await records.find({ ...filter }).toArray()
 }
 
 export async function fetchRecord(id: Record['_id']) {
-  return await records
-    .aggregate([
-      { $match: { _id: id } },
-      {
-        $lookup: {
-          from: 'exercises',
-          localField: 'exercise',
-          foreignField: '_id',
-          as: 'exercise',
-        },
-      },
-      { $unwind: '$exercise' },
-    ])
-    .toArray()
+  return await records.findOne({ _id: id })
 }
 
 export async function updateRecord(record: Record) {
