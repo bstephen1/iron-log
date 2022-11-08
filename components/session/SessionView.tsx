@@ -46,6 +46,12 @@ export default function SessionView({ date }: { date: Dayjs }) {
     mutate(newSession)
   }
 
+  const handleDeleteRecord = (idToDelete) => {
+    const newRecords = session?.records.filter((id) => id !== idToDelete)
+    updateSession({ ...session, records: newRecords })
+    mutate({ ...session, records: newRecords })
+  }
+
   // todo: compare with last of this day type
   // todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
   return (
@@ -60,13 +66,15 @@ export default function SessionView({ date }: { date: Dayjs }) {
       {session &&
         session.records.map((id) => (
           <Grid key={id}>
-            <RecordInput id={id} />
+            <RecordInput id={id} deleteRecord={handleDeleteRecord} />
           </Grid>
         ))}
 
       <Grid>
+        {/* maybe make this a card with CardHeader */}
+
         {!isLoading && (
-          <Paper elevation={1} sx={{ p: 2, my: 2 }}>
+          <Paper elevation={3} sx={{ p: 2, my: 2 }}>
             <Stack direction="row" spacing={2}>
               <ExerciseSelector
                 fullWidth

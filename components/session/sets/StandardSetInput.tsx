@@ -35,6 +35,7 @@ export default function StandardSetInput({
       sx={{
         borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
         background: `${grey[100]}`, // todo
+        py: 0.5,
       }}
     >
       {inputs[0]}

@@ -1,4 +1,13 @@
-import { Button, Card, CardContent } from '@mui/material'
+import { Delete } from '@mui/icons-material'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  IconButton,
+} from '@mui/material'
 import { Stack } from '@mui/system'
 import Grid from '@mui/system/Unstable_Grid'
 import {
@@ -17,8 +26,9 @@ import StandardSetInput from './sets/StandardSetInput'
 
 interface Props {
   id: Record['_id']
+  deleteRecord: (id: string) => void
 }
-export default function RecordInput({ id }: Props) {
+export default function RecordInput({ id, deleteRecord }: Props) {
   const { record, isError, mutate } = useRecord(id)
   const { exercises } = useExercises({ status: ExerciseStatus.ACTIVE }) // SWR caches this, so it won't need to call the API every render
 
@@ -78,7 +88,7 @@ export default function RecordInput({ id }: Props) {
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
   // todo: add Category to Record so it persists
   return (
-    <Card>
+    <Card elevation={3}>
       <CardContent>
         <Grid container spacing={2} sx={{ pt: 2 }}>
           <Grid xs={6} md={3}>
@@ -114,7 +124,7 @@ export default function RecordInput({ id }: Props) {
           </Grid>
         </Grid>
 
-        <Stack spacing={2} sx={{ px: 4, pt: 2 }}>
+        <Box sx={{ px: 4, py: 2 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
             <StandardSetInput
@@ -127,9 +137,18 @@ export default function RecordInput({ id }: Props) {
               }
             />
           ))}
-          <Button onClick={addSet}>Add Set</Button>
-        </Stack>
+        </Box>
       </CardContent>
+      <CardActions
+        sx={{ display: 'flex', justifyContent: 'space-between', px: 2, pb: 2 }}
+      >
+        <Button onClick={() => deleteRecord(_id)} color="error">
+          Delete Record
+        </Button>
+        <Button onClick={addSet} variant="contained">
+          Add Set
+        </Button>
+      </CardActions>
     </Card>
   )
 }
