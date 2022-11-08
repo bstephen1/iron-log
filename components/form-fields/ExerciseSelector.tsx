@@ -98,7 +98,7 @@ const withDefaults = (Component) => (props) => {
     <Component
       {...props}
       options={props.exercises}
-      label="Exercises"
+      label="Exercise"
       placeholder="Select or Add an Exercise"
       categoryFilter={category}
       // inputRef={inputRef}

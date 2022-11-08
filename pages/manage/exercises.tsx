@@ -1,3 +1,4 @@
+import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
 import ExerciseForm from '../../components/ExerciseForm'
@@ -17,6 +18,12 @@ import Exercise from '../../models/Exercise'
 export default function ManageExercisesPage() {
   const { exercises, mutate } = useExercises({})
   const [exercise, setExercise] = useState<Exercise | null>(null)
+  const [tabValue, setTabValue] = useState(false)
+  const tabContent = [
+    { label: 'Exercises', selector: ExerciseSelector },
+    { label: 'Modifiers', selector: null },
+    { label: 'Categories', selector: null },
+  ]
 
   const handleUpdate = <T extends keyof Exercise>(
     field: T,
@@ -40,6 +47,17 @@ export default function ManageExercisesPage() {
   // todo: names should be case insensitive. 'Squats' === 'squats'
   return (
     <Grid container spacing={2}>
+      <Grid xs={12}>
+        <Tabs
+          value={tabValue}
+          onChange={(_, value) => setTabValue(value)}
+          centered
+        >
+          {tabContent.map((tab) => (
+            <Tab key={tab.label} label={tab.label} />
+          ))}
+        </Tabs>
+      </Grid>
       <Grid xs={12} md={3}>
         {/* @ts-ignore  withAsync() has renderInput prop */}
         <ExerciseSelector
