@@ -3,7 +3,7 @@ import * as yup from 'yup'
 import useField from './useField'
 
 interface Props extends Omit<TextFieldProps, 'onSubmit'> {
-  label: string
+  label?: string
   initialValue: string
   defaultHelperText?: string
   onSubmit: (value: string) => void
@@ -13,7 +13,7 @@ export default function InputFieldAutosave(props: Props) {
   const {
     label,
     defaultHelperText = ' ',
-    initialValue,
+    initialValue = '',
     onSubmit,
     yupValidator,
     ...textFieldProps
@@ -28,7 +28,6 @@ export default function InputFieldAutosave(props: Props) {
   return (
     <TextField
       {...control(label)}
-      disabled={initialValue == null}
       autoComplete="off"
       error={!!error}
       helperText={error || defaultHelperText}

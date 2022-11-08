@@ -32,8 +32,8 @@ function addName(name) {
   return { name }
 }
 
-function addSet(weight, reps, rpe) {
-  return { weight, reps, rpe }
+function addSet(primary, secondary, effort) {
+  return { primary, secondary, effort }
 }
 
 function addRecord(date, type, exercise, activeModifiers, sets, _id) {

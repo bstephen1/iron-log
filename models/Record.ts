@@ -1,6 +1,6 @@
 import { generateId } from '../lib/util'
 import Exercise from './Exercise'
-import Set from './Set'
+import StandardSet from './sets/StandardSet'
 import { SetType } from './SetType'
 
 export default class Record {
@@ -9,7 +9,7 @@ export default class Record {
     public exercise: Exercise,
     public type: SetType = SetType.STANDARD,
     public activeModifiers: string[] = [],
-    public sets: Set[] = [],
+    public sets: StandardSet[] = [],
     public readonly _id: string = generateId()
   ) {}
 }

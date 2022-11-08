@@ -13,7 +13,7 @@ import { SetType } from '../../models/SetType'
 import { ExerciseSelector } from '../ExerciseSelector'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
-import SetInput from './SetInput'
+import StandardSetInput from './sets/StandardSetInput'
 
 interface Props {
   id: Record['_id']
@@ -50,6 +50,13 @@ export default function RecordInput({ id }: Props) {
   ) => {
     updateRecordField(_id, field, value)
     mutate({ ...record, [field]: value })
+  }
+
+  const handleSetChange = (setField, value, i) => {
+    updateRecordField(_id, `sets.${i}.${setField}`, value)
+    const newSets = [...record.sets]
+    newSets[i][setField] = value
+    mutate({ ...record, sets: newSets })
   }
 
   const handleExerciseChange = (newExercise: Exercise) => {
@@ -110,7 +117,15 @@ export default function RecordInput({ id }: Props) {
         <Stack spacing={2} sx={{ px: 4, pt: 2 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
-            <SetInput {...set} key={i} />
+            <StandardSetInput
+              {...set}
+              type={record.type}
+              units={{ primary: 'kg' }}
+              key={i}
+              onSubmit={(setField, value) =>
+                handleSetChange(setField, value, i)
+              }
+            />
           ))}
           {/* <Button onClick={addSet}>Add Set</Button> */}
         </Stack>
