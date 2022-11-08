@@ -32,6 +32,9 @@ export default function RecordInput({ id }: Props) {
     return <></>
   }
 
+  // define after null checks so record must exist
+  const { exercise, type, activeModifiers, sets, _id } = record
+
   // const addSet = () => {
   //   const last = sets[sets.length - 1]
   //   // todo: init first set, and possibly have different behavior when adding different types of sets?
@@ -40,9 +43,6 @@ export default function RecordInput({ id }: Props) {
   //     index
   //   )
   // }
-
-  // todo: this exercise is a string. May want to change to an exercise ID and pull from db with Record.
-  const { exercise, type, activeModifiers, sets, _id } = record
 
   const handleFieldChange = <T extends keyof Record>(
     field: T,
@@ -53,9 +53,11 @@ export default function RecordInput({ id }: Props) {
   }
 
   const handleExerciseChange = (newExercise: Exercise) => {
-    const remainingModifiers = activeModifiers.filter(
-      (m) => m in newExercise.modifiers
+    const remainingModifiers = activeModifiers.filter((modifier) =>
+      newExercise.modifiers.some((exercise) => exercise === modifier)
     )
+    console.log(newExercise)
+    console.log(remainingModifiers)
     updateRecordField(_id, 'exercise', newExercise)
     updateRecordField(_id, 'activeModifiers', remainingModifiers)
     mutate({
@@ -65,8 +67,6 @@ export default function RecordInput({ id }: Props) {
     })
   }
 
-  // todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
-  // todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
@@ -100,7 +100,9 @@ export default function RecordInput({ id }: Props) {
               options={exercise.modifiers}
               initialValue={activeModifiers}
               variant="standard"
-              onSubmit={(value) => handleFieldChange('activeModifiers', value)}
+              onSubmit={(value: string[]) =>
+                handleFieldChange('activeModifiers', value)
+              }
             />
           </Grid>
         </Grid>
