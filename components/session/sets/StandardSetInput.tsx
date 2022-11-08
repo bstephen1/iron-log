@@ -1,13 +1,10 @@
-import { Box, InputAdornment, Stack } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import StandardSet from '../../../models/sets/StandardSet'
-import InputFieldAutosave from '../../form-fields/InputFieldAutosave'
+import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 // todo: indicator for failing a rep
 export default function StandardSetInput({
-  primary,
-  secondary,
-  effort,
   type,
   onSubmit,
   ...props
@@ -18,6 +15,16 @@ export default function StandardSetInput({
   const units = { primary: 'kg', secondary: '', effort: '' }
 
   // todo: disable number scroll. Possibly use inputMode=decimal but that doesn't stop letters like type=number does
+
+  const inputs = ['primary', 'secondary', 'effort'].map((field) => (
+    <NumericFieldAutosave
+      key={field}
+      placeholder={placeholders[field]}
+      initialValue={props[field]}
+      onSubmit={(value) => onSubmit(field, value)}
+      units={units[field]}
+    />
+  ))
 
   return (
     <Stack
@@ -30,54 +37,11 @@ export default function StandardSetInput({
         background: `${grey[100]}`, // todo
       }}
     >
-      <InputFieldAutosave
-        type="number"
-        variant="standard"
-        onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()} // prevent scrolling from incrementing the number. See: https://github.com/mui/material-ui/issues/7960
-        defaultHelperText=""
-        placeholder={placeholders.primary}
-        initialValue={primary}
-        onSubmit={(value) => onSubmit('primary', value)}
-        inputProps={{ style: { textAlign: 'center' } }}
-        InputProps={{
-          disableUnderline: true,
-          endAdornment: (
-            <InputAdornment position="end">{units.primary}</InputAdornment>
-          ),
-        }}
-      />
+      {inputs[0]}
       <Box px={1}>/</Box>
-      <InputFieldAutosave
-        type="number"
-        variant="standard"
-        defaultHelperText=""
-        placeholder={placeholders.secondary}
-        initialValue={secondary}
-        inputProps={{ style: { textAlign: 'center' } }}
-        onSubmit={(value) => onSubmit('secondary', value)}
-        InputProps={{
-          disableUnderline: true,
-          endAdornment: (
-            <InputAdornment position="end">{units.secondary}</InputAdornment>
-          ),
-        }}
-      />
+      {inputs[1]}
       <Box px={1}>@</Box>
-      <InputFieldAutosave
-        type="number"
-        variant="standard"
-        defaultHelperText=""
-        placeholder={placeholders.effort}
-        initialValue={effort}
-        inputProps={{ style: { textAlign: 'center' } }}
-        onSubmit={(value) => onSubmit('effort', value)}
-        InputProps={{
-          disableUnderline: true,
-          endAdornment: (
-            <InputAdornment position="end">{units.effort}</InputAdornment>
-          ),
-        }}
-      />
+      {inputs[2]}
     </Stack>
   )
 }

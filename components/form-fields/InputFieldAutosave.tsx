@@ -2,14 +2,15 @@ import { TextField, TextFieldProps } from '@mui/material'
 import * as yup from 'yup'
 import useField from './useField'
 
-interface Props extends Omit<TextFieldProps, 'onSubmit'> {
+export interface InputFieldAutosaveProps
+  extends Omit<TextFieldProps, 'onSubmit'> {
   label?: string
-  initialValue: string
+  initialValue?: string
   defaultHelperText?: string
   onSubmit: (value: string) => void
   yupValidator?: ReturnType<typeof yup.reach>
 }
-export default function InputFieldAutosave(props: Props) {
+export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const {
     label,
     defaultHelperText = ' ',
