@@ -1,7 +1,7 @@
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
-import ExerciseForm from '../../components/exercise-form/ExerciseForm'
-import { ExerciseSelector } from '../../components/ExerciseSelector'
+import ExerciseForm from '../../components/ExerciseForm'
+import { ExerciseSelector } from '../../components/form-fields/ExerciseSelector'
 import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import StyledDivider from '../../components/StyledDivider'
 import {

@@ -2,11 +2,11 @@
 // todo: typing
 import { Autocomplete, createFilterOptions } from '@mui/material'
 import { useState } from 'react'
-import { addExercise, useCategories } from '../lib/frontend/restService'
-import Exercise from '../models/Exercise'
-import { ExerciseStatusOrder } from '../models/ExerciseStatus'
-import CategoryFilter from './CategoryFilter'
-import { withAsync } from './form-fields/withAsync'
+import { addExercise, useCategories } from '../../lib/frontend/restService'
+import Exercise from '../../models/Exercise'
+import { ExerciseStatusOrder } from '../../models/ExerciseStatus'
+import CategoryFilter from '../CategoryFilter'
+import { withAsync } from './withAsync'
 
 // this allows the autocomplete to filter options based on what the user is typing
 const filter = createFilterOptions<Exercise | NewExerciseStub>()

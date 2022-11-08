@@ -6,14 +6,14 @@ import {
   useCategories,
   useExercises,
   useModifiers,
-} from '../../lib/frontend/restService'
-import Exercise from '../../models/Exercise'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
-import { ComboBoxField } from '../form-fields/ComboBoxField'
-import InputField from '../form-fields/InputField'
-import InputFieldAutosave from '../form-fields/InputFieldAutosave'
-import InputListField from '../form-fields/InputListField'
-import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
+} from '../lib/frontend/restService'
+import Exercise from '../models/Exercise'
+import { ExerciseStatus } from '../models/ExerciseStatus'
+import { ComboBoxField } from './form-fields/ComboBoxField'
+import InputField from './form-fields/InputField'
+import InputFieldAutosave from './form-fields/InputFieldAutosave'
+import InputListField from './form-fields/InputListField'
+import SelectFieldAutosave from './form-fields/SelectFieldAutosave'
 
 interface Props {
   exercise: Exercise
