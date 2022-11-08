@@ -140,7 +140,7 @@ let records = [
     '2022-09-26',
     'standard',
     { ...exercises[1] },
-    ['belt', 'AMRAP'],
+    ['bodyweight'],
     sets2,
     randomUUID()
   ),
