@@ -26,6 +26,8 @@ export default function CategoryFilter({
     setAnchorEl(props.anchorEl ? props.anchorEl : e.currentTarget)
   }
 
+  // todo: onClose without selection: don't focus ExerciseSelector input
+
   const open = !!anchorEl
   const id = open ? 'exercise-filter-popper' : undefined
 

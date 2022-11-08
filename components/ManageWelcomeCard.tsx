@@ -9,7 +9,8 @@ export default function ManageWelcomeCard() {
         exercise to create it.
       </Typography>
       <Typography variant="body2">
-        Any edits will be saved automatically.
+        Any edits to the "name" field must be manually confirmed. All other
+        edits are saved automatically.
       </Typography>
     </Stack>
   )
