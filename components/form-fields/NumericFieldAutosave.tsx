@@ -3,6 +3,7 @@ import InputFieldAutosave, {
   InputFieldAutosaveProps,
 } from './InputFieldAutosave'
 
+// todo: split out from InputField so this can be number not string
 interface Props extends InputFieldAutosaveProps {
   units?: string
 }

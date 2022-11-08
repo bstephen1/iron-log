@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@mui/material'
+import { Button, Card, CardContent } from '@mui/material'
 import { Stack } from '@mui/system'
 import Grid from '@mui/system/Unstable_Grid'
 import {
@@ -35,14 +35,13 @@ export default function RecordInput({ id }: Props) {
   // define after null checks so record must exist
   const { exercise, type, activeModifiers, sets, _id } = record
 
-  // const addSet = () => {
-  //   const last = sets[sets.length - 1]
-  //   // todo: init first set, and possibly have different behavior when adding different types of sets?
-  //   updateRecord(
-  //     { ...record, sets: sets.concat({ ...last, rpe: undefined }) },
-  //     index
-  //   )
-  // }
+  const addSet = () => {
+    const last = sets[sets.length - 1] ?? { primary: 0, secondary: 0 }
+    // todo: init first set, and possibly have different behavior when adding different types of sets?
+    const newSet = { ...last, effort: undefined }
+    updateRecordField(_id, `sets.${sets.length}`, newSet)
+    mutate({ ...record, sets: sets.concat(newSet) })
+  }
 
   const handleFieldChange = <T extends keyof Record>(
     field: T,
@@ -77,6 +76,7 @@ export default function RecordInput({ id }: Props) {
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
+  // todo: add Category to Record so it persists
   return (
     <Card>
       <CardContent>
@@ -127,7 +127,7 @@ export default function RecordInput({ id }: Props) {
               }
             />
           ))}
-          {/* <Button onClick={addSet}>Add Set</Button> */}
+          <Button onClick={addSet}>Add Set</Button>
         </Stack>
       </CardContent>
     </Card>
