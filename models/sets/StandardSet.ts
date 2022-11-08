@@ -1,8 +1,8 @@
 // todo: maybe some of these should be RecordOptions, at the Record level.
 // todo: could combine cardio into this?
 export default interface StandardSet {
-  primary: number
-  secondary: number
+  primary?: number
+  secondary?: number
   effort?: number
   failed?: boolean
   // maybe these at Record level

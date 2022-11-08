@@ -79,7 +79,7 @@ export function useModifiers() {
   }
 }
 
-export async function createSession(session: Session) {
+export async function addSession(session: Session) {
   fetch(URI_SESSIONS + session.date, {
     method: 'POST',
     body: JSON.stringify(session),
@@ -97,6 +97,13 @@ export async function addExercise(newExercise: Exercise) {
   fetch(URI_EXERCISES + newExercise.name, {
     method: 'POST',
     body: JSON.stringify(newExercise),
+  }).catch((e) => console.error(e))
+}
+
+export async function addRecord(newRecord: Record) {
+  fetch(URI_RECORDS + newRecord._id, {
+    method: 'POST',
+    body: JSON.stringify(newRecord),
   }).catch((e) => console.error(e))
 }
 

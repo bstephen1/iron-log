@@ -9,7 +9,7 @@ export default class Record {
     public exercise: Exercise,
     public type: SetType = SetType.STANDARD,
     public activeModifiers: string[] = [],
-    public sets: StandardSet[] = [],
+    public sets: StandardSet[] = [{ primary: undefined }],
     public readonly _id: string = generateId()
   ) {}
 }

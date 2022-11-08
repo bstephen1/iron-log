@@ -36,7 +36,7 @@ export default async function handler(
       } catch (e) {
         res
           .status(500)
-          .json({ isError: true, message: 'could not create record' })
+          .json({ isError: true, message: 'could not create session' })
       }
       break
     case 'PUT':
@@ -46,7 +46,7 @@ export default async function handler(
       } catch (e) {
         res
           .status(500)
-          .json({ isError: true, message: 'could not update record' })
+          .json({ isError: true, message: 'could not update session' })
       }
   }
 }
