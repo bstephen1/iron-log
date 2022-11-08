@@ -44,6 +44,27 @@ export default function RecordInput({ id }: Props) {
   // todo: this exercise is a string. May want to change to an exercise ID and pull from db with Record.
   const { exercise, type, activeModifiers, sets, _id } = record
 
+  const handleFieldChange = <T extends keyof Record>(
+    field: T,
+    value: Record[T]
+  ) => {
+    updateRecordField(_id, field, value)
+    mutate({ ...record, [field]: value })
+  }
+
+  const handleExerciseChange = (newExercise: Exercise) => {
+    const remainingModifiers = activeModifiers.filter(
+      (m) => m in newExercise.modifiers
+    )
+    updateRecordField(_id, 'exercise', newExercise)
+    updateRecordField(_id, 'activeModifiers', remainingModifiers)
+    mutate({
+      ...record,
+      exercise: newExercise,
+      activeModifiers: remainingModifiers,
+    })
+  }
+
   // todo: don't show toggle or any sets until a set type is selected (or default to basic set?)
   // todo (?): maybe just the expand icon is a button instead of the whole thing? Not sure what's more natural
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
@@ -59,8 +80,7 @@ export default function RecordInput({ id }: Props) {
               {...{
                 exercise,
                 exercises,
-                changeExercise: (exercise: Exercise) =>
-                  updateRecordField(_id, 'exercise', exercise),
+                changeExercise: handleExerciseChange,
               }}
             />
           </Grid>
@@ -71,7 +91,7 @@ export default function RecordInput({ id }: Props) {
               fullWidth
               variant="standard"
               options={Object.values(SetType)}
-              onSubmit={(value) => updateRecordField(_id, 'type', value)}
+              onSubmit={(value) => handleFieldChange('type', value)}
             />
           </Grid>
           <Grid xs={12} md={6}>
@@ -80,9 +100,7 @@ export default function RecordInput({ id }: Props) {
               options={exercise.modifiers}
               initialValue={activeModifiers}
               variant="standard"
-              onSubmit={(value) =>
-                updateRecordField(_id, 'activeModifiers', value)
-              }
+              onSubmit={(value) => handleFieldChange('activeModifiers', value)}
             />
           </Grid>
         </Grid>
