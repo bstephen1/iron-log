@@ -42,7 +42,9 @@ export async function fetchSession(date: string) {
 }
 
 export async function updateSession(session: Session) {
-  return await sessions.replaceOne({ date: session.date }, session)
+  return await sessions.replaceOne({ date: session.date }, session, {
+    upsert: true,
+  })
 }
 
 //--------

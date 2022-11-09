@@ -87,7 +87,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
               {...{
                 exercise,
                 exercises,
-                changeExercise: handleExerciseChange,
+                handleChange: handleExerciseChange,
               }}
             />
           </Grid>

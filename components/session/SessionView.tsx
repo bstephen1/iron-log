@@ -1,7 +1,7 @@
 import { Button, Paper, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { Dayjs } from 'dayjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
   addRecord,
@@ -12,6 +12,7 @@ import {
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
+import Session from '../../models/Session'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import Clock from './Clock'
 import RecordInput from './RecordInput'
@@ -38,10 +39,12 @@ export default function SessionView({ date }: { date: Dayjs }) {
     const record = new Record(date.format(DATE_FORMAT), exercise)
     addRecord(record)
     // todo: updateSessionField
-    const newSession = {
-      ...session,
-      records: session.records.concat(record._id),
-    }
+    const newSession = session
+      ? {
+          ...session,
+          records: session.records.concat(record._id),
+        }
+      : new Session(date.format(DATE_FORMAT), [record._id])
     updateSession(newSession)
     mutate(newSession)
   }
@@ -82,7 +85,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                 {...{
                   exercise,
                   exercises,
-                  changeExercise: (newExercise) => setExercise(newExercise),
+                  handleChange: (newExercise) => setExercise(newExercise),
                 }}
               />
               <Button
