@@ -7,7 +7,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import useField from './useField'
-import { withAsync } from './withAsync'
+import withAsync from './withAsync'
 
 export const ComboBoxField = withAsync(ComboBoxFieldBase)
 

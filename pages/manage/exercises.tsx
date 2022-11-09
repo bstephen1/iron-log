@@ -18,7 +18,7 @@ import Exercise from '../../models/Exercise'
 export default function ManageExercisesPage() {
   const { exercises, mutate } = useExercises({})
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const [tabValue, setTabValue] = useState(false)
+  const [tabValue, setTabValue] = useState(0)
   const tabContent = [
     { label: 'Exercises', selector: ExerciseSelector },
     { label: 'Modifiers', selector: null },
