@@ -21,7 +21,6 @@ export default function NavbarDrawer() {
           <ListItem>
             <Link href="/manage/exercises">Manage</Link>
           </ListItem>
-          <ListItem>Item 3</ListItem>
         </List>
       </Drawer>
     </>
