@@ -55,6 +55,20 @@ export default function ManageExercisesPage() {
     setExercise(newExercise)
   }
 
+  const handleModifierUpdate = <T extends keyof Modifier>(
+    field: T,
+    value: Modifier[T]
+  ) => {
+    const newModifier = { ...modifier, [field]: value }
+  }
+
+  const handleCategoryUpdate = <T extends keyof Category>(
+    field: T,
+    value: Category[T]
+  ) => {
+    const newCategory = { ...category, [field]: value }
+  }
+
   const renderForm = () => {
     switch (tabValue) {
       case 0:
@@ -65,13 +79,13 @@ export default function ManageExercisesPage() {
         )
       case 1:
         return modifier ? (
-          <ModifierForm {...{ modifier, handleUpdate }} />
+          <ModifierForm {...{ modifier, handleUpdate: handleModifierUpdate }} />
         ) : (
           <ManageWelcomeCard />
         )
       case 2:
         return category ? (
-          <CategoryForm {...{ category, handleUpdate }} />
+          <CategoryForm {...{ category, handleUpdate: handleCategoryUpdate }} />
         ) : (
           <ManageWelcomeCard />
         )
@@ -112,7 +126,7 @@ export default function ManageExercisesPage() {
               modifier,
               handleChange: setModifier,
               modifiers,
-              mutateModifiers,
+              mutate: mutateModifiers,
             }}
           />
         )}
@@ -122,7 +136,7 @@ export default function ManageExercisesPage() {
               category,
               handleChange: setCategory,
               categories,
-              mutateCategories,
+              mutate: mutateCategories,
             }}
           />
         )}
