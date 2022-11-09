@@ -1,11 +1,13 @@
 import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
+import CategoryForm from '../../components/CategoryForm'
 import ExerciseForm from '../../components/ExerciseForm'
 import { CategorySelector } from '../../components/form-fields/selectors/CategorySelector'
 import { ExerciseSelector } from '../../components/form-fields/selectors/ExerciseSelector'
 import { ModifierSelector } from '../../components/form-fields/selectors/ModifierSelector'
 import ManageWelcomeCard from '../../components/ManageWelcomeCard'
+import ModifierForm from '../../components/ModifierForm'
 import StyledDivider from '../../components/StyledDivider'
 import {
   updateExerciseField,
@@ -35,6 +37,7 @@ export default function ManageExercisesPage() {
     { label: 'Categories', selector: null },
   ]
 
+  // todo: move inside form, and only have a watcher here for new values
   const handleUpdate = <T extends keyof Exercise>(
     field: T,
     value: Exercise[T]
@@ -50,6 +53,29 @@ export default function ManageExercisesPage() {
     )
     mutate(newExercises)
     setExercise(newExercise)
+  }
+
+  const renderForm = () => {
+    switch (tabValue) {
+      case 0:
+        return exercise ? (
+          <ExerciseForm {...{ exercise, handleUpdate }} />
+        ) : (
+          <ManageWelcomeCard />
+        )
+      case 1:
+        return modifier ? (
+          <ModifierForm {...{ modifier, handleUpdate }} />
+        ) : (
+          <ManageWelcomeCard />
+        )
+      case 2:
+        return category ? (
+          <CategoryForm {...{ category, handleUpdate }} />
+        ) : (
+          <ManageWelcomeCard />
+        )
+    }
   }
 
   // todo: move autocomplete to a component for this + session view
@@ -106,11 +132,7 @@ export default function ManageExercisesPage() {
         <StyledDivider />
       </Grid>
       <Grid container xs={12} md={8} justifyContent="center">
-        {exercise ? (
-          <ExerciseForm {...{ exercise, handleUpdate }} />
-        ) : (
-          <ManageWelcomeCard />
-        )}
+        {renderForm()}
       </Grid>
     </Grid>
   )
