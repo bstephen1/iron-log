@@ -79,6 +79,13 @@ export function useModifiers() {
   }
 }
 
+export async function addModifier(newModifier: Modifier) {
+  fetch(URI_MODIFIERS + newModifier.name, {
+    method: 'POST',
+    body: JSON.stringify(newModifier),
+  }).catch((e) => console.error(e))
+}
+
 export async function addSession(session: Session) {
   fetch(URI_SESSIONS + session.date, {
     method: 'POST',

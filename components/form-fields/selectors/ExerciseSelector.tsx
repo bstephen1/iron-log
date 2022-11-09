@@ -1,12 +1,12 @@
 // @ts-nocheck
 // todo: typing
 import { useState } from 'react'
-import { addExercise, useCategories } from '../../lib/frontend/restService'
-import Exercise from '../../models/Exercise'
-import { ExerciseStatusOrder } from '../../models/ExerciseStatus'
-import CategoryFilter from '../CategoryFilter'
+import { addExercise, useCategories } from '../../../lib/frontend/restService'
+import Exercise from '../../../models/Exercise'
+import { ExerciseStatusOrder } from '../../../models/ExerciseStatus'
+import CategoryFilter from '../../CategoryFilter'
 import SelectorBase from './SelectorBase'
-import withAsync from './withAsync'
+import withAsync from '../withAsync'
 
 const withExercise = (Component) => (props) => {
   // const inputRef = useRef<HTMLElement>(null)
@@ -27,6 +27,8 @@ const withExercise = (Component) => (props) => {
   return (
     <Component
       {...props}
+      // todo: it worked without this...?
+      // value={props.exercise}
       options={
         props.exercises?.sort(
           (a, b) =>

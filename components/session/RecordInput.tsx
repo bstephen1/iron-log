@@ -1,14 +1,4 @@
-import { Delete } from '@mui/icons-material'
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  IconButton,
-} from '@mui/material'
-import { Stack } from '@mui/system'
+import { Box, Button, Card, CardActions, CardContent } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import {
   updateRecordField,
@@ -20,8 +10,8 @@ import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
 import { SetType } from '../../models/SetType'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
-import { ExerciseSelector } from '../form-fields/ExerciseSelector'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
+import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StandardSetInput from './sets/StandardSetInput'
 
 interface Props {

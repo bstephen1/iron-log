@@ -1,6 +1,7 @@
 // @ts-nocheck
 // todo: typing
 import { Autocomplete, createFilterOptions } from '@mui/material'
+import { useEffect } from 'react'
 
 // this allows the autocomplete to filter options based on what the user is typing
 const filter = createFilterOptions<T | NewObjectStub>()
@@ -17,6 +18,9 @@ export default function SelectorBase<T>({
   addNewItem,
   ...autocompleteProps
 }) {
+  useEffect(() => {
+    console.log(value)
+  }, [value])
   return (
     <Autocomplete<T | NewObjectStub>
       openOnFocus
@@ -25,7 +29,7 @@ export default function SelectorBase<T>({
       handleHomeEndKeys
       autoHighlight // todo: this sometimes pops up over Category selector for Exercises
       options={options}
-      value={value}
+      value={value} // todo: this is just undefined currently. Probably will hash out when typing
       isOptionEqualToValue={(a, b) => a.name === b.name}
       getOptionLabel={(option) => option.name}
       onChange={(_, option) => {

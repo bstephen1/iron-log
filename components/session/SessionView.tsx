@@ -12,7 +12,7 @@ import {
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
-import { ExerciseSelector } from '../form-fields/ExerciseSelector'
+import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import Clock from './Clock'
 import RecordInput from './RecordInput'
 import TitleBar from './TitleBar'
