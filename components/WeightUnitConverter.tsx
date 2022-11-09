@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 export default function WeightUnitConverter() {
   const [kg, setKg] = useState<number>(0)
+  const KG_TO_LB_RATE = 2.2
 
   const format = (num: number) => +num.toFixed(2)
 
@@ -17,8 +18,8 @@ export default function WeightUnitConverter() {
       <SyncAlt />
       <ConverterField
         type="lb"
-        value={format(kg * 2.2)}
-        onChange={(e) => setKg(+e.target.value / 2.2)}
+        value={format(kg * KG_TO_LB_RATE)}
+        onChange={(e) => setKg(+e.target.value / KG_TO_LB_RATE)}
       />
     </Stack>
   )
