@@ -63,7 +63,7 @@ export default function ManageExercisesPage() {
         <ExerciseSelector
           {...{
             exercise,
-            changeExercise: setExercise,
+            handleChange: setExercise,
             exercises,
             mutate,
           }}
