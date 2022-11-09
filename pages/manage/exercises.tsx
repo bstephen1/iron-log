@@ -2,15 +2,18 @@ import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
 import ExerciseForm from '../../components/ExerciseForm'
+import { CategorySelector } from '../../components/form-fields/selectors/CategorySelector'
 import { ExerciseSelector } from '../../components/form-fields/selectors/ExerciseSelector'
 import { ModifierSelector } from '../../components/form-fields/selectors/ModifierSelector'
 import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import StyledDivider from '../../components/StyledDivider'
 import {
   updateExerciseField,
+  useCategories,
   useExercises,
   useModifiers,
 } from '../../lib/frontend/restService'
+import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 
@@ -21,8 +24,10 @@ import Modifier from '../../models/Modifier'
 export default function ManageExercisesPage() {
   const { exercises, mutate } = useExercises({})
   const { modifiers, mutate: mutateModifiers } = useModifiers()
+  const { categories, mutate: mutateCategories } = useCategories()
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [modifier, setModifier] = useState<Modifier | null>(null)
+  const [category, setCategory] = useState<Category | null>(null)
   const [tabValue, setTabValue] = useState(0)
   const tabContent = [
     { label: 'Exercises', selector: ExerciseSelector },
@@ -82,6 +87,16 @@ export default function ManageExercisesPage() {
               handleChange: setModifier,
               modifiers,
               mutateModifiers,
+            }}
+          />
+        )}
+        {tabValue === 2 && (
+          <CategorySelector
+            {...{
+              category,
+              handleChange: setCategory,
+              categories,
+              mutateCategories,
             }}
           />
         )}

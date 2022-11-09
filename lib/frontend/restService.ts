@@ -86,6 +86,13 @@ export async function addModifier(newModifier: Modifier) {
   }).catch((e) => console.error(e))
 }
 
+export async function addCategory(newCategory: Category) {
+  fetch(URI_CATEGORIES + newCategory.name, {
+    method: 'POST',
+    body: JSON.stringify(newCategory),
+  }).catch((e) => console.error(e))
+}
+
 export async function addSession(session: Session) {
   fetch(URI_SESSIONS + session.date, {
     method: 'POST',
