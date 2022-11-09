@@ -8,7 +8,7 @@ import SelectorBase from './SelectorBase'
 const withModifier = (Component) => (props) => {
   // temporarily store the current input in a stub and only create a true Modifier if the stub is selected
   class NewModifierStub {
-    constructor(public name: string) {}
+    constructor(public name: string, public addNew = 'Add New') {}
   }
 
   return (
@@ -16,6 +16,7 @@ const withModifier = (Component) => (props) => {
       {...props}
       options={props.modifiers}
       label="Modifier"
+      groupBy={(option) => (option.addNew ? option.addNew : 'Modifier')}
       placeholder="Select or Add a Modifier"
       NewItemStub={NewModifierStub}
       ItemConstructor={Modifier}
