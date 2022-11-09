@@ -1,7 +1,7 @@
 import { Button, Paper, Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { Dayjs } from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
   addRecord,
@@ -14,6 +14,7 @@ import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
 import Session from '../../models/Session'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
+import WeightUnitConverter from '../WeightUnitConverter'
 import Clock from './Clock'
 import RecordInput from './RecordInput'
 import TitleBar from './TitleBar'
@@ -64,6 +65,9 @@ export default function SessionView({ date }: { date: Dayjs }) {
       </Grid>
       <Grid>
         <Clock />
+      </Grid>
+      <Grid>
+        <WeightUnitConverter />
       </Grid>
       {/* todo: session only handles updating index order */}
       {session &&
