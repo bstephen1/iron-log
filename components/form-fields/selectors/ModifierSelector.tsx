@@ -14,16 +14,15 @@ import SelectorBase from './SelectorBase'
 interface WithModifierProps {
   modifiers?: Modifier[]
   modifier: Modifier | null
-  mutate: KeyedMutator<Modifier>
+  mutate: KeyedMutator<Modifier[]>
   handleChange: Dispatch<SetStateAction<Modifier | null>>
 }
-const withModifier =
-  <T extends ComponentType<any>>(Component: T) =>
-  ({
+function withModifier<T extends ComponentType<any>>(Component: T) {
+  return function ({
     modifiers,
     modifier,
     ...props
-  }: WithModifierProps & ComponentPropsWithoutRef<T>) => {
+  }: WithModifierProps & ComponentPropsWithoutRef<T>) {
     class NewModifierStub implements NamedStub {
       constructor(public name: string, public status = 'Add New') {}
     }
@@ -45,5 +44,6 @@ const withModifier =
       />
     )
   }
+}
 
 export const ModifierSelector = withModifier(withAsync(SelectorBase<Modifier>))
