@@ -15,9 +15,8 @@ interface WithExerciseProps {
   exercises: Exercise[] | undefined
   mutate: KeyedMutator<Exercise[]>
 }
-const withExercise =
-  (Component: typeof SelectorBase<Exercise>) =>
-  ({ exercise, exercises, ...props }: WithExerciseProps) => {
+function withExercise(Component: typeof SelectorBase<Exercise>) {
+  return function ({ exercise, exercises, ...props }: WithExerciseProps) {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
     const [category, setCategory] = useState<Category | null>(null)
@@ -57,5 +56,6 @@ const withExercise =
       />
     )
   }
+}
 
 export const ExerciseSelector = withExercise(withAsync(SelectorBase<Exercise>))
