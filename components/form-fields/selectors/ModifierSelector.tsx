@@ -1,14 +1,12 @@
-// @ts-nocheck
-// todo: typing
 import { addModifier } from '../../../lib/frontend/restService'
 import Modifier from '../../../models/Modifier'
+import { NamedStub } from '../../../models/NamedObject'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
 
 const withModifier = (Component) => (props) => {
-  // temporarily store the current input in a stub and only create a true Modifier if the stub is selected
-  class NewModifierStub {
-    constructor(public name: string, public addNew = 'Add New') {}
+  class NewModifierStub implements NamedStub {
+    constructor(public name: string, public status = 'Add New') {}
   }
 
   return (
@@ -16,7 +14,10 @@ const withModifier = (Component) => (props) => {
       {...props}
       options={props.modifiers}
       label="Modifier"
-      groupBy={(option) => (option.addNew ? option.addNew : 'Modifier')}
+      // todo: do we want modifiers to have status?
+      groupBy={(option: Modifier | NewModifierStub) =>
+        option.status === 'Add New' ? option.status : 'Modifier'
+      }
       placeholder="Select or Add a Modifier"
       StubConstructor={NewModifierStub}
       Constructor={Modifier}
@@ -26,3 +27,4 @@ const withModifier = (Component) => (props) => {
 }
 
 export const ModifierSelector = withModifier(withAsync(SelectorBase<Modifier>))
+// export const ModifierSelector = withAsync(withModifier(SelectorBase<Modifier>))

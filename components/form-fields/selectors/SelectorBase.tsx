@@ -5,13 +5,13 @@ import { GenericAutocompleteProps } from '../../../lib/util'
 import Category from '../../../models/Category'
 import { NamedObject, NamedStub } from '../../../models/NamedObject'
 
-interface SelectorBaseProps<C, S>
+export interface SelectorBaseProps<C, S>
   // Partial because this component defines all required Autocomplete props.
   // Any explicitly given AutocompleteProps will override the defaults
   extends Partial<GenericAutocompleteProps<C | S>> {
   label?: string
   handleChange: (value: C | null) => void
-  categoryFilter: Category | null
+  categoryFilter?: Category
   mutate: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
   Constructor: new (name: string) => C

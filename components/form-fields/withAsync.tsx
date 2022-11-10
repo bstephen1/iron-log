@@ -16,7 +16,15 @@ import { GenericAutocompleteProps } from '../../lib/util'
  *
  * The component this function takes in must extend Autocomplete so it can accept the added props.
  *
+ * This component must be able to see the options to show the loading state correctly.
+ * Eg, withAsync(withOptions(BaseComponent)) will not work because the options are hydrated after withAsync().
+ *
+ * Likewise, any editing to the inner TextField must be wrapped outside of this component
+ * since this component overwrites the Textfield to add the loading spinner adornment.
+ *
  */
+
+// todo: should this be somehow ComponentType<T> or similar?
 interface WithAsyncProps<T> extends GenericAutocompleteProps<T> {
   label?: string
   startAdornment?: JSX.Element
