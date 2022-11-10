@@ -1,29 +1,42 @@
-// @ts-nocheck
-// todo: typing
+import { ComponentType, Dispatch, SetStateAction } from 'react'
+import { KeyedMutator } from 'swr'
 import { addCategory } from '../../../lib/frontend/restService'
 import Category from '../../../models/Category'
+import { NamedStub } from '../../../models/NamedObject'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
 
-const withCategory = (Component) => (props) => {
-  // temporarily store the current input in a stub and only create a true Category if the stub is selected
-  class NewCategoryStub {
-    constructor(public name: string, public addNew = 'Add New') {}
-  }
+interface WithCategoryProps {
+  categories?: Category[]
+  category: Category | null
+  mutate: KeyedMutator<Category[]>
+  handleChange: Dispatch<SetStateAction<Category | null>>
+}
+function withCategory<T extends ComponentType<any>>(Component: T) {
+  return function ({ categories, category, ...props }: WithCategoryProps) {
+    class NewCategoryStub implements NamedStub {
+      constructor(public name: string, public status = 'Add New') {}
+    }
 
-  return (
-    <Component
-      {...props}
-      options={props.categories}
-      // value={props.category}
-      label="Category"
-      groupBy={(option) => (option.addNew ? option.addNew : 'Category')}
-      placeholder="Select or Add a Category"
-      StubConstructor={NewCategoryStub}
-      Constructor={Category}
-      addNewItem={addCategory}
-    />
-  )
+    return (
+      <Component
+        {...(props as any)}
+        options={categories}
+        value={category}
+        label="Category"
+        // todo: this is pretty slapdash
+        groupBy={(option: Category | NewCategoryStub) =>
+          (option as NewCategoryStub).status
+            ? (option as NewCategoryStub).status
+            : 'Category'
+        }
+        placeholder="Select or Add a Category"
+        StubConstructor={NewCategoryStub}
+        Constructor={Category}
+        addNewItem={addCategory}
+      />
+    )
+  }
 }
 
 export const CategorySelector = withCategory(withAsync(SelectorBase<Category>))

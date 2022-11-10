@@ -11,7 +11,7 @@ export interface SelectorBaseProps<C, S>
   extends Partial<GenericAutocompleteProps<C | S>> {
   label?: string
   handleChange: (value: C | null) => void
-  categoryFilter?: Category
+  categoryFilter?: Category | null
   mutate: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
   Constructor: new (name: string) => C
@@ -20,6 +20,7 @@ export interface SelectorBaseProps<C, S>
   // have to explicitly declare options is C[] or Autocomplete will think it's (C | S)[].
   // options is the db res, so will not include the keyless Stub value
   options?: C[]
+  startAdornment?: JSX.Element // only used in withAsync. Here to make TS happy.
 }
 // this component is intended to be ingested as the base layer of a HOC.
 export default function SelectorBase<C extends NamedObject>({
@@ -32,6 +33,7 @@ export default function SelectorBase<C extends NamedObject>({
   StubConstructor,
   Constructor,
   addNewItem,
+  startAdornment,
   ...autocompleteProps
 }: SelectorBaseProps<C, NamedStub>) {
   // This allows the autocomplete to filter options as the user types, in real time.

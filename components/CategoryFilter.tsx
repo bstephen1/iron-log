@@ -10,8 +10,8 @@ import Category from '../models/Category'
 
 interface Props {
   anchorEl?: HTMLElement
-  categories: Category[]
-  category: Category
+  categories?: Category[]
+  category: Category | null
   setCategory: Dispatch<SetStateAction<Category | null>>
 }
 export default function CategoryFilter({

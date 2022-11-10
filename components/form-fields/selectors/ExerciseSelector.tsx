@@ -17,7 +17,7 @@ interface ExerciseSelectorProps {
 }
 const withExercise =
   (Component: typeof SelectorBase<Exercise>) =>
-  (props: ExerciseSelectorProps) => {
+  ({ exercise, exercises, ...props }: ExerciseSelectorProps) => {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
     const [category, setCategory] = useState<Category | null>(null)
@@ -34,10 +34,9 @@ const withExercise =
     return (
       <Component
         {...props}
-        // todo: it worked without this...?
-        // value={props.exercise}
+        value={exercise}
         options={
-          props.exercises?.sort(
+          exercises?.sort(
             (a, b) =>
               ExerciseStatusOrder[a.status] - ExerciseStatusOrder[b.status]
           ) || []
