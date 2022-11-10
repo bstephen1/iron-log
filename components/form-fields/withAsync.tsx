@@ -1,17 +1,10 @@
 import {
-  Autocomplete,
   AutocompleteRenderInputParams,
   CircularProgress,
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import {
-  ComponentProps,
-  ComponentPropsWithoutRef,
-  ComponentType,
-  useState,
-} from 'react'
-import { GenericAutocompleteProps } from '../../lib/util'
+import { ComponentPropsWithoutRef, ComponentType, useState } from 'react'
 
 /*
  * HOC to add async loading state to an Autocomplete.
@@ -57,7 +50,7 @@ export default function withAsync<T extends ComponentType<any>>(Component: T) {
     return (
       <Component
         // This also has to be any, probably related to the ComponentType being any.
-        // But it should just be strictly the baseComponentProps, as seen by all the
+        // But it really is strictly the baseComponentProps, as seen by all the
         // withAsync-specific props being omitted.
         {...(baseComponentProps as any)}
         onOpen={() => setOpen(true)}
