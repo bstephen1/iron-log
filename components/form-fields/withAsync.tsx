@@ -1,12 +1,10 @@
 import {
-  Autocomplete,
-  AutocompleteProps,
   AutocompleteRenderInputParams,
   CircularProgress,
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { ComponentProps, ComponentType, useState } from 'react'
+import { ComponentType, useState } from 'react'
 import { GenericAutocompleteProps } from '../../lib/util'
 
 /*
@@ -19,14 +17,15 @@ import { GenericAutocompleteProps } from '../../lib/util'
  * The component this function takes in must extend Autocomplete so it can accept the added props.
  *
  */
-interface WithAsyncProps {
+interface WithAsyncProps<T> extends GenericAutocompleteProps<T> {
   label?: string
   startAdornment?: JSX.Element
   placeholder?: string
-  variant?: string
-  textFieldProps: TextFieldProps
+  variant?: TextFieldProps['variant']
+  // a few textFieldProps are extracted for convenience, but others can be added here
+  textFieldProps?: TextFieldProps
 }
-export default function withAsync<T extends GenericAutocompleteProps<T>>(
+export default function withAsync<T extends WithAsyncProps<T>>(
   Component: ComponentType<T>
 ) {
   return function ({
@@ -42,7 +41,10 @@ export default function withAsync<T extends GenericAutocompleteProps<T>>(
 
     return (
       <Component
-        {...autocompleteProps}
+        // the typing here is a bit confusing. Have to let TS know that
+        // autocompleteProps are the same type as Component. We've just removed the
+        // non-autocompleteProps and are passing autocompleteProps to the base Autocomplete.
+        {...(autocompleteProps as T)}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         loading={loading}
