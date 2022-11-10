@@ -109,7 +109,6 @@ export default function ManageExercisesPage() {
         </Tabs>
       </Grid>
       <Grid xs={12} md={3}>
-        {/* @ts-ignore  withAsync() has renderInput prop */}
         {tabValue === 0 && (
           <ExerciseSelector
             {...{

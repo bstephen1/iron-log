@@ -18,11 +18,7 @@ interface WithModifierProps {
   handleChange: Dispatch<SetStateAction<Modifier | null>>
 }
 function withModifier<T extends ComponentType<any>>(Component: T) {
-  return function ({
-    modifiers,
-    modifier,
-    ...props
-  }: WithModifierProps & ComponentPropsWithoutRef<T>) {
+  return function ({ modifiers, modifier, ...props }: WithModifierProps) {
     class NewModifierStub implements NamedStub {
       constructor(public name: string, public status = 'Add New') {}
     }
