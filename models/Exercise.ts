@@ -1,7 +1,8 @@
 import { v4 as uuid } from 'uuid'
 import { ExerciseStatus } from './ExerciseStatus'
+import NamedCollection from './NamedCollection'
 
-export default class Exercise {
+export default class Exercise extends NamedCollection {
   constructor(
     public name: string,
     public status: ExerciseStatus = ExerciseStatus.ACTIVE,
@@ -10,5 +11,7 @@ export default class Exercise {
     public categories: string[] = [],
     public modifiers: string[] = [],
     public readonly _id: string = uuid()
-  ) {}
+  ) {
+    super(name, _id)
+  }
 }

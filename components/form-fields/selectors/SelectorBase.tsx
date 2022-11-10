@@ -1,42 +1,55 @@
-// @ts-nocheck
-// todo: typing
 import { Autocomplete, createFilterOptions } from '@mui/material'
-import { useEffect } from 'react'
+import { useMemo } from 'react'
+import { KeyedMutator } from 'swr'
+import { GenericAutocompleteProps } from '../../../lib/util'
+import Category from '../../../models/Category'
+import NamedCollection, {
+  NamedCollectionKeyless,
+} from '../../../models/NamedCollection'
 
-// this allows the autocomplete to filter options based on what the user is typing
-const filter = createFilterOptions<T | NewObjectStub>()
-
+interface SelectorBaseProps<T> extends GenericAutocompleteProps<T> {
+  handleChange: (value: T | null) => void
+  categoryFilter: Category | null
+  mutate: KeyedMutator<T[]>
+  StubConstructor: new (name: string) => T // todo: this should be keyless
+  Constructor: new (name: string) => T
+  addNewItem: (value: T) => void
+}
 // this component is intended to be ingested as the base layer of a HOC.
-export default function SelectorBase<T>({
-  value,
+export default function SelectorBase<
+  T extends NamedCollectionKeyless // todo: what should it extend?
+>({
+  // value,
   handleChange,
-  options,
+  // options, // todo: these should be part of autocompleteProps
   categoryFilter,
   mutate,
-  NewItemStub,
-  ItemConstructor,
+  StubConstructor,
+  Constructor,
   addNewItem,
   ...autocompleteProps
-}) {
-  useEffect(() => {
-    console.log(value)
-  }, [value])
+}: SelectorBaseProps<T>) {
+  // This allows the autocomplete to filter options as the user types, in real time.
+  // It needs to be the result of this function call, and we can't call it
+  // outside the component while keeping the generic. So, useMemo to cache the result
+  const filter = useMemo(() => createFilterOptions<T>(), [])
+
   return (
-    <Autocomplete<T | NewObjectStub>
+    <Autocomplete<T>
       openOnFocus
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
       autoHighlight // todo: this sometimes pops up over Category selector for Exercises
-      options={options}
-      value={value} // todo: this is just undefined currently. Probably will hash out when typing
+      // options={options}
+      // value={value} // todo: this is just undefined currently. Probably will hash out when typing
       isOptionEqualToValue={(a, b) => a.name === b.name}
       getOptionLabel={(option) => option.name}
       onChange={(_, option) => {
         // add the new item if selected
         if (option && !('_id' in option)) {
-          const newItem = new ItemConstructor(option.name)
-          mutate(options?.concat(newItem))
+          const newItem = new Constructor(option.name)
+          mutate(autocompleteProps.options?.concat(newItem))
           addNewItem(newItem)
           handleChange(newItem)
         } else {
@@ -65,7 +78,7 @@ export default function SelectorBase<T>({
         // append an option to add the current input
         const isExisting = options.some((option) => inputValue === option.name)
         if (inputValue && !isExisting) {
-          filtered.push(new NewItemStub(inputValue))
+          filtered.push(new StubConstructor(inputValue))
         }
 
         return filtered
