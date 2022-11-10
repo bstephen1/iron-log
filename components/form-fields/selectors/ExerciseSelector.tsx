@@ -23,7 +23,7 @@ const withExercise =
     const [category, setCategory] = useState<Category | null>(null)
 
     // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
-    class NewExerciseStub implements NamedStub {
+    class ExerciseStub implements NamedStub {
       name: string
       status: string
       constructor(name: string) {
@@ -31,7 +31,6 @@ const withExercise =
         this.status = 'Add New'
       }
     }
-
     return (
       <Component
         {...props}
@@ -47,7 +46,7 @@ const withExercise =
         groupBy={(option) => option.status}
         placeholder="Select or Add an Exercise"
         categoryFilter={category}
-        StubConstructor={NewExerciseStub}
+        StubConstructor={ExerciseStub}
         Constructor={Exercise}
         addNewItem={addExercise}
         // inputRef={inputRef}

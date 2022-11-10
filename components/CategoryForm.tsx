@@ -53,7 +53,7 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
             label="Name"
             initialValue={category.name}
             required
-            onSubmit={(value) => handleUpdate('name', value)}
+            handleSubmit={(value) => handleUpdate('name', value)}
             yupValidator={yup.reach(validationSchema, 'name')}
           />
         </Stack>
@@ -64,7 +64,7 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
           initialValue={exercise}
           options={exerciseNames}
           fullWidth
-          onSubmit={(value: string[]) => handleUpdate('categories', value)}
+          handleSubmit={(value: string[]) => handleUpdate('categories', value)}
         /> */}
       </Grid>
     </Grid>

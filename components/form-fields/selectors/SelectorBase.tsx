@@ -17,10 +17,7 @@ interface SelectorBaseProps<C, S> extends GenericAutocompleteProps<C | S> {
   options: C[]
 }
 // this component is intended to be ingested as the base layer of a HOC.
-export default function SelectorBase<
-  C extends NamedObject,
-  S extends NamedStub
->({
+export default function SelectorBase<C extends NamedObject>({
   // value,
   handleChange,
   options, // todo: these should be part of autocompleteProps
@@ -30,14 +27,14 @@ export default function SelectorBase<
   Constructor,
   addNewItem,
   ...autocompleteProps
-}: SelectorBaseProps<C, S>) {
+}: SelectorBaseProps<C, NamedStub>) {
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic. So, useMemo to cache the result
-  const filter = useMemo(() => createFilterOptions<C | S>(), [])
+  const filter = useMemo(() => createFilterOptions<C | NamedStub>(), [])
 
   return (
-    <Autocomplete<C | S>
+    <Autocomplete<C | NamedStub>
       openOnFocus
       selectOnFocus
       clearOnBlur

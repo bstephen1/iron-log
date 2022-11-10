@@ -2,27 +2,29 @@ import { MenuItem, TextField, TextFieldProps } from '@mui/material'
 import * as yup from 'yup'
 import useField from './useField'
 
-interface Props<T> extends Omit<TextFieldProps, 'onSubmit'> {
+interface Props<T> {
   label: string
   initialValue: T
   options: T[]
   defaultHelperText?: string
-  onSubmit: (value: T) => void
+  handleSubmit: (value: T) => void
   yupValidator?: ReturnType<typeof yup.reach>
 }
-export default function SelectFieldAutosave<T extends string>(props: Props<T>) {
+export default function SelectFieldAutosave<T extends string>(
+  props: Props<T> & TextFieldProps
+) {
   const {
     label,
     defaultHelperText = ' ',
     options,
     initialValue,
-    onSubmit,
+    handleSubmit,
     yupValidator,
     ...textFieldProps
   } = props
 
   const { control } = useField<T>({
-    onSubmit,
+    handleSubmit,
     initialValue,
     yupValidator,
   })

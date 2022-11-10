@@ -17,7 +17,7 @@ export default function AddItemInput({
   disabled,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>()
-  const onSubmit = (value: string) => {
+  const handleSubmit = (value: string) => {
     handleAdd(value)
     onReset()
   }
@@ -27,7 +27,7 @@ export default function AddItemInput({
   }
 
   const { control, isEmpty, reset, submit } = useField({
-    onSubmit,
+    handleSubmit,
     initialValue: '',
     autoSubmit: false,
   })

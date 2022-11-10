@@ -1,11 +1,13 @@
-// @ts-nocheck
 import {
   Autocomplete,
+  AutocompleteProps,
   AutocompleteRenderInputParams,
   CircularProgress,
   TextField,
+  TextFieldProps,
 } from '@mui/material'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps, ComponentType, useState } from 'react'
+import { GenericAutocompleteProps } from '../../lib/util'
 
 /*
  * HOC to add async loading state to an Autocomplete.
@@ -17,21 +19,30 @@ import { ComponentProps, useState } from 'react'
  * The component this function takes in must extend Autocomplete so it can accept the added props.
  *
  */
-// todo: typing this is such a pain. Outer function should be the component, inner should be its props. Component extends Autocomplete.
-export default function withAsync<T extends typeof Autocomplete>(Component: T) {
+interface WithAsyncProps {
+  label?: string
+  startAdornment?: JSX.Element
+  placeholder?: string
+  variant?: string
+  textFieldProps: TextFieldProps
+}
+export default function withAsync<T extends GenericAutocompleteProps<T>>(
+  Component: ComponentType<T>
+) {
   return function ({
     label,
     startAdornment,
     placeholder,
     variant = 'outlined',
-    ...props
-  }: ComponentProps<T>) {
+    textFieldProps,
+    ...autocompleteProps
+  }: T) {
     const [open, setOpen] = useState(false)
-    const loading = open && !props.options
+    const loading = open && !autocompleteProps.options
 
     return (
       <Component
-        {...props}
+        {...autocompleteProps}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         loading={loading}
@@ -57,6 +68,7 @@ export default function withAsync<T extends typeof Autocomplete>(Component: T) {
                 </>
               ),
             }}
+            {...textFieldProps}
           />
         )}
       />

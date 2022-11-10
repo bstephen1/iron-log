@@ -19,7 +19,7 @@ interface Props<T = string> {
   // the validator should be for a single field. Run reach() to specify the field to use.
   yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
-  onSubmit: (value: T) => void
+  handleSubmit: (value: T) => void
 
   // required so we can determine the type. Cannot be undefined.
   // Note: If T is an array/object, use a const defined outside the component for
@@ -32,7 +32,7 @@ export default function useField<T = string>({
   debounceMilliseconds = 800,
   initialValue,
   autoSubmit = true,
-  onSubmit,
+  handleSubmit,
 }: Props<T>) {
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
@@ -112,7 +112,7 @@ export default function useField<T = string>({
   // maybe this https://stackoverflow.com/questions/69331438/wise-to-exclude-this-useeffect-dependency-array-variable-lint-recommends-3-but
   useEffect(() => {
     if (isSubmitting && hasValidated && !error) {
-      onSubmit(value)
+      handleSubmit(value)
       setIsSubmitting(false)
       setHasValidated(false)
     }

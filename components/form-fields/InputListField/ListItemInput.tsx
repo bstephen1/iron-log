@@ -21,9 +21,9 @@ export default function ListItemInput(props: Props) {
   } = props
 
   const inputRef = useRef<HTMLInputElement>()
-  const onSubmit = (value: string) => handleUpdate(index, value)
+  const handleSubmit = (value: string) => handleUpdate(index, value)
   const { control, isEmpty } = useField({
-    onSubmit,
+    handleSubmit,
     initialValue,
   })
 

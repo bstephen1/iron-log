@@ -98,7 +98,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
               fullWidth
               variant="standard"
               options={Object.values(SetType)}
-              onSubmit={(value) => handleFieldChange('type', value)}
+              handleSubmit={(value) => handleFieldChange('type', value)}
             />
           </Grid>
           <Grid xs={12} md={6}>
@@ -107,7 +107,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
               options={exercise.modifiers}
               initialValue={activeModifiers}
               variant="standard"
-              onSubmit={(value: string[]) =>
+              go={(value: string[]) =>
                 handleFieldChange('activeModifiers', value)
               }
             />
@@ -122,7 +122,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
               type={record.type}
               units={{ primary: 'kg' }}
               key={i}
-              onSubmit={(setField, value) =>
+              handleSubmit={(setField, value) =>
                 handleSetChange(setField, value, i)
               }
             />

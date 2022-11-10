@@ -6,7 +6,7 @@ import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 // todo: indicator for failing a rep
 export default function StandardSetInput({
   type,
-  onSubmit,
+  handleSubmit,
   ...props
 }: StandardSet & any) {
   // todo: restrict to numbers, but also allow undefined.
@@ -21,7 +21,7 @@ export default function StandardSetInput({
       key={field}
       placeholder={placeholders[field]}
       initialValue={props[field]}
-      onSubmit={(value) => onSubmit(field, value)}
+      handleSubmit={(value) => handleSubmit(field, value)}
       units={units[field]}
     />
   ))

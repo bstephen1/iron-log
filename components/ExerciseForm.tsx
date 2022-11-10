@@ -76,7 +76,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             label="Name"
             initialValue={exercise.name}
             required
-            onSubmit={(value) => handleUpdate('name', value)}
+            handleSubmit={(value) => handleUpdate('name', value)}
             yupValidator={yup.reach(validationSchema, 'name')}
           />
           <SelectFieldAutosave
@@ -85,13 +85,13 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             initialValue={exercise.status}
             required
             yupValidator={yup.reach(validationSchema, 'status')}
-            onSubmit={(value) => handleUpdate('status', value)}
+            handleSubmit={(value) => handleUpdate('status', value)}
           />
           <ComboBoxField
             label="Modifiers"
             initialValue={exercise.modifiers}
             options={modifierNames}
-            onSubmit={(value: string[]) => handleUpdate('modifiers', value)}
+            handleSubmit={(value: string[]) => handleUpdate('modifiers', value)}
           />
         </Stack>
       </Grid>
@@ -101,14 +101,16 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             label="Notes"
             initialValue={exercise.notes}
             fullWidth
-            onSubmit={(value) => handleUpdate('notes', value)}
+            handleSubmit={(value) => handleUpdate('notes', value)}
           />
           <ComboBoxField
             label="Categories"
             initialValue={exercise.categories}
             options={categoryNames}
             fullWidth
-            onSubmit={(value: string[]) => handleUpdate('categories', value)}
+            handleSubmit={(value: string[]) =>
+              handleUpdate('categories', value)
+            }
           />
         </Stack>
       </Grid>
@@ -118,7 +120,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           addItemPlaceholder="Add Cue"
           listItemPlaceholder="Empty Cue (will be deleted)"
           values={exercise.cues}
-          onSubmit={(values: string[]) => handleUpdate('cues', values)}
+          handleSubmit={(values: string[]) => handleUpdate('cues', values)}
         />
       </Grid>
     </Grid>

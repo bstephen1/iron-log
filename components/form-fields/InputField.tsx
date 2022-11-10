@@ -5,20 +5,19 @@ import { reach } from 'yup'
 import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
 
-// have to omit onSubmit because TextFieldProps has this as an undocumented property (and handleSubmit!)
-interface Props extends Omit<TextFieldProps, 'onSubmit'> {
+interface Props {
   label: string
   initialValue?: string
   defaultHelperText?: string
-  onSubmit: (value: string) => void
+  handleSubmit: (value: string) => void
   yupValidator: ReturnType<typeof reach>
 }
-export default function InputField(props: Props) {
+export default function InputField(props: Props & TextFieldProps) {
   const {
     label,
     initialValue = '',
     defaultHelperText = ' ',
-    onSubmit,
+    handleSubmit,
     yupValidator,
     ...textFieldProps
   } = props
@@ -26,7 +25,7 @@ export default function InputField(props: Props) {
   const inputRef = useRef<HTMLInputElement>()
   const { control, reset, submit, isDirty, error } = useField<string>({
     yupValidator,
-    onSubmit,
+    handleSubmit,
     initialValue,
     autoSubmit: false,
   })
