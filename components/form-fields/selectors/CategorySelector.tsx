@@ -1,4 +1,4 @@
-import { ComponentType, Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
 import { addCategory } from '../../../lib/frontend/restService'
 import Category from '../../../models/Category'
@@ -12,7 +12,7 @@ interface WithCategoryProps {
   mutate: KeyedMutator<Category[]>
   handleChange: Dispatch<SetStateAction<Category | null>>
 }
-function withCategory<T extends ComponentType<any>>(Component: T) {
+function withCategory(Component: typeof SelectorBase<Category>) {
   return function ({ categories, category, ...props }: WithCategoryProps) {
     class NewCategoryStub implements NamedStub {
       constructor(public name: string, public status = 'Add New') {}
@@ -20,7 +20,7 @@ function withCategory<T extends ComponentType<any>>(Component: T) {
 
     return (
       <Component
-        {...(props as any)}
+        {...props}
         options={categories}
         value={category}
         label="Category"

@@ -1,9 +1,4 @@
-import {
-  ComponentPropsWithoutRef,
-  ComponentType,
-  Dispatch,
-  SetStateAction,
-} from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
 import { addModifier } from '../../../lib/frontend/restService'
 import Modifier from '../../../models/Modifier'
@@ -17,7 +12,7 @@ interface WithModifierProps {
   mutate: KeyedMutator<Modifier[]>
   handleChange: Dispatch<SetStateAction<Modifier | null>>
 }
-function withModifier<T extends ComponentType<any>>(Component: T) {
+function withModifier(Component: typeof SelectorBase<Modifier>) {
   return function ({ modifiers, modifier, ...props }: WithModifierProps) {
     class NewModifierStub implements NamedStub {
       constructor(public name: string, public status = 'Add New') {}
@@ -25,7 +20,7 @@ function withModifier<T extends ComponentType<any>>(Component: T) {
 
     return (
       <Component
-        {...(props as any)}
+        {...props}
         options={modifiers}
         value={modifier}
         label="Modifier"

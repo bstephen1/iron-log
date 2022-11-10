@@ -9,7 +9,7 @@ import CategoryFilter from '../../CategoryFilter'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
 
-interface ExerciseSelectorProps {
+interface WithExerciseProps {
   exercise: Exercise | null
   handleChange: (value: Exercise | null) => void
   exercises: Exercise[] | undefined
@@ -17,7 +17,7 @@ interface ExerciseSelectorProps {
 }
 const withExercise =
   (Component: typeof SelectorBase<Exercise>) =>
-  ({ exercise, exercises, ...props }: ExerciseSelectorProps) => {
+  ({ exercise, exercises, ...props }: WithExerciseProps) => {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
     const [category, setCategory] = useState<Category | null>(null)
