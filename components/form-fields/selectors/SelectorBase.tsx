@@ -1,24 +1,28 @@
-import { Autocomplete, createFilterOptions } from '@mui/material'
+import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
 import { useMemo } from 'react'
 import { KeyedMutator } from 'swr'
 import { GenericAutocompleteProps } from '../../../lib/util'
 import Category from '../../../models/Category'
 import { NamedObject, NamedStub } from '../../../models/NamedObject'
 
-interface SelectorBaseProps<C, S> extends GenericAutocompleteProps<C | S> {
+interface SelectorBaseProps<C, S>
+  extends Partial<GenericAutocompleteProps<C | S>> {
+  label?: string
   handleChange: (value: C | null) => void
   categoryFilter: Category | null
   mutate: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
   Constructor: new (name: string) => C
+  // function to add new C (created from stub) to db
   addNewItem: (value: C) => void
-  // have to explicitly declare options is T[] or Autocomplete will think it's (T | S)[].
+  // have to explicitly declare options is C[] or Autocomplete will think it's (C | S)[].
   // options is the db res, so will not include the keyless Stub value
   options: C[]
 }
 // this component is intended to be ingested as the base layer of a HOC.
 export default function SelectorBase<C extends NamedObject>({
   // value,
+  label,
   handleChange,
   options, // todo: these should be part of autocompleteProps
   categoryFilter,
@@ -35,6 +39,7 @@ export default function SelectorBase<C extends NamedObject>({
 
   return (
     <Autocomplete<C | NamedStub>
+      renderInput={(params) => <TextField {...params} label={label} />}
       openOnFocus
       selectOnFocus
       clearOnBlur
