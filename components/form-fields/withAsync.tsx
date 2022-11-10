@@ -1,10 +1,16 @@
 import {
+  Autocomplete,
   AutocompleteRenderInputParams,
   CircularProgress,
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { ComponentType, useState } from 'react'
+import {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  ComponentType,
+  useState,
+} from 'react'
 import { GenericAutocompleteProps } from '../../lib/util'
 
 /*
@@ -25,7 +31,7 @@ import { GenericAutocompleteProps } from '../../lib/util'
  */
 
 // todo: should this be somehow ComponentType<T> or similar?
-interface WithAsyncProps<T> extends GenericAutocompleteProps<T> {
+interface WithAsyncProps {
   label?: string
   startAdornment?: JSX.Element
   placeholder?: string
@@ -33,26 +39,27 @@ interface WithAsyncProps<T> extends GenericAutocompleteProps<T> {
   // a few textFieldProps are extracted for convenience, but others can be added here
   textFieldProps?: TextFieldProps
 }
-export default function withAsync<T extends WithAsyncProps<T>>(
-  Component: ComponentType<T>
-) {
+// unfortunately seems like <any> is required here. That or some esotaric ts wrangling.
+// The componentType should be an extension of autocomplete, and withAsync needs to know the
+// baseComponentProps' type so it can pass those off as required to whatever is calling withAsync.
+export default function withAsync<T extends ComponentType<any>>(Component: T) {
   return function ({
     label,
     startAdornment,
     placeholder,
     variant = 'outlined',
     textFieldProps,
-    ...autocompleteProps
-  }: T) {
+    ...baseComponentProps
+  }: WithAsyncProps & ComponentPropsWithoutRef<T>) {
     const [open, setOpen] = useState(false)
-    const loading = open && !autocompleteProps.options
+    const loading = open && !baseComponentProps.options
 
     return (
       <Component
-        // the typing here is a bit confusing. Have to let TS know that
-        // autocompleteProps are the same type as Component. We've just removed the
-        // non-autocompleteProps and are passing autocompleteProps to the base Autocomplete.
-        {...(autocompleteProps as T)}
+        // This also has to be any, probably related to the ComponentType being any.
+        // But it should just be strictly the baseComponentProps, as seen by all the
+        // withAsync-specific props being omitted.
+        {...(baseComponentProps as any)}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         loading={loading}

@@ -26,9 +26,4 @@ const withModifier = (Component) => (props) => {
   )
 }
 
-// SelectorBase and withAsync both need the props from withModifier.
-// withAsync does not directly provide the props SelectorBase needs.
-// withAsync needs typing that shows that its props are the required props from SelectorBase and it passes them along.
-// Also, it's not just SelectorBase: it can be any Autocomplete. See ComboBoxField.
 export const ModifierSelector = withModifier(withAsync(SelectorBase<Modifier>))
-// export const ModifierSelector = withAsync(withModifier(SelectorBase<Modifier>))
