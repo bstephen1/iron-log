@@ -2,8 +2,8 @@ import { CheckBoxOutlineBlank } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import {
   Autocomplete,
+  AutocompleteProps,
   Checkbox,
-  TextField,
   TextFieldProps,
 } from '@mui/material'
 import useField from './useField'
@@ -11,33 +11,33 @@ import withAsync from './withAsync'
 
 export const ComboBoxField = withAsync(ComboBoxFieldBase)
 
-interface Props {
+interface ComboBoxFieldProps
+  extends AutocompleteProps<string, true, false, false> {
   label: string
   options: string[]
   initialValue: string[]
-  onSubmit: (value: string[]) => void
-  TextFieldProps?: Partial<TextFieldProps>
+  handleSubmit: (value: string[]) => void
+  onClose?: () => void
+  textFieldProps?: Partial<TextFieldProps>
 }
 // todo: doesn't send to db if clicking X on chips
-// todo: such a headache extending autocompleteProps
-function ComboBoxFieldBase(props: Props & any) {
-  const {
-    label,
-    options,
-    initialValue,
-    onSubmit,
-    TextFieldProps,
-    ...autocompleteProps
-  } = props
-
+function ComboBoxFieldBase({
+  label,
+  options,
+  initialValue,
+  handleSubmit,
+  onClose,
+  textFieldProps,
+  ...autocompleteProps
+}: ComboBoxFieldProps) {
   const { control, value, setValue } = useField<string[]>({
-    onSubmit,
-    initialValue: initialValue,
+    handleSubmit,
+    initialValue,
   })
 
   const handleClose = () => {
-    onSubmit(value)
-    props.onClose && props.onClose()
+    handleSubmit(value)
+    onClose?.()
   }
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.
@@ -48,7 +48,7 @@ function ComboBoxFieldBase(props: Props & any) {
     <Autocomplete
       {...control()}
       {...autocompleteProps}
-      onChange={(_, value: string[]) => setValue(value)} // todo: shouldn't need to assert type
+      onChange={(_, value) => setValue(value)}
       fullWidth
       // size="small"  // todo: use small sizes?
       multiple
@@ -57,11 +57,11 @@ function ComboBoxFieldBase(props: Props & any) {
       options={options ?? []}
       disableCloseOnSelect
       autoHighlight
-      renderInput={
-        props.renderInput
-          ? props.renderInput
-          : (params) => <TextField {...params} label={props.label} />
-      }
+      // renderInput={
+      //   props.renderInput
+      //     ? props.renderInput
+      //     : (params) => <TextField {...params} label={props.label} />
+      // }
       renderOption={(props, modifierName, { selected }) => (
         <li {...props}>
           <Checkbox
