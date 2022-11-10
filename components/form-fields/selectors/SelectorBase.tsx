@@ -19,7 +19,7 @@ interface SelectorBaseProps<C, S>
   addNewItem: (value: C) => void
   // have to explicitly declare options is C[] or Autocomplete will think it's (C | S)[].
   // options is the db res, so will not include the keyless Stub value
-  options: C[]
+  options?: C[]
 }
 // this component is intended to be ingested as the base layer of a HOC.
 export default function SelectorBase<C extends NamedObject>({
@@ -47,7 +47,7 @@ export default function SelectorBase<C extends NamedObject>({
       clearOnBlur
       handleHomeEndKeys
       autoHighlight // todo: this sometimes pops up over Category selector for Exercises
-      options={options}
+      options={options || []}
       // value={value} // todo: this is just undefined currently. Probably will hash out when typing
       isOptionEqualToValue={(a, b) => a.name === b.name}
       getOptionLabel={(option) => option.name}
