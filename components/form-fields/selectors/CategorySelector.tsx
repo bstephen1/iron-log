@@ -19,8 +19,8 @@ const withCategory = (Component) => (props) => {
       label="Category"
       groupBy={(option) => (option.addNew ? option.addNew : 'Category')}
       placeholder="Select or Add a Category"
-      NewItemStub={NewCategoryStub}
-      ItemConstructor={Category}
+      StubConstructor={NewCategoryStub}
+      Constructor={Category}
       addNewItem={addCategory}
     />
   )

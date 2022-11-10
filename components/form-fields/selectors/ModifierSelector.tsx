@@ -18,8 +18,8 @@ const withModifier = (Component) => (props) => {
       label="Modifier"
       groupBy={(option) => (option.addNew ? option.addNew : 'Modifier')}
       placeholder="Select or Add a Modifier"
-      NewItemStub={NewModifierStub}
-      ItemConstructor={Modifier}
+      StubConstructor={NewModifierStub}
+      Constructor={Modifier}
       addNewItem={addModifier}
     />
   )
