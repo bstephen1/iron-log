@@ -3,9 +3,7 @@ import { useMemo } from 'react'
 import { KeyedMutator } from 'swr'
 import { GenericAutocompleteProps } from '../../../lib/util'
 import Category from '../../../models/Category'
-import NamedCollection, {
-  NamedCollectionKeyless,
-} from '../../../models/NamedCollection'
+import { NamedObjectKeyless } from '../../../models/NamedObject'
 
 interface SelectorBaseProps<T> extends GenericAutocompleteProps<T> {
   handleChange: (value: T | null) => void
@@ -17,7 +15,7 @@ interface SelectorBaseProps<T> extends GenericAutocompleteProps<T> {
 }
 // this component is intended to be ingested as the base layer of a HOC.
 export default function SelectorBase<
-  T extends NamedCollectionKeyless // todo: what should it extend?
+  T extends NamedObjectKeyless // todo: what should it extend?
 >({
   // value,
   handleChange,

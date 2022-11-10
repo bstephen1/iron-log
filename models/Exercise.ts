@@ -1,8 +1,8 @@
 import { v4 as uuid } from 'uuid'
 import { ExerciseStatus } from './ExerciseStatus'
-import NamedCollection from './NamedCollection'
+import NamedObject from './NamedObject'
 
-export default class Exercise extends NamedCollection {
+export default class Exercise extends NamedObject {
   constructor(
     public name: string,
     public status: ExerciseStatus = ExerciseStatus.ACTIVE,
