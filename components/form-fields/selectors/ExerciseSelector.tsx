@@ -4,6 +4,7 @@ import { addExercise, useCategories } from '../../../lib/frontend/restService'
 import Category from '../../../models/Category'
 import Exercise from '../../../models/Exercise'
 import { ExerciseStatusOrder } from '../../../models/ExerciseStatus'
+import { NamedStub } from '../../../models/NamedObject'
 import CategoryFilter from '../../CategoryFilter'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
@@ -22,7 +23,7 @@ const withExercise =
     const [category, setCategory] = useState<Category | null>(null)
 
     // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
-    class NewExerciseStub {
+    class NewExerciseStub implements NamedStub {
       name: string
       status: string
       constructor(name: string) {

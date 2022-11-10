@@ -1,11 +1,10 @@
 import { v4 as uuid } from 'uuid'
 
-export abstract class NamedObjectKeyless {
-  constructor(public name: string) {}
+export abstract class NamedObject {
+  constructor(public name: string, public readonly _id: string = uuid()) {}
 }
 
-export default abstract class NamedObject extends NamedObjectKeyless {
-  constructor(public name: string, public readonly _id: string = uuid()) {
-    super(name)
-  }
+// There is no need to associate this with NamedObject because as a stub it only needs the fields explicitly defined
+export class NamedStub {
+  constructor(public name: string, public status?: string) {}
 }

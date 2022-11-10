@@ -3,23 +3,23 @@ import { useMemo } from 'react'
 import { KeyedMutator } from 'swr'
 import { GenericAutocompleteProps } from '../../../lib/util'
 import Category from '../../../models/Category'
-import NamedObject, { NamedObjectKeyless } from '../../../models/NamedObject'
+import { NamedObject, NamedStub } from '../../../models/NamedObject'
 
-interface SelectorBaseProps<T, S> extends GenericAutocompleteProps<T | S> {
-  handleChange: (value: T | null) => void
+interface SelectorBaseProps<C, S> extends GenericAutocompleteProps<C | S> {
+  handleChange: (value: C | null) => void
   categoryFilter: Category | null
-  mutate: KeyedMutator<T[]>
+  mutate: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
-  Constructor: new (name: string) => T
-  addNewItem: (value: T) => void
+  Constructor: new (name: string) => C
+  addNewItem: (value: C) => void
   // have to explicitly declare options is T[] or Autocomplete will think it's (T | S)[].
   // options is the db res, so will not include the keyless Stub value
-  options: T[]
+  options: C[]
 }
 // this component is intended to be ingested as the base layer of a HOC.
 export default function SelectorBase<
-  T extends NamedObject,
-  S extends NamedObjectKeyless
+  C extends NamedObject,
+  S extends NamedStub
 >({
   // value,
   handleChange,
@@ -30,14 +30,14 @@ export default function SelectorBase<
   Constructor,
   addNewItem,
   ...autocompleteProps
-}: SelectorBaseProps<T, S>) {
+}: SelectorBaseProps<C, S>) {
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic. So, useMemo to cache the result
-  const filter = useMemo(() => createFilterOptions<T | S>(), [])
+  const filter = useMemo(() => createFilterOptions<C | S>(), [])
 
   return (
-    <Autocomplete<T | S>
+    <Autocomplete<C | S>
       openOnFocus
       selectOnFocus
       clearOnBlur
