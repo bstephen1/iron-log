@@ -4,6 +4,7 @@ import {
   Autocomplete,
   AutocompleteProps,
   Checkbox,
+  TextField,
   TextFieldProps,
 } from '@mui/material'
 import useField from './useField'
@@ -13,7 +14,6 @@ export const ComboBoxField = withAsync(ComboBoxFieldBase)
 
 interface ComboBoxFieldProps
   extends AutocompleteProps<string, true, false, false> {
-  label: string
   options: string[]
   initialValue: string[]
   handleSubmit: (value: string[]) => void
@@ -22,7 +22,6 @@ interface ComboBoxFieldProps
 }
 // todo: doesn't send to db if clicking X on chips
 function ComboBoxFieldBase({
-  label,
   options,
   initialValue,
   handleSubmit,
@@ -41,9 +40,8 @@ function ComboBoxFieldBase({
   }
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.
-  // The useField() hook currently only supports uncontrolled inputs. May have to modify it
-  // if debounceSubmit is desired, but that may not be necessary for this. Seems like the
-  // debounce has to be a lot longer. onClose + onBlur may be enough.
+  // May have to modify it if debounceSubmit is desired, but that may not be necessary for this.
+  // Seems like the debounce has to be a lot longer. onClose + onBlur may be enough.
   return (
     <Autocomplete
       {...control()}
@@ -57,11 +55,6 @@ function ComboBoxFieldBase({
       options={options ?? []}
       disableCloseOnSelect
       autoHighlight
-      // renderInput={
-      //   props.renderInput
-      //     ? props.renderInput
-      //     : (params) => <TextField {...params} label={props.label} />
-      // }
       renderOption={(props, modifierName, { selected }) => (
         <li {...props}>
           <Checkbox

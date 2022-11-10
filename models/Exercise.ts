@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { ExerciseStatus } from './ExerciseStatus'
-import NamedObject from './NamedObject'
+import { NamedObject } from './NamedObject'
 
 export default class Exercise extends NamedObject {
   constructor(
