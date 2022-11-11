@@ -1,29 +1,28 @@
 import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
-import CategoryForm from '../../components/CategoryForm'
-import ExerciseForm from '../../components/ExerciseForm'
-import { CategorySelector } from '../../components/form-fields/selectors/CategorySelector'
-import { ExerciseSelector } from '../../components/form-fields/selectors/ExerciseSelector'
-import { ModifierSelector } from '../../components/form-fields/selectors/ModifierSelector'
-import ManageWelcomeCard from '../../components/ManageWelcomeCard'
-import ModifierForm from '../../components/ModifierForm'
-import StyledDivider from '../../components/StyledDivider'
+import CategoryForm from '../components/CategoryForm'
+import ExerciseForm from '../components/ExerciseForm'
+import { CategorySelector } from '../components/form-fields/selectors/CategorySelector'
+import { ExerciseSelector } from '../components/form-fields/selectors/ExerciseSelector'
+import { ModifierSelector } from '../components/form-fields/selectors/ModifierSelector'
+import ManageWelcomeCard from '../components/ManageWelcomeCard'
+import ModifierForm from '../components/ModifierForm'
+import StyledDivider from '../components/StyledDivider'
 import {
   updateExerciseField,
   useCategories,
   useExercises,
   useModifiers,
-} from '../../lib/frontend/restService'
-import Category from '../../models/Category'
-import Exercise from '../../models/Exercise'
-import Modifier from '../../models/Modifier'
+} from '../lib/frontend/restService'
+import Category from '../models/Category'
+import Exercise from '../models/Exercise'
+import Modifier from '../models/Modifier'
 
 // todo: disable form stuff when no changes
 // todo: ui element showing "changes saved". Snackbar?
 // todo: add/delete exercise. Delete only for unused exercises?
-// todo: filter exercise list by status?
-export default function ManageExercisesPage() {
+export default function ManagePage() {
   const { exercises, mutate: mutateExercises } = useExercises({})
   const { modifiers, mutate: mutateModifiers } = useModifiers()
   const { categories, mutate: mutateCategories } = useCategories()
@@ -38,7 +37,7 @@ export default function ManageExercisesPage() {
   ]
 
   // todo: move inside form, and only have a watcher here for new values
-  const handleUpdate = <T extends keyof Exercise>(
+  const handleUpdateExercise = <T extends keyof Exercise>(
     field: T,
     value: Exercise[T]
   ) => {
@@ -73,7 +72,7 @@ export default function ManageExercisesPage() {
     switch (tabValue) {
       case 0:
         return exercise ? (
-          <ExerciseForm {...{ exercise, handleUpdate }} />
+          <ExerciseForm {...{ exercise, handleUpdate: handleUpdateExercise }} />
         ) : (
           <ManageWelcomeCard />
         )
