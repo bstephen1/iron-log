@@ -19,7 +19,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
   return function ({ exercise, exercises, ...props }: WithExerciseProps) {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
-    const [category, setCategory] = useState<Category | null>(null)
+    const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
 
     // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
     class ExerciseStub implements NamedStub {
@@ -30,6 +30,17 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         this.status = 'Add New'
       }
     }
+
+    // todo: null out category if selecting something that's not in the category?
+    // todo: on clicking category chip in form, setCategory to that value?
+    const filterCategories = (exercise: Exercise, inputValue: string) => {
+      return (
+        !categoryFilter ||
+        exercise.name === inputValue || // if you filter out an exercise you can still type it in manually
+        exercise.categories.some((category) => category === categoryFilter.name)
+      )
+    }
+
     return (
       <Component
         {...props}
@@ -43,7 +54,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         label="Exercise"
         groupBy={(option) => option.status}
         placeholder="Select or Add an Exercise"
-        categoryFilter={category}
+        filterCustom={filterCategories}
         StubConstructor={ExerciseStub}
         Constructor={Exercise}
         addNewItem={addExercise}
@@ -51,7 +62,9 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         // todo: anchor to the bottom of the input?
         // todo: any way to get label to offset and not shrink with startAdornment? Not officially supported by mui bc "too hard" apparently. Is placeholder an ok comrpromise?
         startAdornment={
-          <CategoryFilter {...{ categories, category, setCategory }} />
+          <CategoryFilter
+            {...{ categories, categoryFilter, setCategoryFilter }}
+          />
         }
       />
     )

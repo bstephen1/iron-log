@@ -2,7 +2,6 @@ import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
 import { useMemo } from 'react'
 import { KeyedMutator } from 'swr'
 import { GenericAutocompleteProps } from '../../../lib/util'
-import Category from '../../../models/Category'
 import { NamedObject, NamedStub } from '../../../models/NamedObject'
 
 export interface SelectorBaseProps<C, S>
@@ -10,8 +9,8 @@ export interface SelectorBaseProps<C, S>
   // Any explicitly given AutocompleteProps will override the defaults
   extends Partial<GenericAutocompleteProps<C | S>> {
   label?: string
+  filterCustom?: (value: C, inputValue: string) => boolean
   handleChange: (value: C | null) => void
-  categoryFilter?: Category | null
   mutate: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
   Constructor: new (name: string) => C
@@ -26,9 +25,9 @@ export interface SelectorBaseProps<C, S>
 export default function SelectorBase<C extends NamedObject>({
   // value,
   label,
+  filterCustom,
   handleChange,
   options, // todo: these should be part of autocompleteProps
-  categoryFilter,
   mutate,
   StubConstructor,
   Constructor,
@@ -64,26 +63,18 @@ export default function SelectorBase<C extends NamedObject>({
           handleChange(option)
         }
       }}
-      // was going to pull this out to a separate function but the param type definitions are long and annoying
       filterOptions={(options, params) => {
         const { inputValue } = params
         let filtered = filter(options, params)
 
-        // todo: this is really specific to Exercise, but needs inputValue
-        if (categoryFilter) {
-          filtered = filtered.filter((option) => {
-            return (
-              // todo: null out category if selecting something that's not in the category?
-              // todo: on clicking category chip in form, setCategory to that value?
-              option.name === inputValue || // if you filter out an exercise you can still type it in manually
-              option.categories.some(
-                (category) => category === categoryFilter.name
-              )
-            )
-          })
+        if (filterCustom) {
+          // this is called before NamedStub is appended to list so we must assert it's type C
+          filtered = filtered.filter((value) =>
+            filterCustom(value as C, inputValue)
+          )
         }
 
-        // append an option to add the current input
+        // append the "add new" Stub end of list
         const isExisting = options.some((option) => inputValue === option.name)
         if (inputValue && !isExisting) {
           filtered.push(new StubConstructor(inputValue))

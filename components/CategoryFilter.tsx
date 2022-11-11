@@ -11,13 +11,13 @@ import Category from '../models/Category'
 interface Props {
   anchorEl?: HTMLElement
   categories?: Category[]
-  category: Category | null
-  setCategory: Dispatch<SetStateAction<Category | null>>
+  categoryFilter: Category | null
+  setCategoryFilter: Dispatch<SetStateAction<Category | null>>
 }
 export default function CategoryFilter({
   categories,
-  category,
-  setCategory,
+  categoryFilter,
+  setCategoryFilter,
   ...props
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -33,11 +33,11 @@ export default function CategoryFilter({
 
   return (
     <>
-      {!!category ? (
+      {!!categoryFilter ? (
         <Chip
-          label={category.name}
+          label={categoryFilter.name}
           onClick={handleOpen}
-          onDelete={() => setCategory(null)}
+          onDelete={() => setCategoryFilter(null)}
         />
       ) : (
         <Tooltip title="Select Category">
@@ -63,7 +63,7 @@ export default function CategoryFilter({
               value={category.name}
               // for some reason e.target.value is NOT returning the value, even though it is visible in e.target
               onClick={(_) => {
-                setCategory(category)
+                setCategoryFilter(category)
                 setAnchorEl(null)
               }}
             >
