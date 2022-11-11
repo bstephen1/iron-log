@@ -54,6 +54,7 @@ export default function ManagePage() {
     setExercise(newExercise)
   }
 
+  // todo: update these to be {[field]: value} like backend
   const handleModifierUpdate = <T extends keyof Modifier>(
     field: T,
     value: Modifier[T]
@@ -61,11 +62,9 @@ export default function ManagePage() {
     const newModifier = { ...modifier, [field]: value }
   }
 
-  const handleCategoryUpdate = <T extends keyof Category>(
-    field: T,
-    value: Category[T]
-  ) => {
-    const newCategory = { ...category, [field]: value }
+  const handleCategoryUpdate = (updates: Partial<Category>) => {
+    const newCategory = { ...category, ...updates }
+    console.log(newCategory)
   }
 
   const renderForm = () => {

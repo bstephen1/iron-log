@@ -8,7 +8,7 @@ import InputField from './form-fields/InputField'
 
 interface Props {
   category: Category
-  handleUpdate: <T extends keyof Category>(field: T, value: Category[T]) => void
+  handleUpdate: (updates: Partial<Category>) => void
 }
 export default function CategoryForm({ category, handleUpdate }: Props) {
   const { exercises } = useExercises({})
@@ -53,7 +53,7 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
             label="Name"
             initialValue={category.name}
             required
-            handleSubmit={(value) => handleUpdate('name', value)}
+            handleSubmit={(value) => handleUpdate({ name: value })}
             yupValidator={yup.reach(validationSchema, 'name')}
           />
         </Stack>
