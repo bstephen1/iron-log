@@ -4,7 +4,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { ComponentPropsWithoutRef, ComponentType, useState } from 'react'
+import { ComponentType, useState } from 'react'
 
 /*
  * HOC to add async loading state to an Autocomplete.
@@ -23,7 +23,6 @@ import { ComponentPropsWithoutRef, ComponentType, useState } from 'react'
  *
  */
 
-// todo: should this be somehow ComponentType<T> or similar?
 interface WithAsyncProps {
   label?: string
   startAdornment?: JSX.Element
@@ -32,27 +31,26 @@ interface WithAsyncProps {
   // a few textFieldProps are extracted for convenience, but others can be added here
   textFieldProps?: TextFieldProps
 }
-// unfortunately seems like <any> is required here. That or some esotaric ts wrangling.
-// The componentType should be an extension of autocomplete, and withAsync needs to know the
-// baseComponentProps' type so it can pass those off as required to whatever is calling withAsync.
-export default function withAsync<T extends ComponentType<any>>(Component: T) {
+// T here is the type of the base component's props. Eg, T = SelectorBaseProps<Exercise, NamedStub>
+// ts aggressively nags that "options" is missing. Manually extending it like this is clunky, but works.
+export default function withAsync<T extends { options?: unknown[] }>(
+  Component: ComponentType<T>
+) {
   return function ({
     label,
     startAdornment,
     placeholder,
-    variant = 'outlined',
+    variant,
     textFieldProps,
     ...baseComponentProps
-  }: WithAsyncProps & ComponentPropsWithoutRef<T>) {
+  }: WithAsyncProps & T) {
     const [open, setOpen] = useState(false)
     const loading = open && !baseComponentProps.options
 
     return (
       <Component
-        // This also has to be any, probably related to the ComponentType being any.
-        // But it really is strictly the baseComponentProps, as seen by all the
-        // withAsync-specific props being omitted.
-        {...(baseComponentProps as any)}
+        // This must match up with what Component is expecting, so we have to assure TS it's really type T
+        {...(baseComponentProps as T)}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         loading={loading}
