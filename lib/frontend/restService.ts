@@ -140,15 +140,13 @@ export async function updateExerciseField<T extends keyof Exercise>(
   }).catch((e) => console.error(e))
 }
 
-// todo: make this {[field]: value} instead of 2 args?
-export async function updateRecordField<T extends keyof Record>(
+export async function updateRecordFields(
   id: Record['_id'],
-  field: T,
-  value: Record[T]
+  updates: Partial<Record>
 ) {
   fetch(URI_RECORDS + id, {
     method: 'PATCH',
-    body: JSON.stringify({ id, field, value }),
+    body: JSON.stringify({ id, updates }),
   }).catch((e) => console.error(e))
 }
 

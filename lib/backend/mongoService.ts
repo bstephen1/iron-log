@@ -86,17 +86,15 @@ export async function updateRecord(record: Record) {
   })
 }
 
-interface updateRecordFieldProps<T extends keyof Record> {
+interface updateRecordFieldProps {
   id: Record['_id']
-  field: T
-  value: Record[T] | any
+  updates: Partial<Record>
 }
-export async function updateRecordField<T extends keyof Record>({
+export async function updateRecordFields({
   id,
-  field,
-  value,
-}: updateRecordFieldProps<T>) {
-  return await records.updateOne({ _id: id }, { $set: { [field]: value } })
+  updates,
+}: updateRecordFieldProps) {
+  return await records.updateOne({ _id: id }, { $set: updates })
 }
 
 //----------

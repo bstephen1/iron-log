@@ -3,7 +3,7 @@
 import { Box, Button, Card, CardActions, CardContent } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import {
-  updateRecordField,
+  updateRecordFields,
   useExercises,
   useRecord,
 } from '../../lib/frontend/restService'
@@ -44,7 +44,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
     const last = sets[sets.length - 1] ?? { primary: 0, secondary: 0 }
     // todo: init first set, and possibly have different behavior when adding different types of sets?
     const newSet = { ...last, effort: undefined }
-    updateRecordField(_id, `sets.${sets.length}`, newSet)
+    updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
     mutateRecord({ ...record, sets: sets.concat(newSet) })
   }
 
@@ -52,25 +52,27 @@ export default function RecordInput({ id, deleteRecord }: Props) {
     field: T,
     value: Record[T]
   ) => {
-    updateRecordField(_id, field, value)
+    updateRecordFields(_id, { [field]: value })
     mutateRecord({ ...record, [field]: value })
   }
 
   const handleSetChange = (setField, value, i) => {
-    updateRecordField(_id, `sets.${i}.${setField}`, value)
+    updateRecordFields(_id, { [`sets.${i}.${setField}`]: value })
     const newSets = [...record.sets]
     newSets[i][setField] = value
     mutateRecord({ ...record, sets: newSets })
   }
 
   const handleExerciseChange = (newExercise: Exercise | null) => {
+    // if an exercise changes, discard any modifiers that are not valid for the new exercise
     const remainingModifiers = activeModifiers.filter((modifier) =>
       newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
 
-    // todo: should be able to update multiple fields at once
-    updateRecordField(_id, 'exercise', newExercise)
-    updateRecordField(_id, 'activeModifiers', remainingModifiers)
+    updateRecordFields(_id, {
+      exercise: newExercise,
+      activeModifiers: remainingModifiers,
+    })
     mutateRecord({
       ...record,
       exercise: newExercise,

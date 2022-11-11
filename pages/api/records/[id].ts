@@ -3,7 +3,7 @@ import {
   addRecord,
   fetchRecord,
   updateRecord,
-  updateRecordField,
+  updateRecordFields,
 } from '../../../lib/backend/mongoService'
 
 export default async function handler(
@@ -52,7 +52,7 @@ export default async function handler(
       }
     case 'PATCH':
       try {
-        await updateRecordField(JSON.parse(req.body))
+        await updateRecordFields(JSON.parse(req.body))
         res.status(200).end()
       } catch (e) {
         console.error(e)
