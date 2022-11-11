@@ -13,7 +13,12 @@ interface WithModifierProps {
   handleChange: Dispatch<SetStateAction<Modifier | null>>
 }
 function withModifier(Component: typeof SelectorBase<Modifier>) {
-  return function ({ modifiers, modifier, ...props }: WithModifierProps) {
+  return function ({
+    modifiers,
+    modifier,
+    mutate,
+    ...props
+  }: WithModifierProps) {
     class NewModifierStub implements NamedStub {
       constructor(public name: string, public status = 'Add New') {}
     }
@@ -22,6 +27,7 @@ function withModifier(Component: typeof SelectorBase<Modifier>) {
       <Component
         {...props}
         options={modifiers}
+        mutateOptions={mutate}
         value={modifier}
         label="Modifier"
         // todo: do we want modifiers to have status?

@@ -19,8 +19,10 @@ interface Props {
   deleteRecord: (id: string) => void
 }
 export default function RecordInput({ id, deleteRecord }: Props) {
-  const { record, isError, mutate } = useRecord(id)
-  const { exercises } = useExercises({ status: ExerciseStatus.ACTIVE }) // SWR caches this, so it won't need to call the API every render
+  const { record, isError, mutate: mutateRecord } = useRecord(id)
+  const { exercises, mutate: mutateExercises } = useExercises({
+    status: ExerciseStatus.ACTIVE,
+  }) // SWR caches this, so it won't need to call the API every render
 
   if (isError) {
     console.error('Could not fetch record!')
@@ -40,7 +42,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
     // todo: init first set, and possibly have different behavior when adding different types of sets?
     const newSet = { ...last, effort: undefined }
     updateRecordField(_id, `sets.${sets.length}`, newSet)
-    mutate({ ...record, sets: sets.concat(newSet) })
+    mutateRecord({ ...record, sets: sets.concat(newSet) })
   }
 
   const handleFieldChange = <T extends keyof Record>(
@@ -48,25 +50,25 @@ export default function RecordInput({ id, deleteRecord }: Props) {
     value: Record[T]
   ) => {
     updateRecordField(_id, field, value)
-    mutate({ ...record, [field]: value })
+    mutateRecord({ ...record, [field]: value })
   }
 
   const handleSetChange = (setField, value, i) => {
     updateRecordField(_id, `sets.${i}.${setField}`, value)
     const newSets = [...record.sets]
     newSets[i][setField] = value
-    mutate({ ...record, sets: newSets })
+    mutateRecord({ ...record, sets: newSets })
   }
 
-  const handleExerciseChange = (newExercise: Exercise) => {
+  const handleExerciseChange = (newExercise: Exercise | null) => {
     const remainingModifiers = activeModifiers.filter((modifier) =>
-      newExercise.modifiers.some((exercise) => exercise === modifier)
+      newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
-    console.log(newExercise)
-    console.log(remainingModifiers)
+
+    // todo: should be able to update multiple fields at once
     updateRecordField(_id, 'exercise', newExercise)
     updateRecordField(_id, 'activeModifiers', remainingModifiers)
-    mutate({
+    mutateRecord({
       ...record,
       exercise: newExercise,
       activeModifiers: remainingModifiers,
@@ -88,6 +90,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
                 exercise,
                 exercises,
                 handleChange: handleExerciseChange,
+                mutate: mutateExercises,
               }}
             />
           </Grid>
@@ -104,10 +107,10 @@ export default function RecordInput({ id, deleteRecord }: Props) {
           <Grid xs={12} md={6}>
             <ComboBoxField
               label="Modifiers"
-              options={exercise.modifiers}
+              options={exercise?.modifiers}
               initialValue={activeModifiers}
               variant="standard"
-              go={(value: string[]) =>
+              handleSubmit={(value: string[]) =>
                 handleFieldChange('activeModifiers', value)
               }
             />

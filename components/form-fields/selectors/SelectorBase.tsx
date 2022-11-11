@@ -11,7 +11,7 @@ export interface SelectorBaseProps<C, S>
   label?: string
   filterCustom?: (value: C, inputValue: string) => boolean
   handleChange: (value: C | null) => void
-  mutate: KeyedMutator<C[]>
+  mutateOptions: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
   Constructor: new (name: string) => C
   // function to add new C (created from stub) to db
@@ -28,7 +28,7 @@ export default function SelectorBase<C extends NamedObject>({
   filterCustom,
   handleChange,
   options, // todo: these should be part of autocompleteProps
-  mutate,
+  mutateOptions,
   StubConstructor,
   Constructor,
   addNewItem,
@@ -56,13 +56,14 @@ export default function SelectorBase<C extends NamedObject>({
         // add the new item if selected
         if (option && !('_id' in option)) {
           const newItem = new Constructor(option.name)
-          mutate(options?.concat(newItem))
+          mutateOptions(options?.concat(newItem))
           addNewItem(newItem)
           handleChange(newItem)
         } else {
           handleChange(option)
         }
       }}
+      // todo: extract Add New to yet another HOC? Can add to ComboBoxField
       filterOptions={(options, params) => {
         const { inputValue } = params
         let filtered = filter(options, params)

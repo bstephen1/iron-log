@@ -24,7 +24,7 @@ import Modifier from '../../models/Modifier'
 // todo: add/delete exercise. Delete only for unused exercises?
 // todo: filter exercise list by status?
 export default function ManageExercisesPage() {
-  const { exercises, mutate } = useExercises({})
+  const { exercises, mutate: mutateExercises } = useExercises({})
   const { modifiers, mutate: mutateModifiers } = useModifiers()
   const { categories, mutate: mutateCategories } = useCategories()
   const [exercise, setExercise] = useState<Exercise | null>(null)
@@ -51,7 +51,7 @@ export default function ManageExercisesPage() {
     const newExercises = exercises?.map((exercise) =>
       exercise._id === newExercise._id ? newExercise : exercise
     )
-    mutate(newExercises)
+    mutateExercises(newExercises)
     setExercise(newExercise)
   }
 
@@ -115,7 +115,7 @@ export default function ManageExercisesPage() {
               exercise,
               handleChange: setExercise,
               exercises,
-              mutate,
+              mutate: mutateExercises,
             }}
           />
         )}

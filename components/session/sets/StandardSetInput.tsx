@@ -1,3 +1,5 @@
+// @ts-nocheck
+// todo: Set structure is still under construction
 import { Box, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import StandardSet from '../../../models/sets/StandardSet'

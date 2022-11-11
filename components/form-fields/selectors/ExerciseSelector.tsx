@@ -1,3 +1,4 @@
+import { TextFieldProps } from '@mui/material'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
@@ -14,9 +15,15 @@ interface WithExerciseProps {
   handleChange: (value: Exercise | null) => void
   exercises: Exercise[] | undefined
   mutate: KeyedMutator<Exercise[]>
+  variant?: TextFieldProps['variant']
 }
 function withExercise(Component: typeof SelectorBase<Exercise>) {
-  return function ({ exercise, exercises, ...props }: WithExerciseProps) {
+  return function ({
+    exercise,
+    exercises,
+    mutate,
+    ...props
+  }: WithExerciseProps) {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
     const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
@@ -45,6 +52,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
       <Component
         {...props}
         value={exercise}
+        mutateOptions={mutate}
         options={
           exercises?.sort(
             (a, b) =>

@@ -14,7 +14,7 @@ export const ComboBoxField = withAsync(ComboBoxFieldBase)
 
 interface ComboBoxFieldProps
   extends Partial<AutocompleteProps<string, true, false, false>> {
-  options: string[]
+  options?: string[]
   initialValue: string[]
   handleSubmit: (value: string[]) => void
   onClose?: () => void
@@ -22,7 +22,7 @@ interface ComboBoxFieldProps
 }
 // todo: doesn't send to db if clicking X on chips
 function ComboBoxFieldBase({
-  options,
+  options = [],
   initialValue,
   handleSubmit,
   onClose,
