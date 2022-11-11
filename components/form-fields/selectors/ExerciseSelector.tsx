@@ -2,6 +2,7 @@ import { TextFieldProps } from '@mui/material'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
+import { GenericAutocompleteProps } from '../../../lib/util'
 import Category from '../../../models/Category'
 import Exercise from '../../../models/Exercise'
 import { ExerciseStatusOrder } from '../../../models/ExerciseStatus'
@@ -10,7 +11,8 @@ import CategoryFilter from '../../CategoryFilter'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
 
-interface WithExerciseProps {
+interface WithExerciseProps
+  extends Partial<GenericAutocompleteProps<Exercise | NamedStub>> {
   exercise: Exercise | null
   handleChange: (value: Exercise | null) => void
   exercises: Exercise[] | undefined

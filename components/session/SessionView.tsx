@@ -21,7 +21,9 @@ import TitleBar from './TitleBar'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const { session, isError, mutate } = useSession(date)
-  const { exercises } = useExercises({ status: ExerciseStatus.ACTIVE }) // SWR caches this, so it won't need to call the API every render
+  const { exercises, mutate: mutateExercises } = useExercises({
+    status: ExerciseStatus.ACTIVE,
+  }) // SWR caches this, so it won't need to call the API every render
   const [exercise, setExercise] = useState<Exercise | null>(null)
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
   // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
@@ -48,10 +50,13 @@ export default function SessionView({ date }: { date: Dayjs }) {
       : new Session(date.format(DATE_FORMAT), [record._id])
     updateSession(newSession)
     mutate(newSession)
+    setExercise(null)
   }
 
-  const handleDeleteRecord = (idToDelete) => {
-    const newRecords = session?.records.filter((id) => id !== idToDelete)
+  const handleDeleteRecord = (idToDelete: string) => {
+    if (!session) return // can't delete from a nonexistant session
+
+    const newRecords = session.records.filter((id) => id !== idToDelete)
     updateSession({ ...session, records: newRecords })
     mutate({ ...session, records: newRecords })
   }
@@ -90,6 +95,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                   exercise,
                   exercises,
                   handleChange: (newExercise) => setExercise(newExercise),
+                  mutate: mutateExercises,
                 }}
               />
               <Button

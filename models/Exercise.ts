@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid'
 import { ExerciseStatus } from './ExerciseStatus'
 import { NamedObject } from './NamedObject'
 
+// todo: add activeCategory (for programming)
 export default class Exercise extends NamedObject {
   constructor(
     public name: string,

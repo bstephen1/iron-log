@@ -1,3 +1,5 @@
+// @ts-nocheck
+// todo: ignoring Set typing issues for now
 import { Box, Button, Card, CardActions, CardContent } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import {
@@ -34,6 +36,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
     return <></>
   }
 
+  // todo: when exercise is null'd the record doesn't show (still exists in db)
   // define after null checks so record must exist
   const { exercise, type, activeModifiers, sets, _id } = record
 
