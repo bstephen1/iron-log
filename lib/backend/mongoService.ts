@@ -16,19 +16,6 @@ const modifiers = db.collection<Modifier>('modifiers')
 const categories = db.collection<Category>('categories')
 const records = db.collection<Record>('records')
 
-// todo: can use toArray() for iterators instead of pushing
-async function fetchCollection<T extends Document>(
-  collection: Collection<T>,
-  constraints: Filter<T> = {}
-) {
-  // we need to construct the array because find() returns a cursor
-  let documents: WithId<T>[] = []
-  await collection.find(constraints).forEach((document) => {
-    documents.push(document)
-  })
-  return documents
-}
-
 interface updateFieldsProps<T extends { _id: string }> {
   id: T['_id']
   updates: Partial<T>
@@ -64,6 +51,7 @@ export async function addRecord(record: Record) {
 
 // todo: pagination
 export async function fetchRecords(filter?: Filter<Record>) {
+  // find() returns a cursor, so it has to be converted to an array
   return await records.find({ ...filter }).toArray()
 }
 
@@ -108,7 +96,7 @@ export async function addExercise(exercise: Exercise) {
 }
 
 export async function fetchExercises(filter?: Filter<Exercise>) {
-  return await fetchCollection(exercises, filter)
+  return await exercises.find({ ...filter }).toArray()
 }
 
 export async function fetchExercise(id: string) {
@@ -138,7 +126,7 @@ export async function addModifier(modifier: Modifier) {
 }
 
 export async function fetchModifiers(filter?: Filter<Modifier>) {
-  return await fetchCollection(modifiers, filter)
+  return await modifiers.find({ ...filter }).toArray()
 }
 
 export async function fetchModifier(name: string) {
@@ -168,7 +156,7 @@ export async function addCategory(category: Category) {
 }
 
 export async function fetchCategories(filter?: Filter<Category>) {
-  return await fetchCollection(categories, filter)
+  return await categories.find({ ...filter }).toArray()
 }
 
 export async function fetchCategory(name: string) {
