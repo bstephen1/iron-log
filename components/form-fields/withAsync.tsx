@@ -5,6 +5,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import { ComponentType, useState } from 'react'
+import { AutocompletePropsAny } from '../../lib/util'
 
 /*
  * HOC to add async loading state to an Autocomplete.
@@ -32,8 +33,9 @@ interface WithAsyncProps {
   textFieldProps?: TextFieldProps
 }
 // T here is the type of the base component's props. Eg, T = SelectorBaseProps<Exercise, NamedStub>
-// ts aggressively nags that "options" is missing. Manually extending it like this is clunky, but works.
-export default function withAsync<T extends { options?: unknown[] }>(
+// ts aggressively complains that "options" is missing. Searched for a way to get the generic signature
+// out of T to pass to AutocompleteProps instead of any, but couldn't find a way to do it.
+export default function withAsync<T extends Partial<AutocompletePropsAny>>(
   Component: ComponentType<T>
 ) {
   return function ({

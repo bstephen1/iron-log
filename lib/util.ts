@@ -1,4 +1,4 @@
-import { AutocompleteProps } from '@mui/material'
+import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
 import { v4 as uuid } from 'uuid'
 
 // manually create a globally unique id across all tables. This should be used for ALL new records.
@@ -11,3 +11,12 @@ export function generateId() {
 // shortcut interface to bypass AutocompleteProps' unwieldy generic type
 export interface GenericAutocompleteProps<T>
   extends AutocompleteProps<T, undefined, undefined, undefined> {}
+
+// With AutocompleteProps only "any" works, but with UseAutocompleteProps we can say boolean | undefined.
+export interface AutocompletePropsAny
+  extends UseAutocompleteProps<
+    any,
+    boolean | undefined,
+    boolean | undefined,
+    boolean | undefined
+  > {}
