@@ -10,7 +10,7 @@ import ManageWelcomeCard from '../components/ManageWelcomeCard'
 import ModifierForm from '../components/ModifierForm'
 import StyledDivider from '../components/StyledDivider'
 import {
-  updateExerciseField,
+  updateExerciseFields,
   useCategories,
   useExercises,
   useModifiers,
@@ -45,7 +45,7 @@ export default function ManagePage() {
 
     console.log(`updating ${field}: ${value}`)
     const newExercise = { ...exercise, [field]: value }
-    updateExerciseField(exercise, field, value)
+    updateExerciseFields(exercise, { [field]: value })
     // todo: not sure I like this... can we just mutate the selected exercise?
     const newExercises = exercises?.map((exercise) =>
       exercise._id === newExercise._id ? newExercise : exercise

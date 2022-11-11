@@ -3,7 +3,7 @@ import {
   addExercise,
   fetchExercise,
   updateExercise,
-  updateExerciseField,
+  updateExerciseFields,
 } from '../../../lib/backend/mongoService'
 
 export default async function handler(
@@ -54,7 +54,7 @@ export default async function handler(
       }
     case 'PATCH':
       try {
-        await updateExerciseField(JSON.parse(req.body))
+        await updateExerciseFields(JSON.parse(req.body))
         res.status(200).end()
       } catch (e) {
         console.error(e)

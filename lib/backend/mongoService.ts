@@ -29,6 +29,11 @@ async function fetchCollection<T extends Document>(
   return documents
 }
 
+interface updateFieldsProps<T extends { _id: string }> {
+  id: T['_id']
+  updates: Partial<T>
+}
+
 //---------
 // SESSION
 //---------
@@ -46,6 +51,8 @@ export async function updateSession(session: Session) {
     upsert: true,
   })
 }
+
+// todo: fetch sessions in date range
 
 //--------
 // RECORD
@@ -86,14 +93,10 @@ export async function updateRecord(record: Record) {
   })
 }
 
-interface updateRecordFieldProps {
-  id: Record['_id']
-  updates: Partial<Record>
-}
 export async function updateRecordFields({
   id,
   updates,
-}: updateRecordFieldProps) {
+}: updateFieldsProps<Record>) {
   return await records.updateOne({ _id: id }, { $set: updates })
 }
 
@@ -120,17 +123,11 @@ export async function updateExercise(exercise: Exercise) {
   })
 }
 
-interface updateExerciseFieldProps<T extends keyof Exercise> {
-  id: Exercise['_id']
-  field: T
-  value: Exercise[T] | any // todo $set is complaining bc it adds fields for each array index
-}
-export async function updateExerciseField<T extends keyof Exercise>({
+export async function updateExerciseFields({
   id,
-  field,
-  value,
-}: updateExerciseFieldProps<T>) {
-  return await exercises.updateOne({ _id: id }, { $set: { [field]: value } })
+  updates,
+}: updateFieldsProps<Exercise>) {
+  return await exercises.updateOne({ _id: id }, { $set: updates })
 }
 
 //----------
@@ -156,6 +153,13 @@ export async function updateModifier(modifier: Modifier) {
   })
 }
 
+export async function updateModifierFields({
+  id,
+  updates,
+}: updateFieldsProps<Modifier>) {
+  return await modifiers.updateOne({ _id: id }, { $set: updates })
+}
+
 //----------
 // CATEGORY
 //----------
@@ -176,8 +180,14 @@ export async function fetchCategory(name: string) {
 }
 
 export async function updateCategory(category: Category) {
-  // upsert creates a new record if it couldn't find one to update
   return await categories.replaceOne({ _id: category._id }, category, {
     upsert: true,
   })
+}
+
+export async function updateCategoryFields({
+  id,
+  updates,
+}: updateFieldsProps<Category>) {
+  return await categories.updateOne({ _id: id }, { $set: updates })
 }
