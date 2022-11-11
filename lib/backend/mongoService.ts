@@ -62,9 +62,8 @@ export async function addRecord(record: Record) {
   return await records.insertOne(record)
 }
 
-// todo: aggregate doesn't work with Filter
+// todo: pagination
 export async function fetchRecords(filter?: Filter<Record>) {
-  // replace exercise ID with full exercise
   return await records.find({ ...filter }).toArray()
 }
 
