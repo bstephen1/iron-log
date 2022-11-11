@@ -1,4 +1,4 @@
-import { Collection, Document, Filter, MongoClient, WithId } from 'mongodb'
+import { Filter, MongoClient } from 'mongodb'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
