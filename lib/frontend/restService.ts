@@ -10,6 +10,10 @@ import { DATE_FORMAT } from './constants'
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json())
 
+//---------
+// SESSION
+//---------
+
 export function useSession(date: Dayjs) {
   const { data, error, mutate } = useSWR<Session>(
     URI_SESSIONS + date.format(DATE_FORMAT),
@@ -22,6 +26,55 @@ export function useSession(date: Dayjs) {
     mutate: mutate,
   }
 }
+
+export async function addSession(session: Session) {
+  fetch(URI_SESSIONS + session.date, {
+    method: 'POST',
+    body: JSON.stringify(session),
+  }).catch((e) => console.error(e))
+}
+
+export async function updateSession(newSesson: Session) {
+  fetch(URI_SESSIONS + newSesson.date, {
+    method: 'PUT',
+    body: JSON.stringify(newSesson),
+  }).catch((e) => console.error(e))
+}
+
+//--------
+// RECORD
+//--------
+
+export function useRecord(id: Record['_id']) {
+  const { data, error, mutate } = useSWR<Record>(URI_RECORDS + id, fetcher)
+
+  return {
+    record: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
+export async function addRecord(newRecord: Record) {
+  fetch(URI_RECORDS + newRecord._id, {
+    method: 'POST',
+    body: JSON.stringify(newRecord),
+  }).catch((e) => console.error(e))
+}
+
+export async function updateRecordFields(
+  id: Record['_id'],
+  updates: Partial<Record>
+) {
+  fetch(URI_RECORDS + id, {
+    method: 'PATCH',
+    body: JSON.stringify({ id, updates }),
+  }).catch((e) => console.error(e))
+}
+
+//----------
+// EXERCISE
+//----------
 
 // todo: make params more robust
 export function useExercises({ status }: { status?: ExerciseStatus }) {
@@ -49,75 +102,10 @@ export function useExercise(id: Exercise['_id']) {
   }
 }
 
-export function useRecord(id: Record['_id']) {
-  const { data, error, mutate } = useSWR<Record>(URI_RECORDS + id, fetcher)
-
-  return {
-    record: data,
-    isError: error,
-    mutate: mutate,
-  }
-}
-
-export function useCategories() {
-  const { data, error, mutate } = useSWR<Category[]>(URI_CATEGORIES, fetcher)
-
-  return {
-    categories: data,
-    isError: error,
-    mutate: mutate,
-  }
-}
-
-export function useModifiers() {
-  const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS, fetcher)
-
-  return {
-    modifiers: data,
-    isError: error,
-    mutate: mutate,
-  }
-}
-
-export async function addModifier(newModifier: Modifier) {
-  fetch(URI_MODIFIERS + newModifier.name, {
-    method: 'POST',
-    body: JSON.stringify(newModifier),
-  }).catch((e) => console.error(e))
-}
-
-export async function addCategory(newCategory: Category) {
-  fetch(URI_CATEGORIES + newCategory.name, {
-    method: 'POST',
-    body: JSON.stringify(newCategory),
-  }).catch((e) => console.error(e))
-}
-
-export async function addSession(session: Session) {
-  fetch(URI_SESSIONS + session.date, {
-    method: 'POST',
-    body: JSON.stringify(session),
-  }).catch((e) => console.error(e))
-}
-
-export async function updateSession(newSesson: Session) {
-  fetch(URI_SESSIONS + newSesson.date, {
-    method: 'PUT',
-    body: JSON.stringify(newSesson),
-  }).catch((e) => console.error(e))
-}
-
 export async function addExercise(newExercise: Exercise) {
   fetch(URI_EXERCISES + newExercise.name, {
     method: 'POST',
     body: JSON.stringify(newExercise),
-  }).catch((e) => console.error(e))
-}
-
-export async function addRecord(newRecord: Record) {
-  fetch(URI_RECORDS + newRecord._id, {
-    method: 'POST',
-    body: JSON.stringify(newRecord),
   }).catch((e) => console.error(e))
 }
 
@@ -139,13 +127,24 @@ export async function updateExerciseFields(
   }).catch((e) => console.error(e))
 }
 
-export async function updateRecordFields(
-  id: Record['_id'],
-  updates: Partial<Record>
-) {
-  fetch(URI_RECORDS + id, {
-    method: 'PATCH',
-    body: JSON.stringify({ id, updates }),
+//----------
+// MODIFIER
+//----------
+
+export function useModifiers() {
+  const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS, fetcher)
+
+  return {
+    modifiers: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
+export async function addModifier(newModifier: Modifier) {
+  fetch(URI_MODIFIERS + newModifier.name, {
+    method: 'POST',
+    body: JSON.stringify(newModifier),
   }).catch((e) => console.error(e))
 }
 
@@ -155,6 +154,31 @@ export async function updateModifier(newModifier: Modifier) {
     body: JSON.stringify(newModifier),
   }).catch((e) => console.error(e))
 }
+
+//----------
+// CATEGORY
+//----------
+
+export function useCategories() {
+  const { data, error, mutate } = useSWR<Category[]>(URI_CATEGORIES, fetcher)
+
+  return {
+    categories: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
+export async function addCategory(newCategory: Category) {
+  fetch(URI_CATEGORIES + newCategory.name, {
+    method: 'POST',
+    body: JSON.stringify(newCategory),
+  }).catch((e) => console.error(e))
+}
+
+//------
+// URIS
+//------
 
 export const URI_SESSIONS = '/api/sessions/'
 export const URI_EXERCISES = '/api/exercises/'
