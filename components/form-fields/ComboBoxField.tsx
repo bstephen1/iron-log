@@ -13,7 +13,7 @@ import withAsync from './withAsync'
 export const ComboBoxField = withAsync(ComboBoxFieldBase)
 
 interface ComboBoxFieldProps
-  extends AutocompleteProps<string, true, false, false> {
+  extends Partial<AutocompleteProps<string, true, false, false>> {
   options: string[]
   initialValue: string[]
   handleSubmit: (value: string[]) => void
@@ -45,7 +45,8 @@ function ComboBoxFieldBase({
   return (
     <Autocomplete
       {...control()}
-      {...autocompleteProps}
+      // useless renderInput to satisfy ts. Overwritten by autocompleteProps
+      renderInput={(params) => <TextField {...params} />}
       onChange={(_, value) => setValue(value)}
       fullWidth
       // size="small"  // todo: use small sizes?
@@ -66,6 +67,7 @@ function ComboBoxFieldBase({
           {modifierName}
         </li>
       )}
+      {...autocompleteProps}
     />
   )
 }
