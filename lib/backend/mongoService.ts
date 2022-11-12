@@ -1,19 +1,10 @@
-import { Filter, MongoClient } from 'mongodb'
+import { Filter } from 'mongodb'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import Record from '../../models/Record'
 import Session from '../../models/Session'
-
-if (!process.env.DB_URI) {
-  console.error('DB_URI is undefined! Cannot connect to db!')
-} else if (!process.env.DB_NAME) {
-  console.error('DB_NAME is undefined! Cannot connect to db!')
-}
-
-const rawClient = new MongoClient(process.env.DB_URI || '')
-let client = await rawClient.connect()
-const db = client.db(process.env.DB_NAME)
+import db from './mongoConnect'
 
 const sessions = db.collection<Session>('sessions')
 const exercises = db.collection<Exercise>('exercises')
