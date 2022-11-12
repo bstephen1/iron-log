@@ -5,8 +5,13 @@ import Modifier from '../../models/Modifier'
 import Record from '../../models/Record'
 import Session from '../../models/Session'
 
-const uri = 'mongodb://localhost:27017'
-const rawClient = new MongoClient(uri)
+if (!process.env.DB_URI) {
+  console.error('DB_URI is undefined! Cannot connect to db!')
+} else if (!process.env.DB_NAME) {
+  console.error('DB_NAME is undefined! Cannot connect to db!')
+}
+
+const rawClient = new MongoClient(process.env.DB_URI || '')
 let client = await rawClient.connect()
 const db = client.db(process.env.DB_NAME)
 
