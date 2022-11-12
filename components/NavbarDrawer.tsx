@@ -19,7 +19,7 @@ export default function NavbarDrawer() {
             <Link href="/">Home</Link>
           </ListItem>
           <ListItem>
-            <Link href="/manage/exercises">Manage</Link>
+            <Link href="/manage">Manage</Link>
           </ListItem>
         </List>
       </Drawer>
