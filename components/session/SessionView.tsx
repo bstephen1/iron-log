@@ -74,6 +74,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
       <WeightUnitConverter />
       {/* todo: session only handles updating index order */}
       {/*  todo: loading */}
+      {/* todo: breakpoints. sm => hide navigation; lg => ~3 slidesPerView */}
       {!isLoading && (
         <Swiper
           modules={[Navigation, Pagination, Scrollbar, A11y]}

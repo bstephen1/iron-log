@@ -98,7 +98,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
     <Card elevation={10}>
       <CardContent>
         <Grid container spacing={2} sx={{ pt: 2 }}>
-          <Grid xs={6} md={3}>
+          <Grid xs={12} sm={6}>
             <ExerciseSelector
               variant="standard"
               {...{
@@ -109,17 +109,18 @@ export default function RecordInput({ id, deleteRecord }: Props) {
               }}
             />
           </Grid>
-          <Grid xs={6} md={3}>
+          <Grid xs={12} sm={6}>
             <SelectFieldAutosave
               label="Set Type"
               initialValue={type}
               fullWidth
+              defaultHelperText=""
               variant="standard"
               options={Object.values(SetType)}
               handleSubmit={(value) => handleFieldChange('type', value)}
             />
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid xs={12}>
             <ComboBoxField
               label="Modifiers"
               options={exercise?.modifiers}
