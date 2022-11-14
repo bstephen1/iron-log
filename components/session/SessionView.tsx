@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material'
+import { Skeleton, Stack } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
@@ -72,36 +72,40 @@ export default function SessionView({ date }: { date: Dayjs }) {
       <Clock />
       <WeightUnitConverter />
       {/* todo: session only handles updating index order */}
-      <Swiper
-        modules={[Navigation, Pagination, Scrollbar, A11y]}
-        spaceBetween={80}
-        slidesPerView={1}
-        navigation
-        grabCursor
-        // loop
-        // todo: would be nice to have pagination ABOVE, so it doesn't change with varying Record size
-        autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
-        pagination={{
-          clickable: true,
-          // renderBullet: function (index, className) {
-          //   return '<span class="' + className + '">' + (index + 1) + '</span>'
-          // },
-        }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
-        style={{ padding: '50px' }}
-        // style={{ height: '800px' }}
-      >
-        {session &&
-          session.records.map((id) => (
-            <SwiperSlide key={id}>
-              <RecordInput id={id} deleteRecord={handleDeleteRecord} />
-            </SwiperSlide>
-          ))}
-        <SwiperSlide>
-          <AddRecord handleAdd={handleAddRecord} />
-        </SwiperSlide>
-      </Swiper>
+      {/*  todo: loading */}
+      {!isLoading && (
+        <Swiper
+          modules={[Navigation, Pagination, Scrollbar, A11y]}
+          spaceBetween={80}
+          slidesPerView={1}
+          navigation
+          grabCursor
+          // loop
+          // todo: would be nice to have pagination ABOVE, so it doesn't change with varying Record size
+          // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
+          pagination={{
+            clickable: true,
+            // todo: numbered list? Make last one AddIcon ?
+            renderBullet: function (index, className) {
+              return `<span class="${className}"></span>`
+            },
+          }}
+          onSwiper={(swiper) => console.log(swiper)}
+          onSlideChange={() => console.log('slide change')}
+          style={{ padding: '50px' }}
+          // style={{ height: '800px' }}
+        >
+          {session &&
+            session.records.map((id) => (
+              <SwiperSlide key={id}>
+                <RecordInput id={id} deleteRecord={handleDeleteRecord} />
+              </SwiperSlide>
+            ))}
+          <SwiperSlide>
+            <AddRecord handleAdd={handleAddRecord} />
+          </SwiperSlide>
+        </Swiper>
+      )}
     </Stack>
   )
 }

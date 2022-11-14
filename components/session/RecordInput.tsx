@@ -1,12 +1,13 @@
 // @ts-nocheck
 // todo: ignoring Set typing issues for now
-import { Box, Button, Card, CardActions, CardContent } from '@mui/material'
+import { Box, Button, Card, CardActions, CardContent, Fab } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import {
   updateRecordFields,
   useExercises,
   useRecord,
 } from '../../lib/frontend/restService'
+import AddIcon from '@mui/icons-material/Add'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
@@ -41,7 +42,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
   const { exercise, type, activeModifiers, sets, _id } = record
 
   const addSet = () => {
-    const last = sets[sets.length - 1] ?? { primary: 0, secondary: 0 }
+    const last = sets[sets.length - 1] ?? {}
     // todo: init first set, and possibly have different behavior when adding different types of sets?
     const newSet = { ...last, effort: undefined }
     updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
@@ -138,14 +139,17 @@ export default function RecordInput({ id, deleteRecord }: Props) {
         </Box>
       </CardContent>
       <CardActions
-        sx={{ display: 'flex', justifyContent: 'space-between', px: 2, pb: 2 }}
+        sx={{ display: 'flex', justifyContent: 'center', px: 2, pb: 2 }}
       >
-        <Button onClick={() => deleteRecord(_id)} color="error">
+        {/* <Button onClick={() => deleteRecord(_id)} color="error">
           Delete Record
-        </Button>
-        <Button onClick={addSet} variant="contained">
+        </Button> */}
+        {/* <Button onClick={addSet} variant="contained">
           Add Set
-        </Button>
+        </Button> */}
+        <Fab color="primary" onClick={addSet}>
+          <AddIcon />
+        </Fab>
       </CardActions>
     </Card>
   )
