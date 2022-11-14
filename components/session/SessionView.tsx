@@ -1,18 +1,14 @@
-import { Button, Paper, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 import { Dayjs } from 'dayjs'
-import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
   addRecord,
   updateSession,
-  useExercises,
   useSession,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
 import Session from '../../models/Session'
-import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import WeightUnitConverter from '../WeightUnitConverter'
 import Clock from './Clock'
 import RecordInput from './RecordInput'
