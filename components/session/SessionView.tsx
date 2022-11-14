@@ -1,5 +1,4 @@
 import { Button, Paper, Stack } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
 import { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
@@ -76,73 +75,61 @@ export default function SessionView({ date }: { date: Dayjs }) {
   // todo: compare with last of this day type
   // todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
   return (
-    <>
-      <Grid container spacing={2}>
-        <Grid>
-          <TitleBar date={date} />
-        </Grid>
-        <Grid>
-          <Clock />
-        </Grid>
-        <Grid>
-          <WeightUnitConverter />
-        </Grid>
-        {/* todo: session only handles updating index order */}
-        <Grid>
-          <Swiper
-            modules={[Navigation, Pagination, Scrollbar, A11y]}
-            spaceBetween={50}
-            slidesPerView={1}
-            navigation
-            grabCursor
-            loop
-            centeredSlides
-            pagination={{
-              clickable: true,
-              // renderBullet: function (index, className) {
-              //   return '<span class="' + className + '">' + (index + 1) + '</span>'
-              // },
-            }}
-            onSwiper={(swiper) => console.log(swiper)}
-            onSlideChange={() => console.log('slide change')}
-            // style={{ height: '800px' }}
-          >
-            {session &&
-              session.records.map((id) => (
-                <SwiperSlide key={id}>
-                  <RecordInput id={id} deleteRecord={handleDeleteRecord} />
-                </SwiperSlide>
-              ))}
-          </Swiper>
-        </Grid>
-        <Grid>
-          {/* maybe make this a card with CardHeader */}
+    <Stack spacing={2}>
+      <TitleBar date={date} />
+      <Clock />
+      <WeightUnitConverter />
+      {/* todo: session only handles updating index order */}
+      <Swiper
+        modules={[Navigation, Pagination, Scrollbar, A11y]}
+        spaceBetween={50}
+        slidesPerView={1}
+        navigation
+        grabCursor
+        loop
+        centeredSlides
+        pagination={{
+          clickable: true,
+          // renderBullet: function (index, className) {
+          //   return '<span class="' + className + '">' + (index + 1) + '</span>'
+          // },
+        }}
+        onSwiper={(swiper) => console.log(swiper)}
+        onSlideChange={() => console.log('slide change')}
+        // style={{ height: '800px' }}
+      >
+        {session &&
+          session.records.map((id) => (
+            <SwiperSlide key={id}>
+              <RecordInput id={id} deleteRecord={handleDeleteRecord} />
+            </SwiperSlide>
+          ))}
+      </Swiper>
+      {/* maybe make this a card with CardHeader */}
 
-          {!isLoading && (
-            <Paper elevation={3} sx={{ p: 2, my: 2 }}>
-              <Stack direction="row" spacing={2}>
-                <ExerciseSelector
-                  fullWidth
-                  variant="standard"
-                  {...{
-                    exercise,
-                    exercises,
-                    handleChange: (newExercise) => setExercise(newExercise),
-                    mutate: mutateExercises,
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  sx={{ width: 250 }}
-                  onClick={handleAddRecord}
-                >
-                  Add Exercise
-                </Button>
-              </Stack>
-            </Paper>
-          )}
-        </Grid>
-      </Grid>
-    </>
+      {!isLoading && (
+        <Paper elevation={3} sx={{ p: 2, my: 2 }}>
+          <Stack direction="row" spacing={2}>
+            <ExerciseSelector
+              fullWidth
+              variant="standard"
+              {...{
+                exercise,
+                exercises,
+                handleChange: (newExercise) => setExercise(newExercise),
+                mutate: mutateExercises,
+              }}
+            />
+            <Button
+              variant="contained"
+              sx={{ width: 250 }}
+              onClick={handleAddRecord}
+            >
+              Add Exercise
+            </Button>
+          </Stack>
+        </Paper>
+      )}
+    </Stack>
   )
 }
