@@ -80,7 +80,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
         grabCursor
         // loop
         // todo: would be nice to have pagination ABOVE, so it doesn't change with varying Record size
-        // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
+        autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
         pagination={{
           clickable: true,
           // renderBullet: function (index, className) {

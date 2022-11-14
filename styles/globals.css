@@ -28,15 +28,19 @@ input[type='number'] {
   appearance: textfield;
 }
 
-/* .swiper-pagination {
+/* todo: clean up styling, add add an opt-in class for this */
+/* currently this depends on having an ample top margin */
+.swiper-pagination {
 	position: absolute;
 	top: 10px;
-	right: 10px;
-	width: auto !important;
-	left: auto !important;
-	margin: 0;
+	/* right: 10px; */
+  height: 21px; /* need this or height will envelop the entire container, disabling interaction */
+  /* top: 2%; */
+	/* width: auto !important; */
+	/* left: auto !important; */
+	/* margin: 0; */
 }
-.swiper-pagination-bullet {
+/* .swiper-pagination-bullet {
 	padding: 5px 10px;
 	border-radius: 0;
 	width: auto;
