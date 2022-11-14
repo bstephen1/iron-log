@@ -77,31 +77,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
   // todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
   return (
     <>
-      <Swiper
-        modules={[Navigation, Pagination, Scrollbar, A11y]}
-        spaceBetween={50}
-        slidesPerView={1}
-        navigation
-        grabCursor
-        loop
-        centeredSlides
-        pagination={{
-          clickable: true,
-          // renderBullet: function (index, className) {
-          //   return '<span class="' + className + '">' + (index + 1) + '</span>'
-          // },
-        }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
-        // style={{ height: '400px' }}
-      >
-        {session &&
-          session.records.map((id) => (
-            <SwiperSlide key={id}>
-              <RecordInput id={id} deleteRecord={handleDeleteRecord} />
-            </SwiperSlide>
-          ))}
-      </Swiper>
       <Grid container spacing={2}>
         <Grid>
           <TitleBar date={date} />
@@ -113,7 +88,33 @@ export default function SessionView({ date }: { date: Dayjs }) {
           <WeightUnitConverter />
         </Grid>
         {/* todo: session only handles updating index order */}
-        <Grid></Grid>
+        <Grid>
+          <Swiper
+            modules={[Navigation, Pagination, Scrollbar, A11y]}
+            spaceBetween={50}
+            slidesPerView={1}
+            navigation
+            grabCursor
+            loop
+            centeredSlides
+            pagination={{
+              clickable: true,
+              // renderBullet: function (index, className) {
+              //   return '<span class="' + className + '">' + (index + 1) + '</span>'
+              // },
+            }}
+            onSwiper={(swiper) => console.log(swiper)}
+            onSlideChange={() => console.log('slide change')}
+            // style={{ height: '800px' }}
+          >
+            {session &&
+              session.records.map((id) => (
+                <SwiperSlide key={id}>
+                  <RecordInput id={id} deleteRecord={handleDeleteRecord} />
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        </Grid>
         <Grid>
           {/* maybe make this a card with CardHeader */}
 

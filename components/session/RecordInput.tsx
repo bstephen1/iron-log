@@ -85,7 +85,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
   // todo: add Category to Record so it persists
   return (
-    <Card elevation={10} sx={{ p: 7 }}>
+    <Card elevation={10} sx={{ mx: 7, mb: 5, mt: 3 }}>
       <CardContent>
         <Grid container spacing={2} sx={{ pt: 2 }}>
           <Grid xs={6} md={3}>

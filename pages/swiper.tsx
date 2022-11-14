@@ -4,6 +4,7 @@ import { A11y, Navigation, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 // Import Swiper styles
+import { Card } from '@mui/material'
 import 'swiper/css'
 import 'swiper/css/bundle'
 import 'swiper/css/effect-cards'
@@ -47,7 +48,9 @@ export default function SwiperDemo() {
     >
       {slides.map((text) => (
         <SwiperSlide key={text} style={centered}>
-          {text}
+          <Card elevation={10} sx={{ p: 1 }}>
+            {text}
+          </Card>
         </SwiperSlide>
       ))}
     </Swiper>
