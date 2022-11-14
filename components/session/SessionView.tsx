@@ -19,6 +19,18 @@ import Clock from './Clock'
 import RecordInput from './RecordInput'
 import TitleBar from './TitleBar'
 
+import { A11y, Navigation, Pagination, Scrollbar } from 'swiper'
+
+import { Swiper, SwiperSlide } from 'swiper/react'
+
+import 'swiper/css'
+import 'swiper/css/bundle'
+import 'swiper/css/effect-cards'
+import 'swiper/css/effect-creative'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import 'swiper/css/scrollbar'
+
 export default function SessionView({ date }: { date: Dayjs }) {
   const { session, isError, mutate } = useSession(date)
   const { exercises, mutate: mutateExercises } = useExercises({
@@ -64,51 +76,72 @@ export default function SessionView({ date }: { date: Dayjs }) {
   // todo: compare with last of this day type
   // todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
   return (
-    <Grid container spacing={2} direction="column">
-      <Grid>
-        <TitleBar date={date} />
-      </Grid>
-      <Grid>
-        <Clock />
-      </Grid>
-      <Grid>
-        <WeightUnitConverter />
-      </Grid>
-      {/* todo: session only handles updating index order */}
-      {session &&
-        session.records.map((id) => (
-          <Grid key={id}>
-            <RecordInput id={id} deleteRecord={handleDeleteRecord} />
-          </Grid>
-        ))}
+    <>
+      <Swiper
+        modules={[Navigation, Pagination, Scrollbar, A11y]}
+        spaceBetween={50}
+        slidesPerView={1}
+        navigation
+        grabCursor
+        loop
+        centeredSlides
+        pagination={{
+          clickable: true,
+          // renderBullet: function (index, className) {
+          //   return '<span class="' + className + '">' + (index + 1) + '</span>'
+          // },
+        }}
+        onSwiper={(swiper) => console.log(swiper)}
+        onSlideChange={() => console.log('slide change')}
+        // style={{ height: '400px' }}
+      >
+        {session &&
+          session.records.map((id) => (
+            <SwiperSlide key={id}>
+              <RecordInput id={id} deleteRecord={handleDeleteRecord} />
+            </SwiperSlide>
+          ))}
+      </Swiper>
+      <Grid container spacing={2}>
+        <Grid>
+          <TitleBar date={date} />
+        </Grid>
+        <Grid>
+          <Clock />
+        </Grid>
+        <Grid>
+          <WeightUnitConverter />
+        </Grid>
+        {/* todo: session only handles updating index order */}
+        <Grid></Grid>
+        <Grid>
+          {/* maybe make this a card with CardHeader */}
 
-      <Grid>
-        {/* maybe make this a card with CardHeader */}
-
-        {!isLoading && (
-          <Paper elevation={3} sx={{ p: 2, my: 2 }}>
-            <Stack direction="row" spacing={2}>
-              <ExerciseSelector
-                fullWidth
-                variant="standard"
-                {...{
-                  exercise,
-                  exercises,
-                  handleChange: (newExercise) => setExercise(newExercise),
-                  mutate: mutateExercises,
-                }}
-              />
-              <Button
-                variant="contained"
-                sx={{ width: 250 }}
-                onClick={handleAddRecord}
-              >
-                Add Exercise
-              </Button>
-            </Stack>
-          </Paper>
-        )}
+          {!isLoading && (
+            <Paper elevation={3} sx={{ p: 2, my: 2 }}>
+              <Stack direction="row" spacing={2}>
+                <ExerciseSelector
+                  fullWidth
+                  variant="standard"
+                  {...{
+                    exercise,
+                    exercises,
+                    handleChange: (newExercise) => setExercise(newExercise),
+                    mutate: mutateExercises,
+                  }}
+                />
+                <Button
+                  variant="contained"
+                  sx={{ width: 250 }}
+                  onClick={handleAddRecord}
+                >
+                  Add Exercise
+                </Button>
+              </Stack>
+            </Paper>
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   )
 }
