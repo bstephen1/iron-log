@@ -29,25 +29,22 @@ import 'swiper/css/effect-creative'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
+import AddRecord from './AddRecord'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const { session, isError, mutate } = useSession(date)
-  const { exercises, mutate: mutateExercises } = useExercises({
-    status: ExerciseStatus.ACTIVE,
-  }) // SWR caches this, so it won't need to call the API every render
-  const [exercise, setExercise] = useState<Exercise | null>(null)
+  // SWR caches this, so it won't need to call the API every render
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
   // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
   // so for now we just hide the add exercise button so the records don't pop in above it
-  const isLoading = session === undefined || !exercises
+  const isLoading = session === undefined
 
   // todo: this is a placeholder
   if (isError) {
     return <>Error fetching data!</>
   }
 
-  // todo: have an extra card for adding? Like Add Cue? Or just an input for the name with a submit button?
-  const handleAddRecord = () => {
+  const handleAddRecord = (exercise: Exercise) => {
     if (isLoading) return // make typescript happy
 
     const record = new Record(date.format(DATE_FORMAT), exercise)
@@ -61,7 +58,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
       : new Session(date.format(DATE_FORMAT), [record._id])
     updateSession(newSession)
     mutate(newSession)
-    setExercise(null)
   }
 
   const handleDeleteRecord = (idToDelete: string) => {
@@ -82,12 +78,13 @@ export default function SessionView({ date }: { date: Dayjs }) {
       {/* todo: session only handles updating index order */}
       <Swiper
         modules={[Navigation, Pagination, Scrollbar, A11y]}
-        spaceBetween={50}
+        spaceBetween={80}
         slidesPerView={1}
         navigation
         grabCursor
-        loop
-        centeredSlides
+        // loop
+        // todo: would be nice to have pagination ABOVE, so it doesn't change with varying Record size
+        // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
         pagination={{
           clickable: true,
           // renderBullet: function (index, className) {
@@ -96,6 +93,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
         }}
         onSwiper={(swiper) => console.log(swiper)}
         onSlideChange={() => console.log('slide change')}
+        style={{ padding: '50px' }}
         // style={{ height: '800px' }}
       >
         {session &&
@@ -104,32 +102,10 @@ export default function SessionView({ date }: { date: Dayjs }) {
               <RecordInput id={id} deleteRecord={handleDeleteRecord} />
             </SwiperSlide>
           ))}
+        <SwiperSlide>
+          <AddRecord handleAdd={handleAddRecord} />
+        </SwiperSlide>
       </Swiper>
-      {/* maybe make this a card with CardHeader */}
-
-      {!isLoading && (
-        <Paper elevation={3} sx={{ p: 2, my: 2 }}>
-          <Stack direction="row" spacing={2}>
-            <ExerciseSelector
-              fullWidth
-              variant="standard"
-              {...{
-                exercise,
-                exercises,
-                handleChange: (newExercise) => setExercise(newExercise),
-                mutate: mutateExercises,
-              }}
-            />
-            <Button
-              variant="contained"
-              sx={{ width: 250 }}
-              onClick={handleAddRecord}
-            >
-              Add Exercise
-            </Button>
-          </Stack>
-        </Paper>
-      )}
     </Stack>
   )
 }

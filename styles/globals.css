@@ -28,6 +28,13 @@ input[type='number'] {
   appearance: textfield;
 }
 
+
+/* this can vertically center Swiper slides, but it can only center all of them */
+/* .swiper-wrapper {
+  align-items: center; 
+}
+ */
+
 /*
 * {
   box-sizing: border-box;
