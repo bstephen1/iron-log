@@ -43,6 +43,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const handleAddRecord = (exercise: Exercise) => {
     if (isLoading) return // make typescript happy
 
+    // todo: include a set too
     const record = new Record(date.format(DATE_FORMAT), exercise)
     addRecord(record)
     // todo: updateSessionField

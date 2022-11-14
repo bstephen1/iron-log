@@ -1,13 +1,22 @@
 // @ts-nocheck
 // todo: ignoring Set typing issues for now
-import { Box, Button, Card, CardActions, CardContent, Fab } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Fab,
+  Tooltip,
+} from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import {
   updateRecordFields,
   useExercises,
   useRecord,
 } from '../../lib/frontend/restService'
-import AddIcon from '@mui/icons-material/Add'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
@@ -147,9 +156,12 @@ export default function RecordInput({ id, deleteRecord }: Props) {
         {/* <Button onClick={addSet} variant="contained">
           Add Set
         </Button> */}
-        <Fab color="primary" onClick={addSet}>
-          <AddIcon />
-        </Fab>
+        {/* todo: extend on hover with text? */}
+        <Tooltip title="Add Set" placement="right">
+          <Fab color="primary" size="medium" onClick={addSet}>
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       </CardActions>
     </Card>
   )
