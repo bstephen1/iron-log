@@ -15,7 +15,7 @@ import Clock from './Clock'
 import RecordInput from './RecordInput'
 import TitleBar from './TitleBar'
 
-import { A11y, Navigation, Pagination, Scrollbar } from 'swiper'
+import { A11y, Keyboard, Navigation, Pagination, Scrollbar } from 'swiper'
 
 import { Swiper, SwiperSlide } from 'swiper/react'
 
@@ -93,13 +93,12 @@ export default function SessionView({ date }: { date: Dayjs }) {
       {/* todo: breakpoints. sm => hide navigation; lg => ~3 slidesPerView */}
       {!isLoading && (
         <Swiper
-          modules={[Navigation, Pagination, Scrollbar, A11y]}
+          modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
           spaceBetween={80}
           slidesPerView={1}
-          // allowTouchMove={false}
+          keyboard
           navigation
           grabCursor
-          // loop
           // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
           pagination={{
             clickable: true,
