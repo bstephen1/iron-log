@@ -79,7 +79,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
 
     const newRecords = session.records.filter((id) => id !== recordId)
     deleteSessionRecord(session.date, recordId)
-    mutate({ ...session, records: newRecords })
+    // todo: not sure if disabling revalidation fixes glitchiness
+    mutate({ ...session, records: newRecords }, { revalidate: false })
   }
 
   // todo: compare with last of this day type

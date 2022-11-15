@@ -99,6 +99,7 @@ export default function RecordInput({
 
   const handleDeleteRecord = () => {
     deleteRecord(id)
+    // todo: this became glitchy after deleting records from db instead of just removing from session array
     swiper.update() // have to update swiper whenever changing swiper elements
   }
 
