@@ -103,6 +103,7 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
     <Card elevation={10} sx={{ px: 1 }}>
       <CardHeader
         title={`Record ${index + 1}`}
+        titleTypographyProps={{ variant: 'h6' }}
         action={
           <Tooltip title="Delete Record" placement="left">
             {/* todo: make a menu? Maybe will want to add other stuff. */}
@@ -156,7 +157,7 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
           </Grid>
         </Grid>
 
-        <Box sx={{ px: 2, py: 2 }}>
+        <Box sx={{ p: 2, pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
             <Stack key={i} direction="row">
