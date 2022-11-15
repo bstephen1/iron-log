@@ -184,7 +184,7 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
                 sx={{
                   borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
                   background: `${grey[100]}`, // todo
-
+                  px: '10px',
                   borderRadius: 0,
                   // '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {
                   //   borderRadius: 0,
