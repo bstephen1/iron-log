@@ -50,6 +50,7 @@ export default async function handler(
           .status(500)
           .json({ isError: true, message: 'could not update record', error: e })
       }
+      break
     case 'PATCH':
       try {
         await updateRecordFields(JSON.parse(req.body))
@@ -60,5 +61,6 @@ export default async function handler(
           .status(500)
           .json({ isError: true, message: 'could not update record', error: e })
       }
+      break
   }
 }
