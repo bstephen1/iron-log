@@ -1,6 +1,11 @@
 // @ts-nocheck
 // todo: ignoring Set typing issues for now
-import { MoreVert } from '@mui/icons-material'
+import {
+  Delete,
+  KeyboardDoubleArrowLeft,
+  KeyboardDoubleArrowRight,
+  MoreVert,
+} from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
 import ClearIcon from '@mui/icons-material/Clear'
 import {
@@ -28,6 +33,7 @@ import { SetType } from '../../models/SetType'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
+import StyledDivider from '../StyledDivider'
 import StandardSetInput from './sets/StandardSetInput'
 
 interface Props {
@@ -105,17 +111,31 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
         title={`Record ${index + 1}`}
         titleTypographyProps={{ variant: 'h6' }}
         action={
-          <Tooltip title="Delete Record" placement="left">
-            {/* todo: make a menu? Maybe will want to add other stuff. */}
-            <IconButton
-              className="swiper-no-swiping"
-              onClick={() => deleteRecord(id)}
-            >
-              <MoreVert />
-            </IconButton>
-          </Tooltip>
+          <>
+            <Tooltip title="Move left" placement="bottom-end">
+              <IconButton className="swiper-no-swiping" onClick={() => {}}>
+                <KeyboardDoubleArrowLeft />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Move right" placement="bottom-end">
+              <IconButton className="swiper-no-swiping" onClick={() => {}}>
+                <KeyboardDoubleArrowRight />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Record" placement="bottom-end">
+              {/* todo: make a menu? Maybe will want to add other stuff. Actually, maybe only for when the screen is small. Lots of empty space in the title bar. */}
+              <IconButton
+                className="swiper-no-swiping"
+                color="error"
+                onClick={() => deleteRecord(id)}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </>
         }
       />
+      <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
       <CardContent
         // swiping causes weird behavior when combine with data input fields, so disable it
         className="swiper-no-swiping" // lol
