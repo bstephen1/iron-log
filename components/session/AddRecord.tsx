@@ -38,7 +38,12 @@ export default function AddRecord(props: Props) {
             mutate: mutateExercises,
           }}
         />
-        <Button variant="contained" sx={{ width: 250 }} onClick={handleAdd}>
+        <Button
+          variant="contained"
+          sx={{ width: 250 }}
+          onClick={handleAdd}
+          disabled={!exercise}
+        >
           Add Record
         </Button>
       </Stack>
