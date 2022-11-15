@@ -60,6 +60,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const handleDeleteRecord = (idToDelete: string) => {
     if (!session) return // can't delete from a nonexistant session
 
+    // todo: swiper needs to remove() the index
+
     const newRecords = session.records.filter((id) => id !== idToDelete)
     updateSession({ ...session, records: newRecords })
     mutate({ ...session, records: newRecords })
@@ -80,6 +82,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
           modules={[Navigation, Pagination, Scrollbar, A11y]}
           spaceBetween={80}
           slidesPerView={1}
+          // allowTouchMove={false}
           navigation
           grabCursor
           // loop
@@ -98,9 +101,13 @@ export default function SessionView({ date }: { date: Dayjs }) {
           // style={{ height: '800px' }}
         >
           {session &&
-            session.records.map((id) => (
+            session.records.map((id, i) => (
               <SwiperSlide key={id}>
-                <RecordInput id={id} deleteRecord={handleDeleteRecord} />
+                <RecordInput
+                  id={id}
+                  deleteRecord={handleDeleteRecord}
+                  index={i}
+                />
               </SwiperSlide>
             ))}
           <SwiperSlide>

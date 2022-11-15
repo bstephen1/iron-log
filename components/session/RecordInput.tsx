@@ -1,16 +1,20 @@
 // @ts-nocheck
 // todo: ignoring Set typing issues for now
+import { MoreVert } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
+import ClearIcon from '@mui/icons-material/Clear'
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   Fab,
+  IconButton,
+  Stack,
   Tooltip,
 } from '@mui/material'
+import { grey } from '@mui/material/colors'
 import Grid from '@mui/system/Unstable_Grid'
 import {
   updateRecordFields,
@@ -29,8 +33,9 @@ import StandardSetInput from './sets/StandardSetInput'
 interface Props {
   id: Record['_id']
   deleteRecord: (id: string) => void
+  index: number
 }
-export default function RecordInput({ id, deleteRecord }: Props) {
+export default function RecordInput({ id, deleteRecord, index }: Props) {
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
@@ -93,11 +98,29 @@ export default function RecordInput({ id, deleteRecord }: Props) {
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
-  // todo: add Category to Record so it persists
+  // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
-    <Card elevation={10}>
-      <CardContent>
-        <Grid container spacing={2} sx={{ pt: 2 }}>
+    <Card elevation={10} sx={{ px: 1 }}>
+      <CardHeader
+        title={`Record ${index + 1}`}
+        action={
+          <Tooltip title="Delete Record" placement="left">
+            {/* todo: make a menu? Maybe will want to add other stuff. */}
+            <IconButton
+              className="swiper-no-swiping"
+              onClick={() => deleteRecord(id)}
+            >
+              <MoreVert />
+            </IconButton>
+          </Tooltip>
+        }
+      />
+      <CardContent
+        // swiping causes weird behavior when combine with data input fields, so disable it
+        className="swiper-no-swiping" // lol
+        sx={{ cursor: 'default' }}
+      >
+        <Grid container spacing={2}>
           <Grid xs={12} sm={6}>
             <ExerciseSelector
               variant="standard"
@@ -133,23 +156,54 @@ export default function RecordInput({ id, deleteRecord }: Props) {
           </Grid>
         </Grid>
 
-        <Box sx={{ px: 4, py: 2 }}>
+        <Box sx={{ px: 2, py: 2 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
-            <StandardSetInput
-              {...set}
-              type={record.type}
-              units={{ primary: 'kg' }}
-              key={i}
-              handleSubmit={(setField, value) =>
-                handleSetChange(setField, value, i)
-              }
-            />
+            <Stack key={i} direction="row">
+              <StandardSetInput
+                {...set}
+                type={record.type}
+                units={{ primary: 'kg' }}
+                key={i}
+                handleSubmit={(setField, value) =>
+                  handleSetChange(setField, value, i)
+                }
+              />
+              {/* <Button
+                color="error"
+                // variant="outlined"
+                // startIcon={<ClearIcon />}
+                sx={{ p: 0, borderRadius: 0 }}
+              >
+                <ClearIcon />
+              </Button> */}
+              <IconButton
+                size="small"
+                // color="error"
+                onClick={() => console.log('click')}
+                sx={{
+                  borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+                  background: `${grey[100]}`, // todo
+
+                  borderRadius: 0,
+                  // '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {
+                  //   borderRadius: 0,
+                  // },
+                }}
+              >
+                <ClearIcon />
+              </IconButton>
+            </Stack>
           ))}
         </Box>
       </CardContent>
       <CardActions
-        sx={{ display: 'flex', justifyContent: 'center', px: 2, pb: 2 }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          px: 2,
+          pb: 2,
+        }}
       >
         {/* <Button onClick={() => deleteRecord(_id)} color="error">
           Delete Record
