@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material'
+import { Stack, useTheme } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
@@ -29,6 +29,7 @@ import 'swiper/css/scrollbar'
 import AddRecord from './AddRecord'
 
 export default function SessionView({ date }: { date: Dayjs }) {
+  const theme = useTheme()
   // SWR caches this, so it won't need to call the API every render
   const { session, isError, mutate } = useSession(date)
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
@@ -94,8 +95,24 @@ export default function SessionView({ date }: { date: Dayjs }) {
       {!isLoading && (
         <Swiper
           modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
+          // breakpoints catch everything >= the given value
+          breakpoints={{
+            [theme.breakpoints.values.xs]: {
+              slidesPerView: 1,
+              // "not all parameters work with breakpoints" -- is this one? Do I have to make theme invisible or something? Not necessary on mobile
+              navigation: false,
+            },
+            [theme.breakpoints.values.sm]: {},
+            [theme.breakpoints.values.md]: {
+              slidesPerView: 2,
+            },
+            [theme.breakpoints.values.lg]: {
+              slidesPerView: 3,
+              spaceBetween: 20,
+            },
+          }}
           spaceBetween={80}
-          slidesPerView={1}
+          // slidesPerView={1}
           keyboard
           navigation
           grabCursor
@@ -107,8 +124,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
               return `<span class="${className}"></span>`
             },
           }}
-          onSwiper={(swiper) => console.log(swiper)}
-          onSlideChange={() => console.log('slide change')}
+          // todo: need to fix navigation arrows overlapping
           style={{ padding: '50px' }}
         >
           {session &&
