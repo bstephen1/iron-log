@@ -6,7 +6,6 @@ import {
   KeyboardDoubleArrowRight,
 } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
-import ClearIcon from '@mui/icons-material/Clear'
 import {
   Box,
   Card,
@@ -18,7 +17,6 @@ import {
   Stack,
   Tooltip,
 } from '@mui/material'
-import { grey } from '@mui/material/colors'
 import Grid from '@mui/system/Unstable_Grid'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
@@ -38,7 +36,7 @@ import StandardSetInput from './sets/StandardSetInput'
 
 interface Props {
   id: Record['_id']
-  deleteRecord: (i: number) => void
+  deleteRecord: (id: string) => void
   swapRecords: (i: number, j: number) => void
   index: number
 }
@@ -100,7 +98,7 @@ export default function RecordInput({
   }
 
   const handleDeleteRecord = () => {
-    deleteRecord(index)
+    deleteRecord(id)
     swiper.update() // have to update swiper whenever changing swiper elements
   }
 

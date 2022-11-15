@@ -3,6 +3,7 @@ import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
   addRecord,
+  deleteSessionRecord,
   updateSession,
   useSession,
 } from '../../lib/frontend/restService'
@@ -73,12 +74,11 @@ export default function SessionView({ date }: { date: Dayjs }) {
     mutate(newSession)
   }
 
-  const handleDeleteRecord = (i: number) => {
+  const handleDeleteRecord = (recordId: string) => {
     if (!session) return
 
-    // todo: have to also delete the orphaned record
-    const newRecords = session.records.filter((_, j) => j !== i)
-    updateSession({ ...session, records: newRecords })
+    const newRecords = session.records.filter((id) => id !== recordId)
+    deleteSessionRecord(session.date, recordId)
     mutate({ ...session, records: newRecords })
   }
 
