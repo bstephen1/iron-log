@@ -4,11 +4,13 @@ import { useExercises } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
+import { useSwiper } from 'swiper/react'
 
 interface Props {
   handleAdd: (exercise: Exercise) => void
 }
 export default function AddRecord(props: Props) {
+  const swiper = useSwiper()
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
@@ -19,6 +21,7 @@ export default function AddRecord(props: Props) {
 
     props.handleAdd(exercise)
 
+    swiper.update()
     setExercise(null)
   }
 

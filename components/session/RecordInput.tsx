@@ -4,7 +4,6 @@ import {
   Delete,
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
-  MoreVert,
 } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
 import ClearIcon from '@mui/icons-material/Clear'
@@ -21,6 +20,7 @@ import {
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import Grid from '@mui/system/Unstable_Grid'
+import { useSwiper } from 'swiper/react'
 import {
   updateRecordFields,
   useExercises,
@@ -42,6 +42,7 @@ interface Props {
   index: number
 }
 export default function RecordInput({ id, deleteRecord, index }: Props) {
+  const swiper = useSwiper()
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
@@ -82,6 +83,11 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
     const newSets = [...record.sets]
     newSets[i][setField] = value
     mutateRecord({ ...record, sets: newSets })
+  }
+
+  const handleDeleteRecord = () => {
+    deleteRecord(id)
+    swiper.update() // have to update swiper whenever changing swiper elements
   }
 
   const handleExerciseChange = (newExercise: Exercise | null) => {
@@ -127,7 +133,7 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
               <IconButton
                 className="swiper-no-swiping"
                 color="error"
-                onClick={() => deleteRecord(id)}
+                onClick={handleDeleteRecord}
               >
                 <Delete />
               </IconButton>
