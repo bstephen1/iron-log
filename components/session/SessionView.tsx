@@ -1,4 +1,4 @@
-import { Skeleton, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
@@ -28,8 +28,8 @@ import 'swiper/css/scrollbar'
 import AddRecord from './AddRecord'
 
 export default function SessionView({ date }: { date: Dayjs }) {
-  const { session, isError, mutate } = useSession(date)
   // SWR caches this, so it won't need to call the API every render
+  const { session, isError, mutate } = useSession(date)
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
   // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
   // so for now we just hide the add exercise button so the records don't pop in above it
@@ -57,24 +57,36 @@ export default function SessionView({ date }: { date: Dayjs }) {
     mutate(newSession)
   }
 
-  const handleDeleteRecord = (idToDelete: string) => {
-    if (!session) return // can't delete from a nonexistant session
+  const handleSwapRecords = (i: number, j: number) => {
+    if (!session) return
 
-    // todo: swiper needs to remove() the index
+    const length = session.records.length
+    if (i < 0 || i >= length || j < 0 || j >= length) {
+      console.error(`Tried swapping records out of range: ${i}, ${j}`)
+      return
+    }
 
-    const newRecords = session.records.filter((id) => id !== idToDelete)
+    const newRecords = [...session.records]
+    ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
+    const newSession = { ...session, records: newRecords }
+    updateSession(newSession)
+    mutate(newSession)
+  }
+
+  const handleDeleteRecord = (i: number) => {
+    if (!session) return
+
+    const newRecords = session.records.filter((_, j) => j !== i)
     updateSession({ ...session, records: newRecords })
     mutate({ ...session, records: newRecords })
   }
 
   // todo: compare with last of this day type
-  // todo: drag and drop (react-beautiful-dnd?) mongo stores array ordered so dnd can just return a new object with the new order (rather than introducing IDs for subarrays)
   return (
     <Stack spacing={2}>
       <TitleBar date={date} />
       <Clock />
       <WeightUnitConverter />
-      {/* todo: session only handles updating index order */}
       {/*  todo: loading */}
       {/* todo: breakpoints. sm => hide navigation; lg => ~3 slidesPerView */}
       {!isLoading && (
@@ -86,7 +98,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
           navigation
           grabCursor
           // loop
-          // todo: would be nice to have pagination ABOVE, so it doesn't change with varying Record size
           // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
           pagination={{
             clickable: true,
@@ -98,7 +109,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
           onSwiper={(swiper) => console.log(swiper)}
           onSlideChange={() => console.log('slide change')}
           style={{ padding: '50px' }}
-          // style={{ height: '800px' }}
         >
           {session &&
             session.records.map((id, i) => (
@@ -106,6 +116,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                 <RecordInput
                   id={id}
                   deleteRecord={handleDeleteRecord}
+                  swapRecords={handleSwapRecords}
                   index={i}
                 />
               </SwiperSlide>

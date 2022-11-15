@@ -51,6 +51,7 @@ export function useRecord(id: Record['_id']) {
   return {
     record: data,
     isError: error,
+    // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
     mutate: mutate,
   }
 }

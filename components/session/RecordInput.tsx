@@ -20,7 +20,7 @@ import {
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import Grid from '@mui/system/Unstable_Grid'
-import { useSwiper } from 'swiper/react'
+import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateRecordFields,
   useExercises,
@@ -38,11 +38,19 @@ import StandardSetInput from './sets/StandardSetInput'
 
 interface Props {
   id: Record['_id']
-  deleteRecord: (id: string) => void
+  deleteRecord: (i: number) => void
+  swapRecords: (i: number, j: number) => void
   index: number
 }
-export default function RecordInput({ id, deleteRecord, index }: Props) {
+export default function RecordInput({
+  id,
+  deleteRecord,
+  swapRecords,
+  index,
+}: Props) {
   const swiper = useSwiper()
+  // this hook needs to be called for useSwiper() to update the activeIndex, but is otherwise unused
+  const _ = useSwiperSlide()
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
@@ -86,8 +94,15 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
   }
 
   const handleDeleteRecord = () => {
-    deleteRecord(id)
+    deleteRecord(index)
     swiper.update() // have to update swiper whenever changing swiper elements
+  }
+
+  const handleSwapRecords = (i, j) => {
+    swapRecords(i, j)
+    swiper.update()
+    // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
+    swiper.slideTo(j)
   }
 
   const handleExerciseChange = (newExercise: Exercise | null) => {
@@ -118,13 +133,28 @@ export default function RecordInput({ id, deleteRecord, index }: Props) {
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <>
-            <Tooltip title="Move left" placement="bottom-end">
-              <IconButton className="swiper-no-swiping" onClick={() => {}}>
+            <Tooltip
+              title="Move current record to the left"
+              placement="bottom-end"
+            >
+              <IconButton
+                className="swiper-no-swiping"
+                disabled={swiper.isBeginning}
+                onClick={() => handleSwapRecords(index, index - 1)}
+              >
                 <KeyboardDoubleArrowLeft />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Move right" placement="bottom-end">
-              <IconButton className="swiper-no-swiping" onClick={() => {}}>
+            <Tooltip
+              title="Move current record to the right"
+              placement="bottom-end"
+            >
+              <IconButton
+                className="swiper-no-swiping"
+                // disable on the penultimate slide because the last is the "add record" button
+                disabled={swiper.activeIndex >= swiper.slides?.length - 2}
+                onClick={() => handleSwapRecords(index, index + 1)}
+              >
                 <KeyboardDoubleArrowRight />
               </IconButton>
             </Tooltip>
