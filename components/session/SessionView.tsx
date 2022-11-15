@@ -76,6 +76,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const handleDeleteRecord = (i: number) => {
     if (!session) return
 
+    // todo: have to also delete the orphaned record
     const newRecords = session.records.filter((_, j) => j !== i)
     updateSession({ ...session, records: newRecords })
     mutate({ ...session, records: newRecords })

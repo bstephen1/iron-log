@@ -93,6 +93,12 @@ export default function RecordInput({
     mutateRecord({ ...record, sets: newSets })
   }
 
+  const handleDeleteSet = (i) => {
+    const newSets = record.sets.filter((_, j) => j !== i)
+    updateRecordFields(_id, { ['sets']: newSets })
+    mutateRecord({ ...record, sets: newSets })
+  }
+
   const handleDeleteRecord = () => {
     deleteRecord(index)
     swiper.update() // have to update swiper whenever changing swiper elements
@@ -222,34 +228,12 @@ export default function RecordInput({
                 type={record.type}
                 units={{ primary: 'kg' }}
                 key={i}
+                index={i}
                 handleSubmit={(setField, value) =>
                   handleSetChange(setField, value, i)
                 }
+                handleDelete={() => handleDeleteSet(i)}
               />
-              {/* <Button
-                color="error"
-                // variant="outlined"
-                // startIcon={<ClearIcon />}
-                sx={{ p: 0, borderRadius: 0 }}
-              >
-                <ClearIcon />
-              </Button> */}
-              <IconButton
-                size="small"
-                // color="error"
-                onClick={() => console.log('click')}
-                sx={{
-                  borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-                  background: `${grey[100]}`, // todo
-                  px: '10px',
-                  borderRadius: 0,
-                  // '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {
-                  //   borderRadius: 0,
-                  // },
-                }}
-              >
-                <ClearIcon />
-              </IconButton>
             </Stack>
           ))}
         </Box>
@@ -270,7 +254,12 @@ export default function RecordInput({
         </Button> */}
         {/* todo: extend on hover with text? */}
         <Tooltip title="Add Set" placement="right">
-          <Fab color="primary" size="medium" onClick={addSet}>
+          <Fab
+            color="primary"
+            size="medium"
+            onClick={addSet}
+            className="swiper-no-swiping"
+          >
             <AddIcon />
           </Fab>
         </Tooltip>
