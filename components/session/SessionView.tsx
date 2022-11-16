@@ -1,4 +1,4 @@
-import { Stack, useTheme } from '@mui/material'
+import { Box, Stack, useMediaQuery, useTheme } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
@@ -30,6 +30,8 @@ import AddRecord from './AddRecord'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
+  const showNav = useMediaQuery(theme.breakpoints.up('sm'))
+  const hideNavClass = showNav ? '' : 'swiper-button-hidden'
   // SWR caches this, so it won't need to call the API every render
   const { session, isError, mutate } = useSession(date)
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
@@ -97,12 +99,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
           modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
           // breakpoints catch everything >= the given value
           breakpoints={{
-            [theme.breakpoints.values.xs]: {
-              slidesPerView: 1,
-              // "not all parameters work with breakpoints" -- is this one? Do I have to make theme invisible or something? Not necessary on mobile
-              // Edit: this both doesn't work, and causes cryptic errors upon resize
-              // navigation: false,
-            },
             [theme.breakpoints.values.sm]: {
               slidesPerView: 1,
             },
@@ -116,7 +112,14 @@ export default function SessionView({ date }: { date: Dayjs }) {
           spaceBetween={20}
           // slidesPerView={1}
           keyboard
-          navigation
+          watchOverflow
+          centerInsufficientSlides
+          // centeredSlides
+          // centeredSlidesBounds
+          navigation={{
+            prevEl: '.prev',
+            nextEl: '.next',
+          }}
           grabCursor
           watchSlidesProgress
           // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
@@ -128,8 +131,11 @@ export default function SessionView({ date }: { date: Dayjs }) {
             },
           }}
           // todo: need to fix navigation arrows overlapping
-          style={{ padding: '50px' }}
+          style={{ padding: showNav ? '50px' : '50px 10px' }}
         >
+          {/* these get auto positioned via swiper css. */}
+          <Box className={`prev swiper-button-prev ${hideNavClass}`} />
+          <Box className={`next swiper-button-next ${hideNavClass}`} />
           {session &&
             session.records.map((id, i) => (
               <SwiperSlide key={id}>
