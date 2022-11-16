@@ -104,21 +104,22 @@ export default function SessionView({ date }: { date: Dayjs }) {
             },
             [theme.breakpoints.values.md]: {
               slidesPerView: 2,
+              centeredSlides: false,
+              centerInsufficientSlides: true,
             },
             [theme.breakpoints.values.lg]: {
               slidesPerView: 3,
+              centeredSlides: true,
+              centerInsufficientSlides: false,
             },
           }}
           spaceBetween={20}
-          // slidesPerView={1}
           keyboard
-          watchOverflow
-          centerInsufficientSlides
-          // centeredSlides
-          // centeredSlidesBounds
+          // watchOverflow
+          centeredSlides
           navigation={{
-            prevEl: '.prev',
-            nextEl: '.next',
+            prevEl: '.nav-prev',
+            nextEl: '.nav-next',
           }}
           grabCursor
           watchSlidesProgress
@@ -134,8 +135,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
           style={{ padding: showNav ? '50px' : '50px 10px' }}
         >
           {/* these get auto positioned via swiper css. */}
-          <Box className={`prev swiper-button-prev ${hideNavClass}`} />
-          <Box className={`next swiper-button-next ${hideNavClass}`} />
+          <Box className={`nav-prev swiper-button-prev ${hideNavClass}`} />
+          <Box className={`nav-next swiper-button-next ${hideNavClass}`} />
           {session &&
             session.records.map((id, i) => (
               <SwiperSlide key={id}>
