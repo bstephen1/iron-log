@@ -41,6 +41,12 @@ export async function updateSession(newSesson: Session) {
   }).catch((e) => console.error(e))
 }
 
+export async function deleteSessionRecord(date: string, recordId: string) {
+  fetch(`${URI_SESSIONS}${date}/records/${recordId}`, {
+    method: 'DELETE',
+  }).catch((e) => console.error(e))
+}
+
 //--------
 // RECORD
 //--------
@@ -51,6 +57,7 @@ export function useRecord(id: Record['_id']) {
   return {
     record: data,
     isError: error,
+    // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
     mutate: mutate,
   }
 }

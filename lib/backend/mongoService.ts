@@ -26,13 +26,26 @@ export async function addSession(session: Session) {
 }
 
 export async function fetchSession(date: string) {
-  return await sessions.findOne({ date: date }, { projection: { _id: false } })
+  return await sessions.findOne({ date })
 }
 
 export async function updateSession(session: Session) {
   return await sessions.replaceOne({ date: session.date }, session, {
     upsert: true,
   })
+}
+
+// todo: make this a transaction?
+export async function deleteSessionRecord({
+  date,
+  recordId,
+}: {
+  date: string
+  recordId: string
+}) {
+  await sessions.updateOne({ date }, { $pull: { records: recordId } })
+  await deleteRecord(recordId)
+  return
 }
 
 // todo: fetch sessions in date range
@@ -83,6 +96,12 @@ export async function updateRecordFields({
   return await records.updateOne({ _id: id }, { $set: updates })
 }
 
+// Currently not exporting. To delete call deleteSessionRecord().
+// All Records must belong to a Session, so a record can only be deleted in the context of a Session.
+async function deleteRecord(id: string) {
+  return await records.deleteOne({ _id: id })
+}
+
 //----------
 // EXERCISE
 //----------
@@ -126,7 +145,7 @@ export async function fetchModifiers(filter?: Filter<Modifier>) {
 }
 
 export async function fetchModifier(name: string) {
-  return await modifiers.findOne({ name: name }, { projection: { _id: false } })
+  return await modifiers.findOne({ name }, { projection: { _id: false } })
 }
 
 export async function updateModifier(modifier: Modifier) {
@@ -156,10 +175,7 @@ export async function fetchCategories(filter?: Filter<Category>) {
 }
 
 export async function fetchCategory(name: string) {
-  return await categories.findOne(
-    { name: name },
-    { projection: { _id: false } }
-  )
+  return await categories.findOne({ name }, { projection: { _id: false } })
 }
 
 export async function updateCategory(category: Category) {

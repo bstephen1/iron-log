@@ -1,7 +1,24 @@
 // @ts-nocheck
 // todo: ignoring Set typing issues for now
-import { Box, Button, Card, CardActions, CardContent } from '@mui/material'
+import {
+  Delete,
+  KeyboardDoubleArrowLeft,
+  KeyboardDoubleArrowRight,
+} from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Fab,
+  IconButton,
+  Stack,
+  Tooltip,
+} from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
+import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateRecordFields,
   useExercises,
@@ -14,13 +31,24 @@ import { SetType } from '../../models/SetType'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
+import StyledDivider from '../StyledDivider'
 import StandardSetInput from './sets/StandardSetInput'
 
 interface Props {
   id: Record['_id']
   deleteRecord: (id: string) => void
+  swapRecords: (i: number, j: number) => void
+  index: number
 }
-export default function RecordInput({ id, deleteRecord }: Props) {
+export default function RecordInput({
+  id,
+  deleteRecord,
+  swapRecords,
+  index,
+}: Props) {
+  const swiper = useSwiper()
+  // this hook needs to be called for useSwiper() to update the activeIndex, but is otherwise unused
+  const _ = useSwiperSlide()
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
@@ -41,7 +69,7 @@ export default function RecordInput({ id, deleteRecord }: Props) {
   const { exercise, type, activeModifiers, sets, _id } = record
 
   const addSet = () => {
-    const last = sets[sets.length - 1] ?? { primary: 0, secondary: 0 }
+    const last = sets[sets.length - 1] ?? {}
     // todo: init first set, and possibly have different behavior when adding different types of sets?
     const newSet = { ...last, effort: undefined }
     updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
@@ -61,6 +89,25 @@ export default function RecordInput({ id, deleteRecord }: Props) {
     const newSets = [...record.sets]
     newSets[i][setField] = value
     mutateRecord({ ...record, sets: newSets })
+  }
+
+  const handleDeleteSet = (i) => {
+    const newSets = record.sets.filter((_, j) => j !== i)
+    updateRecordFields(_id, { ['sets']: newSets })
+    mutateRecord({ ...record, sets: newSets })
+  }
+
+  const handleDeleteRecord = () => {
+    deleteRecord(id)
+    // todo: this became glitchy after deleting records from db instead of just removing from session array
+    swiper.update() // have to update swiper whenever changing swiper elements
+  }
+
+  const handleSwapRecords = (i, j) => {
+    swapRecords(i, j)
+    swiper.update()
+    // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
+    swiper.slideTo(j, 0)
   }
 
   const handleExerciseChange = (newExercise: Exercise | null) => {
@@ -83,12 +130,64 @@ export default function RecordInput({ id, deleteRecord }: Props) {
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
-  // todo: add Category to Record so it persists
+  // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
-    <Card elevation={3}>
-      <CardContent>
-        <Grid container spacing={2} sx={{ pt: 2 }}>
-          <Grid xs={6} md={3}>
+    <Card elevation={3} sx={{ px: 1 }}>
+      <CardHeader
+        title={`Record ${index + 1}`}
+        titleTypographyProps={{ variant: 'h6' }}
+        action={
+          <>
+            <Tooltip
+              title="Move current record to the left"
+              placement="bottom-end"
+            >
+              <>
+                <IconButton
+                  className="swiper-no-swiping"
+                  disabled={swiper.isBeginning}
+                  onClick={() => handleSwapRecords(index, index - 1)}
+                >
+                  <KeyboardDoubleArrowLeft />
+                </IconButton>
+              </>
+            </Tooltip>
+            <Tooltip
+              title="Move current record to the right"
+              placement="bottom-end"
+            >
+              <>
+                <IconButton
+                  className="swiper-no-swiping"
+                  // disable on the penultimate slide because the last is the "add record" button
+                  disabled={swiper.activeIndex >= swiper.slides?.length - 2}
+                  onClick={() => handleSwapRecords(index, index + 1)}
+                >
+                  <KeyboardDoubleArrowRight />
+                </IconButton>
+              </>
+            </Tooltip>
+            <Tooltip title="Delete Record" placement="bottom-end">
+              {/* todo: make a menu? Maybe will want to add other stuff. Actually, maybe only for when the screen is small. Lots of empty space in the title bar. */}
+              <IconButton
+                className="swiper-no-swiping"
+                color="error"
+                onClick={handleDeleteRecord}
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </>
+        }
+      />
+      <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+      <CardContent
+        // swiping causes weird behavior when combine with data input fields, so disable it
+        className="swiper-no-swiping" // lol
+        sx={{ cursor: 'default' }}
+      >
+        <Grid container spacing={2}>
+          <Grid xs={12}>
             <ExerciseSelector
               variant="standard"
               {...{
@@ -99,17 +198,18 @@ export default function RecordInput({ id, deleteRecord }: Props) {
               }}
             />
           </Grid>
-          <Grid xs={6} md={3}>
+          <Grid xs={12}>
             <SelectFieldAutosave
               label="Set Type"
               initialValue={type}
               fullWidth
+              defaultHelperText=""
               variant="standard"
               options={Object.values(SetType)}
               handleSubmit={(value) => handleFieldChange('type', value)}
             />
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid xs={12}>
             <ComboBoxField
               label="Modifiers"
               options={exercise?.modifiers}
@@ -122,30 +222,50 @@ export default function RecordInput({ id, deleteRecord }: Props) {
           </Grid>
         </Grid>
 
-        <Box sx={{ px: 4, py: 2 }}>
+        <Box sx={{ p: 2, pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
-            <StandardSetInput
-              {...set}
-              type={record.type}
-              units={{ primary: 'kg' }}
-              key={i}
-              handleSubmit={(setField, value) =>
-                handleSetChange(setField, value, i)
-              }
-            />
+            <Stack key={i} direction="row">
+              <StandardSetInput
+                {...set}
+                type={record.type}
+                units={{ primary: 'kg' }}
+                key={i}
+                index={i}
+                handleSubmit={(setField, value) =>
+                  handleSetChange(setField, value, i)
+                }
+                handleDelete={() => handleDeleteSet(i)}
+              />
+            </Stack>
           ))}
         </Box>
       </CardContent>
       <CardActions
-        sx={{ display: 'flex', justifyContent: 'space-between', px: 2, pb: 2 }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          px: 2,
+          pb: 2,
+        }}
       >
-        <Button onClick={() => deleteRecord(_id)} color="error">
+        {/* <Button onClick={() => deleteRecord(_id)} color="error">
           Delete Record
-        </Button>
-        <Button onClick={addSet} variant="contained">
+        </Button> */}
+        {/* <Button onClick={addSet} variant="contained">
           Add Set
-        </Button>
+        </Button> */}
+        {/* todo: extend on hover with text? */}
+        <Tooltip title="Add Set" placement="right">
+          <Fab
+            color="primary"
+            size="medium"
+            onClick={addSet}
+            className="swiper-no-swiping"
+          >
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       </CardActions>
     </Card>
   )
