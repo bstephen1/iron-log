@@ -129,9 +129,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
               // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
               onSwiper={updateSwiper}
               onSlideChange={updateSwiper}
-              // will not be at the end after adding a record. For some reason the swiper object
-              // param is before the length changes, so as a workaround manually set the state to false
-              onSlidesLengthChange={(_) => setIsEnd(false)}
+              // update when number of slides changes
+              onUpdate={updateSwiper}
               modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
               // breakpoints catch everything >= the given value
               breakpoints={{
