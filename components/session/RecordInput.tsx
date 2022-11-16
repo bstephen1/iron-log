@@ -142,26 +142,30 @@ export default function RecordInput({
               title="Move current record to the left"
               placement="bottom-end"
             >
-              <IconButton
-                className="swiper-no-swiping"
-                disabled={swiper.isBeginning}
-                onClick={() => handleSwapRecords(index, index - 1)}
-              >
-                <KeyboardDoubleArrowLeft />
-              </IconButton>
+              <>
+                <IconButton
+                  className="swiper-no-swiping"
+                  disabled={swiper.isBeginning}
+                  onClick={() => handleSwapRecords(index, index - 1)}
+                >
+                  <KeyboardDoubleArrowLeft />
+                </IconButton>
+              </>
             </Tooltip>
             <Tooltip
               title="Move current record to the right"
               placement="bottom-end"
             >
-              <IconButton
-                className="swiper-no-swiping"
-                // disable on the penultimate slide because the last is the "add record" button
-                disabled={swiper.activeIndex >= swiper.slides?.length - 2}
-                onClick={() => handleSwapRecords(index, index + 1)}
-              >
-                <KeyboardDoubleArrowRight />
-              </IconButton>
+              <>
+                <IconButton
+                  className="swiper-no-swiping"
+                  // disable on the penultimate slide because the last is the "add record" button
+                  disabled={swiper.activeIndex >= swiper.slides?.length - 2}
+                  onClick={() => handleSwapRecords(index, index + 1)}
+                >
+                  <KeyboardDoubleArrowRight />
+                </IconButton>
+              </>
             </Tooltip>
             <Tooltip title="Delete Record" placement="bottom-end">
               {/* todo: make a menu? Maybe will want to add other stuff. Actually, maybe only for when the screen is small. Lots of empty space in the title bar. */}
@@ -183,7 +187,7 @@ export default function RecordInput({
         sx={{ cursor: 'default' }}
       >
         <Grid container spacing={2}>
-          <Grid xs={12} sm={6}>
+          <Grid xs={12}>
             <ExerciseSelector
               variant="standard"
               {...{
@@ -194,7 +198,7 @@ export default function RecordInput({
               }}
             />
           </Grid>
-          <Grid xs={12} sm={6}>
+          <Grid xs={12}>
             <SelectFieldAutosave
               label="Set Type"
               initialValue={type}

@@ -28,6 +28,14 @@ input[type='number'] {
   appearance: textfield;
 }
 
+.swiper-slide {
+  opacity: 0;
+}
+.swiper-slide-visible {
+  opacity: 1;
+}
+
+
 /* todo: clean up styling, add add an opt-in class for this */
 /* currently this depends on having an ample top margin */
 .swiper-pagination {

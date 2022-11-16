@@ -100,22 +100,25 @@ export default function SessionView({ date }: { date: Dayjs }) {
             [theme.breakpoints.values.xs]: {
               slidesPerView: 1,
               // "not all parameters work with breakpoints" -- is this one? Do I have to make theme invisible or something? Not necessary on mobile
-              navigation: false,
+              // Edit: this both doesn't work, and causes cryptic errors upon resize
+              // navigation: false,
             },
-            [theme.breakpoints.values.sm]: {},
+            [theme.breakpoints.values.sm]: {
+              slidesPerView: 1,
+            },
             [theme.breakpoints.values.md]: {
               slidesPerView: 2,
             },
             [theme.breakpoints.values.lg]: {
               slidesPerView: 3,
-              spaceBetween: 20,
             },
           }}
-          spaceBetween={80}
+          spaceBetween={20}
           // slidesPerView={1}
           keyboard
           navigation
           grabCursor
+          watchSlidesProgress
           // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
           pagination={{
             clickable: true,
