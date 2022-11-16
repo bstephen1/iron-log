@@ -26,7 +26,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/bundle'
 import 'swiper/css/effect-cards'
@@ -48,7 +48,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const isLoading = session === undefined
 
   const updateSwiper = (swiper: SwiperClass) => {
-    console.log(swiper)
     setIsBeginning(swiper.isBeginning)
     setIsEnd(swiper.isEnd)
   }
@@ -127,10 +126,12 @@ export default function SessionView({ date }: { date: Dayjs }) {
           {/*  todo: loading */}
           {!isLoading && (
             <Swiper
-              // state doesn't update directly on Swiper changing for some reason so added in an intermediary function
-              // todo: nav buttons don't update when adding record (still thinks it's at the end)
+              // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
               onSwiper={updateSwiper}
               onSlideChange={updateSwiper}
+              // will not be at the end after adding a record. For some reason the swiper object
+              // param is before the length changes, so as a workaround manually set the state to false
+              onSlidesLengthChange={(_) => setIsEnd(false)}
               modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
               // breakpoints catch everything >= the given value
               breakpoints={{
@@ -150,8 +151,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
               }}
               spaceBetween={20}
               keyboard
-              observer
-              // watchOverflow
               centeredSlides
               navigation={{
                 prevEl: '.nav-prev',
@@ -169,7 +168,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
                   return `<span class="${className}"></span>`
                 },
               }}
-              // need
               style={{ padding: '15px 10px', flexGrow: '1' }}
             >
               {session &&
