@@ -132,7 +132,7 @@ export default function RecordInput({
   // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
-    <Card elevation={10} sx={{ px: 1 }}>
+    <Card elevation={3} sx={{ px: 1 }}>
       <CardHeader
         title={`Record ${index + 1}`}
         titleTypographyProps={{ variant: 'h6' }}

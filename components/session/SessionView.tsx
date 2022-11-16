@@ -1,4 +1,4 @@
-import { Box, Stack, useMediaQuery, useTheme } from '@mui/material'
+import { Box, IconButton, Stack, useTheme } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
@@ -15,10 +15,18 @@ import Clock from './Clock'
 import RecordInput from './RecordInput'
 import TitleBar from './TitleBar'
 
-import { A11y, Keyboard, Navigation, Pagination, Scrollbar } from 'swiper'
-
+import {
+  A11y,
+  Keyboard,
+  Navigation,
+  Pagination,
+  Scrollbar,
+  Swiper as SwiperClass,
+} from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
+import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/bundle'
 import 'swiper/css/effect-cards'
@@ -30,14 +38,20 @@ import AddRecord from './AddRecord'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
-  const showNav = useMediaQuery(theme.breakpoints.up('sm'))
-  const hideNavClass = showNav ? '' : 'swiper-button-hidden'
+  const [isBeginning, setIsBeginning] = useState(false)
+  const [isEnd, setIsEnd] = useState(false)
   // SWR caches this, so it won't need to call the API every render
   const { session, isError, mutate } = useSession(date)
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
   // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
   // so for now we just hide the add exercise button so the records don't pop in above it
   const isLoading = session === undefined
+
+  const updateSwiper = (swiper: SwiperClass) => {
+    console.log(swiper)
+    setIsBeginning(swiper.isBeginning)
+    setIsEnd(swiper.isEnd)
+  }
 
   // todo: this is a placeholder
   if (isError) {
@@ -92,67 +106,100 @@ export default function SessionView({ date }: { date: Dayjs }) {
       <TitleBar date={date} />
       <Clock />
       <WeightUnitConverter />
-      {/*  todo: loading */}
-      {/* todo: breakpoints. sm => hide navigation; lg => ~3 slidesPerView */}
-      {!isLoading && (
-        <Swiper
-          modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
-          // breakpoints catch everything >= the given value
-          breakpoints={{
-            [theme.breakpoints.values.sm]: {
-              slidesPerView: 1,
-            },
-            [theme.breakpoints.values.md]: {
-              slidesPerView: 2,
-              centeredSlides: false,
-              centerInsufficientSlides: true,
-            },
-            [theme.breakpoints.values.lg]: {
-              slidesPerView: 3,
-              centeredSlides: true,
-              centerInsufficientSlides: false,
-            },
-          }}
-          spaceBetween={20}
-          keyboard
-          // watchOverflow
-          centeredSlides
-          navigation={{
-            prevEl: '.nav-prev',
-            nextEl: '.nav-next',
-          }}
-          grabCursor
-          watchSlidesProgress
-          // autoHeight // todo: not sure about this, kinda jumpy. Also doesn't refresh height when adding new record
-          pagination={{
-            clickable: true,
-            // todo: numbered list? Make last one AddIcon ?
-            renderBullet: function (index, className) {
-              return `<span class="${className}"></span>`
-            },
-          }}
-          // todo: need to fix navigation arrows overlapping
-          style={{ padding: showNav ? '50px' : '50px 10px' }}
-        >
-          {/* these get auto positioned via swiper css. */}
-          <Box className={`nav-prev swiper-button-prev ${hideNavClass}`} />
-          <Box className={`nav-next swiper-button-next ${hideNavClass}`} />
-          {session &&
-            session.records.map((id, i) => (
-              <SwiperSlide key={id}>
-                <RecordInput
-                  id={id}
-                  deleteRecord={handleDeleteRecord}
-                  swapRecords={handleSwapRecords}
-                  index={i}
-                />
+      <Box>
+        <Box
+          className="pagination"
+          display="flex"
+          justifyContent="center"
+          pt={2}
+        />
+        <Stack direction="row">
+          <Box display="flex" width="auto" alignItems="center">
+            <IconButton
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+              className="nav-prev"
+              color="primary"
+              disabled={isBeginning}
+            >
+              <ArrowBackIosNew />
+            </IconButton>
+          </Box>
+          {/*  todo: loading */}
+          {!isLoading && (
+            <Swiper
+              // state doesn't update directly on Swiper changing for some reason so added in an intermediary function
+              // todo: nav buttons don't update when adding record (still thinks it's at the end)
+              onSwiper={updateSwiper}
+              onSlideChange={updateSwiper}
+              modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
+              // breakpoints catch everything >= the given value
+              breakpoints={{
+                [theme.breakpoints.values.sm]: {
+                  slidesPerView: 1,
+                },
+                [theme.breakpoints.values.md]: {
+                  slidesPerView: 2,
+                  centeredSlides: false,
+                  centerInsufficientSlides: true,
+                },
+                [theme.breakpoints.values.lg]: {
+                  slidesPerView: 3,
+                  centeredSlides: true,
+                  centerInsufficientSlides: false,
+                },
+              }}
+              spaceBetween={20}
+              keyboard
+              observer
+              // watchOverflow
+              centeredSlides
+              navigation={{
+                prevEl: '.nav-prev',
+                nextEl: '.nav-next',
+              }}
+              grabCursor
+              watchOverflow
+              // need this for CSS to hide slides that are partially offscreen
+              watchSlidesProgress
+              pagination={{
+                el: '.pagination',
+                clickable: true,
+                // todo: numbered list? Make last one AddIcon ?
+                renderBullet: function (index, className) {
+                  return `<span class="${className}"></span>`
+                },
+              }}
+              // need
+              style={{ padding: '15px 10px', flexGrow: '1' }}
+            >
+              {session &&
+                session.records.map((id, i) => (
+                  <SwiperSlide key={id}>
+                    <RecordInput
+                      id={id}
+                      deleteRecord={handleDeleteRecord}
+                      swapRecords={handleSwapRecords}
+                      index={i}
+                    />
+                  </SwiperSlide>
+                ))}
+              <SwiperSlide>
+                <AddRecord handleAdd={handleAddRecord} />
               </SwiperSlide>
-            ))}
-          <SwiperSlide>
-            <AddRecord handleAdd={handleAddRecord} />
-          </SwiperSlide>
-        </Swiper>
-      )}
+            </Swiper>
+          )}
+          <Box display="flex" alignItems="center">
+            <IconButton
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+              className="nav-next"
+              color="primary"
+              disabled={isEnd}
+            >
+              <ArrowForwardIos />
+            </IconButton>
+          </Box>
+        </Stack>
+      </Box>
     </Stack>
   )
 }
