@@ -107,7 +107,7 @@ export default function RecordInput({
     swapRecords(i, j)
     swiper.update()
     // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
-    swiper.slideTo(j)
+    swiper.slideTo(j, 0)
   }
 
   const handleExerciseChange = (newExercise: Exercise | null) => {
