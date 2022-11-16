@@ -16,6 +16,8 @@ import {
   IconButton,
   Stack,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
@@ -49,6 +51,10 @@ export default function RecordInput({
   const swiper = useSwiper()
   // this hook needs to be called for useSwiper() to update the activeIndex, but is otherwise unused
   const _ = useSwiperSlide()
+  const theme = useTheme()
+  const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
+    ? 'swiper-no-swiping'
+    : ''
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
@@ -144,7 +150,7 @@ export default function RecordInput({
             >
               <>
                 <IconButton
-                  className="swiper-no-swiping"
+                  className={noSwipingAboveSm}
                   disabled={swiper.isBeginning}
                   onClick={() => handleSwapRecords(index, index - 1)}
                 >
@@ -158,7 +164,7 @@ export default function RecordInput({
             >
               <>
                 <IconButton
-                  className="swiper-no-swiping"
+                  className={noSwipingAboveSm}
                   // disable on the penultimate slide because the last is the "add record" button
                   disabled={swiper.activeIndex >= swiper.slides?.length - 2}
                   onClick={() => handleSwapRecords(index, index + 1)}
@@ -170,7 +176,7 @@ export default function RecordInput({
             <Tooltip title="Delete Record" placement="bottom-end">
               {/* todo: make a menu? Maybe will want to add other stuff. Actually, maybe only for when the screen is small. Lots of empty space in the title bar. */}
               <IconButton
-                className="swiper-no-swiping"
+                className={noSwipingAboveSm}
                 color="error"
                 onClick={handleDeleteRecord}
               >
@@ -183,8 +189,8 @@ export default function RecordInput({
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
       <CardContent
         // swiping causes weird behavior when combine with data input fields, so disable it
-        className="swiper-no-swiping" // lol
-        sx={{ cursor: 'default' }}
+        className={noSwipingAboveSm}
+        sx={{ cursor: { sm: 'default' } }}
       >
         <Grid container spacing={2}>
           <Grid xs={12}>
@@ -261,7 +267,7 @@ export default function RecordInput({
             color="primary"
             size="medium"
             onClick={addSet}
-            className="swiper-no-swiping"
+            className={noSwipingAboveSm}
           >
             <AddIcon />
           </Fab>
