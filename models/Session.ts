@@ -2,6 +2,7 @@ import { generateId } from '../lib/util'
 import Record from './Record'
 
 // todo: add session time. Start / end times? Program stuff (not hashed out yet), overall notes?
+// todo: gym location?
 export default class Session {
   constructor(
     public readonly date: string,

@@ -35,7 +35,7 @@ import { ComboBoxField } from '../form-fields/ComboBoxField'
 import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../StyledDivider'
-import StandardSetInput from './sets/StandardSetInput'
+import StandardSetInput from './SetInput'
 
 interface Props {
   id: Record['_id']

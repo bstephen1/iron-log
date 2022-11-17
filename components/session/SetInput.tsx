@@ -3,8 +3,8 @@
 import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import StandardSet from '../../../models/sets/StandardSet'
-import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
+import Set from '../../models/Set'
+import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
@@ -13,7 +13,7 @@ export default function StandardSetInput({
   handleSubmit,
   handleDelete,
   ...props
-}: StandardSet & any) {
+}: Set & any) {
   // todo: restrict to numbers, but also allow undefined.
   // todo: changes based on type
   const placeholders = { primary: 'weight', secondary: 'reps', effort: 'rpe' }
@@ -43,6 +43,9 @@ export default function StandardSetInput({
     >
       {inputs[0]}
       <Box px={1}>/</Box>
+      <Box px={1} onClick={console.log('fuzzy')}>
+        ~
+      </Box>
       {inputs[1]}
       <Box px={1}>@</Box>
       {inputs[2]}
