@@ -14,6 +14,7 @@ import {
   CardHeader,
   Fab,
   IconButton,
+  Skeleton,
   Stack,
   Tooltip,
   useMediaQuery,
@@ -58,16 +59,43 @@ export default function RecordInput({
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
-  }) // SWR caches this, so it won't need to call the API every render
+  })
 
+  // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
     console.error('Could not fetch record!')
-    return <></>
-  }
+    return (
+      <Card elevation={3} sx={{ px: 1 }}>
+        <CardHeader
+          title={`Record ${index + 1}`}
+          titleTypographyProps={{ variant: 'h6' }}
+        />
+        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
 
-  // todo: skeleton?
-  if (!record || !exercises) {
-    return <></>
+        <CardContent sx={{ justifyContent: 'center', display: 'flex' }}>
+          <Box>Error: Could not fetch record.</Box>
+        </CardContent>
+      </Card>
+    )
+  } else if (!record) {
+    return (
+      <Card elevation={3} sx={{ px: 1 }}>
+        <CardHeader
+          title={`Record ${index + 1}`}
+          titleTypographyProps={{ variant: 'h6' }}
+        />
+        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+
+        <CardContent>
+          <Skeleton height="50px" />
+          <Skeleton height="50px" />
+          <Skeleton height="50px" />
+        </CardContent>
+        <CardActions sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}>
+          <Skeleton variant="circular" height="50px" width="50px" />
+        </CardActions>
+      </Card>
+    )
   }
 
   // todo: when exercise is null'd the record doesn't show (still exists in db)
@@ -188,7 +216,7 @@ export default function RecordInput({
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
       <CardContent
-        // swiping causes weird behavior when combine with data input fields, so disable it
+        // swiping causes weird behavior on desktop when combined with data input fields
         className={noSwipingAboveSm}
         sx={{ cursor: { sm: 'default' } }}
       >
@@ -255,13 +283,6 @@ export default function RecordInput({
           pb: 2,
         }}
       >
-        {/* <Button onClick={() => deleteRecord(_id)} color="error">
-          Delete Record
-        </Button> */}
-        {/* <Button onClick={addSet} variant="contained">
-          Add Set
-        </Button> */}
-        {/* todo: extend on hover with text? */}
         <Tooltip title="Add Set" placement="right">
           <Fab
             color="primary"

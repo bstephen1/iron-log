@@ -1,4 +1,10 @@
-import { Box, IconButton, Stack, useTheme } from '@mui/material'
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Stack,
+  useTheme,
+} from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
@@ -26,7 +32,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/bundle'
 import 'swiper/css/effect-cards'
@@ -105,26 +111,29 @@ export default function SessionView({ date }: { date: Dayjs }) {
       <TitleBar date={date} />
       <Clock />
       <WeightUnitConverter />
-      <Box>
-        <Box
-          className="pagination"
-          display="flex"
-          justifyContent="center"
-          pt={2}
-        />
-        <Stack direction="row">
-          <Box display="flex" width="auto" alignItems="center">
-            <IconButton
-              sx={{ display: { xs: 'none', sm: 'block' } }}
-              className="nav-prev"
-              color="primary"
-              disabled={isBeginning}
-            >
-              <ArrowBackIosNew />
-            </IconButton>
-          </Box>
-          {/*  todo: loading */}
-          {!isLoading && (
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" py={10}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box>
+          <Box
+            className="pagination"
+            display="flex"
+            justifyContent="center"
+            pt={2}
+          />
+          <Stack direction="row">
+            <Box display="flex" width="auto" alignItems="center">
+              <IconButton
+                sx={{ display: { xs: 'none', sm: 'block' } }}
+                className="nav-prev"
+                color="primary"
+                disabled={isBeginning}
+              >
+                <ArrowBackIosNew />
+              </IconButton>
+            </Box>
             <Swiper
               // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
               onSwiper={updateSwiper}
@@ -184,19 +193,19 @@ export default function SessionView({ date }: { date: Dayjs }) {
                 <AddRecord handleAdd={handleAddRecord} />
               </SwiperSlide>
             </Swiper>
-          )}
-          <Box display="flex" alignItems="center">
-            <IconButton
-              sx={{ display: { xs: 'none', sm: 'block' } }}
-              className="nav-next"
-              color="primary"
-              disabled={isEnd}
-            >
-              <ArrowForwardIos />
-            </IconButton>
-          </Box>
-        </Stack>
-      </Box>
+            <Box display="flex" alignItems="center">
+              <IconButton
+                sx={{ display: { xs: 'none', sm: 'block' } }}
+                className="nav-next"
+                color="primary"
+                disabled={isEnd}
+              >
+                <ArrowForwardIos />
+              </IconButton>
+            </Box>
+          </Stack>
+        </Box>
+      )}
     </Stack>
   )
 }
