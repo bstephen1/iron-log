@@ -14,3 +14,10 @@ export default interface Set {
   // maybe bw at Record level
   bodyweight?: number
 }
+
+export interface SetUnits {
+  weight?: 'kg' | 'lb'
+  distance?: 'km' | 'm' | 'ft' | 'mi'
+  time?: 'seconds' | 'stopwatch'
+  rpe?: 'rpe' | 'rir'
+}

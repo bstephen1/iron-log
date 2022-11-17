@@ -43,9 +43,6 @@ export default function StandardSetInput({
     >
       {inputs[0]}
       <Box px={1}>/</Box>
-      <Box px={1} onClick={console.log('fuzzy')}>
-        ~
-      </Box>
       {inputs[1]}
       <Box px={1}>@</Box>
       {inputs[2]}
