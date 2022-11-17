@@ -34,7 +34,6 @@ export default function StandardSetInput({
     <Stack
       direction="row"
       alignItems="center"
-      justifyContent="space-between"
       // border is from TextField underline
       sx={{
         borderBottom: '1px solid rgba(0, 0, 0, 0.42)',

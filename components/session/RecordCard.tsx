@@ -256,7 +256,7 @@ export default function RecordCard({
           </Grid>
         </Grid>
 
-        <Box sx={{ p: 2, pb: 0 }}>
+        <Box sx={{ pt: 2, pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
             <Stack key={i} direction="row">
