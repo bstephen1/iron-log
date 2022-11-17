@@ -18,7 +18,7 @@ import Record from '../../models/Record'
 import Session from '../../models/Session'
 import WeightUnitConverter from '../WeightUnitConverter'
 import Clock from './Clock'
-import RecordInput from './RecordInput'
+import RecordCard from './RecordCard'
 import TitleBar from './TitleBar'
 
 import {
@@ -181,7 +181,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
               {session &&
                 session.records.map((id, i) => (
                   <SwiperSlide key={id}>
-                    <RecordInput
+                    <RecordCard
                       id={id}
                       deleteRecord={handleDeleteRecord}
                       swapRecords={handleSwapRecords}

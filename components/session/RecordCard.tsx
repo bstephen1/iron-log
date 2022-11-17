@@ -43,7 +43,7 @@ interface Props {
   swapRecords: (i: number, j: number) => void
   index: number
 }
-export default function RecordInput({
+export default function RecordCard({
   id,
   deleteRecord,
   swapRecords,
