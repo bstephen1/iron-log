@@ -1,9 +1,9 @@
-// @ts-nocheck
 // todo: Set structure is still under construction
 import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import Set from '../../models/Set'
+import { DEFAULT_SET_LAYOUT, DEFAULT_UNITS } from '../../lib/frontend/constants'
+import Set, { SetLayout } from '../../models/Set'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 
 // todo: indicator for failing a rep
@@ -16,19 +16,21 @@ export default function StandardSetInput({
 }: Set & any) {
   // todo: restrict to numbers, but also allow undefined.
   // todo: changes based on type
-  const placeholders = { primary: 'weight', secondary: 'reps', effort: 'rpe' }
-  const units = { primary: 'kg', secondary: '', effort: '' }
+  const units = DEFAULT_UNITS
+  const layout = DEFAULT_SET_LAYOUT
   const pyStack = 0.5
 
-  const inputs = ['primary', 'secondary', 'effort'].map((field) => (
+  const inputs = Object.keys(layout).map((field) => (
     <NumericFieldAutosave
       key={field}
-      placeholder={placeholders[field]}
+      placeholder={field}
       initialValue={props[field]}
       handleSubmit={(value) => handleSubmit(field, value)}
       units={units[field]}
     />
   ))
+
+  console.log(inputs)
 
   return (
     <Stack

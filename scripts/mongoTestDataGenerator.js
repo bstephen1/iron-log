@@ -32,14 +32,13 @@ function addName(name) {
   return { name }
 }
 
-function addSet(primary, secondary, effort) {
-  return { primary, secondary, effort }
+function addSet(weight, reps, rpe, distance, time) {
+  return { weight, reps, rpe, distance, time }
 }
 
-function addRecord(date, type, exercise, activeModifiers, sets, _id) {
+function addRecord(date, exercise, activeModifiers, sets, _id) {
   return {
     date,
-    type,
     exercise,
     activeModifiers,
     sets,
@@ -61,6 +60,8 @@ let categories = [
   addName('bench press'),
   addName('chest'),
   addName('triceps'),
+  addName('cardio'),
+  addName('strongman'),
 ]
 
 let modifiers = [
@@ -114,6 +115,8 @@ let exercises = [
     ['squat'],
     ['AMRAP']
   ),
+  new Exercise('running', 'active', '', [], ['cardio'], []),
+  new Exercise('yoke', 'active', '', [], ['strongman'], []),
 ]
 
 // todo: myo, super, rep range (?), weigh-in, cardio
@@ -127,23 +130,28 @@ let sets2 = [
   addSet(30, 10, undefined),
 ]
 
+let setsDist = [addSet(undefined, undefined, 9, 5000, 900)]
+
+let setsDist2 = [
+  addSet(undefined, undefined, 10, 50, 10),
+  addSet(undefined, undefined, 10, 50, 9.83),
+  addSet(undefined, undefined, 10, 50, 8.33),
+]
+
+let setsAll = [addSet(500, 2, 8, 50, 10)]
+
 let records = [
+  addRecord('2022-09-26', { ...exercises[0] }, ['belt'], sets1, randomUUID()),
   addRecord(
     '2022-09-26',
-    'standard',
-    { ...exercises[0] },
-    ['belt'],
-    sets1,
-    randomUUID()
-  ),
-  addRecord(
-    '2022-09-26',
-    'standard',
     { ...exercises[1] },
     ['bodyweight'],
     sets2,
     randomUUID()
   ),
+  addRecord('2022-09-26', { ...exercises[4] }, [], setsDist, randomUUID()),
+  addRecord('2022-09-26', { ...exercises[4] }, [], setsDist2, randomUUID()),
+  addRecord('2022-09-26', { ...exercises[5] }, [], setsAll, randomUUID()),
 ]
 
 let sessions = [

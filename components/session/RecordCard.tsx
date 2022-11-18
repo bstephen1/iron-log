@@ -233,7 +233,8 @@ export default function RecordCard({
             />
           </Grid>
           <Grid xs={12}>
-            <SelectFieldAutosave
+            {/* todo: make this a multi select with chips */}
+            {/* <SelectFieldAutosave
               label="Set Type"
               initialValue={type}
               fullWidth
@@ -241,7 +242,7 @@ export default function RecordCard({
               variant="standard"
               options={Object.values(SetType)}
               handleSubmit={(value) => handleFieldChange('type', value)}
-            />
+            /> */}
           </Grid>
           <Grid xs={12}>
             <ComboBoxField
