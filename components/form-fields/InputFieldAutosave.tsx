@@ -2,17 +2,15 @@ import { TextField, TextFieldProps } from '@mui/material'
 import * as yup from 'yup'
 import useField from './useField'
 
-export interface InputFieldAutosaveProps {
+// have to use type union instead of interface extension because TextFieldProps is an intersection type
+export type InputFieldAutosaveProps = {
   label?: string
   initialValue?: string
   defaultHelperText?: string
   handleSubmit: (value: string) => void
   yupValidator?: ReturnType<typeof yup.reach>
-}
-// have to use type union instead of interface extension because TextFieldProps is an intersection type
-export default function InputFieldAutosave(
-  props: InputFieldAutosaveProps & TextFieldProps
-) {
+} & Partial<TextFieldProps>
+export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const {
     label,
     defaultHelperText = ' ',

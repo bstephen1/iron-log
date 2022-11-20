@@ -46,6 +46,12 @@ function addRecord(date, exercise, activeModifiers, sets, _id) {
   }
 }
 
+function getRecordIdsForDate(date) {
+  return records
+    .filter((record) => record.date === date)
+    .map((record) => record._id)
+}
+
 // todo: sessionType and program
 function addSessions(date, records, _id) {
   return { date, records, _id }
@@ -155,7 +161,7 @@ let records = [
 ]
 
 let sessions = [
-  addSessions('2022-09-26', [records[0]._id, records[1]._id], randomUUID()),
+  addSessions('2022-09-26', getRecordIdsForDate('2022-09-26'), randomUUID()),
 ]
 
 //  START OPERATIONS

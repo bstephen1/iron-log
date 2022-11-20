@@ -4,13 +4,16 @@ import InputFieldAutosave, {
 } from './InputFieldAutosave'
 
 // todo: split out from InputField so this can be number not string
-interface Props extends InputFieldAutosaveProps {
+type Props = {
   units?: string
-}
-export default function NumericFieldAutosave({ units, ...props }: Props) {
+} & InputFieldAutosaveProps
+export default function NumericFieldAutosave({
+  units,
+  ...inputFieldAutosaveProps
+}: Props) {
   return (
     <InputFieldAutosave
-      {...props}
+      {...inputFieldAutosaveProps}
       type="number"
       variant="standard"
       // prevent scrolling from incrementing the number. See: https://github.com/mui/material-ui/issues/7960
