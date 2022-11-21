@@ -30,12 +30,11 @@ import {
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
-import { SetType } from '../../models/SetType'
+import Set from '../../models/Set'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
-import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../StyledDivider'
-import StandardSetInput from './SetInput'
+import SetInput from './SetInput'
 
 interface Props {
   id: Record['_id']
@@ -77,7 +76,7 @@ export default function RecordCard({
         </CardContent>
       </Card>
     )
-  } else if (!record) {
+  } else if (record === undefined) {
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
@@ -96,14 +95,29 @@ export default function RecordCard({
         </CardActions>
       </Card>
     )
+    // this shouldn't ever happen
+  } else if (record === null) {
+    return (
+      <Card elevation={3} sx={{ px: 1 }}>
+        <CardHeader
+          title={`Record ${index + 1}`}
+          titleTypographyProps={{ variant: 'h6' }}
+        />
+        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+
+        <CardContent>
+          <Box>Could not find record {id}</Box>
+        </CardContent>
+      </Card>
+    )
   }
 
   // todo: when exercise is null'd the record doesn't show (still exists in db)
   // define after null checks so record must exist
-  const { exercise, type, activeModifiers, sets, _id } = record
+  const { exercise, activeModifiers, sets, fields, _id } = record
 
   const addSet = () => {
-    const last = sets[sets.length - 1] ?? {}
+    const last = sets[sets.length - 1] ?? new Set()
     // todo: init first set, and possibly have different behavior when adding different types of sets?
     const newSet = { ...last, effort: undefined }
     updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
@@ -233,14 +247,15 @@ export default function RecordCard({
             />
           </Grid>
           <Grid xs={12}>
-            {/* todo: make this a multi select with chips */}
+            {/* todo: make this a multi select that passes on the SetFields to SetInput */}
             {/* <SelectFieldAutosave
-              label="Set Type"
-              initialValue={type}
+              label="Set Fields"
+              initialValue=""
               fullWidth
+              multiple
               defaultHelperText=""
               variant="standard"
-              options={Object.values(SetType)}
+              options={['weight', 'distance', 'time', 'reps', 'rpe']}
               handleSubmit={(value) => handleFieldChange('type', value)}
             /> */}
           </Grid>
@@ -257,14 +272,24 @@ export default function RecordCard({
           </Grid>
         </Grid>
 
+        {/* todo: add a column header for input labels? Like a title row in excel... */}
+        {/* make the multi Select that chooses the set fields also be the header? */}
+        {/* could also put units in a top header */}
+        {/* oh, AND the header could lock in constant values! Eg, reps = 5 (or, would that be too much?) */}
+        {/* may be better to do something like categoryFilter; a button with a Menu, instead of a Select (so the header row can be customized easier) */}
+        {/* or maybe a custom renderValue in the Select is flexible enough  */}
+
+        {/* Whatever form it is, that Select will pass on the fields to the SetInputs, and act as the source of truth for which fields to display */}
+        {/* units: global user pref. No change per record or anything. Just make it quick to swap units if needed. */}
+        {/* rpe/rir is a "unit" choice, but really switches the label/placeholder.  */}
+
         <Box sx={{ pt: 2, pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
             <Stack key={i} direction="row">
-              <StandardSetInput
-                {...set}
-                type={record.type}
-                units={{ primary: 'kg' }}
+              <SetInput
+                set={set}
+                fields={fields}
                 key={i}
                 index={i}
                 handleSubmit={(setField, value) =>

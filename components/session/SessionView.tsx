@@ -124,6 +124,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
             pt={2}
           />
           <Stack direction="row">
+            {/* todo: nav button ripples are elongated */}
             <Box display="flex" width="auto" alignItems="center">
               <IconButton
                 sx={{ display: { xs: 'none', sm: 'block' } }}

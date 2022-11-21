@@ -1,36 +1,26 @@
-// todo: Set structure is still under construction
 import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import { DEFAULT_SET_LAYOUT, DEFAULT_UNITS } from '../../lib/frontend/constants'
-import Set, { SetLayout } from '../../models/Set'
+import { Fragment } from 'react'
+import Set, { SetFields } from '../../models/Set'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 
+interface Props {
+  handleSubmit: any
+  handleDelete: any
+  set: Set
+  fields: (keyof SetFields)[]
+}
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
-export default function StandardSetInput({
-  type,
+export default function SetInput({
   handleSubmit,
   handleDelete,
-  ...props
-}: Set & any) {
+  set,
+  fields,
+}: Props) {
   // todo: restrict to numbers, but also allow undefined.
-  // todo: changes based on type
-  const units = DEFAULT_UNITS
-  const layout = DEFAULT_SET_LAYOUT
   const pyStack = 0.5
-
-  const inputs = Object.keys(layout).map((field) => (
-    <NumericFieldAutosave
-      key={field}
-      placeholder={field}
-      initialValue={props[field]}
-      handleSubmit={(value) => handleSubmit(field, value)}
-      units={units[field]}
-    />
-  ))
-
-  console.log(inputs)
 
   return (
     <Stack
@@ -41,13 +31,22 @@ export default function StandardSetInput({
         borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
         background: `${grey[100]}`, // todo
         py: pyStack,
+        pl: 1,
       }}
     >
-      {inputs[0]}
-      <Box px={1}>/</Box>
-      {inputs[1]}
-      <Box px={1}>@</Box>
-      {inputs[2]}
+      {fields.map((field, i) => (
+        <Fragment key={i}>
+          {/* todo: store each field's delimiter and pull that here? */}
+          {i > 0 && <Box px={1}>{field === 'rpe' ? '@' : '/'}</Box>}
+          <NumericFieldAutosave
+            placeholder={field}
+            // todo: these are being stored as numbers, but an html input is a string...so have to convert? Store as strings on the front end?
+            initialValue={String(set.fields[field])}
+            handleSubmit={(value) => handleSubmit(field, value)}
+          />
+        </Fragment>
+      ))}
+      {/* todo: maybe make this a "more..." with failed/warmup/delete options */}
       <IconButton
         size="small"
         onClick={handleDelete}
