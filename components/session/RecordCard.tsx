@@ -12,6 +12,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  Divider,
   Fab,
   IconButton,
   Skeleton,
@@ -34,6 +35,7 @@ import Set from '../../models/Set'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../StyledDivider'
+import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
 interface Props {
@@ -177,7 +179,6 @@ export default function RecordCard({
 
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
-  // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
     <Card elevation={3} sx={{ px: 1 }}>
@@ -270,6 +271,15 @@ export default function RecordCard({
               }
             />
           </Grid>
+          <Grid xs={12}>
+            {/* <SetTable sets={sets} /> */}
+            <Divider sx={{ pb: 1 }}>Sets</Divider>
+
+            <SetHeader
+              selected={fields}
+              setSelected={(value) => handleFieldChange('fields', value)}
+            />
+          </Grid>
         </Grid>
 
         {/* todo: add a column header for input labels? Like a title row in excel... */}
@@ -281,8 +291,7 @@ export default function RecordCard({
 
         {/* Whatever form it is, that Select will pass on the fields to the SetInputs, and act as the source of truth for which fields to display */}
         {/* units: global user pref. No change per record or anything. Just make it quick to swap units if needed. */}
-
-        <Box sx={{ pt: 2, pb: 0 }}>
+        <Box sx={{ pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
             <Stack key={i} direction="row">
