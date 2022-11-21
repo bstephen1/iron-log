@@ -281,7 +281,6 @@ export default function RecordCard({
 
         {/* Whatever form it is, that Select will pass on the fields to the SetInputs, and act as the source of truth for which fields to display */}
         {/* units: global user pref. No change per record or anything. Just make it quick to swap units if needed. */}
-        {/* rpe/rir is a "unit" choice, but really switches the label/placeholder.  */}
 
         <Box sx={{ pt: 2, pb: 0 }}>
           {/* todo: unique key */}

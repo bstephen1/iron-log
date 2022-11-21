@@ -23,7 +23,7 @@ export interface SetFields {
   distance?: number
   time?: number
   reps?: number
-  rpe?: number
+  effort?: number
 }
 
 // todo: certain exercises can have default setFields

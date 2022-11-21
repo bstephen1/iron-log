@@ -9,7 +9,7 @@ export default class Record {
     public exercise: Exercise | null = null,
     public type: SetType = SetType.STANDARD,
     public activeModifiers: string[] = [],
-    public fields: (keyof SetFields)[] = ['weight', 'reps', 'rpe'],
+    public fields: (keyof SetFields)[] = ['weight', 'reps', 'effort'],
     public sets: Set[] = [],
     public readonly _id: string = generateId()
   ) {}

@@ -37,7 +37,7 @@ export default function SetInput({
       {fields.map((field, i) => (
         <Fragment key={i}>
           {/* todo: store each field's delimiter and pull that here? */}
-          {i > 0 && <Box px={1}>{field === 'rpe' ? '@' : '/'}</Box>}
+          {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
           <NumericFieldAutosave
             placeholder={field}
             // todo: these are being stored as numbers, but an html input is a string...so have to convert? Store as strings on the front end?
