@@ -13,6 +13,7 @@ interface Props {
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
+// todo: currently not full width if not enough columns to max the width
 export default function SetInput({
   handleSubmit,
   handleDelete,
@@ -39,7 +40,6 @@ export default function SetInput({
           {/* todo: store each field's delimiter and pull that here? */}
           {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
           <NumericFieldAutosave
-            placeholder={field}
             // todo: these are being stored as numbers, but an html input is a string...so have to convert? Store as strings on the front end?
             initialValue={String(set.fields[field])}
             handleSubmit={(value) => handleSubmit(field, value)}

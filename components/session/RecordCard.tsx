@@ -248,19 +248,6 @@ export default function RecordCard({
             />
           </Grid>
           <Grid xs={12}>
-            {/* todo: make this a multi select that passes on the SetFields to SetInput */}
-            {/* <SelectFieldAutosave
-              label="Set Fields"
-              initialValue=""
-              fullWidth
-              multiple
-              defaultHelperText=""
-              variant="standard"
-              options={['weight', 'distance', 'time', 'reps', 'rpe']}
-              handleSubmit={(value) => handleFieldChange('type', value)}
-            /> */}
-          </Grid>
-          <Grid xs={12}>
             <ComboBoxField
               label="Modifiers"
               options={exercise?.modifiers}
@@ -271,13 +258,15 @@ export default function RecordCard({
               }
             />
           </Grid>
+          {/* <SetTable sets={sets} /> */}
           <Grid xs={12}>
-            {/* <SetTable sets={sets} /> */}
-            <Divider sx={{ pb: 1 }}>Sets</Divider>
+            <Divider>Sets</Divider>
+          </Grid>
 
+          <Grid xs={12}>
             <SetHeader
-              selected={fields}
-              setSelected={(value) => handleFieldChange('fields', value)}
+              initialSelected={fields}
+              handleSubmit={(value) => handleFieldChange('fields', value)}
             />
           </Grid>
         </Grid>

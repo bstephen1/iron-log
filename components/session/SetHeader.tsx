@@ -2,21 +2,21 @@ import {
   Box,
   Checkbox,
   Input,
-  ListItemButton,
   ListItemText,
   MenuItem,
   Select,
   Stack,
+  Tooltip,
 } from '@mui/material'
-import { grey } from '@mui/material/colors'
-import { Dispatch, Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { DEFAULT_UNITS } from '../../lib/frontend/constants'
 
 interface Props {
-  selected: string[]
-  setSelected: Dispatch<string[]>
+  initialSelected?: string[]
+  handleSubmit: (value: string[]) => void
 }
-export default function SetHeader({ selected, setSelected }: Props) {
+export default function SetHeader({ initialSelected, handleSubmit }: Props) {
+  const [selected, setSelected] = useState(initialSelected || [])
   // todo: dnd this? user pref? per exercise?
   const FIELD_ORDER = ['weight', 'distance', 'time', 'reps', 'effort']
 
@@ -32,18 +32,20 @@ export default function SetHeader({ selected, setSelected }: Props) {
   }
 
   return (
-    <ListItemButton sx={{ p: 0 }}>
+    <Tooltip title="change displayed fields" placement="top-end">
       <Select
         multiple
         fullWidth
         value={selected}
+        // todo: do a check to only submit if selected is different from initialSelected?
+        onBlur={() => handleSubmit(selected)}
+        onClose={() => handleSubmit(selected)}
         onChange={(e) => handleChange(e.target.value)}
         input={
           <Input
             disableUnderline
             sx={{
-              borderBottom: '2px solid rgba(0, 0, 0, 0.42)',
-              background: `${grey[100]}`,
+              borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
             }}
           />
         }
@@ -85,6 +87,6 @@ export default function SetHeader({ selected, setSelected }: Props) {
           </MenuItem>
         ))}
       </Select>
-    </ListItemButton>
+    </Tooltip>
   )
 }
