@@ -23,6 +23,10 @@ export default function SetInput({
   // todo: restrict to numbers, but also allow undefined.
   const pyStack = 0.5
 
+  if (!fields.length) {
+    return <></>
+  }
+
   return (
     <Stack
       direction="row"

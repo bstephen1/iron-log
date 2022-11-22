@@ -1,7 +1,9 @@
 import {
   Box,
   Checkbox,
+  FormControl,
   Input,
+  InputLabel,
   ListItemText,
   MenuItem,
   Select,
@@ -49,59 +51,68 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
     //   onMouseEnter={() => setTimeout(() => setTooltipOpen(true), 500)}
     //   onMouseLeave={() => setTooltipOpen(false)}
     // >
-    <Select
-      multiple
-      fullWidth
-      value={selected}
-      // todo: do a check to only submit if selected is different from initialSelected?
-      onBlur={() => handleSubmit(selected)}
-      onOpen={() => setTooltipOpen(false)}
-      onClose={() => handleSubmit(selected)}
-      onChange={(e) => handleChange(e.target.value)}
-      input={
-        <Input
-          disableUnderline
-          sx={{
-            borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-          }}
-        />
-      }
-      renderValue={() => (
-        <Stack
-          direction="row"
-          alignItems="center"
-          // border is from TextField underline
-          sx={{
-            pl: 1,
-          }}
-        >
-          {selected.map((field, i) => (
-            <Fragment key={i}>
-              <Box
-                display="flex"
-                flexGrow="1"
-                justifyContent="center"
-                textOverflow="ellipsis"
-                overflow="clip"
-              >
-                {' '}
-                {DEFAULT_UNITS[field] ?? field}
-              </Box>
-            </Fragment>
-          ))}
-        </Stack>
-      )}
-    >
-      {FIELD_ORDER.map((field) => (
-        <MenuItem key={field} value={field}>
-          <Checkbox checked={selected.indexOf(field) > -1} />
-          <ListItemText
-            primary={
-              field + (DEFAULT_UNITS[field] ? ` (${DEFAULT_UNITS[field]})` : '')
-            }
+    <FormControl fullWidth>
+      <InputLabel variant="standard">Sets</InputLabel>
+      <Select
+        multiple
+        fullWidth
+        displayEmpty
+        value={selected}
+        label="Set Fields"
+        // todo: do a check to only submit if selected is different from initialSelected?
+        onBlur={() => handleSubmit(selected)}
+        onOpen={() => setTooltipOpen(false)}
+        onClose={() => handleSubmit(selected)}
+        onChange={(e) => handleChange(e.target.value)}
+        input={
+          <Input
+          // disableUnderline
+          // sx={{
+          //   borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+          // }}
           />
+        }
+        renderValue={() => (
+          <Stack
+            direction="row"
+            alignItems="center"
+            // border is from TextField underline
+            sx={{
+              pl: 1,
+            }}
+          >
+            {selected.map((field, i) => (
+              <Fragment key={i}>
+                <Box
+                  display="flex"
+                  flexGrow="1"
+                  justifyContent="center"
+                  textOverflow="ellipsis"
+                  overflow="clip"
+                >
+                  {' '}
+                  {DEFAULT_UNITS[field] ?? field}
+                </Box>
+              </Fragment>
+            ))}
+          </Stack>
+        )}
+      >
+        <MenuItem disabled value="">
+          <em>Select the fields to display</em>
         </MenuItem>
-      ))}
-    </Select>
+        {FIELD_ORDER.map((field) => (
+          <MenuItem key={field} value={field}>
+            <Checkbox checked={selected.indexOf(field) > -1} />
+            <ListItemText
+              primary={
+                field +
+                (DEFAULT_UNITS[field] ? ` (${DEFAULT_UNITS[field]})` : '')
+              }
+            />
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   )
 }
