@@ -258,10 +258,6 @@ export default function RecordCard({
               }
             />
           </Grid>
-          {/* <SetTable sets={sets} /> */}
-          {/* <Grid xs={12}>
-            <Divider>Sets</Divider>
-          </Grid> */}
 
           <Grid xs={12}>
             <SetHeader
@@ -271,15 +267,7 @@ export default function RecordCard({
           </Grid>
         </Grid>
 
-        {/* todo: add a column header for input labels? Like a title row in excel... */}
-        {/* make the multi Select that chooses the set fields also be the header? */}
-        {/* could also put units in a top header */}
-        {/* oh, AND the header could lock in constant values! Eg, reps = 5 (or, would that be too much?) */}
-        {/* may be better to do something like categoryFilter; a button with a Menu, instead of a Select (so the header row can be customized easier) */}
-        {/* or maybe a custom renderValue in the Select is flexible enough  */}
-
-        {/* Whatever form it is, that Select will pass on the fields to the SetInputs, and act as the source of truth for which fields to display */}
-        {/* units: global user pref. No change per record or anything. Just make it quick to swap units if needed. */}
+        {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
         <Box sx={{ pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
