@@ -6,8 +6,8 @@ import Set, { SetFields } from '../../models/Set'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 
 interface Props {
-  handleSubmit: any
-  handleDelete: any
+  handleSubmit: (changes: Partial<Set>) => void
+  handleDelete: () => void
   set: Set
   fields: (keyof SetFields)[]
 }
@@ -46,7 +46,12 @@ export default function SetInput({
           <NumericFieldAutosave
             // todo: these are being stored as numbers, but an html input is a string...so have to convert? Store as strings on the front end?
             initialValue={String(set.fields[field])}
-            handleSubmit={(value) => handleSubmit(field, value)}
+            // todo: add validation that this is a number
+            handleSubmit={(value) =>
+              handleSubmit({
+                fields: { ...set.fields, [field]: Number(value) },
+              })
+            }
             sx={{ flexGrow: 1 }}
           />
         </Fragment>

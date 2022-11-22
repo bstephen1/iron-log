@@ -1,5 +1,3 @@
-// @ts-nocheck
-// todo: ignoring Set typing issues for now
 import {
   Delete,
   KeyboardDoubleArrowLeft,
@@ -131,14 +129,14 @@ export default function RecordCard({
     mutateRecord({ ...record, ...changes })
   }
 
-  const handleSetChange = (setField, value, i) => {
-    updateRecordFields(_id, { [`sets.${i}.fields.${setField}`]: value })
+  const handleSetChange = (changes: Partial<Set>, i: number) => {
+    updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
     const newSets = [...record.sets]
-    newSets[i][setField] = value
+    newSets[i] = { ...newSets[i], ...changes }
     mutateRecord({ ...record, sets: newSets })
   }
 
-  const handleDeleteSet = (i) => {
+  const handleDeleteSet = (i: number) => {
     const newSets = record.sets.filter((_, j) => j !== i)
     updateRecordFields(_id, { ['sets']: newSets })
     mutateRecord({ ...record, sets: newSets })
@@ -150,7 +148,7 @@ export default function RecordCard({
     swiper.update() // have to update swiper whenever changing swiper elements
   }
 
-  const handleSwapRecords = (i, j) => {
+  const handleSwapRecords = (i: number, j: number) => {
     swapRecords(i, j)
     swiper.update()
     // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
@@ -272,9 +270,8 @@ export default function RecordCard({
               set={set}
               fields={fields}
               key={i}
-              index={i}
-              handleSubmit={(setField, value) =>
-                handleSetChange(setField, value, i)
+              handleSubmit={(changes: Partial<Set>) =>
+                handleSetChange(changes, i)
               }
               handleDelete={() => handleDeleteSet(i)}
             />

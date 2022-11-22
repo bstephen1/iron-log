@@ -15,11 +15,10 @@ import { SetFields } from '../../models/Set'
 
 interface Props {
   initialSelected?: (keyof SetFields)[]
-  handleSubmit: (value: string[]) => void
+  handleSubmit: (value: (keyof SetFields)[]) => void
 }
 export default function SetHeader({ initialSelected, handleSubmit }: Props) {
   const [selected, setSelected] = useState(initialSelected || [])
-  const [tooltipOpen, setTooltipOpen] = useState(false)
   // todo: dnd this? user pref? per exercise?
   const FIELD_ORDER: (keyof SetFields)[] = [
     'weight',
@@ -41,16 +40,6 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
   }
 
   return (
-    // todo: tooltip is annoyingly finnicky
-    // <Tooltip
-    //   // need to manually manage open state so it doesn't remain after opening Select
-    //   title="change displayed fields"
-    //   placement="bottom-end"
-    //   open={tooltipOpen}
-    //   disableHoverListener
-    //   onMouseEnter={() => setTimeout(() => setTooltipOpen(true), 500)}
-    //   onMouseLeave={() => setTooltipOpen(false)}
-    // >
     <FormControl fullWidth>
       <InputLabel variant="standard" shrink={true}>
         Sets
@@ -63,7 +52,6 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
         label="Set Fields"
         // todo: do a check to only submit if selected is different from initialSelected?
         onBlur={() => handleSubmit(selected)}
-        onOpen={() => setTooltipOpen(false)}
         onClose={() => handleSubmit(selected)}
         onChange={(e) => handleChange(e.target.value)}
         input={
