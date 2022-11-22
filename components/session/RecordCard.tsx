@@ -259,9 +259,9 @@ export default function RecordCard({
             />
           </Grid>
           {/* <SetTable sets={sets} /> */}
-          <Grid xs={12}>
+          {/* <Grid xs={12}>
             <Divider>Sets</Divider>
-          </Grid>
+          </Grid> */}
 
           <Grid xs={12}>
             <SetHeader
