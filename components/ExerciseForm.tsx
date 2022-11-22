@@ -17,7 +17,7 @@ import SelectFieldAutosave from './form-fields/SelectFieldAutosave'
 
 interface Props {
   exercise: Exercise
-  handleUpdate: <T extends keyof Exercise>(field: T, value: Exercise[T]) => void
+  handleUpdate: (updates: Partial<Exercise>) => void
 }
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
@@ -76,7 +76,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             label="Name"
             initialValue={exercise.name}
             required
-            handleSubmit={(value) => handleUpdate('name', value)}
+            handleSubmit={(value) => handleUpdate({ name: value })}
             yupValidator={yup.reach(validationSchema, 'name')}
           />
           <SelectFieldAutosave
@@ -85,13 +85,15 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             initialValue={exercise.status}
             required
             yupValidator={yup.reach(validationSchema, 'status')}
-            handleSubmit={(value) => handleUpdate('status', value)}
+            handleSubmit={(value) => handleUpdate({ status: value })}
           />
           <ComboBoxField
             label="Modifiers"
             initialValue={exercise.modifiers}
             options={modifierNames}
-            handleSubmit={(value: string[]) => handleUpdate('modifiers', value)}
+            handleSubmit={(value: string[]) =>
+              handleUpdate({ modifiers: value })
+            }
           />
         </Stack>
       </Grid>
@@ -101,7 +103,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             label="Notes"
             initialValue={exercise.notes}
             fullWidth
-            handleSubmit={(value) => handleUpdate('notes', value)}
+            handleSubmit={(value) => handleUpdate({ notes: value })}
           />
           <ComboBoxField
             label="Categories"
@@ -109,7 +111,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             options={categoryNames}
             fullWidth
             handleSubmit={(value: string[]) =>
-              handleUpdate('categories', value)
+              handleUpdate({ categories: value })
             }
           />
         </Stack>
@@ -120,7 +122,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           addItemPlaceholder="Add Cue"
           listItemPlaceholder="Empty Cue (will be deleted)"
           values={exercise.cues}
-          handleSubmit={(values: string[]) => handleUpdate('cues', values)}
+          handleSubmit={(values: string[]) => handleUpdate({ cues: values })}
         />
       </Grid>
     </Grid>
