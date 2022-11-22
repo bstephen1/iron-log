@@ -47,6 +47,7 @@ export default function SetInput({
             // todo: these are being stored as numbers, but an html input is a string...so have to convert? Store as strings on the front end?
             initialValue={String(set.fields[field])}
             handleSubmit={(value) => handleSubmit(field, value)}
+            sx={{ flexGrow: 1 }}
           />
         </Fragment>
       ))}

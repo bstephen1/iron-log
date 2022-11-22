@@ -15,7 +15,6 @@ import {
   Fab,
   IconButton,
   Skeleton,
-  Stack,
   Tooltip,
   useMediaQuery,
   useTheme,
@@ -269,18 +268,16 @@ export default function RecordCard({
         <Box sx={{ pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
-            <Stack key={i} direction="row">
-              <SetInput
-                set={set}
-                fields={fields}
-                key={i}
-                index={i}
-                handleSubmit={(setField, value) =>
-                  handleSetChange(setField, value, i)
-                }
-                handleDelete={() => handleDeleteSet(i)}
-              />
-            </Stack>
+            <SetInput
+              set={set}
+              fields={fields}
+              key={i}
+              index={i}
+              handleSubmit={(setField, value) =>
+                handleSetChange(setField, value, i)
+              }
+              handleDelete={() => handleDeleteSet(i)}
+            />
           ))}
         </Box>
       </CardContent>
