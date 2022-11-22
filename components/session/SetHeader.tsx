@@ -52,7 +52,9 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
     //   onMouseLeave={() => setTooltipOpen(false)}
     // >
     <FormControl fullWidth>
-      <InputLabel variant="standard">Sets</InputLabel>
+      <InputLabel variant="standard" shrink={true}>
+        Sets
+      </InputLabel>
       <Select
         multiple
         fullWidth
@@ -81,25 +83,31 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
               pl: 1,
             }}
           >
-            {selected.map((field, i) => (
-              <Fragment key={i}>
-                <Box
-                  display="flex"
-                  flexGrow="1"
-                  justifyContent="center"
-                  textOverflow="ellipsis"
-                  overflow="clip"
-                >
-                  {' '}
-                  {DEFAULT_UNITS[field] ?? field}
-                </Box>
-              </Fragment>
-            ))}
+            {!selected.length ? (
+              <MenuItem disabled sx={{ p: 0 }}>
+                <em>Select a display field to add sets.</em>
+              </MenuItem>
+            ) : (
+              selected.map((field, i) => (
+                <Fragment key={i}>
+                  <Box
+                    display="flex"
+                    flexGrow="1"
+                    justifyContent="center"
+                    textOverflow="ellipsis"
+                    overflow="clip"
+                  >
+                    {' '}
+                    {DEFAULT_UNITS[field] ?? field}
+                  </Box>
+                </Fragment>
+              ))
+            )}
           </Stack>
         )}
       >
         <MenuItem disabled value="">
-          <em>Select the fields to display</em>
+          <em>Select fields to display</em>
         </MenuItem>
         {FIELD_ORDER.map((field) => (
           <MenuItem key={field} value={field}>

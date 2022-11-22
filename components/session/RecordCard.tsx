@@ -298,6 +298,7 @@ export default function RecordCard({
           <Fab
             color="primary"
             size="medium"
+            disabled={!fields.length}
             onClick={addSet}
             className={noSwipingAboveSm}
           >
