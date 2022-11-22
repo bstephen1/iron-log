@@ -11,7 +11,7 @@ interface State {
 }
 
 interface Action {
-  type: 'start' | 'resetRest' | 'tick'
+  type: 'start' | 'resetRest' | 'tick' | 'pause'
 }
 
 // this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
@@ -27,6 +27,8 @@ function clockReducer(state: State, action: Action) {
       }
     case 'resetRest':
       return { ...state, deltaRestTime: 0, initialRestTime: dayjs().valueOf() }
+    case 'pause':
+      return { ...state, isRunning: false }
     case 'tick':
       return {
         ...state,
@@ -84,6 +86,7 @@ export default function Clock() {
       ) : (
         <Stack direction="row" justifyContent="space-between">
           <Typography>Total time: {formatDeltaTime(deltaTime)}</Typography>
+          <Button onClick={() => dispatch({ type: 'pause' })}>Pause</Button>
           <Button onClick={() => dispatch({ type: 'resetRest' })}>
             Reset Rest Time
           </Button>
