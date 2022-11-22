@@ -77,7 +77,8 @@ export async function fetchRecord(id: Record['_id']) {
           as: 'exercise',
         },
       },
-      { $unwind: '$exercise' },
+      // if preserveNull is false the whole record becomes null if exercise is null
+      { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
     ])
     // return just the first (there's only the one)
     .next()

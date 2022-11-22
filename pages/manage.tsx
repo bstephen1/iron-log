@@ -37,15 +37,11 @@ export default function ManagePage() {
   ]
 
   // todo: move inside form, and only have a watcher here for new values
-  const handleUpdateExercise = <T extends keyof Exercise>(
-    field: T,
-    value: Exercise[T]
-  ) => {
+  const handleUpdateExercise = (updates: Partial<Exercise>) => {
     if (!exercise) return
 
-    console.log(`updating ${field}: ${value}`)
-    const newExercise = { ...exercise, [field]: value }
-    updateExerciseFields(exercise, { [field]: value })
+    const newExercise = { ...exercise, ...updates }
+    updateExerciseFields(exercise, updates)
     // todo: not sure I like this... can we just mutate the selected exercise?
     const newExercises = exercises?.map((exercise) =>
       exercise._id === newExercise._id ? newExercise : exercise
@@ -55,11 +51,8 @@ export default function ManagePage() {
   }
 
   // todo: update these to be {[field]: value} like backend
-  const handleModifierUpdate = <T extends keyof Modifier>(
-    field: T,
-    value: Modifier[T]
-  ) => {
-    const newModifier = { ...modifier, [field]: value }
+  const handleModifierUpdate = (updates: Partial<Modifier>) => {
+    const newModifier = { ...modifier, ...updates }
   }
 
   const handleCategoryUpdate = (updates: Partial<Category>) => {

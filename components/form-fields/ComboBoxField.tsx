@@ -17,7 +17,6 @@ interface ComboBoxFieldProps
   options?: string[]
   initialValue: string[]
   handleSubmit: (value: string[]) => void
-  onClose?: () => void
   textFieldProps?: Partial<TextFieldProps>
 }
 // todo: doesn't send to db if clicking X on chips
@@ -25,18 +24,16 @@ function ComboBoxFieldBase({
   options = [],
   initialValue,
   handleSubmit,
-  onClose,
   textFieldProps,
   ...autocompleteProps
 }: ComboBoxFieldProps) {
-  const { control, value, setValue } = useField<string[]>({
+  const { control, value, setValue, isDirty } = useField<string[]>({
     handleSubmit,
     initialValue,
   })
 
   const handleClose = () => {
-    handleSubmit(value)
-    onClose?.()
+    isDirty && handleSubmit(value)
   }
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.

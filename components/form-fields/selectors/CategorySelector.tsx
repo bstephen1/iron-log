@@ -36,7 +36,7 @@ function withCategory(Component: typeof SelectorBase<Category>) {
             ? (option as NewCategoryStub).status
             : 'Category'
         }
-        placeholder="Select or Add a Category"
+        placeholder="Select or Add New Category"
         StubConstructor={NewCategoryStub}
         Constructor={Category}
         addNewItem={addCategory}

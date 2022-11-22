@@ -8,7 +8,7 @@ import InputField from './form-fields/InputField'
 
 interface Props {
   modifier: Modifier
-  handleUpdate: <T extends keyof Modifier>(field: T, value: Modifier[T]) => void
+  handleUpdate: (updates: Partial<Modifier>) => void
 }
 export default function ModifierForm({ modifier, handleUpdate }: Props) {
   const { exercises } = useExercises({})
@@ -53,7 +53,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
             label="Name"
             initialValue={modifier.name}
             required
-            handleSubmit={(value) => handleUpdate('name', value)}
+            handleSubmit={(value) => handleUpdate({ name: value })}
             yupValidator={yup.reach(validationSchema, 'name')}
           />
         </Stack>

@@ -32,19 +32,25 @@ function addName(name) {
   return { name }
 }
 
-function addSet(primary, secondary, effort) {
-  return { primary, secondary, effort }
+function addSet(weight, reps, effort, distance, time) {
+  return { fields: { weight, reps, effort, distance, time } }
 }
 
-function addRecord(date, type, exercise, activeModifiers, sets, _id) {
+function addRecord(date, exercise, activeModifiers, sets, fields, _id) {
   return {
     date,
-    type,
     exercise,
     activeModifiers,
     sets,
+    fields,
     _id,
   }
+}
+
+function getRecordIdsForDate(date) {
+  return records
+    .filter((record) => record.date === date)
+    .map((record) => record._id)
 }
 
 // todo: sessionType and program
@@ -61,6 +67,8 @@ let categories = [
   addName('bench press'),
   addName('chest'),
   addName('triceps'),
+  addName('cardio'),
+  addName('strongman'),
 ]
 
 let modifiers = [
@@ -114,6 +122,8 @@ let exercises = [
     ['squat'],
     ['AMRAP']
   ),
+  new Exercise('running', 'active', '', [], ['cardio'], []),
+  new Exercise('yoke', 'active', '', [], ['strongman'], []),
 ]
 
 // todo: myo, super, rep range (?), weigh-in, cardio
@@ -127,27 +137,61 @@ let sets2 = [
   addSet(30, 10, undefined),
 ]
 
+let setsDist = [addSet(undefined, undefined, 9, 5000, 900)]
+
+let setsDist2 = [
+  addSet(undefined, undefined, 10, 50, 10),
+  addSet(undefined, undefined, 10, 50, 9.83),
+  addSet(undefined, undefined, 10, 50, 8.33),
+]
+
+let setsAll = [addSet(500, 2, 8, 50, 10)]
+
 let records = [
   addRecord(
     '2022-09-26',
-    'standard',
     { ...exercises[0] },
     ['belt'],
     sets1,
+    ['weight', 'reps', 'effort'],
     randomUUID()
   ),
   addRecord(
     '2022-09-26',
-    'standard',
     { ...exercises[1] },
     ['bodyweight'],
     sets2,
+    ['weight', 'reps'],
+    randomUUID()
+  ),
+  addRecord(
+    '2022-09-26',
+    { ...exercises[4] },
+    [],
+    setsDist,
+    ['time', 'distance', 'effort'],
+    randomUUID()
+  ),
+  addRecord(
+    '2022-09-26',
+    { ...exercises[4] },
+    [],
+    setsDist2,
+    ['distance', 'time', 'effort'],
+    randomUUID()
+  ),
+  addRecord(
+    '2022-09-26',
+    { ...exercises[5] },
+    [],
+    setsAll,
+    ['weight', 'distance', 'time', 'reps', 'effort'],
     randomUUID()
   ),
 ]
 
 let sessions = [
-  addSessions('2022-09-26', [records[0]._id, records[1]._id], randomUUID()),
+  addSessions('2022-09-26', getRecordIdsForDate('2022-09-26'), randomUUID()),
 ]
 
 //  START OPERATIONS

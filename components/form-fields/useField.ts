@@ -39,6 +39,7 @@ export default function useField<T = string>({
   const [value, setValue] = useState(initialValue)
   const [hasValidated, setHasValidated] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const isDirty = value !== initialValue
 
   // Spread this into an input component to set up the value.
   // If the input is simple this may be all that's needed!
@@ -58,7 +59,7 @@ export default function useField<T = string>({
   const onBlur = () => {
     clearTimeout(timerRef.current)
 
-    autoSubmit && submit()
+    autoSubmit && isDirty && submit()
   }
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -129,6 +130,6 @@ export default function useField<T = string>({
     value,
     setValue,
     isEmpty: !value,
-    isDirty: value !== initialValue,
+    isDirty,
   }
 }

@@ -1,5 +1,3 @@
-// @ts-nocheck
-// todo: ignoring Set typing issues for now
 import {
   Delete,
   KeyboardDoubleArrowLeft,
@@ -14,7 +12,7 @@ import {
   CardHeader,
   Fab,
   IconButton,
-  Stack,
+  Skeleton,
   Tooltip,
   useMediaQuery,
   useTheme,
@@ -29,12 +27,12 @@ import {
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Record from '../../models/Record'
-import { SetType } from '../../models/SetType'
+import Set from '../../models/Set'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
-import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../StyledDivider'
-import StandardSetInput from './sets/StandardSetInput'
+import SetHeader from './SetHeader'
+import SetInput from './SetInput'
 
 interface Props {
   id: Record['_id']
@@ -42,7 +40,7 @@ interface Props {
   swapRecords: (i: number, j: number) => void
   index: number
 }
-export default function RecordInput({
+export default function RecordCard({
   id,
   deleteRecord,
   swapRecords,
@@ -58,46 +56,87 @@ export default function RecordInput({
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: ExerciseStatus.ACTIVE,
-  }) // SWR caches this, so it won't need to call the API every render
+  })
 
+  // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
     console.error('Could not fetch record!')
-    return <></>
+    return (
+      <Card elevation={3} sx={{ px: 1 }}>
+        <CardHeader
+          title={`Record ${index + 1}`}
+          titleTypographyProps={{ variant: 'h6' }}
+        />
+        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+
+        <CardContent sx={{ justifyContent: 'center', display: 'flex' }}>
+          <Box>Error: Could not fetch record.</Box>
+        </CardContent>
+      </Card>
+    )
+  } else if (record === undefined) {
+    return (
+      <Card elevation={3} sx={{ px: 1 }}>
+        <CardHeader
+          title={`Record ${index + 1}`}
+          titleTypographyProps={{ variant: 'h6' }}
+        />
+        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+
+        <CardContent>
+          <Skeleton height="50px" />
+          <Skeleton height="50px" />
+          <Skeleton height="50px" />
+        </CardContent>
+        <CardActions sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}>
+          <Skeleton variant="circular" height="50px" width="50px" />
+        </CardActions>
+      </Card>
+    )
+    // this shouldn't ever happen
+  } else if (record === null) {
+    return (
+      <Card elevation={3} sx={{ px: 1 }}>
+        <CardHeader
+          title={`Record ${index + 1}`}
+          titleTypographyProps={{ variant: 'h6' }}
+        />
+        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+
+        <CardContent>
+          <Box>Could not find record {id}</Box>
+        </CardContent>
+      </Card>
+    )
   }
 
-  // todo: skeleton?
-  if (!record || !exercises) {
-    return <></>
-  }
-
-  // todo: when exercise is null'd the record doesn't show (still exists in db)
   // define after null checks so record must exist
-  const { exercise, type, activeModifiers, sets, _id } = record
+  const { exercise, activeModifiers, sets, fields, _id } = record
 
   const addSet = () => {
-    const last = sets[sets.length - 1] ?? {}
-    // todo: init first set, and possibly have different behavior when adding different types of sets?
-    const newSet = { ...last, effort: undefined }
+    const newSet = new Set()
+
+    // repeat the previous set field values
+    if (sets[sets.length - 1]) {
+      newSet.fields = { ...sets[sets.length - 1].fields, effort: undefined }
+    }
     updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
     mutateRecord({ ...record, sets: sets.concat(newSet) })
   }
 
-  const handleFieldChange = <T extends keyof Record>(
-    field: T,
-    value: Record[T]
-  ) => {
-    updateRecordFields(_id, { [field]: value })
-    mutateRecord({ ...record, [field]: value })
+  const handleFieldChange = (changes: Partial<Record>) => {
+    updateRecordFields(_id, { ...changes })
+    mutateRecord({ ...record, ...changes })
   }
 
-  const handleSetChange = (setField, value, i) => {
-    updateRecordFields(_id, { [`sets.${i}.${setField}`]: value })
+  const handleSetChange = (changes: Partial<Set>, i: number) => {
+    updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
     const newSets = [...record.sets]
-    newSets[i][setField] = value
+    newSets[i] = { ...newSets[i], ...changes }
     mutateRecord({ ...record, sets: newSets })
   }
 
-  const handleDeleteSet = (i) => {
+  const handleDeleteSet = (i: number) => {
     const newSets = record.sets.filter((_, j) => j !== i)
     updateRecordFields(_id, { ['sets']: newSets })
     mutateRecord({ ...record, sets: newSets })
@@ -109,7 +148,7 @@ export default function RecordInput({
     swiper.update() // have to update swiper whenever changing swiper elements
   }
 
-  const handleSwapRecords = (i, j) => {
+  const handleSwapRecords = (i: number, j: number) => {
     swapRecords(i, j)
     swiper.update()
     // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
@@ -135,7 +174,6 @@ export default function RecordInput({
 
   // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
   // todo: preserve state when changing set type?
-  // todo: use carousel? https://github.com/Learus/react-material-ui-carousel
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
     <Card elevation={3} sx={{ px: 1 }}>
@@ -188,7 +226,7 @@ export default function RecordInput({
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
       <CardContent
-        // swiping causes weird behavior when combine with data input fields, so disable it
+        // swiping causes weird behavior on desktop when combined with data input fields
         className={noSwipingAboveSm}
         sx={{ cursor: { sm: 'default' } }}
       >
@@ -205,45 +243,38 @@ export default function RecordInput({
             />
           </Grid>
           <Grid xs={12}>
-            <SelectFieldAutosave
-              label="Set Type"
-              initialValue={type}
-              fullWidth
-              defaultHelperText=""
-              variant="standard"
-              options={Object.values(SetType)}
-              handleSubmit={(value) => handleFieldChange('type', value)}
-            />
-          </Grid>
-          <Grid xs={12}>
             <ComboBoxField
               label="Modifiers"
               options={exercise?.modifiers}
               initialValue={activeModifiers}
               variant="standard"
               handleSubmit={(value: string[]) =>
-                handleFieldChange('activeModifiers', value)
+                handleFieldChange({ activeModifiers: value })
               }
+            />
+          </Grid>
+
+          <Grid xs={12}>
+            <SetHeader
+              initialSelected={fields}
+              handleSubmit={(value) => handleFieldChange({ fields: value })}
             />
           </Grid>
         </Grid>
 
-        <Box sx={{ p: 2, pb: 0 }}>
+        {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
+        <Box sx={{ pb: 0 }}>
           {/* todo: unique key */}
           {sets.map((set, i) => (
-            <Stack key={i} direction="row">
-              <StandardSetInput
-                {...set}
-                type={record.type}
-                units={{ primary: 'kg' }}
-                key={i}
-                index={i}
-                handleSubmit={(setField, value) =>
-                  handleSetChange(setField, value, i)
-                }
-                handleDelete={() => handleDeleteSet(i)}
-              />
-            </Stack>
+            <SetInput
+              set={set}
+              fields={fields}
+              key={i}
+              handleSubmit={(changes: Partial<Set>) =>
+                handleSetChange(changes, i)
+              }
+              handleDelete={() => handleDeleteSet(i)}
+            />
           ))}
         </Box>
       </CardContent>
@@ -255,17 +286,11 @@ export default function RecordInput({
           pb: 2,
         }}
       >
-        {/* <Button onClick={() => deleteRecord(_id)} color="error">
-          Delete Record
-        </Button> */}
-        {/* <Button onClick={addSet} variant="contained">
-          Add Set
-        </Button> */}
-        {/* todo: extend on hover with text? */}
         <Tooltip title="Add Set" placement="right">
           <Fab
             color="primary"
             size="medium"
+            disabled={!fields.length}
             onClick={addSet}
             className={noSwipingAboveSm}
           >
