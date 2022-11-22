@@ -20,7 +20,6 @@ export default function SetInput({
   set,
   fields,
 }: Props) {
-  // todo: restrict to numbers, but also allow undefined.
   const pyStack = 0.5
 
   if (!fields.length) {
@@ -39,6 +38,7 @@ export default function SetInput({
         pl: 1,
       }}
     >
+      {/* {!!set.unilateral && <Box>{set.unilateral.slice(0, 1).toUpperCase()}</Box>} */}
       {fields.map((field, i) => (
         <Fragment key={i}>
           {/* todo: store each field's delimiter and pull that here? */}
@@ -49,6 +49,8 @@ export default function SetInput({
             // todo: add validation that this is a number
             handleSubmit={(value) =>
               handleSubmit({
+                // todo: somewhere this is causing "the specified value undefined cannot be parsed" warning. Still there when removing Number() cast
+                // also Number() changes undefined to zero
                 fields: { ...set.fields, [field]: Number(value) },
               })
             }
