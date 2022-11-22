@@ -34,7 +34,7 @@ function withModifier(Component: typeof SelectorBase<Modifier>) {
         groupBy={(option: Modifier | NewModifierStub) =>
           option.status === 'Add New' ? option.status : 'Modifier'
         }
-        placeholder="Select or Add a Modifier"
+        placeholder="Select or Add New Modifier"
         StubConstructor={NewModifierStub}
         Constructor={Modifier}
         addNewItem={addModifier}

@@ -63,7 +63,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         }
         label="Exercise"
         groupBy={(option) => option.status}
-        placeholder="Select or Add an Exercise"
+        placeholder="Select or Add New Exercise"
         filterCustom={filterCategories}
         StubConstructor={ExerciseStub}
         Constructor={Exercise}
