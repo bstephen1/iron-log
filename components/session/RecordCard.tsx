@@ -12,7 +12,6 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  Divider,
   Fab,
   IconButton,
   Skeleton,
@@ -114,28 +113,27 @@ export default function RecordCard({
     )
   }
 
-  // todo: when exercise is null'd the record doesn't show (still exists in db)
   // define after null checks so record must exist
   const { exercise, activeModifiers, sets, fields, _id } = record
 
   const addSet = () => {
-    const last = sets[sets.length - 1] ?? new Set()
-    // todo: init first set, and possibly have different behavior when adding different types of sets?
-    const newSet = { ...last, effort: undefined }
+    const newSet = new Set()
+
+    // repeat the previous set field values
+    if (sets[sets.length - 1]) {
+      newSet.fields = { ...sets[sets.length - 1].fields, effort: undefined }
+    }
     updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
     mutateRecord({ ...record, sets: sets.concat(newSet) })
   }
 
-  const handleFieldChange = <T extends keyof Record>(
-    field: T,
-    value: Record[T]
-  ) => {
-    updateRecordFields(_id, { [field]: value })
-    mutateRecord({ ...record, [field]: value })
+  const handleFieldChange = (changes: Partial<Record>) => {
+    updateRecordFields(_id, { ...changes })
+    mutateRecord({ ...record, ...changes })
   }
 
   const handleSetChange = (setField, value, i) => {
-    updateRecordFields(_id, { [`sets.${i}.${setField}`]: value })
+    updateRecordFields(_id, { [`sets.${i}.fields.${setField}`]: value })
     const newSets = [...record.sets]
     newSets[i][setField] = value
     mutateRecord({ ...record, sets: newSets })
@@ -254,7 +252,7 @@ export default function RecordCard({
               initialValue={activeModifiers}
               variant="standard"
               handleSubmit={(value: string[]) =>
-                handleFieldChange('activeModifiers', value)
+                handleFieldChange({ activeModifiers: value })
               }
             />
           </Grid>
@@ -262,7 +260,7 @@ export default function RecordCard({
           <Grid xs={12}>
             <SetHeader
               initialSelected={fields}
-              handleSubmit={(value) => handleFieldChange('fields', value)}
+              handleSubmit={(value) => handleFieldChange({ fields: value })}
             />
           </Grid>
         </Grid>
