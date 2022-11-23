@@ -15,15 +15,14 @@ Set will need to be passed bodyweight though when the modifier is on. Can have s
 Eg, if you are doing 5 reps, query history for most recent records of this exercise with a set that includes 5 reps. If a modifier like amrap/myo, query most recent with those modifiers.
 Could also add arbitrary modifiers to group records. Maybe a "locked reps" modifier would make history queries faster 
 */
-export default class Set {
-  constructor(
-    public fields: SetFields = {},
-    public bodyweight?: number,
-    public unilateral?: 'left' | 'right',
-    public failed = false,
-    public warmup = false
-  ) {}
-}
+// export default class Set {
+//   constructor(
+//     public weight?: number,
+//     public unilateral?: 'left' | 'right',
+//     public failed = false,
+//     public warmup = false
+//   ) {}
+// }
 
 // todo: mapped type?
 // export interface SetUnits {
@@ -33,12 +32,13 @@ export default class Set {
 //   // rpe?: 'rpe' | 'rir' these should be placeholders...
 // }
 
-export interface SetFields {
+export default interface Set {
   weight?: number
   distance?: number
   time?: number
   reps?: number
   effort?: number
+  side?: 'left' | 'right'
 }
 
 // todo: certain exercises can have default setFields

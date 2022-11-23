@@ -114,12 +114,10 @@ export default function RecordCard({
   const { exercise, activeModifiers, sets, fields, _id } = record
 
   const addSet = () => {
-    const newSet = new Set()
+    const newSet = sets[sets.length - 1]
+      ? { ...sets[sets.length - 1], effort: undefined }
+      : ({} as Set)
 
-    // repeat the previous set field values
-    if (sets[sets.length - 1]) {
-      newSet.fields = { ...sets[sets.length - 1].fields, effort: undefined }
-    }
     updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
     mutateRecord({ ...record, sets: sets.concat(newSet) })
   }

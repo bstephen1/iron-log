@@ -33,7 +33,7 @@ function addName(name) {
 }
 
 function addSet(weight, reps, effort, distance, time) {
-  return { fields: { weight, reps, effort, distance, time } }
+  return { weight, reps, effort, distance, time }
 }
 
 function addRecord(date, exercise, activeModifiers, sets, fields, _id) {
