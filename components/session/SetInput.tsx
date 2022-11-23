@@ -48,6 +48,8 @@ export default function SetInput({
             initialValue={String(set[field])}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
+              // todo: somewhere this is causing "the specified value undefined cannot be parsed" warning. Still there when removing Number() cast
+              // also Number() changes undefined to zero
               handleSubmit({
                 [field]: Number(value),
               })

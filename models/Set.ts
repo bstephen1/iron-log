@@ -3,6 +3,8 @@
 
 /*
 todo: refactor set: pull out fields to top level. Unilateral becomes another column in the stack. It isn't selectable in the display menu; always shown when modifier is set.
+Edit: OR, unilateral can be two modifiers (for left/right) and no other changes. Just have two records instead. Maybe do that for now and see how it feels in practice. 
+I guess technically you don't HAVE to do both left and right sets... but usually I want to see both when looking at records, to compare left vs right.
 
 failed / warmup are Effort values? Make effort a select instead of number? Expected values are actually limited to about 5-10 in .5 steps. Plus F and W for failed / warmup.
 Making a Select addresses issues with adding F and W to numeric input (would otherwise have to change to string with restricted values, and mobile keyboard will have to choose between qwerty or numeric keyboard)
