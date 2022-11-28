@@ -11,16 +11,16 @@ import {
 } from '@mui/material'
 import { Fragment, useState } from 'react'
 import { DEFAULT_UNITS } from '../../lib/frontend/constants'
-import { SetFields } from '../../models/Set'
+import Set from '../../models/Set'
 
 interface Props {
-  initialSelected?: (keyof SetFields)[]
-  handleSubmit: (value: (keyof SetFields)[]) => void
+  initialSelected?: (keyof Set)[]
+  handleSubmit: (value: (keyof Set)[]) => void
 }
 export default function SetHeader({ initialSelected, handleSubmit }: Props) {
   const [selected, setSelected] = useState(initialSelected || [])
   // todo: dnd this? user pref? per exercise?
-  const FIELD_ORDER: (keyof SetFields)[] = [
+  const FIELD_ORDER: (keyof Set)[] = [
     'weight',
     'distance',
     'time',

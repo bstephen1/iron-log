@@ -41,6 +41,7 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import AddRecord from './AddRecord'
+import Set from '../../models/Set'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
@@ -53,23 +54,22 @@ export default function SessionView({ date }: { date: Dayjs }) {
   // so for now we just hide the add exercise button so the records don't pop in above it
   const isLoading = session === undefined
 
-  const updateSwiper = (swiper: SwiperClass) => {
-    setIsBeginning(swiper.isBeginning)
-    setIsEnd(swiper.isEnd)
-  }
-
   // todo: this is a placeholder
   if (isError) {
     return <>Error fetching data!</>
   }
 
+  const updateSwiper = (swiper: SwiperClass) => {
+    setIsBeginning(swiper.isBeginning)
+    setIsEnd(swiper.isEnd)
+  }
+
   const handleAddRecord = (exercise: Exercise) => {
     if (isLoading) return // make typescript happy
 
-    // todo: include a set too
     const record = new Record(date.format(DATE_FORMAT), exercise)
+    record.sets.push({})
     addRecord(record)
-    // todo: updateSessionField
     const newSession = session
       ? {
           ...session,
@@ -89,6 +89,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
       return
     }
 
+    // todo: avoid the semi colon?
     const newRecords = [...session.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
     const newSession = { ...session, records: newRecords }
@@ -168,6 +169,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
               grabCursor
               watchOverflow
               // need this for CSS to hide slides that are partially offscreen
+              // todo: the 0 opacity on unselected slides is clunky on mobile... (see global css)
               watchSlidesProgress
               pagination={{
                 el: '.pagination',
