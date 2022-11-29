@@ -7,9 +7,10 @@ import { NamedObject } from './NamedObject'
 export default class Modifier extends NamedObject {
   constructor(
     public name: string,
-    public status: ModifierStatus = ModifierStatus.ACTIVE,
-    public canDelete: boolean = true,
-    public readonly _id: string = generateId()
+    public status = ModifierStatus.ACTIVE,
+    public weight = 0,
+    public canDelete = true,
+    public readonly _id = generateId()
   ) {
     super(name, _id)
   }

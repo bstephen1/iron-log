@@ -37,6 +37,7 @@ export default function InputField(props: Props & TextFieldProps) {
 
   return (
     <TextField
+      {...textFieldProps}
       {...control(label)}
       error={!!error}
       autoComplete="off"
@@ -61,10 +62,10 @@ export default function InputField(props: Props & TextFieldProps) {
             <TransitionIconButton isVisible={isDirty} onClick={onReset}>
               <RestartAlt />
             </TransitionIconButton>
+            {textFieldProps.InputProps?.endAdornment}
           </>
         ),
       }}
-      {...textFieldProps}
     />
   )
 }

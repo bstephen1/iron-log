@@ -41,7 +41,7 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import AddRecord from './AddRecord'
-import Set from '../../models/Set'
+import BodyweightInput from './BodyweightInput'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
@@ -111,6 +111,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
     <Stack spacing={2}>
       <TitleBar date={date} />
       <Clock />
+      <BodyweightInput />
       <WeightUnitConverter />
       {isLoading ? (
         <Box display="flex" justifyContent="center" py={10}>
