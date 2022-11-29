@@ -1,5 +1,7 @@
 import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
+import type { NextApiRequest } from 'next'
 import { v4 as uuid } from 'uuid'
+import { validDateStringRegex } from './frontend/constants'
 
 // manually create a globally unique id across all tables. This should be used for ALL new records.
 // We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -20,3 +22,6 @@ export interface AutocompletePropsAny
     boolean | undefined,
     boolean | undefined
   > {}
+
+export const isValidDateParam = (date: string | string[] | undefined) =>
+  !date || typeof date !== 'string' || !date.match(validDateStringRegex)
