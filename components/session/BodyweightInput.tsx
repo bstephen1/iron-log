@@ -4,7 +4,7 @@ import {
   InputAdornment,
   TextFieldProps,
 } from '@mui/material'
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
 import * as yup from 'yup'
 import { DATE_FORMAT, DEFAULT_UNITS } from '../../lib/frontend/constants'
 import {
@@ -33,9 +33,8 @@ export default function BodyweightInput({
       Number(value),
       date.format(DATE_FORMAT)
     )
-    // const newBodyweight = { ...(new Bodyweight(Number(value), date.format(DATE_FORMAT))) }
-    console.log(newBodyweight)
     // use update instead of add so there can only be 1 weigh in per day
+    // todo: actually, may want to have multiple per day. Weigh in in the morning, then later at the gym with gym clothes on...
     updateBodyweight(newBodyweight)
     mutate([newBodyweight])
   }
@@ -51,7 +50,8 @@ export default function BodyweightInput({
       {...textFieldProps}
       type="number"
       label="Bodyweight"
-      initialValue={data?.length ? '' + data[0].value : ''}
+      onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
+      initialValue={data?.length ? '' + data[0].value + data[0].clothes : ''}
       handleSubmit={handleSubmit}
       yupValidator={yup.reach(validationSchema, 'value')}
       InputProps={{

@@ -36,6 +36,7 @@ function ConverterField({
     <TextField
       {...textFieldProps}
       type="number"
+      onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
       autoComplete="off"
       onFocus={(e) => e.target.select()}
       variant="standard"
