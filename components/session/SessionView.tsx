@@ -111,7 +111,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
     <Stack spacing={2}>
       <TitleBar date={date} />
       <Clock />
-      <BodyweightInput date={date} />
       <WeightUnitConverter />
       {isLoading ? (
         <Box display="flex" justifyContent="center" py={10}>

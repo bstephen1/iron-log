@@ -1,27 +1,32 @@
-import { Box, CircularProgress, InputAdornment } from '@mui/material'
-import { Dayjs } from 'dayjs'
-import { useEffect } from 'react'
+import {
+  Box,
+  CircularProgress,
+  InputAdornment,
+  TextFieldProps,
+} from '@mui/material'
+import dayjs, { Dayjs } from 'dayjs'
 import * as yup from 'yup'
 import { DATE_FORMAT, DEFAULT_UNITS } from '../../lib/frontend/constants'
 import {
-  addBodyweight,
   updateBodyweight,
   useBodyweightHistory,
 } from '../../lib/frontend/restService'
 import Bodyweight from '../../models/Bodyweight'
 import InputField from '../form-fields/InputField'
 
-export default function BodyweightInput({ date }: { date: Dayjs }) {
+interface Props {
+  date: Dayjs
+}
+export default function BodyweightInput({
+  date,
+  ...textFieldProps
+}: Props & TextFieldProps) {
   const { data, mutate } = useBodyweightHistory(1, date.format(DATE_FORMAT))
   const validationSchema = yup.object({
     // this willl be cast to a number on submit
     value: yup.string().required('Must have a value'),
   })
   const loading = data === undefined
-
-  useEffect(() => {
-    console.log(data)
-  }, [data])
 
   const handleSubmit = (value: string) => {
     const newBodyweight = new Bodyweight(
@@ -43,6 +48,7 @@ export default function BodyweightInput({ date }: { date: Dayjs }) {
 
   return (
     <InputField
+      {...textFieldProps}
       type="number"
       label="Bodyweight"
       initialValue={data?.length ? '' + data[0].value : ''}
