@@ -1,4 +1,5 @@
 import { Filter } from 'mongodb'
+import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
@@ -11,6 +12,7 @@ const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<Modifier>('modifiers')
 const categories = db.collection<Category>('categories')
 const records = db.collection<Record>('records')
+const bodyweightHistory = db.collection<Bodyweight>('bodyweightHistory')
 
 interface updateFieldsProps<T extends { _id: string }> {
   id: T['_id']
@@ -190,4 +192,41 @@ export async function updateCategoryFields({
   updates,
 }: updateFieldsProps<Category>) {
   return await categories.updateOne({ _id: id }, { $set: updates })
+}
+
+//------------
+// BODYWEIGHT
+//------------
+
+export async function addBodyweight(bodyweight: Bodyweight) {
+  return await bodyweightHistory.insertOne(bodyweight)
+}
+
+// The default start/end values compare against the first char of the date (ie, the first digit of the year).
+// So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
+export async function fetchBodyweightHistory(
+  limit?: number,
+  start = '0',
+  end = '9'
+) {
+  // -1 sorts most recent first
+  return await bodyweightHistory
+    .find({ date: { $gte: start, $lte: end } })
+    .sort({ date: -1 })
+    .limit(limit ?? 50)
+    .toArray()
+}
+
+export async function updateBodyweight(bodyweight: Bodyweight) {
+  return await bodyweightHistory.updateOne(
+    { date: bodyweight.date },
+    { $set: { value: bodyweight.value } },
+    {
+      upsert: true,
+    }
+  )
+}
+
+export async function deleteBodyweight(date: string) {
+  return await bodyweightHistory.deleteOne({ date })
 }

@@ -3,7 +3,8 @@ import { InputAdornment, Stack, TextField, TextFieldProps } from '@mui/material'
 import { useState } from 'react'
 
 export default function WeightUnitConverter() {
-  const [kg, setKg] = useState<number>(0)
+  // the Textfield's value is a string, but it's based of kg here which is a number
+  const [kg, setKg] = useState<number>()
   const KG_TO_LB_RATE = 2.2
 
   const format = (num: number) => +num.toFixed(2)
@@ -11,34 +12,37 @@ export default function WeightUnitConverter() {
   return (
     <Stack direction="row" sx={{ justifyContent: 'center' }}>
       <ConverterField
-        type="kg"
-        value={format(kg)}
-        onChange={(e) => setKg(+e.target.value)}
+        unit="kg"
+        value={kg ? format(kg) : ''}
+        onChange={(e) => setKg(e.target.value ? +e.target.value : undefined)}
       />
       <SyncAlt />
       <ConverterField
-        type="lb"
-        value={format(kg * KG_TO_LB_RATE)}
-        onChange={(e) => setKg(+e.target.value / KG_TO_LB_RATE)}
+        unit="lb"
+        value={kg ? format(kg * KG_TO_LB_RATE) : ''}
+        onChange={(e) =>
+          setKg(e.target.value ? +e.target.value / KG_TO_LB_RATE : undefined)
+        }
       />
     </Stack>
   )
 }
 
 function ConverterField({
-  type,
+  unit,
   ...textFieldProps
-}: { type: 'lb' | 'kg' } & TextFieldProps) {
+}: { unit: 'lb' | 'kg' } & TextFieldProps) {
   return (
     <TextField
       {...textFieldProps}
       type="number"
+      onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
       autoComplete="off"
       onFocus={(e) => e.target.select()}
       variant="standard"
       sx={{ width: 100, px: 2 }}
       InputProps={{
-        endAdornment: <InputAdornment position="end">{type}</InputAdornment>,
+        endAdornment: <InputAdornment position="end">{unit}</InputAdornment>,
       }}
     />
   )

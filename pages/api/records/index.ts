@@ -13,7 +13,7 @@ export default async function handler(
     const { date, exercise } = req.query as RecordParams
 
     if (date && !date.match(validDateStringRegex)) {
-      res.status(400).json({ isError: true, message: 'invalid date format' })
+      res.status(400).end()
     }
 
     const query = {} as any
@@ -23,6 +23,7 @@ export default async function handler(
     const records = await fetchRecords(query)
     res.status(200).json(records)
   } catch (e) {
-    res.status(500).json({ isError: true, message: 'error fetching records' })
+    console.error(e)
+    res.status(500).end()
   }
 }

@@ -13,7 +13,7 @@ export default async function handler(
     const { status, category, name } = req.query as ExerciseParams
 
     if (status && !Object.values(ExerciseStatus).includes(status)) {
-      res.status(400).json({ isError: true, message: 'invalid status' })
+      res.status(400).end()
     }
 
     // todo: this is a bit of a hack to make the api param singular despite the mongo field being plural. Ideally status/categories could accept arrays.
@@ -25,6 +25,7 @@ export default async function handler(
     const exercises = await fetchExercises(query)
     res.status(200).json(exercises)
   } catch (e) {
-    res.status(500).json({ isError: true, message: 'error fetching exercises' })
+    console.error(e)
+    res.status(500).end()
   }
 }

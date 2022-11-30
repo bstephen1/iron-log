@@ -1,5 +1,6 @@
 import { Dayjs } from 'dayjs'
 import useSWR from 'swr'
+import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
@@ -183,6 +184,45 @@ export async function addCategory(newCategory: Category) {
   }).catch((e) => console.error(e))
 }
 
+//------------
+// BODYWEIGHT
+//------------
+
+export function useBodyweightHistory(
+  limit?: number,
+  end?: string,
+  start?: string
+) {
+  // this leaves extra chars but doesn't seem to affect the rest call
+  const paramString = `?${limit && 'limit=' + limit}&${
+    start && 'start=' + start
+  }&${end && 'end=' + end}`
+  const { data, error, mutate } = useSWR<Bodyweight[]>(
+    URI_BODYWEIGHT + paramString,
+    fetcher
+  )
+
+  return {
+    data: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
+export async function addBodyweight(newBodyweight: Bodyweight) {
+  fetch(URI_BODYWEIGHT, {
+    method: 'POST',
+    body: JSON.stringify(newBodyweight),
+  }).catch((e) => console.error(e))
+}
+
+export async function updateBodyweight(newBodyweight: Bodyweight) {
+  fetch(URI_BODYWEIGHT, {
+    method: 'PUT',
+    body: JSON.stringify(newBodyweight),
+  }).catch((e) => console.error(e))
+}
+
 //------
 // URIS
 //------
@@ -192,3 +232,4 @@ export const URI_EXERCISES = '/api/exercises/'
 export const URI_MODIFIERS = '/api/modifiers/'
 export const URI_CATEGORIES = '/api/categories/'
 export const URI_RECORDS = '/api/records/'
+export const URI_BODYWEIGHT = '/api/bodyweight-history/'

@@ -14,7 +14,7 @@ export default async function handler(
   console.log(`Incoming ${req.method} on modifier "${name}"`)
 
   if (!name || typeof name !== 'string') {
-    res.status(400).json({ isError: true, message: 'invalid modifier' })
+    res.status(400).end()
     return
   }
 
@@ -24,9 +24,8 @@ export default async function handler(
         const modifier = await fetchModifier(name)
         res.status(200).json(modifier) // todo: return 204 when no content?
       } catch (e) {
-        res
-          .status(500)
-          .json({ isError: true, message: 'error fetching modifiers' })
+        console.error(e)
+        res.status(500).end()
       }
       break
     case 'POST':
@@ -34,9 +33,8 @@ export default async function handler(
         await addModifier(JSON.parse(req.body))
         res.status(201).end()
       } catch (e) {
-        res
-          .status(500)
-          .json({ isError: true, message: 'could not create modifier' })
+        console.error(e)
+        res.status(500).end()
       }
       break
     case 'PUT':
@@ -45,11 +43,7 @@ export default async function handler(
         res.status(200).end()
       } catch (e) {
         console.error(e)
-        res.status(500).json({
-          isError: true,
-          message: 'could not update modifier',
-          error: e,
-        })
+        res.status(500).end()
       }
     // case 'PATCH':
     //   try {

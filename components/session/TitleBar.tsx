@@ -1,9 +1,11 @@
-import { Box, TextField } from '@mui/material'
+import { TextField } from '@mui/material'
+import Grid from '@mui/system/Unstable_Grid'
 import { DatePicker } from '@mui/x-date-pickers'
-import { Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
+import BodyweightInput from './BodyweightInput'
 
 interface Props {
   date?: Dayjs | null
@@ -21,18 +23,26 @@ export default function TitleBar(props: Props) {
   }, [date])
 
   return (
-    <Box display="flex" justifyContent="space-between">
+    <Grid container spacing={2}>
       {/* todo: change this to a data type which is user defined per program, or freestyle/unstructured type*/}
-      <TextField label="Session Type" />
+      <Grid xs={12} sm={4}>
+        <DatePicker
+          label="Date"
+          value={date}
+          onChange={(newDate) => setDate(newDate)}
+          renderInput={(params) => <TextField {...params} fullWidth />}
+        />
+      </Grid>
+      <Grid xs={12} sm={4}>
+        <TextField label="Session Type" fullWidth />
+      </Grid>
       {/* todo: customize to show days that have a record; possibly show title; 
             possibly give days a 'type' instead of title, with an associated icon;
             could also highlight different programs / meso cycles */}
-      <DatePicker
-        label="Date"
-        value={date}
-        onChange={(newDate) => setDate(newDate)}
-        renderInput={(params) => <TextField {...params} />}
-      />
-    </Box>
+      <Grid xs={12} sm={4}>
+        {' '}
+        <BodyweightInput date={date ?? dayjs()} fullWidth />
+      </Grid>
+    </Grid>
   )
 }

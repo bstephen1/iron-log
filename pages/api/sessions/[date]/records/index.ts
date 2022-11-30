@@ -9,7 +9,7 @@ export default async function handler(
   const date = req.query.date
 
   if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).json({ isError: true, message: 'invalid date format' })
+    res.status(400).end()
     return
   }
 
@@ -19,6 +19,7 @@ export default async function handler(
     const records = await fetchRecords({ date })
     res.status(200).json(records)
   } catch (e) {
-    res.status(500).json({ isError: true, message: 'error fetching records' })
+    console.error(e)
+    res.status(500).end()
   }
 }
