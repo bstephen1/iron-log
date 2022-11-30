@@ -218,9 +218,9 @@ export async function fetchBodyweightHistory(
 }
 
 export async function updateBodyweight(bodyweight: Bodyweight) {
-  return await bodyweightHistory.replaceOne(
-    { _id: bodyweight._id },
-    bodyweight,
+  return await bodyweightHistory.updateOne(
+    { date: bodyweight.date },
+    { $set: { value: bodyweight.value } },
     {
       upsert: true,
     }

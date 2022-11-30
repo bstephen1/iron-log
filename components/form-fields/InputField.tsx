@@ -50,6 +50,7 @@ export default function InputField(props: Props & TextFieldProps) {
       }}
       inputRef={inputRef}
       InputProps={{
+        ...textFieldProps.InputProps,
         endAdornment: (
           <>
             <TransitionIconButton

@@ -22,6 +22,3 @@ export interface AutocompletePropsAny
     boolean | undefined,
     boolean | undefined
   > {}
-
-export const isValidDateParam = (date: string | string[] | undefined) =>
-  !date || typeof date !== 'string' || !date.match(validDateStringRegex)

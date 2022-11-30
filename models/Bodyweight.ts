@@ -5,8 +5,8 @@ import { generateId } from '../lib/util'
 export default class Bodyweight {
   constructor(
     public value: number,
-    public clothes?: number,
     public date = dayjs().format(DATE_FORMAT),
+    public clothes?: number,
     public readonly _id = generateId()
   ) {}
 }
