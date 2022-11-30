@@ -1,5 +1,5 @@
 import { Check, RestartAlt } from '@mui/icons-material'
-import { TextField, TextFieldProps } from '@mui/material'
+import { TextField, TextFieldProps, Tooltip } from '@mui/material'
 import { useRef } from 'react'
 import { reach } from 'yup'
 import TransitionIconButton from '../TransitionIconButton'
@@ -58,10 +58,14 @@ export default function InputField(props: Props & TextFieldProps) {
               disabled={!!error}
               onClick={submit}
             >
-              <Check />
+              <Tooltip title="submit">
+                <Check />
+              </Tooltip>
             </TransitionIconButton>
             <TransitionIconButton isVisible={isDirty} onClick={onReset}>
-              <RestartAlt />
+              <Tooltip title="reset">
+                <RestartAlt />
+              </Tooltip>
             </TransitionIconButton>
             {textFieldProps.InputProps?.endAdornment}
           </>
