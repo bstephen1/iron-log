@@ -12,7 +12,7 @@ export default async function handler(
   const { date, id } = req.query
 
   if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).json({ isError: true, message: 'invalid date format' })
+    res.status(400).end()
     return
   }
   console.log(
@@ -20,7 +20,7 @@ export default async function handler(
   )
 
   if (!id || typeof id !== 'string') {
-    res.status(400).json({ isError: true, message: 'invalid record id format' })
+    res.status(400).end()
     return
   }
 
@@ -30,7 +30,8 @@ export default async function handler(
         const record = await fetchRecord(id)
         res.status(200).json(record)
       } catch (e) {
-        res.status(500).json({ isError: true, message: 'could not fetch data' })
+        console.error(e)
+        res.status(500).end()
       }
       break
     case 'DELETE':
@@ -38,9 +39,8 @@ export default async function handler(
         await deleteSessionRecord({ date, recordId: id })
         res.status(200).end()
       } catch (e) {
-        res
-          .status(500)
-          .json({ isError: true, message: 'could not update session' })
+        console.error(e)
+        res.status(500).end()
       }
       break
   }

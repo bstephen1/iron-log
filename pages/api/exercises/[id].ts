@@ -15,7 +15,7 @@ export default async function handler(
   console.log(`Incoming ${req.method} on exercise "${id}"`)
 
   if (!id || typeof id !== 'string') {
-    res.status(400).json({ isError: true, message: 'invalid exercise' })
+    res.status(400).end()
     return
   }
 
@@ -25,9 +25,8 @@ export default async function handler(
         const exercise = await fetchExercise(id)
         res.status(200).json(exercise)
       } catch (e) {
-        res
-          .status(500)
-          .json({ isError: true, message: 'error fetching exercises' })
+        console.error(e)
+        res.status(500).end()
       }
       break
     case 'POST':
@@ -35,9 +34,8 @@ export default async function handler(
         await addExercise(JSON.parse(req.body))
         res.status(201).end()
       } catch (e) {
-        res
-          .status(500)
-          .json({ isError: true, message: 'could not create exercise' })
+        console.error(e)
+        res.status(500).end()
       }
       break
     case 'PUT':
@@ -46,11 +44,7 @@ export default async function handler(
         res.status(200).end()
       } catch (e) {
         console.error(e)
-        res.status(500).json({
-          isError: true,
-          message: 'could not update exercise',
-          error: e,
-        })
+        res.status(500).end()
       }
     case 'PATCH':
       try {
@@ -58,11 +52,7 @@ export default async function handler(
         res.status(200).end()
       } catch (e) {
         console.error(e)
-        res.status(500).json({
-          isError: true,
-          message: 'could not update exercise',
-          error: e,
-        })
+        res.status(500).end()
       }
   }
 }

@@ -16,7 +16,7 @@ export default async function handler(
       status &&
       !Object.values(ModifierStatus).includes(status as ModifierStatus)
     ) {
-      res.status(400).json({ isError: true, message: 'invalid status' })
+      res.status(400).end()
     }
 
     const modifiers = await (status
@@ -24,6 +24,7 @@ export default async function handler(
       : fetchModifiers())
     res.status(200).json(modifiers)
   } catch (e) {
-    res.status(500).json({ isError: true, message: 'error fetching modifiers' })
+    console.error(e)
+    res.status(500).end()
   }
 }

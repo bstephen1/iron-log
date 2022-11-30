@@ -15,7 +15,7 @@ export default async function handler(
   console.log(`Incoming ${req.method} on record "${id}"`)
 
   if (!id || typeof id !== 'string') {
-    res.status(400).json({ isError: true, message: 'invalid record' })
+    res.status(400).end()
     return
   }
 
