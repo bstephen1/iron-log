@@ -18,9 +18,7 @@ export default async function handler(
     return
   }
 
-  console.log(
-    `Incoming ${req.method} on bodyweight history "${req.query.date}" ${req.body}`
-  )
+  console.log(`Incoming ${req.method} on bodyweight history ${req.body}`)
 
   switch (req.method) {
     case 'GET':

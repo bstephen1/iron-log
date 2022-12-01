@@ -41,7 +41,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
     [categories]
   )
 
-  // todo: validate (drop empty cues)
+  // todo: validate (drop empty notes)
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
@@ -97,32 +97,13 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           />
         </Stack>
       </Grid>
-      <Grid xs={12} sm={6}>
-        <Stack>
-          <InputFieldAutosave
-            label="Notes"
-            initialValue={exercise.notes}
-            fullWidth
-            handleSubmit={(value) => handleUpdate({ notes: value })}
-          />
-          <ComboBoxField
-            label="Categories"
-            initialValue={exercise.categories}
-            options={categoryNames}
-            fullWidth
-            handleSubmit={(value: string[]) =>
-              handleUpdate({ categories: value })
-            }
-          />
-        </Stack>
-      </Grid>
       <Grid xs={12}>
         <InputListField
-          label="Cues"
-          addItemPlaceholder="Add Cue"
-          listItemPlaceholder="Empty Cue (will be deleted)"
-          values={exercise.cues}
-          handleSubmit={(values: string[]) => handleUpdate({ cues: values })}
+          label="Notes"
+          addItemPlaceholder="Add Note"
+          listItemPlaceholder="Empty Note (will be deleted)"
+          values={exercise.notes}
+          handleSubmit={(values: string[]) => handleUpdate({ notes: values })}
         />
       </Grid>
     </Grid>

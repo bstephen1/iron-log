@@ -9,15 +9,13 @@ class Exercise {
   constructor(
     name,
     status = 'active',
-    notes = '',
-    cues = [],
+    notes = [],
     categories = [],
     modifiers = []
   ) {
     ;(this.name = name),
       (this.status = status),
       (this.notes = notes),
-      (this.cues = cues),
       (this.categories = categories),
       (this.modifiers = modifiers),
       (this._id = randomUUID())
@@ -90,7 +88,6 @@ let exercises = [
   new Exercise(
     'high bar squats',
     'active',
-    'Milk and squats.',
     ['knees out', 'chest up'],
     ['squat'],
     ['belt', 'band']
@@ -98,7 +95,6 @@ let exercises = [
   new Exercise(
     'curls',
     'active',
-    'curl curl curl',
     ['a', 'b', 'c', 'd', 'f', 'e'],
     ['biceps'],
     ['bodyweight', 'unilateral']
@@ -106,7 +102,6 @@ let exercises = [
   new Exercise(
     'multi grip bench press',
     'active',
-    '',
     [
       'tucked, middle grip => great triceps',
       'flared, narrow grip => great chest',
@@ -114,16 +109,9 @@ let exercises = [
     ['bench press', 'chest', 'triceps'],
     ['flared', 'tucked', 'wide', 'narrow', 'middle', 'belt', 'wraps']
   ),
-  new Exercise(
-    'zercher squat',
-    'archived',
-    'never again',
-    ['pain'],
-    ['squat'],
-    ['AMRAP']
-  ),
-  new Exercise('running', 'active', '', [], ['cardio'], []),
-  new Exercise('yoke', 'active', '', [], ['strongman'], []),
+  new Exercise('zercher squat', 'archived', ['pain'], ['squat'], ['AMRAP']),
+  new Exercise('running', 'active', [], ['cardio'], []),
+  new Exercise('yoke', 'active', [], ['strongman'], []),
 ]
 
 // todo: myo, super, rep range (?), weigh-in, cardio

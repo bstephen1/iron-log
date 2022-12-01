@@ -7,8 +7,7 @@ export default class Exercise extends NamedObject {
   constructor(
     public name: string,
     public status: ExerciseStatus = ExerciseStatus.ACTIVE,
-    public notes: string = '',
-    public cues: string[] = [],
+    public notes: string[] = [],
     public categories: string[] = [],
     public modifiers: string[] = [],
     public readonly _id: string = uuid()
