@@ -11,7 +11,6 @@ import Exercise from '../models/Exercise'
 import { ExerciseStatus } from '../models/ExerciseStatus'
 import { ComboBoxField } from './form-fields/ComboBoxField'
 import InputField from './form-fields/InputField'
-import InputFieldAutosave from './form-fields/InputFieldAutosave'
 import InputListField from './form-fields/InputListField'
 import SelectFieldAutosave from './form-fields/SelectFieldAutosave'
 
@@ -67,9 +66,9 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   })
 
   return (
-    <Grid container spacing={2} xs={12}>
+    <Grid container spacing={1} xs={12}>
       <Grid xs={12} sm={6}>
-        <Stack>
+        <Stack spacing={1}>
           {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
             Export the schema and have the hook pull it in?  */}
           <InputField
@@ -87,15 +86,16 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             yupValidator={yup.reach(validationSchema, 'status')}
             handleSubmit={(value) => handleUpdate({ status: value })}
           />
-          <ComboBoxField
-            label="Modifiers"
-            initialValue={exercise.modifiers}
-            options={modifierNames}
-            handleSubmit={(value: string[]) =>
-              handleUpdate({ modifiers: value })
-            }
-          />
         </Stack>
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <ComboBoxField
+          label="Modifiers"
+          initialValue={exercise.modifiers}
+          options={modifierNames}
+          textFieldProps={{ helperText: ' ' }}
+          handleSubmit={(value: string[]) => handleUpdate({ modifiers: value })}
+        />
       </Grid>
       <Grid xs={12}>
         <InputListField
