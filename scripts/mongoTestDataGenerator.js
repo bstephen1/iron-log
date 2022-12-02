@@ -114,9 +114,6 @@ let exercises = [
   new Exercise('yoke', 'active', [], ['strongman'], []),
 ]
 
-// todo: myo, super, rep range (?), weigh-in, cardio
-let setTypes = [addName('standard')]
-
 let sets1 = [addSet(100, 5, 8), addSet(110, 5, 9), addSet(120, 5, 10)]
 
 let sets2 = [
@@ -189,7 +186,6 @@ db.dropDatabase()
 db.modifiers.insertMany(modifiers)
 db.categories.insertMany(categories)
 db.exercises.insertMany(exercises)
-db.setTypes.insertMany(setTypes)
 db.sessions.insertMany(sessions)
 db.records.insertMany(records)
 
