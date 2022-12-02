@@ -11,7 +11,7 @@ interface Props {
   handleUpdate: (index: number, value: string) => void
   placeholder?: string
 }
-export default function ListItemInput(props: Props) {
+export default function NotesListItem(props: Props) {
   const {
     initialValue,
     placeholder = '',

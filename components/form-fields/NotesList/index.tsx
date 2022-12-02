@@ -1,6 +1,6 @@
 import { Divider, Stack } from '@mui/material'
-import AddItemInput from './AddItemInput'
-import ListItemInput from './ListItemInput'
+import AddNote from './AddNote'
+import NotesListItem from './NotesListItem'
 
 interface Props {
   label?: string
@@ -9,7 +9,7 @@ interface Props {
   handleSubmit: (values: string[]) => void
   values: string[]
 }
-export default function InputListField(props: Props) {
+export default function NotesList(props: Props) {
   const {
     label,
     values,
@@ -43,14 +43,14 @@ export default function InputListField(props: Props) {
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
-        <AddItemInput
+        <AddNote
           handleAdd={handleAdd}
           placeholder={addItemPlaceholder}
           disabled={props.values == null}
         />
         {/* todo: transitionGroup (see https://mui.com/material-ui/transitions/#transitiongroup) */}
         {values?.map((value, i) => (
-          <ListItemInput
+          <NotesListItem
             key={i}
             handleDelete={handleDelete}
             handleUpdate={handleUpdate}

@@ -11,11 +11,7 @@ interface Props {
   disabled: boolean
 }
 // This Input is a temporary value that isn't include in the list until/unless it is submitted.
-export default function AddItemInput({
-  placeholder,
-  handleAdd,
-  disabled,
-}: Props) {
+export default function AddNote({ placeholder, handleAdd, disabled }: Props) {
   const inputRef = useRef<HTMLInputElement>()
   const handleSubmit = (value: string) => {
     handleAdd(value)

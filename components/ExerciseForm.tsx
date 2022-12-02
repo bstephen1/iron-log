@@ -11,7 +11,7 @@ import Exercise from '../models/Exercise'
 import { ExerciseStatus } from '../models/ExerciseStatus'
 import { ComboBoxField } from './form-fields/ComboBoxField'
 import InputField from './form-fields/InputField'
-import InputListField from './form-fields/InputListField'
+import NotesList from './form-fields/NotesList'
 import SelectFieldAutosave from './form-fields/SelectFieldAutosave'
 
 interface Props {
@@ -98,7 +98,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         />
       </Grid>
       <Grid xs={12}>
-        <InputListField
+        <NotesList
           label="Notes"
           addItemPlaceholder="Add Note"
           listItemPlaceholder="Empty Note (will be deleted)"
