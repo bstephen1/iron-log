@@ -30,6 +30,10 @@ function addName(name) {
   return { name }
 }
 
+function addNote(value, chips) {
+  return { value, chips }
+}
+
 function addSet(weight, reps, effort, distance, time) {
   return { weight, reps, effort, distance, time }
 }
@@ -79,37 +83,47 @@ let modifiers = [
   addModifier('narrow', 'active', true),
   addModifier('wraps', 'active', true),
   addModifier('middle', 'active', true),
-  addModifier('unilateral', 'active', false), // add L/R rows
-  addModifier('AMRAP', 'active', false), // or set type?
-  addModifier('bodyweight', 'active', false), // add BW column
+  addModifier('barbell', 'active', true),
+  addModifier('unilateral left', 'active', true),
+  addModifier('unilateral right', 'active', true),
+  addModifier('AMRAP', 'active', true),
+  addModifier('myo', 'active', true),
+  addModifier('bodyweight', 'active', false),
+  // todo: rep goal / marathon
 ]
 
 let exercises = [
   new Exercise(
     'high bar squats',
     'active',
-    ['knees out', 'chest up'],
+    [addNote('knees up'), addNote('chest up')],
     ['squat'],
     ['belt', 'band']
   ),
   new Exercise(
     'curls',
     'active',
-    ['a', 'b', 'c', 'd', 'f', 'e'],
+    [addNote('twist in', ['barbell'])],
     ['biceps'],
-    ['bodyweight', 'unilateral']
+    ['bodyweight', 'unilateral', 'barbell']
   ),
   new Exercise(
     'multi grip bench press',
     'active',
     [
-      'tucked, middle grip => great triceps',
-      'flared, narrow grip => great chest',
+      addNote('great triceps', ['tucked', 'middle']),
+      addNote('great chest', ['flared', 'narrow']),
     ],
     ['bench press', 'chest', 'triceps'],
     ['flared', 'tucked', 'wide', 'narrow', 'middle', 'belt', 'wraps']
   ),
-  new Exercise('zercher squat', 'archived', ['pain'], ['squat'], ['AMRAP']),
+  new Exercise(
+    'zercher squat',
+    'archived',
+    [addNote('pain')],
+    ['squat'],
+    ['AMRAP']
+  ),
   new Exercise('running', 'active', [], ['cardio'], []),
   new Exercise('yoke', 'active', [], ['strongman'], []),
 ]
