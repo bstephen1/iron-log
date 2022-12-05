@@ -31,7 +31,7 @@ import { ComboBoxField } from '../form-fields/ComboBoxField'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../StyledDivider'
 import RecordHeaderButton from './RecordHeaderButton'
-import RecordNotesDialog from './RecordNotesDialog'
+import RecordNotesDialogButton from './RecordNotesDialogButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
@@ -198,13 +198,7 @@ export default function RecordCard({
             >
               <KeyboardDoubleArrowRight />
             </RecordHeaderButton>
-            <RecordHeaderButton
-              title="Record Notes"
-              className={noSwipingAboveSm}
-              onClick={handleDeleteRecord}
-            >
-              <RecordNotesDialog />
-            </RecordHeaderButton>
+            <RecordNotesDialogButton className={noSwipingAboveSm} />
             <RecordHeaderButton
               title="Delete Record"
               className={noSwipingAboveSm}
