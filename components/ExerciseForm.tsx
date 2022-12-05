@@ -75,7 +75,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             label="Name"
             initialValue={exercise.name}
             required
-            handleSubmit={(value) => handleUpdate({ name: value })}
+            handleSubmit={(name) => handleUpdate({ name })}
             yupValidator={yup.reach(validationSchema, 'name')}
           />
           <SelectFieldAutosave
@@ -84,7 +84,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
             initialValue={exercise.status}
             required
             yupValidator={yup.reach(validationSchema, 'status')}
-            handleSubmit={(value) => handleUpdate({ status: value })}
+            handleSubmit={(status) => handleUpdate({ status })}
           />
         </Stack>
       </Grid>
@@ -94,7 +94,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           initialValue={exercise.modifiers}
           options={modifierNames}
           textFieldProps={{ helperText: ' ' }}
-          handleSubmit={(value: string[]) => handleUpdate({ modifiers: value })}
+          handleSubmit={(modifiers) => handleUpdate({ modifiers })}
         />
       </Grid>
       <Grid xs={12}>
@@ -102,8 +102,9 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Notes"
           addItemPlaceholder="Add Note"
           listItemPlaceholder="Empty Note (will be deleted)"
-          values={exercise.notes}
-          handleSubmit={(values: string[]) => handleUpdate({ notes: values })}
+          notes={exercise.notes}
+          options={exercise.modifiers}
+          handleSubmit={(notes) => handleUpdate({ notes })}
         />
       </Grid>
     </Grid>

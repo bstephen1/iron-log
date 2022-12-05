@@ -1,18 +1,21 @@
 import { Divider, Stack } from '@mui/material'
+import Note from '../../../models/Note'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'
 
 interface Props {
   label?: string
+  options: string[]
   addItemPlaceholder?: string
   listItemPlaceholder?: string
-  handleSubmit: (values: string[]) => void
-  values: string[]
+  handleSubmit: (notes: Note[]) => void
+  notes: Note[]
 }
 export default function NotesList(props: Props) {
   const {
     label,
-    values,
+    notes,
+    options,
     addItemPlaceholder,
     listItemPlaceholder,
     handleSubmit,
@@ -20,16 +23,16 @@ export default function NotesList(props: Props) {
 
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
-  const handleAdd = (value: string) => handleSubmit([value, ...values])
+  const handleAdd = (newNote: Note) => handleSubmit([newNote, ...notes])
   const handleDelete = (i: number) => {
-    handleSubmit(values.slice(0, i).concat(values.slice(i + 1)))
+    handleSubmit(notes.slice(0, i).concat(notes.slice(i + 1)))
   }
-  const handleUpdate = (i: number, value: string) => {
+  const handleUpdate = (i: number, newNote: Note) => {
     handleSubmit(
-      values
+      notes
         .slice(0, i)
-        .concat(value)
-        .concat(values.slice(i + 1))
+        .concat(newNote)
+        .concat(notes.slice(i + 1))
     )
   }
 
@@ -44,19 +47,16 @@ export default function NotesList(props: Props) {
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
         <AddNote
-          handleAdd={handleAdd}
           placeholder={addItemPlaceholder}
-          disabled={props.values == null}
+          disabled={props.notes == null}
+          {...{ handleAdd, options }}
         />
         {/* todo: transitionGroup (see https://mui.com/material-ui/transitions/#transitiongroup) */}
-        {values?.map((value, i) => (
+        {notes?.map((note, index) => (
           <NotesListItem
-            key={i}
-            handleDelete={handleDelete}
-            handleUpdate={handleUpdate}
-            index={i}
-            initialValue={value}
+            key={index} // apparently eslint doesn't see this if it's in the spread object
             placeholder={listItemPlaceholder}
+            {...{ handleDelete, handleUpdate, options, note, index }}
           />
         ))}
       </Stack>

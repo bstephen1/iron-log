@@ -30,8 +30,8 @@ function addName(name) {
   return { name }
 }
 
-function addNote(value, chips) {
-  return { value, chips }
+function addNote(value = '', tags = []) {
+  return { value, tags }
 }
 
 function addSet(weight, reps, effort, distance, time) {
