@@ -27,6 +27,7 @@ export default function CategoryFilter({
   }
 
   // todo: onClose without selection: don't focus ExerciseSelector input
+  // todo: use the TagSelect from notes list? add category to db?
 
   const open = !!anchorEl
   const id = open ? 'exercise-filter-popper' : undefined
