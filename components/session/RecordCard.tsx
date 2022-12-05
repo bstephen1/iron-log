@@ -11,7 +11,6 @@ import {
   CardContent,
   CardHeader,
   Fab,
-  IconButton,
   Skeleton,
   Tooltip,
   useMediaQuery,
@@ -31,6 +30,8 @@ import Set from '../../models/Set'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../StyledDivider'
+import RecordHeaderButton from './RecordHeaderButton'
+import RecordNotesDialog from './RecordNotesDialog'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
@@ -180,45 +181,38 @@ export default function RecordCard({
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <>
-            <Tooltip
+            <RecordHeaderButton
               title="Move current record to the left"
-              placement="bottom-end"
+              className={noSwipingAboveSm}
+              disabled={swiper.isBeginning}
+              onClick={() => handleSwapRecords(index, index - 1)}
             >
-              <>
-                <IconButton
-                  className={noSwipingAboveSm}
-                  disabled={swiper.isBeginning}
-                  onClick={() => handleSwapRecords(index, index - 1)}
-                >
-                  <KeyboardDoubleArrowLeft />
-                </IconButton>
-              </>
-            </Tooltip>
-            <Tooltip
+              <KeyboardDoubleArrowLeft />
+            </RecordHeaderButton>
+            <RecordHeaderButton
               title="Move current record to the right"
-              placement="bottom-end"
+              className={noSwipingAboveSm}
+              // disable on the penultimate slide because the last is the "add record" button
+              disabled={swiper.activeIndex >= swiper.slides?.length - 2}
+              onClick={() => handleSwapRecords(index, index + 1)}
             >
-              <>
-                <IconButton
-                  className={noSwipingAboveSm}
-                  // disable on the penultimate slide because the last is the "add record" button
-                  disabled={swiper.activeIndex >= swiper.slides?.length - 2}
-                  onClick={() => handleSwapRecords(index, index + 1)}
-                >
-                  <KeyboardDoubleArrowRight />
-                </IconButton>
-              </>
-            </Tooltip>
-            <Tooltip title="Delete Record" placement="bottom-end">
-              {/* todo: make a menu? Maybe will want to add other stuff. Actually, maybe only for when the screen is small. Lots of empty space in the title bar. */}
-              <IconButton
-                className={noSwipingAboveSm}
-                color="error"
-                onClick={handleDeleteRecord}
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
+              <KeyboardDoubleArrowRight />
+            </RecordHeaderButton>
+            <RecordHeaderButton
+              title="Record Notes"
+              className={noSwipingAboveSm}
+              onClick={handleDeleteRecord}
+            >
+              <RecordNotesDialog />
+            </RecordHeaderButton>
+            <RecordHeaderButton
+              title="Delete Record"
+              className={noSwipingAboveSm}
+              color="error"
+              onClick={handleDeleteRecord}
+            >
+              <Delete />
+            </RecordHeaderButton>
           </>
         }
       />
