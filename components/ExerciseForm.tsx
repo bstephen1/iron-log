@@ -100,8 +100,6 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       <Grid xs={12}>
         <NotesList
           label="Notes"
-          addItemPlaceholder="Add Note"
-          listItemPlaceholder="Empty Note (will be deleted)"
           notes={exercise.notes}
           options={exercise.modifiers}
           handleSubmit={(notes) => handleUpdate({ notes })}

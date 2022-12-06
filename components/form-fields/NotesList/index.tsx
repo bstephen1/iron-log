@@ -16,8 +16,8 @@ export default function NotesList(props: Props) {
     label,
     notes,
     options,
-    addItemPlaceholder,
-    listItemPlaceholder,
+    addItemPlaceholder = 'Add Note',
+    listItemPlaceholder = 'Empty Note (will be deleted)',
     handleSubmit,
   } = props
 
@@ -40,9 +40,11 @@ export default function NotesList(props: Props) {
     <>
       {/* todo: center text? outline? divider style in the middle? */}
       {/* todo: style divider line w/ theme color? (see dad) */}
-      <Divider textAlign="center" sx={{ pb: 2 }}>
-        {label}
-      </Divider>
+      {label && (
+        <Divider textAlign="center" sx={{ pb: 2 }}>
+          {label}
+        </Divider>
+      )}
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}

@@ -112,7 +112,7 @@ export default function RecordCard({
   }
 
   // define after null checks so record must exist
-  const { exercise, activeModifiers, sets, fields, _id } = record
+  const { exercise, activeModifiers, sets, fields, notes, _id } = record
 
   const addSet = () => {
     const newSet = sets[sets.length - 1]
@@ -198,7 +198,12 @@ export default function RecordCard({
             >
               <KeyboardDoubleArrowRight />
             </RecordHeaderButton>
-            <RecordNotesDialogButton className={noSwipingAboveSm} />
+            <RecordNotesDialogButton
+              className={noSwipingAboveSm}
+              notes={notes}
+              setsAmount={sets.length}
+              handleSubmit={(notes) => handleFieldChange({ notes })}
+            />
             <RecordHeaderButton
               title="Delete Record"
               className={noSwipingAboveSm}
@@ -243,7 +248,7 @@ export default function RecordCard({
           <Grid xs={12}>
             <SetHeader
               initialSelected={fields}
-              handleSubmit={(value) => handleFieldChange({ fields: value })}
+              handleSubmit={(fields) => handleFieldChange({ fields })}
             />
           </Grid>
         </Grid>

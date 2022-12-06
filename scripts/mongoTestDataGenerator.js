@@ -38,13 +38,14 @@ function addSet(weight, reps, effort, distance, time) {
   return { weight, reps, effort, distance, time }
 }
 
-function addRecord(date, exercise, activeModifiers, sets, fields, _id) {
+function addRecord(date, exercise, activeModifiers, sets, fields, notes, _id) {
   return {
     date,
     exercise,
     activeModifiers,
     sets,
     fields,
+    notes,
     _id,
   }
 }
@@ -153,6 +154,7 @@ let records = [
     ['belt'],
     sets1,
     ['weight', 'reps', 'effort'],
+    [addNote('good session')],
     randomUUID()
   ),
   addRecord(
@@ -161,6 +163,7 @@ let records = [
     ['bodyweight'],
     sets2,
     ['weight', 'reps'],
+    [],
     randomUUID()
   ),
   addRecord(
@@ -169,6 +172,7 @@ let records = [
     [],
     setsDist,
     ['time', 'distance', 'effort'],
+    [],
     randomUUID()
   ),
   addRecord(
@@ -177,6 +181,7 @@ let records = [
     [],
     setsDist2,
     ['distance', 'time', 'effort'],
+    [],
     randomUUID()
   ),
   addRecord(
@@ -185,6 +190,7 @@ let records = [
     [],
     setsAll,
     ['weight', 'distance', 'time', 'reps', 'effort'],
+    [],
     randomUUID()
   ),
 ]
