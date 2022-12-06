@@ -35,7 +35,7 @@ export default function RecordNotesDialogButton({
         onClick={() => setOpen(true)}
         {...recordHeaderButtonProps}
       >
-        <Badge badgeContent={4} color="primary">
+        <Badge badgeContent={notes.length} color="primary">
           <Notes />
         </Badge>
       </RecordHeaderButton>
