@@ -13,6 +13,7 @@ interface Props {
   handleUpdate: (index: number, value: Note) => void
   placeholder?: string
   options: string[]
+  multiple?: boolean
 }
 export default function NotesListItem(props: Props) {
   const {
@@ -22,6 +23,7 @@ export default function NotesListItem(props: Props) {
     handleDelete,
     handleUpdate,
     options,
+    multiple,
   } = props
 
   const inputRef = useRef<HTMLInputElement>()
@@ -49,7 +51,7 @@ export default function NotesListItem(props: Props) {
             handleUpdate(index, { ...note, tags: newTags })
           }
           tags={note.tags}
-          options={options}
+          {...{ options, multiple }}
         />
       }
       endAdornment={

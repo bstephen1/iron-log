@@ -103,6 +103,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           notes={exercise.notes}
           options={exercise.modifiers}
           handleSubmit={(notes) => handleUpdate({ notes })}
+          multiple
         />
       </Grid>
     </Grid>

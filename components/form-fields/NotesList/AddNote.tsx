@@ -12,6 +12,7 @@ interface Props {
   handleAdd: (value: Note) => void
   disabled: boolean
   options: string[]
+  multiple?: boolean
 }
 // This Input is a temporary value that isn't include in the list until/unless it is submitted.
 export default function AddNote({
@@ -19,6 +20,7 @@ export default function AddNote({
   handleAdd,
   disabled,
   options,
+  multiple,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>()
   const [tags, setTags] = useState<Note['tags']>([])
@@ -46,14 +48,14 @@ export default function AddNote({
       onKeyDown={(e) => e.code === 'Enter' && submit()}
       inputRef={inputRef}
       startAdornment={
-        <TagSelect handleUpdate={setTags} tags={tags} options={options} />
+        <TagSelect handleUpdate={setTags} {...{ tags, options, multiple }} />
       }
       endAdornment={
         <>
           <TransitionIconButton
             isVisible={!isEmpty}
             onClick={submit}
-            aria-label="add cue"
+            aria-label="add note"
           >
             <CheckIcon />
           </TransitionIconButton>

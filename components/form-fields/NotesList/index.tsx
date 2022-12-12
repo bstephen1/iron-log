@@ -10,6 +10,7 @@ interface Props {
   listItemPlaceholder?: string
   handleSubmit: (notes: Note[]) => void
   notes: Note[]
+  multiple?: boolean
 }
 export default function NotesList(props: Props) {
   const {
@@ -19,6 +20,7 @@ export default function NotesList(props: Props) {
     addItemPlaceholder = 'Add Note',
     listItemPlaceholder = 'Empty Note (will be deleted)',
     handleSubmit,
+    multiple,
   } = props
 
   // we need to save these as functions in the parent component
@@ -51,14 +53,14 @@ export default function NotesList(props: Props) {
         <AddNote
           placeholder={addItemPlaceholder}
           disabled={props.notes == null}
-          {...{ handleAdd, options }}
+          {...{ handleAdd, options, multiple }}
         />
         {/* todo: transitionGroup (see https://mui.com/material-ui/transitions/#transitiongroup) */}
         {notes?.map((note, index) => (
           <NotesListItem
             key={index} // apparently eslint doesn't see this if it's in the spread object
             placeholder={listItemPlaceholder}
-            {...{ handleDelete, handleUpdate, options, note, index }}
+            {...{ handleDelete, handleUpdate, options, note, index, multiple }}
           />
         ))}
       </Stack>
