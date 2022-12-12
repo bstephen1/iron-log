@@ -1,11 +1,6 @@
-import {
-  CategoryOutlined,
-  FilterAltOutlined,
-  FilterOutlined,
-} from '@mui/icons-material'
+import { FilterAltOutlined } from '@mui/icons-material'
 import { Chip, IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
 import { Dispatch, SetStateAction, useState } from 'react'
-import { useCategories } from '../lib/frontend/restService'
 import Category from '../models/Category'
 
 interface Props {
@@ -27,6 +22,7 @@ export default function CategoryFilter({
   }
 
   // todo: onClose without selection: don't focus ExerciseSelector input
+  // todo: use the TagSelect from notes list? add category to db?
 
   const open = !!anchorEl
   const id = open ? 'exercise-filter-popper' : undefined
@@ -57,7 +53,7 @@ export default function CategoryFilter({
         }}
       >
         {!!categories &&
-          categories.map((category, i) => (
+          categories.map((category) => (
             <MenuItem
               key={category.name}
               value={category.name}

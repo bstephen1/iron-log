@@ -9,15 +9,13 @@ class Exercise {
   constructor(
     name,
     status = 'active',
-    notes = '',
-    cues = [],
+    notes = [],
     categories = [],
     modifiers = []
   ) {
     ;(this.name = name),
       (this.status = status),
       (this.notes = notes),
-      (this.cues = cues),
       (this.categories = categories),
       (this.modifiers = modifiers),
       (this._id = randomUUID())
@@ -32,17 +30,22 @@ function addName(name) {
   return { name }
 }
 
+function addNote(value = '', tags = []) {
+  return { value, tags }
+}
+
 function addSet(weight, reps, effort, distance, time) {
   return { weight, reps, effort, distance, time }
 }
 
-function addRecord(date, exercise, activeModifiers, sets, fields, _id) {
+function addRecord(date, exercise, activeModifiers, sets, fields, notes, _id) {
   return {
     date,
     exercise,
     activeModifiers,
     sets,
     fields,
+    notes,
     _id,
   }
 }
@@ -81,35 +84,36 @@ let modifiers = [
   addModifier('narrow', 'active', true),
   addModifier('wraps', 'active', true),
   addModifier('middle', 'active', true),
-  addModifier('unilateral', 'active', false), // add L/R rows
-  addModifier('AMRAP', 'active', false), // or set type?
-  addModifier('bodyweight', 'active', false), // add BW column
+  addModifier('barbell', 'active', true),
+  addModifier('unilateral left', 'active', true),
+  addModifier('unilateral right', 'active', true),
+  addModifier('AMRAP', 'active', true),
+  addModifier('myo', 'active', true),
+  addModifier('bodyweight', 'active', false),
+  // todo: rep goal / marathon
 ]
 
 let exercises = [
   new Exercise(
     'high bar squats',
     'active',
-    'Milk and squats.',
-    ['knees out', 'chest up'],
+    [addNote('knees up'), addNote('chest up')],
     ['squat'],
     ['belt', 'band']
   ),
   new Exercise(
     'curls',
     'active',
-    'curl curl curl',
-    ['a', 'b', 'c', 'd', 'f', 'e'],
+    [addNote('twist in', ['barbell'])],
     ['biceps'],
-    ['bodyweight', 'unilateral']
+    ['bodyweight', 'unilateral', 'barbell']
   ),
   new Exercise(
     'multi grip bench press',
     'active',
-    '',
     [
-      'tucked, middle grip => great triceps',
-      'flared, narrow grip => great chest',
+      addNote('great triceps', ['tucked', 'middle']),
+      addNote('great chest', ['flared', 'narrow']),
     ],
     ['bench press', 'chest', 'triceps'],
     ['flared', 'tucked', 'wide', 'narrow', 'middle', 'belt', 'wraps']
@@ -117,17 +121,13 @@ let exercises = [
   new Exercise(
     'zercher squat',
     'archived',
-    'never again',
-    ['pain'],
+    [addNote('pain')],
     ['squat'],
     ['AMRAP']
   ),
-  new Exercise('running', 'active', '', [], ['cardio'], []),
-  new Exercise('yoke', 'active', '', [], ['strongman'], []),
+  new Exercise('running', 'active', [], ['cardio'], []),
+  new Exercise('yoke', 'active', [], ['strongman'], []),
 ]
-
-// todo: myo, super, rep range (?), weigh-in, cardio
-let setTypes = [addName('standard')]
 
 let sets1 = [addSet(100, 5, 8), addSet(110, 5, 9), addSet(120, 5, 10)]
 
@@ -154,6 +154,7 @@ let records = [
     ['belt'],
     sets1,
     ['weight', 'reps', 'effort'],
+    [addNote('good session')],
     randomUUID()
   ),
   addRecord(
@@ -162,6 +163,7 @@ let records = [
     ['bodyweight'],
     sets2,
     ['weight', 'reps'],
+    [],
     randomUUID()
   ),
   addRecord(
@@ -170,6 +172,7 @@ let records = [
     [],
     setsDist,
     ['time', 'distance', 'effort'],
+    [],
     randomUUID()
   ),
   addRecord(
@@ -178,6 +181,7 @@ let records = [
     [],
     setsDist2,
     ['distance', 'time', 'effort'],
+    [],
     randomUUID()
   ),
   addRecord(
@@ -186,6 +190,7 @@ let records = [
     [],
     setsAll,
     ['weight', 'distance', 'time', 'reps', 'effort'],
+    [],
     randomUUID()
   ),
 ]
@@ -201,7 +206,6 @@ db.dropDatabase()
 db.modifiers.insertMany(modifiers)
 db.categories.insertMany(categories)
 db.exercises.insertMany(exercises)
-db.setTypes.insertMany(setTypes)
 db.sessions.insertMany(sessions)
 db.records.insertMany(records)
 

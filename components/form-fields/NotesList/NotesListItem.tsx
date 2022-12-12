@@ -1,30 +1,37 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
 import { useRef } from 'react'
+import Note from '../../../models/Note'
 import TransitionIconButton from '../../TransitionIconButton'
 import useField from '../useField'
+import TagSelect from './TagSelect'
 
 interface Props {
-  initialValue: string
+  note: Note
   index: number
   handleDelete: (index: number) => void
-  handleUpdate: (index: number, value: string) => void
+  handleUpdate: (index: number, value: Note) => void
   placeholder?: string
+  options: string[]
+  multiple?: boolean
 }
-export default function ListItemInput(props: Props) {
+export default function NotesListItem(props: Props) {
   const {
-    initialValue,
+    note,
     placeholder = '',
     index,
     handleDelete,
     handleUpdate,
+    options,
+    multiple,
   } = props
 
   const inputRef = useRef<HTMLInputElement>()
-  const handleSubmit = (value: string) => handleUpdate(index, value)
+  const handleSubmit = (value: string) =>
+    handleUpdate(index, { ...note, value })
   const { control, isEmpty } = useField({
     handleSubmit,
-    initialValue,
+    initialValue: note.value,
   })
 
   return (
@@ -38,6 +45,15 @@ export default function ListItemInput(props: Props) {
       inputProps={{
         'aria-label': 'edit',
       }}
+      startAdornment={
+        <TagSelect
+          handleUpdate={(newTags) =>
+            handleUpdate(index, { ...note, tags: newTags })
+          }
+          tags={note.tags}
+          {...{ options, multiple }}
+        />
+      }
       endAdornment={
         <>
           <TransitionIconButton

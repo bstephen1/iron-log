@@ -1,4 +1,4 @@
-import { Tab, Tabs } from '@mui/material'
+import { Container, Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useState } from 'react'
 import CategoryForm from '../components/CategoryForm'
@@ -87,57 +87,58 @@ export default function ManagePage() {
   // todo: when typing, if string becomes empty it disables the form, even if not submitted
   // todo: names should be case insensitive. 'Squats' === 'squats'
   return (
-    <Grid container spacing={2}>
-      <Grid xs={12}>
-        <Tabs
-          value={tabValue}
-          onChange={(_, value) => setTabValue(value)}
-          centered
-        >
-          {tabContent.map((tab) => (
-            <Tab key={tab.label} label={tab.label} />
-          ))}
-        </Tabs>
+    <Container maxWidth="md">
+      <Grid container spacing={2}>
+        <Grid xs={12}>
+          <Tabs
+            value={tabValue}
+            onChange={(_, value) => setTabValue(value)}
+            centered
+          >
+            {tabContent.map((tab) => (
+              <Tab key={tab.label} label={tab.label} />
+            ))}
+          </Tabs>
+        </Grid>
+        <Grid xs={12}>
+          {tabValue === 0 && (
+            <ExerciseSelector
+              {...{
+                exercise,
+                handleChange: setExercise,
+                exercises,
+                mutate: mutateExercises,
+              }}
+            />
+          )}
+          {tabValue === 1 && (
+            <ModifierSelector
+              {...{
+                modifier,
+                handleChange: setModifier,
+                modifiers,
+                mutate: mutateModifiers,
+              }}
+            />
+          )}
+          {tabValue === 2 && (
+            <CategorySelector
+              {...{
+                category,
+                handleChange: setCategory,
+                categories,
+                mutate: mutateCategories,
+              }}
+            />
+          )}
+        </Grid>
+        <Grid xs={12}>
+          <StyledDivider />
+        </Grid>
+        <Grid container xs={12} justifyContent="center">
+          {renderForm()}
+        </Grid>
       </Grid>
-      <Grid xs={12} md={3}>
-        {tabValue === 0 && (
-          <ExerciseSelector
-            {...{
-              exercise,
-              handleChange: setExercise,
-              exercises,
-              mutate: mutateExercises,
-            }}
-          />
-        )}
-        {tabValue === 1 && (
-          <ModifierSelector
-            {...{
-              modifier,
-              handleChange: setModifier,
-              modifiers,
-              mutate: mutateModifiers,
-            }}
-          />
-        )}
-        {tabValue === 2 && (
-          <CategorySelector
-            {...{
-              category,
-              handleChange: setCategory,
-              categories,
-              mutate: mutateCategories,
-            }}
-          />
-        )}
-      </Grid>
-      {/* todo: vertical on md */}
-      <Grid xs={12} md={1}>
-        <StyledDivider />
-      </Grid>
-      <Grid container xs={12} md={8} justifyContent="center">
-        {renderForm()}
-      </Grid>
-    </Grid>
+    </Container>
   )
 }
