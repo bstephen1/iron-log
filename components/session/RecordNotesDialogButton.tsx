@@ -19,8 +19,7 @@ export default function RecordNotesDialogButton({
 }: Props) {
   const [open, setOpen] = useState(false)
 
-  // thinking only allow a single tag, and default to "Record" (no null tag)
-  // also, Session tagged notes should propagate to all records in the session
+  // Session tagged notes should propagate to all records in the session? Would need an id for notes
   const options = ['Session', 'Record']
 
   // the rare full for loop
