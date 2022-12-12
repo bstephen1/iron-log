@@ -8,6 +8,7 @@ interface Props {
   options: string[]
   addItemPlaceholder?: string
   listItemPlaceholder?: string
+  initialTags?: string[]
   handleSubmit: (notes: Note[]) => void
   notes: Note[]
   multiple?: boolean
@@ -19,6 +20,7 @@ export default function NotesList(props: Props) {
     options,
     addItemPlaceholder = 'Add Note',
     listItemPlaceholder = 'Empty Note (will be deleted)',
+    initialTags,
     handleSubmit,
     multiple,
   } = props
@@ -53,7 +55,7 @@ export default function NotesList(props: Props) {
         <AddNote
           placeholder={addItemPlaceholder}
           disabled={props.notes == null}
-          {...{ handleAdd, options, multiple }}
+          {...{ handleAdd, options, multiple, initialTags }}
         />
         {/* todo: transitionGroup (see https://mui.com/material-ui/transitions/#transitiongroup) */}
         {notes?.map((note, index) => (

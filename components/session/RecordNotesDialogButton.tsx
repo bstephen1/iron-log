@@ -42,7 +42,10 @@ export default function RecordNotesDialogButton({
       <Dialog open={open} fullWidth onClose={() => setOpen(false)}>
         <DialogTitle>Notes</DialogTitle>
         <DialogContent>
-          <NotesList {...{ options, handleSubmit, notes }} />
+          <NotesList
+            initialTags={['Record']}
+            {...{ options, handleSubmit, notes }}
+          />
         </DialogContent>
       </Dialog>
     </>

@@ -13,6 +13,7 @@ interface Props {
   disabled: boolean
   options: string[]
   multiple?: boolean
+  initialTags?: string[]
 }
 // This Input is a temporary value that isn't include in the list until/unless it is submitted.
 export default function AddNote({
@@ -21,16 +22,18 @@ export default function AddNote({
   disabled,
   options,
   multiple,
+  initialTags = [],
 }: Props) {
   const inputRef = useRef<HTMLInputElement>()
-  const [tags, setTags] = useState<Note['tags']>([])
+  const [tags, setTags] = useState<Note['tags']>(initialTags)
   const handleSubmit = (value: string) => {
     handleAdd(new Note(value, tags))
     onReset()
   }
   const onReset = () => {
     reset('')
-    setTags([])
+    // if it's single we can just leave the tag as is
+    if (multiple) setTags(initialTags)
     inputRef.current?.focus()
   }
 
