@@ -1,4 +1,3 @@
-import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useMemo } from 'react'
 import * as yup from 'yup'
@@ -68,27 +67,38 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   return (
     <Grid container spacing={1} xs={12}>
       <Grid xs={12} sm={6}>
-        <Stack spacing={1}>
-          {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
+        {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
             Export the schema and have the hook pull it in?  */}
-          <InputField
-            label="Name"
-            initialValue={exercise.name}
-            required
-            handleSubmit={(name) => handleUpdate({ name })}
-            yupValidator={yup.reach(validationSchema, 'name')}
-          />
-          <SelectFieldAutosave
-            label="Status"
-            options={Object.values(ExerciseStatus)}
-            initialValue={exercise.status}
-            required
-            yupValidator={yup.reach(validationSchema, 'status')}
-            handleSubmit={(status) => handleUpdate({ status })}
-          />
-        </Stack>
+        <InputField
+          label="Name"
+          initialValue={exercise.name}
+          required
+          fullWidth
+          handleSubmit={(name) => handleUpdate({ name })}
+          yupValidator={yup.reach(validationSchema, 'name')}
+        />
       </Grid>
       <Grid xs={12} sm={6}>
+        <SelectFieldAutosave
+          label="Status"
+          options={Object.values(ExerciseStatus)}
+          initialValue={exercise.status}
+          required
+          fullWidth
+          yupValidator={yup.reach(validationSchema, 'status')}
+          handleSubmit={(status) => handleUpdate({ status })}
+        />
+      </Grid>
+      <Grid xs={12}>
+        <ComboBoxField
+          label="Categories"
+          initialValue={exercise.categories}
+          options={categoryNames}
+          textFieldProps={{ helperText: ' ' }}
+          handleSubmit={(categories) => handleUpdate({ categories })}
+        />
+      </Grid>
+      <Grid xs={12}>
         <ComboBoxField
           label="Modifiers"
           initialValue={exercise.modifiers}
