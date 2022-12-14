@@ -181,16 +181,22 @@ export async function fetchCategory(name: string) {
   return await categories.findOne({ name }, { projection: { _id: false } })
 }
 
-export async function updateCategory(category: Category) {
-  return await categories.replaceOne({ _id: category._id }, category, {
-    upsert: true,
-  })
-}
-
 export async function updateCategoryFields({
   id,
   updates,
 }: updateFieldsProps<Category>) {
+  // todo: should this be a transaction? Apparently that requires a cluster
+  if (updates.name) {
+    const oldCategory = await categories.find({ _id: id }).next()
+    await exercises.updateMany(
+      { categories: oldCategory?.name },
+      { $set: { 'categories.$': updates.name } }
+    )
+    await records.updateMany(
+      { category: oldCategory?.name },
+      { $set: { category: updates.name } }
+    )
+  }
   return await categories.updateOne({ _id: id }, { $set: updates })
 }
 

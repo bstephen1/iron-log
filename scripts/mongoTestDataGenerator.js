@@ -38,7 +38,16 @@ function addSet(weight, reps, effort, distance, time) {
   return { weight, reps, effort, distance, time }
 }
 
-function addRecord(date, exercise, activeModifiers, sets, fields, notes, _id) {
+function addRecord(
+  date,
+  exercise,
+  activeModifiers,
+  sets,
+  fields,
+  notes,
+  _id,
+  category = ''
+) {
   return {
     date,
     exercise,
@@ -47,6 +56,7 @@ function addRecord(date, exercise, activeModifiers, sets, fields, notes, _id) {
     fields,
     notes,
     _id,
+    category,
   }
 }
 
