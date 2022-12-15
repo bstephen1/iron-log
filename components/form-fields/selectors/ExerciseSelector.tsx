@@ -28,7 +28,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
   }: WithExerciseProps) {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
-    const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
+    const [category, setCategory] = useState<Category | null>(null)
 
     // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
     class ExerciseStub implements NamedStub {
@@ -44,9 +44,9 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
     // todo: on clicking category chip in form, setCategory to that value?
     const filterCategories = (exercise: Exercise, inputValue: string) => {
       return (
-        !categoryFilter ||
+        !category ||
         exercise.name === inputValue || // if you filter out an exercise you can still type it in manually
-        exercise.categories.some((category) => category === categoryFilter.name)
+        exercise.categories.some((name) => name === category.name)
       )
     }
 
@@ -72,9 +72,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         // todo: anchor to the bottom of the input?
         // todo: any way to get label to offset and not shrink with startAdornment? Not officially supported by mui bc "too hard" apparently. Is placeholder an ok comrpromise?
         startAdornment={
-          <CategoryFilter
-            {...{ categories, categoryFilter, setCategoryFilter }}
-          />
+          <CategoryFilter {...{ categories, category, setCategory }} />
         }
       />
     )

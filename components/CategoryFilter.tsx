@@ -1,18 +1,18 @@
 import { FilterAltOutlined } from '@mui/icons-material'
 import { Chip, IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import Category from '../models/Category'
 
 interface Props {
   anchorEl?: HTMLElement
   categories?: Category[]
-  categoryFilter: Category | null
-  setCategoryFilter: Dispatch<SetStateAction<Category | null>>
+  category: Category | null
+  setCategory: (category: Category | null) => void
 }
 export default function CategoryFilter({
   categories,
-  categoryFilter,
-  setCategoryFilter,
+  category,
+  setCategory,
   ...props
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -29,11 +29,11 @@ export default function CategoryFilter({
 
   return (
     <>
-      {!!categoryFilter ? (
+      {!!category ? (
         <Chip
-          label={categoryFilter.name}
+          label={category.name}
           onClick={handleOpen}
-          onDelete={() => setCategoryFilter(null)}
+          onDelete={() => setCategory(null)}
         />
       ) : (
         <Tooltip title="Select Category">
@@ -53,17 +53,17 @@ export default function CategoryFilter({
         }}
       >
         {!!categories &&
-          categories.map((category) => (
+          categories.map((newCategory) => (
             <MenuItem
-              key={category.name}
-              value={category.name}
+              key={newCategory.name}
+              value={newCategory.name}
               // for some reason e.target.value is NOT returning the value, even though it is visible in e.target
               onClick={(_) => {
-                setCategoryFilter(category)
+                setCategory(newCategory)
                 setAnchorEl(null)
               }}
             >
-              {category.name}
+              {newCategory.name}
             </MenuItem>
           ))}
       </Menu>
