@@ -10,6 +10,7 @@ import ManageWelcomeCard from '../components/ManageWelcomeCard'
 import ModifierForm from '../components/ModifierForm'
 import StyledDivider from '../components/StyledDivider'
 import {
+  updateCategoryFields,
   updateExerciseFields,
   useCategories,
   useExercises,
@@ -56,8 +57,15 @@ export default function ManagePage() {
   }
 
   const handleCategoryUpdate = (updates: Partial<Category>) => {
+    if (!category) return
+
     const newCategory = { ...category, ...updates }
-    console.log(newCategory)
+    const newCategories = categories?.map((category) =>
+      category._id === newCategory._id ? newCategory : category
+    )
+    updateCategoryFields(category, updates)
+    mutateCategories(newCategories)
+    setCategory(newCategory)
   }
 
   const renderForm = () => {

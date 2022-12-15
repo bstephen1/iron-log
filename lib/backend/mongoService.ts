@@ -63,7 +63,21 @@ export async function addRecord(record: Record) {
 // todo: pagination
 export async function fetchRecords(filter?: Filter<Record>) {
   // find() returns a cursor, so it has to be converted to an array
-  return await records.find({ ...filter }).toArray()
+  return await records
+    .aggregate([
+      { $match: filter },
+      {
+        $lookup: {
+          from: 'exercises',
+          localField: 'exercise._id',
+          foreignField: '_id',
+          as: 'exercise',
+        },
+      },
+      // if preserveNull is false the whole record becomes null if exercise is null
+      { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
+    ])
+    .toArray()
 }
 
 // todo: update record if exercise has been modified since last fetch
@@ -186,6 +200,7 @@ export async function updateCategoryFields({
   updates,
 }: updateFieldsProps<Category>) {
   // todo: should this be a transaction? Apparently that requires a cluster
+  // can run single testing node as cluster with mongod --replset rs0
   if (updates.name) {
     const oldCategory = await categories.find({ _id: id }).next()
     await exercises.updateMany(
