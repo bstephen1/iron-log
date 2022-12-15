@@ -83,6 +83,8 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         // todo: any way to get label to offset and not shrink with startAdornment? Not officially supported by mui bc "too hard" apparently. Is placeholder an ok comrpromise?
         startAdornment={
           <CategoryFilter
+            // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
+            sx={{ pr: props.variant === 'standard' ? 1 : 0 }}
             {...{ categories: categoryNames, category, setCategory }}
           />
         }

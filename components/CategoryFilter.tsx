@@ -1,5 +1,13 @@
 import { FilterAltOutlined } from '@mui/icons-material'
-import { Chip, IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
+import {
+  Box,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  SxProps,
+  Tooltip,
+} from '@mui/material'
 import { useState } from 'react'
 
 interface Props {
@@ -7,11 +15,13 @@ interface Props {
   categories?: string[]
   category: string | null
   setCategory: (category: string | null) => void
+  sx?: SxProps
 }
 export default function CategoryFilter({
   categories,
   category,
   setCategory,
+  sx,
   ...props
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -27,7 +37,7 @@ export default function CategoryFilter({
   const id = open ? 'exercise-filter-popper' : undefined
 
   return (
-    <>
+    <Box sx={sx}>
       {!!category ? (
         <Chip
           label={category}
@@ -66,6 +76,6 @@ export default function CategoryFilter({
             </MenuItem>
           ))}
       </Menu>
-    </>
+    </Box>
   )
 }
