@@ -23,11 +23,11 @@ class Exercise {
 }
 
 function addModifier(name, status, canDelete) {
-  return { name, status, canDelete }
+  return { name, status, canDelete, _id: randomUUID() }
 }
 
-function addName(name) {
-  return { name }
+function addCategory(name) {
+  return { name, _id: randomUUID() }
 }
 
 function addNote(value = '', tags = []) {
@@ -38,7 +38,16 @@ function addSet(weight, reps, effort, distance, time) {
   return { weight, reps, effort, distance, time }
 }
 
-function addRecord(date, exercise, activeModifiers, sets, fields, notes, _id) {
+function addRecord(
+  date,
+  exercise,
+  activeModifiers,
+  sets,
+  fields,
+  notes,
+  _id,
+  category = ''
+) {
   return {
     date,
     exercise,
@@ -47,6 +56,7 @@ function addRecord(date, exercise, activeModifiers, sets, fields, notes, _id) {
     fields,
     notes,
     _id,
+    category,
   }
 }
 
@@ -62,16 +72,16 @@ function addSessions(date, records, _id) {
 }
 
 let categories = [
-  addName('quads'),
-  addName('squat'),
-  addName('side delts'),
-  addName('biceps'),
-  addName('hamstrings'),
-  addName('bench press'),
-  addName('chest'),
-  addName('triceps'),
-  addName('cardio'),
-  addName('strongman'),
+  addCategory('quads'),
+  addCategory('squat'),
+  addCategory('side delts'),
+  addCategory('biceps'),
+  addCategory('hamstrings'),
+  addCategory('bench press'),
+  addCategory('chest'),
+  addCategory('triceps'),
+  addCategory('cardio'),
+  addCategory('strongman'),
 ]
 
 let modifiers = [
@@ -154,7 +164,7 @@ let records = [
     ['belt'],
     sets1,
     ['weight', 'reps', 'effort'],
-    [addNote('good session')],
+    [addNote('good lifts', ['Record'])],
     randomUUID()
   ),
   addRecord(

@@ -11,8 +11,7 @@ export default async function handler(
     const categories = await fetchCategories()
     res.status(200).json(categories)
   } catch (e) {
-    res
-      .status(500)
-      .json({ isError: true, message: 'error fetching categories' })
+    console.error(e)
+    res.status(500).end()
   }
 }

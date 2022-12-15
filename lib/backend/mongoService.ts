@@ -63,7 +63,21 @@ export async function addRecord(record: Record) {
 // todo: pagination
 export async function fetchRecords(filter?: Filter<Record>) {
   // find() returns a cursor, so it has to be converted to an array
-  return await records.find({ ...filter }).toArray()
+  return await records
+    .aggregate([
+      { $match: filter },
+      {
+        $lookup: {
+          from: 'exercises',
+          localField: 'exercise._id',
+          foreignField: '_id',
+          as: 'exercise',
+        },
+      },
+      // if preserveNull is false the whole record becomes null if exercise is null
+      { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
+    ])
+    .toArray()
 }
 
 // todo: update record if exercise has been modified since last fetch
@@ -151,17 +165,32 @@ export async function fetchModifier(name: string) {
   return await modifiers.findOne({ name }, { projection: { _id: false } })
 }
 
-export async function updateModifier(modifier: Modifier) {
-  // upsert creates a new record if it couldn't find one to update
-  return await modifiers.replaceOne({ _id: modifier._id }, modifier, {
-    upsert: true,
-  })
-}
-
 export async function updateModifierFields({
   id,
   updates,
 }: updateFieldsProps<Modifier>) {
+  if (updates.name) {
+    const oldModifier = await modifiers.find({ _id: id }).next()
+    await exercises.updateMany(
+      { modifiers: oldModifier?.name },
+      { $set: { 'modifiers.$': updates.name } }
+    )
+    // nested $[] operator (cannot use simple $ operator more than once): https://jira.mongodb.org/browse/SERVER-831
+    // typescript isn't recognizing notes.$[].tags.$[tag] as a valid signature for $set even though it works and is the recommended way to do it
+    await exercises.updateMany(
+      { 'notes.tags': oldModifier?.name },
+      { $set: { 'notes.$[].tags.$[tag]': updates.name } as any },
+      { arrayFilters: [{ tag: oldModifier?.name }] }
+    )
+    await records.updateMany(
+      { category: oldModifier?.name },
+      { $set: { category: updates.name } }
+    )
+    await records.updateMany(
+      { activeModifiers: oldModifier?.name },
+      { $set: { 'activeModifiers.$': updates.name } }
+    )
+  }
   return await modifiers.updateOne({ _id: id }, { $set: updates })
 }
 
@@ -181,16 +210,23 @@ export async function fetchCategory(name: string) {
   return await categories.findOne({ name }, { projection: { _id: false } })
 }
 
-export async function updateCategory(category: Category) {
-  return await categories.replaceOne({ _id: category._id }, category, {
-    upsert: true,
-  })
-}
-
 export async function updateCategoryFields({
   id,
   updates,
 }: updateFieldsProps<Category>) {
+  // todo: should this be a transaction? Apparently that requires a cluster
+  // can run single testing node as cluster with mongod --replset rs0
+  if (updates.name) {
+    const oldCategory = await categories.find({ _id: id }).next()
+    await exercises.updateMany(
+      { categories: oldCategory?.name },
+      { $set: { 'categories.$': updates.name } }
+    )
+    await records.updateMany(
+      { category: oldCategory?.name },
+      { $set: { category: updates.name } }
+    )
+  }
   return await categories.updateOne({ _id: id }, { $set: updates })
 }
 

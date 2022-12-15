@@ -156,10 +156,15 @@ export async function addModifier(newModifier: Modifier) {
   }).catch((e) => console.error(e))
 }
 
-export async function updateModifier(newModifier: Modifier) {
-  fetch(URI_MODIFIERS + newModifier.name, {
-    method: 'PUT',
-    body: JSON.stringify(newModifier),
+// todo: add a modifiers/id/<id> URI? Weird to use name in uri then send id to backend
+export async function updateModifierFields(
+  modifier: Modifier,
+  updates: Partial<Modifier>
+) {
+  const id = modifier._id
+  fetch(URI_MODIFIERS + modifier.name, {
+    method: 'PATCH',
+    body: JSON.stringify({ id, updates }),
   }).catch((e) => console.error(e))
 }
 
@@ -181,6 +186,18 @@ export async function addCategory(newCategory: Category) {
   fetch(URI_CATEGORIES + newCategory.name, {
     method: 'POST',
     body: JSON.stringify(newCategory),
+  }).catch((e) => console.error(e))
+}
+
+// todo: add a categories/id/<id> URI? Weird to use name in uri then send id to backend
+export async function updateCategoryFields(
+  category: Category,
+  updates: Partial<Category>
+) {
+  const id = category._id
+  fetch(URI_CATEGORIES + category.name, {
+    method: 'PATCH',
+    body: JSON.stringify({ id, updates }),
   }).catch((e) => console.error(e))
 }
 

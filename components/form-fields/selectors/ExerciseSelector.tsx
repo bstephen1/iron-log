@@ -2,8 +2,7 @@ import { TextFieldProps } from '@mui/material'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
-import { GenericAutocompleteProps } from '../../../lib/util'
-import Category from '../../../models/Category'
+import { GenericAutocompleteProps, useNames } from '../../../lib/util'
 import Exercise from '../../../models/Exercise'
 import { ExerciseStatusOrder } from '../../../models/ExerciseStatus'
 import { NamedStub } from '../../../models/NamedObject'
@@ -18,17 +17,30 @@ interface WithExerciseProps
   exercises: Exercise[] | undefined
   mutate: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
+  handleCategoryFilterChange?: (category: string | null) => void
+  initialCategoryFilter?: string | null
 }
 function withExercise(Component: typeof SelectorBase<Exercise>) {
   return function ({
     exercise,
     exercises,
     mutate,
+    handleCategoryFilterChange,
+    initialCategoryFilter = null,
     ...props
   }: WithExerciseProps) {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
-    const [categoryFilter, setCategoryFilter] = useState<Category | null>(null)
+    const categoryNames = useNames(categories)
+    const [category, setCategory] = useState<string | null>(
+      initialCategoryFilter
+    )
+
+    const handleFilterChange = (filtered: (Exercise | NamedStub)[]) => {
+      if (exercise && !filtered.some((item) => item.name === exercise.name)) {
+        props.handleChange(null)
+      }
+    }
 
     // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
     class ExerciseStub implements NamedStub {
@@ -42,18 +54,14 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
 
     // todo: null out category if selecting something that's not in the category?
     // todo: on clicking category chip in form, setCategory to that value?
-    const filterCategories = (exercise: Exercise, inputValue: string) => {
-      return (
-        !categoryFilter ||
-        exercise.name === inputValue || // if you filter out an exercise you can still type it in manually
-        exercise.categories.some((category) => category === categoryFilter.name)
-      )
+    const filterCategories = (exercise: Exercise) => {
+      return !category || exercise.categories.some((name) => name === category)
     }
 
     return (
       <Component
         {...props}
-        value={exercise}
+        value={exercise || null} // need to reduce undefined | null to just null to avoid switching to uncontrolled
         mutateOptions={mutate}
         options={
           exercises?.sort(
@@ -65,6 +73,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         groupBy={(option) => option.status}
         placeholder="Select or Add New Exercise"
         filterCustom={filterCategories}
+        handleFilterChange={handleFilterChange}
         StubConstructor={ExerciseStub}
         Constructor={Exercise}
         addNewItem={addExercise}
@@ -73,7 +82,9 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         // todo: any way to get label to offset and not shrink with startAdornment? Not officially supported by mui bc "too hard" apparently. Is placeholder an ok comrpromise?
         startAdornment={
           <CategoryFilter
-            {...{ categories, categoryFilter, setCategoryFilter }}
+            // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
+            sx={{ pr: props.variant === 'standard' ? 1 : 0 }}
+            {...{ categories: categoryNames, category, setCategory }}
           />
         }
       />

@@ -48,6 +48,8 @@ function ComboBoxFieldBase({
       fullWidth
       // size="small"  // todo: use small sizes?
       multiple
+      // todo: change color?
+      // ChipProps={{ color: 'primary', variant: 'outlined' }}
       onClose={handleClose}
       disabled={initialValue == null}
       options={options ?? []}

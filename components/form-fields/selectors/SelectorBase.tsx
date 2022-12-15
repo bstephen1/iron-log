@@ -1,5 +1,5 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { KeyedMutator } from 'swr'
 import { GenericAutocompleteProps } from '../../../lib/util'
 import { NamedObject, NamedStub } from '../../../models/NamedObject'
@@ -9,7 +9,8 @@ export interface SelectorBaseProps<C, S>
   // Any explicitly given AutocompleteProps will override the defaults
   extends Partial<GenericAutocompleteProps<C | S>> {
   label?: string
-  filterCustom?: (value: C, inputValue: string) => boolean
+  filterCustom?: (value: C, inputValue?: string) => boolean
+  handleFilterChange?: (options: (C | NamedStub)[]) => void
   handleChange: (value: C | null) => void
   mutateOptions: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
@@ -26,6 +27,7 @@ export default function SelectorBase<C extends NamedObject>({
   // value,
   label,
   filterCustom,
+  handleFilterChange,
   handleChange,
   options, // todo: these should be part of autocompleteProps
   mutateOptions,
@@ -46,6 +48,7 @@ export default function SelectorBase<C extends NamedObject>({
       openOnFocus
       selectOnFocus
       clearOnBlur
+      disablePortal // this will ensure the dropdown cannot overlap the category filter dropdown
       handleHomeEndKeys
       autoHighlight // todo: this sometimes pops up over Category selector for Exercises
       options={options || []}
@@ -81,6 +84,7 @@ export default function SelectorBase<C extends NamedObject>({
           filtered.push(new StubConstructor(inputValue))
         }
 
+        handleFilterChange?.(filtered)
         return filtered
       }}
       {...autocompleteProps}

@@ -1,18 +1,27 @@
 import { FilterAltOutlined } from '@mui/icons-material'
-import { Chip, IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
-import { Dispatch, SetStateAction, useState } from 'react'
-import Category from '../models/Category'
+import {
+  Box,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  SxProps,
+  Tooltip,
+} from '@mui/material'
+import { useState } from 'react'
 
 interface Props {
   anchorEl?: HTMLElement
-  categories?: Category[]
-  categoryFilter: Category | null
-  setCategoryFilter: Dispatch<SetStateAction<Category | null>>
+  categories?: string[]
+  category: string | null
+  setCategory: (category: string | null) => void
+  sx?: SxProps
 }
 export default function CategoryFilter({
   categories,
-  categoryFilter,
-  setCategoryFilter,
+  category,
+  setCategory,
+  sx,
   ...props
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -28,12 +37,12 @@ export default function CategoryFilter({
   const id = open ? 'exercise-filter-popper' : undefined
 
   return (
-    <>
-      {!!categoryFilter ? (
+    <Box sx={sx}>
+      {!!category ? (
         <Chip
-          label={categoryFilter.name}
+          label={category}
           onClick={handleOpen}
-          onDelete={() => setCategoryFilter(null)}
+          onDelete={() => setCategory(null)}
         />
       ) : (
         <Tooltip title="Select Category">
@@ -53,20 +62,20 @@ export default function CategoryFilter({
         }}
       >
         {!!categories &&
-          categories.map((category) => (
+          categories.map((newCategory) => (
             <MenuItem
-              key={category.name}
-              value={category.name}
+              key={newCategory}
+              value={newCategory}
               // for some reason e.target.value is NOT returning the value, even though it is visible in e.target
               onClick={(_) => {
-                setCategoryFilter(category)
+                setCategory(newCategory)
                 setAnchorEl(null)
               }}
             >
-              {category.name}
+              {newCategory}
             </MenuItem>
           ))}
       </Menu>
-    </>
+    </Box>
   )
 }
