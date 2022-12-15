@@ -1,5 +1,6 @@
 import {
   Delete,
+  FitnessCenter,
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from '@mui/icons-material'
@@ -19,12 +20,14 @@ import {
 import Grid from '@mui/system/Unstable_Grid'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
+  updateExerciseFields,
   updateRecordFields,
   useExercises,
   useRecord,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
+import Note from '../../models/Note'
 import Record from '../../models/Record'
 import Set from '../../models/Set'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
@@ -128,6 +131,12 @@ export default function RecordCard({
     mutateRecord({ ...record, ...changes })
   }
 
+  const handleExerciseNotesChange = (notes: Note[]) => {
+    if (!exercise) return
+
+    updateExerciseFields(exercise, { notes })
+  }
+
   const handleSetChange = (changes: Partial<Set>, i: number) => {
     updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
     const newSets = [...record.sets]
@@ -204,6 +213,17 @@ export default function RecordCard({
               setsAmount={sets.length}
               handleSubmit={(notes) => handleFieldChange({ notes })}
             />
+            {!!exercise && (
+              <RecordNotesDialogButton
+                className={noSwipingAboveSm}
+                notes={exercise.notes}
+                options={exercise.modifiers}
+                Icon={<FitnessCenter />}
+                tooltipTitle="Exercise Notes"
+                handleSubmit={(notes) => handleExerciseNotesChange(notes)}
+                multiple
+              />
+            )}
             <RecordHeaderButton
               title="Delete Record"
               className={noSwipingAboveSm}
