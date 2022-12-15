@@ -48,6 +48,7 @@ export default function SelectorBase<C extends NamedObject>({
       openOnFocus
       selectOnFocus
       clearOnBlur
+      disablePortal // this will ensure the dropdown cannot overlap the category filter dropdown
       handleHomeEndKeys
       autoHighlight // todo: this sometimes pops up over Category selector for Exercises
       options={options || []}
