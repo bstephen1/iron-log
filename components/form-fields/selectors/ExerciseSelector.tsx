@@ -1,5 +1,5 @@
 import { TextFieldProps } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { KeyedMutator } from 'swr'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
 import { GenericAutocompleteProps, useNames } from '../../../lib/util'
@@ -36,9 +36,11 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
       initialCategoryFilter
     )
 
-    useEffect(() => {
-      handleCategoryFilterChange?.(category)
-    }, [category, handleCategoryFilterChange])
+    const handleFilterChange = (filtered: (Exercise | NamedStub)[]) => {
+      if (exercise && !filtered.some((item) => item.name === exercise.name)) {
+        props.handleChange(null)
+      }
+    }
 
     // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
     class ExerciseStub implements NamedStub {
@@ -52,18 +54,14 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
 
     // todo: null out category if selecting something that's not in the category?
     // todo: on clicking category chip in form, setCategory to that value?
-    const filterCategories = (exercise: Exercise, inputValue: string) => {
-      return (
-        !category ||
-        exercise.name === inputValue || // if you filter out an exercise you can still type it in manually
-        exercise.categories.some((name) => name === category)
-      )
+    const filterCategories = (exercise: Exercise) => {
+      return !category || exercise.categories.some((name) => name === category)
     }
 
     return (
       <Component
         {...props}
-        value={exercise}
+        value={exercise || null} // need to reduce undefined | null to just null to avoid switching to uncontrolled
         mutateOptions={mutate}
         options={
           exercises?.sort(
@@ -75,6 +73,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         groupBy={(option) => option.status}
         placeholder="Select or Add New Exercise"
         filterCustom={filterCategories}
+        handleFilterChange={handleFilterChange}
         StubConstructor={ExerciseStub}
         Constructor={Exercise}
         addNewItem={addExercise}
