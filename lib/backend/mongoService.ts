@@ -165,17 +165,32 @@ export async function fetchModifier(name: string) {
   return await modifiers.findOne({ name }, { projection: { _id: false } })
 }
 
-export async function updateModifier(modifier: Modifier) {
-  // upsert creates a new record if it couldn't find one to update
-  return await modifiers.replaceOne({ _id: modifier._id }, modifier, {
-    upsert: true,
-  })
-}
-
 export async function updateModifierFields({
   id,
   updates,
 }: updateFieldsProps<Modifier>) {
+  if (updates.name) {
+    const oldModifier = await modifiers.find({ _id: id }).next()
+    await exercises.updateMany(
+      { modifiers: oldModifier?.name },
+      { $set: { 'modifiers.$': updates.name } }
+    )
+    // nested $[] operator (cannot use simple $ operator more than once): https://jira.mongodb.org/browse/SERVER-831
+    // typescript isn't recognizing notes.$[].tags.$[tag] as a valid signature for $set even though it works and is the recommended way to do it
+    await exercises.updateMany(
+      { 'notes.tags': oldModifier?.name },
+      { $set: { 'notes.$[].tags.$[tag]': updates.name } as any },
+      { arrayFilters: [{ tag: oldModifier?.name }] }
+    )
+    await records.updateMany(
+      { category: oldModifier?.name },
+      { $set: { category: updates.name } }
+    )
+    await records.updateMany(
+      { activeModifiers: oldModifier?.name },
+      { $set: { 'activeModifiers.$': updates.name } }
+    )
+  }
   return await modifiers.updateOne({ _id: id }, { $set: updates })
 }
 

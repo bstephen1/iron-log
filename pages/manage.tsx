@@ -12,6 +12,7 @@ import StyledDivider from '../components/StyledDivider'
 import {
   updateCategoryFields,
   updateExerciseFields,
+  updateModifierFields,
   useCategories,
   useExercises,
   useModifiers,
@@ -20,7 +21,6 @@ import Category from '../models/Category'
 import Exercise from '../models/Exercise'
 import Modifier from '../models/Modifier'
 
-// todo: disable form stuff when no changes
 // todo: ui element showing "changes saved". Snackbar?
 // todo: add/delete exercise. Delete only for unused exercises?
 export default function ManagePage() {
@@ -32,9 +32,9 @@ export default function ManagePage() {
   const [category, setCategory] = useState<Category | null>(null)
   const [tabValue, setTabValue] = useState(0)
   const tabContent = [
-    { label: 'Exercises', selector: ExerciseSelector },
-    { label: 'Modifiers', selector: null },
-    { label: 'Categories', selector: null },
+    { label: 'Exercises' },
+    { label: 'Modifiers' },
+    { label: 'Categories' },
   ]
 
   // todo: move inside form, and only have a watcher here for new values
@@ -51,9 +51,28 @@ export default function ManagePage() {
     setExercise(newExercise)
   }
 
-  // todo: update these to be {[field]: value} like backend
+  // todo: after updating modifier, have to update exercise
   const handleModifierUpdate = (updates: Partial<Modifier>) => {
+    if (!modifier) return
+
+    // todo: mutate exercise to display new modifier name without having to reload page or swap exercises
+    // if (exercise && updates.name) {
+    //   const typescriptIsStupid = updates.name
+    //   const newExercise = { ...exercise }
+    //   newExercise.modifiers = newExercise.modifiers.map(name => name === modifier.name ? typescriptIsStupid : name)
+    //   newExercise.notes = newExercise.notes.map(note => note.tags = note.tags.map(tag => tag === modifier.name ? typescriptIsStupid : tag))
+    //   console.log(newExercise);
+    //   setExercise(newExercise)
+    // }
+
     const newModifier = { ...modifier, ...updates }
+    const newModifiers = modifiers?.map((modifier) =>
+      modifier._id === newModifier._id ? newModifier : modifier
+    )
+    updateModifierFields(modifier, updates)
+    mutateModifiers(newModifiers)
+    setModifier(newModifier)
+    // mutateExercises().then(() => setExercise(exercises?.find(revalidated => revalidated._id === exercise?._id) || null))
   }
 
   const handleCategoryUpdate = (updates: Partial<Category>) => {
@@ -91,8 +110,6 @@ export default function ManagePage() {
     }
   }
 
-  // todo: move autocomplete to a component for this + session view
-  // todo: when typing, if string becomes empty it disables the form, even if not submitted
   // todo: names should be case insensitive. 'Squats' === 'squats'
   return (
     <Container maxWidth="md">
