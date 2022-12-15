@@ -1,5 +1,5 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { KeyedMutator } from 'swr'
 import { GenericAutocompleteProps } from '../../../lib/util'
 import { NamedObject, NamedStub } from '../../../models/NamedObject'
