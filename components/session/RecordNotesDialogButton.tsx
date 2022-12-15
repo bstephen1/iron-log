@@ -30,6 +30,7 @@ export default function RecordNotesDialogButton({
 }: Props) {
   const [open, setOpen] = useState(false)
 
+  // todo: probably store these in a new db collection
   if (!options.length) {
     // Session tagged notes should propagate to all records in the session? Would need an id for notes
     options = ['Session', 'Record']

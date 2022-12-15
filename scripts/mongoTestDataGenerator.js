@@ -164,7 +164,7 @@ let records = [
     ['belt'],
     sets1,
     ['weight', 'reps', 'effort'],
-    [addNote('good session')],
+    [addNote('good lifts', ['Record'])],
     randomUUID()
   ),
   addRecord(
