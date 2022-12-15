@@ -1,7 +1,7 @@
 import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
-import type { NextApiRequest } from 'next'
+import { useMemo } from 'react'
 import { v4 as uuid } from 'uuid'
-import { validDateStringRegex } from './frontend/constants'
+import { NamedObject } from '../models/NamedObject'
 
 // manually create a globally unique id across all tables. This should be used for ALL new records.
 // We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -22,3 +22,7 @@ export interface AutocompletePropsAny
     boolean | undefined,
     boolean | undefined
   > {}
+
+// memoize mapping out the names so the mapping doesn't run every render
+export const useNames = (entities?: NamedObject[]) =>
+  useMemo(() => entities?.map((entity) => entity.name) || [], [entities])

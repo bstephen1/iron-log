@@ -1,13 +1,12 @@
 import { FilterAltOutlined } from '@mui/icons-material'
 import { Chip, IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
 import { useState } from 'react'
-import Category from '../models/Category'
 
 interface Props {
   anchorEl?: HTMLElement
-  categories?: Category[]
-  category: Category | null
-  setCategory: (category: Category | null) => void
+  categories?: string[]
+  category: string | null
+  setCategory: (category: string | null) => void
 }
 export default function CategoryFilter({
   categories,
@@ -31,7 +30,7 @@ export default function CategoryFilter({
     <>
       {!!category ? (
         <Chip
-          label={category.name}
+          label={category}
           onClick={handleOpen}
           onDelete={() => setCategory(null)}
         />
@@ -55,15 +54,15 @@ export default function CategoryFilter({
         {!!categories &&
           categories.map((newCategory) => (
             <MenuItem
-              key={newCategory.name}
-              value={newCategory.name}
+              key={newCategory}
+              value={newCategory}
               // for some reason e.target.value is NOT returning the value, even though it is visible in e.target
               onClick={(_) => {
                 setCategory(newCategory)
                 setAnchorEl(null)
               }}
             >
-              {newCategory.name}
+              {newCategory}
             </MenuItem>
           ))}
       </Menu>

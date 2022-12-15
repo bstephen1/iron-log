@@ -1,9 +1,8 @@
 import { TextFieldProps } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { KeyedMutator } from 'swr'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
-import { GenericAutocompleteProps } from '../../../lib/util'
-import Category from '../../../models/Category'
+import { GenericAutocompleteProps, useNames } from '../../../lib/util'
 import Exercise from '../../../models/Exercise'
 import { ExerciseStatusOrder } from '../../../models/ExerciseStatus'
 import { NamedStub } from '../../../models/NamedObject'
@@ -18,17 +17,28 @@ interface WithExerciseProps
   exercises: Exercise[] | undefined
   mutate: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
+  handleCategoryFilterChange?: (category: string | null) => void
+  initialCategoryFilter?: string | null
 }
 function withExercise(Component: typeof SelectorBase<Exercise>) {
   return function ({
     exercise,
     exercises,
     mutate,
+    handleCategoryFilterChange,
+    initialCategoryFilter = null,
     ...props
   }: WithExerciseProps) {
     // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
-    const [category, setCategory] = useState<Category | null>(null)
+    const categoryNames = useNames(categories)
+    const [category, setCategory] = useState<string | null>(
+      initialCategoryFilter
+    )
+
+    useEffect(() => {
+      handleCategoryFilterChange?.(category)
+    }, [category, handleCategoryFilterChange])
 
     // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
     class ExerciseStub implements NamedStub {
@@ -46,7 +56,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
       return (
         !category ||
         exercise.name === inputValue || // if you filter out an exercise you can still type it in manually
-        exercise.categories.some((name) => name === category.name)
+        exercise.categories.some((name) => name === category)
       )
     }
 
@@ -72,7 +82,9 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         // todo: anchor to the bottom of the input?
         // todo: any way to get label to offset and not shrink with startAdornment? Not officially supported by mui bc "too hard" apparently. Is placeholder an ok comrpromise?
         startAdornment={
-          <CategoryFilter {...{ categories, category, setCategory }} />
+          <CategoryFilter
+            {...{ categories: categoryNames, category, setCategory }}
+          />
         }
       />
     )

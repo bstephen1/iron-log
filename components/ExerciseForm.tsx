@@ -1,11 +1,11 @@
 import Grid from '@mui/system/Unstable_Grid'
-import { useMemo } from 'react'
 import * as yup from 'yup'
 import {
   useCategories,
   useExercises,
   useModifiers,
 } from '../lib/frontend/restService'
+import { useNames } from '../lib/util'
 import Exercise from '../models/Exercise'
 import { ExerciseStatus } from '../models/ExerciseStatus'
 import { ComboBoxField } from './form-fields/ComboBoxField'
@@ -22,22 +22,9 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { categories } = useCategories()
   const { exercises } = useExercises({})
 
-  // todo: I smell an extractable function...
-  // memoize the maps so they don't have to rerun every render
-  const modifierNames = useMemo(
-    () => modifiers?.map((modifier) => modifier.name) || [],
-    [modifiers]
-  )
-
-  const exerciseNames = useMemo(
-    () => exercises?.map((exercise) => exercise.name) || [],
-    [exercises]
-  )
-
-  const categoryNames = useMemo(
-    () => categories?.map((category) => category.name) || [],
-    [categories]
-  )
+  const modifierNames = useNames(modifiers)
+  const exerciseNames = useNames(exercises)
+  const categoryNames = useNames(categories)
 
   // todo: validate (drop empty notes)
 

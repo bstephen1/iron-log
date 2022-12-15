@@ -245,6 +245,10 @@ export default function RecordCard({
           <Grid xs={12}>
             <ExerciseSelector
               variant="standard"
+              initialCategoryFilter={record.category}
+              handleCategoryFilterChange={(category) =>
+                handleFieldChange({ category })
+              }
               {...{
                 exercise,
                 exercises,
