@@ -12,8 +12,10 @@ const options = {
     }),
   ],
   database: process.env.DATABASE_URL || '',
-  // todo: using an adapter changes the strategy to "database", which causes an infinite redirect loop.
-  // Not sure what the difference is. See: https://github.com/nextauthjs/next-auth/issues/5392
+  // using a database adapter changes the strategy to "database", which causes an infinite redirect loop.
+  // See: https://github.com/nextauthjs/next-auth/issues/5392
+  // Per the docs, jwt seems to store user session data in the client instead of in the database.
+  // So seems like it should be fine? See: https://next-auth.js.org/adapters/overview
   session: { strategy: 'jwt' as SessionStrategy },
   adapter: MongoDBAdapter(clientPromise),
 }
