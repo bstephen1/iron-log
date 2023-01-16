@@ -5,7 +5,7 @@ import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import Record from '../../models/Record'
 import Session from '../../models/Session'
-import db from './mongoConnect'
+import { db } from './mongoConnect'
 
 const sessions = db.collection<Session>('sessions')
 const exercises = db.collection<Exercise>('exercises')

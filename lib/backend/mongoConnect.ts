@@ -6,10 +6,13 @@ if (!process.env.MONGODB_URI) {
   throw new Error('MONGODB_NAME is undefined! Define in .env')
 }
 
-const rawClient = new MongoClient(process.env.MONGODB_URI as string)
-const client = await rawClient.connect()
-const db = client.db(process.env.MONGODB_NAME)
+const uri = process.env.MONGODB_URI
+const options = {}
 
-console.log('connecting to ' + process.env.MONGODB_URI)
+console.log('connecting to ' + uri)
 
-export default db
+const client = new MongoClient(uri, options)
+
+// NextAuth mongo adapter needs the promise
+export const clientPromise = client.connect()
+export const db = (await clientPromise).db(process.env.MONGODB_NAME)

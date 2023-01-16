@@ -1,5 +1,6 @@
-import { AppBar, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Toolbar, Typography } from '@mui/material'
 import Link from 'next/link'
+import LoginButton from './LoginButton'
 import NavbarDrawer from './NavbarDrawer'
 
 export default function Navbar() {
@@ -12,6 +13,8 @@ export default function Navbar() {
             <a>Iron Log</a>
           </Link>
         </Typography>
+        <Box flex={1} />
+        <LoginButton />
       </Toolbar>
     </AppBar>
   )
