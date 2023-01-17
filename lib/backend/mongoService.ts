@@ -4,10 +4,10 @@ import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import Record from '../../models/Record'
-import Session from '../../models/Session'
+import SessionLog from '../../models/SessionLog'
 import { db } from './mongoConnect'
 
-const sessions = db.collection<Session>('sessions')
+const sessions = db.collection<SessionLog>('sessions')
 const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<Modifier>('modifiers')
 const categories = db.collection<Category>('categories')
@@ -23,7 +23,7 @@ interface updateFieldsProps<T extends { _id: string }> {
 // SESSION
 //---------
 
-export async function addSession(session: Session) {
+export async function addSession(session: SessionLog) {
   return await sessions.insertOne(session)
 }
 
@@ -31,7 +31,7 @@ export async function fetchSession(date: string) {
   return await sessions.findOne({ date })
 }
 
-export async function updateSession(session: Session) {
+export async function updateSession(session: SessionLog) {
   return await sessions.replaceOne({ date: session.date }, session, {
     upsert: true,
   })

@@ -10,12 +10,12 @@ import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
   addRecord,
   deleteSessionRecord,
-  updateSession,
-  useSession,
+  updateSessionLog,
+  useSessionLog,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
 import Record from '../../models/Record'
-import Session from '../../models/Session'
+import SessionLog from '../../models/SessionLog'
 import WeightUnitConverter from '../WeightUnitConverter'
 import Clock from './Clock'
 import RecordCard from './RecordCard'
@@ -47,7 +47,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
   // SWR caches this, so it won't need to call the API every render
-  const { session, isError, mutate } = useSession(date)
+  const { session, isError, mutate } = useSessionLog(date)
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
   // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
   // so for now we just hide the add exercise button so the records don't pop in above it
@@ -74,8 +74,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
           ...session,
           records: session.records.concat(record._id),
         }
-      : new Session(date.format(DATE_FORMAT), [record._id])
-    updateSession(newSession)
+      : new SessionLog(date.format(DATE_FORMAT), [record._id])
+    updateSessionLog(newSession)
     mutate(newSession)
   }
 
@@ -92,7 +92,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
     const newRecords = [...session.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
     const newSession = { ...session, records: newRecords }
-    updateSession(newSession)
+    updateSessionLog(newSession)
     mutate(newSession)
   }
 
