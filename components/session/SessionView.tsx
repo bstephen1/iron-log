@@ -32,6 +32,7 @@ import {
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/bundle'
@@ -48,6 +49,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const [isEnd, setIsEnd] = useState(false)
   // SWR caches this, so it won't need to call the API every render
   const { sessionLog, isError, mutate } = useSessionLog(date)
+  const session = useSession()
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
   // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
   // so for now we just hide the add exercise button so the records don't pop in above it
@@ -66,7 +68,11 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const handleAddRecord = (exercise: Exercise) => {
     if (isLoading) return // make typescript happy
 
-    const record = new Record(date.format(DATE_FORMAT), exercise)
+    const record = new Record(
+      date.format(DATE_FORMAT),
+      session.data?.user?.id,
+      exercise
+    )
     record.sets.push({})
     addRecord(record)
     const newSession = sessionLog
@@ -74,7 +80,9 @@ export default function SessionView({ date }: { date: Dayjs }) {
           ...sessionLog,
           records: sessionLog.records.concat(record._id),
         }
-      : new SessionLog(date.format(DATE_FORMAT), [record._id])
+      : new SessionLog(date.format(DATE_FORMAT), session.data?.user?.id, [
+          record._id,
+        ])
     updateSessionLog(newSession)
     mutate(newSession)
   }

@@ -1,4 +1,5 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
+import { useSession } from 'next-auth/react'
 import { useMemo } from 'react'
 import { KeyedMutator } from 'swr'
 import { GenericAutocompleteProps } from '../../../lib/util'
@@ -14,7 +15,7 @@ export interface SelectorBaseProps<C, S>
   handleChange: (value: C | null) => void
   mutateOptions: KeyedMutator<C[]>
   StubConstructor: new (name: string) => S
-  Constructor: new (name: string) => C
+  Constructor: new (name: string, userId: string) => C
   // function to add new C (created from stub) to db
   addNewItem: (value: C) => void
   // have to explicitly declare options is C[] or Autocomplete will think it's (C | S)[].
@@ -41,6 +42,7 @@ export default function SelectorBase<C extends NamedObject>({
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic. So, useMemo to cache the result
   const filter = useMemo(() => createFilterOptions<C | NamedStub>(), [])
+  const session = useSession()
 
   return (
     <Autocomplete<C | NamedStub>
@@ -58,7 +60,10 @@ export default function SelectorBase<C extends NamedObject>({
       onChange={(_, option) => {
         // add the new item if selected
         if (option && !('_id' in option)) {
-          const newItem = new Constructor(option.name)
+          const newItem = new Constructor(
+            option.name,
+            session.data?.user?.id || ''
+          )
           mutateOptions(options?.concat(newItem))
           addNewItem(newItem)
           handleChange(newItem)
