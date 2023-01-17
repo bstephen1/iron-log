@@ -17,6 +17,9 @@ const options = {
   // Per the docs, jwt seems to store user session data in the client instead of in the database.
   // So seems like it should be fine? See: https://next-auth.js.org/adapters/overview
   session: { strategy: 'jwt' as SessionStrategy },
+  // The official adapter uses an auto generated mongo ObjectId for the id.
+  // We could define a custom adapter to use our own generateId() function but that adds a maintenance and complexity cost.
+  // So for now we're going with the stock adapter and seeing if that causes issues.
   adapter: MongoDBAdapter(clientPromise),
 }
 
