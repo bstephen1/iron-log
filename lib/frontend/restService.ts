@@ -22,7 +22,7 @@ export function useSessionLog(date: Dayjs) {
   )
 
   return {
-    session: data,
+    sessionLog: data,
     isError: error,
     mutate: mutate,
   }

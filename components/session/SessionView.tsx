@@ -47,11 +47,11 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
   // SWR caches this, so it won't need to call the API every render
-  const { session, isError, mutate } = useSessionLog(date)
+  const { sessionLog, isError, mutate } = useSessionLog(date)
   // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
   // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
   // so for now we just hide the add exercise button so the records don't pop in above it
-  const isLoading = session === undefined
+  const isLoading = sessionLog === undefined
 
   // todo: this is a placeholder
   if (isError) {
@@ -69,10 +69,10 @@ export default function SessionView({ date }: { date: Dayjs }) {
     const record = new Record(date.format(DATE_FORMAT), exercise)
     record.sets.push({})
     addRecord(record)
-    const newSession = session
+    const newSession = sessionLog
       ? {
-          ...session,
-          records: session.records.concat(record._id),
+          ...sessionLog,
+          records: sessionLog.records.concat(record._id),
         }
       : new SessionLog(date.format(DATE_FORMAT), [record._id])
     updateSessionLog(newSession)
@@ -80,29 +80,29 @@ export default function SessionView({ date }: { date: Dayjs }) {
   }
 
   const handleSwapRecords = (i: number, j: number) => {
-    if (!session) return
+    if (!sessionLog) return
 
-    const length = session.records.length
+    const length = sessionLog.records.length
     if (i < 0 || i >= length || j < 0 || j >= length) {
       console.error(`Tried swapping records out of range: ${i}, ${j}`)
       return
     }
 
     // todo: avoid the semi colon?
-    const newRecords = [...session.records]
+    const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
-    const newSession = { ...session, records: newRecords }
+    const newSession = { ...sessionLog, records: newRecords }
     updateSessionLog(newSession)
     mutate(newSession)
   }
 
   const handleDeleteRecord = (recordId: string) => {
-    if (!session) return
+    if (!sessionLog) return
 
-    const newRecords = session.records.filter((id) => id !== recordId)
-    deleteSessionRecord(session.date, recordId)
+    const newRecords = sessionLog.records.filter((id) => id !== recordId)
+    deleteSessionRecord(sessionLog.date, recordId)
     // todo: not sure if disabling revalidation fixes glitchiness
-    mutate({ ...session, records: newRecords }, { revalidate: false })
+    mutate({ ...sessionLog, records: newRecords }, { revalidate: false })
   }
 
   // todo: compare with last of this day type
@@ -180,8 +180,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
               }}
               style={{ padding: '15px 10px', flexGrow: '1' }}
             >
-              {session &&
-                session.records.map((id, i) => (
+              {sessionLog &&
+                sessionLog.records.map((id, i) => (
                   <SwiperSlide key={id}>
                     <RecordCard
                       id={id}
