@@ -1,7 +1,10 @@
-import { v4 as uuid } from 'uuid'
+import { generateId } from '../lib/util'
 
 export abstract class NamedObject {
-  constructor(public name: string, public readonly _id: string = uuid()) {}
+  readonly _id: string
+  constructor(public name: string, public readonly userId: string = '') {
+    this._id = generateId()
+  }
 }
 
 // There is no need to associate this with NamedObject because as a stub it only needs the fields explicitly defined

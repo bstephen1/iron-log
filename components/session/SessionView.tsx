@@ -41,7 +41,6 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import AddRecord from './AddRecord'
-import BodyweightInput from './BodyweightInput'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()

@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid'
 import { ExerciseStatus } from './ExerciseStatus'
 import { NamedObject } from './NamedObject'
 import Note from './Note'
@@ -7,12 +6,12 @@ import Note from './Note'
 export default class Exercise extends NamedObject {
   constructor(
     public name: string,
+    public readonly userId: string,
     public status: ExerciseStatus = ExerciseStatus.ACTIVE,
     public notes: Note[] = [],
     public categories: string[] = [],
-    public modifiers: string[] = [],
-    public readonly _id: string = uuid()
+    public modifiers: string[] = []
   ) {
-    super(name, _id)
+    super(name, userId)
   }
 }

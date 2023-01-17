@@ -5,6 +5,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
+import { useSession } from 'next-auth/react'
 import * as yup from 'yup'
 import { DATE_FORMAT, DEFAULT_UNITS } from '../../lib/frontend/constants'
 import {
@@ -27,9 +28,11 @@ export default function BodyweightInput({
     value: yup.string().required('Must have a value'),
   })
   const loading = data === undefined
+  const session = useSession()
 
   const handleSubmit = (value: string) => {
     const newBodyweight = new Bodyweight(
+      session.data?.user?.id,
       Number(value),
       date.format(DATE_FORMAT)
     )
