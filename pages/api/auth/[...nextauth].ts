@@ -1,4 +1,5 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
+import { ObjectId } from 'mongodb'
 import { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth, { SessionStrategy } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
@@ -27,9 +28,15 @@ const options = {
     // called whenever a session is checked
     // todo: does this have better typing?
     async session({ session, token }: { session: any; token: any }) {
+      // in dev mode we can set an arbitrary id for testing
+      if (process.env.NEXTAUTH_DUMMY_SESSION_ID) {
+        const userObjectId = new ObjectId(process.env.NEXTAUTH_DUMMY_SESSION_ID)
+        session.user.id = userObjectId.toString()
+        return session
+      }
+
       // for some reason the mongo id is stored under token.sub
       session.user.id = token.sub
-
       return session
     },
   },
