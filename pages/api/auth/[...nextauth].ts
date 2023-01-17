@@ -21,6 +21,18 @@ const options = {
   // We could define a custom adapter to use our own generateId() function but that adds a maintenance and complexity cost.
   // So for now we're going with the stock adapter and seeing if that causes issues.
   adapter: MongoDBAdapter(clientPromise),
+  // By default the client receives only minimal information. Callbacks allow us to add needed properties to the client model.
+  // (We want the id)
+  callbacks: {
+    // called whenever a session is checked
+    // todo: does this have better typing?
+    async session({ session, token }: { session: any; token: any }) {
+      // for some reason the mongo id is stored under token.sub
+      session.user.id = token.sub
+
+      return session
+    },
+  },
 }
 
 // todo add some kind of splash screen
