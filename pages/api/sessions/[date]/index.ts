@@ -5,7 +5,7 @@ import {
   emptyApiResponse,
   methodNotAllowed,
 } from '../../../../lib/backend/apiMiddleware/util'
-import withStatusHandler from '../../../../lib/backend/apiMiddleware/withStatusHandler'
+import withApiMiddleware from '../../../../lib/backend/apiMiddleware/withApiMiddleware'
 import {
   addSession,
   fetchSession,
@@ -35,4 +35,4 @@ async function handler(req: NextApiRequest, userId: string) {
   }
 }
 
-export default withStatusHandler(handler)
+export default withApiMiddleware(handler)
