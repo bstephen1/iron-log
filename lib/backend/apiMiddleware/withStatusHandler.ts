@@ -10,7 +10,7 @@ export default function withStatusHandler(handler: ApiHandler) {
     console.log(`Incoming ${req.method} on ${req.url}`)
 
     try {
-      const userId = await getUserId()
+      const userId = await getUserId(req, res)
       const { statusCode, payload } = await handler(req, userId)
       res.status(statusCode || StatusCodes.OK).json(payload ?? {})
     } catch (e: unknown) {

@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { NextApiRequest } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import { ApiError } from 'next/dist/server/api-utils'
 import { authOptions } from '../../../pages/api/auth/[...nextauth]'
@@ -21,8 +21,9 @@ export const methodNotAllowed = new ApiError(
   'method not allowed'
 )
 
-export async function getUserId() {
-  const session = await unstable_getServerSession(authOptions)
+export async function getUserId(req: NextApiRequest, res: NextApiResponse) {
+  // req and res appear to be required. You can call the function without them but it won't work correctly.
+  const session = await unstable_getServerSession(req, res, authOptions)
 
   if (!session || !session.user?.id) {
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'You must be logged in.')
