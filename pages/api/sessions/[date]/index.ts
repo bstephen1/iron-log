@@ -2,6 +2,7 @@ import type { NextApiRequest } from 'next'
 import {
   emptyApiResponse,
   methodNotAllowed,
+  UserId,
   valiDate,
 } from '../../../../lib/backend/apiMiddleware/util'
 import withApiMiddleware from '../../../../lib/backend/apiMiddleware/withApiMiddleware'
@@ -11,7 +12,7 @@ import {
   updateSession,
 } from '../../../../lib/backend/mongoService'
 
-async function handler(req: NextApiRequest, userId: string) {
+async function handler(req: NextApiRequest, userId: UserId) {
   const date = valiDate(req.query.date)
 
   switch (req.method) {

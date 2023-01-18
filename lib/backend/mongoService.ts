@@ -20,30 +20,29 @@ interface updateFieldsProps<T extends { _id: string }> {
   updates: Partial<T>
 }
 
+// Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
+// This is to make the api less tightly coupled to mongo, in case the db changes down the line.
+// Here ObjectId is used instead because this is the service that interfaces with mongo.
+
 //---------
 // SESSION
 //---------
 
-export async function addSession(userIdString: string, sessionLog: SessionLog) {
-  const mongoSessionLog = { ...sessionLog, userId: new ObjectId(userIdString) }
-  return await sessions.insertOne(mongoSessionLog)
+export async function addSession(userId: ObjectId, sessionLog: SessionLog) {
+  return await sessions.insertOne({ ...sessionLog, userId })
 }
 
-export async function fetchSession(userIdString: string, date: string) {
+export async function fetchSession(userId: ObjectId, date: string) {
   return (await sessions.findOne(
-    { userId: new ObjectId(userIdString), date },
+    { userId, date },
     { projection: { userId: 0 } }
   )) as SessionLog
 }
 
-export async function updateSession(
-  userIdString: string,
-  sessionLog: SessionLog
-) {
-  const mongoSessionLog = { ...sessionLog, userId: new ObjectId(userIdString) }
+export async function updateSession(userId: ObjectId, sessionLog: SessionLog) {
   return await sessions.replaceOne(
-    { userId: mongoSessionLog.userId, date: mongoSessionLog.date },
-    mongoSessionLog,
+    { userId, date: sessionLog.date },
+    { ...sessionLog, userId },
     {
       upsert: true,
     }
