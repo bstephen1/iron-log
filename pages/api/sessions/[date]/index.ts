@@ -1,52 +1,46 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { StatusCodes } from 'http-status-codes'
+import type { NextApiRequest } from 'next'
+import { unstable_getServerSession } from 'next-auth'
+import { ApiError } from 'next/dist/server/api-utils'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+} from '../../../../lib/backend/apiMiddleware/util'
+import withStatusHandler from '../../../../lib/backend/apiMiddleware/withStatusHandler'
 import {
   addSession,
   fetchSession,
   updateSession,
 } from '../../../../lib/backend/mongoService'
 import { validDateStringRegex } from '../../../../lib/frontend/constants'
+import { authOptions } from '../../auth/[...nextauth]'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, userId: string) {
   const date = req.query.date
 
-  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).end()
-    return
+  const session = await unstable_getServerSession(authOptions)
+
+  if (!session || !session.user?.id) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'You must be logged in.')
   }
-  console.log(
-    `Incoming ${req.method} on session "${req.query.date}" ${req.body}`
-  )
+
+  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid date.')
+  }
 
   switch (req.method) {
     case 'GET':
-      try {
-        const record = await fetchSession(date)
-        res.status(200).json(record)
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      const record = await fetchSession(session.user.id, date)
+      return { payload: record }
     case 'POST':
-      try {
-        await addSession(JSON.parse(req.body))
-        res.status(201).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await addSession(userId, JSON.parse(req.body))
+      return emptyApiResponse
     case 'PUT':
-      try {
-        await updateSession(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await updateSession(userId, JSON.parse(req.body))
+      return emptyApiResponse
+    default:
+      return methodNotAllowed
   }
 }
+
+export default withStatusHandler(handler)

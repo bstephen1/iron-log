@@ -1,4 +1,4 @@
-import { Filter } from 'mongodb'
+import { Filter, ObjectId } from 'mongodb'
 import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
@@ -6,8 +6,9 @@ import Modifier from '../../models/Modifier'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { db } from './mongoConnect'
+import { MongoSessionLog } from './mongoModels'
 
-const sessions = db.collection<SessionLog>('sessions')
+const sessions = db.collection<MongoSessionLog>('sessions')
 const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<Modifier>('modifiers')
 const categories = db.collection<Category>('categories')
@@ -23,18 +24,30 @@ interface updateFieldsProps<T extends { _id: string }> {
 // SESSION
 //---------
 
-export async function addSession(session: SessionLog) {
-  return await sessions.insertOne(session)
+export async function addSession(userIdString: string, sessionLog: SessionLog) {
+  const mongoSessionLog = { ...sessionLog, userId: new ObjectId(userIdString) }
+  return await sessions.insertOne(mongoSessionLog)
 }
 
-export async function fetchSession(date: string) {
-  return await sessions.findOne({ date })
+export async function fetchSession(userIdString: string, date: string) {
+  return (await sessions.findOne(
+    { userId: new ObjectId(userIdString), date },
+    { projection: { userId: 0 } }
+  )) as SessionLog
 }
 
-export async function updateSession(session: SessionLog) {
-  return await sessions.replaceOne({ date: session.date }, session, {
-    upsert: true,
-  })
+export async function updateSession(
+  userIdString: string,
+  sessionLog: SessionLog
+) {
+  const mongoSessionLog = { ...sessionLog, userId: new ObjectId(userIdString) }
+  return await sessions.replaceOne(
+    { userId: mongoSessionLog.userId, date: mongoSessionLog.date },
+    mongoSessionLog,
+    {
+      upsert: true,
+    }
+  )
 }
 
 // todo: make this a transaction?

@@ -80,9 +80,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
           ...sessionLog,
           records: sessionLog.records.concat(record._id),
         }
-      : new SessionLog(date.format(DATE_FORMAT), session.data?.user?.id, [
-          record._id,
-        ])
+      : new SessionLog(date.format(DATE_FORMAT), [record._id])
     updateSessionLog(newSession)
     mutate(newSession)
   }
