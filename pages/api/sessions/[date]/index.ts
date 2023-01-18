@@ -1,9 +1,8 @@
-import { StatusCodes } from 'http-status-codes'
 import type { NextApiRequest } from 'next'
-import { ApiError } from 'next/dist/server/api-utils'
 import {
   emptyApiResponse,
   methodNotAllowed,
+  valiDate,
 } from '../../../../lib/backend/apiMiddleware/util'
 import withApiMiddleware from '../../../../lib/backend/apiMiddleware/withApiMiddleware'
 import {
@@ -11,14 +10,9 @@ import {
   fetchSession,
   updateSession,
 } from '../../../../lib/backend/mongoService'
-import { validDateStringRegex } from '../../../../lib/frontend/constants'
 
 async function handler(req: NextApiRequest, userId: string) {
-  const date = req.query.date
-
-  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid date.')
-  }
+  const date = valiDate(req.query.date)
 
   switch (req.method) {
     case 'GET':

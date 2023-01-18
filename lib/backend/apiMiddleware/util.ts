@@ -3,7 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import { ApiError } from 'next/dist/server/api-utils'
 import { authOptions } from '../../../pages/api/auth/[...nextauth]'
+import { validDateStringRegex } from '../../frontend/constants'
 
+export type ApiQuery = string | string[] | undefined
 export interface ApiResponse {
   statusCode?: number
   payload?: object
@@ -31,3 +33,20 @@ export async function getUserId(req: NextApiRequest, res: NextApiResponse) {
 
   return session.user.id
 }
+
+/** validate a date */
+export function valiDate(date: ApiQuery) {
+  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'Date must be formatted as YYYY-MM-DD'
+    )
+  }
+
+  return date
+}
+
+// todo: (if needed)
+// export function validateString(string: ApiQuery, required = true) {
+//   if (required && !string)
+// }
