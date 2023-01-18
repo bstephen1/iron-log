@@ -6,9 +6,11 @@ import Modifier from '../../models/Modifier'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { db } from './mongoConnect'
-import { MongoSessionLog } from './mongoModels'
 
-const sessions = db.collection<MongoSessionLog>('sessions')
+/** add userId, an extra field only visible to mongo records */
+type WithUserId<T> = { userId: ObjectId } & T
+
+const sessions = db.collection<WithUserId<SessionLog>>('sessions')
 const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<Modifier>('modifiers')
 const categories = db.collection<Category>('categories')
@@ -148,7 +150,6 @@ export async function fetchExercise(id: string) {
 }
 
 export async function updateExercise(exercise: Exercise) {
-  // upsert creates a new record if it couldn't find one to update
   return await exercises.replaceOne({ _id: exercise._id }, exercise, {
     upsert: true,
   })
