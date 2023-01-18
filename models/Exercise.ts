@@ -6,12 +6,11 @@ import Note from './Note'
 export default class Exercise extends NamedObject {
   constructor(
     public name: string,
-    public readonly userId: string,
     public status: ExerciseStatus = ExerciseStatus.ACTIVE,
     public notes: Note[] = [],
     public categories: string[] = [],
     public modifiers: string[] = []
   ) {
-    super(name, userId)
+    super(name)
   }
 }

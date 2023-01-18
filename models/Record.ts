@@ -6,7 +6,6 @@ import Set from './Set'
 export default class Record {
   constructor(
     public date: string,
-    public readonly userId: string = '',
     public exercise: Exercise | null = null,
     public activeModifiers: string[] = [],
     public fields: (keyof Set)[] = ['weight', 'reps', 'effort'],

@@ -2,7 +2,7 @@ import { generateId } from '../lib/util'
 
 export abstract class NamedObject {
   readonly _id: string
-  constructor(public name: string, public readonly userId: string = '') {
+  constructor(public name: string) {
     this._id = generateId()
   }
 }

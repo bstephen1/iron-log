@@ -6,7 +6,6 @@ import { generateId } from '../lib/util'
 // todo: also add time
 export default class Bodyweight {
   constructor(
-    public readonly userId: string = '',
     public value: number,
     public date = dayjs().format(DATE_FORMAT),
     public clothes?: number,

@@ -6,11 +6,10 @@ import { NamedObject } from './NamedObject'
 export default class Modifier extends NamedObject {
   constructor(
     public name: string,
-    public readonly userId: string,
     public status = ModifierStatus.ACTIVE,
     public weight = 0,
     public canDelete = true
   ) {
-    super(name, userId)
+    super(name)
   }
 }
