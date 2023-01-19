@@ -2,8 +2,17 @@ import { StatusCodes } from 'http-status-codes'
 import { ApiError } from 'next/dist/server/api-utils'
 import { ModifierStatus } from '../../models/ModifierStatus'
 import { validDateStringRegex } from '../frontend/constants'
+import { isValidId } from '../util'
 
 export type ApiQuery = string | string[] | undefined
+
+export function validateId(id: ApiQuery) {
+  if (!(typeof id === 'string' && isValidId(id))) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid id format.')
+  }
+
+  return id
+}
 
 export function validateModifierStatus(status: ApiQuery) {
   if (status && typeof status !== 'string') {

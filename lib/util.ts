@@ -1,6 +1,6 @@
 import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
 import { useMemo } from 'react'
-import { v4 as uuid } from 'uuid'
+import { v4 as uuid, validate, version } from 'uuid'
 import { NamedObject } from '../models/NamedObject'
 
 // manually create a globally unique id across all tables. This should be used for ALL new records.
@@ -8,6 +8,12 @@ import { NamedObject } from '../models/NamedObject'
 // and to ensure no information is leaked from the ID (eg, userId=55 implies users 1-54 exist)
 export function generateId() {
   return uuid()
+}
+
+// Currently enforcing that UUIDs are v4 but that may not be particularly useful.
+// v4 is total random generation instead of using time / hardware to generate the uuid.
+export function isValidId(id: string) {
+  return validate(id) && version(id) === 4
 }
 
 // shortcut interface to bypass AutocompleteProps' unwieldy generic type

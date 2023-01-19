@@ -7,7 +7,8 @@ import { authOptions } from '../../../pages/api/auth/[...nextauth]'
 
 export interface ApiResponse {
   statusCode?: number
-  payload?: object
+  /** A null payload is treated as a 404 not found error. An undefined payload is just empty. */
+  payload?: object | null
 }
 
 export type ApiHandler = (

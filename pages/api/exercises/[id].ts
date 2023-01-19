@@ -1,4 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+} from '../../../lib/backend/apiMiddleware/util'
+import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
+import { validateId } from '../../../lib/backend/apiQueryValidationService'
 import {
   addExercise,
   fetchExercise,
@@ -6,53 +12,25 @@ import {
   updateExerciseFields,
 } from '../../../lib/backend/mongoService'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const id = req.query.id
-
-  console.log(`Incoming ${req.method} on exercise "${id}"`)
-
-  if (!id || typeof id !== 'string') {
-    res.status(400).end()
-    return
-  }
+async function handler(req: NextApiRequest) {
+  const id = validateId(req.query.id)
 
   switch (req.method) {
     case 'GET':
-      try {
-        const exercise = await fetchExercise(id)
-        res.status(200).json(exercise)
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      const exercise = await fetchExercise(id)
+      return { payload: exercise }
     case 'POST':
-      try {
-        await addExercise(JSON.parse(req.body))
-        res.status(201).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await addExercise(JSON.parse(req.body))
+      return emptyApiResponse
     case 'PUT':
-      try {
-        await updateExercise(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
+      await updateExercise(JSON.parse(req.body))
+      return emptyApiResponse
     case 'PATCH':
-      try {
-        await updateExerciseFields(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
+      await updateExerciseFields(JSON.parse(req.body))
+      return emptyApiResponse
+    default:
+      throw methodNotAllowed
   }
 }
+
+export default withApiMiddleware(handler)

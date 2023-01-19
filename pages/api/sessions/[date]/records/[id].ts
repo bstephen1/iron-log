@@ -1,47 +1,32 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+} from '../../../../../lib/backend/apiMiddleware/util'
+import withApiMiddleware from '../../../../../lib/backend/apiMiddleware/withApiMiddleware'
+import {
+  valiDate,
+  validateId,
+} from '../../../../../lib/backend/apiQueryValidationService'
 import {
   deleteSessionRecord,
   fetchRecord,
 } from '../../../../../lib/backend/mongoService'
-import { validDateStringRegex } from '../../../../../lib/frontend/constants'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { date, id } = req.query
-
-  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).end()
-    return
-  }
-  console.log(
-    `Incoming ${req.method} on session "${req.query.date}" ${req.body}`
-  )
-
-  if (!id || typeof id !== 'string') {
-    res.status(400).end()
-    return
-  }
+async function handler(req: NextApiRequest) {
+  const id = validateId(req.query.id)
+  const date = valiDate(req.query.date)
 
   switch (req.method) {
     case 'GET':
-      try {
-        const record = await fetchRecord(id)
-        res.status(200).json(record)
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      const record = await fetchRecord(id)
+      return { payload: record }
     case 'DELETE':
-      try {
-        await deleteSessionRecord({ date, recordId: id })
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await deleteSessionRecord({ date, recordId: id })
+      return emptyApiResponse
+    default:
+      throw methodNotAllowed
   }
 }
+
+export default withApiMiddleware(handler)

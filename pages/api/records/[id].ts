@@ -1,4 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+} from '../../../lib/backend/apiMiddleware/util'
+import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
+import { validateId } from '../../../lib/backend/apiQueryValidationService'
 import {
   addRecord,
   fetchRecord,
@@ -6,53 +12,25 @@ import {
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const id = req.query.id
-
-  console.log(`Incoming ${req.method} on record "${id}"`)
-
-  if (!id || typeof id !== 'string') {
-    res.status(400).end()
-    return
-  }
+async function handler(req: NextApiRequest) {
+  const id = validateId(req.query.id)
 
   switch (req.method) {
     case 'GET':
-      try {
-        const record = await fetchRecord(id)
-        res.status(200).json(record)
-      } catch (e) {
-        res.status(500).end()
-      }
-      break
+      const record = await fetchRecord(id)
+      return { payload: record }
     case 'POST':
-      try {
-        await addRecord(JSON.parse(req.body))
-        res.status(201).end()
-      } catch (e) {
-        res.status(500).end()
-      }
-      break
+      await addRecord(JSON.parse(req.body))
+      return emptyApiResponse
     case 'PUT':
-      try {
-        await updateRecord(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await updateRecord(JSON.parse(req.body))
+      return emptyApiResponse
     case 'PATCH':
-      try {
-        await updateRecordFields(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await updateRecordFields(JSON.parse(req.body))
+      return emptyApiResponse
+    default:
+      throw methodNotAllowed
   }
 }
+
+export default withApiMiddleware(handler)

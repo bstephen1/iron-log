@@ -13,6 +13,10 @@ export default function withStatusHandler(handler: ApiHandler) {
 
       const { statusCode, payload } = await handler(req, userId)
 
+      if (payload === null) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Record not found.')
+      }
+
       res.status(statusCode || StatusCodes.OK).json(payload ?? {})
     } catch (e: unknown) {
       let statusCode = StatusCodes.INTERNAL_SERVER_ERROR

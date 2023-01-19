@@ -2,7 +2,6 @@ import type { NextApiRequest } from 'next'
 import {
   emptyApiResponse,
   methodNotAllowed,
-  recordNotFound,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
@@ -19,9 +18,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
   switch (req.method) {
     case 'GET':
       const modifier = await fetchModifier(userId, name)
-      if (!modifier) {
-        throw recordNotFound
-      }
       return { payload: modifier }
     case 'POST':
       await addModifier(userId, JSON.parse(req.body))
