@@ -21,10 +21,10 @@ async function handler(req: NextApiRequest, userId: UserId) {
       const record = await fetchRecord(userId, id)
       return { payload: record }
     case 'POST':
-      await addRecord(JSON.parse(req.body))
+      await addRecord(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PUT':
-      await updateRecord(JSON.parse(req.body))
+      await updateRecord(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
       await updateRecordFields(JSON.parse(req.body))

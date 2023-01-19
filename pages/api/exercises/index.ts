@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchExercises } from '../../../lib/backend/mongoService'
 import { ExerciseStatus } from '../../../models/ExerciseStatus'
-import { ExerciseParams } from '../../../models/rest/ExerciseParams'
+import { ExerciseQuery } from '../../../models/query-filters/ExerciseQuery'
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,7 +10,7 @@ export default async function handler(
   console.log(`Incoming ${req.method} on exercises`)
 
   try {
-    const { status, category, name } = req.query as ExerciseParams
+    const { status, category, name } = req.query as ExerciseQuery
 
     if (status && !Object.values(ExerciseStatus).includes(status)) {
       res.status(400).end()

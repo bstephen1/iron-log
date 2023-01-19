@@ -1,29 +1,21 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  methodNotAllowed,
+  UserId,
+} from '../../../lib/backend/apiMiddleware/util'
+import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
+import { buildRecordQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchRecords } from '../../../lib/backend/mongoService'
-import { validDateStringRegex } from '../../../lib/frontend/constants'
-import { RecordParams } from '../../../models/rest/RecordParams'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  console.log(`Incoming ${req.method} on records`)
-
-  try {
-    const { date, exercise } = req.query as RecordParams
-
-    if (date && !date.match(validDateStringRegex)) {
-      res.status(400).end()
-    }
-
-    const query = {} as any
-    if (date) query.date = date
-    if (exercise) query['exercise.name'] = exercise
-
-    const records = await fetchRecords(query)
-    res.status(200).json(records)
-  } catch (e) {
-    console.error(e)
-    res.status(500).end()
+async function handler(req: NextApiRequest, userId: UserId) {
+  if (req.method !== 'GET') {
+    throw methodNotAllowed
   }
+
+  const query = buildRecordQuery(req.query)
+
+  const records = await fetchRecords({ ...query, userId })
+  return { payload: records }
 }
+
+export default withApiMiddleware(handler)

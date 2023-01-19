@@ -1,7 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 import { ApiError } from 'next/dist/server/api-utils'
 import { ModifierStatus } from '../../models/ModifierStatus'
-import { BodyweightParams } from '../../models/rest/BodyweightParams'
+import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
+import { ModifierQuery } from '../../models/query-filters/ModifierQuery'
+import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import { validDateStringRegex } from '../frontend/constants'
 import { isValidId } from '../util'
 
@@ -13,7 +15,7 @@ export type ApiQuery = { [param: string]: ApiParam }
 // See: https://softwareengineering.stackexchange.com/questions/311484/should-i-be-permissive-of-unknown-parameters
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildBodyweightQuery({ limit, start, end }: ApiQuery) {
-  const query = {} as BodyweightParams
+  const query = {} as BodyweightQuery
 
   // only add the defined params to the query
   if (limit) {
@@ -29,6 +31,22 @@ export function buildBodyweightQuery({ limit, start, end }: ApiQuery) {
   return query
 }
 
+/** Build and validate a query to send to the db from the rest param input. */
+export function buildRecordQuery({ exercise, date }: ApiQuery) {
+  // We just want "name" from exercise, but Partial doesn't affect nested object props
+  const query = {} as RecordQuery
+
+  // only add the defined params to the query
+  if (exercise) {
+    query.exercise = { name: validateString(exercise, 'Exercise') }
+  }
+  if (date) {
+    query.date = valiDate(date)
+  }
+
+  return query
+}
+
 export function validateId(id: ApiParam) {
   if (!(typeof id === 'string' && isValidId(id))) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid id format.')
@@ -37,22 +55,24 @@ export function validateId(id: ApiParam) {
   return id
 }
 
-export function validateModifierStatus(status: ApiParam) {
-  if (status && typeof status !== 'string') {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Modifier status must be a string.'
-    )
+export function buildModifierQuery({ status }: ApiQuery) {
+  const query = {} as ModifierQuery
+
+  if (status) {
+    if (
+      !(
+        typeof status === 'string' &&
+        Object.values(ModifierStatus).includes(status as ModifierStatus)
+      )
+    ) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid modifier status.')
+    }
+
+    // aparrently ts isn't smart enough to see the ModifierStatus guard above
+    query.status = status as ModifierStatus
   }
 
-  if (
-    typeof status === 'string' &&
-    !Object.values(ModifierStatus).includes(status as ModifierStatus)
-  ) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid modifier status.')
-  }
-
-  return status as ModifierStatus | undefined
+  return query
 }
 
 /** validate a date */

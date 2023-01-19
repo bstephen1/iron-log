@@ -1,8 +1,9 @@
 import { ExerciseStatus } from '../ExerciseStatus'
 
-// valid params to use in the API call.
-export interface ExerciseParams {
+export interface ExerciseQuery {
   status?: ExerciseStatus
   category?: string
-  name?: string
+  exercise?: {
+    name?: string
+  }
 }

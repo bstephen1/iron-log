@@ -14,7 +14,7 @@ const sessions = db.collection<WithUserId<SessionLog>>('sessions')
 const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<WithUserId<Modifier>>('modifiers')
 const categories = db.collection<WithUserId<Category>>('categories')
-const records = db.collection<Record>('records')
+const records = db.collection<WithUserId<Record>>('records')
 const bodyweightHistory =
   db.collection<WithUserId<Bodyweight>>('bodyweightHistory')
 
@@ -71,8 +71,8 @@ export async function deleteSessionRecord({
 // RECORD
 //--------
 
-export async function addRecord(record: Record) {
-  return await records.insertOne(record)
+export async function addRecord(userId: ObjectId, record: Record) {
+  return await records.insertOne({ ...record, userId })
 }
 
 // todo: pagination
@@ -118,10 +118,14 @@ export async function fetchRecord(userId: ObjectId, _id: Record['_id']) {
     .next()
 }
 
-export async function updateRecord(record: Record) {
-  return await records.replaceOne({ _id: record._id }, record, {
-    upsert: true,
-  })
+export async function updateRecord(userId: ObjectId, record: Record) {
+  return await records.replaceOne(
+    { userId, _id: record._id },
+    { ...record, userId },
+    {
+      upsert: true,
+    }
+  )
 }
 
 export async function updateRecordFields({

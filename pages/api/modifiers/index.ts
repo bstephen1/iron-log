@@ -4,7 +4,7 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
-import { validateModifierStatus } from '../../../lib/backend/apiQueryValidationService'
+import { buildModifierQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchModifiers } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
@@ -12,11 +12,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
     throw methodNotAllowed
   }
 
-  const status = validateModifierStatus(req.query.status)
+  const query = buildModifierQuery(req.query)
 
-  const modifiers = await (status
-    ? fetchModifiers({ userId, status })
-    : fetchModifiers({ userId }))
+  const modifiers = await fetchModifiers({ ...query, userId })
 
   return { payload: modifiers }
 }
