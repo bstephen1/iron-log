@@ -1,7 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 import { ApiError } from 'next/dist/server/api-utils'
+import { ExerciseStatus } from '../../models/ExerciseStatus'
 import { ModifierStatus } from '../../models/ModifierStatus'
 import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
+import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { ModifierQuery } from '../../models/query-filters/ModifierQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import { validDateStringRegex } from '../frontend/constants'
@@ -42,6 +44,37 @@ export function buildRecordQuery({ exercise, date }: ApiQuery) {
   }
   if (date) {
     query.date = valiDate(date)
+  }
+
+  return query
+}
+
+/** Build and validate a query to send to the db from the rest param input.
+ *
+ *  Note: the api param is "category" because when filtering only one category is supported.
+ *  But the ExerciseQuery must convert this to "categories" to match Exercise objects.
+ */
+export function buildExerciseQuery({ status, name, category }: ApiQuery) {
+  const query = {} as ExerciseQuery
+
+  // only add the defined params to the query
+  if (status) {
+    if (
+      !(
+        typeof status === 'string' &&
+        Object.values(ExerciseStatus).includes(status as ExerciseStatus)
+      )
+    ) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid exercise status.')
+    }
+
+    query.status = status as ExerciseStatus
+  }
+  if (name) {
+    query.name = validateName(name)
+  }
+  if (category) {
+    query.categories = validateString(category, 'Category')
   }
 
   return query

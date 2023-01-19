@@ -21,10 +21,10 @@ async function handler(req: NextApiRequest, userId: UserId) {
       const exercise = await fetchExercise(userId, id)
       return { payload: exercise }
     case 'POST':
-      await addExercise(JSON.parse(req.body))
+      await addExercise(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PUT':
-      await updateExercise(JSON.parse(req.body))
+      await updateExercise(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
       await updateExerciseFields(JSON.parse(req.body))

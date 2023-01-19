@@ -11,7 +11,7 @@ import { db } from './mongoConnect'
 type WithUserId<T> = { userId: ObjectId } & T
 
 const sessions = db.collection<WithUserId<SessionLog>>('sessions')
-const exercises = db.collection<Exercise>('exercises')
+const exercises = db.collection<WithUserId<Exercise>>('exercises')
 const modifiers = db.collection<WithUserId<Modifier>>('modifiers')
 const categories = db.collection<WithUserId<Category>>('categories')
 const records = db.collection<WithUserId<Record>>('records')
@@ -145,22 +145,28 @@ async function deleteRecord(id: string) {
 // EXERCISE
 //----------
 
-export async function addExercise(exercise: Exercise) {
-  return await exercises.insertOne(exercise)
+export async function addExercise(userId: ObjectId, exercise: Exercise) {
+  return await exercises.insertOne({ ...exercise, userId })
 }
 
 export async function fetchExercises(filter?: Filter<Exercise>) {
-  return await exercises.find({ ...filter }).toArray()
+  return await exercises
+    .find({ ...filter }, { projection: { userId: 0 } })
+    .toArray()
 }
 
 export async function fetchExercise(userId: ObjectId, _id: string) {
   return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
-export async function updateExercise(exercise: Exercise) {
-  return await exercises.replaceOne({ _id: exercise._id }, exercise, {
-    upsert: true,
-  })
+export async function updateExercise(userId: ObjectId, exercise: Exercise) {
+  return await exercises.replaceOne(
+    { userId, _id: exercise._id },
+    { ...exercise, userId },
+    {
+      upsert: true,
+    }
+  )
 }
 
 export async function updateExerciseFields({
