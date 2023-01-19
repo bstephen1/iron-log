@@ -13,11 +13,11 @@ const dummyUserId2 = new ObjectId('1234567890CC')
 class Exercise {
   constructor(
     name,
-    userId = dummyUserId,
     status = 'active',
     notes = [],
     categories = [],
-    modifiers = []
+    modifiers = [],
+    userId = dummyUserId
   ) {
     ;(this.name = name),
       (this.userId = userId),
@@ -37,12 +37,12 @@ function addCategory(name, userId = dummyUserId) {
   return { name, _id: randomUUID(), userId }
 }
 
-function addNote(value = '', tags = [], userId = dummyUserId) {
-  return { value, tags, userId }
+function addNote(value = '', tags = []) {
+  return { value, tags }
 }
 
-function addSet(weight, reps, effort, distance, time, userId = dummyUserId) {
-  return { weight, reps, effort, distance, time, userId }
+function addSet(weight, reps, effort, distance, time) {
+  return { weight, reps, effort, distance, time }
 }
 
 function addRecord(

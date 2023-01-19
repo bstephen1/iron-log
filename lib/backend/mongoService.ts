@@ -95,10 +95,10 @@ export async function fetchRecords(filter?: Filter<Record>) {
 }
 
 // todo: update record if exercise has been modified since last fetch
-export async function fetchRecord(id: Record['_id']) {
+export async function fetchRecord(userId: ObjectId, _id: Record['_id']) {
   return await records
     .aggregate([
-      { $match: { _id: id } },
+      { $match: { userId, _id } },
       {
         $lookup: {
           from: 'exercises',
@@ -109,6 +109,8 @@ export async function fetchRecord(id: Record['_id']) {
       },
       // if preserveNull is false the whole record becomes null if exercise is null
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
+      // $project is the equivalent of "projection" for aggregate pipelines
+      { $project: { userId: 0 } },
     ])
     // return just the first (there's only the one)
     .next()
@@ -145,8 +147,8 @@ export async function fetchExercises(filter?: Filter<Exercise>) {
   return await exercises.find({ ...filter }).toArray()
 }
 
-export async function fetchExercise(id: string) {
-  return await exercises.findOne({ _id: id })
+export async function fetchExercise(userId: ObjectId, _id: string) {
+  return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
 export async function updateExercise(exercise: Exercise) {
@@ -222,8 +224,11 @@ export async function fetchCategories(filter?: Filter<Category>) {
   return await categories.find({ ...filter }).toArray()
 }
 
-export async function fetchCategory(name: string) {
-  return await categories.findOne({ name }, { projection: { _id: false } })
+export async function fetchCategory(userId: ObjectId, name: string) {
+  return await categories.findOne(
+    { userId, name },
+    { projection: { userId: 0, _id: 0 } }
+  )
 }
 
 export async function updateCategoryFields({
@@ -254,8 +259,9 @@ export async function addBodyweight(bodyweight: Bodyweight) {
   return await bodyweightHistory.insertOne(bodyweight)
 }
 
-// The default start/end values compare against the first char of the date (ie, the first digit of the year).
-// So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
+/** The default start/end values compare against the first char of the date (ie, the first digit of the year).
+ *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
+ */
 export async function fetchBodyweightHistory(
   limit?: number,
   start = '0',
