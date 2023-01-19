@@ -27,7 +27,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
       await updateExercise(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
-      await updateExerciseFields(JSON.parse(req.body))
+      await updateExerciseFields(userId, JSON.parse(req.body))
       return emptyApiResponse
     default:
       throw methodNotAllowed

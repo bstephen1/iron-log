@@ -23,7 +23,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
       const record = await fetchRecord(userId, id)
       return { payload: record }
     case 'DELETE':
-      await deleteSessionRecord({ date, recordId: id })
+      await deleteSessionRecord(userId, date, id)
       return emptyApiResponse
     default:
       throw methodNotAllowed

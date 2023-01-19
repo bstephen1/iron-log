@@ -53,15 +53,14 @@ export async function updateSession(userId: ObjectId, sessionLog: SessionLog) {
 }
 
 // todo: make this a transaction?
-export async function deleteSessionRecord({
-  date,
-  recordId,
-}: {
-  date: string
+export async function deleteSessionRecord(
+  userId: ObjectId,
+  date: string,
   recordId: string
-}) {
-  await sessions.updateOne({ date }, { $pull: { records: recordId } })
-  await deleteRecord(recordId)
+) {
+  // $pull is equivalent to removing an element from an array
+  await sessions.updateOne({ userId, date }, { $pull: { records: recordId } })
+  await deleteRecord(userId, recordId)
   return
 }
 
@@ -128,17 +127,17 @@ export async function updateRecord(userId: ObjectId, record: Record) {
   )
 }
 
-export async function updateRecordFields({
-  id,
-  updates,
-}: updateFieldsProps<Record>) {
-  return await records.updateOne({ _id: id }, { $set: updates })
+export async function updateRecordFields(
+  userId: ObjectId,
+  { id, updates }: updateFieldsProps<Record>
+) {
+  return await records.updateOne({ userId, _id: id }, { $set: updates })
 }
 
 // Currently not exporting. To delete call deleteSessionRecord().
 // All Records must belong to a Session, so a record can only be deleted in the context of a Session.
-async function deleteRecord(id: string) {
-  return await records.deleteOne({ _id: id })
+async function deleteRecord(userId: ObjectId, _id: string) {
+  return await records.deleteOne({ userId, _id })
 }
 
 //----------
@@ -169,11 +168,11 @@ export async function updateExercise(userId: ObjectId, exercise: Exercise) {
   )
 }
 
-export async function updateExerciseFields({
-  id,
-  updates,
-}: updateFieldsProps<Exercise>) {
-  return await exercises.updateOne({ _id: id }, { $set: updates })
+export async function updateExerciseFields(
+  userId: ObjectId,
+  { id, updates }: updateFieldsProps<Exercise>
+) {
+  return await exercises.updateOne({ userId, _id: id }, { $set: updates })
 }
 
 //----------
