@@ -4,7 +4,7 @@ import {
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
-import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
+import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import { validateId } from '../../../lib/backend/apiQueryValidationService'
 import {
   addExercise,
@@ -34,4 +34,4 @@ async function handler(req: NextApiRequest, userId: UserId) {
   }
 }
 
-export default withApiMiddleware(handler)
+export default withStatusHandler(handler)

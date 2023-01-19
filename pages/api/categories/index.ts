@@ -3,7 +3,7 @@ import {
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
-import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
+import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import { fetchCategories } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
@@ -15,4 +15,4 @@ async function handler(req: NextApiRequest, userId: UserId) {
   return { payload: categories }
 }
 
-export default withApiMiddleware(handler)
+export default withStatusHandler(handler)

@@ -3,7 +3,7 @@ import {
   methodNotAllowed,
   UserId,
 } from '../../../../../lib/backend/apiMiddleware/util'
-import withApiMiddleware from '../../../../../lib/backend/apiMiddleware/withApiMiddleware'
+import withStatusHandler from '../../../../../lib/backend/apiMiddleware/withStatusHandler'
 import { valiDate } from '../../../../../lib/backend/apiQueryValidationService'
 import { fetchRecords } from '../../../../../lib/backend/mongoService'
 
@@ -17,4 +17,4 @@ async function handler(req: NextApiRequest, userId: UserId) {
   return { payload: records }
 }
 
-export default withApiMiddleware(handler)
+export default withStatusHandler(handler)
