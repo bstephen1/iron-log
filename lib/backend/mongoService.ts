@@ -15,7 +15,8 @@ const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<WithUserId<Modifier>>('modifiers')
 const categories = db.collection<WithUserId<Category>>('categories')
 const records = db.collection<Record>('records')
-const bodyweightHistory = db.collection<Bodyweight>('bodyweightHistory')
+const bodyweightHistory =
+  db.collection<WithUserId<Bodyweight>>('bodyweightHistory')
 
 interface updateFieldsProps<T extends { _id: string }> {
   id: T['_id']
@@ -260,29 +261,38 @@ export async function updateCategoryFields(
 // BODYWEIGHT
 //------------
 
-export async function addBodyweight(bodyweight: Bodyweight) {
-  return await bodyweightHistory.insertOne(bodyweight)
+export async function addBodyweight(userId: ObjectId, bodyweight: Bodyweight) {
+  return await bodyweightHistory.insertOne({ ...bodyweight, userId })
 }
 
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
 export async function fetchBodyweightHistory(
+  userId: ObjectId,
   limit?: number,
+  /** YYYY-MM-DD */
   start = '0',
+  /** YYYY-MM-DD */
   end = '9'
 ) {
   // -1 sorts most recent first
   return await bodyweightHistory
-    .find({ date: { $gte: start, $lte: end } })
+    .find(
+      { userId, date: { $gte: start, $lte: end } },
+      { projection: { userId: 0, _id: 0 } }
+    )
     .sort({ date: -1 })
     .limit(limit ?? 50)
     .toArray()
 }
 
-export async function updateBodyweight(bodyweight: Bodyweight) {
+export async function updateBodyweight(
+  userId: ObjectId,
+  bodyweight: Bodyweight
+) {
   return await bodyweightHistory.updateOne(
-    { date: bodyweight.date },
+    { userId, date: bodyweight.date },
     { $set: { value: bodyweight.value } },
     {
       upsert: true,
@@ -290,6 +300,6 @@ export async function updateBodyweight(bodyweight: Bodyweight) {
   )
 }
 
-export async function deleteBodyweight(date: string) {
-  return await bodyweightHistory.deleteOne({ date })
+export async function deleteBodyweight(userId: ObjectId, date: string) {
+  return await bodyweightHistory.deleteOne({ userId, date })
 }

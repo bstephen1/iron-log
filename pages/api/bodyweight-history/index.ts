@@ -1,56 +1,33 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+  UserId,
+} from '../../../lib/backend/apiMiddleware/util'
+import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
+import { buildBodyweightQuery } from '../../../lib/backend/apiQueryValidationService'
 import {
   addBodyweight,
   fetchBodyweightHistory,
   updateBodyweight,
 } from '../../../lib/backend/mongoService'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { start, end, limit: rawLimit } = req.query
-
-  const limit = rawLimit ? Number(rawLimit) : undefined
-
-  if (limit && isNaN(limit)) {
-    res.status(400).end()
-    return
-  }
-
-  console.log(`Incoming ${req.method} on bodyweight history ${req.body}`)
+async function handler(req: NextApiRequest, userId: UserId) {
+  const { start, limit, end } = buildBodyweightQuery(req.query)
 
   switch (req.method) {
     case 'GET':
-      try {
-        const data = await fetchBodyweightHistory(
-          limit,
-          start as string | undefined,
-          end as string | undefined
-        ) // todo: get rid of string[] type and check for proper date format if string
-        res.status(200).json(data)
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      const data = await fetchBodyweightHistory(userId, limit, start, end)
+      return { payload: data }
     case 'POST':
-      try {
-        await addBodyweight(JSON.parse(req.body))
-        res.status(201).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await addBodyweight(userId, JSON.parse(req.body))
+      return emptyApiResponse
     case 'PUT':
-      try {
-        await updateBodyweight(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await updateBodyweight(userId, JSON.parse(req.body))
+      return emptyApiResponse
+    default:
+      throw methodNotAllowed
   }
 }
+
+export default withApiMiddleware(handler)
