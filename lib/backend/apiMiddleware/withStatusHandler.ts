@@ -7,11 +7,12 @@ import { ApiHandler, getUserId } from './util'
 // The handler either returns an ApiResponse or throws an ApiError.
 export default function withStatusHandler(handler: ApiHandler) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    console.log(`Incoming ${req.method} on ${req.url}`)
-
     try {
       const userId = await getUserId(req, res)
+      console.log(`Incoming ${req.method} on ${req.url} for user ${userId}`)
+
       const { statusCode, payload } = await handler(req, userId)
+
       res.status(statusCode || StatusCodes.OK).json(payload ?? {})
     } catch (e: unknown) {
       let statusCode = StatusCodes.INTERNAL_SERVER_ERROR

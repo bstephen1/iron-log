@@ -3,9 +3,9 @@ import {
   emptyApiResponse,
   methodNotAllowed,
   UserId,
-  valiDate,
 } from '../../../../lib/backend/apiMiddleware/util'
 import withApiMiddleware from '../../../../lib/backend/apiMiddleware/withApiMiddleware'
+import { valiDate } from '../../../../lib/backend/apiQueryValidationService'
 import {
   addSession,
   fetchSession,

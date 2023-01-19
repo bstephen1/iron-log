@@ -1,49 +1,37 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+  recordNotFound,
+  UserId,
+} from '../../../lib/backend/apiMiddleware/util'
+import withApiMiddleware from '../../../lib/backend/apiMiddleware/withApiMiddleware'
+import { validateName } from '../../../lib/backend/apiQueryValidationService'
 import {
   addModifier,
   fetchModifier,
   updateModifierFields,
 } from '../../../lib/backend/mongoService'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const name = req.query.name
-
-  console.log(`Incoming ${req.method} on modifier "${name}"`)
-
-  if (!name || typeof name !== 'string') {
-    res.status(400).end()
-    return
-  }
+async function handler(req: NextApiRequest, userId: UserId) {
+  const name = validateName(req.query.name)
 
   switch (req.method) {
     case 'GET':
-      try {
-        const modifier = await fetchModifier(name)
-        res.status(200).json(modifier) // todo: return 204 when no content?
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
+      const modifier = await fetchModifier(userId, name)
+      if (!modifier) {
+        throw recordNotFound
       }
-      break
+      return { payload: modifier }
     case 'POST':
-      try {
-        await addModifier(JSON.parse(req.body))
-        res.status(201).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await addModifier(userId, JSON.parse(req.body))
+      return emptyApiResponse
     case 'PATCH':
-      try {
-        await updateModifierFields(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
+      await updateModifierFields(JSON.parse(req.body))
+      return emptyApiResponse
+    default:
+      throw methodNotAllowed
   }
 }
+
+export default withApiMiddleware(handler)

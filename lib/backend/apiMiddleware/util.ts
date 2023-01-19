@@ -4,9 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import { ApiError } from 'next/dist/server/api-utils'
 import { authOptions } from '../../../pages/api/auth/[...nextauth]'
-import { validDateStringRegex } from '../../frontend/constants'
 
-export type ApiQuery = string | string[] | undefined
 export interface ApiResponse {
   statusCode?: number
   payload?: object
@@ -21,7 +19,12 @@ export const emptyApiResponse = {} as ApiResponse
 
 export const methodNotAllowed = new ApiError(
   StatusCodes.METHOD_NOT_ALLOWED,
-  'method not allowed'
+  'Method not allowed.'
+)
+
+export const recordNotFound = new ApiError(
+  StatusCodes.NOT_FOUND,
+  'Record not found.'
 )
 
 /** userId format for backend use. The frontend will not see the userId.
@@ -42,20 +45,3 @@ export async function getUserId(
 
   return new ObjectId(session.user.id)
 }
-
-/** validate a date */
-export function valiDate(date: ApiQuery) {
-  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      'Date must be formatted as YYYY-MM-DD'
-    )
-  }
-
-  return date
-}
-
-// todo: (if needed)
-// export function validateString(string: ApiQuery, required = true) {
-//   if (required && !string)
-// }

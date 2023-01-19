@@ -12,7 +12,7 @@ type WithUserId<T> = { userId: ObjectId } & T
 
 const sessions = db.collection<WithUserId<SessionLog>>('sessions')
 const exercises = db.collection<Exercise>('exercises')
-const modifiers = db.collection<Modifier>('modifiers')
+const modifiers = db.collection<WithUserId<Modifier>>('modifiers')
 const categories = db.collection<Category>('categories')
 const records = db.collection<Record>('records')
 const bodyweightHistory = db.collection<Bodyweight>('bodyweightHistory')
@@ -166,16 +166,19 @@ export async function updateExerciseFields({
 // MODIFIER
 //----------
 
-export async function addModifier(modifier: Modifier) {
-  return await modifiers.insertOne(modifier)
+export async function addModifier(userId: ObjectId, modifier: Modifier) {
+  return await modifiers.insertOne({ ...modifier, userId })
 }
 
 export async function fetchModifiers(filter?: Filter<Modifier>) {
   return await modifiers.find({ ...filter }).toArray()
 }
 
-export async function fetchModifier(name: string) {
-  return await modifiers.findOne({ name }, { projection: { _id: false } })
+export async function fetchModifier(userId: ObjectId, name: string) {
+  return await modifiers.findOne(
+    { userId, name },
+    { projection: { userId: 0, _id: 0 } }
+  )
 }
 
 export async function updateModifierFields({
