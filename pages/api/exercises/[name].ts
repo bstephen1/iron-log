@@ -5,7 +5,7 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { validateId } from '../../../lib/backend/apiQueryValidationService'
+import { validateName } from '../../../lib/backend/apiQueryValidationService'
 import {
   addExercise,
   fetchExercise,
@@ -14,11 +14,11 @@ import {
 } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
-  const id = validateId(req.query.id)
+  const name = validateName(req.query.name)
 
   switch (req.method) {
     case 'GET':
-      const exercise = await fetchExercise(userId, id)
+      const exercise = await fetchExercise(userId, name)
       return { payload: exercise }
     case 'POST':
       await addExercise(userId, JSON.parse(req.body))
@@ -27,6 +27,8 @@ async function handler(req: NextApiRequest, userId: UserId) {
       await updateExercise(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
+      console.log('patch')
+      console.log(req.body)
       await updateExerciseFields(userId, JSON.parse(req.body))
       return emptyApiResponse
     default:

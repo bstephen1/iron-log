@@ -25,6 +25,8 @@ export default function withStatusHandler(handler: ApiHandler) {
         statusCode = e.statusCode ?? statusCode
         message = e.message ?? message
       }
+
+      console.error(`Error ${statusCode}: ${message}`)
       res.status(statusCode).json(message)
     }
   }
