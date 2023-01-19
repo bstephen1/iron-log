@@ -20,10 +20,10 @@ async function handler(req: NextApiRequest, userId: UserId) {
       const category = await fetchCategory(userId, name)
       return { payload: category }
     case 'POST':
-      await addCategory(JSON.parse(req.body))
+      await addCategory(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
-      await updateCategoryFields(JSON.parse(req.body))
+      await updateCategoryFields(userId, JSON.parse(req.body))
       return emptyApiResponse
     default:
       throw methodNotAllowed

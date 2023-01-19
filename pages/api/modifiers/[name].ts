@@ -23,7 +23,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
       await addModifier(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
-      await updateModifierFields(JSON.parse(req.body))
+      await updateModifierFields(userId, JSON.parse(req.body))
       return emptyApiResponse
     default:
       throw methodNotAllowed

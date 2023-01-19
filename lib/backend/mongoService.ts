@@ -13,7 +13,7 @@ type WithUserId<T> = { userId: ObjectId } & T
 const sessions = db.collection<WithUserId<SessionLog>>('sessions')
 const exercises = db.collection<Exercise>('exercises')
 const modifiers = db.collection<WithUserId<Modifier>>('modifiers')
-const categories = db.collection<Category>('categories')
+const categories = db.collection<WithUserId<Category>>('categories')
 const records = db.collection<Record>('records')
 const bodyweightHistory = db.collection<Bodyweight>('bodyweightHistory')
 
@@ -90,6 +90,7 @@ export async function fetchRecords(filter?: Filter<Record>) {
       },
       // if preserveNull is false the whole record becomes null if exercise is null
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
+      { $project: { userId: 0 } },
     ])
     .toArray()
 }
@@ -173,7 +174,9 @@ export async function addModifier(userId: ObjectId, modifier: Modifier) {
 }
 
 export async function fetchModifiers(filter?: Filter<Modifier>) {
-  return await modifiers.find({ ...filter }).toArray()
+  return await modifiers
+    .find({ ...filter }, { projection: { userId: 0 } })
+    .toArray()
 }
 
 export async function fetchModifier(userId: ObjectId, name: string) {
@@ -183,45 +186,47 @@ export async function fetchModifier(userId: ObjectId, name: string) {
   )
 }
 
-export async function updateModifierFields({
-  id,
-  updates,
-}: updateFieldsProps<Modifier>) {
+export async function updateModifierFields(
+  userId: ObjectId,
+  { id, updates }: updateFieldsProps<Modifier>
+) {
   if (updates.name) {
-    const oldModifier = await modifiers.find({ _id: id }).next()
+    const oldModifier = await modifiers.find({ userId, _id: id }).next()
     await exercises.updateMany(
-      { modifiers: oldModifier?.name },
+      { userId, modifiers: oldModifier?.name },
       { $set: { 'modifiers.$': updates.name } }
     )
     // nested $[] operator (cannot use simple $ operator more than once): https://jira.mongodb.org/browse/SERVER-831
     // typescript isn't recognizing notes.$[].tags.$[tag] as a valid signature for $set even though it works and is the recommended way to do it
     await exercises.updateMany(
-      { 'notes.tags': oldModifier?.name },
+      { userId, 'notes.tags': oldModifier?.name },
       { $set: { 'notes.$[].tags.$[tag]': updates.name } as any },
       { arrayFilters: [{ tag: oldModifier?.name }] }
     )
     await records.updateMany(
-      { category: oldModifier?.name },
+      { userId, category: oldModifier?.name },
       { $set: { category: updates.name } }
     )
     await records.updateMany(
-      { activeModifiers: oldModifier?.name },
+      { userId, activeModifiers: oldModifier?.name },
       { $set: { 'activeModifiers.$': updates.name } }
     )
   }
-  return await modifiers.updateOne({ _id: id }, { $set: updates })
+  return await modifiers.updateOne({ userId, _id: id }, { $set: updates })
 }
 
 //----------
 // CATEGORY
 //----------
 
-export async function addCategory(category: Category) {
-  return await categories.insertOne(category)
+export async function addCategory(userId: ObjectId, category: Category) {
+  return await categories.insertOne({ ...category, userId })
 }
 
 export async function fetchCategories(filter?: Filter<Category>) {
-  return await categories.find({ ...filter }).toArray()
+  return await categories
+    .find({ ...filter }, { projection: { userId: 0 } })
+    .toArray()
 }
 
 export async function fetchCategory(userId: ObjectId, name: string) {
@@ -231,24 +236,24 @@ export async function fetchCategory(userId: ObjectId, name: string) {
   )
 }
 
-export async function updateCategoryFields({
-  id,
-  updates,
-}: updateFieldsProps<Category>) {
+export async function updateCategoryFields(
+  userId: ObjectId,
+  { id, updates }: updateFieldsProps<Category>
+) {
   // todo: should this be a transaction? Apparently that requires a cluster
   // can run single testing node as cluster with mongod --replset rs0
   if (updates.name) {
-    const oldCategory = await categories.find({ _id: id }).next()
+    const oldCategory = await categories.find({ userId, _id: id }).next()
     await exercises.updateMany(
-      { categories: oldCategory?.name },
+      { userId, categories: oldCategory?.name },
       { $set: { 'categories.$': updates.name } }
     )
     await records.updateMany(
-      { category: oldCategory?.name },
+      { userId, category: oldCategory?.name },
       { $set: { category: updates.name } }
     )
   }
-  return await categories.updateOne({ _id: id }, { $set: updates })
+  return await categories.updateOne({ userId, _id: id }, { $set: updates })
 }
 
 //------------
