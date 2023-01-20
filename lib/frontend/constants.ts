@@ -15,4 +15,4 @@ export const DEFAULT_UNITS: SetUnits = {
 // Was thinking of making this a user pref, but may not be necessary.
 // The value is already fuzzy if weighing with clothes, and if you knew the exact weight
 // you could just input the that instead.
-export const DEFAULT_CLOTHING_WEIGHT = 1
+export const DEFAULT_CLOTHING_OFFSET = 1
