@@ -180,8 +180,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
               }}
               style={{ padding: '15px 10px', flexGrow: '1' }}
             >
-              {sessionLog &&
-                sessionLog.records?.map((id, i) => (
+              {!!sessionLog &&
+                sessionLog.records.map((id, i) => (
                   <SwiperSlide key={id}>
                     <RecordCard
                       id={id}
