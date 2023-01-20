@@ -44,7 +44,6 @@ export default interface Set {
   time?: number
   reps?: number
   effort?: number
-  side?: 'left' | 'right'
 }
 
 // todo: certain exercises can have default setFields
