@@ -23,7 +23,7 @@ export default function BodyweightInput({
 }: Props & TextFieldProps) {
   const { data, mutate } = useBodyweightHistory(1, date.format(DATE_FORMAT))
   const validationSchema = yup.object({
-    // this willl be cast to a number on submit
+    // this will be cast to a number on submit
     value: yup.string().required('Must have a value'),
   })
   const loading = data === undefined
@@ -50,8 +50,9 @@ export default function BodyweightInput({
       {...textFieldProps}
       type="number"
       label="Bodyweight"
+      // disable scroll wheel changing the number
       onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
-      initialValue={data?.length ? '' + data[0].value + data[0].clothes : ''}
+      initialValue={data?.length ? '' + data[0].value : ''}
       handleSubmit={handleSubmit}
       yupValidator={yup.reach(validationSchema, 'value')}
       InputProps={{

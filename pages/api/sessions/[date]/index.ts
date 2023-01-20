@@ -1,52 +1,36 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+  UserId,
+} from '../../../../lib/backend/apiMiddleware/util'
+import withStatusHandler from '../../../../lib/backend/apiMiddleware/withStatusHandler'
+import { valiDate } from '../../../../lib/backend/apiQueryValidationService'
 import {
   addSession,
   fetchSession,
   updateSession,
 } from '../../../../lib/backend/mongoService'
-import { validDateStringRegex } from '../../../../lib/frontend/constants'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const date = req.query.date
-
-  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).end()
-    return
-  }
-  console.log(
-    `Incoming ${req.method} on session "${req.query.date}" ${req.body}`
-  )
+async function handler(req: NextApiRequest, userId: UserId) {
+  const date = valiDate(req.query.date)
 
   switch (req.method) {
     case 'GET':
-      try {
-        const record = await fetchSession(date)
-        res.status(200).json(record)
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      const record = await fetchSession(userId, date)
+      // We want to send a null res when there is no session for a given date so the user can
+      // flip through arbitrary dates without creating a bunch of empty SessionLogs. A new
+      // SessionLog should only be created when the user tries to add a Record on an empty date.
+      return { payload: record, nullOk: true }
     case 'POST':
-      try {
-        await addSession(JSON.parse(req.body))
-        res.status(201).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await addSession(userId, JSON.parse(req.body))
+      return emptyApiResponse
     case 'PUT':
-      try {
-        await updateSession(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await updateSession(userId, JSON.parse(req.body))
+      return emptyApiResponse
+    default:
+      return methodNotAllowed
   }
 }
+
+export default withStatusHandler(handler)

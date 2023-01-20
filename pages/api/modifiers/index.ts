@@ -1,30 +1,22 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  methodNotAllowed,
+  UserId,
+} from '../../../lib/backend/apiMiddleware/util'
+import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
+import { buildModifierQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchModifiers } from '../../../lib/backend/mongoService'
-import { ModifierStatus } from '../../../models/ModifierStatus'
-import { ModifierParams } from '../../../models/rest/ModifierParams'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  console.log(`Incoming ${req.method} on modifiers`)
-
-  try {
-    const { status } = req.query as ModifierParams
-
-    if (
-      status &&
-      !Object.values(ModifierStatus).includes(status as ModifierStatus)
-    ) {
-      res.status(400).end()
-    }
-
-    const modifiers = await (status
-      ? fetchModifiers({ status: status as ModifierStatus }) // should not have to explicity assert this but ts isn't recognizing the if check above
-      : fetchModifiers())
-    res.status(200).json(modifiers)
-  } catch (e) {
-    console.error(e)
-    res.status(500).end()
+async function handler(req: NextApiRequest, userId: UserId) {
+  if (req.method !== 'GET') {
+    throw methodNotAllowed
   }
+
+  const query = buildModifierQuery(req.query)
+
+  const modifiers = await fetchModifiers({ ...query, userId })
+
+  return { payload: modifiers }
 }
+
+export default withStatusHandler(handler)

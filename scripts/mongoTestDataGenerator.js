@@ -1,6 +1,11 @@
 const { randomUUID } = require('crypto')
+const { ObjectId } = require('mongodb')
 
 const db = connect('mongodb://localhost:27017/test')
+
+// NEXTAUTH_DUMMY_SESSION_ID in .env.development must match a userId to show the corresponding records
+const dummyUserId = new ObjectId('1234567890AB')
+const dummyUserId2 = new ObjectId('1234567890CC')
 
 // todo: look into seeing if this script can be made less fragile with denormalized values
 
@@ -11,9 +16,11 @@ class Exercise {
     status = 'active',
     notes = [],
     categories = [],
-    modifiers = []
+    modifiers = [],
+    userId = dummyUserId
   ) {
     ;(this.name = name),
+      (this.userId = userId),
       (this.status = status),
       (this.notes = notes),
       (this.categories = categories),
@@ -22,12 +29,12 @@ class Exercise {
   }
 }
 
-function addModifier(name, status, canDelete) {
-  return { name, status, canDelete, _id: randomUUID() }
+function addModifier(name, status, canDelete, userId = dummyUserId) {
+  return { name, status, canDelete, _id: randomUUID(), userId }
 }
 
-function addCategory(name) {
-  return { name, _id: randomUUID() }
+function addCategory(name, userId = dummyUserId) {
+  return { name, _id: randomUUID(), userId }
 }
 
 function addNote(value = '', tags = []) {
@@ -45,8 +52,8 @@ function addRecord(
   sets,
   fields,
   notes,
-  _id,
-  category = ''
+  category = '',
+  userId = dummyUserId
 ) {
   return {
     date,
@@ -55,8 +62,9 @@ function addRecord(
     sets,
     fields,
     notes,
-    _id,
+    _id: randomUUID(),
     category,
+    userId,
   }
 }
 
@@ -67,8 +75,8 @@ function getRecordIdsForDate(date) {
 }
 
 // todo: sessionType and program
-function addSessions(date, records, _id) {
-  return { date, records, _id }
+function addSessions(date, records, userId = dummyUserId) {
+  return { date, records, _id: randomUUID(), userId }
 }
 
 let categories = [
@@ -164,8 +172,7 @@ let records = [
     ['belt'],
     sets1,
     ['weight', 'reps', 'effort'],
-    [addNote('good lifts', ['Record'])],
-    randomUUID()
+    [addNote('good lifts', ['Record'])]
   ),
   addRecord(
     '2022-09-26',
@@ -173,8 +180,7 @@ let records = [
     ['bodyweight'],
     sets2,
     ['weight', 'reps'],
-    [],
-    randomUUID()
+    []
   ),
   addRecord(
     '2022-09-26',
@@ -182,8 +188,7 @@ let records = [
     [],
     setsDist,
     ['time', 'distance', 'effort'],
-    [],
-    randomUUID()
+    []
   ),
   addRecord(
     '2022-09-26',
@@ -191,8 +196,7 @@ let records = [
     [],
     setsDist2,
     ['distance', 'time', 'effort'],
-    [],
-    randomUUID()
+    []
   ),
   addRecord(
     '2022-09-26',
@@ -200,14 +204,11 @@ let records = [
     [],
     setsAll,
     ['weight', 'distance', 'time', 'reps', 'effort'],
-    [],
-    randomUUID()
+    []
   ),
 ]
 
-let sessions = [
-  addSessions('2022-09-26', getRecordIdsForDate('2022-09-26'), randomUUID()),
-]
+let sessions = [addSessions('2022-09-26', getRecordIdsForDate('2022-09-26'))]
 
 //  START OPERATIONS
 

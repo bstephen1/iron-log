@@ -3,7 +3,7 @@ import Record from './Record'
 
 // todo: add session time. Start / end times? Program stuff (not hashed out yet), overall notes?
 // todo: gym location?
-export default class Session {
+export default class SessionLog {
   constructor(
     public readonly date: string,
     public records: Record['_id'][] = [], // ordered array

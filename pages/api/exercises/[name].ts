@@ -7,9 +7,10 @@ import {
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import { validateName } from '../../../lib/backend/apiQueryValidationService'
 import {
-  addModifier,
-  fetchModifier,
-  updateModifierFields,
+  addExercise,
+  fetchExercise,
+  updateExercise,
+  updateExerciseFields,
 } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
@@ -17,13 +18,18 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
   switch (req.method) {
     case 'GET':
-      const modifier = await fetchModifier(userId, name)
-      return { payload: modifier }
+      const exercise = await fetchExercise(userId, name)
+      return { payload: exercise }
     case 'POST':
-      await addModifier(userId, JSON.parse(req.body))
+      await addExercise(userId, JSON.parse(req.body))
+      return emptyApiResponse
+    case 'PUT':
+      await updateExercise(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
-      await updateModifierFields(userId, JSON.parse(req.body))
+      console.log('patch')
+      console.log(req.body)
+      await updateExerciseFields(userId, JSON.parse(req.body))
       return emptyApiResponse
     default:
       throw methodNotAllowed

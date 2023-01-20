@@ -1,49 +1,33 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  emptyApiResponse,
+  methodNotAllowed,
+  UserId,
+} from '../../../lib/backend/apiMiddleware/util'
+import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
+import { validateName } from '../../../lib/backend/apiQueryValidationService'
 import {
   addCategory,
   fetchCategory,
   updateCategoryFields,
 } from '../../../lib/backend/mongoService'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const name = req.query.name
-
-  console.log(`Incoming ${req.method} on category "${name}"`)
-
-  if (!name || typeof name !== 'string') {
-    res.status(400).end()
-    return
-  }
+async function handler(req: NextApiRequest, userId: UserId) {
+  const name = validateName(req.query.name)
 
   switch (req.method) {
     case 'GET':
-      try {
-        const category = await fetchCategory(name)
-        res.status(200).json(category) // todo: return 204 when no content?
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      const category = await fetchCategory(userId, name)
+      return { payload: category }
     case 'POST':
-      try {
-        await addCategory(JSON.parse(req.body))
-        res.status(201).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
-      break
+      await addCategory(userId, JSON.parse(req.body))
+      return emptyApiResponse
     case 'PATCH':
-      try {
-        await updateCategoryFields(JSON.parse(req.body))
-        res.status(200).end()
-      } catch (e) {
-        console.error(e)
-        res.status(500).end()
-      }
+      await updateCategoryFields(userId, JSON.parse(req.body))
+      return emptyApiResponse
+    default:
+      throw methodNotAllowed
   }
 }
+
+export default withStatusHandler(handler)

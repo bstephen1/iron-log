@@ -6,7 +6,7 @@ import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Modifier from '../../models/Modifier'
 import Record from '../../models/Record'
-import Session from '../../models/Session'
+import SessionLog from '../../models/SessionLog'
 import { DATE_FORMAT } from './constants'
 
 const fetcher = (url: any) => fetch(url).then((r) => r.json())
@@ -15,27 +15,27 @@ const fetcher = (url: any) => fetch(url).then((r) => r.json())
 // SESSION
 //---------
 
-export function useSession(date: Dayjs) {
-  const { data, error, mutate } = useSWR<Session>(
+export function useSessionLog(date: Dayjs) {
+  const { data, error, mutate } = useSWR<SessionLog>(
     URI_SESSIONS + date.format(DATE_FORMAT),
     fetcher
   )
 
   return {
-    session: data,
+    sessionLog: data,
     isError: error,
     mutate: mutate,
   }
 }
 
-export async function addSession(session: Session) {
+export async function addSessionLog(session: SessionLog) {
   fetch(URI_SESSIONS + session.date, {
     method: 'POST',
     body: JSON.stringify(session),
   }).catch((e) => console.error(e))
 }
 
-export async function updateSession(newSesson: Session) {
+export async function updateSessionLog(newSesson: SessionLog) {
   fetch(URI_SESSIONS + newSesson.date, {
     method: 'PUT',
     body: JSON.stringify(newSesson),

@@ -1,25 +1,20 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest } from 'next'
+import {
+  methodNotAllowed,
+  UserId,
+} from '../../../../../lib/backend/apiMiddleware/util'
+import withStatusHandler from '../../../../../lib/backend/apiMiddleware/withStatusHandler'
+import { valiDate } from '../../../../../lib/backend/apiQueryValidationService'
 import { fetchRecords } from '../../../../../lib/backend/mongoService'
-import { validDateStringRegex } from '../../../../../lib/frontend/constants'
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const date = req.query.date
-
-  if (!date || typeof date !== 'string' || !date.match(validDateStringRegex)) {
-    res.status(400).end()
-    return
+async function handler(req: NextApiRequest, userId: UserId) {
+  if (req.method !== 'GET') {
+    throw methodNotAllowed
   }
 
-  console.log(`Incoming GET on records for session "${req.query.date}"`)
-
-  try {
-    const records = await fetchRecords({ date })
-    res.status(200).json(records)
-  } catch (e) {
-    console.error(e)
-    res.status(500).end()
-  }
+  const date = valiDate(req.query.date)
+  const records = await fetchRecords({ userId, date })
+  return { payload: records }
 }
+
+export default withStatusHandler(handler)

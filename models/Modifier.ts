@@ -1,4 +1,3 @@
-import { generateId } from '../lib/util'
 import { ModifierStatus } from './ModifierStatus'
 import { NamedObject } from './NamedObject'
 
@@ -9,9 +8,8 @@ export default class Modifier extends NamedObject {
     public name: string,
     public status = ModifierStatus.ACTIVE,
     public weight = 0,
-    public canDelete = true,
-    public readonly _id = generateId()
+    public canDelete = true
   ) {
-    super(name, _id)
+    super(name)
   }
 }
