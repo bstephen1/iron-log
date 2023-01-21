@@ -10,10 +10,9 @@ export const authOptions: NextAuthOptions = {
     GitHubProvider({
       clientId: process.env.NEXTAUTH_GITHUB_ID || '',
       clientSecret: process.env.NEXTAUTH_GITHUB_SECRET || '',
+      id: 'github',
     }),
   ],
-  // this is supposed to default to NEXTAUTH_SECRET without needing to set it...
-  secret: process.env.NEXTAUTH_SECRET || '',
 
   // this was in the docs but not sure if needed and can no longer find it. Says it isn't a valid option
   // database: process.env.DATABASE_URL || '',
