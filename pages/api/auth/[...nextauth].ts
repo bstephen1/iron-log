@@ -8,8 +8,8 @@ import { clientPromise } from '../../../lib/backend/mongoConnect'
 export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
-      clientId: process.env.GITHUB_ID || '',
-      clientSecret: process.env.GITHUB_SECRET || '',
+      clientId: process.env.NEXTAUTH_GITHUB_ID || '',
+      clientSecret: process.env.NEXTAUTH_GITHUB_SECRET || '',
     }),
   ],
 
