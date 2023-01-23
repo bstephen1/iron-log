@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { ApiError } from 'next/dist/server/api-utils'
+import { WeighInType } from '../../models/Bodyweight'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import { ModifierStatus } from '../../models/ModifierStatus'
 import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
@@ -16,7 +17,7 @@ export type ApiQuery = { [param: string]: ApiParam }
 // For now we are just ignoring them since it probably won't matter for our use case.
 // See: https://softwareengineering.stackexchange.com/questions/311484/should-i-be-permissive-of-unknown-parameters
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildBodyweightQuery({ limit, start, end }: ApiQuery) {
+export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
   const query = {} as BodyweightQuery
 
   // only add the defined params to the query
@@ -28,6 +29,14 @@ export function buildBodyweightQuery({ limit, start, end }: ApiQuery) {
   }
   if (end) {
     query.end = valiDate(end)
+  }
+  if (type) {
+    if (
+      !(typeof type === 'string' && ['official', 'unofficial'].includes(type))
+    ) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid weigh-in type.')
+    }
+    query.type = type as WeighInType
   }
 
   return query

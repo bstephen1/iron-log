@@ -20,7 +20,7 @@ interface Props {
 export default function SetHeader({ initialSelected, handleSubmit }: Props) {
   const [selected, setSelected] = useState(initialSelected || [])
   // todo: dnd this? user pref? per exercise?
-  const FIELD_ORDER: (keyof Set)[] = [
+  const fieldOrder: (keyof Set)[] = [
     'weight',
     'distance',
     'time',
@@ -35,7 +35,7 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
 
     // we want to ensure the order is consistent
     setSelected(
-      FIELD_ORDER.filter((field) => valueAsArray.some((item) => item === field))
+      fieldOrder.filter((field) => valueAsArray.some((item) => item === field))
     )
   }
 
@@ -97,7 +97,7 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
         <MenuItem disabled value="">
           <em>Select fields to display</em>
         </MenuItem>
-        {FIELD_ORDER.map((field) => (
+        {fieldOrder.map((field) => (
           <MenuItem key={field} value={field}>
             <Checkbox checked={selected.indexOf(field) > -1} />
             <ListItemText
