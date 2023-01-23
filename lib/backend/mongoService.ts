@@ -1,5 +1,5 @@
 import { Filter, ObjectId } from 'mongodb'
-import Bodyweight from '../../models/Bodyweight'
+import Bodyweight, { WeighInType } from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
@@ -283,12 +283,13 @@ export async function fetchBodyweightHistory(
   /** YYYY-MM-DD */
   start = '0',
   /** YYYY-MM-DD */
-  end = '9'
+  end = '9',
+  type?: WeighInType
 ) {
   // -1 sorts most recent first
   return await bodyweightHistory
     .find(
-      { userId, date: { $gte: start, $lte: end } },
+      { userId, type, dateTime: { $gte: start, $lte: end } },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ date: -1 })
@@ -296,19 +297,25 @@ export async function fetchBodyweightHistory(
     .toArray()
 }
 
+/** if updating at the same dateTime, it will overwrite. This allows for updating an existing bodyweight
+ * instead of always making a new one.
+ *
+ * Note: two records can exist at the same time if they are different types.
+ */
 export async function updateBodyweight(
   userId: ObjectId,
-  bodyweight: Bodyweight
+  newBodyweight: Bodyweight
 ) {
   return await bodyweightHistory.updateOne(
-    { userId, date: bodyweight.date },
-    { $set: { value: bodyweight.value } },
+    { userId, dateTime: newBodyweight.dateTime, type: newBodyweight.type },
+    { $set: newBodyweight },
     {
       upsert: true,
     }
   )
 }
 
-export async function deleteBodyweight(userId: ObjectId, date: string) {
-  return await bodyweightHistory.deleteOne({ userId, date })
+// todo: use id, not dateTime.
+export async function deleteBodyweight(userId: ObjectId, dateTime: string) {
+  return await bodyweightHistory.deleteOne({ userId, dateTime })
 }

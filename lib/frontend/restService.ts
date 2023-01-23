@@ -1,10 +1,11 @@
-import { Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import useSWR from 'swr'
 import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Modifier from '../../models/Modifier'
+import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { DATE_FORMAT } from './constants'
@@ -205,15 +206,24 @@ export async function updateCategoryFields(
 // BODYWEIGHT
 //------------
 
-export function useBodyweightHistory(
-  limit?: number,
-  end?: string,
-  start?: string
-) {
+export function useBodyweightHistory({
+  limit,
+  start,
+  end,
+  type,
+}: BodyweightQuery) {
+  // bodyweight history is stored as ISO8601, so we need to add a day.
+  // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
+  // Incrementing to 2020-04-03 will catch everything from the previous day.
+  const addDay = (date: string) => dayjs(date).add(1, 'day').format(DATE_FORMAT)
+
+  start = start ? addDay(start) : start
+  end = end ? addDay(end) : end
+
   // this leaves extra chars but doesn't seem to affect the rest call
   const paramString = `?${limit && 'limit=' + limit}&${
     start && 'start=' + start
-  }&${end && 'end=' + end}`
+  }&${end && 'end=' + end}&${type && 'type=' + type}`
   const { data, error, mutate } = useSWR<Bodyweight[]>(
     URI_BODYWEIGHT + paramString,
     fetcher
