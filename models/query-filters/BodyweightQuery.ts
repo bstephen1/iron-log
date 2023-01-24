@@ -1,4 +1,4 @@
-export interface BodyweightQuery {
+export default interface BodyweightQuery {
   /** Treated as an absolute value (Negatives are the same as positives). 0 means no limit. */
   limit?: number
   /** ISO8601, e.g. '2020-04-02T08:02:17-05:00' */

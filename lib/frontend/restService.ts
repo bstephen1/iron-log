@@ -5,12 +5,12 @@ import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Modifier from '../../models/Modifier'
-import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
+import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { DATE_FORMAT } from './constants'
 
-const fetcher = (url: any) => fetch(url).then((r) => r.json())
+const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
 //---------
 // SESSION
