@@ -117,42 +117,42 @@ export default function RecordCard({
   // define after null checks so record must exist
   const { exercise, activeModifiers, sets, fields, notes, _id } = record
 
-  const addSet = () => {
+  const addSet = async () => {
     const newSet = sets[sets.length - 1]
       ? { ...sets[sets.length - 1], effort: undefined }
       : ({} as Set)
 
-    updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
+    await updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
     mutateRecord({ ...record, sets: sets.concat(newSet) })
   }
 
-  const handleFieldChange = (changes: Partial<Record>) => {
-    updateRecordFields(_id, { ...changes })
+  const handleFieldChange = async (changes: Partial<Record>) => {
+    await updateRecordFields(_id, { ...changes })
     mutateRecord({ ...record, ...changes })
   }
 
-  const handleExerciseNotesChange = (notes: Note[]) => {
+  const handleExerciseNotesChange = async (notes: Note[]) => {
     if (!exercise) return
 
-    updateExerciseFields(exercise, { notes })
+    await updateExerciseFields(exercise, { notes })
+    mutateRecord({ ...record, exercise: { ...exercise, notes } })
   }
 
-  const handleSetChange = (changes: Partial<Set>, i: number) => {
-    updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
+  const handleSetChange = async (changes: Partial<Set>, i: number) => {
+    await updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
     const newSets = [...record.sets]
     newSets[i] = { ...newSets[i], ...changes }
     mutateRecord({ ...record, sets: newSets })
   }
 
-  const handleDeleteSet = (i: number) => {
+  const handleDeleteSet = async (i: number) => {
     const newSets = record.sets.filter((_, j) => j !== i)
-    updateRecordFields(_id, { ['sets']: newSets })
+    await updateRecordFields(_id, { ['sets']: newSets })
     mutateRecord({ ...record, sets: newSets })
   }
 
   const handleDeleteRecord = () => {
     deleteRecord(id)
-    // todo: this became glitchy after deleting records from db instead of just removing from session array
     swiper.update() // have to update swiper whenever changing swiper elements
   }
 
@@ -163,13 +163,13 @@ export default function RecordCard({
     swiper.slideTo(j, 0)
   }
 
-  const handleExerciseChange = (newExercise: Exercise | null) => {
+  const handleExerciseChange = async (newExercise: Exercise | null) => {
     // if an exercise changes, discard any modifiers that are not valid for the new exercise
     const remainingModifiers = activeModifiers.filter((modifier) =>
       newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
 
-    updateRecordFields(_id, {
+    await updateRecordFields(_id, {
       exercise: newExercise,
       activeModifiers: remainingModifiers,
     })

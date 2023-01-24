@@ -4,7 +4,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { ComponentType, useState } from 'react'
+import { ComponentType, useCallback, useEffect, useState } from 'react'
 import { AutocompletePropsAny } from '../../lib/util'
 
 /*
@@ -24,11 +24,13 @@ import { AutocompletePropsAny } from '../../lib/util'
  *
  */
 
-interface WithAsyncProps {
+export interface WithAsyncProps {
   label?: string
   startAdornment?: JSX.Element
   placeholder?: string
   variant?: TextFieldProps['variant']
+  /** if the input has an adornment with a dropdown, the dropdown can interfere with the autocomplete dropdown. This value can indicate whether the adornment dropdown is open.  */
+  adornmentOpen?: boolean
   // a few textFieldProps are extracted for convenience, but others can be added here
   textFieldProps?: TextFieldProps
 }
@@ -44,17 +46,42 @@ export default function withAsync<T extends Partial<AutocompletePropsAny>>(
     placeholder,
     variant,
     textFieldProps,
+    adornmentOpen = false,
     ...baseComponentProps
   }: WithAsyncProps & T) {
     const [open, setOpen] = useState(false)
+    const [waitingToOpen, setWaitingToOpen] = useState(false)
     const loading = open && !baseComponentProps.options
+
+    const handleOpen = useCallback(() => {
+      if (!adornmentOpen) {
+        setOpen(true)
+      } else {
+        setWaitingToOpen(true)
+      }
+    }, [adornmentOpen])
+
+    const handleClose = () => {
+      setOpen(false)
+    }
+
+    useEffect(() => {
+      if (adornmentOpen) {
+        handleClose()
+        // the adornment dropdown closes before state gets updated so waitingToOpen makes sure it will be able to open.
+      } else if (!adornmentOpen && waitingToOpen) {
+        handleOpen()
+        setWaitingToOpen(false)
+      }
+    }, [adornmentOpen, handleOpen, waitingToOpen])
 
     return (
       <Component
         // This must match up with what Component is expecting, so we have to assure TS it's really type T
         {...(baseComponentProps as T)}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
+        open={open}
+        onOpen={handleOpen}
+        onClose={handleClose}
         loading={loading}
         loadingText="Loading..."
         renderInput={(params: AutocompleteRenderInputParams) => (

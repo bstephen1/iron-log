@@ -8,13 +8,15 @@ import {
   SxProps,
   Tooltip,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props {
   anchorEl?: HTMLElement
   categories?: string[]
   category: string | null
   setCategory: (category: string | null) => void
+  /** function that is called when the open state changes */
+  handleOpenChange?: (open: boolean) => void
   sx?: SxProps
 }
 export default function CategoryFilter({
@@ -22,19 +24,25 @@ export default function CategoryFilter({
   category,
   setCategory,
   sx,
+  handleOpenChange,
   ...props
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 
   const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(props.anchorEl ? props.anchorEl : e.currentTarget)
+    setAnchorEl(e.currentTarget)
   }
 
   // todo: onClose without selection: don't focus ExerciseSelector input
   // todo: use the TagSelect from notes list? add category to db?
 
+  // essentially, anchorEl is acting as "open", this just converts it to a boolean
   const open = !!anchorEl
   const id = open ? 'exercise-filter-popper' : undefined
+
+  useEffect(() => {
+    handleOpenChange?.(open)
+  }, [open, handleOpenChange])
 
   return (
     <Box sx={sx}>

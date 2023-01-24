@@ -10,6 +10,8 @@ export interface SelectorBaseProps<C, S>
   extends Partial<GenericAutocompleteProps<C | S>> {
   label?: string
   filterCustom?: (value: C, inputValue?: string) => boolean
+  /** This function can be used to reset the input value to null
+   * based on the current options in the dropdown */
   handleFilterChange?: (options: (C | NamedStub)[]) => void
   handleChange: (value: C | null) => void
   mutateOptions: KeyedMutator<C[]>
@@ -20,6 +22,8 @@ export interface SelectorBaseProps<C, S>
   // have to explicitly declare options is C[] or Autocomplete will think it's (C | S)[].
   // options is the db res, so will not include the keyless Stub value
   options?: C[]
+  /**  withAsync() uses this. It's too cumbersome trying to extend withAsync's props on top of extending SelectorBase so it's included here.  */
+  adornmentOpen?: boolean
   startAdornment?: JSX.Element // only used in withAsync. Here to make TS happy.
 }
 // this component is intended to be ingested as the base layer of a HOC.
@@ -48,7 +52,6 @@ export default function SelectorBase<C extends NamedObject>({
       openOnFocus
       selectOnFocus
       clearOnBlur
-      disablePortal // this will ensure the dropdown cannot overlap the category filter dropdown
       handleHomeEndKeys
       autoHighlight // todo: this sometimes pops up over Category selector for Exercises
       options={options || []}
@@ -85,6 +88,7 @@ export default function SelectorBase<C extends NamedObject>({
         }
 
         handleFilterChange?.(filtered)
+
         return filtered
       }}
       {...autocompleteProps}

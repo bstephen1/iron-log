@@ -124,7 +124,7 @@ let exercises = [
     'active',
     [addNote('twist in', ['barbell'])],
     ['biceps'],
-    ['bodyweight', 'unilateral', 'barbell']
+    ['bodyweight', 'unilateral left', 'unilateral right', 'barbell']
   ),
   new Exercise(
     'multi grip bench press',

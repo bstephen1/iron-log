@@ -1,4 +1,4 @@
-import { Check, ExpandMore } from '@mui/icons-material'
+import { Check, ScaleOutlined } from '@mui/icons-material'
 import {
   IconButton,
   ListItemIcon,
@@ -31,7 +31,7 @@ export default function BodyweightInputToggle({
     <>
       <Tooltip title="options">
         <IconButton onClick={handleOpen} sx={{ p: '2px' }}>
-          <ExpandMore />
+          <ScaleOutlined />
         </IconButton>
       </Tooltip>
       <Menu

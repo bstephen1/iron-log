@@ -28,9 +28,9 @@ input[type='number'] {
   appearance: textfield;
 }
 
-.swiper-slide {
+/* .swiper-slide {
   opacity: 0;
-}
+} */
 .swiper-slide-visible {
   opacity: 1;
 }

@@ -63,7 +63,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
     setIsEnd(swiper.isEnd)
   }
 
-  const handleAddRecord = (exercise: Exercise) => {
+  const handleAddRecord = async (exercise: Exercise) => {
     if (isLoading) return // make typescript happy
 
     const record = new Record(date.format(DATE_FORMAT), exercise)
@@ -75,11 +75,11 @@ export default function SessionView({ date }: { date: Dayjs }) {
           records: sessionLog.records.concat(record._id),
         }
       : new SessionLog(date.format(DATE_FORMAT), [record._id])
-    updateSessionLog(newSession)
+    await updateSessionLog(newSession)
     mutate(newSession)
   }
 
-  const handleSwapRecords = (i: number, j: number) => {
+  const handleSwapRecords = async (i: number, j: number) => {
     if (!sessionLog) return
 
     const length = sessionLog.records.length
@@ -92,17 +92,16 @@ export default function SessionView({ date }: { date: Dayjs }) {
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
     const newSession = { ...sessionLog, records: newRecords }
-    updateSessionLog(newSession)
+    await updateSessionLog(newSession)
     mutate(newSession)
   }
 
-  const handleDeleteRecord = (recordId: string) => {
+  const handleDeleteRecord = async (recordId: string) => {
     if (!sessionLog) return
 
     const newRecords = sessionLog.records.filter((id) => id !== recordId)
-    deleteSessionRecord(sessionLog.date, recordId)
-    // todo: not sure if disabling revalidation fixes glitchiness
-    mutate({ ...sessionLog, records: newRecords }, { revalidate: false })
+    await deleteSessionRecord(sessionLog.date, recordId)
+    mutate({ ...sessionLog, records: newRecords })
   }
 
   // todo: compare with last of this day type
@@ -168,7 +167,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
               grabCursor
               watchOverflow
               // need this for CSS to hide slides that are partially offscreen
-              // todo: the 0 opacity on unselected slides is clunky on mobile... (see global css)
               watchSlidesProgress
               pagination={{
                 el: '.pagination',
