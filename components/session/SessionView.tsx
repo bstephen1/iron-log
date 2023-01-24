@@ -167,7 +167,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
               grabCursor
               watchOverflow
               // need this for CSS to hide slides that are partially offscreen
-              // todo: the 0 opacity on unselected slides is clunky on mobile... (see global css)
               watchSlidesProgress
               pagination={{
                 el: '.pagination',
