@@ -29,16 +29,21 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
     initialCategoryFilter = null,
     ...props
   }: WithExerciseProps) {
-    // const inputRef = useRef<HTMLElement>(null)
     const { categories } = useCategories()
     const categoryNames = useNames(categories)
+    const [filterOpen, setFilterOpen] = useState(false)
     const [category, setCategory] = useState<string | null>(
       initialCategoryFilter
     )
 
     const handleFilterChange = (filtered: (Exercise | NamedStub)[]) => {
+      // if a category is selected and the existing exercise is not in that category, erase the input value.
       if (exercise && !filtered.some((item) => item.name === exercise.name)) {
-        props.handleChange(null)
+        // This was causing a mysterious error for updating a component while
+        // rendering a different component.
+        // Not sure why but wrapping it in a setTimeout() fixes it.
+        // See: https://stackoverflow.com/a/69236626
+        setTimeout(() => props.handleChange(null), 0)
       }
     }
 
@@ -74,6 +79,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         placeholder="Select or Add New Exercise"
         filterCustom={filterCategories}
         handleFilterChange={handleFilterChange}
+        adornmentOpen={filterOpen}
         StubConstructor={ExerciseStub}
         Constructor={Exercise}
         addNewItem={addExercise}
@@ -84,7 +90,12 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
           <CategoryFilter
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: props.variant === 'standard' ? 1 : 0 }}
-            {...{ categories: categoryNames, category, setCategory }}
+            {...{
+              categories: categoryNames,
+              category,
+              setCategory,
+              handleOpenChange: setFilterOpen,
+            }}
           />
         }
       />
