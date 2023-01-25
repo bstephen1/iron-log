@@ -35,7 +35,7 @@ export default function BodyweightInput({
   })
   const loading = data === undefined
 
-  const handleSubmit = (value: string) => {
+  const handleSubmit = async (value: string) => {
     const now = dayjs()
     const newBodyweight = new Bodyweight(
       Number(value),
@@ -48,7 +48,7 @@ export default function BodyweightInput({
     // on days not the current day, the date's time will be whatever the default dayjs() time is.
     // So any new weigh-ins will overwrite old ones. This is probably fine? Since you can't actually
     // perform a new weigh-in in the past.
-    updateBodyweight(newBodyweight)
+    await updateBodyweight(newBodyweight)
     mutate([newBodyweight])
   }
 

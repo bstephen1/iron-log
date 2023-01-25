@@ -38,11 +38,11 @@ export default function ManagePage() {
   ]
 
   // todo: move inside form, and only have a watcher here for new values
-  const handleUpdateExercise = (updates: Partial<Exercise>) => {
+  const handleUpdateExercise = async (updates: Partial<Exercise>) => {
     if (!exercise) return
 
     const newExercise = { ...exercise, ...updates }
-    updateExerciseFields(exercise, updates)
+    await updateExerciseFields(exercise, updates)
     // todo: not sure I like this... can we just mutate the selected exercise?
     const newExercises = exercises?.map((exercise) =>
       exercise._id === newExercise._id ? newExercise : exercise
@@ -52,7 +52,7 @@ export default function ManagePage() {
   }
 
   // todo: after updating modifier, have to update exercise
-  const handleModifierUpdate = (updates: Partial<Modifier>) => {
+  const handleModifierUpdate = async (updates: Partial<Modifier>) => {
     if (!modifier) return
 
     // todo: mutate exercise to display new modifier name without having to reload page or swap exercises
@@ -69,20 +69,20 @@ export default function ManagePage() {
     const newModifiers = modifiers?.map((modifier) =>
       modifier._id === newModifier._id ? newModifier : modifier
     )
-    updateModifierFields(modifier, updates)
+    await updateModifierFields(modifier, updates)
     mutateModifiers(newModifiers)
     setModifier(newModifier)
     // mutateExercises().then(() => setExercise(exercises?.find(revalidated => revalidated._id === exercise?._id) || null))
   }
 
-  const handleCategoryUpdate = (updates: Partial<Category>) => {
+  const handleCategoryUpdate = async (updates: Partial<Category>) => {
     if (!category) return
 
     const newCategory = { ...category, ...updates }
     const newCategories = categories?.map((category) =>
       category._id === newCategory._id ? newCategory : category
     )
-    updateCategoryFields(category, updates)
+    await updateCategoryFields(category, updates)
     mutateCategories(newCategories)
     setCategory(newCategory)
   }
