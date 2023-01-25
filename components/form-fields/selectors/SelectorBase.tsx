@@ -13,14 +13,18 @@ export interface SelectorBaseProps<C, S>
   /** This function can be used to reset the input value to null
    * based on the current options in the dropdown */
   handleFilterChange?: (options: (C | NamedStub)[]) => void
+  /** standard autocomplete onChange() callback */
   handleChange: (value: C | null) => void
+  /** locally mutate options when adding a new item. Changes the stub S to a new full item C. Invoked after addNewItem().  */
   mutateOptions: KeyedMutator<C[]>
+  /** constructor for "add new item" stub option that updates as a user types. */
   StubConstructor: new (name: string) => S
+  /** constructor for the full object.  */
   Constructor: new (name: string) => C
-  // function to add new C (created from stub) to db
-  addNewItem: (value: C) => void
-  // have to explicitly declare options is C[] or Autocomplete will think it's (C | S)[].
-  // options is the db res, so will not include the keyless Stub value
+  /**  function to add new C (created from stub) to db */
+  addNewItem: (value: C) => Promise<any>
+  /** have to explicitly declare options is C[] or Autocomplete will think it's (C | S)[].
+   * Options is the db res, so will not include the keyless Stub value */
   options?: C[]
   /**  withAsync() uses this. It's too cumbersome trying to extend withAsync's props on top of extending SelectorBase so it's included here.  */
   adornmentOpen?: boolean
@@ -58,12 +62,12 @@ export default function SelectorBase<C extends NamedObject>({
       // value={value} // todo: this is just undefined currently. Probably will hash out when typing
       isOptionEqualToValue={(a, b) => a.name === b.name}
       getOptionLabel={(option) => option.name}
-      onChange={(_, option) => {
+      onChange={async (_, option) => {
         // add the new item if selected
         if (option && !('_id' in option)) {
           const newItem = new Constructor(option.name)
+          await addNewItem(newItem)
           mutateOptions(options?.concat(newItem))
-          addNewItem(newItem)
           handleChange(newItem)
         } else {
           handleChange(option)

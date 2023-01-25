@@ -27,8 +27,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
       await updateExercise(userId, JSON.parse(req.body))
       return emptyApiResponse
     case 'PATCH':
-      console.log('patch')
-      console.log(req.body)
       await updateExerciseFields(userId, JSON.parse(req.body))
       return emptyApiResponse
     default:
