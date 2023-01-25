@@ -292,7 +292,7 @@ export async function fetchBodyweightHistory(
       { userId, type, dateTime: { $gte: start, $lte: end } },
       { projection: { userId: 0, _id: 0 } }
     )
-    .sort({ date: -1 })
+    .sort({ dateTime: -1 })
     .limit(limit ?? 50)
     .toArray()
 }
