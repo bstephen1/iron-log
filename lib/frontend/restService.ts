@@ -10,6 +10,9 @@ import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { DATE_FORMAT } from './constants'
 
+// Note: make sure any fetch() functions actually return after the fetch!
+// Otherwise there's no guarantee the write will be finished before it tries to read again...
+
 //---------
 // SESSION
 //---------
@@ -27,21 +30,21 @@ export function useSessionLog(date: Dayjs) {
 }
 
 export async function addSessionLog(session: SessionLog) {
-  fetch(URI_SESSIONS + session.date, {
+  return fetch(URI_SESSIONS + session.date, {
     method: 'POST',
     body: JSON.stringify(session),
   }).catch((e) => console.error(e))
 }
 
 export async function updateSessionLog(newSesson: SessionLog) {
-  fetch(URI_SESSIONS + newSesson.date, {
+  return fetch(URI_SESSIONS + newSesson.date, {
     method: 'PUT',
     body: JSON.stringify(newSesson),
   }).catch((e) => console.error(e))
 }
 
 export async function deleteSessionRecord(date: string, recordId: string) {
-  fetch(`${URI_SESSIONS}${date}/records/${recordId}`, {
+  return fetch(`${URI_SESSIONS}${date}/records/${recordId}`, {
     method: 'DELETE',
   }).catch((e) => console.error(e))
 }
@@ -62,7 +65,7 @@ export function useRecord(id: Record['_id']) {
 }
 
 export async function addRecord(newRecord: Record) {
-  fetch(URI_RECORDS + newRecord._id, {
+  return fetch(URI_RECORDS + newRecord._id, {
     method: 'POST',
     body: JSON.stringify(newRecord),
   }).catch((e) => console.error(e))
@@ -72,7 +75,7 @@ export async function updateRecordFields(
   id: Record['_id'],
   updates: Partial<Record>
 ) {
-  fetch(URI_RECORDS + id, {
+  return fetch(URI_RECORDS + id, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
   }).catch((e) => console.error(e))
@@ -106,14 +109,14 @@ export function useExercise(id: Exercise['_id']) {
 }
 
 export async function addExercise(newExercise: Exercise) {
-  fetch(URI_EXERCISES + newExercise.name, {
+  return fetch(URI_EXERCISES + newExercise.name, {
     method: 'POST',
     body: JSON.stringify(newExercise),
   }).catch((e) => console.error(e))
 }
 
 export async function updateExercise(newExercise: Exercise) {
-  fetch(URI_EXERCISES + newExercise.name, {
+  return fetch(URI_EXERCISES + newExercise.name, {
     method: 'PUT',
     body: JSON.stringify(newExercise),
   }).catch((e) => console.error(e))
@@ -124,7 +127,7 @@ export async function updateExerciseFields(
   updates: Partial<Exercise>
 ) {
   const id = exercise._id
-  fetch(URI_EXERCISES + exercise.name, {
+  return fetch(URI_EXERCISES + exercise.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
   }).catch((e) => console.error(e))
@@ -145,7 +148,7 @@ export function useModifiers() {
 }
 
 export async function addModifier(newModifier: Modifier) {
-  fetch(URI_MODIFIERS + newModifier.name, {
+  return fetch(URI_MODIFIERS + newModifier.name, {
     method: 'POST',
     body: JSON.stringify(newModifier),
   }).catch((e) => console.error(e))
@@ -157,7 +160,7 @@ export async function updateModifierFields(
   updates: Partial<Modifier>
 ) {
   const id = modifier._id
-  fetch(URI_MODIFIERS + modifier.name, {
+  return fetch(URI_MODIFIERS + modifier.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
   }).catch((e) => console.error(e))
@@ -178,7 +181,7 @@ export function useCategories() {
 }
 
 export async function addCategory(newCategory: Category) {
-  fetch(URI_CATEGORIES + newCategory.name, {
+  return fetch(URI_CATEGORIES + newCategory.name, {
     method: 'POST',
     body: JSON.stringify(newCategory),
   }).catch((e) => console.error(e))
@@ -190,7 +193,7 @@ export async function updateCategoryFields(
   updates: Partial<Category>
 ) {
   const id = category._id
-  fetch(URI_CATEGORIES + category.name, {
+  return fetch(URI_CATEGORIES + category.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
   }).catch((e) => console.error(e))
@@ -230,14 +233,14 @@ export function useBodyweightHistory({
 }
 
 export async function addBodyweight(newBodyweight: Bodyweight) {
-  fetch(URI_BODYWEIGHT, {
+  return fetch(URI_BODYWEIGHT, {
     method: 'POST',
     body: JSON.stringify(newBodyweight),
   }).catch((e) => console.error(e))
 }
 
 export async function updateBodyweight(newBodyweight: Bodyweight) {
-  fetch(URI_BODYWEIGHT, {
+  return fetch(URI_BODYWEIGHT, {
     method: 'PUT',
     body: JSON.stringify(newBodyweight),
   }).catch((e) => console.error(e))
