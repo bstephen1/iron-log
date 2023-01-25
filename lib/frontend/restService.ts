@@ -10,16 +10,13 @@ import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { DATE_FORMAT } from './constants'
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json())
-
 //---------
 // SESSION
 //---------
 
 export function useSessionLog(date: Dayjs) {
   const { data, error, mutate } = useSWR<SessionLog>(
-    URI_SESSIONS + date.format(DATE_FORMAT),
-    fetcher
+    URI_SESSIONS + date.format(DATE_FORMAT)
   )
 
   return {
@@ -54,7 +51,7 @@ export async function deleteSessionRecord(date: string, recordId: string) {
 //--------
 
 export function useRecord(id: Record['_id']) {
-  const { data, error, mutate } = useSWR<Record>(URI_RECORDS + id, fetcher)
+  const { data, error, mutate } = useSWR<Record>(URI_RECORDS + id)
 
   return {
     record: data,
@@ -89,10 +86,7 @@ export async function updateRecordFields(
 export function useExercises({ status }: { status?: ExerciseStatus }) {
   const params = status ? '?status=' + status : ''
 
-  const { data, error, mutate } = useSWR<Exercise[]>(
-    URI_EXERCISES + params,
-    fetcher
-  )
+  const { data, error, mutate } = useSWR<Exercise[]>(URI_EXERCISES + params)
 
   return {
     exercises: data,
@@ -102,7 +96,7 @@ export function useExercises({ status }: { status?: ExerciseStatus }) {
 }
 
 export function useExercise(id: Exercise['_id']) {
-  const { data, error, mutate } = useSWR<Exercise>(URI_EXERCISES + id, fetcher)
+  const { data, error, mutate } = useSWR<Exercise>(URI_EXERCISES + id)
 
   return {
     exercise: data,
@@ -141,7 +135,7 @@ export async function updateExerciseFields(
 //----------
 
 export function useModifiers() {
-  const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS, fetcher)
+  const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS)
 
   return {
     modifiers: data,
@@ -174,7 +168,7 @@ export async function updateModifierFields(
 //----------
 
 export function useCategories() {
-  const { data, error, mutate } = useSWR<Category[]>(URI_CATEGORIES, fetcher)
+  const { data, error, mutate } = useSWR<Category[]>(URI_CATEGORIES)
 
   return {
     categories: data,
@@ -225,8 +219,7 @@ export function useBodyweightHistory({
     start && 'start=' + start
   }&${end && 'end=' + end}&${type && 'type=' + type}`
   const { data, error, mutate } = useSWR<Bodyweight[]>(
-    URI_BODYWEIGHT + paramString,
-    fetcher
+    URI_BODYWEIGHT + paramString
   )
 
   return {
