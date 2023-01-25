@@ -1,4 +1,5 @@
-import { MongoClient } from 'mongodb'
+import { MongoClient, W } from 'mongodb'
+import { generateId } from '../util'
 
 if (!process.env.MONGODB_URI) {
   throw new Error('MONGODB_URI is undefined! Define in .env')
@@ -7,7 +8,8 @@ if (!process.env.MONGODB_URI) {
 }
 
 const uri = process.env.MONGODB_URI
-const options = {}
+// pkFactory overwrites the default mongo _id generation
+const options = { w: 'majority' as W, pkFactory: { createPk: generateId } }
 
 console.log('connecting to ' + uri)
 
