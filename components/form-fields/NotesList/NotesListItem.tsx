@@ -28,7 +28,7 @@ export default function NotesListItem(props: Props) {
 
   const inputRef = useRef<HTMLInputElement>()
   const handleSubmit = (value: string) =>
-    handleUpdate(index, { ...note, value })
+    handleUpdate(index, { ...note, value: value.trim() })
   const { control, isEmpty } = useField({
     handleSubmit,
     initialValue: note.value,
@@ -37,10 +37,13 @@ export default function NotesListItem(props: Props) {
   return (
     <OutlinedInput
       {...control()}
+      multiline
+      size="small"
       onBlur={() => isEmpty && handleDelete(index)}
       placeholder={placeholder}
       autoComplete="off"
-      onKeyDown={(e) => e.code === 'Enter' && inputRef.current?.blur()}
+      // removing this for multiline notes
+      // onKeyDown={(e) => e.code === 'Enter' && inputRef.current?.blur()}
       inputRef={inputRef}
       inputProps={{
         'aria-label': 'edit',

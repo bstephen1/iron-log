@@ -27,7 +27,7 @@ export default function AddNote({
   const inputRef = useRef<HTMLInputElement>()
   const [tags, setTags] = useState<Note['tags']>(initialTags)
   const handleSubmit = (value: string) => {
-    handleAdd(new Note(value, tags))
+    handleAdd(new Note(value.trim(), tags))
     onReset()
   }
   const onReset = () => {
@@ -46,9 +46,12 @@ export default function AddNote({
   return (
     <OutlinedInput
       {...control()}
+      multiline
+      size="small"
       placeholder={placeholder}
       disabled={disabled}
-      onKeyDown={(e) => e.code === 'Enter' && submit()}
+      // removing this for multiline notes
+      // onKeyDown={(e) => e.code === 'Enter' && submit()}
       inputRef={inputRef}
       startAdornment={
         <TagSelect handleUpdate={setTags} {...{ tags, options, multiple }} />
