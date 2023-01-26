@@ -18,10 +18,10 @@ export default function RecordHeaderButton({
 }: Props) {
   return (
     <Tooltip title={title} placement="bottom-end" {...tooltipProps}>
-      {/* Tooltip can't have its direct child be disabled so add in a buffer Fragment */}
-      <>
+      {/* Tooltip can't have its direct child be disabled so add in a buffer. Note a react Fragment won't work. */}
+      <span>
         <IconButton {...iconButtonProps}>{children}</IconButton>
-      </>
+      </span>
     </Tooltip>
   )
 }
