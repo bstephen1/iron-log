@@ -17,10 +17,24 @@ export default function SessionDatePicker(props: Props) {
   const [date, setDate] = useState(props.date)
   const [month, setMonth] = useState(props.date)
   const router = useRef(useRouter())
-  const { sessionLogsIndex, isLoading } = useSessionLogs({
-    start: month?.startOf('month').format(DATE_FORMAT),
-    end: month?.endOf('month').format(DATE_FORMAT),
+  const buildSessionLogQuery = (relativeMonth: number) => ({
+    limit: 0,
+    start: month
+      ?.startOf('month')
+      .add(relativeMonth, 'month')
+      .format(DATE_FORMAT),
+    end: month?.endOf('month').add(relativeMonth, 'month').format(DATE_FORMAT),
   })
+
+  const { sessionLogsIndex, isLoading } = useSessionLogs(
+    buildSessionLogQuery(0)
+  )
+
+  // Query the adjacent months to store them in the cache.
+  // UseSwr's cache uses the api uri as the key, so we need to build the same query that the
+  // currently selected month will use instead of widening the range.
+  const _sessionLogsCachePrev = useSessionLogs(buildSessionLogQuery(-1))
+  const _sessionLogsCacheNext = useSessionLogs(buildSessionLogQuery(1))
 
   useEffect(() => {
     console.log(sessionLogsIndex)
@@ -44,12 +58,14 @@ export default function SessionDatePicker(props: Props) {
       loading={isLoading}
       renderLoading={() => <CalendarPickerSkeleton />}
       renderDay={(dayjs, _selectedDays, DayComponentProps) => {
-        const date = dayjs?.format(DATE_FORMAT) ?? ''
+        const day = dayjs?.format(DATE_FORMAT) ?? ''
         return (
           <Badge
-            key={date}
+            key={day}
             overlap="circular"
-            badgeContent={sessionLogsIndex[date] ? '🌚' : undefined}
+            variant="dot"
+            color="secondary"
+            invisible={!sessionLogsIndex[day]}
           >
             <PickersDay {...DayComponentProps} />
           </Badge>

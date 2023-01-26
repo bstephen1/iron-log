@@ -33,7 +33,7 @@ export function useSessionLog(date: Dayjs) {
 
 export function useSessionLogs({ limit, start, end }: DateRangeQuery) {
   // this leaves extra chars but doesn't seem to affect the rest call
-  const paramString = `?${limit && 'limit=' + limit}&${
+  const paramString = `?${limit !== undefined && 'limit=' + limit}&${
     start && 'start=' + start
   }&${end && 'end=' + end}`
   const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
@@ -238,7 +238,7 @@ export function useBodyweightHistory({
   end = end ? addDay(end) : end
 
   // this leaves extra chars but doesn't seem to affect the rest call
-  const paramString = `?${limit && 'limit=' + limit}&${
+  const paramString = `?${limit !== undefined && 'limit=' + limit}&${
     start && 'start=' + start
   }&${end && 'end=' + end}&${type && 'type=' + type}`
   const { data, error, mutate } = useSWR<Bodyweight[]>(
