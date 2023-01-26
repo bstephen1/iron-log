@@ -1,37 +1,18 @@
 import { TextField } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { DatePicker } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
-import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
 import BodyweightInput from './BodyweightInput'
+import SessionDatePicker from './SessionDatePicker'
 
 interface Props {
   date?: Dayjs | null
 }
-export default function TitleBar(props: Props) {
-  const [date, setDate] = useState(props.date)
-  const router = useRef(useRouter())
-
-  useEffect(() => {
-    if (date?.isValid()) {
-      // can either useRef here or add router to dep array
-      // not sure which is better. I don't know why router would ever change value
-      router.current.push(`/sessions/${date.format(DATE_FORMAT)}`)
-    }
-  }, [date])
-
+export default function TitleBar({ date }: Props) {
   return (
     <Grid container spacing={2}>
       {/* todo: change this to a data type which is user defined per program, or freestyle/unstructured type*/}
       <Grid xs={12} sm={4}>
-        <DatePicker
-          label="Date"
-          value={date}
-          onChange={(newDate) => setDate(newDate)}
-          renderInput={(params) => <TextField {...params} fullWidth />}
-        />
+        <SessionDatePicker date={date} />
       </Grid>
       <Grid xs={12} sm={4}>
         <TextField label="Session Type" fullWidth />

@@ -34,3 +34,20 @@ export interface AutocompletePropsAny
 /**  memoize mapping out the names so the mapping doesn't run every render */
 export const useNames = (entities?: NamedObject[]) =>
   useMemo(() => entities?.map((entity) => entity.name) || [], [entities])
+
+/** Takes an array of objects which each have a given index field and converts them to an object of objects indexed by the given field.
+ * Index field values must be strings
+ *
+ * eg, indexing on _id: [{_id: '1', data: 'a'}] => {'1': {_id: '1', data: 'a'}}
+ */
+export const arrayToIndex = <T extends Object>(index: keyof T, arr?: T[]) => {
+  const map = {} as { [key: string]: T }
+  arr?.map((cur) => {
+    if (typeof cur[index] !== 'string') {
+      throw new Error('Index field must be string')
+    }
+
+    map[cur[index] as string] = cur
+  })
+  return map
+}

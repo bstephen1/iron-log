@@ -6,8 +6,10 @@ import Exercise from '../../models/Exercise'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Modifier from '../../models/Modifier'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
+import { arrayToIndex } from '../util'
 import { DATE_FORMAT } from './constants'
 
 // Note: make sure any fetch() functions actually return after the fetch!
@@ -24,6 +26,24 @@ export function useSessionLog(date: Dayjs) {
 
   return {
     sessionLog: data,
+    isError: error,
+    mutate: mutate,
+  }
+}
+
+export function useSessionLogs({ limit, start, end }: DateRangeQuery) {
+  // this leaves extra chars but doesn't seem to affect the rest call
+  const paramString = `?${limit !== undefined && 'limit=' + limit}&${
+    start && 'start=' + start
+  }&${end && 'end=' + end}`
+  const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
+    URI_SESSIONS + paramString
+  )
+
+  return {
+    sessionLogs: data,
+    sessionLogsIndex: arrayToIndex<SessionLog>('date', data),
+    isLoading,
     isError: error,
     mutate: mutate,
   }
@@ -218,7 +238,7 @@ export function useBodyweightHistory({
   end = end ? addDay(end) : end
 
   // this leaves extra chars but doesn't seem to affect the rest call
-  const paramString = `?${limit && 'limit=' + limit}&${
+  const paramString = `?${limit !== undefined && 'limit=' + limit}&${
     start && 'start=' + start
   }&${end && 'end=' + end}&${type && 'type=' + type}`
   const { data, error, mutate } = useSWR<Bodyweight[]>(
