@@ -36,22 +36,18 @@ export const useNames = (entities?: NamedObject[]) =>
   useMemo(() => entities?.map((entity) => entity.name) || [], [entities])
 
 /** Takes an array of objects which each have a given index field and converts them to an object of objects indexed by the given field.
- * eg, indexing on _id: [{_id: 1, data: 'a'}] => {1: {_id: 1, data: 'a'}}
+ * Index field values must be strings
+ *
+ * eg, indexing on _id: [{_id: '1', data: 'a'}] => {'1': {_id: '1', data: 'a'}}
  */
-export const arrayToIndex = <T extends Object>(index: keyof T, arr?: T[]) =>
-  arr
-    ? arr.reduce(
-        (prev, cur) => {
-          // assign directly instead of spreading each iteration
-          prev[cur[index]] = cur
-          return prev
-        },
-        {} as any // { [index]: T }
-      )
-    : []
+export const arrayToIndex = <T extends Object>(index: keyof T, arr?: T[]) => {
+  const map = {} as { [key: string]: T }
+  arr?.map((cur) => {
+    if (typeof cur[index] !== 'string') {
+      throw new Error('Index field must be string')
+    }
 
-// export const arrayToIndex = <T extends Object>(index: keyof T, arr?: T[]) => {
-//   const map = {} as { [index]: T }
-//   arr?.map((cur) => map[cur[index]] = cur)
-//   return map
-// }
+    map[cur[index] as string] = cur
+  })
+  return map
+}
