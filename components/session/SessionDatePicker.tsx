@@ -39,10 +39,6 @@ export default function SessionDatePicker(props: Props) {
   const _sessionLogsCacheNext = useSessionLogs(buildSessionLogQuery(1))
 
   useEffect(() => {
-    console.log(sessionLogsIndex)
-  }, [sessionLogsIndex])
-
-  useEffect(() => {
     if (date?.isValid()) {
       // can either useRef here or add router to dep array
       // not sure which is better. I don't know why router would ever change value

@@ -26,6 +26,16 @@ export default function SetInput({
     return <></>
   }
 
+  const convertValueToNumber = (value: string) => {
+    value = value.trim()
+    // have to explicitly handle an empty string because isNaN treats it as zero
+    if (!value) {
+      return undefined
+    }
+    // for some reason isNaN is requiring a number even though it casts to a number
+    return isNaN(Number(value)) ? undefined : Number(value)
+  }
+
   return (
     <Stack
       direction="row"
@@ -44,14 +54,11 @@ export default function SetInput({
           {/* todo: store each field's delimiter and pull that here? */}
           {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
           <NumericFieldAutosave
-            // todo: these are being stored as numbers, but an html input is a string...so have to convert? Store as strings on the front end?
-            initialValue={String(set[field])}
+            initialValue={String(set[field] ?? '')}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
-              // todo: somewhere this is causing "the specified value undefined cannot be parsed" warning. Still there when removing Number() cast
-              // also Number() changes undefined to zero
               handleSubmit({
-                [field]: Number(value),
+                [field]: convertValueToNumber(value),
               })
             }
             sx={{ flexGrow: 1 }}
