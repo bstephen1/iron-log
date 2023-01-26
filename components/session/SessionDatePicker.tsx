@@ -26,6 +26,8 @@ export default function SessionDatePicker(props: Props) {
     end: month?.endOf('month').add(relativeMonth, 'month').format(DATE_FORMAT),
   })
 
+  // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
+
   const { sessionLogsIndex, isLoading } = useSessionLogs(
     buildSessionLogQuery(0)
   )
