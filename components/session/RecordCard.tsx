@@ -40,15 +40,15 @@ import SetInput from './SetInput'
 
 interface Props {
   id: Record['_id']
-  deleteRecord: (id: string) => void
-  swapRecords: (i: number, j: number) => void
-  index: number
+  deleteRecord: (id: string) => Promise<void>
+  swapRecords: (i: number, j: number) => Promise<void>
+  swiperIndex: number
 }
 export default function RecordCard({
   id,
   deleteRecord,
   swapRecords,
-  index,
+  swiperIndex,
 }: Props) {
   const swiper = useSwiper()
   // this hook needs to be called for useSwiper() to update the activeIndex, but is otherwise unused
@@ -68,7 +68,7 @@ export default function RecordCard({
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
-          title={`Record ${index + 1}`}
+          title={`Record ${swiperIndex + 1}`}
           titleTypographyProps={{ variant: 'h6' }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
@@ -82,7 +82,7 @@ export default function RecordCard({
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
-          title={`Record ${index + 1}`}
+          title={`Record ${swiperIndex + 1}`}
           titleTypographyProps={{ variant: 'h6' }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
@@ -102,7 +102,7 @@ export default function RecordCard({
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
-          title={`Record ${index + 1}`}
+          title={`Record ${swiperIndex + 1}`}
           titleTypographyProps={{ variant: 'h6' }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
@@ -151,13 +151,13 @@ export default function RecordCard({
     mutateRecord({ ...record, sets: newSets })
   }
 
-  const handleDeleteRecord = () => {
-    deleteRecord(id)
+  const handleDeleteRecord = async () => {
+    await deleteRecord(id)
     swiper.update() // have to update swiper whenever changing swiper elements
   }
 
-  const handleSwapRecords = (i: number, j: number) => {
-    swapRecords(i, j)
+  const handleSwapRecords = async (i: number, j: number) => {
+    await swapRecords(i, j)
     swiper.update()
     // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
     swiper.slideTo(j, 0)
@@ -186,15 +186,15 @@ export default function RecordCard({
   return (
     <Card elevation={3} sx={{ px: 1 }}>
       <CardHeader
-        title={`Record ${index + 1}`}
+        title={`Record ${swiperIndex + 1}`}
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <>
             <RecordHeaderButton
               title="Move current record to the left"
               className={noSwipingAboveSm}
-              disabled={swiper.isBeginning}
-              onClick={() => handleSwapRecords(index, index - 1)}
+              disabled={!swiperIndex}
+              onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
             >
               <KeyboardDoubleArrowLeft />
             </RecordHeaderButton>
@@ -202,8 +202,8 @@ export default function RecordCard({
               title="Move current record to the right"
               className={noSwipingAboveSm}
               // disable on the penultimate slide because the last is the "add record" button
-              disabled={swiper.activeIndex >= swiper.slides?.length - 2}
-              onClick={() => handleSwapRecords(index, index + 1)}
+              disabled={swiperIndex >= swiper.slides?.length - 2}
+              onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
             >
               <KeyboardDoubleArrowRight />
             </RecordHeaderButton>
