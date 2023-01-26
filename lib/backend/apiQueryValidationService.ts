@@ -4,6 +4,7 @@ import { WeighInType } from '../../models/Bodyweight'
 import { ExerciseStatus } from '../../models/ExerciseStatus'
 import { ModifierStatus } from '../../models/ModifierStatus'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import ExerciseQuery from '../../models/query-filters/ExerciseQuery'
 import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import RecordQuery from '../../models/query-filters/RecordQuery'
@@ -16,9 +17,10 @@ export type ApiQuery = { [param: string]: ApiParam }
 // It could be debated whether to be permissive of unsupported params.
 // For now we are just ignoring them since it probably won't matter for our use case.
 // See: https://softwareengineering.stackexchange.com/questions/311484/should-i-be-permissive-of-unknown-parameters
+
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
-  const query = {} as BodyweightQuery
+export function buildDateRangeQuery({ limit, start, end }: ApiQuery) {
+  const query = {} as DateRangeQuery
 
   // only add the defined params to the query
   if (limit) {
@@ -30,6 +32,14 @@ export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
   if (end) {
     query.end = valiDate(end)
   }
+
+  return query
+}
+
+/** Build and validate a query to send to the db from the rest param input. */
+export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
+  const query = buildDateRangeQuery({ limit, start, end }) as BodyweightQuery
+
   if (type) {
     if (
       !(typeof type === 'string' && ['official', 'unofficial'].includes(type))

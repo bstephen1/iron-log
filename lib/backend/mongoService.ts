@@ -42,6 +42,28 @@ export async function fetchSession(userId: ObjectId, date: string) {
   )) as SessionLog
 }
 
+/** The default start/end values compare against the first char of the date (ie, the first digit of the year).
+ *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
+ */
+export async function fetchSessions(
+  userId: ObjectId,
+  limit?: number,
+  /** YYYY-MM-DD */
+  start = '0',
+  /** YYYY-MM-DD */
+  end = '9'
+) {
+  // -1 sorts most recent first
+  return await sessions
+    .find(
+      { userId, date: { $gte: start, $lte: end } },
+      { projection: { userId: 0 } }
+    )
+    .sort({ date: -1 })
+    .limit(limit ?? 50)
+    .toArray()
+}
+
 export async function updateSession(userId: ObjectId, sessionLog: SessionLog) {
   return await sessions.replaceOne(
     { userId, date: sessionLog.date },
