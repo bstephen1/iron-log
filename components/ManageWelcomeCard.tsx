@@ -5,12 +5,16 @@ export default function ManageWelcomeCard() {
     <Stack spacing={2} sx={{ textAlign: 'center' }}>
       <Typography variant="h5">Manage Exercises</Typography>
       <Typography variant="body2">
-        Select an exercise in the dropdown to edit its values. Or, type in a new
-        exercise to create it.
+        Here you can edit your bank of available exercises and their categories
+        / modifiers.
       </Typography>
       <Typography variant="body2">
-        Any edits to the "name" field must be manually confirmed. All other
-        edits are saved automatically.
+        Select an item in the dropdown to edit its values. Or, type in something
+        new to create it.
+      </Typography>
+      <Typography variant="body2">
+        Any edits to "name" fields must be manually confirmed. All other edits
+        are saved automatically.
       </Typography>
     </Stack>
   )
