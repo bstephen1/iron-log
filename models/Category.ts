@@ -1,7 +1,8 @@
-import { NamedObject } from './NamedObject'
+import { SelectorBaseOption } from './SelectorBaseOption'
+import { Status } from './Status'
 
-export default class Category extends NamedObject {
-  constructor(public name: string) {
-    super(name)
+export default class Category extends SelectorBaseOption {
+  constructor(public name: string, public status: Status = Status.active) {
+    super(name, status)
   }
 }
