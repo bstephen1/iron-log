@@ -3,12 +3,12 @@ import useSWR from 'swr'
 import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Modifier from '../../models/Modifier'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
+import { Status } from '../../models/Status'
 import { arrayToIndex } from '../util'
 import { DATE_FORMAT } from './constants'
 
@@ -106,7 +106,7 @@ export async function updateRecordFields(
 //----------
 
 // todo: make params more robust
-export function useExercises({ status }: { status?: ExerciseStatus } = {}) {
+export function useExercises({ status }: { status?: Status } = {}) {
   const params = status ? '?status=' + status : ''
 
   const { data, error, mutate } = useSWR<Exercise[]>(URI_EXERCISES + params)

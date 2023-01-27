@@ -1,5 +1,5 @@
 import { Pool } from 'pg'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
+import { Status } from '../../models/Status'
 
 // pool handles managing the client connections
 const pool = new Pool()
@@ -24,7 +24,7 @@ export async function fetchExercises() {
 }
 
 export async function fetchExercisesWithStatus(status: string) {
-  if (!Object.values(ExerciseStatus).includes(status as ExerciseStatus)) {
+  if (!Object.values(Status).includes(status as Status)) {
     console.warn('invalid status: ' + status)
     return []
   }

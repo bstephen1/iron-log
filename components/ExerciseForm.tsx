@@ -7,7 +7,7 @@ import {
 } from '../lib/frontend/restService'
 import { useNames } from '../lib/util'
 import Exercise from '../models/Exercise'
-import { ExerciseStatus } from '../models/ExerciseStatus'
+import { Status } from '../models/Status'
 import { ComboBoxField } from './form-fields/ComboBoxField'
 import InputField from './form-fields/InputField'
 import NotesList from './form-fields/NotesList'
@@ -68,7 +68,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       <Grid xs={12} sm={6}>
         <SelectFieldAutosave
           label="Status"
-          options={Object.values(ExerciseStatus)}
+          options={Object.values(Status)}
           initialValue={exercise.status}
           required
           fullWidth

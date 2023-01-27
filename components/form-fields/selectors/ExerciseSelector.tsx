@@ -4,8 +4,8 @@ import { KeyedMutator } from 'swr'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
 import { GenericAutocompleteProps, useNames } from '../../../lib/util'
 import Exercise from '../../../models/Exercise'
-import { ExerciseStatusOrder } from '../../../models/ExerciseStatus'
 import { NamedStub } from '../../../models/NamedObject'
+import { StatusOrder } from '../../../models/Status'
 import CategoryFilter from '../../CategoryFilter'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
@@ -70,8 +70,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         mutateOptions={mutate}
         options={
           exercises?.sort(
-            (a, b) =>
-              ExerciseStatusOrder[a.status] - ExerciseStatusOrder[b.status]
+            (a, b) => StatusOrder[a.status] - StatusOrder[b.status]
           ) || []
         }
         label="Exercise"

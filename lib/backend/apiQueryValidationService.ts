@@ -1,13 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
 import { ApiError } from 'next/dist/server/api-utils'
 import { WeighInType } from '../../models/Bodyweight'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
-import { ModifierStatus } from '../../models/ModifierStatus'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import ExerciseQuery from '../../models/query-filters/ExerciseQuery'
 import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import RecordQuery from '../../models/query-filters/RecordQuery'
+import { Status } from '../../models/Status'
 import { validDateStringRegex } from '../frontend/constants'
 import { isValidId } from '../util'
 
@@ -78,16 +77,7 @@ export function buildExerciseQuery({ status, name, category }: ApiQuery) {
 
   // only add the defined params to the query
   if (status) {
-    if (
-      !(
-        typeof status === 'string' &&
-        Object.values(ExerciseStatus).includes(status as ExerciseStatus)
-      )
-    ) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid exercise status.')
-    }
-
-    query.status = status as ExerciseStatus
+    query.status = validateStatus(status)
   }
   if (name) {
     query.name = validateName(name)
@@ -111,17 +101,7 @@ export function buildModifierQuery({ status }: ApiQuery) {
   const query = {} as ModifierQuery
 
   if (status) {
-    if (
-      !(
-        typeof status === 'string' &&
-        Object.values(ModifierStatus).includes(status as ModifierStatus)
-      )
-    ) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid modifier status.')
-    }
-
-    // aparrently ts isn't smart enough to see the ModifierStatus guard above
-    query.status = status as ModifierStatus
+    query.status = validateStatus(status)
   }
 
   return query
@@ -141,6 +121,19 @@ export function valiDate(param: ApiParam) {
 
 export function validateName(param: ApiParam) {
   return validateString(param, 'Name')
+}
+
+export function validateStatus(param: ApiParam) {
+  if (
+    !(
+      typeof param === 'string' &&
+      Object.values(Status).includes(param as Status)
+    )
+  ) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid modifier status.')
+  }
+
+  return param as Status
 }
 
 export function validateString(

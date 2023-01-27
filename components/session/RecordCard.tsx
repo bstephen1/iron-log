@@ -26,10 +26,10 @@ import {
   useRecord,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
 import Note from '../../models/Note'
 import Record from '../../models/Record'
 import Set from '../../models/Set'
+import { Status } from '../../models/Status'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../StyledDivider'
@@ -59,7 +59,7 @@ export default function RecordCard({
     : ''
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
-    status: ExerciseStatus.ACTIVE,
+    status: Status.active,
   })
 
   // error / loading states repeat a bit of styling from the live record card.
