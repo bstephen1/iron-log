@@ -118,8 +118,11 @@ export function useExercises({ status }: { status?: ExerciseStatus } = {}) {
   }
 }
 
-export function useExercise(id: Exercise['_id']) {
-  const { data, error, mutate } = useSWR<Exercise>(URI_EXERCISES + id)
+export function useExercise(id: string | null) {
+  // passing null to useSWR disables fetching
+  const { data, error, mutate } = useSWR<Exercise>(
+    id ? URI_EXERCISES + id : null
+  )
 
   return {
     exercise: data,

@@ -60,6 +60,7 @@ export default function SelectorBase<C extends NamedObject>({
       autoHighlight // todo: this sometimes pops up over Category selector for Exercises
       options={options || []}
       // value={value} // todo: this is just undefined currently. Probably will hash out when typing
+      // todo: this throws a warning when updating names.... but can't use _id, that's the whole point of namedStubs! Or should the stubs actually generate ids...?
       isOptionEqualToValue={(a, b) => a.name === b.name}
       getOptionLabel={(option) => option.name}
       onChange={async (_, option) => {

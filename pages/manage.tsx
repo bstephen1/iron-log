@@ -22,9 +22,9 @@ import Exercise from '../models/Exercise'
 import Modifier from '../models/Modifier'
 
 // todo: ui element showing "changes saved". Snackbar?
-// todo: add/delete exercise. Delete only for unused exercises?
+// todo: delete exercise. Delete only for unused exercises?
 export default function ManagePage() {
-  const { exercises, mutate: mutateExercises } = useExercises({})
+  const { exercises, mutate: mutateExercises } = useExercises()
   const { modifiers, mutate: mutateModifiers } = useModifiers()
   const { categories, mutate: mutateCategories } = useCategories()
   const [exercise, setExercise] = useState<Exercise | null>(null)
@@ -37,54 +37,49 @@ export default function ManagePage() {
     { label: 'Categories' },
   ]
 
-  // todo: move inside form, and only have a watcher here for new values
+  /** Trigger a data fetch for exercises, and refresh the currently selected exercise. */
+  const revalidateExercises = async () => {
+    const updatedExercises = await mutateExercises()
+    const updatedExercise =
+      updatedExercises?.find((cur) => cur._id === exercise?._id) || exercise
+    setExercise(updatedExercise)
+  }
+
   const handleUpdateExercise = async (updates: Partial<Exercise>) => {
     if (!exercise) return
 
     const newExercise = { ...exercise, ...updates }
     await updateExerciseFields(exercise, updates)
-    // todo: not sure I like this... can we just mutate the selected exercise?
-    const newExercises = exercises?.map((exercise) =>
-      exercise._id === newExercise._id ? newExercise : exercise
-    )
-    mutateExercises(newExercises)
+
     setExercise(newExercise)
+    // mark exercises as stale and trigger revalidation
+    mutateExercises()
   }
 
-  // todo: after updating modifier, have to update exercise
   const handleModifierUpdate = async (updates: Partial<Modifier>) => {
     if (!modifier) return
 
-    // todo: mutate exercise to display new modifier name without having to reload page or swap exercises
-    // if (exercise && updates.name) {
-    //   const typescriptIsStupid = updates.name
-    //   const newExercise = { ...exercise }
-    //   newExercise.modifiers = newExercise.modifiers.map(name => name === modifier.name ? typescriptIsStupid : name)
-    //   newExercise.notes = newExercise.notes.map(note => note.tags = note.tags.map(tag => tag === modifier.name ? typescriptIsStupid : tag))
-    //   console.log(newExercise);
-    //   setExercise(newExercise)
-    // }
-
     const newModifier = { ...modifier, ...updates }
-    const newModifiers = modifiers?.map((modifier) =>
-      modifier._id === newModifier._id ? newModifier : modifier
-    )
     await updateModifierFields(modifier, updates)
-    mutateModifiers(newModifiers)
+
+    mutateModifiers()
     setModifier(newModifier)
-    // mutateExercises().then(() => setExercise(exercises?.find(revalidated => revalidated._id === exercise?._id) || null))
+
+    // exercises need to be updated if name was changed
+    !!updates.name && revalidateExercises()
   }
 
   const handleCategoryUpdate = async (updates: Partial<Category>) => {
     if (!category) return
 
     const newCategory = { ...category, ...updates }
-    const newCategories = categories?.map((category) =>
-      category._id === newCategory._id ? newCategory : category
-    )
     await updateCategoryFields(category, updates)
-    mutateCategories(newCategories)
+
+    mutateCategories()
     setCategory(newCategory)
+
+    // exercises need to be updated if name was changed
+    !!updates.name && revalidateExercises()
   }
 
   const renderForm = () => {
@@ -110,7 +105,6 @@ export default function ManagePage() {
     }
   }
 
-  // todo: names should be case insensitive. 'Squats' === 'squats'
   return (
     <Container maxWidth="md">
       <Grid container spacing={2}>
