@@ -6,12 +6,9 @@ export enum Status {
   active = 'Active',
   /** Archived records only appear in the manage screen. */
   archived = 'Archived',
-  /** Only used by SelectorBase for temp records that have not yet been saved to the db.   */
-  new = 'Add New',
 }
 
 export const StatusOrder = {
   [Status.active]: 1,
   [Status.archived]: 2,
-  [Status.new]: 3,
 }
