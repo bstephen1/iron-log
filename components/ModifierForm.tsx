@@ -11,7 +11,7 @@ interface Props {
   handleUpdate: (updates: Partial<Modifier>) => void
 }
 export default function ModifierForm({ modifier, handleUpdate }: Props) {
-  const { exercises } = useExercises({})
+  const { exercises } = useExercises()
 
   const exerciseNames = useMemo(
     () => exercises?.map((exercise) => exercise.name) || [],

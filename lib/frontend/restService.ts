@@ -106,7 +106,7 @@ export async function updateRecordFields(
 //----------
 
 // todo: make params more robust
-export function useExercises({ status }: { status?: ExerciseStatus }) {
+export function useExercises({ status }: { status?: ExerciseStatus } = {}) {
   const params = status ? '?status=' + status : ''
 
   const { data, error, mutate } = useSWR<Exercise[]>(URI_EXERCISES + params)

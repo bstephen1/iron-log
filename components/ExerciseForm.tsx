@@ -20,7 +20,7 @@ interface Props {
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifiers } = useModifiers()
   const { categories } = useCategories()
-  const { exercises } = useExercises({})
+  const { exercises } = useExercises()
 
   const modifierNames = useNames(modifiers)
   const exerciseNames = useNames(exercises)
