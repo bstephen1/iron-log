@@ -86,7 +86,9 @@ export default function SelectorBase<C extends NamedObject>({
         }
 
         // append the "add new" Stub end of list
-        const isExisting = options.some((option) => inputValue === option.name)
+        const isExisting = options.some(
+          (option) => inputValue.toLowerCase() === option.name.toLowerCase()
+        )
         if (inputValue && !isExisting) {
           filtered.push(new StubConstructor(inputValue))
         }
