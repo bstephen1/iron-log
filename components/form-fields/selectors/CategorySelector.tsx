@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
 import { addCategory } from '../../../lib/frontend/restService'
 import Category from '../../../models/Category'
-import { NamedStub } from '../../../models/NamedObject'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
 
@@ -19,10 +18,6 @@ function withCategory(Component: typeof SelectorBase<Category>) {
     mutate,
     ...props
   }: WithCategoryProps) {
-    class NewCategoryStub implements NamedStub {
-      constructor(public name: string, public status = 'Add New') {}
-    }
-
     return (
       <Component
         {...props}
@@ -30,14 +25,7 @@ function withCategory(Component: typeof SelectorBase<Category>) {
         mutateOptions={mutate}
         value={category}
         label="Category"
-        // todo: this is pretty slapdash
-        groupBy={(option: Category | NewCategoryStub) =>
-          (option as NewCategoryStub).status
-            ? (option as NewCategoryStub).status
-            : 'Category'
-        }
         placeholder="Select or Add New Category"
-        StubConstructor={NewCategoryStub}
         Constructor={Category}
         addNewItem={addCategory}
       />

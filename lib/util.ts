@@ -1,7 +1,7 @@
 import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
 import { useMemo } from 'react'
 import { v4 as uuid, validate, version } from 'uuid'
-import { NamedObject } from '../models/NamedObject'
+import { SelectorBaseOption } from '../models/SelectorBaseOption'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -32,7 +32,7 @@ export interface AutocompletePropsAny
   > {}
 
 /**  memoize mapping out the names so the mapping doesn't run every render */
-export const useNames = (entities?: NamedObject[]) =>
+export const useNames = (entities?: SelectorBaseOption[]) =>
   useMemo(() => entities?.map((entity) => entity.name) || [], [entities])
 
 /** Takes an array of objects which each have a given index field and converts them to an object of objects indexed by the given field.

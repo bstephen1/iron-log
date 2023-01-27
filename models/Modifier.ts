@@ -1,15 +1,15 @@
-import { ModifierStatus } from './ModifierStatus'
-import { NamedObject } from './NamedObject'
+import { SelectorBaseOption } from './SelectorBaseOption'
+import { Status } from './Status'
 
 // todo: instead of status, how about group? Eg, group == "grip width", containing wide and narrow.
 // And groups can have a validation restraint that only 1 element of the same group can be selected
-export default class Modifier extends NamedObject {
+export default class Modifier extends SelectorBaseOption {
   constructor(
     public name: string,
-    public status = ModifierStatus.ACTIVE,
+    public status = Status.active,
     public weight = 0,
     public canDelete = true
   ) {
-    super(name)
+    super(name, status)
   }
 }

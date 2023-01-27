@@ -1,10 +1,10 @@
 import { Button, Paper, Stack } from '@mui/material'
 import { useState } from 'react'
+import { useSwiper } from 'swiper/react'
 import { useExercises } from '../../lib/frontend/restService'
 import Exercise from '../../models/Exercise'
-import { ExerciseStatus } from '../../models/ExerciseStatus'
+import { Status } from '../../models/Status'
 import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
-import { useSwiper } from 'swiper/react'
 
 interface Props {
   handleAdd: (exercise: Exercise) => void
@@ -13,7 +13,7 @@ export default function AddRecord(props: Props) {
   const swiper = useSwiper()
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const { exercises, mutate: mutateExercises } = useExercises({
-    status: ExerciseStatus.ACTIVE,
+    status: Status.active,
   })
 
   const handleAdd = () => {

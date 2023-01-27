@@ -1,7 +1,7 @@
-import { ExerciseStatus } from '../ExerciseStatus'
+import { Status } from '../Status'
 
 export default interface ExerciseQuery {
-  status?: ExerciseStatus
+  status?: Status
   /** Note: the api param is "category" because when filtering only one category is supported.
    * But the query must stay as "categories" to match Exercise objects.
    */

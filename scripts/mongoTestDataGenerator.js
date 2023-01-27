@@ -13,7 +13,7 @@ const dummyUserId2 = new ObjectId('1234567890CC')
 class Exercise {
   constructor(
     name,
-    status = 'active',
+    status = 'Active',
     notes = [],
     categories = [],
     modifiers = [],
@@ -33,8 +33,8 @@ function addModifier(name, status, canDelete, userId = dummyUserId) {
   return { name, status, canDelete, _id: randomUUID(), userId }
 }
 
-function addCategory(name, userId = dummyUserId) {
-  return { name, _id: randomUUID(), userId }
+function addCategory(name, status = 'Active', userId = dummyUserId) {
+  return { name, status, _id: randomUUID(), userId }
 }
 
 function addNote(value = '', tags = []) {
@@ -93,42 +93,42 @@ let categories = [
 ]
 
 let modifiers = [
-  addModifier('belt', 'active', true),
-  addModifier('band', 'archived', true),
-  addModifier('pause', 'active', true),
-  addModifier('flared', 'active', true),
-  addModifier('tucked', 'active', true),
-  addModifier('wide', 'active', true),
-  addModifier('narrow', 'active', true),
-  addModifier('wraps', 'active', true),
-  addModifier('middle', 'active', true),
-  addModifier('barbell', 'active', true),
-  addModifier('unilateral left', 'active', true),
-  addModifier('unilateral right', 'active', true),
-  addModifier('AMRAP', 'active', true),
-  addModifier('myo', 'active', true),
-  addModifier('bodyweight', 'active', false),
+  addModifier('belt', 'Active', true),
+  addModifier('band', 'Archived', true),
+  addModifier('pause', 'Active', true),
+  addModifier('flared', 'Active', true),
+  addModifier('tucked', 'Active', true),
+  addModifier('wide', 'Active', true),
+  addModifier('narrow', 'Active', true),
+  addModifier('wraps', 'Active', true),
+  addModifier('middle', 'Active', true),
+  addModifier('barbell', 'Active', true),
+  addModifier('unilateral left', 'Active', true),
+  addModifier('unilateral right', 'Active', true),
+  addModifier('AMRAP', 'Active', true),
+  addModifier('myo', 'Active', true),
+  addModifier('bodyweight', 'Active', false),
   // todo: rep goal / marathon
 ]
 
 let exercises = [
   new Exercise(
     'high bar squats',
-    'active',
+    'Active',
     [addNote('knees up'), addNote('chest up')],
     ['squat'],
     ['belt', 'band']
   ),
   new Exercise(
     'curls',
-    'active',
+    'Active',
     [addNote('twist in', ['barbell'])],
     ['biceps'],
     ['bodyweight', 'unilateral left', 'unilateral right', 'barbell']
   ),
   new Exercise(
     'multi grip bench press',
-    'active',
+    'Active',
     [
       addNote('great triceps', ['tucked', 'middle']),
       addNote('great chest', ['flared', 'narrow']),
@@ -138,13 +138,13 @@ let exercises = [
   ),
   new Exercise(
     'zercher squat',
-    'archived',
+    'Archived',
     [addNote('pain')],
     ['squat'],
     ['AMRAP']
   ),
-  new Exercise('running', 'active', [], ['cardio'], []),
-  new Exercise('yoke', 'active', [], ['strongman'], []),
+  new Exercise('running', 'Active', [], ['cardio'], []),
+  new Exercise('yoke', 'Active', [], ['strongman'], []),
 ]
 
 let sets1 = [addSet(100, 5, 8), addSet(110, 5, 9), addSet(120, 5, 10)]

@@ -11,7 +11,7 @@ interface Props {
   handleUpdate: (updates: Partial<Category>) => void
 }
 export default function CategoryForm({ category, handleUpdate }: Props) {
-  const { exercises } = useExercises({})
+  const { exercises } = useExercises()
 
   const exerciseNames = useMemo(
     () => exercises?.map((exercise) => exercise.name) || [],

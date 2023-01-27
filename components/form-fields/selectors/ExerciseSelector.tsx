@@ -2,16 +2,13 @@ import { TextFieldProps } from '@mui/material'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
-import { GenericAutocompleteProps, useNames } from '../../../lib/util'
+import { useNames } from '../../../lib/util'
 import Exercise from '../../../models/Exercise'
-import { ExerciseStatusOrder } from '../../../models/ExerciseStatus'
-import { NamedStub } from '../../../models/NamedObject'
 import CategoryFilter from '../../CategoryFilter'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
 
-interface WithExerciseProps
-  extends Partial<GenericAutocompleteProps<Exercise | NamedStub>> {
+interface WithExerciseProps {
   exercise: Exercise | null
   handleChange: (value: Exercise | null) => void
   exercises: Exercise[] | undefined
@@ -36,7 +33,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
       initialCategoryFilter
     )
 
-    const handleFilterChange = (filtered: (Exercise | NamedStub)[]) => {
+    const handleFilterChange = (filtered: Exercise[]) => {
       // if a category is selected and the existing exercise is not in that category, erase the input value.
       if (exercise && !filtered.some((item) => item.name === exercise.name)) {
         // This was causing a mysterious error for updating a component while
@@ -44,16 +41,6 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         // Not sure why but wrapping it in a setTimeout() fixes it.
         // See: https://stackoverflow.com/a/69236626
         setTimeout(() => props.handleChange(null), 0)
-      }
-    }
-
-    // temporarily store the current input in a stub and only create a true Exercise if the stub is selected
-    class ExerciseStub implements NamedStub {
-      name: string
-      status: string
-      constructor(name: string) {
-        this.name = name
-        this.status = 'Add New'
       }
     }
 
@@ -68,19 +55,12 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
         {...props}
         value={exercise || null} // need to reduce undefined | null to just null to avoid switching to uncontrolled
         mutateOptions={mutate}
-        options={
-          exercises?.sort(
-            (a, b) =>
-              ExerciseStatusOrder[a.status] - ExerciseStatusOrder[b.status]
-          ) || []
-        }
+        options={exercises}
         label="Exercise"
-        groupBy={(option) => option.status}
         placeholder="Select or Add New Exercise"
         filterCustom={filterCategories}
         handleFilterChange={handleFilterChange}
         adornmentOpen={filterOpen}
-        StubConstructor={ExerciseStub}
         Constructor={Exercise}
         addNewItem={addExercise}
         // inputRef={inputRef}
