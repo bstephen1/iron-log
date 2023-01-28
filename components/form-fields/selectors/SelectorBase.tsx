@@ -83,6 +83,7 @@ export default function SelectorBase<C extends SelectorBaseOption>({
     <Autocomplete<C | SelectorStub>
       renderInput={(params) => <TextField {...params} label={label} />}
       openOnFocus
+      fullWidth
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys

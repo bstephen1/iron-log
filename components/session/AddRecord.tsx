@@ -29,7 +29,6 @@ export default function AddRecord(props: Props) {
     <Paper elevation={3} sx={{ p: 2 }}>
       <Stack spacing={2} alignItems="center">
         <ExerciseSelector
-          fullWidth
           variant="standard"
           {...{
             exercise,
