@@ -3,6 +3,7 @@ import {
   CircularProgress,
   IconButton,
   Stack,
+  Typography,
   useTheme,
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
@@ -47,11 +48,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
   // SWR caches this, so it won't need to call the API every render
-  const { sessionLog, isError, mutate } = useSessionLog(date)
-  // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
-  // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
-  // so for now we just hide the add exercise button so the records don't pop in above it
-  const isLoading = sessionLog === undefined
+  const { sessionLog, isError, isLoading, mutate } = useSessionLog(date)
 
   // todo: this is a placeholder
   if (isError) {
@@ -172,7 +169,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                 el: '.pagination',
                 clickable: true,
                 // todo: numbered list? Make last one AddIcon ?
-                renderBullet: function (index, className) {
+                renderBullet: function (_index, className) {
                   return `<span class="${className}"></span>`
                 },
               }}
@@ -206,6 +203,10 @@ export default function SessionView({ date }: { date: Dayjs }) {
           </Stack>
         </Box>
       )}
+
+      <Typography variant="h5" textAlign="center">
+        History
+      </Typography>
     </Stack>
   )
 }

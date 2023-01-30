@@ -58,7 +58,7 @@ export function buildRecordQuery({ exercise, date }: ApiQuery) {
 
   // only add the defined params to the query
   if (exercise) {
-    query.exercise = { name: validateString(exercise, 'Exercise') }
+    query['exercise.name'] = validateString(exercise, 'Exercise')
   }
   if (date) {
     query.date = valiDate(date)

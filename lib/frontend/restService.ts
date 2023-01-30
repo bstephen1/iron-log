@@ -20,14 +20,15 @@ import { DATE_FORMAT } from './constants'
 //---------
 
 export function useSessionLog(date: Dayjs) {
-  const { data, error, mutate } = useSWR<SessionLog>(
+  const { data, error, isLoading, mutate } = useSWR<SessionLog>(
     URI_SESSIONS + date.format(DATE_FORMAT)
   )
 
   return {
     sessionLog: data,
     isError: error,
-    mutate: mutate,
+    isLoading,
+    mutate,
   }
 }
 
