@@ -33,9 +33,7 @@ export function useSessionLog(date: Dayjs) {
 
 export function useSessionLogs({ limit, start, end }: DateRangeQuery) {
   // this leaves extra chars but doesn't seem to affect the rest call
-  const paramString = `?${limit !== undefined && 'limit=' + limit}&${
-    start && 'start=' + start
-  }&${end && 'end=' + end}`
+  const paramString = buildQuery({ limit, start, end })
   const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
     URI_SESSIONS + paramString
   )
@@ -105,11 +103,12 @@ export async function updateRecordFields(
 // EXERCISE
 //----------
 
-// todo: make params more robust
 export function useExercises({ status }: { status?: Status } = {}) {
-  const params = status ? '?status=' + status : ''
+  const paramString = buildQuery({ status })
 
-  const { data, error, mutate } = useSWR<Exercise[]>(URI_EXERCISES + params)
+  const { data, error, mutate } = useSWR<Exercise[]>(
+    URI_EXERCISES + paramString
+  )
 
   return {
     exercises: data,
@@ -240,10 +239,7 @@ export function useBodyweightHistory({
   start = start ? addDay(start) : start
   end = end ? addDay(end) : end
 
-  // this leaves extra chars but doesn't seem to affect the rest call
-  const paramString = `?${limit !== undefined && 'limit=' + limit}&${
-    start && 'start=' + start
-  }&${end && 'end=' + end}&${type && 'type=' + type}`
+  const paramString = buildQuery({ limit, start, end, type })
   const { data, error, mutate } = useSWR<Bodyweight[]>(
     URI_BODYWEIGHT + paramString
   )
@@ -267,6 +263,21 @@ export async function updateBodyweight(newBodyweight: Bodyweight) {
     method: 'PUT',
     body: JSON.stringify(newBodyweight),
   }).catch((e) => console.error(e))
+}
+
+//-------------------
+// PRIVATE FUNCTIONS
+//-------------------
+
+function buildQuery(params: { [param: string]: string | number | undefined }) {
+  let query = '?'
+  Object.keys(params).forEach((key) => {
+    query =
+      params[key] !== undefined ? query.concat(`${key}=${params[key]}&`) : query
+  })
+
+  // remove trailing '&', and remove '?' if there are no params
+  return query === '?' ? '' : query.slice(0, -1)
 }
 
 //------

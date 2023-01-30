@@ -1,5 +1,5 @@
 import { Filter, ObjectId } from 'mongodb'
-import Bodyweight, { WeighInType } from '../../models/Bodyweight'
+import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
@@ -307,12 +307,12 @@ export async function fetchBodyweightHistory(
   start = '0',
   /** YYYY-MM-DD */
   end = '9',
-  type?: WeighInType
+  filters?: Filter<Bodyweight>
 ) {
   // -1 sorts most recent first
   return await bodyweightHistory
     .find(
-      { userId, type, dateTime: { $gte: start, $lte: end } },
+      { userId, dateTime: { $gte: start, $lte: end }, ...filters },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ dateTime: -1 })
