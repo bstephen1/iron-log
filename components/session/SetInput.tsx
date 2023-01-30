@@ -26,16 +26,6 @@ export default function SetInput({
     return <></>
   }
 
-  const convertValueToNumber = (value: string) => {
-    value = value.trim()
-    // have to explicitly handle an empty string because isNaN treats it as zero
-    if (!value) {
-      return undefined
-    }
-    // for some reason isNaN is requiring a number even though it casts to a number
-    return isNaN(Number(value)) ? undefined : Number(value)
-  }
-
   return (
     <Stack
       direction="row"
@@ -54,13 +44,18 @@ export default function SetInput({
           {/* todo: store each field's delimiter and pull that here? */}
           {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
           <NumericFieldAutosave
-            initialValue={String(set[field] ?? '')}
+            initialValue={set[field]}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
               handleSubmit({
-                [field]: convertValueToNumber(value),
+                [field]: value,
               })
             }
+            inputProps={{ style: { textAlign: 'center' } }}
+            InputProps={{
+              disableUnderline: true,
+              // endAdornment: <InputAdornment position="end">{units}</InputAdornment>,
+            }}
             sx={{ flexGrow: 1 }}
           />
         </Fragment>

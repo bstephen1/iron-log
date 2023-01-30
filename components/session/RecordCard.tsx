@@ -13,11 +13,11 @@ import {
   CardHeader,
   Fab,
   Skeleton,
+  Stack,
   Tooltip,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
@@ -241,41 +241,34 @@ export default function RecordCard({
         className={noSwipingAboveSm}
         sx={{ cursor: { sm: 'default' } }}
       >
-        <Grid container spacing={2}>
-          <Grid xs={12}>
-            <ExerciseSelector
-              variant="standard"
-              initialCategoryFilter={record.category}
-              handleCategoryFilterChange={(category) =>
-                handleFieldChange({ category })
-              }
-              {...{
-                exercise,
-                exercises,
-                handleChange: handleExerciseChange,
-                mutate: mutateExercises,
-              }}
-            />
-          </Grid>
-          <Grid xs={12}>
-            <ComboBoxField
-              label="Modifiers"
-              options={exercise?.modifiers}
-              initialValue={activeModifiers}
-              variant="standard"
-              handleSubmit={(value: string[]) =>
-                handleFieldChange({ activeModifiers: value })
-              }
-            />
-          </Grid>
-
-          <Grid xs={12}>
-            <SetHeader
-              initialSelected={fields}
-              handleSubmit={(fields) => handleFieldChange({ fields })}
-            />
-          </Grid>
-        </Grid>
+        <Stack spacing={2}>
+          <ExerciseSelector
+            variant="standard"
+            initialCategoryFilter={record.category}
+            handleCategoryFilterChange={(category) =>
+              handleFieldChange({ category })
+            }
+            {...{
+              exercise,
+              exercises,
+              handleChange: handleExerciseChange,
+              mutate: mutateExercises,
+            }}
+          />
+          <ComboBoxField
+            label="Modifiers"
+            options={exercise?.modifiers}
+            initialValue={activeModifiers}
+            variant="standard"
+            handleSubmit={(value: string[]) =>
+              handleFieldChange({ activeModifiers: value })
+            }
+          />
+          <SetHeader
+            initialSelected={fields}
+            handleSubmit={(fields) => handleFieldChange({ fields })}
+          />
+        </Stack>
 
         {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
         <Box sx={{ pb: 0 }}>
