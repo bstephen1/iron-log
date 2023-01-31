@@ -2,9 +2,14 @@ import { Status } from '../Status'
 
 export default interface ExerciseQuery {
   status?: Status
-  /** Note: the api param is "category" because when filtering only one category is supported.
-   * But the query must stay as "categories" to match Exercise objects.
+
+  /** Same as category. Queries for exercises with any one of the given categories. */
+  categories?: string[]
+  /** Same as "categories". Provided for convenience in the rest api.
+   *  "category" gets treated as and merged with "categories" on the backend.
+   *
+   * Queries for exercises with any one of the given categories.
    */
-  categories?: string
+  category?: string[]
   name?: string
 }

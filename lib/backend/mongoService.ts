@@ -18,9 +18,31 @@ const records = db.collection<WithUserId<Record>>('records')
 const bodyweightHistory =
   db.collection<WithUserId<Bodyweight>>('bodyweightHistory')
 
-interface updateFieldsProps<T extends { _id: string }> {
+interface UpdateFieldsProps<T extends { _id: string }> {
   id: T['_id']
   updates: Partial<T>
+}
+
+export interface FetchOptions {
+  /** Set to true to treat arrays as exact matches.
+   * Eg, [1,2,3] will only fetch records with that EXACT array.
+   * Default (false) will fetch records with at least one of the values in the array.
+   */
+  arrayExactMatch: boolean
+}
+
+/** wraps arrays in a filter with {$in}, so mongo will match on any one value in the array
+ * instead of an exact match.
+ */
+function addInToArrays(filter: Filter<any>) {
+  const newFilter = { ...filter }
+  Object.keys(newFilter).forEach((cur) => {
+    if (Array.isArray(newFilter[cur])) {
+      newFilter[cur] = { $in: newFilter[cur] }
+    }
+  })
+
+  return newFilter
 }
 
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
@@ -151,7 +173,7 @@ export async function updateRecord(userId: ObjectId, record: Record) {
 
 export async function updateRecordFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Record>
+  { id, updates }: UpdateFieldsProps<Record>
 ) {
   return await records.updateOne({ userId, _id: id }, { $set: updates })
 }
@@ -170,7 +192,17 @@ export async function addExercise(userId: ObjectId, exercise: Exercise) {
   return await exercises.insertOne({ ...exercise, userId })
 }
 
-export async function fetchExercises(filter?: Filter<Exercise>) {
+/** This fetch supports the array field "categories". By default, a query on categories
+ * will match records that contain any one of the given categories array.
+ */
+export async function fetchExercises(
+  filter?: Filter<Exercise>,
+  options?: FetchOptions
+) {
+  if (!options?.arrayExactMatch && filter) {
+    filter = addInToArrays(filter)
+  }
+
   return await exercises
     .find({ ...filter }, { projection: { userId: 0 } })
     .toArray()
@@ -193,7 +225,7 @@ export async function updateExercise(userId: ObjectId, exercise: Exercise) {
 
 export async function updateExerciseFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Exercise>
+  { id, updates }: UpdateFieldsProps<Exercise>
 ) {
   return await exercises.updateOne({ userId, _id: id }, { $set: updates })
 }
@@ -221,7 +253,7 @@ export async function fetchModifier(userId: ObjectId, name: string) {
 
 export async function updateModifierFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Modifier>
+  { id, updates }: UpdateFieldsProps<Modifier>
 ) {
   if (updates.name) {
     const oldModifier = await modifiers.find({ userId, _id: id }).next()
@@ -271,7 +303,7 @@ export async function fetchCategory(userId: ObjectId, name: string) {
 
 export async function updateCategoryFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Category>
+  { id, updates }: UpdateFieldsProps<Category>
 ) {
   // todo: should this be a transaction? Apparently that requires a cluster
   // can run single testing node as cluster with mongod --replset rs0

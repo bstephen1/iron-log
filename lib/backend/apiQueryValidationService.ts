@@ -17,6 +17,10 @@ export type ApiQuery = { [param: string]: ApiParam }
 // For now we are just ignoring them since it probably won't matter for our use case.
 // See: https://softwareengineering.stackexchange.com/questions/311484/should-i-be-permissive-of-unknown-parameters
 
+//------------------------
+// buildQuery() functions
+//------------------------
+
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildDateRangeQuery({ limit, start, end }: ApiQuery) {
   const query = {} as DateRangeQuery
@@ -69,11 +73,16 @@ export function buildRecordQuery({ exercise, date }: ApiQuery) {
 
 /** Build and validate a query to send to the db from the rest param input.
  *
- *  Note: the api param is "category" because when filtering only one category is supported.
- *  But the ExerciseQuery must convert this to "categories" to match Exercise objects.
+ *  Note: "category" and "categories" are treated as the same param, and are merged together.
  */
-export function buildExerciseQuery({ status, name, category }: ApiQuery) {
+export function buildExerciseQuery({
+  status,
+  name,
+  category,
+  categories,
+}: ApiQuery) {
   const query = {} as ExerciseQuery
+  let categoriesQuery: string[] = []
 
   // only add the defined params to the query
   if (status) {
@@ -83,11 +92,26 @@ export function buildExerciseQuery({ status, name, category }: ApiQuery) {
     query.name = validateName(name)
   }
   if (category) {
-    query.categories = validateString(category, 'Category')
+    categoriesQuery = categoriesQuery.concat(
+      validateStringArray(category, 'Category')
+    )
+  }
+  if (categories) {
+    categoriesQuery = categoriesQuery.concat(
+      validateStringArray(categories, 'Category')
+    )
+  }
+
+  if (categoriesQuery.length) {
+    query.categories = categoriesQuery
   }
 
   return query
 }
+
+//------------------------
+// validation functions
+//------------------------
 
 export function validateId(id: ApiParam) {
   if (!(typeof id === 'string' && isValidId(id))) {
@@ -136,7 +160,11 @@ export function validateStatus(param: ApiParam) {
   return param as Status
 }
 
-export function validateString(
+//-------------------
+// buildQuery() helper functions
+//-------------------
+
+function validateString(
   param: ApiParam,
   /** name of param, for error messages */ name: string
 ) {
@@ -146,7 +174,24 @@ export function validateString(
   return param
 }
 
-export function validateNumber(
+function validateStringArray(
+  param: ApiParam,
+  /** name of param, for error messages */ name: string
+) {
+  if (typeof param === 'string') {
+    return [param]
+  }
+  if (Array.isArray(param)) {
+    return param
+  }
+
+  throw new ApiError(
+    StatusCodes.BAD_REQUEST,
+    `${name} must be a string or array.`
+  )
+}
+
+function validateNumber(
   param: ApiParam,
   /** name of param, for error messages */ name: string
 ) {
