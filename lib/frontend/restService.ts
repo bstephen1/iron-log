@@ -7,7 +7,7 @@ import Modifier from '../../models/Modifier'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import ExerciseQuery from '../../models/query-filters/ExerciseQuery'
-import RecordQuery from '../../models/query-filters/RecordQuery'
+import { RecordQueryFrontend } from '../../models/query-filters/RecordQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { arrayToIndex } from '../util'
@@ -83,13 +83,14 @@ export function useRecord(id: Record['_id']) {
   }
 }
 
-export function useRecords(query?: RecordQuery) {
+export function useRecords(query?: RecordQueryFrontend) {
   const paramString = buildParamString({ ...query })
-  const { data, error } = useSWR<Record[]>(URI_RECORDS + paramString)
+  const { data, isLoading, error } = useSWR<Record[]>(URI_RECORDS + paramString)
 
   return {
     records: data,
     isError: error,
+    isLoading,
   }
 }
 

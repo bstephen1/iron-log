@@ -5,7 +5,7 @@ import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import ExerciseQuery from '../../models/query-filters/ExerciseQuery'
 import ModifierQuery from '../../models/query-filters/ModifierQuery'
-import RecordQuery from '../../models/query-filters/RecordQuery'
+import { RecordQueryBackend } from '../../models/query-filters/RecordQuery'
 import { Status } from '../../models/Status'
 import { validDateStringRegex } from '../frontend/constants'
 import { isValidId } from '../util'
@@ -56,19 +56,12 @@ export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildRecordQuery({ exercise, date, ...rest }: ApiQuery) {
-  // We just want "name" from exercise, but Partial doesn't affect nested object props
-  const query = {} as RecordQuery
-  const exerciseNameKey = 'exercise.name'
+export function buildRecordQueryBackend({ exercise, date }: ApiQuery) {
+  const query = {} as RecordQueryBackend
 
   // only add the defined params to the query
   if (exercise) {
-    query[exerciseNameKey] = validateString(exercise, 'Exercise')
-  }
-  // Can't extract this to a variable like the others.
-  // If exercise is also present it will be overwritten (intended).
-  if (rest[exerciseNameKey]) {
-    query[exerciseNameKey] = validateString(rest[exerciseNameKey], 'Exercise')
+    query['exercise.name'] = validateString(exercise, 'Exercise')
   }
   if (date) {
     query.date = valiDate(date)

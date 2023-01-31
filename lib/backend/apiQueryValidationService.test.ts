@@ -7,7 +7,7 @@ import {
   buildBodyweightQuery,
   buildDateRangeQuery,
   buildExerciseQuery,
-  buildRecordQuery,
+  buildRecordQueryBackend,
   valiDate,
   validateId,
   validateName,
@@ -151,10 +151,10 @@ describe('build query', () => {
     })
   })
 
-  describe('buildRecordQuery', () => {
+  describe('buildRecordQueryBackend', () => {
     it('builds full query', () => {
       const apiQuery: ApiQuery = { exercise: 'exercise', date: '2000-01-01' }
-      expect(buildRecordQuery(apiQuery)).toMatchObject({
+      expect(buildRecordQueryBackend(apiQuery)).toMatchObject({
         date: apiQuery.date,
         'exercise.name': apiQuery.exercise,
       })
@@ -162,27 +162,21 @@ describe('build query', () => {
 
     it('builds partial query', () => {
       const apiQuery: ApiQuery = { date: '2000-01-01', exercise: undefined }
-      expect(buildRecordQuery(apiQuery)).toMatchObject({ date: apiQuery.date })
-    })
-
-    it('uses exercise.name over exercise', () => {
-      const apiQuery: ApiQuery = {
-        'exercise.name': 'name',
-        exercise: 'other name',
-      }
-      expect(buildRecordQuery(apiQuery)).toMatchObject({
-        'exercise.name': apiQuery['exercise.name'],
+      expect(buildRecordQueryBackend(apiQuery)).toMatchObject({
+        date: apiQuery.date,
       })
     })
 
     it('validates exercise', () => {
-      expect(() => buildRecordQuery({ exercise: ['invalid'] })).toThrow(
+      expect(() => buildRecordQueryBackend({ exercise: ['invalid'] })).toThrow(
         ApiError
       )
     })
 
     it('validates date', () => {
-      expect(() => buildRecordQuery({ date: 'invalid' })).toThrow(ApiError)
+      expect(() => buildRecordQueryBackend({ date: 'invalid' })).toThrow(
+        ApiError
+      )
     })
   })
 

@@ -1,4 +1,12 @@
-export default interface RecordQuery {
+export interface RecordQueryFrontend {
+  /** YYYY-MM-DD */
+  date?: string
+  /** Exercise name.  */
+  exercise?: string
+}
+
+/** This model must match what mongo expects for Filter<Exercise>  */
+export interface RecordQueryBackend {
   /** YYYY-MM-DD */
   date?: string
   /** Mongo requires using a dot operator instead of a normal nested object, because the latter will match only
@@ -6,6 +14,4 @@ export default interface RecordQuery {
    * document with the given field.
    */
   'exercise.name'?: string
-  /** Exercise name. Equivalent to 'exercise.name'. If 'exercise.name' is present it is used instead.  */
-  exercise?: string
 }
