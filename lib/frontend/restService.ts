@@ -6,9 +6,10 @@ import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import ExerciseQuery from '../../models/query-filters/ExerciseQuery'
+import RecordQuery from '../../models/query-filters/RecordQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
-import { Status } from '../../models/Status'
 import { arrayToIndex } from '../util'
 import { DATE_FORMAT } from './constants'
 
@@ -32,9 +33,8 @@ export function useSessionLog(date: Dayjs) {
   }
 }
 
-export function useSessionLogs({ limit, start, end }: DateRangeQuery) {
-  // this leaves extra chars but doesn't seem to affect the rest call
-  const paramString = buildQuery({ limit, start, end })
+export function useSessionLogs(query: DateRangeQuery) {
+  const paramString = buildParamString({ ...query })
   const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
     URI_SESSIONS + paramString
   )
@@ -83,6 +83,16 @@ export function useRecord(id: Record['_id']) {
   }
 }
 
+export function useRecords(query?: RecordQuery) {
+  const paramString = buildParamString({ ...query })
+  const { data, error } = useSWR<Record[]>(URI_RECORDS + paramString)
+
+  return {
+    records: data,
+    isError: error,
+  }
+}
+
 export async function addRecord(newRecord: Record) {
   return fetch(URI_RECORDS + newRecord._id, {
     method: 'POST',
@@ -104,8 +114,8 @@ export async function updateRecordFields(
 // EXERCISE
 //----------
 
-export function useExercises({ status }: { status?: Status } = {}) {
-  const paramString = buildQuery({ status })
+export function useExercises(query?: ExerciseQuery) {
+  const paramString = buildParamString({ ...query })
 
   const { data, error, mutate } = useSWR<Exercise[]>(
     URI_EXERCISES + paramString
@@ -226,12 +236,7 @@ export async function updateCategoryFields(
 // BODYWEIGHT
 //------------
 
-export function useBodyweightHistory({
-  limit,
-  start,
-  end,
-  type,
-}: BodyweightQuery) {
+export function useBodyweightHistory({ start, end, ...rest }: BodyweightQuery) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
   // Incrementing to 2020-04-03 will catch everything from the previous day.
@@ -240,7 +245,7 @@ export function useBodyweightHistory({
   start = start ? addDay(start) : start
   end = end ? addDay(end) : end
 
-  const paramString = buildQuery({ limit, start, end, type })
+  const paramString = buildParamString({ start, end, ...rest })
   const { data, error, mutate } = useSWR<Bodyweight[]>(
     URI_BODYWEIGHT + paramString
   )
@@ -270,15 +275,34 @@ export async function updateBodyweight(newBodyweight: Bodyweight) {
 // PRIVATE FUNCTIONS
 //-------------------
 
-function buildQuery(params: { [param: string]: string | number | undefined }) {
-  let query = '?'
-  Object.keys(params).forEach((key) => {
-    query =
-      params[key] !== undefined ? query.concat(`${key}=${params[key]}&`) : query
-  })
+/** query-filter models are not directly accepted as Params type.
+ * Either spread the object or redefine the query models to be types instead of interfaces.
+ * See: https://bobbyhadz.com/blog/typescript-index-signature-for-type-is-missing-in-type
+ */
+type Params = { [param: string]: string | string[] | number | undefined }
+
+/** build an api filter string query. Flattens any arrays and changes numbers to strings.
+ *
+ * eg, {category: [1,2,3]} => '?category=1&category=2&category=3'
+ */
+function buildParamString(params: Params) {
+  let paramString = '?'
+
+  for (let key of Object.keys(params)) {
+    let value = params[key]
+    if (!value) {
+      continue
+    }
+
+    if (!Array.isArray(value)) {
+      value = [`${value}`]
+    }
+
+    value.forEach((item) => (paramString += `${key}=${item}&`))
+  }
 
   // remove trailing '&', and remove '?' if there are no params
-  return query === '?' ? '' : query.slice(0, -1)
+  return paramString === '?' ? '' : paramString.slice(0, -1)
 }
 
 //------
