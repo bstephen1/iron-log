@@ -56,13 +56,19 @@ export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildRecordQuery({ exercise, date }: ApiQuery) {
+export function buildRecordQuery({ exercise, date, ...rest }: ApiQuery) {
   // We just want "name" from exercise, but Partial doesn't affect nested object props
   const query = {} as RecordQuery
+  const exerciseNameKey = 'exercise.name'
 
   // only add the defined params to the query
   if (exercise) {
-    query['exercise.name'] = validateString(exercise, 'Exercise')
+    query[exerciseNameKey] = validateString(exercise, 'Exercise')
+  }
+  // Can't extract this to a variable like the others.
+  // If exercise is also present it will be overwritten (intended).
+  if (rest[exerciseNameKey]) {
+    query[exerciseNameKey] = validateString(rest[exerciseNameKey], 'Exercise')
   }
   if (date) {
     query.date = valiDate(date)

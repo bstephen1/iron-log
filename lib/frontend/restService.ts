@@ -281,7 +281,7 @@ export async function updateBodyweight(newBodyweight: Bodyweight) {
  */
 type Params = { [param: string]: string | string[] | number | undefined }
 
-/** build an api filter string query. Flattens any arrays and changes numbers to strings.
+/** Build an api filter string query. Flattens any arrays and changes numbers to strings.
  *
  * eg, {category: [1,2,3]} => '?category=1&category=2&category=3'
  */

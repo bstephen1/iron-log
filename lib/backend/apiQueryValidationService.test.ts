@@ -165,6 +165,16 @@ describe('build query', () => {
       expect(buildRecordQuery(apiQuery)).toMatchObject({ date: apiQuery.date })
     })
 
+    it('uses exercise.name over exercise', () => {
+      const apiQuery: ApiQuery = {
+        'exercise.name': 'name',
+        exercise: 'other name',
+      }
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
+        'exercise.name': apiQuery['exercise.name'],
+      })
+    })
+
     it('validates exercise', () => {
       expect(() => buildRecordQuery({ exercise: ['invalid'] })).toThrow(
         ApiError
