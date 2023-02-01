@@ -30,6 +30,9 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
         direction="vertical"
         // vertical orientation REQUIRES a fixed height. Currently fixing height of parent container.
         spaceBetween={20}
+        noSwipingClass="swiper-no-swiping-inner"
+        className="swiper-no-swiping-outer"
+        grabCursor
         pagination={{
           // This was inexplicably not rendering at all.
           // Solved by removing an early return of <></> if isLoading.

@@ -140,6 +140,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
               onSlideChange={updateSwiper}
               // update when number of slides changes
               onUpdate={updateSwiper}
+              noSwipingClass="swiper-no-swiping-outer"
               modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
               // breakpoints catch everything >= the given value
               breakpoints={{
