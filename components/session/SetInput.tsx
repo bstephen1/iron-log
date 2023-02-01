@@ -10,6 +10,7 @@ interface Props {
   handleDelete: () => void
   set: Set
   fields: (keyof Set)[]
+  readOnly?: boolean
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
@@ -19,6 +20,7 @@ export default function SetInput({
   handleDelete,
   set,
   fields,
+  readOnly = false,
 }: Props) {
   const pyStack = 0.5
 
@@ -54,6 +56,7 @@ export default function SetInput({
             inputProps={{ style: { textAlign: 'center' } }}
             InputProps={{
               disableUnderline: true,
+              readOnly,
               // endAdornment: <InputAdornment position="end">{units}</InputAdornment>,
             }}
             sx={{ flexGrow: 1 }}

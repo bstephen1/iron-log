@@ -3,7 +3,6 @@ import {
   CircularProgress,
   IconButton,
   Stack,
-  Typography,
   useTheme,
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
@@ -22,6 +21,8 @@ import Clock from './Clock'
 import RecordCard from './RecordCard'
 import TitleBar from './TitleBar'
 
+import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { useState } from 'react'
 import {
   A11y,
   Keyboard,
@@ -31,17 +32,15 @@ import {
   Swiper as SwiperClass,
 } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import AddRecord from './AddRecord'
+import HistoryFilterCard from './HistoryFilterCard'
 
-import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
-import { useState } from 'react'
+// Swiper needs all these css classes to be imported too
 import 'swiper/css'
 import 'swiper/css/bundle'
-import 'swiper/css/effect-cards'
-import 'swiper/css/effect-creative'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
-import AddRecord from './AddRecord'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
@@ -114,13 +113,17 @@ export default function SessionView({ date }: { date: Dayjs }) {
       ) : (
         <Box>
           <Box
-            className="pagination"
+            className="pagination-above"
             display="flex"
             justifyContent="center"
             pt={2}
           />
           <Stack direction="row">
             {/* todo: nav button ripples are elongated */}
+            {/* todo: actually thinking of making these ListItemButtons, 
+            HistoryCards are within the single Swiper, and the Icon can be sticky
+            and scroll down the screen. The ListItemButton will be clickable 
+            over the whole gutter. */}
             <Box display="flex" width="auto" alignItems="center">
               <IconButton
                 sx={{ display: { xs: 'none', sm: 'block' } }}
@@ -166,12 +169,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
               // need this for CSS to hide slides that are partially offscreen
               watchSlidesProgress
               pagination={{
-                el: '.pagination',
+                el: '.pagination-above',
                 clickable: true,
-                // todo: numbered list? Make last one AddIcon ?
-                renderBullet: function (_index, className) {
-                  return `<span class="${className}"></span>`
-                },
               }}
               style={{ padding: '15px 10px', flexGrow: '1' }}
             >
@@ -184,6 +183,9 @@ export default function SessionView({ date }: { date: Dayjs }) {
                       swapRecords={handleSwapRecords}
                       swiperIndex={i}
                     />
+                    <Box py={3}>
+                      <HistoryFilterCard recordId={id} key={id} />
+                    </Box>
                   </SwiperSlide>
                 ))}
               <SwiperSlide>
@@ -203,10 +205,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
           </Stack>
         </Box>
       )}
-
-      <Typography variant="h5" textAlign="center">
-        History
-      </Typography>
     </Stack>
   )
 }
