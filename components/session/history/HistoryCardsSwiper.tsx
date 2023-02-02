@@ -1,8 +1,8 @@
 import { Stack } from '@mui/material'
 import { Navigation, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { useRecords } from '../../lib/frontend/restService'
-import { RecordQueryFrontend } from '../../models/query-filters/RecordQuery'
+import { useRecords } from '../../../lib/frontend/restService'
+import { RecordQueryFrontend } from '../../../models/query-filters/RecordQuery'
 import HistoryCard from './HistoryCard'
 
 import 'swiper/css'

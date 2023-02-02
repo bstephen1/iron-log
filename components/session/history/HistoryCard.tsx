@@ -1,10 +1,10 @@
 import { Box, Card, CardContent, CardHeader } from '@mui/material'
 import { useSwiper } from 'swiper/react'
-import Record from '../../models/Record'
-import Set from '../../models/Set'
-import StyledDivider from '../StyledDivider'
-import RecordNotesDialogButton from './RecordNotesDialogButton'
-import SetInput from './SetInput'
+import Record from '../../../models/Record'
+import Set from '../../../models/Set'
+import StyledDivider from '../../StyledDivider'
+import RecordNotesDialogButton from '../records/RecordNotesDialogButton'
+import SetInput from '../records/SetInput'
 
 interface Props {
   record: Record

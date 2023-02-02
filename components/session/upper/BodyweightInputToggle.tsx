@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { useState } from 'react'
-import { WeighInType } from '../../models/Bodyweight'
+import { WeighInType } from '../../../models/Bodyweight'
 
 interface Props {
   type: WeighInType

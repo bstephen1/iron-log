@@ -2,8 +2,8 @@ import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { Fragment } from 'react'
-import Set from '../../models/Set'
-import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
+import Set from '../../../models/Set'
+import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 interface Props {
   handleSubmit: (changes: Partial<Set>) => void

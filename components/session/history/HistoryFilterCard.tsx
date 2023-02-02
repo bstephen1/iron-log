@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { useState } from 'react'
-import { useRecord } from '../../lib/frontend/restService'
-import { ComboBoxField } from '../form-fields/ComboBoxField'
-import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
-import StyledDivider from '../StyledDivider'
+import { useRecord } from '../../../lib/frontend/restService'
+import { ComboBoxField } from '../../form-fields/ComboBoxField'
+import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
+import StyledDivider from '../../StyledDivider'
 import HistoryCardsSwiper from './HistoryCardsSwiper'
 
 interface Props {

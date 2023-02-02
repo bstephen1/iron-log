@@ -17,9 +17,9 @@ import Exercise from '../../models/Exercise'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import WeightUnitConverter from '../WeightUnitConverter'
-import Clock from './Clock'
-import RecordCard from './RecordCard'
-import TitleBar from './TitleBar'
+import RecordCard from './records/RecordCard'
+import Clock from './upper/Clock'
+import TitleBar from './upper/TitleBar'
 
 import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
 import { useState } from 'react'
@@ -32,8 +32,8 @@ import {
   Swiper as SwiperClass,
 } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import AddRecord from './AddRecord'
-import HistoryFilterCard from './HistoryFilterCard'
+import HistoryFilterCard from './history/HistoryFilterCard'
+import AddRecord from './records/AddRecord'
 
 // Swiper needs all these css classes to be imported too
 import 'swiper/css'

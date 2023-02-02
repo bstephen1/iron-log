@@ -7,8 +7,8 @@ import {
 import { Dayjs } from 'dayjs'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
-import { useSessionLogs } from '../../lib/frontend/restService'
+import { DATE_FORMAT } from '../../../lib/frontend/constants'
+import { useSessionLogs } from '../../../lib/frontend/restService'
 
 interface Props {
   date?: Dayjs | null
