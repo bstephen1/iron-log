@@ -32,7 +32,7 @@ import {
   Swiper as SwiperClass,
 } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import HistoryFilterCard from './history/HistoryFilterCard'
+import HistoryFilter from './history/HistoryFilter'
 import AddRecord from './records/AddRecord'
 
 // Swiper needs all these css classes to be imported too
@@ -185,7 +185,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                       swiperIndex={i}
                     />
                     <Box py={3}>
-                      <HistoryFilterCard recordId={id} key={id} />
+                      <HistoryFilter recordId={id} key={id} />
                     </Box>
                   </SwiperSlide>
                 ))}

@@ -9,7 +9,7 @@ import HistoryCardsSwiper from './HistoryCardsSwiper'
 interface Props {
   recordId: string
 }
-export default function HistoryFilterCard({ recordId }: Props) {
+export default function HistoryFilter({ recordId }: Props) {
   const { record } = useRecord(recordId)
   const [modifierFilter, setModifierFilter] = useState<string[]>([])
   const [repFilter, setRepFilter] = useState<number>()
