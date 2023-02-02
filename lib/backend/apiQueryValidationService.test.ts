@@ -6,7 +6,7 @@ import {
   ApiQuery,
   buildBodyweightQuery,
   buildDateRangeQuery,
-  buildExerciseQuery,
+  buildExerciseQueryBackend,
   buildRecordQueryBackend,
   valiDate,
   validateId,
@@ -180,14 +180,14 @@ describe('build query', () => {
     })
   })
 
-  describe('buildExerciseQuery', () => {
+  describe('buildExerciseQueryBackend', () => {
     it('builds full query', () => {
       const apiQuery: ApiQuery = {
         status: Status.active,
         name: 'name',
         category: 'category',
       }
-      expect(buildExerciseQuery(apiQuery)).toMatchObject({
+      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
         status: apiQuery.status,
         name: apiQuery.name,
         categories: [apiQuery.category],
@@ -199,39 +199,40 @@ describe('build query', () => {
         status: Status.active,
         name: undefined,
         category: undefined,
-        categories: undefined,
       }
-      expect(buildExerciseQuery(apiQuery)).toMatchObject({
+      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
         status: apiQuery.status,
       })
     })
 
-    it('merges category and categories from strings', () => {
+    it('builds categories from string category', () => {
       const apiQuery: ApiQuery = {
         category: 'category',
-        categories: 'categories',
       }
-      expect(buildExerciseQuery(apiQuery)).toMatchObject({
-        categories: [apiQuery.category, apiQuery.categories],
+      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
+        categories: [apiQuery.category],
       })
     })
 
-    it('merges category and categories from arrays', () => {
+    it('builds categories from array category', () => {
       const apiQuery: ApiQuery = {
         category: ['category'],
-        categories: ['categories'],
       }
-      expect(buildExerciseQuery(apiQuery)).toMatchObject({
-        categories: ['category', 'categories'],
+      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
+        categories: apiQuery.category,
       })
     })
 
     it('validates status', () => {
-      expect(() => buildExerciseQuery({ status: 'invalid' })).toThrow(ApiError)
+      expect(() => buildExerciseQueryBackend({ status: 'invalid' })).toThrow(
+        ApiError
+      )
     })
 
     it('validates name', () => {
-      expect(() => buildExerciseQuery({ name: ['invalid'] })).toThrow(ApiError)
+      expect(() => buildExerciseQueryBackend({ name: ['invalid'] })).toThrow(
+        ApiError
+      )
     })
   })
 })

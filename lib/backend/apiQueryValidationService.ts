@@ -3,7 +3,7 @@ import { ApiError } from 'next/dist/server/api-utils'
 import { WeighInType } from '../../models/Bodyweight'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import ExerciseQuery from '../../models/query-filters/ExerciseQuery'
+import { ExerciseQueryBackend } from '../../models/query-filters/ExerciseQuery'
 import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import { RecordQueryBackend } from '../../models/query-filters/RecordQuery'
 import { Status } from '../../models/Status'
@@ -70,18 +70,13 @@ export function buildRecordQueryBackend({ exercise, date }: ApiQuery) {
   return query
 }
 
-/** Build and validate a query to send to the db from the rest param input.
- *
- *  Note: "category" and "categories" are treated as the same param, and are merged together.
- */
-export function buildExerciseQuery({
+/** Build and validate a query to send to the db from the rest param input. */
+export function buildExerciseQueryBackend({
   status,
   name,
   category,
-  categories,
 }: ApiQuery) {
-  const query = {} as ExerciseQuery
-  let categoriesQuery: string[] = []
+  const query = {} as ExerciseQueryBackend
 
   // only add the defined params to the query
   if (status) {
@@ -90,19 +85,9 @@ export function buildExerciseQuery({
   if (name) {
     query.name = validateName(name)
   }
+  // must convert the frontend "category" to the backend "categories"
   if (category) {
-    categoriesQuery = categoriesQuery.concat(
-      validateStringArray(category, 'Category')
-    )
-  }
-  if (categories) {
-    categoriesQuery = categoriesQuery.concat(
-      validateStringArray(categories, 'Category')
-    )
-  }
-
-  if (categoriesQuery.length) {
-    query.categories = categoriesQuery
+    query.categories = validateStringArray(category, 'Category')
   }
 
   return query

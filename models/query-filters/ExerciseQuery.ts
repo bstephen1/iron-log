@@ -1,15 +1,18 @@
 import { Status } from '../Status'
+import { ArrayMatchType } from './ArrayMatchType'
 
-export default interface ExerciseQuery {
+export interface ExerciseQueryFrontend {
   status?: Status
-
-  /** Same as category. Queries for exercises with any one of the given categories. */
-  categories?: string[]
-  /** Same as "categories". Provided for convenience in the rest api.
-   *  "category" gets treated as and merged with "categories" on the backend.
-   *
-   * Queries for exercises with any one of the given categories.
-   */
+  /** Query on categories. Can provide multiple categories. */
   category?: string[]
+  /** Specify how to match against the given category array. Defaults to "All" */
+  categoryMatchType?: ArrayMatchType
+  name?: string
+}
+
+/** This model must match what mongo expects for Filter<Exercise>  */
+export interface ExerciseQueryBackend {
+  status?: Status
+  categories?: string[]
   name?: string
 }

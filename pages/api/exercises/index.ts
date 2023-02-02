@@ -4,7 +4,7 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { buildExerciseQuery } from '../../../lib/backend/apiQueryValidationService'
+import { buildExerciseQueryBackend } from '../../../lib/backend/apiQueryValidationService'
 import { fetchExercises } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
@@ -12,7 +12,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     throw methodNotAllowed
   }
 
-  const query = buildExerciseQuery(req.query)
+  const query = buildExerciseQueryBackend(req.query)
 
   const exercises = await fetchExercises({ ...query, userId })
   return { payload: exercises }

@@ -6,7 +6,7 @@ import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import ExerciseQuery from '../../models/query-filters/ExerciseQuery'
+import { ExerciseQueryFrontend } from '../../models/query-filters/ExerciseQuery'
 import { RecordQueryFrontend } from '../../models/query-filters/RecordQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
@@ -115,7 +115,7 @@ export async function updateRecordFields(
 // EXERCISE
 //----------
 
-export function useExercises(query?: ExerciseQuery) {
+export function useExercises(query?: ExerciseQueryFrontend) {
   const paramString = buildParamString({ ...query })
 
   const { data, error, mutate } = useSWR<Exercise[]>(
