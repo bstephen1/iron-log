@@ -3,6 +3,11 @@ import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
+import {
+  ArrayMatchType,
+  MatchTypes,
+  MongoQuery,
+} from '../../models/query-filters/MongoQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { db } from './mongoConnect'
@@ -23,26 +28,28 @@ interface UpdateFieldsProps<T extends { _id: string }> {
   updates: Partial<T>
 }
 
-export interface FetchOptions {
-  /** Set to true to treat arrays as exact matches.
-   * Eg, [1,2,3] will only fetch records with that EXACT array.
-   * Default (false) will fetch records with at least one of the values in the array.
-   */
-  arrayExactMatch: boolean
-}
-
-/** wraps arrays in a filter with {$in}, so mongo will match on any one value in the array
- * instead of an exact match.
+// todo: add a guard to not do anything if calling multiple times
+/** sets a Filter to query based on the desired MatchType schema.
+ * Should only be called once on a given filter.
  */
-function addInToArrays(filter: Filter<any>) {
-  const newFilter = { ...filter }
-  Object.keys(newFilter).forEach((cur) => {
-    if (Array.isArray(newFilter[cur])) {
-      newFilter[cur] = { $in: newFilter[cur] }
+function setArrayMatchTypes<T>(filter: Filter<T>, matchTypes: MatchTypes<T>) {
+  for (const key in matchTypes) {
+    switch (matchTypes[key]) {
+      case ArrayMatchType.All:
+        // typescript complaining for some reason. May or may not be a better way to silence it.
+        filter[key] = { $all: filter[key] } as any
+        break
+      case ArrayMatchType.Any:
+        filter[key] = { $in: filter[key] } as any
+        break
+      case ArrayMatchType.Exact:
+        // do nothing
+        break
+      default:
+        // do nothing (same as Exact)
+        break
     }
-  })
-
-  return newFilter
+  }
 }
 
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
@@ -195,16 +202,17 @@ export async function addExercise(userId: ObjectId, exercise: Exercise) {
 /** This fetch supports the array field "categories". By default, a query on categories
  * will match records that contain any one of the given categories array.
  */
-export async function fetchExercises(
-  filter?: Filter<Exercise>,
-  options?: FetchOptions
-) {
-  if (!options?.arrayExactMatch && filter) {
-    filter = addInToArrays(filter)
+export async function fetchExercises({
+  userId,
+  filter,
+  matchTypes,
+}: MongoQuery<Exercise>) {
+  if (filter && matchTypes) {
+    setArrayMatchTypes(filter, matchTypes)
   }
 
   return await exercises
-    .find({ ...filter }, { projection: { userId: 0 } })
+    .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
 }
 

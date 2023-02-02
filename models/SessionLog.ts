@@ -6,7 +6,8 @@ import Record from './Record'
 export default class SessionLog {
   constructor(
     public readonly date: string,
-    public records: Record['_id'][] = [], // ordered array
+    /** An ordered array of associated Record ids */
+    public records: Record['_id'][] = [],
     public readonly _id = generateId()
   ) {}
 }

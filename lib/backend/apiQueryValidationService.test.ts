@@ -1,18 +1,26 @@
+import { ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
 import { v1 as invalidUuid } from 'uuid'
+import { ArrayMatchType } from '../../models/query-filters/MongoQuery'
 import { Status } from '../../models/Status'
 import { generateId } from '../util'
 import {
   ApiQuery,
   buildBodyweightQuery,
   buildDateRangeQuery,
-  buildExerciseQueryBackend,
-  buildRecordQueryBackend,
+  buildExerciseQuery,
+  buildRecordQuery,
   valiDate,
   validateId,
+  validateMatchType,
   validateName,
   validateStatus,
 } from './apiQueryValidationService'
+
+// If this file is causing a TextEncoder error, try this fix:
+// https://stackoverflow.com/a/74377819
+// there is a compatibility issue between a mongo dep and jest and
+// unfortunately it seems the only solution is to modify the node_modules file.
 
 describe('validation', () => {
   describe('validateId', () => {
@@ -73,9 +81,23 @@ describe('validation', () => {
       expect(validateStatus(Status.active)).toBe(Status.active)
     })
   })
+
+  describe('validateMatchType', () => {
+    it('throws error when not a MatchType', () => {
+      expect(() => validateMatchType(undefined)).toThrow(ApiError)
+      expect(() => validateMatchType([ArrayMatchType.All])).toThrow(ApiError)
+      expect(() => validateMatchType('invalid')).toThrow(ApiError)
+    })
+
+    it('returns ArrayMatchType when valid', () => {
+      expect(validateMatchType(ArrayMatchType.All)).toBe(ArrayMatchType.All)
+    })
+  })
 })
 
 describe('build query', () => {
+  const userId = new ObjectId('123456789ABC')
+
   describe('buildDateRangeQuery', () => {
     it('builds full query', () => {
       const apiQuery: ApiQuery = {
@@ -154,7 +176,7 @@ describe('build query', () => {
   describe('buildRecordQueryBackend', () => {
     it('builds full query', () => {
       const apiQuery: ApiQuery = { exercise: 'exercise', date: '2000-01-01' }
-      expect(buildRecordQueryBackend(apiQuery)).toMatchObject({
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
         date: apiQuery.date,
         'exercise.name': apiQuery.exercise,
       })
@@ -162,35 +184,40 @@ describe('build query', () => {
 
     it('builds partial query', () => {
       const apiQuery: ApiQuery = { date: '2000-01-01', exercise: undefined }
-      expect(buildRecordQueryBackend(apiQuery)).toMatchObject({
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
         date: apiQuery.date,
       })
     })
 
     it('validates exercise', () => {
-      expect(() => buildRecordQueryBackend({ exercise: ['invalid'] })).toThrow(
+      expect(() => buildRecordQuery({ exercise: ['invalid'] })).toThrow(
         ApiError
       )
     })
 
     it('validates date', () => {
-      expect(() => buildRecordQueryBackend({ date: 'invalid' })).toThrow(
-        ApiError
-      )
+      expect(() => buildRecordQuery({ date: 'invalid' })).toThrow(ApiError)
     })
   })
 
-  describe('buildExerciseQueryBackend', () => {
+  describe('buildExerciseQuery', () => {
     it('builds full query', () => {
       const apiQuery: ApiQuery = {
         status: Status.active,
         name: 'name',
         category: 'category',
+        categoryMatchType: ArrayMatchType.All,
       }
-      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
-        status: apiQuery.status,
-        name: apiQuery.name,
-        categories: [apiQuery.category],
+      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+        filter: {
+          status: apiQuery.status,
+          name: apiQuery.name,
+          categories: [apiQuery.category],
+        },
+        matchTypes: {
+          categories: ArrayMatchType.All,
+        },
+        userId,
       })
     })
 
@@ -200,8 +227,9 @@ describe('build query', () => {
         name: undefined,
         category: undefined,
       }
-      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
-        status: apiQuery.status,
+      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+        filter: { status: apiQuery.status },
+        userId,
       })
     })
 
@@ -209,8 +237,9 @@ describe('build query', () => {
       const apiQuery: ApiQuery = {
         category: 'category',
       }
-      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
-        categories: [apiQuery.category],
+      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+        filter: { categories: [apiQuery.category] },
+        userId,
       })
     })
 
@@ -218,19 +247,35 @@ describe('build query', () => {
       const apiQuery: ApiQuery = {
         category: ['category'],
       }
-      expect(buildExerciseQueryBackend(apiQuery)).toMatchObject({
-        categories: apiQuery.category,
+      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+        filter: { categories: apiQuery.category },
+        userId,
       })
     })
 
+    it('validates match type', () => {
+      expect(() =>
+        buildExerciseQuery(
+          { category: 'category', categoryMatchType: 'invalid' },
+          userId
+        )
+      ).toThrow(ApiError)
+    })
+
+    it('ignores matchType when category is empty', () => {
+      expect(
+        buildExerciseQuery({ categoryMatchType: ArrayMatchType.All }, userId)
+      ).toMatchObject({ userId })
+    })
+
     it('validates status', () => {
-      expect(() => buildExerciseQueryBackend({ status: 'invalid' })).toThrow(
+      expect(() => buildExerciseQuery({ status: 'invalid' }, userId)).toThrow(
         ApiError
       )
     })
 
     it('validates name', () => {
-      expect(() => buildExerciseQueryBackend({ name: ['invalid'] })).toThrow(
+      expect(() => buildExerciseQuery({ name: ['invalid'] }, userId)).toThrow(
         ApiError
       )
     })

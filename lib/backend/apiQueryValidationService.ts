@@ -1,10 +1,16 @@
 import { StatusCodes } from 'http-status-codes'
+import { Filter, ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
 import { WeighInType } from '../../models/Bodyweight'
+import Exercise from '../../models/Exercise'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import { ExerciseQueryBackend } from '../../models/query-filters/ExerciseQuery'
 import ModifierQuery from '../../models/query-filters/ModifierQuery'
+import {
+  ArrayMatchType,
+  MatchTypes,
+  MongoQuery,
+} from '../../models/query-filters/MongoQuery'
 import { RecordQueryBackend } from '../../models/query-filters/RecordQuery'
 import { Status } from '../../models/Status'
 import { validDateStringRegex } from '../frontend/constants'
@@ -56,7 +62,7 @@ export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildRecordQueryBackend({ exercise, date }: ApiQuery) {
+export function buildRecordQuery({ exercise, date }: ApiQuery) {
   const query = {} as RecordQueryBackend
 
   // only add the defined params to the query
@@ -71,26 +77,29 @@ export function buildRecordQueryBackend({ exercise, date }: ApiQuery) {
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildExerciseQueryBackend({
-  status,
-  name,
-  category,
-}: ApiQuery) {
-  const query = {} as ExerciseQueryBackend
+export function buildExerciseQuery(
+  { status, name, category, categoryMatchType }: ApiQuery,
+  userId: ObjectId
+) {
+  const filter = {} as Filter<Exercise>
+  const matchTypes = {} as MatchTypes<Exercise>
 
   // only add the defined params to the query
   if (status) {
-    query.status = validateStatus(status)
+    filter.status = validateStatus(status)
   }
   if (name) {
-    query.name = validateName(name)
+    filter.name = validateName(name)
   }
   // must convert the frontend "category" to the backend "categories"
   if (category) {
-    query.categories = validateStringArray(category, 'Category')
+    filter.categories = validateStringArray(category, 'Category')
+    if (categoryMatchType) {
+      matchTypes.categories = validateMatchType(categoryMatchType)
+    }
   }
 
-  return query
+  return { filter, matchTypes, userId } as MongoQuery<Exercise>
 }
 
 //------------------------
@@ -142,6 +151,19 @@ export function validateStatus(param: ApiParam) {
   }
 
   return param as Status
+}
+
+export function validateMatchType(param: ApiParam) {
+  if (
+    !(
+      typeof param === 'string' &&
+      Object.values(ArrayMatchType).includes(param as ArrayMatchType)
+    )
+  ) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid match type.')
+  }
+
+  return param as ArrayMatchType
 }
 
 //-------------------
