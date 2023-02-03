@@ -209,6 +209,9 @@ describe('build query', () => {
         modifier: 'modifier',
         modifierMatchType: ArrayMatchType.All,
         reps: '5',
+        start: '2022-01-01',
+        end: '2022-02-02',
+        limit: '6',
       }
       expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
         filter: {
@@ -217,6 +220,9 @@ describe('build query', () => {
           'sets.reps': Number(apiQuery.reps),
           'exercise.name': apiQuery.exercise,
         },
+        start: apiQuery.start,
+        end: apiQuery.end,
+        limit: Number(apiQuery.limit),
         matchTypes: {
           activeModifiers: apiQuery.modifierMatchType,
         },

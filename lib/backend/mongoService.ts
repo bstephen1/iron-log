@@ -124,11 +124,18 @@ export async function addRecord(userId: ObjectId, record: Record) {
 }
 
 // todo: pagination
-export async function fetchRecords({ filter, userId }: MongoQuery<Record>) {
+export async function fetchRecords({
+  filter,
+  limit,
+  start = '0',
+  end = '9',
+  userId,
+}: MongoQuery<Record>) {
   // find() returns a cursor, so it has to be converted to an array
   return await records
     .aggregate([
-      { $match: { ...filter, userId } },
+      // date range will be overwritten if a specific date is given in the filter
+      { $match: { date: { $gte: start, $lte: end }, ...filter, userId } },
       {
         $lookup: {
           from: 'exercises',
@@ -141,6 +148,8 @@ export async function fetchRecords({ filter, userId }: MongoQuery<Record>) {
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
       { $project: { userId: 0 } },
     ])
+    .sort({ date: -1 })
+    .limit(limit ?? 50)
     .toArray()
 }
 

@@ -1,6 +1,7 @@
+import DateRangeQuery from './DateRangeQuery'
 import { ArrayMatchType } from './MongoQuery'
 
-export interface RecordQuery {
+export interface RecordQuery extends DateRangeQuery {
   /** YYYY-MM-DD */
   date?: string
   /** Exercise name.  */

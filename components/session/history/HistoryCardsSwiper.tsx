@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material'
+import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { Navigation, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useRecords } from '../../../lib/frontend/restService'
@@ -19,9 +19,19 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
   // each record's history needs a unique className
   const paginationClassName = `pagination-vertical-${recordId}`
 
-  // if (isLoading || records === undefined) {
-  //   return <></>
-  // }
+  if (isLoading) {
+    return (
+      <Box display="flex" alignItems="center" justifyContent="center">
+        <CircularProgress color="primary" size={20} />
+      </Box>
+    )
+  }
+
+  if (records && !records.length) {
+    return (
+      <Typography textAlign="center">No records with those filters!</Typography>
+    )
+  }
 
   return (
     // todo: may need to do something with height, just arbitrarily stuck in 300px
@@ -38,6 +48,7 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
           // Solved by removing an early return of <></> if isLoading.
           // I guess Swiper needs to be initialized immediately or bizarre behavior
           // can occur.
+          // Edit: and yet now the early return has returned, and it's still working...
           el: `.${paginationClassName}`,
           clickable: true,
           // todo: may want to add these when adding a limit to useRecords fetch

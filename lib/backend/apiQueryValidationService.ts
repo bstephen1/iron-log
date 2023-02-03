@@ -78,9 +78,22 @@ export function buildBodyweightQuery(
 
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildRecordQuery(
-  { exercise, date, modifier, modifierMatchType, reps }: ApiReq<RecordQuery>,
+  {
+    exercise,
+    date,
+    modifier,
+    modifierMatchType,
+    reps,
+    start,
+    end,
+    limit,
+  }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
+  const query: MongoQuery<Record> = buildDateRangeQuery<Record>(
+    { start, end, limit },
+    userId
+  )
   const filter: MongoFilter<Record> = {}
   const matchTypes: MatchTypes<Record> = {}
 
@@ -101,7 +114,7 @@ export function buildRecordQuery(
     filter['sets.reps'] = validateNumber(reps, 'Reps')
   }
 
-  return { filter, matchTypes, userId }
+  return { ...query, filter, matchTypes }
 }
 
 /** Build and validate a query to send to the db from the rest param input. */

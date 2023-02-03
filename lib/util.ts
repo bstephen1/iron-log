@@ -1,7 +1,9 @@
 import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
+import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { v4 as uuid, validate, version } from 'uuid'
 import { SelectorBaseOption } from '../models/SelectorBaseOption'
+import { DATE_FORMAT } from './frontend/constants'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -51,3 +53,9 @@ export const arrayToIndex = <T extends Object>(index: keyof T, arr?: T[]) => {
   })
   return map
 }
+
+export const dayjsStringAdd = (
+  date: string,
+  value: number,
+  unit?: dayjs.ManipulateType | undefined
+) => dayjs(date).add(value, unit).format(DATE_FORMAT)
