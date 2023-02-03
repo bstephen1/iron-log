@@ -109,9 +109,10 @@ describe('build query', () => {
         start: '2000-01-01',
         end: '2001-01-01',
       }
-      expect(buildDateRangeQuery(apiQuery)).toMatchObject({
+      expect(buildDateRangeQuery(apiQuery, userId)).toMatchObject({
         ...apiQuery,
         limit: Number(apiQuery.limit),
+        userId,
       })
     })
 
@@ -121,19 +122,28 @@ describe('build query', () => {
         start: '2000-01-01',
         end: undefined,
       }
-      expect(buildDateRangeQuery(apiQuery)).toMatchObject({
+      expect(buildDateRangeQuery(apiQuery, userId)).toMatchObject({
         start: apiQuery.start,
+        userId,
       })
     })
 
     it('validates limit', () => {
-      expect(() => buildDateRangeQuery({ limit: 'invalid' })).toThrow(ApiError)
-      expect(() => buildDateRangeQuery({ limit: ['5'] })).toThrow(ApiError)
+      expect(() => buildDateRangeQuery({ limit: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
+      expect(() => buildDateRangeQuery({ limit: ['5'] }, userId)).toThrow(
+        ApiError
+      )
     })
 
     it('validates dates', () => {
-      expect(() => buildDateRangeQuery({ start: 'invalid' })).toThrow(ApiError)
-      expect(() => buildDateRangeQuery({ end: 'invalid' })).toThrow(ApiError)
+      expect(() => buildDateRangeQuery({ start: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
+      expect(() => buildDateRangeQuery({ end: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
     })
   })
 
@@ -145,9 +155,14 @@ describe('build query', () => {
         start: '2000-01-01',
         end: '2001-01-01',
       }
-      expect(buildBodyweightQuery(apiQuery)).toMatchObject({
-        ...apiQuery,
+      expect(buildBodyweightQuery(apiQuery, userId)).toMatchObject({
+        filter: {
+          type: apiQuery.type,
+        },
+        start: apiQuery.start,
+        end: apiQuery.end,
         limit: Number(apiQuery.limit),
+        userId,
       })
     })
 
@@ -158,22 +173,31 @@ describe('build query', () => {
         start: '2000-01-01',
         end: undefined,
       }
-      expect(buildBodyweightQuery(apiQuery)).toMatchObject({
+      expect(buildBodyweightQuery(apiQuery, userId)).toMatchObject({
         start: apiQuery.start,
+        userId,
       })
     })
 
     it('validates type', () => {
-      expect(() => buildBodyweightQuery({ type: 'invalid' })).toThrow(ApiError)
-      expect(() => buildBodyweightQuery({ type: ['official'] })).toThrow(
+      expect(() => buildBodyweightQuery({ type: 'invalid' }, userId)).toThrow(
         ApiError
       )
+      expect(() =>
+        buildBodyweightQuery({ type: ['official'] }, userId)
+      ).toThrow(ApiError)
     })
 
     it('validates dateRange params', () => {
-      expect(() => buildBodyweightQuery({ start: 'invalid' })).toThrow(ApiError)
-      expect(() => buildBodyweightQuery({ end: 'invalid' })).toThrow(ApiError)
-      expect(() => buildBodyweightQuery({ limit: 'invalid' })).toThrow(ApiError)
+      expect(() => buildBodyweightQuery({ start: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
+      expect(() => buildBodyweightQuery({ end: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
+      expect(() => buildBodyweightQuery({ limit: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
     })
   })
 

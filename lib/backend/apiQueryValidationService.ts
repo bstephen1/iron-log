@@ -1,8 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { Filter, ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
-import { WeighInType } from '../../models/Bodyweight'
+import Bodyweight, { WeighInType } from '../../models/Bodyweight'
 import Exercise from '../../models/Exercise'
+import Modifier from '../../models/Modifier'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
@@ -32,12 +33,11 @@ export type ApiReq<T> = { [key in keyof T]: ApiParam }
 //------------------------
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildDateRangeQuery({
-  limit,
-  start,
-  end,
-}: ApiReq<DateRangeQuery>) {
-  const query = {} as DateRangeQuery
+export function buildDateRangeQuery<T>(
+  { limit, start, end }: ApiReq<DateRangeQuery>,
+  userId: ObjectId
+): MongoQuery<T> {
+  const query: DateRangeQuery = {}
 
   // only add the defined params to the query
   if (limit) {
@@ -50,17 +50,19 @@ export function buildDateRangeQuery({
     query.end = valiDate(end)
   }
 
-  return query
+  return { ...query, userId }
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildBodyweightQuery({
-  limit,
-  start,
-  end,
-  type,
-}: ApiReq<BodyweightQuery>) {
-  const query = buildDateRangeQuery({ limit, start, end }) as BodyweightQuery
+export function buildBodyweightQuery(
+  { limit, start, end, type }: ApiReq<BodyweightQuery>,
+  userId: ObjectId
+): MongoQuery<Bodyweight> {
+  const query: MongoQuery<Bodyweight> = buildDateRangeQuery<Bodyweight>(
+    { limit, start, end },
+    userId
+  )
+  const filter: MongoFilter<Bodyweight> = {}
 
   if (type) {
     if (
@@ -68,10 +70,10 @@ export function buildBodyweightQuery({
     ) {
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid weigh-in type.')
     }
-    query.type = type as WeighInType
+    filter.type = type as WeighInType
   }
 
-  return query
+  return { ...query, filter }
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
@@ -106,9 +108,9 @@ export function buildRecordQuery(
 export function buildExerciseQuery(
   { status, name, category, categoryMatchType }: ApiReq<ExerciseQuery>,
   userId: ObjectId
-) {
-  const filter = {} as Filter<Exercise>
-  const matchTypes = {} as MatchTypes<Exercise>
+): MongoQuery<Exercise> {
+  const filter: MongoFilter<Exercise> = {}
+  const matchTypes: MatchTypes<Exercise> = {}
 
   // only add the defined params to the query
   if (status) {
@@ -125,17 +127,20 @@ export function buildExerciseQuery(
     }
   }
 
-  return { filter, matchTypes, userId } as MongoQuery<Exercise>
+  return { filter, matchTypes, userId }
 }
 
-export function buildModifierQuery({ status }: ApiReq<ModifierQuery>) {
-  const query = {} as ModifierQuery
+export function buildModifierQuery(
+  { status }: ApiReq<ModifierQuery>,
+  userId: ObjectId
+): MongoQuery<Modifier> {
+  const filter: MongoFilter<Modifier> = {}
 
   if (status) {
-    query.status = validateStatus(status)
+    filter.status = validateStatus(status)
   }
 
-  return query
+  return { filter, userId }
 }
 
 //------------------------

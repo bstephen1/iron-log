@@ -74,14 +74,12 @@ export async function fetchSession(userId: ObjectId, date: string) {
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchSessions(
-  userId: ObjectId,
-  limit?: number,
-  /** YYYY-MM-DD */
+export async function fetchSessions({
+  userId,
+  limit,
   start = '0',
-  /** YYYY-MM-DD */
-  end = '9'
-) {
+  end = '9',
+}: MongoQuery<SessionLog>) {
   // -1 sorts most recent first
   return await sessions
     .find(
@@ -246,9 +244,9 @@ export async function addModifier(userId: ObjectId, modifier: Modifier) {
   return await modifiers.insertOne({ ...modifier, userId })
 }
 
-export async function fetchModifiers(filter?: Filter<Modifier>) {
+export async function fetchModifiers({ filter, userId }: MongoQuery<Modifier>) {
   return await modifiers
-    .find({ ...filter }, { projection: { userId: 0 } })
+    .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
@@ -340,19 +338,17 @@ export async function addBodyweight(userId: ObjectId, bodyweight: Bodyweight) {
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchBodyweightHistory(
-  userId: ObjectId,
-  limit?: number,
-  /** YYYY-MM-DD */
+export async function fetchBodyweightHistory({
+  userId,
+  limit,
   start = '0',
-  /** YYYY-MM-DD */
   end = '9',
-  filters?: Filter<Bodyweight>
-) {
+  filter,
+}: MongoQuery<Bodyweight>) {
   // -1 sorts most recent first
   return await bodyweightHistory
     .find(
-      { userId, dateTime: { $gte: start, $lte: end }, ...filters },
+      { userId, dateTime: { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ dateTime: -1 })
