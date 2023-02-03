@@ -13,26 +13,26 @@ import {
   CardHeader,
   Fab,
   Skeleton,
+  Stack,
   Tooltip,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
   updateRecordFields,
   useExercises,
   useRecord,
-} from '../../lib/frontend/restService'
-import Exercise from '../../models/Exercise'
-import Note from '../../models/Note'
-import Record from '../../models/Record'
-import Set from '../../models/Set'
-import { Status } from '../../models/Status'
-import { ComboBoxField } from '../form-fields/ComboBoxField'
-import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
-import StyledDivider from '../StyledDivider'
+} from '../../../lib/frontend/restService'
+import Exercise from '../../../models/Exercise'
+import Note from '../../../models/Note'
+import Record from '../../../models/Record'
+import Set from '../../../models/Set'
+import { Status } from '../../../models/Status'
+import { ComboBoxField } from '../../form-fields/ComboBoxField'
+import { ExerciseSelector } from '../../form-fields/selectors/ExerciseSelector'
+import StyledDivider from '../../StyledDivider'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
 import SetHeader from './SetHeader'
@@ -55,7 +55,7 @@ export default function RecordCard({
   const _ = useSwiperSlide()
   const theme = useTheme()
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
-    ? 'swiper-no-swiping'
+    ? 'swiper-no-swiping-outer'
     : ''
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
@@ -241,41 +241,34 @@ export default function RecordCard({
         className={noSwipingAboveSm}
         sx={{ cursor: { sm: 'default' } }}
       >
-        <Grid container spacing={2}>
-          <Grid xs={12}>
-            <ExerciseSelector
-              variant="standard"
-              initialCategoryFilter={record.category}
-              handleCategoryFilterChange={(category) =>
-                handleFieldChange({ category })
-              }
-              {...{
-                exercise,
-                exercises,
-                handleChange: handleExerciseChange,
-                mutate: mutateExercises,
-              }}
-            />
-          </Grid>
-          <Grid xs={12}>
-            <ComboBoxField
-              label="Modifiers"
-              options={exercise?.modifiers}
-              initialValue={activeModifiers}
-              variant="standard"
-              handleSubmit={(value: string[]) =>
-                handleFieldChange({ activeModifiers: value })
-              }
-            />
-          </Grid>
-
-          <Grid xs={12}>
-            <SetHeader
-              initialSelected={fields}
-              handleSubmit={(fields) => handleFieldChange({ fields })}
-            />
-          </Grid>
-        </Grid>
+        <Stack spacing={2}>
+          <ExerciseSelector
+            variant="standard"
+            initialCategoryFilter={record.category}
+            handleCategoryFilterChange={(category) =>
+              handleFieldChange({ category })
+            }
+            {...{
+              exercise,
+              exercises,
+              handleChange: handleExerciseChange,
+              mutate: mutateExercises,
+            }}
+          />
+          <ComboBoxField
+            label="Modifiers"
+            options={exercise?.modifiers}
+            initialValue={activeModifiers}
+            variant="standard"
+            handleSubmit={(value: string[]) =>
+              handleFieldChange({ activeModifiers: value })
+            }
+          />
+          <SetHeader
+            initialSelected={fields}
+            handleSubmit={(fields) => handleFieldChange({ fields })}
+          />
+        </Stack>
 
         {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
         <Box sx={{ pb: 0 }}>

@@ -1,10 +1,11 @@
 import { Status } from '../Status'
+import { ArrayMatchType } from './MongoQuery'
 
-export default interface ExerciseQuery {
+export interface ExerciseQuery {
   status?: Status
-  /** Note: the api param is "category" because when filtering only one category is supported.
-   * But the query must stay as "categories" to match Exercise objects.
-   */
-  categories?: string
+  /** Query on categories. Can provide multiple categories. */
+  category?: string[]
+  /** Specify how to match against the given category array. Defaults to "Exact" */
+  categoryMatchType?: ArrayMatchType
   name?: string
 }

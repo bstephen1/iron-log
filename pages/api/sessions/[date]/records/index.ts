@@ -13,7 +13,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
   }
 
   const date = valiDate(req.query.date)
-  const records = await fetchRecords({ userId, date })
+  const records = await fetchRecords({ userId, filter: { date } })
   return { payload: records }
 }
 

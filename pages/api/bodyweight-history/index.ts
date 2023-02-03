@@ -13,11 +13,11 @@ import {
 } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
-  const { start, limit, end, type } = buildBodyweightQuery(req.query)
+  const query = buildBodyweightQuery(req.query, userId)
 
   switch (req.method) {
     case 'GET':
-      const data = await fetchBodyweightHistory(userId, limit, start, end, type)
+      const data = await fetchBodyweightHistory(query)
       return { payload: data }
     case 'POST':
       await addBodyweight(userId, JSON.parse(req.body))

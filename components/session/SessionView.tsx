@@ -17,10 +17,12 @@ import Exercise from '../../models/Exercise'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import WeightUnitConverter from '../WeightUnitConverter'
-import Clock from './Clock'
-import RecordCard from './RecordCard'
-import TitleBar from './TitleBar'
+import RecordCard from './records/RecordCard'
+import Clock from './upper/Clock'
+import TitleBar from './upper/TitleBar'
 
+import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import { useState } from 'react'
 import {
   A11y,
   Keyboard,
@@ -30,28 +32,22 @@ import {
   Swiper as SwiperClass,
 } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import HistoryFilter from './history/HistoryFilter'
+import AddRecord from './records/AddRecord'
 
-import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
-import { useState } from 'react'
+// Swiper needs all these css classes to be imported too
 import 'swiper/css'
 import 'swiper/css/bundle'
-import 'swiper/css/effect-cards'
-import 'swiper/css/effect-creative'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
-import AddRecord from './AddRecord'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
   // SWR caches this, so it won't need to call the API every render
-  const { sessionLog, isError, mutate } = useSessionLog(date)
-  // when the record is empty it will be null, but if it still hasn't returned yet it will be undefined
-  // it looks offputting putting a skeleton in when loading since there can be any number of exerciseRecords,
-  // so for now we just hide the add exercise button so the records don't pop in above it
-  const isLoading = sessionLog === undefined
+  const { sessionLog, isError, isLoading, mutate } = useSessionLog(date)
 
   // todo: this is a placeholder
   if (isError) {
@@ -117,13 +113,17 @@ export default function SessionView({ date }: { date: Dayjs }) {
       ) : (
         <Box>
           <Box
-            className="pagination"
+            className="pagination-above"
             display="flex"
             justifyContent="center"
             pt={2}
           />
           <Stack direction="row">
             {/* todo: nav button ripples are elongated */}
+            {/* todo: actually thinking of making these ListItemButtons, 
+            HistoryCards are within the single Swiper, and the Icon can be sticky
+            and scroll down the screen. The ListItemButton will be clickable 
+            over the whole gutter. */}
             <Box display="flex" width="auto" alignItems="center">
               <IconButton
                 sx={{ display: { xs: 'none', sm: 'block' } }}
@@ -140,6 +140,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
               onSlideChange={updateSwiper}
               // update when number of slides changes
               onUpdate={updateSwiper}
+              noSwipingClass="swiper-no-swiping-outer"
               modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
               // breakpoints catch everything >= the given value
               breakpoints={{
@@ -169,12 +170,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
               // need this for CSS to hide slides that are partially offscreen
               watchSlidesProgress
               pagination={{
-                el: '.pagination',
+                el: '.pagination-above',
                 clickable: true,
-                // todo: numbered list? Make last one AddIcon ?
-                renderBullet: function (index, className) {
-                  return `<span class="${className}"></span>`
-                },
               }}
               style={{ padding: '15px 10px', flexGrow: '1' }}
             >
@@ -187,6 +184,9 @@ export default function SessionView({ date }: { date: Dayjs }) {
                       swapRecords={handleSwapRecords}
                       swiperIndex={i}
                     />
+                    <Box py={3}>
+                      <HistoryFilter recordId={id} key={id} />
+                    </Box>
                   </SwiperSlide>
                 ))}
               <SwiperSlide>

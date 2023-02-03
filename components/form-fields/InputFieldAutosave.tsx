@@ -31,6 +31,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       {...control(label)}
       autoComplete="off"
       error={!!error}
+      fullWidth
       helperText={error || defaultHelperText}
       InputLabelProps={{ shrink: !isEmpty }}
       {...textFieldProps}

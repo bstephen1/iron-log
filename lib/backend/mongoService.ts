@@ -1,8 +1,13 @@
 import { Filter, ObjectId } from 'mongodb'
-import Bodyweight, { WeighInType } from '../../models/Bodyweight'
+import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
+import {
+  ArrayMatchType,
+  MatchTypes,
+  MongoQuery,
+} from '../../models/query-filters/MongoQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { db } from './mongoConnect'
@@ -18,9 +23,33 @@ const records = db.collection<WithUserId<Record>>('records')
 const bodyweightHistory =
   db.collection<WithUserId<Bodyweight>>('bodyweightHistory')
 
-interface updateFieldsProps<T extends { _id: string }> {
+interface UpdateFieldsProps<T extends { _id: string }> {
   id: T['_id']
   updates: Partial<T>
+}
+
+// todo: add a guard to not do anything if calling multiple times
+/** sets a Filter to query based on the desired MatchType schema.
+ * Should only be called once on a given filter.
+ */
+function setArrayMatchTypes<T>(filter: Filter<T>, matchTypes: MatchTypes<T>) {
+  for (const key in matchTypes) {
+    switch (matchTypes[key]) {
+      case ArrayMatchType.All:
+        // typescript complaining for some reason. May or may not be a better way to silence it.
+        filter[key] = { $all: filter[key] } as any
+        break
+      case ArrayMatchType.Any:
+        filter[key] = { $in: filter[key] } as any
+        break
+      case ArrayMatchType.Exact:
+        // do nothing
+        break
+      default:
+        // do nothing (same as Exact)
+        break
+    }
+  }
 }
 
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
@@ -45,14 +74,12 @@ export async function fetchSession(userId: ObjectId, date: string) {
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchSessions(
-  userId: ObjectId,
-  limit?: number,
-  /** YYYY-MM-DD */
+export async function fetchSessions({
+  userId,
+  limit,
   start = '0',
-  /** YYYY-MM-DD */
-  end = '9'
-) {
+  end = '9',
+}: MongoQuery<SessionLog>) {
   // -1 sorts most recent first
   return await sessions
     .find(
@@ -97,11 +124,18 @@ export async function addRecord(userId: ObjectId, record: Record) {
 }
 
 // todo: pagination
-export async function fetchRecords(filter?: Filter<Record>) {
+export async function fetchRecords({
+  filter,
+  limit,
+  start = '0',
+  end = '9',
+  userId,
+}: MongoQuery<Record>) {
   // find() returns a cursor, so it has to be converted to an array
   return await records
     .aggregate([
-      { $match: filter },
+      // date range will be overwritten if a specific date is given in the filter
+      { $match: { date: { $gte: start, $lte: end }, ...filter, userId } },
       {
         $lookup: {
           from: 'exercises',
@@ -114,6 +148,8 @@ export async function fetchRecords(filter?: Filter<Record>) {
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
       { $project: { userId: 0 } },
     ])
+    .sort({ date: -1 })
+    .limit(limit ?? 50)
     .toArray()
 }
 
@@ -151,7 +187,7 @@ export async function updateRecord(userId: ObjectId, record: Record) {
 
 export async function updateRecordFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Record>
+  { id, updates }: UpdateFieldsProps<Record>
 ) {
   return await records.updateOne({ userId, _id: id }, { $set: updates })
 }
@@ -170,9 +206,20 @@ export async function addExercise(userId: ObjectId, exercise: Exercise) {
   return await exercises.insertOne({ ...exercise, userId })
 }
 
-export async function fetchExercises(filter?: Filter<Exercise>) {
+/** This fetch supports the array field "categories". By default, a query on categories
+ * will match records that contain any one of the given categories array.
+ */
+export async function fetchExercises({
+  userId,
+  filter,
+  matchTypes,
+}: MongoQuery<Exercise>) {
+  if (filter && matchTypes) {
+    setArrayMatchTypes(filter, matchTypes)
+  }
+
   return await exercises
-    .find({ ...filter }, { projection: { userId: 0 } })
+    .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
@@ -193,7 +240,7 @@ export async function updateExercise(userId: ObjectId, exercise: Exercise) {
 
 export async function updateExerciseFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Exercise>
+  { id, updates }: UpdateFieldsProps<Exercise>
 ) {
   return await exercises.updateOne({ userId, _id: id }, { $set: updates })
 }
@@ -206,9 +253,9 @@ export async function addModifier(userId: ObjectId, modifier: Modifier) {
   return await modifiers.insertOne({ ...modifier, userId })
 }
 
-export async function fetchModifiers(filter?: Filter<Modifier>) {
+export async function fetchModifiers({ filter, userId }: MongoQuery<Modifier>) {
   return await modifiers
-    .find({ ...filter }, { projection: { userId: 0 } })
+    .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
@@ -221,7 +268,7 @@ export async function fetchModifier(userId: ObjectId, name: string) {
 
 export async function updateModifierFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Modifier>
+  { id, updates }: UpdateFieldsProps<Modifier>
 ) {
   if (updates.name) {
     const oldModifier = await modifiers.find({ userId, _id: id }).next()
@@ -271,7 +318,7 @@ export async function fetchCategory(userId: ObjectId, name: string) {
 
 export async function updateCategoryFields(
   userId: ObjectId,
-  { id, updates }: updateFieldsProps<Category>
+  { id, updates }: UpdateFieldsProps<Category>
 ) {
   // todo: should this be a transaction? Apparently that requires a cluster
   // can run single testing node as cluster with mongod --replset rs0
@@ -300,19 +347,17 @@ export async function addBodyweight(userId: ObjectId, bodyweight: Bodyweight) {
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchBodyweightHistory(
-  userId: ObjectId,
-  limit?: number,
-  /** YYYY-MM-DD */
+export async function fetchBodyweightHistory({
+  userId,
+  limit,
   start = '0',
-  /** YYYY-MM-DD */
   end = '9',
-  type?: WeighInType
-) {
+  filter,
+}: MongoQuery<Bodyweight>) {
   // -1 sorts most recent first
   return await bodyweightHistory
     .find(
-      { userId, type, dateTime: { $gte: start, $lte: end } },
+      { userId, dateTime: { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ dateTime: -1 })

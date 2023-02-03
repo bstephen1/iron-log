@@ -10,8 +10,8 @@ import {
   Stack,
 } from '@mui/material'
 import { Fragment, useState } from 'react'
-import { DEFAULT_UNITS } from '../../lib/frontend/constants'
-import Set from '../../models/Set'
+import { DEFAULT_UNITS } from '../../../lib/frontend/constants'
+import Set from '../../../models/Set'
 
 interface Props {
   initialSelected?: (keyof Set)[]

@@ -12,9 +12,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
     throw methodNotAllowed
   }
 
-  const query = buildRecordQuery(req.query)
+  const query = buildRecordQuery(req.query, userId)
 
-  const records = await fetchRecords({ ...query, userId })
+  const records = await fetchRecords(query)
   return { payload: records }
 }
 

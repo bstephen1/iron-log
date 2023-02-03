@@ -2,14 +2,15 @@ import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { Fragment } from 'react'
-import Set from '../../models/Set'
-import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
+import Set from '../../../models/Set'
+import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 interface Props {
   handleSubmit: (changes: Partial<Set>) => void
   handleDelete: () => void
   set: Set
   fields: (keyof Set)[]
+  readOnly?: boolean
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
@@ -19,21 +20,12 @@ export default function SetInput({
   handleDelete,
   set,
   fields,
+  readOnly = false,
 }: Props) {
   const pyStack = 0.5
 
   if (!fields.length) {
     return <></>
-  }
-
-  const convertValueToNumber = (value: string) => {
-    value = value.trim()
-    // have to explicitly handle an empty string because isNaN treats it as zero
-    if (!value) {
-      return undefined
-    }
-    // for some reason isNaN is requiring a number even though it casts to a number
-    return isNaN(Number(value)) ? undefined : Number(value)
   }
 
   return (
@@ -54,13 +46,19 @@ export default function SetInput({
           {/* todo: store each field's delimiter and pull that here? */}
           {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
           <NumericFieldAutosave
-            initialValue={String(set[field] ?? '')}
+            initialValue={set[field]}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
               handleSubmit({
-                [field]: convertValueToNumber(value),
+                [field]: value,
               })
             }
+            inputProps={{ style: { textAlign: 'center' } }}
+            InputProps={{
+              disableUnderline: true,
+              readOnly,
+              // endAdornment: <InputAdornment position="end">{units}</InputAdornment>,
+            }}
             sx={{ flexGrow: 1 }}
           />
         </Fragment>

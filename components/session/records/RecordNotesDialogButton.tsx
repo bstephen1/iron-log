@@ -1,8 +1,8 @@
 import { Notes } from '@mui/icons-material'
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { ComponentProps, ReactElement, useState } from 'react'
-import Note from '../../models/Note'
-import NotesList from '../form-fields/NotesList'
+import Note from '../../../models/Note'
+import NotesList from '../../form-fields/NotesList'
 import RecordHeaderButton from './RecordHeaderButton'
 
 export interface Props

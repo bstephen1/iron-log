@@ -7,13 +7,13 @@ import {
 import dayjs, { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import * as yup from 'yup'
-import { DATE_FORMAT, DEFAULT_UNITS } from '../../lib/frontend/constants'
+import { DATE_FORMAT, DEFAULT_UNITS } from '../../../lib/frontend/constants'
 import {
   updateBodyweight,
   useBodyweightHistory,
-} from '../../lib/frontend/restService'
-import Bodyweight, { WeighInType } from '../../models/Bodyweight'
-import InputField from '../form-fields/InputField'
+} from '../../../lib/frontend/restService'
+import Bodyweight, { WeighInType } from '../../../models/Bodyweight'
+import InputField from '../../form-fields/InputField'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
 interface Props {
