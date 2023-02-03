@@ -2,7 +2,7 @@ import { Stack } from '@mui/material'
 import { Navigation, Pagination, Scrollbar } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useRecords } from '../../../lib/frontend/restService'
-import { RecordQueryFrontend } from '../../../models/query-filters/RecordQuery'
+import { RecordQuery } from '../../../models/query-filters/RecordQuery'
 import HistoryCard from './HistoryCard'
 
 import 'swiper/css'
@@ -12,7 +12,7 @@ import 'swiper/css/pagination'
 
 interface Props {
   recordId: string
-  filter: RecordQueryFrontend
+  filter: RecordQuery
 }
 export default function HistoryCardsSwiper({ recordId, filter }: Props) {
   const { records, isLoading } = useRecords(filter)

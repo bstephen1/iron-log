@@ -1,4 +1,11 @@
-import { Condition, Join, NestedPaths, ObjectId, PropertyType } from 'mongodb'
+import {
+  Condition,
+  Join,
+  NestedPaths,
+  ObjectId,
+  PropertyType,
+  RootFilterOperators,
+} from 'mongodb'
 
 /** A query to send to mongo.  */
 export interface MongoQuery<T> {
@@ -58,17 +65,17 @@ export enum ArrayMatchType {
 // part that we want and made a custom type. With the custom filter "as" works fine
 // and there's no union to worry about. The custom filter also removes the WithId<>
 // wrapper because the models already include _id fields.
+//
+// Originally left out RootFilterOperators, but that turned out to be needed to
+// query nested arrays (eg, filter['sets.reps'] for Records).
 
-/** A restricted mongo Filter that only allows for setting field values
- * (no mongo operators). This should be used to set up mongo filters instead of mongo's
- * own Filter type unless directly interfacing with the db.
- *
- * Note: this filter removes mongo Filter's Partial\<TSchema\> union type, so it can't
- * be used to query for an exact given document. If that is a desired query it should
+/** A restricted mongo Filter thatremoves mongo Filter's Partial\<TSchema\> union type,
+ * which doesn't play nice with typescript. This means this type can't be used to query for
+ * an exact given document. If that is a desired query it should
  * be passed to the mongo service typed as a Partial\<TSchema\> instead.
  */
 export type MongoFilter<TSchema> = {
   [Property in Join<NestedPaths<TSchema>, '.'>]?: Condition<
     PropertyType<TSchema, Property>
   >
-}
+} & RootFilterOperators<TSchema>

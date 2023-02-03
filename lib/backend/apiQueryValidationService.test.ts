@@ -1,11 +1,15 @@
 import { ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
 import { v1 as invalidUuid } from 'uuid'
+import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { ArrayMatchType } from '../../models/query-filters/MongoQuery'
+import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import { Status } from '../../models/Status'
 import { generateId } from '../util'
 import {
-  ApiQuery,
+  ApiReq,
   buildBodyweightQuery,
   buildDateRangeQuery,
   buildExerciseQuery,
@@ -100,7 +104,7 @@ describe('build query', () => {
 
   describe('buildDateRangeQuery', () => {
     it('builds full query', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<DateRangeQuery> = {
         limit: '5',
         start: '2000-01-01',
         end: '2001-01-01',
@@ -112,7 +116,7 @@ describe('build query', () => {
     })
 
     it('builds partial query', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<DateRangeQuery> = {
         limit: undefined,
         start: '2000-01-01',
         end: undefined,
@@ -135,7 +139,7 @@ describe('build query', () => {
 
   describe('buildBodyweightQuery', () => {
     it('builds full query', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<BodyweightQuery> = {
         type: 'official',
         limit: '5',
         start: '2000-01-01',
@@ -148,7 +152,7 @@ describe('build query', () => {
     })
 
     it('builds partial query', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<BodyweightQuery> = {
         type: undefined,
         limit: undefined,
         start: '2000-01-01',
@@ -175,18 +179,32 @@ describe('build query', () => {
 
   describe('buildRecordQuery', () => {
     it('builds full query', () => {
-      const apiQuery: ApiQuery = { exercise: 'exercise', date: '2000-01-01' }
+      const apiQuery: ApiReq<RecordQuery> = {
+        exercise: 'exercise',
+        date: '2000-01-01',
+        modifier: 'modifier',
+        modifierMatchType: ArrayMatchType.All,
+        reps: '5',
+      }
       expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
         filter: {
           date: apiQuery.date,
+          activeModifiers: [apiQuery.modifier],
+          'sets.reps': Number(apiQuery.reps),
           'exercise.name': apiQuery.exercise,
+        },
+        matchTypes: {
+          activeModifiers: apiQuery.modifierMatchType,
         },
         userId,
       })
     })
 
     it('builds partial query', () => {
-      const apiQuery: ApiQuery = { date: '2000-01-01', exercise: undefined }
+      const apiQuery: ApiReq<RecordQuery> = {
+        date: '2000-01-01',
+        exercise: undefined,
+      }
       expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
         filter: {
           date: apiQuery.date,
@@ -206,11 +224,53 @@ describe('build query', () => {
         ApiError
       )
     })
+
+    it('builds modifiers from string modifier', () => {
+      const apiQuery: ApiReq<RecordQuery> = {
+        modifier: 'modifier',
+      }
+      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+        filter: { activeModifiers: [apiQuery.modifier] },
+        userId,
+      })
+    })
+
+    it('builds modifiers from array modifier', () => {
+      const apiQuery: ApiReq<RecordQuery> = {
+        modifier: ['modifier'],
+      }
+      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+        filter: { activeModifiers: apiQuery.modifier },
+        userId,
+      })
+    })
+
+    it('validates match type', () => {
+      expect(() =>
+        buildRecordQuery(
+          { modifier: 'modifier', modifierMatchType: 'invalid' },
+          userId
+        )
+      ).toThrow(ApiError)
+    })
+
+    it('ignores matchType when modifier is empty', () => {
+      expect(
+        buildRecordQuery({ modifierMatchType: ArrayMatchType.All }, userId)
+      ).toMatchObject({ userId })
+    })
+
+    it('validates reps', () => {
+      expect(() => buildRecordQuery({ reps: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
+      expect(() => buildRecordQuery({ reps: ['5'] }, userId)).toThrow(ApiError)
+    })
   })
 
   describe('buildExerciseQuery', () => {
     it('builds full query', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<ExerciseQuery> = {
         status: Status.active,
         name: 'name',
         category: 'category',
@@ -230,7 +290,7 @@ describe('build query', () => {
     })
 
     it('builds partial query', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<ExerciseQuery> = {
         status: Status.active,
         name: undefined,
         category: undefined,
@@ -242,7 +302,7 @@ describe('build query', () => {
     })
 
     it('builds categories from string category', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<ExerciseQuery> = {
         category: 'category',
       }
       expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
@@ -252,7 +312,7 @@ describe('build query', () => {
     })
 
     it('builds categories from array category', () => {
-      const apiQuery: ApiQuery = {
+      const apiQuery: ApiReq<ExerciseQuery> = {
         category: ['category'],
       }
       expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({

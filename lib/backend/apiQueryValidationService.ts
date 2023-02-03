@@ -5,6 +5,7 @@ import { WeighInType } from '../../models/Bodyweight'
 import Exercise from '../../models/Exercise'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import {
   ArrayMatchType,
@@ -12,13 +13,15 @@ import {
   MongoFilter,
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
+import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import Record from '../../models/Record'
 import { Status } from '../../models/Status'
 import { validDateStringRegex } from '../frontend/constants'
 import { isValidId } from '../util'
 
-export type ApiParam = string | string[] | undefined
-export type ApiQuery = { [param: string]: ApiParam }
+type ApiParam = string | string[] | undefined
+// only exported for the test file
+export type ApiReq<T> = { [key in keyof T]: ApiParam }
 
 // It could be debated whether to be permissive of unsupported params.
 // For now we are just ignoring them since it probably won't matter for our use case.
@@ -29,7 +32,11 @@ export type ApiQuery = { [param: string]: ApiParam }
 //------------------------
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildDateRangeQuery({ limit, start, end }: ApiQuery) {
+export function buildDateRangeQuery({
+  limit,
+  start,
+  end,
+}: ApiReq<DateRangeQuery>) {
   const query = {} as DateRangeQuery
 
   // only add the defined params to the query
@@ -47,7 +54,12 @@ export function buildDateRangeQuery({ limit, start, end }: ApiQuery) {
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
+export function buildBodyweightQuery({
+  limit,
+  start,
+  end,
+  type,
+}: ApiReq<BodyweightQuery>) {
   const query = buildDateRangeQuery({ limit, start, end }) as BodyweightQuery
 
   if (type) {
@@ -64,7 +76,7 @@ export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
 
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildRecordQuery(
-  { exercise, date }: ApiQuery,
+  { exercise, date, modifier, modifierMatchType, reps }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
   const filter: MongoFilter<Record> = {}
@@ -77,13 +89,22 @@ export function buildRecordQuery(
   if (date) {
     filter.date = valiDate(date)
   }
+  if (modifier) {
+    filter.activeModifiers = validateStringArray(modifier, 'Modifier')
+    if (modifierMatchType) {
+      matchTypes.activeModifiers = validateMatchType(modifierMatchType)
+    }
+  }
+  if (reps) {
+    filter['sets.reps'] = validateNumber(reps, 'Reps')
+  }
 
   return { filter, matchTypes, userId }
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildExerciseQuery(
-  { status, name, category, categoryMatchType }: ApiQuery,
+  { status, name, category, categoryMatchType }: ApiReq<ExerciseQuery>,
   userId: ObjectId
 ) {
   const filter = {} as Filter<Exercise>
@@ -107,6 +128,16 @@ export function buildExerciseQuery(
   return { filter, matchTypes, userId } as MongoQuery<Exercise>
 }
 
+export function buildModifierQuery({ status }: ApiReq<ModifierQuery>) {
+  const query = {} as ModifierQuery
+
+  if (status) {
+    query.status = validateStatus(status)
+  }
+
+  return query
+}
+
 //------------------------
 // validation functions
 //------------------------
@@ -117,16 +148,6 @@ export function validateId(id: ApiParam) {
   }
 
   return id
-}
-
-export function buildModifierQuery({ status }: ApiQuery) {
-  const query = {} as ModifierQuery
-
-  if (status) {
-    query.status = validateStatus(status)
-  }
-
-  return query
 }
 
 /** validate a date */
@@ -162,6 +183,7 @@ export function validateMatchType(param: ApiParam) {
   if (
     !(
       typeof param === 'string' &&
+      // todo: ignore case
       Object.values(ArrayMatchType).includes(param as ArrayMatchType)
     )
   ) {
