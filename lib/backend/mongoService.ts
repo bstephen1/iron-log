@@ -126,11 +126,11 @@ export async function addRecord(userId: ObjectId, record: Record) {
 }
 
 // todo: pagination
-export async function fetchRecords(filter?: Filter<Record>) {
+export async function fetchRecords({ filter, userId }: MongoQuery<Record>) {
   // find() returns a cursor, so it has to be converted to an array
   return await records
     .aggregate([
-      { $match: filter },
+      { $match: { ...filter, userId } },
       {
         $lookup: {
           from: 'exercises',

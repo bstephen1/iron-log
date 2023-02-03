@@ -9,9 +9,10 @@ import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import {
   ArrayMatchType,
   MatchTypes,
+  MongoFilter,
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
-import { RecordQueryBackend } from '../../models/query-filters/RecordQuery'
+import Record from '../../models/Record'
 import { Status } from '../../models/Status'
 import { validDateStringRegex } from '../frontend/constants'
 import { isValidId } from '../util'
@@ -62,18 +63,22 @@ export function buildBodyweightQuery({ limit, start, end, type }: ApiQuery) {
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildRecordQuery({ exercise, date }: ApiQuery) {
-  const query = {} as RecordQueryBackend
+export function buildRecordQuery(
+  { exercise, date }: ApiQuery,
+  userId: ObjectId
+): MongoQuery<Record> {
+  const filter: MongoFilter<Record> = {}
+  const matchTypes: MatchTypes<Record> = {}
 
   // only add the defined params to the query
   if (exercise) {
-    query['exercise.name'] = validateString(exercise, 'Exercise')
+    filter['exercise.name'] = validateString(exercise, 'Exercise')
   }
   if (date) {
-    query.date = valiDate(date)
+    filter.date = valiDate(date)
   }
 
-  return query
+  return { filter, matchTypes, userId }
 }
 
 /** Build and validate a query to send to the db from the rest param input. */

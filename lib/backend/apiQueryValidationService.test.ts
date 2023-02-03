@@ -173,30 +173,38 @@ describe('build query', () => {
     })
   })
 
-  describe('buildRecordQueryBackend', () => {
+  describe('buildRecordQuery', () => {
     it('builds full query', () => {
       const apiQuery: ApiQuery = { exercise: 'exercise', date: '2000-01-01' }
-      expect(buildRecordQuery(apiQuery)).toMatchObject({
-        date: apiQuery.date,
-        'exercise.name': apiQuery.exercise,
+      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+        filter: {
+          date: apiQuery.date,
+          'exercise.name': apiQuery.exercise,
+        },
+        userId,
       })
     })
 
     it('builds partial query', () => {
       const apiQuery: ApiQuery = { date: '2000-01-01', exercise: undefined }
-      expect(buildRecordQuery(apiQuery)).toMatchObject({
-        date: apiQuery.date,
+      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+        filter: {
+          date: apiQuery.date,
+        },
+        userId,
       })
     })
 
     it('validates exercise', () => {
-      expect(() => buildRecordQuery({ exercise: ['invalid'] })).toThrow(
+      expect(() => buildRecordQuery({ exercise: ['invalid'] }, userId)).toThrow(
         ApiError
       )
     })
 
     it('validates date', () => {
-      expect(() => buildRecordQuery({ date: 'invalid' })).toThrow(ApiError)
+      expect(() => buildRecordQuery({ date: 'invalid' }, userId)).toThrow(
+        ApiError
+      )
     })
   })
 
