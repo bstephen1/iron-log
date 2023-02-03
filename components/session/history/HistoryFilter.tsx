@@ -37,7 +37,7 @@ export default function HistoryFilter({ recordId }: Props) {
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
 
-        <CardContent sx={{ pl: 0 }}>
+        <CardContent sx={{ px: 1 }}>
           <Stack spacing={2}>
             <Stack direction="row">
               <Checkbox

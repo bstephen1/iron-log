@@ -35,7 +35,17 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
 
   return (
     // todo: may need to do something with height, just arbitrarily stuck in 300px
-    <Stack direction="row" sx={{ height: '300px' }}>
+    <Stack sx={{ height: '500px' }}>
+      {/* todo: spacing is off if coming in from the early return  */}
+      <Stack
+        direction="row"
+        className={paginationClassName}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="40px"
+        spacing={1}
+      />
       <Swiper
         direction="vertical"
         // vertical orientation REQUIRES a fixed height. Currently fixing height of parent container.
@@ -67,7 +77,7 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
 
       {/* the bullets just become spans so we have to stack them 
       vertically or they'll be horizontal */}
-      <Stack
+      {/* <Stack
         className={paginationClassName}
         position="relative"
         display="flex"
@@ -76,7 +86,7 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
         width="40px"
         // flex display removes the bullets' margins but spacing here looks similar enough
         spacing={1}
-      />
+      /> */}
     </Stack>
   )
 }

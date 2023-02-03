@@ -17,7 +17,7 @@ export default function HistoryCard({ record }: Props) {
 
   // todo: readonly
   return (
-    <Card elevation={0} sx={{ mr: 3 }}>
+    <Card elevation={0}>
       <CardHeader
         // todo: onclick route to that day
         title={`${record.date}`}
