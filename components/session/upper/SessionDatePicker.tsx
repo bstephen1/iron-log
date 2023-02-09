@@ -17,13 +17,18 @@ export default function SessionDatePicker(props: Props) {
   const [date, setDate] = useState(props.date)
   const [month, setMonth] = useState(props.date)
   const router = useRef(useRouter())
+  // The query gets data for the current month +/- 1 month so that
+  // data for daysOutsideCurrentMonth is still visible on the current month
   const buildSessionLogQuery = (relativeMonth: number) => ({
     limit: 0,
     start: month
       ?.startOf('month')
-      .add(relativeMonth, 'month')
+      .add(relativeMonth - 1, 'month')
       .format(DATE_FORMAT),
-    end: month?.endOf('month').add(relativeMonth, 'month').format(DATE_FORMAT),
+    end: month
+      ?.endOf('month')
+      .add(relativeMonth + 1, 'month')
+      .format(DATE_FORMAT),
   })
 
   // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
@@ -48,6 +53,7 @@ export default function SessionDatePicker(props: Props) {
 
   return (
     <DatePicker
+      showDaysOutsideCurrentMonth
       label="Date"
       value={date}
       onChange={(newDate) => setDate(newDate)}
