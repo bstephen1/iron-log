@@ -14,13 +14,26 @@ export default function HistoryFilter({ recordId }: Props) {
   const { record } = useRecord(recordId)
   const [modifierFilter, setModifierFilter] = useState<string[]>([])
   const [repFilter, setRepFilter] = useState<number>()
-  const [repsChecked, setRepsChecked] = useState(true)
-  const [modifiersChecked, setModifiersChecked] = useState(true)
+  const [repsChecked, setRepsChecked] = useState(false)
+  const [modifiersChecked, setModifiersChecked] = useState(false)
 
   useEffect(() => {
-    if (record) {
-      setModifierFilter(record.activeModifiers)
+    if (!record) {
+      return
+    }
+
+    // only filter if there is a value.
+    // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
+    setModifiersChecked(!!record.activeModifiers.length)
+    setModifierFilter(record.activeModifiers)
+
+    // todo: amrap needs to be a special default modifier rather than hardcoding here
+    if (record.sets[0].reps && !record.activeModifiers.includes('amrap')) {
+      setRepsChecked(true)
       setRepFilter(record.sets[0].reps)
+    } else {
+      setRepsChecked(false)
+      setRepFilter(undefined)
     }
   }, [record])
 
