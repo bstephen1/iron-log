@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs'
+import { stringify } from 'querystring'
 import useSWR from 'swr'
 import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
@@ -15,6 +16,12 @@ import { DATE_FORMAT } from './constants'
 
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
+
+// todo: querystring's stringify is a bit sloppy when fields are undefined.
+// eg, {reps: undefined} => 'reps=&'. It doesn't affect the backend call though because
+// the validator filters that out. Might be ok to leave as is.
+// Also, note that stringify doesn't add the leading '?'.
+// See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
 
 //---------
 // SESSION
@@ -34,7 +41,7 @@ export function useSessionLog(date: Dayjs) {
 }
 
 export function useSessionLogs(query: DateRangeQuery) {
-  const paramString = buildParamString({ ...query })
+  const paramString = '?' + stringify({ ...query })
   const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
     URI_SESSIONS + paramString
   )
@@ -84,9 +91,10 @@ export function useRecord(id: Record['_id']) {
 }
 
 export function useRecords(query?: RecordQuery) {
-  const paramString = buildParamString({ ...query })
+  const paramString = '?' + stringify({ ...query })
   const { data, isLoading, error } = useSWR<Record[]>(URI_RECORDS + paramString)
 
+  console.log(paramString)
   return {
     records: data,
     isError: error,
@@ -116,7 +124,7 @@ export async function updateRecordFields(
 //----------
 
 export function useExercises(query?: ExerciseQuery) {
-  const paramString = buildParamString({ ...query })
+  const paramString = '?' + stringify({ ...query })
 
   const { data, error, mutate } = useSWR<Exercise[]>(
     URI_EXERCISES + paramString
@@ -246,7 +254,7 @@ export function useBodyweightHistory({ start, end, ...rest }: BodyweightQuery) {
   start = start ? addDay(start) : start
   end = end ? addDay(end) : end
 
-  const paramString = buildParamString({ start, end, ...rest })
+  const paramString = '?' + stringify({ start, end, ...rest })
   const { data, error, mutate } = useSWR<Bodyweight[]>(
     URI_BODYWEIGHT + paramString
   )
@@ -270,40 +278,6 @@ export async function updateBodyweight(newBodyweight: Bodyweight) {
     method: 'PUT',
     body: JSON.stringify(newBodyweight),
   }).catch((e) => console.error(e))
-}
-
-//-------------------
-// PRIVATE FUNCTIONS
-//-------------------
-
-/** query-filter models are not directly accepted as Params type.
- * Either spread the object or redefine the query models to be types instead of interfaces.
- * See: https://bobbyhadz.com/blog/typescript-index-signature-for-type-is-missing-in-type
- */
-type Params = { [param: string]: string | string[] | number | undefined }
-
-/** Build an api filter string query. Flattens any arrays and changes numbers to strings.
- *
- * eg, {category: [1,2,3]} => '?category=1&category=2&category=3'
- */
-function buildParamString(params: Params) {
-  let paramString = '?'
-
-  for (let key of Object.keys(params)) {
-    let value = params[key]
-    if (!value) {
-      continue
-    }
-
-    if (!Array.isArray(value)) {
-      value = [`${value}`]
-    }
-
-    value.forEach((item) => (paramString += `${key}=${item}&`))
-  }
-
-  // remove trailing '&', and remove '?' if there are no params
-  return paramString === '?' ? '' : paramString.slice(0, -1)
 }
 
 //------

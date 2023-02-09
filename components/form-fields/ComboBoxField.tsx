@@ -36,15 +36,22 @@ function ComboBoxFieldBase({
     isDirty && handleSubmit(value)
   }
 
+  const handleChange = (value: string[]) => {
+    setValue(value)
+    handleSubmit(value)
+  }
+
   // This needs to be controlled due to complex behavior between the inner input and Chips.
   // May have to modify it if debounceSubmit is desired, but that may not be necessary for this.
-  // Seems like the debounce has to be a lot longer. onClose + onBlur may be enough.
+  // Originally this was only submitting onClose or onBlur, but changed to onChange because then it
+  // wasn't updating if you clicked delete on the chips. But that means now it might send extra requests
+  // if multiple values are being changed.
   return (
     <Autocomplete
       {...control()}
       // useless renderInput to satisfy ts. Overwritten by autocompleteProps
       renderInput={(params) => <TextField {...params} />}
-      onChange={(_, value) => setValue(value)}
+      onChange={(_, value) => handleChange(value)}
       fullWidth
       // size="small"  // todo: use small sizes?
       multiple
