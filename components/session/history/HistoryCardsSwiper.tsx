@@ -9,13 +9,17 @@ import 'swiper/css'
 import 'swiper/css/bundle'
 
 import 'swiper/css/pagination'
+import { ArrayMatchType } from '../../../models/query-filters/MongoQuery'
 
 interface Props {
   recordId: string
   filter: RecordQuery
 }
 export default function HistoryCardsSwiper({ recordId, filter }: Props) {
-  const { records, isLoading } = useRecords(filter)
+  const { records, isLoading } = useRecords({
+    ...filter,
+    modifierMatchType: ArrayMatchType.Equivalent,
+  })
   // each record's history needs a unique className
   const paginationClassName = `pagination-vertical-${recordId}`
 

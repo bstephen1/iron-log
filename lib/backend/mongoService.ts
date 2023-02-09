@@ -31,8 +31,14 @@ interface UpdateFieldsProps<T extends { _id: string }> {
 // todo: add a guard to not do anything if calling multiple times
 /** sets a Filter to query based on the desired MatchType schema.
  * Should only be called once on a given filter.
+ *
+ * If no matchTypes are provided, arrays will be matched as ArrayMatchType.Exact
  */
-function setArrayMatchTypes<T>(filter: Filter<T>, matchTypes: MatchTypes<T>) {
+function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
+  if (!filter) {
+    return
+  }
+
   for (const key in matchTypes) {
     switch (matchTypes[key]) {
       case ArrayMatchType.All:
@@ -42,11 +48,18 @@ function setArrayMatchTypes<T>(filter: Filter<T>, matchTypes: MatchTypes<T>) {
       case ArrayMatchType.Any:
         filter[key] = { $in: filter[key] } as any
         break
-      case ArrayMatchType.Exact:
-        // do nothing
+      case ArrayMatchType.Equivalent:
+        // Note: for standard exact matches, order of array elements matters.
+        // It is possible, but potentially expensive to query for an exact match where order
+        // doesn't matter (ie, the "equivalent" matchType). Alternatively, arrays should be sorted on insertion.
+        // The latter provides for some pretty clunky ux when editing Autocomplete chips, so
+        // we are opting for the former unless performance notably degrades.
+        // See: https://stackoverflow.com/questions/29774032/mongodb-find-exact-array-match-but-order-doesnt-matter
+        filter[key] = { $size: filter[key].length, $all: filter[key] } as any
         break
+      case ArrayMatchType.Exact:
       default:
-        // do nothing (same as Exact)
+        // do nothing
         break
     }
   }
@@ -130,7 +143,10 @@ export async function fetchRecords({
   start = '0',
   end = '9',
   userId,
+  matchTypes,
 }: MongoQuery<Record>) {
+  setArrayMatchTypes(filter, matchTypes)
+
   // find() returns a cursor, so it has to be converted to an array
   return await records
     .aggregate([
@@ -214,9 +230,7 @@ export async function fetchExercises({
   filter,
   matchTypes,
 }: MongoQuery<Exercise>) {
-  if (filter && matchTypes) {
-    setArrayMatchTypes(filter, matchTypes)
-  }
+  setArrayMatchTypes(filter, matchTypes)
 
   return await exercises
     .find({ ...filter, userId }, { projection: { userId: 0 } })

@@ -43,7 +43,10 @@ export enum ArrayMatchType {
    * This option includes records with a null or empty array
    */
   // OnlyWithNull = 'onlyWithNull',
-  /** matches records that contain exactly the provided values list (combines All and Only) */
+  /** matches records that contain exactly the provided values list, in any order. */
+  Equivalent = 'equivalent',
+  /** matches records that contain exactly the provided array in the same order.
+   * This is treated as the default ArrayMatchType when one is not otherwise specified. */
   Exact = 'exact',
 }
 

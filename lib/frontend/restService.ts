@@ -94,7 +94,6 @@ export function useRecords(query?: RecordQuery) {
   const paramString = '?' + stringify({ ...query })
   const { data, isLoading, error } = useSWR<Record[]>(URI_RECORDS + paramString)
 
-  console.log(paramString)
   return {
     records: data,
     isError: error,
