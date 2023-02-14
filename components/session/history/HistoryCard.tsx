@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import Record from '../../../models/Record'
-import Set from '../../../models/Set'
+import { Set } from '../../../models/Set'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import StyledDivider from '../../StyledDivider'
 import RecordNotesDialogButton from '../records/RecordNotesDialogButton'

@@ -38,11 +38,16 @@ Could also add arbitrary modifiers to group records. Maybe a "locked reps" modif
 //   // rpe?: 'rpe' | 'rir' these should be placeholders...
 // }
 
-export default interface Set {
+export interface Set {
+  /** kilograms */
   weight?: number
+  /** meters */
   distance?: number
+  /** seconds */
   time?: number
+  /** whole number */
   reps?: number
+  /** RPE (0-10 in .5 steps) */
   effort?: number
 }
 

@@ -28,7 +28,7 @@ import {
 import Exercise from '../../../models/Exercise'
 import Note from '../../../models/Note'
 import Record from '../../../models/Record'
-import Set from '../../../models/Set'
+import { Set } from '../../../models/Set'
 import { Status } from '../../../models/Status'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import { ExerciseSelector } from '../../form-fields/selectors/ExerciseSelector'
