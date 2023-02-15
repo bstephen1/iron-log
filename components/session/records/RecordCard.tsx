@@ -25,6 +25,7 @@ import {
   useExercises,
   useRecord,
 } from '../../../lib/frontend/restService'
+import { getDisplayFields } from '../../../lib/util'
 import Exercise from '../../../models/Exercise'
 import Note from '../../../models/Note'
 import Record from '../../../models/Record'
@@ -115,7 +116,7 @@ export default function RecordCard({
   }
 
   // define after null checks so record must exist
-  const { exercise, activeModifiers, sets, fields, notes, _id } = record
+  const { exercise, activeModifiers, sets, displayFields, notes, _id } = record
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]
@@ -265,19 +266,20 @@ export default function RecordCard({
             }
           />
           <SetHeader
-            initialSelected={fields}
-            handleSubmit={(fields) => handleFieldChange({ fields })}
+            displayFields={getDisplayFields(record)}
+            // change to displayFields from Exercise
+            // The record saves which fields are being displayed
+            handleSubmit={(fields) => handleFieldChange({ displayFields })}
           />
         </Stack>
 
         {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
         <Box sx={{ pb: 0 }}>
-          {/* todo: unique key */}
           {sets.map((set, i) => (
             <SetInput
-              set={set}
-              fields={fields}
               key={i}
+              set={set}
+              displayFields={getDisplayFields(record)}
               handleSubmit={(changes: Partial<Set>) =>
                 handleSetChange(changes, i)
               }
@@ -298,7 +300,7 @@ export default function RecordCard({
           <Fab
             color="primary"
             size="medium"
-            disabled={!fields.length}
+            disabled={!displayFields?.activeFields.length}
             onClick={addSet}
             className={noSwipingAboveSm}
           >

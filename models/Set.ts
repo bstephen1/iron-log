@@ -1,5 +1,4 @@
 // todo: maybe some of these should be RecordOptions, at the Record level.
-// todo: fuzzy: planning on displaying negative inputs as "fuzzy". Eg -7 is displayed as ~7. Allows to keep data as numeric. But is it kinda hacky?
 
 /*
 todo: 
@@ -30,4 +29,30 @@ export interface Set {
   reps?: number
   /** RPE (0-10 in .5 steps) */
   effort?: number
+}
+
+/** Specifies the units for a Set, using Unit symbols.
+ * Units are stored in the db. There's no way to type check the symbols here match up
+ * with db values, but the db values are supposed to be read-only.
+ * The symbols act as an id for the db units.
+ * */
+export type SetUnits = {
+  weight: 'kg' | 'lb'
+  distance: 'km' | 'm' | 'ft' | 'mi'
+  time: 'sec' | 'min' | 'hr' | 'HH:MM:SS'
+  effort: 'rpe' | 'rir'
+  reps: 'reps'
+}
+
+// // get it to check Object.keys(Units)
+// export type SetUnitsNoDb = {
+//   [dimension in keyof Units]: Object.keys(units[dimension])
+// }
+
+export const defaultSetUnits: SetUnits = {
+  weight: 'kg',
+  distance: 'm',
+  time: 'sec',
+  reps: 'reps',
+  effort: 'rpe',
 }

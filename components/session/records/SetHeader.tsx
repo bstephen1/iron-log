@@ -10,15 +10,15 @@ import {
   Stack,
 } from '@mui/material'
 import { Fragment, useState } from 'react'
-import { DEFAULT_UNITS } from '../../../lib/frontend/constants'
+import { DisplayFields } from '../../../models/DisplayFields'
 import { Set } from '../../../models/Set'
 
 interface Props {
-  initialSelected?: (keyof Set)[]
+  displayFields: DisplayFields
   handleSubmit: (value: (keyof Set)[]) => void
 }
-export default function SetHeader({ initialSelected, handleSubmit }: Props) {
-  const [selected, setSelected] = useState(initialSelected || [])
+export default function SetHeader({ displayFields, handleSubmit }: Props) {
+  const [selected, setSelected] = useState(displayFields?.activeFields || [])
   // todo: dnd this? user pref? per exercise?
   const fieldOrder: (keyof Set)[] = [
     'weight',
@@ -54,14 +54,7 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
         onBlur={() => handleSubmit(selected)}
         onClose={() => handleSubmit(selected)}
         onChange={(e) => handleChange(e.target.value)}
-        input={
-          <Input
-          // disableUnderline
-          // sx={{
-          //   borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-          // }}
-          />
-        }
+        input={<Input />}
         renderValue={() => (
           <Stack
             direction="row"
@@ -86,7 +79,7 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
                     overflow="clip"
                   >
                     {' '}
-                    {DEFAULT_UNITS[field] ?? field}
+                    {displayFields.units[field]}
                   </Box>
                 </Fragment>
               ))
@@ -101,10 +94,11 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
           <MenuItem key={field} value={field}>
             <Checkbox checked={selected.indexOf(field) > -1} />
             <ListItemText
-              primary={
-                field +
-                (DEFAULT_UNITS[field] ? ` (${DEFAULT_UNITS[field]})` : '')
-              }
+              primary={`${field} ${
+                displayFields.units[field] === field
+                  ? ''
+                  : `(${displayFields.units[field]})`
+              }`}
             />
           </MenuItem>
         ))}
