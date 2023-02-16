@@ -155,8 +155,8 @@ export default function RecordCard({
     if (type === 'exercise') {
       const hashedModifiers = hashModifiers(activeModifiers)
       updateExerciseFields(exercise, {
-        defaultDisplayFields: {
-          ...exercise.defaultDisplayFields,
+        savedDisplayFields: {
+          ...exercise.savedDisplayFields,
           [hashedModifiers]: displayFields,
         },
       })

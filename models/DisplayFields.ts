@@ -21,8 +21,8 @@ export const DEFAULT_DISPLAY_FIELDS: DisplayFields = {
 export const hashModifiers = (modifiers: string[]) =>
   modifiers.sort().toString()
 
-/** get current displayFields for a Record. A Record may be using its exercise's default fields,
- * the global default fields, or a specific override.
+/** get current displayFields for a Record. A Record may be using its exercise's default fields
+ * or the global default fields.
  */
 // Note -- this function and hashModifiers() are here rather than defined on the Record / Exercise
 // classes directly so updates using the spread operator continue to work, rather than having to
@@ -30,14 +30,8 @@ export const hashModifiers = (modifiers: string[]) =>
 export const getDisplayFields = (record?: Record): DisplayFields => {
   if (!record) return DEFAULT_DISPLAY_FIELDS
 
-  const { displayFields, exercise, activeModifiers } = record
-  // todo: for testing
-  // return { visibleFields: ['weight', 'distance', 'effort', 'time', 'reps'], units: { ...defaultDisplayFields.units, weight: 'kg', distance: 'mi', time: 'HH:MM:SS', effort: 'rir' } }
-
-  if (displayFields) {
-    return displayFields
-  }
+  const { exercise, activeModifiers } = record
 
   const hashed = hashModifiers(activeModifiers)
-  return exercise?.defaultDisplayFields?.[hashed] ?? DEFAULT_DISPLAY_FIELDS
+  return exercise?.savedDisplayFields?.[hashed] ?? DEFAULT_DISPLAY_FIELDS
 }
