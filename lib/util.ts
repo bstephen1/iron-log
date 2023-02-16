@@ -9,16 +9,12 @@ import { DATE_FORMAT } from './frontend/constants'
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
  and to ensure no information is leaked from the ID (eg, userId=55 implies users 1-54 exist)
  */
-export function generateId() {
-  return uuid()
-}
+export const generateId = () => uuid()
 
 /** Currently enforcing that UUIDs are v4 but that may not be particularly useful.
  v4 is total random generation instead of using time / hardware to generate the uuid.
  */
-export function isValidId(id: string) {
-  return validate(id) && version(id) === 4
-}
+export const isValidId = (id: string) => validate(id) && version(id) === 4
 
 /** shortcut interface to bypass AutocompleteProps' unwieldy generic type */
 export interface GenericAutocompleteProps<T>
@@ -59,3 +55,11 @@ export const dayjsStringAdd = (
   value: number,
   unit?: dayjs.ManipulateType | undefined
 ) => dayjs(date).add(value, unit).format(DATE_FORMAT)
+
+export const formatTimeFromSeconds = (totalSeconds: number) => {
+  const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
+  const minutes = ('0' + Math.floor((totalSeconds / 60) % 60)).slice(-2)
+  const seconds = ('0' + Math.floor(totalSeconds % 60)).slice(-2)
+
+  return `${hours}:${minutes}:${seconds}`
+}

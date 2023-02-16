@@ -10,15 +10,15 @@ import {
   Stack,
 } from '@mui/material'
 import { Fragment, useState } from 'react'
-import { DEFAULT_UNITS } from '../../../lib/frontend/constants'
-import Set from '../../../models/Set'
+import { DisplayFields } from '../../../models/DisplayFields'
+import { Set } from '../../../models/Set'
 
 interface Props {
-  initialSelected?: (keyof Set)[]
-  handleSubmit: (value: (keyof Set)[]) => void
+  displayFields: DisplayFields
+  handleSubmit: (displayFields: DisplayFields) => void
 }
-export default function SetHeader({ initialSelected, handleSubmit }: Props) {
-  const [selected, setSelected] = useState(initialSelected || [])
+export default function SetHeader({ displayFields, ...props }: Props) {
+  const [selected, setSelected] = useState(displayFields?.visibleFields || [])
   // todo: dnd this? user pref? per exercise?
   const fieldOrder: (keyof Set)[] = [
     'weight',
@@ -39,6 +39,10 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
     )
   }
 
+  const handleSubmit = () => {
+    props.handleSubmit({ ...displayFields, visibleFields: selected })
+  }
+
   return (
     <FormControl fullWidth>
       <InputLabel variant="standard" shrink={true}>
@@ -51,17 +55,10 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
         value={selected}
         label="Set Fields"
         // todo: do a check to only submit if selected is different from initialSelected?
-        onBlur={() => handleSubmit(selected)}
-        onClose={() => handleSubmit(selected)}
+        onBlur={handleSubmit}
+        onClose={handleSubmit}
         onChange={(e) => handleChange(e.target.value)}
-        input={
-          <Input
-          // disableUnderline
-          // sx={{
-          //   borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-          // }}
-          />
-        }
+        input={<Input />}
         renderValue={() => (
           <Stack
             direction="row"
@@ -86,7 +83,7 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
                     overflow="clip"
                   >
                     {' '}
-                    {DEFAULT_UNITS[field] ?? field}
+                    {displayFields.units[field]}
                   </Box>
                 </Fragment>
               ))
@@ -101,10 +98,11 @@ export default function SetHeader({ initialSelected, handleSubmit }: Props) {
           <MenuItem key={field} value={field}>
             <Checkbox checked={selected.indexOf(field) > -1} />
             <ListItemText
-              primary={
-                field +
-                (DEFAULT_UNITS[field] ? ` (${DEFAULT_UNITS[field]})` : '')
-              }
+              primary={`${field} ${
+                displayFields.units[field] === field
+                  ? ''
+                  : `(${displayFields.units[field]})`
+              }`}
             />
           </MenuItem>
         ))}

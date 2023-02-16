@@ -18,6 +18,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { useMemo } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
@@ -25,16 +26,22 @@ import {
   useExercises,
   useRecord,
 } from '../../../lib/frontend/restService'
+import {
+  DisplayFields,
+  getDisplayFields,
+  hashModifiers,
+} from '../../../models/DisplayFields'
 import Exercise from '../../../models/Exercise'
 import Note from '../../../models/Note'
 import Record from '../../../models/Record'
-import Set from '../../../models/Set'
+import { Set } from '../../../models/Set'
 import { Status } from '../../../models/Status'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import { ExerciseSelector } from '../../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../../StyledDivider'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
+import RecordUnitsButton from './RecordUnitsButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
@@ -61,6 +68,8 @@ export default function RecordCard({
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
+
+  const displayFields = useMemo(() => getDisplayFields(record), [record])
 
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
@@ -115,7 +124,7 @@ export default function RecordCard({
   }
 
   // define after null checks so record must exist
-  const { exercise, activeModifiers, sets, fields, notes, _id } = record
+  const { exercise, activeModifiers, sets, notes, _id } = record
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]
@@ -136,6 +145,23 @@ export default function RecordCard({
 
     await updateExerciseFields(exercise, { notes })
     mutateRecord({ ...record, exercise: { ...exercise, notes } })
+  }
+
+  // todo: if you have multiple of the same exercise in the same sessionLog,
+  // only the currently active one gets mutated here. Should be just an edge case tho.
+  const handleDisplayFieldsChange = async (displayFields: DisplayFields) => {
+    if (!exercise) return
+
+    const hashedModifiers = hashModifiers(activeModifiers)
+    const savedDisplayFields = {
+      ...exercise.savedDisplayFields,
+      [hashedModifiers]: displayFields,
+    }
+
+    await updateExerciseFields(exercise, {
+      savedDisplayFields,
+    })
+    mutateRecord({ ...record, exercise: { ...exercise, savedDisplayFields } })
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
@@ -189,10 +215,9 @@ export default function RecordCard({
         title={`Record ${swiperIndex + 1}`}
         titleTypographyProps={{ variant: 'h6' }}
         action={
-          <>
+          <Box className={noSwipingAboveSm} sx={{ cursor: 'default' }}>
             <RecordHeaderButton
               title="Move current record to the left"
-              className={noSwipingAboveSm}
               disabled={!swiperIndex}
               onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
             >
@@ -200,7 +225,6 @@ export default function RecordCard({
             </RecordHeaderButton>
             <RecordHeaderButton
               title="Move current record to the right"
-              className={noSwipingAboveSm}
               // disable on the penultimate slide because the last is the "add record" button
               disabled={swiperIndex >= swiper.slides?.length - 2}
               onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
@@ -208,14 +232,12 @@ export default function RecordCard({
               <KeyboardDoubleArrowRight />
             </RecordHeaderButton>
             <RecordNotesDialogButton
-              className={noSwipingAboveSm}
               notes={notes}
               setsAmount={sets.length}
               handleSubmit={(notes) => handleFieldChange({ notes })}
             />
             {!!exercise && (
               <RecordNotesDialogButton
-                className={noSwipingAboveSm}
                 notes={exercise.notes}
                 options={exercise.modifiers}
                 Icon={<FitnessCenter />}
@@ -224,15 +246,18 @@ export default function RecordCard({
                 multiple
               />
             )}
+            <RecordUnitsButton
+              displayFields={displayFields}
+              handleSubmit={handleDisplayFieldsChange}
+            />
             <RecordHeaderButton
               title="Delete Record"
-              className={noSwipingAboveSm}
               color="error"
               onClick={handleDeleteRecord}
             >
               <Delete />
             </RecordHeaderButton>
-          </>
+          </Box>
         }
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
@@ -265,19 +290,18 @@ export default function RecordCard({
             }
           />
           <SetHeader
-            initialSelected={fields}
-            handleSubmit={(fields) => handleFieldChange({ fields })}
+            displayFields={getDisplayFields(record)}
+            handleSubmit={handleDisplayFieldsChange}
           />
         </Stack>
 
         {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
         <Box sx={{ pb: 0 }}>
-          {/* todo: unique key */}
           {sets.map((set, i) => (
             <SetInput
-              set={set}
-              fields={fields}
               key={i}
+              set={set}
+              displayFields={getDisplayFields(record)}
               handleSubmit={(changes: Partial<Set>) =>
                 handleSetChange(changes, i)
               }
@@ -298,7 +322,7 @@ export default function RecordCard({
           <Fab
             color="primary"
             size="medium"
-            disabled={!fields.length}
+            disabled={!displayFields?.visibleFields.length}
             onClick={addSet}
             className={noSwipingAboveSm}
           >

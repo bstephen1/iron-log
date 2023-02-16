@@ -1,6 +1,7 @@
 import { Button, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { useEffect, useReducer } from 'react'
+import { formatTimeFromSeconds } from '../../../lib/util'
 
 interface State {
   isRunning: boolean
@@ -54,14 +55,7 @@ export default function Clock() {
   // this needs to be <1000 so the rest time can tick out of sync with the total time
   const millisecondsPerInterval = 100
 
-  function formatDeltaTime(milliseconds: number) {
-    const totalSeconds = milliseconds / 1000
-    const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
-    const minutes = ('0' + Math.floor((totalSeconds / 60) % 60)).slice(-2)
-    const seconds = ('0' + Math.floor(totalSeconds % 60)).slice(-2)
-
-    return `${hours}:${minutes}:${seconds}`
-  }
+  const formatDeltaTime = (ms: number) => formatTimeFromSeconds(ms / 1000)
 
   useEffect(() => {
     if (!isRunning) return

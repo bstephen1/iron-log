@@ -1,6 +1,7 @@
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
+import { useMemo } from 'react'
+import { getDisplayFields } from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
-import Set from '../../../models/Set'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import StyledDivider from '../../StyledDivider'
 import RecordNotesDialogButton from '../records/RecordNotesDialogButton'
@@ -9,11 +10,9 @@ import SetInput from '../records/SetInput'
 
 interface Props {
   record: Record
-  fields?: (keyof Set)[]
 }
 export default function HistoryCard({ record }: Props) {
-  // todo: same fields as parent, readonly
-  const fields: (keyof Set)[] = ['weight', 'reps', 'effort']
+  const displayFields = useMemo(() => getDisplayFields(record), [record])
 
   // todo: readonly
   return (
@@ -42,13 +41,13 @@ export default function HistoryCard({ record }: Props) {
             variant="standard"
             handleSubmit={() => {}}
           />
-          <SetHeader initialSelected={fields} handleSubmit={() => {}} />
+          <SetHeader displayFields={displayFields} handleSubmit={() => {}} />
         </Stack>
         <Box sx={{ pb: 0 }}>
           {record.sets.map((set, i) => (
             <SetInput
               set={set}
-              fields={fields}
+              displayFields={displayFields}
               key={i}
               handleSubmit={() => {}}
               handleDelete={() => {}}

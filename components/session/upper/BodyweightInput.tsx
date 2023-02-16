@@ -7,12 +7,13 @@ import {
 import dayjs, { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import * as yup from 'yup'
-import { DATE_FORMAT, DEFAULT_UNITS } from '../../../lib/frontend/constants'
+import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateBodyweight,
   useBodyweightHistory,
 } from '../../../lib/frontend/restService'
 import Bodyweight, { WeighInType } from '../../../models/Bodyweight'
+import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import InputField from '../../form-fields/InputField'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
@@ -88,7 +89,9 @@ export default function BodyweightInput({
           </>
         ),
         endAdornment: (
-          <InputAdornment position="end">{DEFAULT_UNITS.weight}</InputAdornment>
+          <InputAdornment position="end">
+            {DEFAULT_DISPLAY_FIELDS.units.weight}
+          </InputAdornment>
         ),
       }}
       defaultHelperText={getHelperText()}

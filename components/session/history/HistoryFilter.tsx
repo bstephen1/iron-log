@@ -27,8 +27,12 @@ export default function HistoryFilter({ recordId }: Props) {
     setModifiersChecked(!!record.activeModifiers.length)
     setModifierFilter(record.activeModifiers)
 
-    // todo: amrap needs to be a special default modifier rather than hardcoding here
-    if (record.sets[0].reps && !record.activeModifiers.includes('amrap')) {
+    // todo: amrap/myo need to be special default modifiers rather than hardcoding here
+    if (
+      record.sets[0].reps &&
+      !record.activeModifiers.includes('amrap') &&
+      !record.activeModifiers.includes('myo')
+    ) {
       setRepsChecked(true)
       setRepFilter(record.sets[0].reps)
     } else {

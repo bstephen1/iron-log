@@ -2,14 +2,20 @@ import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { Fragment } from 'react'
-import Set from '../../../models/Set'
+import { DisplayFields } from '../../../models/DisplayFields'
+import {
+  convertUnit,
+  convertUnitFormatted,
+  DB_UNITS,
+  Set,
+} from '../../../models/Set'
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 interface Props {
   handleSubmit: (changes: Partial<Set>) => void
   handleDelete: () => void
   set: Set
-  fields: (keyof Set)[]
+  displayFields: DisplayFields
   readOnly?: boolean
 }
 // todo: indicator for failing a rep
@@ -19,12 +25,12 @@ export default function SetInput({
   handleSubmit,
   handleDelete,
   set,
-  fields,
+  displayFields,
   readOnly = false,
 }: Props) {
   const pyStack = 0.5
 
-  if (!fields.length) {
+  if (!displayFields.visibleFields.length) {
     return <></>
   }
 
@@ -40,17 +46,26 @@ export default function SetInput({
         pl: 1,
       }}
     >
-      {/* {!!set.unilateral && <Box>{set.unilateral.slice(0, 1).toUpperCase()}</Box>} */}
-      {fields.map((field, i) => (
+      {displayFields.visibleFields.map((field, i) => (
         <Fragment key={i}>
           {/* todo: store each field's delimiter and pull that here? */}
           {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
           <NumericFieldAutosave
-            initialValue={set[field]}
+            initialValue={convertUnitFormatted(
+              set[field],
+              field,
+              DB_UNITS[field],
+              displayFields.units[field]
+            )}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
               handleSubmit({
-                [field]: value,
+                [field]: convertUnit(
+                  value,
+                  field,
+                  displayFields.units[field],
+                  DB_UNITS[field]
+                ),
               })
             }
             inputProps={{ style: { textAlign: 'center' } }}
