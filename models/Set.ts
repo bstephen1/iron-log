@@ -25,7 +25,7 @@ export type Set = {
 
 /** Specifies the possible units for each field in a set */
 export type Units = {
-  [dimension in keyof typeof UNIT_FACTORS]: keyof typeof UNIT_FACTORS[dimension]
+  [dimension in keyof typeof UNITS]: keyof typeof UNITS[dimension]
 }
 
 /** Units used to store sets in the database. No matter the units used to display
@@ -40,8 +40,7 @@ export const DB_UNITS: Units = Object.freeze({
 })
 
 // todo: deep freeze? normal freeze is shallow
-/** Unit factors used in conversion. These should only be used by the conversion
- * functions, and should never change.
+/** Lists all possible units and their factors used in conversions.
  *
  * A factor is defined such that the base unit of the same dimension times that factor
  * equals the desired unit.
@@ -54,7 +53,7 @@ export const DB_UNITS: Units = Object.freeze({
  */
 // Don't want to give this a type because the type should explicitly be the listed values.
 // Think that's making ts complain in convertUnit() that the symbols could potentially not be numbers.
-const UNIT_FACTORS = Object.freeze({
+export const UNITS = Object.freeze({
   weight: { lbs: 0.45359237, kg: 1 },
   distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471 },
   time: { sec: 1, min: 60, hr: 3600, 'HH:MM:SS': 1 },
@@ -76,8 +75,8 @@ export function convertUnit<Dimension extends keyof Units>(
   if (value === undefined) return value
 
   // ts doesn't infer the type is number even though it can only be number
-  const sourceFactor = UNIT_FACTORS[dimension][source] as number
-  const destFactor = UNIT_FACTORS[dimension][dest] as number
+  const sourceFactor = UNITS[dimension][source] as number
+  const destFactor = UNITS[dimension][dest] as number
 
   if (dimension === 'effort' && source !== dest) {
     // rpe = 10 - rir (factor is not used)

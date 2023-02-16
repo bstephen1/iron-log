@@ -41,6 +41,7 @@ import { ExerciseSelector } from '../../form-fields/selectors/ExerciseSelector'
 import StyledDivider from '../../StyledDivider'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
+import RecordUnitsButton from './RecordUnitsButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
@@ -146,21 +147,21 @@ export default function RecordCard({
     mutateRecord({ ...record, exercise: { ...exercise, notes } })
   }
 
-  const handleDisplayFieldsChange = async (
-    displayFields: DisplayFields,
-    type: 'record' | 'exercise' = 'exercise'
-  ) => {
+  // todo: if you have multiple of the same exercise in the same sessionLog,
+  // only the currently active one gets mutated here. Should be just an edge case tho.
+  const handleDisplayFieldsChange = async (displayFields: DisplayFields) => {
     if (!exercise) return
 
-    if (type === 'exercise') {
-      const hashedModifiers = hashModifiers(activeModifiers)
-      updateExerciseFields(exercise, {
-        savedDisplayFields: {
-          ...exercise.savedDisplayFields,
-          [hashedModifiers]: displayFields,
-        },
-      })
+    const hashedModifiers = hashModifiers(activeModifiers)
+    const savedDisplayFields = {
+      ...exercise.savedDisplayFields,
+      [hashedModifiers]: displayFields,
     }
+
+    await updateExerciseFields(exercise, {
+      savedDisplayFields,
+    })
+    mutateRecord({ ...record, exercise: { ...exercise, savedDisplayFields } })
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
@@ -214,10 +215,9 @@ export default function RecordCard({
         title={`Record ${swiperIndex + 1}`}
         titleTypographyProps={{ variant: 'h6' }}
         action={
-          <>
+          <Box className={noSwipingAboveSm} sx={{ cursor: 'default' }}>
             <RecordHeaderButton
               title="Move current record to the left"
-              className={noSwipingAboveSm}
               disabled={!swiperIndex}
               onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
             >
@@ -225,7 +225,6 @@ export default function RecordCard({
             </RecordHeaderButton>
             <RecordHeaderButton
               title="Move current record to the right"
-              className={noSwipingAboveSm}
               // disable on the penultimate slide because the last is the "add record" button
               disabled={swiperIndex >= swiper.slides?.length - 2}
               onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
@@ -233,14 +232,12 @@ export default function RecordCard({
               <KeyboardDoubleArrowRight />
             </RecordHeaderButton>
             <RecordNotesDialogButton
-              className={noSwipingAboveSm}
               notes={notes}
               setsAmount={sets.length}
               handleSubmit={(notes) => handleFieldChange({ notes })}
             />
             {!!exercise && (
               <RecordNotesDialogButton
-                className={noSwipingAboveSm}
                 notes={exercise.notes}
                 options={exercise.modifiers}
                 Icon={<FitnessCenter />}
@@ -249,15 +246,18 @@ export default function RecordCard({
                 multiple
               />
             )}
+            <RecordUnitsButton
+              displayFields={displayFields}
+              handleSubmit={handleDisplayFieldsChange}
+            />
             <RecordHeaderButton
               title="Delete Record"
-              className={noSwipingAboveSm}
               color="error"
               onClick={handleDeleteRecord}
             >
               <Delete />
             </RecordHeaderButton>
-          </>
+          </Box>
         }
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
