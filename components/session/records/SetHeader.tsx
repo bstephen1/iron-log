@@ -15,10 +15,10 @@ import { Set } from '../../../models/Set'
 
 interface Props {
   displayFields: DisplayFields
-  handleSubmit: (value: (keyof Set)[]) => void
+  handleSubmit: (displayFields: DisplayFields) => void
 }
-export default function SetHeader({ displayFields, handleSubmit }: Props) {
-  const [selected, setSelected] = useState(displayFields?.activeFields || [])
+export default function SetHeader({ displayFields, ...props }: Props) {
+  const [selected, setSelected] = useState(displayFields?.visibleFields || [])
   // todo: dnd this? user pref? per exercise?
   const fieldOrder: (keyof Set)[] = [
     'weight',
@@ -39,6 +39,10 @@ export default function SetHeader({ displayFields, handleSubmit }: Props) {
     )
   }
 
+  const handleSubmit = () => {
+    props.handleSubmit({ ...displayFields, visibleFields: selected })
+  }
+
   return (
     <FormControl fullWidth>
       <InputLabel variant="standard" shrink={true}>
@@ -51,8 +55,8 @@ export default function SetHeader({ displayFields, handleSubmit }: Props) {
         value={selected}
         label="Set Fields"
         // todo: do a check to only submit if selected is different from initialSelected?
-        onBlur={() => handleSubmit(selected)}
-        onClose={() => handleSubmit(selected)}
+        onBlur={handleSubmit}
+        onClose={handleSubmit}
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
         renderValue={() => (

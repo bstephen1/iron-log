@@ -3,7 +3,8 @@ import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { Fragment } from 'react'
 import { DisplayFields } from '../../../models/DisplayFields'
-import { Set } from '../../../models/Set'
+import { defaultSetUnits, Set } from '../../../models/Set'
+import { convertUnitFormattedNoDb, convertUnitNoDb } from '../../../models/Unit'
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 interface Props {
@@ -25,7 +26,7 @@ export default function SetInput({
 }: Props) {
   const pyStack = 0.5
 
-  if (!displayFields.activeFields.length) {
+  if (!displayFields.visibleFields.length) {
     return <></>
   }
 
@@ -41,16 +42,26 @@ export default function SetInput({
         pl: 1,
       }}
     >
-      {displayFields.activeFields.map((field, i) => (
+      {displayFields.visibleFields.map((field, i) => (
         <Fragment key={i}>
           {/* todo: store each field's delimiter and pull that here? */}
           {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
           <NumericFieldAutosave
-            initialValue={set[field]}
+            initialValue={convertUnitFormattedNoDb(
+              set[field],
+              field,
+              defaultSetUnits[field],
+              displayFields.units[field]
+            )}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
               handleSubmit({
-                [field]: value,
+                [field]: convertUnitNoDb(
+                  value,
+                  field,
+                  displayFields.units[field],
+                  defaultSetUnits[field]
+                ),
               })
             }
             inputProps={{ style: { textAlign: 'center' } }}

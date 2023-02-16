@@ -37,7 +37,7 @@ export interface Set {
  * The symbols act as an id for the db units.
  * */
 export type SetUnits = {
-  weight: 'kg' | 'lb'
+  weight: 'kg' | 'lbs'
   distance: 'km' | 'm' | 'ft' | 'mi'
   time: 'sec' | 'min' | 'hr' | 'HH:MM:SS'
   effort: 'rpe' | 'rir'

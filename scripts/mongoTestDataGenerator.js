@@ -25,6 +25,7 @@ class Exercise {
       (this.notes = notes),
       (this.categories = categories),
       (this.modifiers = modifiers),
+      (this.defaultDisplayFields = {}),
       (this._id = randomUUID())
   }
 }

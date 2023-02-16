@@ -10,9 +10,9 @@ export default class Exercise extends SelectorBaseOption {
     public notes: Note[] = [],
     /** stores a map of display fields per modifier group. Any record that has the same
      * modifiers will show the same fields and units. A hash of the modifier array
-     * should be used as a key.
+     * should be used as the key.
      */
-    public defaultDisplayFields: DisplayFieldsHashMap = {},
+    public defaultDisplayFields: DisplayFieldsMap = {},
     public categories: string[] = [],
     public modifiers: string[] = []
   ) {
@@ -20,6 +20,9 @@ export default class Exercise extends SelectorBaseOption {
   }
 }
 
-interface DisplayFieldsHashMap {
+interface DisplayFieldsMap {
   [modifierHash: string]: DisplayFields
 }
+
+// displayFieldsModifierMap
+// modifierGroupDisplayFields

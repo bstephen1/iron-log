@@ -2,7 +2,7 @@ import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { v4 as uuid, validate, version } from 'uuid'
-import { defaultDisplayFields } from '../models/DisplayFields'
+import { defaultDisplayFields, DisplayFields } from '../models/DisplayFields'
 import Record from '../models/Record'
 import { SelectorBaseOption } from '../models/SelectorBaseOption'
 import { DATE_FORMAT } from './frontend/constants'
@@ -72,14 +72,22 @@ export const getDisplayFields = ({
   displayFields,
   exercise,
   activeModifiers,
-}: Record) => {
+}: Record): DisplayFields => {
+  // for testing
+  // return { visibleFields: ['weight', 'distance', 'effort', 'time', 'reps'], units: { ...defaultDisplayFields.units, weight: 'kg', distance: 'mi', time: 'HH:MM:SS', effort: 'rir' } }
+
   if (displayFields) {
     return displayFields
   }
 
-  console.log(exercise)
-  console.log(activeModifiers)
   const hashed = hashModifiers(activeModifiers)
-  console.log(hashed)
   return exercise?.defaultDisplayFields?.[hashed] ?? defaultDisplayFields
+}
+
+export function formatTimeFromSeconds(totalSeconds: number) {
+  const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
+  const minutes = ('0' + Math.floor((totalSeconds / 60) % 60)).slice(-2)
+  const seconds = ('0' + Math.floor(totalSeconds % 60)).slice(-2)
+
+  return `${hours}:${minutes}:${seconds}`
 }

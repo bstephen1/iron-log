@@ -13,7 +13,7 @@ export default class Record {
     public category: string | null = '',
     public notes: Note[] = [],
     public sets: Set[] = [],
-    /** overrides defaultDisplayFields from the Exercise */
+    /** overrides defaultDisplayFields from the Exercise. Currently no way to edit this in the UI. */
     public displayFields?: DisplayFields,
     public readonly _id: string = generateId()
   ) {}

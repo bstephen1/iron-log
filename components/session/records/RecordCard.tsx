@@ -25,7 +25,8 @@ import {
   useExercises,
   useRecord,
 } from '../../../lib/frontend/restService'
-import { getDisplayFields } from '../../../lib/util'
+import { getDisplayFields, hashModifiers } from '../../../lib/util'
+import { DisplayFields } from '../../../models/DisplayFields'
 import Exercise from '../../../models/Exercise'
 import Note from '../../../models/Note'
 import Record from '../../../models/Record'
@@ -137,6 +138,24 @@ export default function RecordCard({
 
     await updateExerciseFields(exercise, { notes })
     mutateRecord({ ...record, exercise: { ...exercise, notes } })
+  }
+
+  const handleDisplayFieldsChange = async (
+    displayFields: DisplayFields,
+    type: 'record' | 'exercise' = 'exercise'
+  ) => {
+    if (!exercise) return
+
+    if (type === 'exercise') {
+      const hashedModifiers = hashModifiers(activeModifiers)
+      // have to update mongo s.t. defaultDisplayFields exists and is not undefined
+      updateExerciseFields(exercise, {
+        defaultDisplayFields: {
+          ...exercise.defaultDisplayFields,
+          [hashedModifiers]: displayFields,
+        },
+      })
+    }
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
@@ -267,9 +286,7 @@ export default function RecordCard({
           />
           <SetHeader
             displayFields={getDisplayFields(record)}
-            // change to displayFields from Exercise
-            // The record saves which fields are being displayed
-            handleSubmit={(fields) => handleFieldChange({ displayFields })}
+            handleSubmit={handleDisplayFieldsChange}
           />
         </Stack>
 
@@ -300,7 +317,7 @@ export default function RecordCard({
           <Fab
             color="primary"
             size="medium"
-            disabled={!displayFields?.activeFields.length}
+            disabled={!displayFields?.visibleFields.length}
             onClick={addSet}
             className={noSwipingAboveSm}
           >
