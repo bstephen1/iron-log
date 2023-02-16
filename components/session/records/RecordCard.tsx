@@ -18,6 +18,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { useMemo } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
@@ -25,8 +26,11 @@ import {
   useExercises,
   useRecord,
 } from '../../../lib/frontend/restService'
-import { getDisplayFields, hashModifiers } from '../../../lib/util'
-import { DisplayFields } from '../../../models/DisplayFields'
+import {
+  DisplayFields,
+  getDisplayFields,
+  hashModifiers,
+} from '../../../models/DisplayFields'
 import Exercise from '../../../models/Exercise'
 import Note from '../../../models/Note'
 import Record from '../../../models/Record'
@@ -63,6 +67,8 @@ export default function RecordCard({
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
+
+  const displayFields = useMemo(() => getDisplayFields(record), [record])
 
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
@@ -117,7 +123,7 @@ export default function RecordCard({
   }
 
   // define after null checks so record must exist
-  const { exercise, activeModifiers, sets, displayFields, notes, _id } = record
+  const { exercise, activeModifiers, sets, notes, _id } = record
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]
@@ -148,7 +154,6 @@ export default function RecordCard({
 
     if (type === 'exercise') {
       const hashedModifiers = hashModifiers(activeModifiers)
-      // have to update mongo s.t. defaultDisplayFields exists and is not undefined
       updateExerciseFields(exercise, {
         defaultDisplayFields: {
           ...exercise.defaultDisplayFields,

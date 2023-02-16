@@ -2,8 +2,6 @@ import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { v4 as uuid, validate, version } from 'uuid'
-import { defaultDisplayFields, DisplayFields } from '../models/DisplayFields'
-import Record from '../models/Record'
 import { SelectorBaseOption } from '../models/SelectorBaseOption'
 import { DATE_FORMAT } from './frontend/constants'
 
@@ -58,33 +56,7 @@ export const dayjsStringAdd = (
   unit?: dayjs.ManipulateType | undefined
 ) => dayjs(date).add(value, unit).format(DATE_FORMAT)
 
-/** transform a string of modifier names into a hashed value for DisplayFields */
-export const hashModifiers = (modifiers: string[]) =>
-  modifiers.sort().toString()
-
-/** get current displayFields for a Record. A Record may be using its exercise's default fields,
- * the global default fields, or a specific override.
- */
-// Note -- this function and hashModifiers() are here rather than defined on the Record / Exercise
-// classes directly so updates using the spread operator continue to work, rather than having to
-// use "new" and assign values explicitly.
-export const getDisplayFields = ({
-  displayFields,
-  exercise,
-  activeModifiers,
-}: Record): DisplayFields => {
-  // for testing
-  // return { visibleFields: ['weight', 'distance', 'effort', 'time', 'reps'], units: { ...defaultDisplayFields.units, weight: 'kg', distance: 'mi', time: 'HH:MM:SS', effort: 'rir' } }
-
-  if (displayFields) {
-    return displayFields
-  }
-
-  const hashed = hashModifiers(activeModifiers)
-  return exercise?.defaultDisplayFields?.[hashed] ?? defaultDisplayFields
-}
-
-export function formatTimeFromSeconds(totalSeconds: number) {
+export const formatTimeFromSeconds = (totalSeconds: number) => {
   const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
   const minutes = ('0' + Math.floor((totalSeconds / 60) % 60)).slice(-2)
   const seconds = ('0' + Math.floor(totalSeconds % 60)).slice(-2)

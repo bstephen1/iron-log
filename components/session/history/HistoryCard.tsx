@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { useMemo } from 'react'
-import { getDisplayFields } from '../../../lib/util'
+import { getDisplayFields } from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import StyledDivider from '../../StyledDivider'

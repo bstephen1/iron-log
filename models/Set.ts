@@ -18,41 +18,86 @@ switch from just a "weight" column to added/total weight columns.
 
 */
 
-export interface Set {
-  /** kilograms */
-  weight?: number
-  /** meters */
-  distance?: number
-  /** seconds */
-  time?: number
-  /** whole number */
-  reps?: number
-  /** RPE (0-10 in .5 steps) */
-  effort?: number
+/** An exercise set. */
+export type Set = {
+  [field in keyof Units]?: number
 }
 
-/** Specifies the units for a Set, using Unit symbols.
- * Units are stored in the db. There's no way to type check the symbols here match up
- * with db values, but the db values are supposed to be read-only.
- * The symbols act as an id for the db units.
- * */
-export type SetUnits = {
-  weight: 'kg' | 'lbs'
-  distance: 'km' | 'm' | 'ft' | 'mi'
-  time: 'sec' | 'min' | 'hr' | 'HH:MM:SS'
-  effort: 'rpe' | 'rir'
-  reps: 'reps'
+/** Specifies the possible units for each field in a set */
+export type Units = {
+  [dimension in keyof typeof UNIT_FACTORS]: keyof typeof UNIT_FACTORS[dimension]
 }
 
-// // get it to check Object.keys(Units)
-// export type SetUnitsNoDb = {
-//   [dimension in keyof Units]: Object.keys(units[dimension])
-// }
-
-export const defaultSetUnits: SetUnits = {
+/** Units used to store sets in the database. No matter the units used to display
+ * data on the frontend, they must be converted to these units before sending to the db.
+ */
+export const DB_UNITS: Units = Object.freeze({
   weight: 'kg',
   distance: 'm',
   time: 'sec',
   reps: 'reps',
   effort: 'rpe',
+})
+
+// todo: deep freeze? normal freeze is shallow
+/** Unit factors used in conversion. These should only be used by the conversion
+ * functions, and should never change.
+ *
+ * A factor is defined such that the base unit of the same dimension times that factor
+ * equals the desired unit.
+ *
+ * E.g., for weight the base unit is 1kg, so the lbs factor f is defined s.t. 1kg * f = 1lb
+ *
+ * Some dimensions are unitless, or factors don't apply since they can't be converted via
+ * multiplication. In those cases the factors should be set to 1 and the conversion handled
+ * manually in convertUnit().
+ */
+// Don't want to give this a type because the type should explicitly be the listed values.
+// Think that's making ts complain in convertUnit() that the symbols could potentially not be numbers.
+const UNIT_FACTORS = Object.freeze({
+  weight: { lbs: 0.45359237, kg: 1 },
+  distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471 },
+  time: { sec: 1, min: 60, hr: 3600, 'HH:MM:SS': 1 },
+  /** reps have no units */
+  reps: { reps: 1 },
+  /** effort requires a custom conversion */
+  effort: { rpe: 1, rir: 1 },
+})
+
+/** Convert a unit from source to dest type. Note the generic type is
+ * inferred from the dimension arg so it doesn't need to be provided explicitly.
+ */
+export function convertUnit<Dimension extends keyof Units>(
+  value: number | undefined,
+  dimension: Dimension,
+  source: Units[Dimension],
+  dest: Units[Dimension]
+) {
+  if (value === undefined) return value
+
+  // ts doesn't infer the type is number even though it can only be number
+  const sourceFactor = UNIT_FACTORS[dimension][source] as number
+  const destFactor = UNIT_FACTORS[dimension][dest] as number
+
+  if (dimension === 'effort' && source !== dest) {
+    // rpe = 10 - rir (factor is not used)
+    return 10 - value
+  }
+
+  return (value * sourceFactor) / destFactor
+}
+
+/** Convert a unit from source to dest type and format to 2 decimal places.
+ * Note the generic type is inferred from the dimension arg so it doesn't need to be provided explicitly.
+ */
+export function convertUnitFormatted<Dimension extends keyof Units>(
+  value: number | undefined,
+  dimension: Dimension,
+  source: Units[Dimension],
+  dest: Units[Dimension]
+) {
+  if (value === undefined) return value
+  // the "+" converts it from a string to a number, and removes excess zeros
+  // @ts-ignore object is not possibly undefined, we already exit early for that.
+  return +convertUnit(value, dimension, source, dest)?.toFixed(2)
 }

@@ -13,7 +13,7 @@ import {
   useBodyweightHistory,
 } from '../../../lib/frontend/restService'
 import Bodyweight, { WeighInType } from '../../../models/Bodyweight'
-import { defaultDisplayFields } from '../../../models/DisplayFields'
+import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import InputField from '../../form-fields/InputField'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
@@ -90,7 +90,7 @@ export default function BodyweightInput({
         ),
         endAdornment: (
           <InputAdornment position="end">
-            {defaultDisplayFields.units.weight}
+            {DEFAULT_DISPLAY_FIELDS.units.weight}
           </InputAdornment>
         ),
       }}

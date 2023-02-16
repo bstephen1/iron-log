@@ -1,4 +1,4 @@
-import { Filter, ObjectId, WithId } from 'mongodb'
+import { Filter, ObjectId } from 'mongodb'
 import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
@@ -10,7 +10,6 @@ import {
 } from '../../models/query-filters/MongoQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
-import { Unit } from '../../models/Unit'
 import { db } from './mongoConnect'
 
 /** add userId, an extra field only visible to mongo records */
@@ -23,7 +22,6 @@ const categories = db.collection<WithUserId<Category>>('categories')
 const records = db.collection<WithUserId<Record>>('records')
 const bodyweightHistory =
   db.collection<WithUserId<Bodyweight>>('bodyweightHistory')
-const units = db.collection<WithId<Unit>>('units')
 
 interface UpdateFieldsProps<T extends { _id: string }> {
   id: T['_id']
@@ -70,14 +68,6 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
 // This is to make the api less tightly coupled to mongo, in case the db changes down the line.
 // Here ObjectId is used instead because this is the service that interfaces with mongo.
-
-//-------
-// UNITS
-//-------
-
-export async function fetchUnits() {
-  return await units.find({}, { projection: { _id: 0 } }).toArray()
-}
 
 //---------
 // SESSION
