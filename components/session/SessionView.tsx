@@ -32,8 +32,8 @@ import {
   Swiper as SwiperClass,
 } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import AddRecordCard from './AddRecordCard'
 import HistoryFilter from './history/HistoryFilter'
-import AddRecord from './records/AddRecord'
 
 // Swiper needs all these css classes to be imported too
 import 'swiper/css'
@@ -189,7 +189,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                   </SwiperSlide>
                 ))}
               <SwiperSlide>
-                <AddRecord handleAdd={handleAddRecord} />
+                <AddRecordCard handleAdd={handleAddRecord} />
               </SwiperSlide>
             </Swiper>
             <Box display="flex" alignItems="center">
