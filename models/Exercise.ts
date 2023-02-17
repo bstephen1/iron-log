@@ -8,13 +8,14 @@ export default class Exercise extends SelectorBaseOption {
     public name: string,
     public status: Status = Status.active,
     public notes: Note[] = [],
-    /** stores a map of display fields per modifier group. Any record that has the same
-     * modifiers will show the same fields and units. A hash of the modifier array
-     * should be used as the key.
-     */
-    public savedDisplayFields: {
-      [modifierHash: string]: DisplayFields
-    } = {},
+    // We can either use undefined or manually assign default displayFields.
+    // Using undefined means we can avoid repeating the defaults in every record,
+    // updating the defaults only updates in one place, and existing prod records
+    // are backwards compatible.
+    // Originally this was a map with keys for each subset of modifier groupings
+    // for the exercise, but that proved to be frustrating and not very useful
+    // in practice.
+    public displayFields?: DisplayFields,
     public categories: string[] = [],
     public modifiers: string[] = []
   ) {
