@@ -54,7 +54,7 @@ export const DB_UNITS: Units = Object.freeze({
 // Don't want to give this a type because the type should explicitly be the listed values.
 // Think that's making ts complain in convertUnit() that the symbols could potentially not be numbers.
 export const UNITS = Object.freeze({
-  weight: { lbs: 0.45359237, kg: 1 },
+  weight: { kg: 1, lbs: 0.45359237 },
   distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471 },
   time: { sec: 1, min: 60, hr: 3600, 'HH:MM:SS': 1 },
   /** reps have no units */
