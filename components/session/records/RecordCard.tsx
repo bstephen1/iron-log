@@ -3,6 +3,7 @@ import {
   FitnessCenter,
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
+  Notes,
 } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
 import {
@@ -212,6 +213,8 @@ export default function RecordCard({
             </RecordHeaderButton>
             <RecordNotesDialogButton
               notes={notes}
+              Icon={<Notes />}
+              tooltipTitle="Record Notes"
               setsAmount={sets.length}
               handleSubmit={(notes) => handleFieldChange({ notes })}
             />

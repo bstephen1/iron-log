@@ -1,3 +1,4 @@
+import { Notes } from '@mui/icons-material'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
@@ -22,8 +23,9 @@ export default function HistoryCard({ record }: Props) {
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <RecordNotesDialogButton
-            // className={noSwipingAboveSm}
             notes={record.notes}
+            Icon={<Notes />}
+            tooltipTitle="Record Notes"
             setsAmount={record.sets.length}
             handleSubmit={() => {}}
           />
