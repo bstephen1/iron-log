@@ -100,7 +100,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
     mutate({ ...sessionLog, records: newRecords })
   }
 
-  // todo: compare with last of this day type
   return (
     <Stack spacing={2}>
       <TitleBar date={date} />

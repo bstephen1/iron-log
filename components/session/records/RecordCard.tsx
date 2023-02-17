@@ -136,7 +136,7 @@ export default function RecordCard({
 
   // todo: if you have multiple of the same exercise in the same sessionLog,
   // only the currently active one gets mutated here. Should be just an edge case tho.
-  // Noticed with displayFields but should also occur for notes
+  // Occurs with changes to displayFields and notes
   const handleExerciseFieldsChange = async (changes: Partial<Exercise>) => {
     if (!exercise) return
 
