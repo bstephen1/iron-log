@@ -1,4 +1,3 @@
-import { Notes } from '@mui/icons-material'
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { ComponentProps, ReactElement, useState } from 'react'
 import Note from '../../../models/Note'
@@ -10,7 +9,7 @@ export interface Props
   notes: Note[]
   setsAmount?: number
   options?: string[]
-  Icon?: ReactElement
+  Icon: ReactElement
   initialTags?: string[]
   handleSubmit: (notes: Note[]) => void
   multiple?: boolean
@@ -20,18 +19,18 @@ export interface Props
 export default function RecordNotesDialogButton({
   notes,
   setsAmount = 0,
-  options = [],
-  Icon = <Notes />,
+  options,
+  Icon,
   initialTags = [],
   handleSubmit,
   multiple,
-  tooltipTitle = 'Record Notes',
+  tooltipTitle = '',
   ...recordHeaderButtonProps
 }: Props) {
   const [open, setOpen] = useState(false)
 
   // todo: probably store these in a new db collection
-  if (!options.length) {
+  if (!options) {
     // Session tagged notes should propagate to all records in the session? Would need an id for notes
     options = ['Session', 'Record']
     initialTags = ['Record']

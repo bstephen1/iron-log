@@ -3,6 +3,7 @@ import {
   FitnessCenter,
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
+  Notes,
 } from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
 import {
@@ -18,7 +19,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { useMemo } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
@@ -26,13 +26,8 @@ import {
   useExercises,
   useRecord,
 } from '../../../lib/frontend/restService'
-import {
-  DisplayFields,
-  getDisplayFields,
-  hashModifiers,
-} from '../../../models/DisplayFields'
+import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import Exercise from '../../../models/Exercise'
-import Note from '../../../models/Note'
 import Record from '../../../models/Record'
 import { Set } from '../../../models/Set'
 import { Status } from '../../../models/Status'
@@ -68,8 +63,6 @@ export default function RecordCard({
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
-
-  const displayFields = useMemo(() => getDisplayFields(record), [record])
 
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
@@ -125,6 +118,7 @@ export default function RecordCard({
 
   // define after null checks so record must exist
   const { exercise, activeModifiers, sets, notes, _id } = record
+  const displayFields = exercise?.displayFields ?? DEFAULT_DISPLAY_FIELDS
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]
@@ -140,28 +134,14 @@ export default function RecordCard({
     mutateRecord({ ...record, ...changes })
   }
 
-  const handleExerciseNotesChange = async (notes: Note[]) => {
-    if (!exercise) return
-
-    await updateExerciseFields(exercise, { notes })
-    mutateRecord({ ...record, exercise: { ...exercise, notes } })
-  }
-
   // todo: if you have multiple of the same exercise in the same sessionLog,
   // only the currently active one gets mutated here. Should be just an edge case tho.
-  const handleDisplayFieldsChange = async (displayFields: DisplayFields) => {
+  // Occurs with changes to displayFields and notes
+  const handleExerciseFieldsChange = async (changes: Partial<Exercise>) => {
     if (!exercise) return
 
-    const hashedModifiers = hashModifiers(activeModifiers)
-    const savedDisplayFields = {
-      ...exercise.savedDisplayFields,
-      [hashedModifiers]: displayFields,
-    }
-
-    await updateExerciseFields(exercise, {
-      savedDisplayFields,
-    })
-    mutateRecord({ ...record, exercise: { ...exercise, savedDisplayFields } })
+    await updateExerciseFields(exercise, { ...changes })
+    mutateRecord({ ...record, exercise: { ...exercise, ...changes } })
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
@@ -233,6 +213,8 @@ export default function RecordCard({
             </RecordHeaderButton>
             <RecordNotesDialogButton
               notes={notes}
+              Icon={<Notes />}
+              tooltipTitle="Record Notes"
               setsAmount={sets.length}
               handleSubmit={(notes) => handleFieldChange({ notes })}
             />
@@ -242,13 +224,15 @@ export default function RecordCard({
                 options={exercise.modifiers}
                 Icon={<FitnessCenter />}
                 tooltipTitle="Exercise Notes"
-                handleSubmit={(notes) => handleExerciseNotesChange(notes)}
+                handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
                 multiple
               />
             )}
             <RecordUnitsButton
               displayFields={displayFields}
-              handleSubmit={handleDisplayFieldsChange}
+              handleSubmit={(displayFields) =>
+                handleExerciseFieldsChange({ displayFields })
+              }
             />
             <RecordHeaderButton
               title="Delete Record"
@@ -290,8 +274,10 @@ export default function RecordCard({
             }
           />
           <SetHeader
-            displayFields={getDisplayFields(record)}
-            handleSubmit={handleDisplayFieldsChange}
+            displayFields={displayFields}
+            handleSubmit={(displayFields) =>
+              handleExerciseFieldsChange({ displayFields })
+            }
           />
         </Stack>
 
@@ -301,7 +287,7 @@ export default function RecordCard({
             <SetInput
               key={i}
               set={set}
-              displayFields={getDisplayFields(record)}
+              displayFields={displayFields}
               handleSubmit={(changes: Partial<Set>) =>
                 handleSetChange(changes, i)
               }

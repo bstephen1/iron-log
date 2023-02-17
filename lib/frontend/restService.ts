@@ -96,6 +96,7 @@ export function useRecords(query?: RecordQuery) {
 
   return {
     records: data,
+    recordsIndex: arrayToIndex<Record>('_id', data),
     isError: error,
     isLoading,
   }

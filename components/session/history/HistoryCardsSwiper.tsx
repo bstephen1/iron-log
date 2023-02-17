@@ -21,7 +21,7 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
     modifierMatchType: ArrayMatchType.Equivalent,
   })
   // each record's history needs a unique className
-  const paginationClassName = `pagination-vertical-${recordId}`
+  const paginationClassName = `pagination-history-${recordId}`
 
   if (isLoading) {
     return (
@@ -38,59 +38,37 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
   }
 
   return (
-    // todo: may need to do something with height, just arbitrarily stuck in 300px
-    <Stack sx={{ height: '500px' }}>
-      {/* todo: spacing is off if coming in from the early return  */}
-      <Stack
-        direction="row"
+    <Stack>
+      <Box
         className={paginationClassName}
         display="flex"
         justifyContent="center"
-        alignItems="center"
-        height="40px"
-        spacing={1}
+        pt={2}
       />
-      <Swiper
-        direction="vertical"
-        // vertical orientation REQUIRES a fixed height. Currently fixing height of parent container.
-        spaceBetween={20}
-        noSwipingClass="swiper-no-swiping-inner"
-        className="swiper-no-swiping-outer"
-        grabCursor
-        pagination={{
-          // This was inexplicably not rendering at all.
-          // Solved by removing an early return of <></> if isLoading.
-          // I guess Swiper needs to be initialized immediately or bizarre behavior
-          // can occur.
-          // Edit: and yet now the early return has returned, and it's still working...
-          el: `.${paginationClassName}`,
-          clickable: true,
-          // todo: may want to add these when adding a limit to useRecords fetch
-          // dynamicBullets: true,
-        }}
-        // slidesPerView={3}
-        // centeredSlides
-        modules={[Pagination, Navigation, Scrollbar]}
-      >
-        {records?.map((record) => (
-          <SwiperSlide key={record._id}>
-            <HistoryCard record={record} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-
-      {/* the bullets just become spans so we have to stack them 
-      vertically or they'll be horizontal */}
-      {/* <Stack
-        className={paginationClassName}
-        position="relative"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        width="40px"
-        // flex display removes the bullets' margins but spacing here looks similar enough
-        spacing={1}
-      /> */}
+      {/* this box prevents Swiper from deciding it needs to have infinite width for some reason */}
+      <Box>
+        <Swiper
+          spaceBetween={20}
+          noSwipingClass="swiper-no-swiping-inner"
+          className="swiper-no-swiping-outer"
+          autoHeight
+          grabCursor
+          pagination={{
+            el: `.${paginationClassName}`,
+            clickable: true,
+            // todo: may want to add these when adding a limit to useRecords fetch
+            // Note: they appear to break the centering css
+            // dynamicBullets: true,
+          }}
+          modules={[Pagination, Navigation, Scrollbar]}
+        >
+          {records?.map((record) => (
+            <SwiperSlide key={record._id}>
+              <HistoryCard record={record} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </Box>
     </Stack>
   )
 }

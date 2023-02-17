@@ -17,7 +17,8 @@ class Exercise {
     notes = [],
     categories = [],
     modifiers = [],
-    userId = dummyUserId
+    userId = dummyUserId,
+    displayFields
   ) {
     ;(this.name = name),
       (this.userId = userId),
@@ -25,7 +26,7 @@ class Exercise {
       (this.notes = notes),
       (this.categories = categories),
       (this.modifiers = modifiers),
-      (this.savedDisplayFields = {}),
+      (this.displayFields = displayFields),
       (this._id = randomUUID())
   }
 }

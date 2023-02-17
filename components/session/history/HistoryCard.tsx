@@ -1,6 +1,6 @@
+import { Notes } from '@mui/icons-material'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
-import { useMemo } from 'react'
-import { getDisplayFields } from '../../../models/DisplayFields'
+import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import StyledDivider from '../../StyledDivider'
@@ -12,9 +12,9 @@ interface Props {
   record: Record
 }
 export default function HistoryCard({ record }: Props) {
-  const displayFields = useMemo(() => getDisplayFields(record), [record])
+  const displayFields = record.exercise?.displayFields ?? DEFAULT_DISPLAY_FIELDS
 
-  // todo: readonly
+  // todo: readonly?
   return (
     <Card elevation={0}>
       <CardHeader
@@ -23,8 +23,9 @@ export default function HistoryCard({ record }: Props) {
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <RecordNotesDialogButton
-            // className={noSwipingAboveSm}
             notes={record.notes}
+            Icon={<Notes />}
+            tooltipTitle="Record Notes"
             setsAmount={record.sets.length}
             handleSubmit={() => {}}
           />

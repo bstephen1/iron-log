@@ -32,8 +32,8 @@ import {
   Swiper as SwiperClass,
 } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import AddRecordCard from './AddRecordCard'
 import HistoryFilter from './history/HistoryFilter'
-import AddRecord from './records/AddRecord'
 
 // Swiper needs all these css classes to be imported too
 import 'swiper/css'
@@ -41,6 +41,7 @@ import 'swiper/css/bundle'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
+import CopySessionCard from './CopySessionCard'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
@@ -59,20 +60,23 @@ export default function SessionView({ date }: { date: Dayjs }) {
     setIsEnd(swiper.isEnd)
   }
 
-  const handleAddRecord = async (exercise: Exercise) => {
-    if (isLoading) return // make typescript happy
+  const handleAddSession = async (newSessionLog: SessionLog) => {
+    await updateSessionLog(newSessionLog)
+    mutate(newSessionLog)
+  }
 
-    const record = new Record(date.format(DATE_FORMAT), exercise)
+  const handleAddRecord = async (exercise: Exercise) => {
+    const record = new Record(date.format(DATE_FORMAT), { exercise })
     record.sets.push({})
     addRecord(record)
-    const newSession = sessionLog
+    const newSessionLog = sessionLog
       ? {
           ...sessionLog,
           records: sessionLog.records.concat(record._id),
         }
       : new SessionLog(date.format(DATE_FORMAT), [record._id])
-    await updateSessionLog(newSession)
-    mutate(newSession)
+    await updateSessionLog(newSessionLog)
+    mutate(newSessionLog)
   }
 
   const handleSwapRecords = async (i: number, j: number) => {
@@ -100,7 +104,6 @@ export default function SessionView({ date }: { date: Dayjs }) {
     mutate({ ...sessionLog, records: newRecords })
   }
 
-  // todo: compare with last of this day type
   return (
     <Stack spacing={2}>
       <TitleBar date={date} />
@@ -190,7 +193,17 @@ export default function SessionView({ date }: { date: Dayjs }) {
                   </SwiperSlide>
                 ))}
               <SwiperSlide>
-                <AddRecord handleAdd={handleAddRecord} />
+                <Stack spacing={2}>
+                  <AddRecordCard handleAdd={handleAddRecord} />
+                  {/* this looks maybe not great as a separate card now, 
+                  but eventually it will have a session type selector */}
+                  {!sessionLog && (
+                    <CopySessionCard
+                      date={date}
+                      handleAddSession={handleAddSession}
+                    />
+                  )}
+                </Stack>
               </SwiperSlide>
             </Swiper>
             <Box display="flex" alignItems="center">

@@ -1,4 +1,4 @@
-import { FormatUnderlined } from '@mui/icons-material'
+import { Build } from '@mui/icons-material'
 import {
   Dialog,
   DialogContent,
@@ -34,8 +34,7 @@ export default function RecordUnitsButton({ displayFields, ...props }: Props) {
   return (
     <>
       <RecordHeaderButton title="change units" onClick={() => setOpen(true)}>
-        {/* todo: mui apparently has no kind of unit icon */}
-        <FormatUnderlined />
+        <Build />
       </RecordHeaderButton>
       <Dialog open={open} fullWidth onClose={() => setOpen(false)}>
         <DialogTitle>Change Units</DialogTitle>
