@@ -17,8 +17,10 @@ export const generateId = () => uuid()
 export const isValidId = (id: string) => validate(id) && version(id) === 4
 
 /** shortcut interface to bypass AutocompleteProps' unwieldy generic type */
+// This used to be "undefined" instead of "false" but suddenly ts started complaining about that.
+// Potentially may have been caused by an npm update to mui. The change seems to not be affecting anything else.
 export interface GenericAutocompleteProps<T>
-  extends AutocompleteProps<T, undefined, undefined, undefined> {}
+  extends AutocompleteProps<T, false, false, false> {}
 
 /** With AutocompleteProps only "any" works, but with UseAutocompleteProps we can say boolean | undefined. */
 export interface AutocompletePropsAny
