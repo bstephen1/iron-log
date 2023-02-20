@@ -42,9 +42,6 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
       <Box
         className={paginationClassName}
         display="flex"
-        // had big issues not realizing this was set as "flex-direction" instead of "flexDirection"
-        // there was no error/warning that the former is incorrect
-        flexDirection="row-reverse"
         justifyContent="center"
         pt={2}
       />
@@ -55,8 +52,10 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
           autoHeight
-          // this name scheme is really bad. "dir" is for rtl/ltr, "direction" is for horizontal/vertical
-          dir="rtl"
+          // dir is supposed to make it so that the swiper swipes from right to left instead of left to right,
+          // but it actually changes EVERYTHING in the swiper to render row-reversed. So it's basically unusable.
+          // If despite that we still want to use rtl remember to change the pagination flexDirection to row-reverse.
+          // dir="rtl"
           grabCursor
           pagination={{
             el: `.${paginationClassName}`,
