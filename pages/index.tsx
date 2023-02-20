@@ -19,7 +19,7 @@ const Home: NextPage = () => {
         <Box>Welcome</Box>
         <Button>
           <Link href={`/sessions/${dayjs().format(DATE_FORMAT)}/`}>
-            <a>Today's Log</a>
+            Today's Log
           </Link>
         </Button>
       </main>

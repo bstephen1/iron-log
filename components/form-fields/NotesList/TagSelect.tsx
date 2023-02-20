@@ -47,21 +47,19 @@ export default function TagSelect({
       sx={{ pr: 2 }}
       {...selectProps}
     >
-      {options.map((option) => {
-        return (
-          <MenuItem key={option} value={option}>
-            {multiple && (
-              <Checkbox
-                icon={<CheckBoxOutlineBlank />}
-                checkedIcon={<CheckBoxIcon />}
-                style={{ marginRight: 8 }}
-                checked={tags.some((x) => x === option)} // todo: add a "selected" boolean map?
-              />
-            )}
-            <ListItemText primary={option} />
-          </MenuItem>
-        )
-      })}
+      {options.map((option) => (
+        <MenuItem key={option} value={option}>
+          {multiple && (
+            <Checkbox
+              icon={<CheckBoxOutlineBlank />}
+              checkedIcon={<CheckBoxIcon />}
+              style={{ marginRight: 8 }}
+              checked={tags.some((x) => x === option)} // todo: add a "selected" boolean map?
+            />
+          )}
+          <ListItemText primary={option} />
+        </MenuItem>
+      ))}
     </Select>
   )
 }

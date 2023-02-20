@@ -9,9 +9,7 @@ export default function Navbar() {
       <Toolbar>
         <NavbarDrawer />
         <Typography variant="h5">
-          <Link href={'/'}>
-            <a>Iron Log</a>
-          </Link>
+          <Link href={'/'}>Iron Log</Link>
         </Typography>
         <Box flex={1} />
         <LoginButton />

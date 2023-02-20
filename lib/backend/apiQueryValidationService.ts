@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { ObjectId } from 'mongodb'
+import { Filter, ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
 import Bodyweight, { WeighInType } from '../../models/Bodyweight'
 import Exercise from '../../models/Exercise'
@@ -11,7 +11,6 @@ import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import {
   ArrayMatchType,
   MatchTypes,
-  MongoFilter,
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
@@ -62,7 +61,7 @@ export function buildBodyweightQuery(
     { limit, start, end },
     userId
   )
-  const filter: MongoFilter<Bodyweight> = {}
+  const filter: Filter<Bodyweight> = {}
 
   if (type) {
     if (
@@ -94,7 +93,7 @@ export function buildRecordQuery(
     { start, end, limit },
     userId
   )
-  const filter: MongoFilter<Record> = {}
+  const filter: Filter<Record> = {}
   const matchTypes: MatchTypes<Record> = {}
 
   // only add the defined params to the query
@@ -122,7 +121,7 @@ export function buildExerciseQuery(
   { status, name, category, categoryMatchType }: ApiReq<ExerciseQuery>,
   userId: ObjectId
 ): MongoQuery<Exercise> {
-  const filter: MongoFilter<Exercise> = {}
+  const filter: Filter<Exercise> = {}
   const matchTypes: MatchTypes<Exercise> = {}
 
   // only add the defined params to the query
@@ -147,7 +146,7 @@ export function buildModifierQuery(
   { status }: ApiReq<ModifierQuery>,
   userId: ObjectId
 ): MongoQuery<Modifier> {
-  const filter: MongoFilter<Modifier> = {}
+  const filter: Filter<Modifier> = {}
 
   if (status) {
     filter.status = validateStatus(status)

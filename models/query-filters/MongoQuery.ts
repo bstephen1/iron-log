@@ -1,15 +1,8 @@
-import {
-  Condition,
-  Join,
-  NestedPaths,
-  ObjectId,
-  PropertyType,
-  RootFilterOperators,
-} from 'mongodb'
+import { Filter, ObjectId } from 'mongodb'
 
 /** A query to send to mongo.  */
 export interface MongoQuery<T> {
-  filter?: MongoFilter<T>
+  filter?: Filter<T>
   /** limit the number of results */
   limit?: number
   /** start date */
@@ -49,36 +42,3 @@ export enum ArrayMatchType {
    * This is treated as the default ArrayMatchType when one is not otherwise specified. */
   Exact = 'exact',
 }
-
-// It was REALLY finnicky to get mongo dot notations working with typescript.
-// There are two key things required for it to work right:
-// - DO NOT USE "AS"! The first line below will work, the second will not!
-//    const filter: Filter<TSchema> = {}
-//    const filter = {} as Filter<TSchema>
-// - The initial object must include something NOT in the generic Filter type.
-// Filter is actually a union type that includes Partial<TSchema>. If you pass an
-// empty object in, typescript will not know if the object is supposed to be just a
-// TSchema or the longer half of the union which includes nested accessors.
-// So it will default to an object which contains only the shared
-// fields, which ends up just being Partial<TSchema> since it's a subset of the other.
-// By including something not in TSchema, we let typescript know that the object
-// is not of that restricted type.
-//
-// So instead of using the actual mongo Filter object, we've pulled out the
-// part that we want and made a custom type. With the custom filter "as" works fine
-// and there's no union to worry about. The custom filter also removes the WithId<>
-// wrapper because the models already include _id fields.
-//
-// Originally left out RootFilterOperators, but that turned out to be needed to
-// query nested arrays (eg, filter['sets.reps'] for Records).
-
-/** A restricted mongo Filter thatremoves mongo Filter's Partial\<TSchema\> union type,
- * which doesn't play nice with typescript. This means this type can't be used to query for
- * an exact given document. If that is a desired query it should
- * be passed to the mongo service typed as a Partial\<TSchema\> instead.
- */
-export type MongoFilter<TSchema> = {
-  [Property in Join<NestedPaths<TSchema>, '.'>]?: Condition<
-    PropertyType<TSchema, Property>
-  >
-} & RootFilterOperators<TSchema>
