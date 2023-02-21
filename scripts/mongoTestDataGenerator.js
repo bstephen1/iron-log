@@ -78,7 +78,7 @@ function getRecordIdsForDate(date) {
 
 // todo: sessionType and program
 function addSessions(date, records, userId = dummyUserId) {
-  return { date, records, _id: randomUUID(), userId }
+  return { date, records, notes: [], _id: randomUUID(), userId }
 }
 
 let categories = [
