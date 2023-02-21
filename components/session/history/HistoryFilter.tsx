@@ -29,7 +29,7 @@ export default function HistoryFilter({ recordId }: Props) {
 
     // todo: amrap/myo need to be special default modifiers rather than hardcoding here
     if (
-      record.sets[0].reps &&
+      record.sets[0]?.reps &&
       !record.activeModifiers.includes('amrap') &&
       !record.activeModifiers.includes('myo')
     ) {
@@ -78,7 +78,7 @@ export default function HistoryFilter({ recordId }: Props) {
               />
               <NumericFieldAutosave
                 label="Filter reps"
-                initialValue={record.sets[0].reps}
+                initialValue={record.sets[0]?.reps}
                 handleSubmit={setRepFilter}
                 variant="standard"
               />
