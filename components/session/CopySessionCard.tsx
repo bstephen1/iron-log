@@ -1,3 +1,4 @@
+import { ContentCopy } from '@mui/icons-material'
 import { LoadingButton } from '@mui/lab'
 import { Paper, Stack, Typography } from '@mui/material'
 import { Dayjs } from 'dayjs'
@@ -99,10 +100,10 @@ export default function CopySessionCard({ date, ...props }: Props) {
           <LoadingButton
             loading={isLoading}
             loadingPosition="start"
+            // if using loadingPosition, a startIcon is required
+            startIcon={<ContentCopy />}
             variant="contained"
             onClick={handleCopy}
-            // without a set width, loading spinner overlaps text
-            sx={{ width: 300 }}
           >
             Copy last week's session
           </LoadingButton>
