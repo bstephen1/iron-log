@@ -41,6 +41,7 @@ import 'swiper/css/bundle'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
+import Note from '../../models/Note'
 import CopySessionCard from './CopySessionCard'
 
 export default function SessionView({ date }: { date: Dayjs }) {
@@ -75,6 +76,14 @@ export default function SessionView({ date }: { date: Dayjs }) {
           records: sessionLog.records.concat(record._id),
         }
       : new SessionLog(date.format(DATE_FORMAT), [record._id])
+    await updateSessionLog(newSessionLog)
+    mutate(newSessionLog)
+  }
+
+  const handleNotesChange = async (notes: Note[]) => {
+    if (!sessionLog) return
+
+    const newSessionLog = { ...sessionLog, notes }
     await updateSessionLog(newSessionLog)
     mutate(newSessionLog)
   }
@@ -186,6 +195,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
                       deleteRecord={handleDeleteRecord}
                       swapRecords={handleSwapRecords}
                       swiperIndex={i}
+                      updateSessionNotes={handleNotesChange}
+                      sessionNotes={sessionLog.notes}
                     />
                     <Box py={3}>
                       <HistoryFilter recordId={id} key={id} />

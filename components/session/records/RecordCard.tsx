@@ -28,6 +28,7 @@ import {
 } from '../../../lib/frontend/restService'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import Exercise from '../../../models/Exercise'
+import Note from '../../../models/Note'
 import Record from '../../../models/Record'
 import { Set } from '../../../models/Set'
 import { Status } from '../../../models/Status'
@@ -44,6 +45,9 @@ interface Props {
   id: Record['_id']
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
+  updateSessionNotes: (notes: Note[]) => Promise<void>
+  // todo: remove undefined after updating existing prod records to have a session notes array
+  sessionNotes: Note[] | undefined
   swiperIndex: number
 }
 export default function RecordCard({
@@ -51,6 +55,8 @@ export default function RecordCard({
   deleteRecord,
   swapRecords,
   swiperIndex,
+  updateSessionNotes,
+  sessionNotes = [],
 }: Props) {
   const swiper = useSwiper()
   // this hook needs to be called for useSwiper() to update the activeIndex, but is otherwise unused
@@ -134,6 +140,22 @@ export default function RecordCard({
     mutateRecord({ ...record, ...changes })
   }
 
+  const handleRecordNotesChange = async (notes: Note[]) => {
+    let sessionNotes = []
+    let recordNotes = []
+    for (const note of notes) {
+      // for record notes, each note should only have a single tag
+      if (note.tags.includes('Session')) {
+        sessionNotes.push(note)
+      } else {
+        recordNotes.push(note)
+      }
+    }
+
+    handleFieldChange({ notes: recordNotes })
+    updateSessionNotes(sessionNotes)
+  }
+
   // todo: if you have multiple of the same exercise in the same sessionLog,
   // only the currently active one gets mutated here. Should be just an edge case tho.
   // Occurs with changes to displayFields and notes
@@ -212,11 +234,11 @@ export default function RecordCard({
               <KeyboardDoubleArrowRight />
             </RecordHeaderButton>
             <RecordNotesDialogButton
-              notes={notes}
+              notes={[...sessionNotes, ...notes]}
               Icon={<Notes />}
               tooltipTitle="Record Notes"
               setsAmount={sets.length}
-              handleSubmit={(notes) => handleFieldChange({ notes })}
+              handleSubmit={(notes) => handleRecordNotesChange(notes)}
             />
             {!!exercise && (
               <RecordNotesDialogButton

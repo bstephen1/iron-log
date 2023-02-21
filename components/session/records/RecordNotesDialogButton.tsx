@@ -15,7 +15,6 @@ export interface Props
   multiple?: boolean
   tooltipTitle?: string
 }
-// the defaults set up notes for a RecordCard, but the component is extensible to allow customization for other note sources
 export default function RecordNotesDialogButton({
   notes,
   setsAmount = 0,
@@ -29,9 +28,9 @@ export default function RecordNotesDialogButton({
 }: Props) {
   const [open, setOpen] = useState(false)
 
-  // todo: probably store these in a new db collection
+  // setup tags for record notes
+  // todo: setup a type or something for RecordNoteTags?
   if (!options) {
-    // Session tagged notes should propagate to all records in the session? Would need an id for notes
     options = ['Session', 'Record']
     initialTags = ['Record']
 
