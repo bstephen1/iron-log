@@ -19,6 +19,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { useEffect } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
@@ -45,6 +46,8 @@ interface Props {
   id: Record['_id']
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
+  setLastChangedExercise: (exercise: Exercise) => void
+  lastChangedExercise: Exercise | null
   updateSessionNotes: (notes: Note[]) => Promise<void>
   // todo: remove undefined after updating existing prod records to have a session notes array
   sessionNotes: Note[] | undefined
@@ -55,6 +58,8 @@ export default function RecordCard({
   deleteRecord,
   swapRecords,
   swiperIndex,
+  setLastChangedExercise,
+  lastChangedExercise,
   updateSessionNotes,
   sessionNotes = [],
 }: Props) {
@@ -69,6 +74,18 @@ export default function RecordCard({
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
+
+  useEffect(() => {
+    if (!record || lastChangedExercise?._id !== record?.exercise?._id) return
+
+    mutateRecord({ ...record, exercise: lastChangedExercise })
+
+    // Adding mutateRecord and record as deps will break the logic.
+    // Could address by adding an early return for when lastChangedExercise === null,
+    // but then it still gets called way more than it needs to.
+    // This should only be called when lastChangedExercise changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastChangedExercise])
 
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
@@ -156,14 +173,16 @@ export default function RecordCard({
     updateSessionNotes(sessionNotes)
   }
 
-  // todo: if you have multiple of the same exercise in the same sessionLog,
-  // only the currently active one gets mutated here. Should be just an edge case tho.
-  // Occurs with changes to displayFields and notes
   const handleExerciseFieldsChange = async (changes: Partial<Exercise>) => {
     if (!exercise) return
 
+    const newExercise = { ...exercise, ...changes }
     await updateExerciseFields(exercise, { ...changes })
-    mutateRecord({ ...record, exercise: { ...exercise, ...changes } })
+
+    // setLastChangedExercise() will also mutate the record, but calling it here
+    // will update the currently active card quicker
+    mutateRecord({ ...record, exercise: newExercise })
+    setLastChangedExercise(newExercise)
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
@@ -208,8 +227,6 @@ export default function RecordCard({
     })
   }
 
-  // todo: select input units (if you display in kg units, you can input in lbs and it will convert)
-  // todo: preserve state when changing set type?
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
     <Card elevation={3} sx={{ px: 1 }}>

@@ -9,7 +9,7 @@ import {
   Select,
   Stack,
 } from '@mui/material'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { DisplayFields } from '../../../models/DisplayFields'
 import { Set } from '../../../models/Set'
 
@@ -17,7 +17,9 @@ interface Props {
   displayFields: DisplayFields
   handleSubmit: (displayFields: DisplayFields) => void
 }
-export default function SetHeader({ displayFields, ...props }: Props) {
+export default function SetHeader({ displayFields, handleSubmit }: Props) {
+  // The Select will submit to db on change so we could just use displayFields,
+  // but using state allows for quicker visual updates on change. Just have to add a useEffect.
   const [selected, setSelected] = useState(displayFields?.visibleFields || [])
   // todo: dnd this? user pref? per exercise?
   const fieldOrder: (keyof Set)[] = [
@@ -28,19 +30,22 @@ export default function SetHeader({ displayFields, ...props }: Props) {
     'effort',
   ]
 
+  // A different record may update displayFields.
+  useEffect(() => {
+    setSelected(displayFields.visibleFields)
+  }, [displayFields])
+
   const handleChange = (value: string | string[]) => {
     // According to MUI docs: "On autofill we get a stringified value"
     // reassigning value isn't updating the type so assigning a new const
     const valueAsArray = typeof value === 'string' ? value.split(',') : value
 
     // we want to ensure the order is consistent
-    setSelected(
-      fieldOrder.filter((field) => valueAsArray.some((item) => item === field))
+    const newSelected = fieldOrder.filter((field) =>
+      valueAsArray.some((item) => item === field)
     )
-  }
-
-  const handleSubmit = () => {
-    props.handleSubmit({ ...displayFields, visibleFields: selected })
+    setSelected(newSelected)
+    handleSubmit({ ...displayFields, visibleFields: newSelected })
   }
 
   return (
@@ -54,9 +59,6 @@ export default function SetHeader({ displayFields, ...props }: Props) {
         displayEmpty
         value={selected}
         label="Set Fields"
-        // todo: do a check to only submit if selected is different from initialSelected?
-        onBlur={handleSubmit}
-        onClose={handleSubmit}
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
         renderValue={() => (

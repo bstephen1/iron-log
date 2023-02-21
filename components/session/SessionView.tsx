@@ -48,6 +48,10 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
+  // This is used to alert when a record changes an exercise, so other records can
+  // be notified and mutate themselves to retrieve the new exercise data.
+  const [lastChangedExercise, setLastChangedExercise] =
+    useState<Exercise | null>(null)
   // SWR caches this, so it won't need to call the API every render
   const { sessionLog, isError, isLoading, mutate } = useSessionLog(date)
 
@@ -197,6 +201,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
                       swiperIndex={i}
                       updateSessionNotes={handleNotesChange}
                       sessionNotes={sessionLog.notes}
+                      setLastChangedExercise={setLastChangedExercise}
+                      lastChangedExercise={lastChangedExercise}
                     />
                     <Box py={3}>
                       <HistoryFilter recordId={id} key={id} />
