@@ -31,7 +31,8 @@ export default function NumericFieldAutosave({
   return (
     <InputFieldAutosave
       {...inputFieldAutosaveProps}
-      initialValue={String(initialValue) ?? ''}
+      // String(undefined) causes a warning
+      initialValue={String(initialValue ?? '')}
       handleSubmit={(str) => handleNumberSubmit(convertValueToNumber(str))}
       type="number"
       variant="standard"
