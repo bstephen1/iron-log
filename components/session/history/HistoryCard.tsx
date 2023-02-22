@@ -21,6 +21,8 @@ export default function HistoryCard({ record }: Props) {
       <CardHeader
         title={
           <Box
+            // todo: Could add the record number so swiper can directly link to the record.
+            // May not be worth the effort tho.
             onClick={() => router.push(record.date)}
             sx={{ cursor: 'pointer' }}
             width="fit-content"
