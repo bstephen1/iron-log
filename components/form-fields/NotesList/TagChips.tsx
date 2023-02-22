@@ -17,7 +17,7 @@ export default function TagChips({ selected, multiple, readOnly }: Props) {
   // todo: can monitor length of note and if it is overflowing?
   const displayedTagsAmount = useMediaQuery(theme.breakpoints.up('sm')) ? 2 : 1
 
-  const tooltipPluralOrSingle = `add ${multiple ? 'tags' : 'tag'}`
+  const tagPluralOrSingle = multiple ? 'tags' : 'tag'
   selected = typeof selected === 'string' ? [selected] : selected
 
   const StyledChip = (props: ChipProps) => (
@@ -25,7 +25,7 @@ export default function TagChips({ selected, multiple, readOnly }: Props) {
   )
 
   return (
-    <Tooltip title={readOnly ? '' : tooltipPluralOrSingle}>
+    <Tooltip title={readOnly ? '' : 'change ' + tagPluralOrSingle}>
       <Box
         sx={{
           display: 'flex',
@@ -49,7 +49,7 @@ export default function TagChips({ selected, multiple, readOnly }: Props) {
               )
           ) : (
             <StyledChip
-              label={'no ' + tooltipPluralOrSingle}
+              label={'no ' + tagPluralOrSingle}
               color="default"
               sx={{ fontStyle: 'italic' }}
             />
