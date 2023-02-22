@@ -2,6 +2,7 @@ import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { Fragment } from 'react'
+import { doNothing } from '../../../lib/util'
 import { DisplayFields } from '../../../models/DisplayFields'
 import {
   convertUnit,
@@ -12,8 +13,8 @@ import {
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 interface Props {
-  handleSubmit: (changes: Partial<Set>) => void
-  handleDelete: () => void
+  handleSubmit?: (changes: Partial<Set>) => void
+  handleDelete?: () => void
   set: Set
   displayFields: DisplayFields
   readOnly?: boolean
@@ -22,8 +23,8 @@ interface Props {
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
 // todo: currently not full width if not enough columns to max the width
 export default function SetInput({
-  handleSubmit,
-  handleDelete,
+  handleSubmit = doNothing,
+  handleDelete = doNothing,
   set,
   displayFields,
   readOnly = false,
@@ -72,27 +73,28 @@ export default function SetInput({
             InputProps={{
               disableUnderline: true,
               readOnly,
-              // endAdornment: <InputAdornment position="end">{units}</InputAdornment>,
             }}
             sx={{ flexGrow: 1 }}
           />
         </Fragment>
       ))}
       {/* todo: maybe make this a "more..." with failed/warmup/delete options */}
-      <IconButton
-        size="small"
-        onClick={handleDelete}
-        sx={{
-          my: -pyStack,
-          p: 1,
-          borderRadius: 0,
-          '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {
+      {!readOnly && (
+        <IconButton
+          size="small"
+          onClick={handleDelete}
+          sx={{
+            my: -pyStack,
+            p: 1,
             borderRadius: 0,
-          },
-        }}
-      >
-        <Clear />
-      </IconButton>
+            '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {
+              borderRadius: 0,
+            },
+          }}
+        >
+          <Clear />
+        </IconButton>
+      )}
     </Stack>
   )
 }

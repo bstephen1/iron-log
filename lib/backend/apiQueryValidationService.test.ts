@@ -18,6 +18,7 @@ import {
   validateId,
   validateMatchType,
   validateName,
+  validateSort,
   validateStatus,
 } from './apiQueryValidationService'
 
@@ -86,6 +87,19 @@ describe('validation', () => {
     })
   })
 
+  describe('validateSort', () => {
+    it('throws error when not a sort type', () => {
+      expect(() => validateSort(undefined)).toThrow(ApiError)
+      expect(() => validateSort(['oldestFirst'])).toThrow(ApiError)
+      expect(() => validateSort('invalid')).toThrow(ApiError)
+    })
+
+    it('returns sort type when valid', () => {
+      expect(validateSort('oldestFirst')).toBe('oldestFirst')
+      expect(validateSort('newestFirst')).toBe('newestFirst')
+    })
+  })
+
   describe('validateMatchType', () => {
     it('throws error when not a MatchType', () => {
       expect(() => validateMatchType(undefined)).toThrow(ApiError)
@@ -108,10 +122,12 @@ describe('build query', () => {
         limit: '5',
         start: '2000-01-01',
         end: '2001-01-01',
+        sort: 'oldestFirst',
       }
       expect(buildDateRangeQuery(apiQuery, userId)).toMatchObject({
         ...apiQuery,
         limit: Number(apiQuery.limit),
+        sort: 'oldestFirst',
         userId,
       })
     })
@@ -121,6 +137,7 @@ describe('build query', () => {
         limit: undefined,
         start: '2000-01-01',
         end: undefined,
+        sort: undefined,
       }
       expect(buildDateRangeQuery(apiQuery, userId)).toMatchObject({
         start: apiQuery.start,
@@ -212,6 +229,7 @@ describe('build query', () => {
         start: '2022-01-01',
         end: '2022-02-02',
         limit: '6',
+        sort: 'oldestFirst',
       }
       expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
         filter: {
@@ -226,6 +244,7 @@ describe('build query', () => {
         matchTypes: {
           activeModifiers: apiQuery.modifierMatchType,
         },
+        sort: 'oldestFirst',
         userId,
       })
     })

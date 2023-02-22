@@ -1,5 +1,11 @@
 import { Box, CircularProgress, Stack, Typography } from '@mui/material'
-import { Navigation, Pagination, Scrollbar } from 'swiper'
+import {
+  Controller,
+  Navigation,
+  Pagination,
+  Scrollbar,
+  Swiper as SwiperClass,
+} from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useRecords } from '../../../lib/frontend/restService'
 import { RecordQuery } from '../../../models/query-filters/RecordQuery'
@@ -8,22 +14,50 @@ import HistoryCard from './HistoryCard'
 import 'swiper/css'
 import 'swiper/css/bundle'
 
+import { useEffect, useMemo, useState } from 'react'
 import 'swiper/css/pagination'
 import { ArrayMatchType } from '../../../models/query-filters/MongoQuery'
 
 interface Props {
   recordId: string
+  currentDate: string
   filter: RecordQuery
 }
-export default function HistoryCardsSwiper({ recordId, filter }: Props) {
+export default function HistoryCardsSwiper({
+  recordId,
+  currentDate,
+  filter,
+}: Props) {
+  const [swiper, setSwiper] = useState<SwiperClass | null>(null)
   const { records, isLoading } = useRecords({
     ...filter,
     modifierMatchType: ArrayMatchType.Equivalent,
+    sort: 'oldestFirst',
   })
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${recordId}`
+  const mostRecentDateIndex = useMemo(
+    () =>
+      records
+        ? records.findIndex((record) => record.date === currentDate) - 1
+        : 0,
+    [records, currentDate]
+  )
 
-  if (isLoading) {
+  // When the records get updated (ie, filters change) we need to slide to the new most recent slide.
+  // Can't use swiper's initialSlide because the swiper doesn't get always get rerendered when records change.
+  useEffect(() => {
+    // guard against just initialized/destroyed swiper
+    if (typeof swiper?.activeIndex === 'number') {
+      // This behavior might not be great UX in practice. It's a bit tricky though. If you swap around the filters
+      // you may expect to stay on the same date if it still exists on the new filter. But the filter is usually
+      // something you'd set up initially, before browsing. And in that case the filter can be too restricted initially
+      // and end up not showing the most recent record when you do set it up.
+      swiper.slideTo(mostRecentDateIndex)
+    }
+  }, [mostRecentDateIndex, swiper])
+
+  if (isLoading || !records) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center">
         <CircularProgress color="primary" size={20} />
@@ -31,7 +65,8 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
     )
   }
 
-  if (records && !records.length) {
+  // length will be 1 at minimum because the current record will always be fetched
+  if (records && records.length < 2) {
     return (
       <Typography textAlign="center">No records with those filters!</Typography>
     )
@@ -49,13 +84,10 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
       <Box>
         <Swiper
           spaceBetween={20}
+          onSwiper={setSwiper}
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
           autoHeight
-          // dir is supposed to make it so that the swiper swipes from right to left instead of left to right,
-          // but it actually changes EVERYTHING in the swiper to render row-reversed. So it's basically unusable.
-          // If despite that we still want to use rtl remember to change the pagination flexDirection to row-reverse.
-          // dir="rtl"
           grabCursor
           pagination={{
             el: `.${paginationClassName}`,
@@ -64,13 +96,15 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
             // Note: they appear to break the centering css
             // dynamicBullets: true,
           }}
-          modules={[Pagination, Navigation, Scrollbar]}
+          modules={[Pagination, Navigation, Scrollbar, Controller]}
         >
-          {records?.map((record) => (
-            <SwiperSlide key={record._id}>
-              <HistoryCard record={record} />
-            </SwiperSlide>
-          ))}
+          {records
+            ?.filter((record) => record.date !== currentDate)
+            .map((record) => (
+              <SwiperSlide key={record._id}>
+                <HistoryCard record={record} />
+              </SwiperSlide>
+            ))}
         </Swiper>
       </Box>
     </Stack>

@@ -7,17 +7,23 @@ import {
   ListItemText,
   MenuItem,
   Select,
+  SelectProps,
   Stack,
 } from '@mui/material'
 import { Fragment, useEffect, useState } from 'react'
+import { doNothing } from '../../../lib/util'
 import { DisplayFields } from '../../../models/DisplayFields'
 import { Set } from '../../../models/Set'
 
-interface Props {
+interface Props extends Partial<SelectProps<(keyof Set)[]>> {
   displayFields: DisplayFields
-  handleSubmit: (displayFields: DisplayFields) => void
+  handleSubmit?: (displayFields: DisplayFields) => void
 }
-export default function SetHeader({ displayFields, handleSubmit }: Props) {
+export default function SetHeader({
+  displayFields,
+  handleSubmit = doNothing,
+  ...selectProps
+}: Props) {
   // The Select will submit to db on change so we could just use displayFields,
   // but using state allows for quicker visual updates on change. Just have to add a useEffect.
   const [selected, setSelected] = useState(displayFields?.visibleFields || [])
@@ -53,7 +59,8 @@ export default function SetHeader({ displayFields, handleSubmit }: Props) {
       <InputLabel variant="standard" shrink={true}>
         Sets
       </InputLabel>
-      <Select
+      {/* Select's generic type must match Props  */}
+      <Select<typeof selected>
         multiple
         fullWidth
         displayEmpty
@@ -92,6 +99,7 @@ export default function SetHeader({ displayFields, handleSubmit }: Props) {
             )}
           </Stack>
         )}
+        {...selectProps}
       >
         <MenuItem disabled value="">
           <em>Select fields to display</em>

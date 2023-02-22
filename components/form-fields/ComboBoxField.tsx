@@ -7,6 +7,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
+import { doNothing } from '../../lib/util'
 import useField from './useField'
 import withAsync from './withAsync'
 
@@ -16,14 +17,14 @@ interface ComboBoxFieldProps
   extends Partial<AutocompleteProps<string, true, false, false>> {
   options?: string[]
   initialValue: string[]
-  handleSubmit: (value: string[]) => void
+  handleSubmit?: (value: string[]) => void
   textFieldProps?: Partial<TextFieldProps>
 }
 // todo: doesn't send to db if clicking X on chips
 function ComboBoxFieldBase({
   options = [],
   initialValue,
-  handleSubmit,
+  handleSubmit = doNothing,
   textFieldProps,
   ...autocompleteProps
 }: ComboBoxFieldProps) {

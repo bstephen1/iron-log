@@ -14,6 +14,7 @@ interface Props {
   placeholder?: string
   options: string[]
   multiple?: boolean
+  readOnly?: boolean
 }
 export default function NotesListItem(props: Props) {
   const {
@@ -24,6 +25,7 @@ export default function NotesListItem(props: Props) {
     handleUpdate,
     options,
     multiple,
+    readOnly,
   } = props
 
   const inputRef = useRef<HTMLInputElement>()
@@ -42,6 +44,7 @@ export default function NotesListItem(props: Props) {
       onBlur={() => isEmpty && handleDelete(index)}
       placeholder={placeholder}
       autoComplete="off"
+      readOnly={readOnly}
       // removing this for multiline notes
       // onKeyDown={(e) => e.code === 'Enter' && inputRef.current?.blur()}
       inputRef={inputRef}
@@ -54,20 +57,22 @@ export default function NotesListItem(props: Props) {
             handleUpdate(index, { ...note, tags: newTags })
           }
           tags={note.tags}
-          {...{ options, multiple }}
+          {...{ options, multiple, readOnly }}
         />
       }
       endAdornment={
         <>
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={() => handleDelete(index)}
-            aria-label="delete item"
-          >
-            {/* todo: should this be a different icon so clear button => clear, not delete? */}
-            {/* NotInterestedIcon ? */}
-            <ClearIcon />
-          </TransitionIconButton>
+          {!readOnly && (
+            <TransitionIconButton
+              isVisible={!isEmpty}
+              onClick={() => handleDelete(index)}
+              aria-label="delete item"
+            >
+              {/* todo: should this be a different icon so clear button => clear, not delete? */}
+              {/* NotInterestedIcon ? */}
+              <ClearIcon />
+            </TransitionIconButton>
+          )}
         </>
       }
     />

@@ -3,6 +3,7 @@ import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import {
   ArrayMatchType,
   MatchTypes,
@@ -27,6 +28,9 @@ interface UpdateFieldsProps<T extends { _id: string }> {
   id: T['_id']
   updates: Partial<T>
 }
+
+const convertSort = (sort: DateRangeQuery['sort']) =>
+  sort === 'newestFirst' ? -1 : 1
 
 // todo: add a guard to not do anything if calling multiple times
 /** sets a Filter to query based on the desired MatchType schema.
@@ -92,14 +96,14 @@ export async function fetchSessions({
   limit,
   start = '0',
   end = '9',
+  sort = 'newestFirst',
 }: MongoQuery<SessionLog>) {
-  // -1 sorts most recent first
   return await sessions
     .find(
       { userId, date: { $gte: start, $lte: end } },
       { projection: { userId: 0 } }
     )
-    .sort({ date: -1 })
+    .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
     .toArray()
 }
@@ -143,6 +147,7 @@ export async function fetchRecords({
   start = '0',
   end = '9',
   userId,
+  sort = 'newestFirst',
   matchTypes,
 }: MongoQuery<Record>) {
   setArrayMatchTypes(filter, matchTypes)
@@ -164,7 +169,7 @@ export async function fetchRecords({
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
       { $project: { userId: 0 } },
     ])
-    .sort({ date: -1 })
+    .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
     .toArray()
 }

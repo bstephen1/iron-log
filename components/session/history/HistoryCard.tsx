@@ -1,5 +1,6 @@
 import { Notes } from '@mui/icons-material'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
+import { useRouter } from 'next/router'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
@@ -12,14 +13,23 @@ interface Props {
   record: Record
 }
 export default function HistoryCard({ record }: Props) {
+  const router = useRouter()
   const displayFields = record.exercise?.displayFields ?? DEFAULT_DISPLAY_FIELDS
 
-  // todo: readonly?
   return (
     <Card elevation={0}>
       <CardHeader
-        // todo: onclick route to that day
-        title={`${record.date}`}
+        title={
+          <Box
+            // todo: Could add the record number so swiper can directly link to the record.
+            // May not be worth the effort tho.
+            onClick={() => router.push(record.date)}
+            sx={{ cursor: 'pointer' }}
+            width="fit-content"
+          >
+            {record.date}
+          </Box>
+        }
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <RecordNotesDialogButton
@@ -27,7 +37,7 @@ export default function HistoryCard({ record }: Props) {
             Icon={<Notes />}
             tooltipTitle="Record Notes"
             setsAmount={record.sets.length}
-            handleSubmit={() => {}}
+            readOnly
           />
         }
       />
@@ -40,9 +50,9 @@ export default function HistoryCard({ record }: Props) {
             options={record.activeModifiers}
             initialValue={record.activeModifiers}
             variant="standard"
-            handleSubmit={() => {}}
+            readOnly
           />
-          <SetHeader displayFields={displayFields} handleSubmit={() => {}} />
+          <SetHeader displayFields={displayFields} readOnly />
         </Stack>
         <Box sx={{ pb: 0 }}>
           {record.sets.map((set, i) => (
@@ -50,8 +60,7 @@ export default function HistoryCard({ record }: Props) {
               set={set}
               displayFields={displayFields}
               key={i}
-              handleSubmit={() => {}}
-              handleDelete={() => {}}
+              readOnly
             />
           ))}
         </Box>

@@ -11,6 +11,7 @@ export interface MongoQuery<T> {
   end?: string
   /** Matches array fields corresponding to the given filter field with a schema for match type. */
   matchTypes?: MatchTypes<T>
+  sort?: 'oldestFirst' | 'newestFirst'
   /** Required. Split out from the filter since the filter is optional. */
   userId: ObjectId
 }

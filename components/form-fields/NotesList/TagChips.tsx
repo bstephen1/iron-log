@@ -10,8 +10,9 @@ import {
 interface Props {
   selected: string | string[]
   multiple?: boolean
+  readOnly?: boolean
 }
-export default function TagChips({ selected, multiple }: Props) {
+export default function TagChips({ selected, multiple, readOnly }: Props) {
   const theme = useTheme()
   // todo: can monitor length of note and if it is overflowing?
   const displayedTagsAmount = useMediaQuery(theme.breakpoints.up('sm')) ? 2 : 1
@@ -24,7 +25,7 @@ export default function TagChips({ selected, multiple }: Props) {
   )
 
   return (
-    <Tooltip title={'add ' + tagPluralOrSingle}>
+    <Tooltip title={readOnly ? '' : 'change ' + tagPluralOrSingle}>
       <Box
         sx={{
           display: 'flex',

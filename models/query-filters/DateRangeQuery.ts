@@ -5,4 +5,5 @@ export default interface DateRangeQuery {
   start?: string
   /** YYYY-MM-DD */
   end?: string
+  sort?: 'oldestFirst' | 'newestFirst'
 }

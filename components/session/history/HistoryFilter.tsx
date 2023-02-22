@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, Checkbox, Stack } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useRecord } from '../../../lib/frontend/restService'
-import { dayjsStringAdd } from '../../../lib/util'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 import StyledDivider from '../../StyledDivider'
@@ -85,11 +84,11 @@ export default function HistoryFilter({ recordId }: Props) {
             </Stack>
             <HistoryCardsSwiper
               recordId={recordId}
+              currentDate={record.date}
               filter={{
                 exercise: record.exercise?.name,
                 reps: repsChecked ? repFilter : undefined,
                 modifier: modifiersChecked ? modifierFilter : undefined,
-                end: dayjsStringAdd(record.date, -1, 'day'),
               }}
             />
           </Stack>
