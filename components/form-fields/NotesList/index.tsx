@@ -12,6 +12,7 @@ interface Props {
   handleSubmit: (notes: Note[]) => void
   notes: Note[]
   multiple?: boolean
+  readOnly?: boolean
 }
 export default function NotesList(props: Props) {
   const {
@@ -23,6 +24,7 @@ export default function NotesList(props: Props) {
     initialTags,
     handleSubmit,
     multiple,
+    readOnly = false,
   } = props
 
   // we need to save these as functions in the parent component
@@ -52,17 +54,27 @@ export default function NotesList(props: Props) {
       {/* todo: drag n drop? */}
       <Stack spacing={2}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
-        <AddNote
-          placeholder={addItemPlaceholder}
-          disabled={props.notes == null}
-          {...{ handleAdd, options, multiple, initialTags }}
-        />
+        {!readOnly && (
+          <AddNote
+            placeholder={addItemPlaceholder}
+            disabled={props.notes == null}
+            {...{ handleAdd, options, multiple, initialTags }}
+          />
+        )}
         {/* todo: transitionGroup (see https://mui.com/material-ui/transitions/#transitiongroup) */}
         {notes?.map((note, index) => (
           <NotesListItem
             key={index} // apparently eslint doesn't see this if it's in the spread object
             placeholder={listItemPlaceholder}
-            {...{ handleDelete, handleUpdate, options, note, index, multiple }}
+            {...{
+              handleDelete,
+              handleUpdate,
+              options,
+              note,
+              index,
+              multiple,
+              readOnly,
+            }}
           />
         ))}
       </Stack>

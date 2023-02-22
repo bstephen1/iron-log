@@ -10,13 +10,14 @@ import {
 interface Props {
   selected: string | string[]
   multiple?: boolean
+  readOnly?: boolean
 }
-export default function TagChips({ selected, multiple }: Props) {
+export default function TagChips({ selected, multiple, readOnly }: Props) {
   const theme = useTheme()
   // todo: can monitor length of note and if it is overflowing?
   const displayedTagsAmount = useMediaQuery(theme.breakpoints.up('sm')) ? 2 : 1
 
-  const tagPluralOrSingle = multiple ? 'tags' : 'tag'
+  const tooltipPluralOrSingle = `add ${multiple ? 'tags' : 'tag'}`
   selected = typeof selected === 'string' ? [selected] : selected
 
   const StyledChip = (props: ChipProps) => (
@@ -24,7 +25,7 @@ export default function TagChips({ selected, multiple }: Props) {
   )
 
   return (
-    <Tooltip title={'add ' + tagPluralOrSingle}>
+    <Tooltip title={readOnly ? '' : tooltipPluralOrSingle}>
       <Box
         sx={{
           display: 'flex',
@@ -48,7 +49,7 @@ export default function TagChips({ selected, multiple }: Props) {
               )
           ) : (
             <StyledChip
-              label={'no ' + tagPluralOrSingle}
+              label={'no ' + tooltipPluralOrSingle}
               color="default"
               sx={{ fontStyle: 'italic' }}
             />

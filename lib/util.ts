@@ -65,3 +65,6 @@ export const formatTimeFromSeconds = (totalSeconds: number) => {
 
   return `${hours}:${minutes}:${seconds}`
 }
+
+// Fun fact: after naming this, found out mui date picker internals has an identical function.
+export const doNothing = () => {}

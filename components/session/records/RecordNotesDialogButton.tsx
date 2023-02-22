@@ -1,5 +1,6 @@
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { ComponentProps, ReactElement, useState } from 'react'
+import { doNothing } from '../../../lib/util'
 import Note from '../../../models/Note'
 import NotesList from '../../form-fields/NotesList'
 import RecordHeaderButton from './RecordHeaderButton'
@@ -11,9 +12,10 @@ export interface Props
   options?: string[]
   Icon: ReactElement
   initialTags?: string[]
-  handleSubmit: (notes: Note[]) => void
+  handleSubmit?: (notes: Note[]) => void
   multiple?: boolean
   tooltipTitle?: string
+  readOnly?: boolean
 }
 export default function RecordNotesDialogButton({
   notes,
@@ -21,9 +23,10 @@ export default function RecordNotesDialogButton({
   options,
   Icon,
   initialTags = [],
-  handleSubmit,
+  handleSubmit = doNothing,
   multiple,
   tooltipTitle = '',
+  readOnly = false,
   ...recordHeaderButtonProps
 }: Props) {
   const [open, setOpen] = useState(false)
@@ -55,7 +58,14 @@ export default function RecordNotesDialogButton({
         <DialogTitle>Notes</DialogTitle>
         <DialogContent>
           <NotesList
-            {...{ options, handleSubmit, notes, initialTags, multiple }}
+            {...{
+              options,
+              handleSubmit,
+              notes,
+              initialTags,
+              multiple,
+              readOnly,
+            }}
           />
         </DialogContent>
       </Dialog>
