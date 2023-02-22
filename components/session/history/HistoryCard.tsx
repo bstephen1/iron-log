@@ -1,5 +1,6 @@
 import { Notes } from '@mui/icons-material'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
+import { useRouter } from 'next/router'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
@@ -12,14 +13,21 @@ interface Props {
   record: Record
 }
 export default function HistoryCard({ record }: Props) {
+  const router = useRouter()
   const displayFields = record.exercise?.displayFields ?? DEFAULT_DISPLAY_FIELDS
 
   // todo: readonly?
   return (
     <Card elevation={0}>
       <CardHeader
-        // todo: onclick route to that day
-        title={`${record.date}`}
+        title={
+          <Box
+            onClick={() => router.push(record.date)}
+            sx={{ cursor: 'pointer' }}
+          >
+            {record.date}
+          </Box>
+        }
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <RecordNotesDialogButton
