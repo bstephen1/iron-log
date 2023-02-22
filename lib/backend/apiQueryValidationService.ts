@@ -33,7 +33,7 @@ export type ApiReq<T> = { [key in keyof T]: ApiParam }
 
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildDateRangeQuery<T>(
-  { limit, start, end }: ApiReq<DateRangeQuery>,
+  { limit, start, end, sort }: ApiReq<DateRangeQuery>,
   userId: ObjectId
 ): MongoQuery<T> {
   const query: DateRangeQuery = {}
@@ -47,6 +47,9 @@ export function buildDateRangeQuery<T>(
   }
   if (end) {
     query.end = valiDate(end)
+  }
+  if (sort) {
+    query.sort = validateSort(sort)
   }
 
   return { ...query, userId }
@@ -86,11 +89,12 @@ export function buildRecordQuery(
     start,
     end,
     limit,
+    sort,
   }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
   const query: MongoQuery<Record> = buildDateRangeQuery<Record>(
-    { start, end, limit },
+    { start, end, limit, sort },
     userId
   )
   const filter: Filter<Record> = {}
@@ -165,6 +169,14 @@ export function validateId(id: ApiParam) {
   }
 
   return id
+}
+
+export function validateSort(sort: ApiParam) {
+  if (sort !== 'oldestFirst' && sort !== 'newestFirst') {
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid sort format.')
+  }
+
+  return sort as DateRangeQuery['sort']
 }
 
 /** validate a date */
