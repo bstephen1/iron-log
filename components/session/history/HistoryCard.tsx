@@ -23,6 +23,7 @@ export default function HistoryCard({ record }: Props) {
           <Box
             onClick={() => router.push(record.date)}
             sx={{ cursor: 'pointer' }}
+            width="fit-content"
           >
             {record.date}
           </Box>
