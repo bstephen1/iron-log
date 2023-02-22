@@ -13,17 +13,23 @@ import { ArrayMatchType } from '../../../models/query-filters/MongoQuery'
 
 interface Props {
   recordId: string
+  currentDate: string
   filter: RecordQuery
 }
-export default function HistoryCardsSwiper({ recordId, filter }: Props) {
+export default function HistoryCardsSwiper({
+  recordId,
+  currentDate,
+  filter,
+}: Props) {
   const { records, isLoading } = useRecords({
     ...filter,
     modifierMatchType: ArrayMatchType.Equivalent,
+    sort: 'oldestFirst',
   })
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${recordId}`
 
-  if (isLoading) {
+  if (isLoading || !records) {
     return (
       <Box display="flex" alignItems="center" justifyContent="center">
         <CircularProgress color="primary" size={20} />
@@ -31,11 +37,17 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
     )
   }
 
-  if (records && !records.length) {
+  // length will be 1 at minimum because the current record will always be fetched
+  if (records && records.length < 2) {
     return (
       <Typography textAlign="center">No records with those filters!</Typography>
     )
   }
+
+  const getMostRecentDateIndex = () =>
+    records.findIndex((record) => {
+      return record.date === currentDate
+    }) - 1
 
   return (
     <Stack>
@@ -52,11 +64,8 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
           autoHeight
-          // dir is supposed to make it so that the swiper swipes from right to left instead of left to right,
-          // but it actually changes EVERYTHING in the swiper to render row-reversed. So it's basically unusable.
-          // If despite that we still want to use rtl remember to change the pagination flexDirection to row-reverse.
-          // dir="rtl"
           grabCursor
+          initialSlide={getMostRecentDateIndex()}
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
@@ -66,11 +75,13 @@ export default function HistoryCardsSwiper({ recordId, filter }: Props) {
           }}
           modules={[Pagination, Navigation, Scrollbar]}
         >
-          {records?.map((record) => (
-            <SwiperSlide key={record._id}>
-              <HistoryCard record={record} />
-            </SwiperSlide>
-          ))}
+          {records
+            ?.filter((record) => record.date !== currentDate)
+            .map((record) => (
+              <SwiperSlide key={record._id}>
+                <HistoryCard record={record} />
+              </SwiperSlide>
+            ))}
         </Swiper>
       </Box>
     </Stack>
