@@ -1,3 +1,4 @@
+import Attributes from './Attributes'
 import { DisplayFields } from './DisplayFields'
 import Note from './Note'
 import { SelectorBaseOption } from './SelectorBaseOption'
@@ -7,6 +8,7 @@ export default class Exercise extends SelectorBaseOption {
   constructor(
     public name: string,
     public status: Status = Status.active,
+    public attributes?: Attributes,
     public notes: Note[] = [],
     // We can either use undefined or manually assign default displayFields.
     // Using undefined means we can avoid repeating the defaults in every record,
