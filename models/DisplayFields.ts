@@ -15,14 +15,14 @@ export const ORDERED_DISPLAY_FIELDS: VisibleField[] = [
     name: 'plateWeight',
     source: 'weight',
     label: 'Plate Weight',
-    unitPrefix: 'p',
+    unitPrefix: 'PW ',
     enabled: { splitWeight: true },
   },
   {
     name: 'totalWeight',
     source: 'weight',
     label: 'Total Weight',
-    unitPrefix: 't',
+    unitPrefix: 'TW ',
     enabled: { splitWeight: true },
   },
   { name: 'distance', source: 'distance' },
@@ -58,7 +58,7 @@ export interface VisibleField {
   /** The visible label. Only needed if it is different than "name" */
   label?: string
   /** adds a prefix in front of the unit symbol to act as an identifier  */
-  unitPrefix?: 'p' | 't'
+  unitPrefix?: string
   /** Matches the display field to a db field. */
   // Could make this optional if not different than name, but it's easier to have a
   // guaranteed way to index Set when using the interface.
