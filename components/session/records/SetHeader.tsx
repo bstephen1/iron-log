@@ -46,6 +46,33 @@ export default function SetHeader({
     [showSplitWeight]
   )
 
+  // when options change, some selectedNames may have been removed from visible options, but still are
+  // selected internally. We have to unselect them. Also, if weight / split weight were selected, swap
+  // to the newly visible option
+  useEffect(() => {
+    const hiddenSelected = selectedNames.filter(
+      (name) => !options.find((field) => field.name === name)
+    )
+    let newSelected = selectedNames.filter(
+      (name) => !hiddenSelected.includes(name)
+    )
+
+    if (hiddenSelected.includes('weight')) {
+      newSelected = [...newSelected, 'plateWeight', 'totalWeight']
+    } else if (
+      hiddenSelected.some(
+        (name) => name === 'plateWeight' || name === 'totalWeight'
+      )
+    ) {
+      newSelected = [...newSelected, 'weight']
+    }
+
+    handleChange(newSelected)
+
+    // do not want to call this if handleChange or selectedNames change, only options.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options])
+
   // A different record may update displayFields.
   useEffect(() => {
     setSelectedNames(displayFields.visibleFields.map((field) => field.name))
@@ -98,27 +125,27 @@ export default function SetHeader({
                 <em>Select a display field to add sets.</em>
               </MenuItem>
             ) : (
-              selectedNames.map((name, i) => {
-                // cannot be undefined -- there will always be a match
-                const field = options.find(
-                  (option) => option.name === name
-                ) as VisibleField
-                return (
-                  <Fragment key={i}>
-                    <Box
-                      display="flex"
-                      flexGrow="1"
-                      justifyContent="center"
-                      textOverflow="ellipsis"
-                      overflow="clip"
-                    >
-                      {' '}
-                      {field?.unitPrefix ?? ''}
-                      {displayFields.units[field?.source]}
-                    </Box>
-                  </Fragment>
-                )
-              })
+              // there shouldn't be selectedNames that are outside the options, but it seems
+              // to happen occasionally, probably from async updates
+              options
+                .filter((option) => selectedNames.includes(option.name))
+                .map((field) => {
+                  return (
+                    <Fragment key={field.name}>
+                      <Box
+                        display="flex"
+                        flexGrow="1"
+                        justifyContent="center"
+                        textOverflow="ellipsis"
+                        overflow="clip"
+                      >
+                        {' '}
+                        {field.unitPrefix ?? ''}
+                        {displayFields.units[field.source]}
+                      </Box>
+                    </Fragment>
+                  )
+                })
             )}
           </Stack>
         )}

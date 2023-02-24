@@ -335,8 +335,8 @@ export default function RecordCard({
             handleSubmit={(displayFields) =>
               handleExerciseFieldsChange({ displayFields })
             }
-            // don't use !!extraWeight because then it will not show correct fields if bodyweight and no weigh-in data exists
-            showSplitWeight={attributes.bodyweight}
+            // also check attributes incase bodyweight is set to true but no bodyweight exists
+            showSplitWeight={attributes.bodyweight || !!extraWeight}
           />
         </Stack>
 
