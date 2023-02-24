@@ -19,6 +19,7 @@ import 'swiper/css/pagination'
 import { ArrayMatchType } from '../../../models/query-filters/MongoQuery'
 
 interface Props {
+  /** just used as index for pagination className */
   recordId: string
   currentDate: string
   filter: RecordQuery

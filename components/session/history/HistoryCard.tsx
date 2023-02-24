@@ -15,9 +15,13 @@ interface Props {
 }
 export default function HistoryCard({ record }: Props) {
   const router = useRouter()
-  // todo: this isn't rerendering when displayFields in original record's setHeader change.
   const displayFields = useDisplayFields({ record })
   const extraWeight = useExtraWeight({ record })
+  // use splitWeight if parent record is using it, even if this history record doesn't have the
+  // right modifiers for it to be active
+  const showSplitWeight = displayFields.visibleFields.some((field) =>
+    ['plateWeight', 'totalWeight'].includes(field.name)
+  )
 
   return (
     <Card elevation={0}>
@@ -55,20 +59,14 @@ export default function HistoryCard({ record }: Props) {
             variant="standard"
             readOnly
           />
-          <SetHeader
-            displayFields={displayFields}
-            showSplitWeight={record.exercise?.attributes?.bodyweight}
-            readOnly
-          />
+          <SetHeader readOnly {...{ displayFields, showSplitWeight }} />
         </Stack>
         <Box sx={{ pb: 0 }}>
           {record.sets.map((set, i) => (
             <SetInput
-              set={set}
-              displayFields={displayFields}
               key={i}
               readOnly
-              extraWeight={extraWeight}
+              {...{ set, displayFields, extraWeight }}
             />
           ))}
         </Box>
