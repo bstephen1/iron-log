@@ -1,10 +1,8 @@
 import { Notes } from '@mui/icons-material'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { useRouter } from 'next/router'
-import {
-  DEFAULT_DISPLAY_FIELDS,
-  DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
-} from '../../../models/DisplayFields'
+import useDisplayFields from '../../../lib/frontend/useDisplayFields'
+import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import Record from '../../../models/Record'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import StyledDivider from '../../StyledDivider'
@@ -18,10 +16,8 @@ interface Props {
 export default function HistoryCard({ record }: Props) {
   const router = useRouter()
   // todo: this isn't rerendering when displayFields in original record's setHeader change.
-  const displayFields =
-    record.exercise?.displayFields ?? record.exercise?.attributes?.bodyweight
-      ? DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT
-      : DEFAULT_DISPLAY_FIELDS
+  const displayFields = useDisplayFields({ record })
+  const extraWeight = useExtraWeight({ record })
 
   return (
     <Card elevation={0}>
@@ -72,7 +68,7 @@ export default function HistoryCard({ record }: Props) {
               displayFields={displayFields}
               key={i}
               readOnly
-              // extraWeight={ }
+              extraWeight={extraWeight}
             />
           ))}
         </Box>

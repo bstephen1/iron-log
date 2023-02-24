@@ -22,10 +22,7 @@ import {
 import { Dayjs } from 'dayjs'
 import { useEffect } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
-import {
-  DATE_FORMAT,
-  DEFAULT_CLOTHING_OFFSET,
-} from '../../../lib/frontend/constants'
+import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -34,10 +31,8 @@ import {
   useModifiers,
   useRecord,
 } from '../../../lib/frontend/restService'
-import {
-  DEFAULT_DISPLAY_FIELDS,
-  DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
-} from '../../../models/DisplayFields'
+import useDisplayFields from '../../../lib/frontend/useDisplayFields'
+import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import Exercise from '../../../models/Exercise'
 import Note from '../../../models/Note'
 import Record from '../../../models/Record'
@@ -91,6 +86,8 @@ export default function RecordCard({
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
+  const displayFields = useDisplayFields({ record })
+  const extraWeight = useExtraWeight({ record })
 
   useEffect(() => {
     if (!record || lastChangedExercise?._id !== record?.exercise?._id) return
@@ -163,21 +160,6 @@ export default function RecordCard({
   // define after null checks so record must exist
   const { exercise, activeModifiers, sets, notes, _id } = record
   const attributes = exercise?.attributes ?? {}
-  const bodyweight = bodyweightData[0]
-    ? bodyweightData[0].value +
-      (bodyweightData[0].type === 'official' ? DEFAULT_CLOTHING_OFFSET : 0)
-    : 0
-
-  const extraWeight =
-    activeModifiers.reduce(
-      (total, name) => (total += modifiersIndex[name].weight ?? 0),
-      0
-    ) + (attributes.bodyweight ? bodyweight : 0)
-
-  const displayFields =
-    exercise?.displayFields ?? attributes.bodyweight
-      ? DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT
-      : DEFAULT_DISPLAY_FIELDS
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]
