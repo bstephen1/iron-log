@@ -1,7 +1,6 @@
 import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import { Fragment } from 'react'
 import { doNothing } from '../../../lib/util'
 import { DisplayFields } from '../../../models/DisplayFields'
 import {
@@ -11,6 +10,8 @@ import {
   Set,
 } from '../../../models/Set'
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
+
+const delimiterWidth = '15px'
 
 interface Props {
   handleSubmit?: (changes: Partial<Set>) => void
@@ -50,8 +51,13 @@ export default function SetInput({
       }}
     >
       {displayFields.visibleFields.map((field, i) => (
-        <Fragment key={i}>
-          {i > 0 && <Box px={1}>{field.delimiter ?? '/'}</Box>}
+        <Stack direction="row" key={i} sx={{ flexGrow: 1, flexBasis: 0 }}>
+          {/* extra mt to visually align delimiters with setInput values. They're slightly off center otherwise.  */}
+          {i > 0 && (
+            <Box width={delimiterWidth} mt={0.5}>
+              {field.delimiter ?? '/'}
+            </Box>
+          )}
           <NumericFieldAutosave
             initialValue={convertUnitFormatted(
               set[field.source],
@@ -79,14 +85,16 @@ export default function SetInput({
               disableUnderline: true,
               readOnly,
             }}
-            sx={{ flexGrow: 1 }}
+            sx={{ flexGrow: 1, flexBasis: 0 }}
           />
-        </Fragment>
+          {/* pad the right side to be equal to the left side */}
+          {i > 0 && <Box minWidth={delimiterWidth}></Box>}
+        </Stack>
       ))}
       {/* todo: maybe make this a "more..." with failed/warmup/delete options */}
       {readOnly ? (
         // insert a box for padding when clear icon is hidden
-        <Box minWidth={'32px'} height="100%" />
+        <Box minWidth={'32px'} />
       ) : (
         <IconButton
           size="small"
