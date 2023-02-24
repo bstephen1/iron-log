@@ -84,7 +84,10 @@ export default function SetInput({
         </Fragment>
       ))}
       {/* todo: maybe make this a "more..." with failed/warmup/delete options */}
-      {!readOnly && (
+      {readOnly ? (
+        // insert a box for padding when clear icon is hidden
+        <Box minWidth={'32px'} height="100%" />
+      ) : (
         <IconButton
           size="small"
           onClick={handleDelete}
