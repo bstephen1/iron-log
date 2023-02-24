@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, Checkbox, Stack } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useRecord } from '../../../lib/frontend/restService'
+import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 import StyledDivider from '../../StyledDivider'
@@ -15,6 +16,7 @@ export default function HistoryFilter({ recordId }: Props) {
   const [repFilter, setRepFilter] = useState<number>()
   const [repsChecked, setRepsChecked] = useState(false)
   const [modifiersChecked, setModifiersChecked] = useState(false)
+  const displayFields = useDisplayFields({ record })
 
   useEffect(() => {
     if (!record) {
@@ -85,6 +87,7 @@ export default function HistoryFilter({ recordId }: Props) {
             <HistoryCardsSwiper
               recordId={recordId}
               currentDate={record.date}
+              displayFields={displayFields}
               filter={{
                 exercise: record.exercise?.name,
                 reps: repsChecked ? repFilter : undefined,

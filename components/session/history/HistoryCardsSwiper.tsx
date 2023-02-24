@@ -16,17 +16,20 @@ import 'swiper/css/bundle'
 
 import { useEffect, useMemo, useState } from 'react'
 import 'swiper/css/pagination'
+import { DisplayFields } from '../../../models/DisplayFields'
 import { ArrayMatchType } from '../../../models/query-filters/MongoQuery'
 
 interface Props {
   /** just used as index for pagination className */
   recordId: string
+  displayFields: DisplayFields
   currentDate: string
   filter: RecordQuery
 }
 export default function HistoryCardsSwiper({
   recordId,
   currentDate,
+  displayFields,
   filter,
 }: Props) {
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
@@ -103,7 +106,7 @@ export default function HistoryCardsSwiper({
             ?.filter((record) => record.date !== currentDate)
             .map((record) => (
               <SwiperSlide key={record._id}>
-                <HistoryCard record={record} />
+                <HistoryCard {...{ record, displayFields }} />
               </SwiperSlide>
             ))}
         </Swiper>
