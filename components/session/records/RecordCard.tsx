@@ -19,15 +19,25 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { Dayjs } from 'dayjs'
 import { useEffect } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
+  DATE_FORMAT,
+  DEFAULT_CLOTHING_OFFSET,
+} from '../../../lib/frontend/constants'
+import {
   updateExerciseFields,
   updateRecordFields,
+  useBodyweightHistory,
   useExercises,
+  useModifiers,
   useRecord,
 } from '../../../lib/frontend/restService'
-import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
+import {
+  DEFAULT_DISPLAY_FIELDS,
+  DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
+} from '../../../models/DisplayFields'
 import Exercise from '../../../models/Exercise'
 import Note from '../../../models/Note'
 import Record from '../../../models/Record'
@@ -44,6 +54,7 @@ import SetInput from './SetInput'
 
 interface Props {
   id: Record['_id']
+  date: Dayjs
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
   setLastChangedExercise: (exercise: Exercise) => void
@@ -55,6 +66,7 @@ interface Props {
 }
 export default function RecordCard({
   id,
+  date,
   deleteRecord,
   swapRecords,
   swiperIndex,
@@ -71,6 +83,11 @@ export default function RecordCard({
     ? 'swiper-no-swiping-outer'
     : ''
   const { record, isError, mutate: mutateRecord } = useRecord(id)
+  const { modifiersIndex } = useModifiers()
+  const { data: bodyweightData } = useBodyweightHistory({
+    limit: 1,
+    end: date.format(DATE_FORMAT),
+  })
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -103,7 +120,11 @@ export default function RecordCard({
         </CardContent>
       </Card>
     )
-  } else if (record === undefined) {
+  } else if (
+    record === undefined ||
+    modifiersIndex === undefined ||
+    bodyweightData === undefined
+  ) {
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
@@ -141,7 +162,22 @@ export default function RecordCard({
 
   // define after null checks so record must exist
   const { exercise, activeModifiers, sets, notes, _id } = record
-  const displayFields = exercise?.displayFields ?? DEFAULT_DISPLAY_FIELDS
+  const attributes = exercise?.attributes ?? {}
+  const bodyweight = bodyweightData[0]
+    ? bodyweightData[0].value +
+      (bodyweightData[0].type === 'official' ? DEFAULT_CLOTHING_OFFSET : 0)
+    : 0
+
+  const extraWeight =
+    activeModifiers.reduce(
+      (total, name) => (total += modifiersIndex[name].weight ?? 0),
+      0
+    ) + (attributes.bodyweight ? bodyweight : 0)
+
+  const displayFields =
+    exercise?.displayFields ?? attributes.bodyweight
+      ? DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT
+      : DEFAULT_DISPLAY_FIELDS
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]
@@ -317,6 +353,8 @@ export default function RecordCard({
             handleSubmit={(displayFields) =>
               handleExerciseFieldsChange({ displayFields })
             }
+            // don't use !!extraWeight because then it will not show correct fields if bodyweight and no weigh-in data exists
+            showSplitWeight={attributes.bodyweight}
           />
         </Stack>
 
@@ -331,6 +369,7 @@ export default function RecordCard({
                 handleSetChange(changes, i)
               }
               handleDelete={() => handleDeleteSet(i)}
+              extraWeight={extraWeight}
             />
           ))}
         </Box>

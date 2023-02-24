@@ -18,16 +18,18 @@ interface Props {
   set: Set
   displayFields: DisplayFields
   readOnly?: boolean
+  /** if using split weight: plate weight + extra weight = total weight */
+  extraWeight?: number
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
-// todo: currently not full width if not enough columns to max the width
 export default function SetInput({
   handleSubmit = doNothing,
   handleDelete = doNothing,
   set,
   displayFields,
   readOnly = false,
+  extraWeight = 0,
 }: Props) {
   const pyStack = 0.5
 
@@ -49,23 +51,26 @@ export default function SetInput({
     >
       {displayFields.visibleFields.map((field, i) => (
         <Fragment key={i}>
-          {/* todo: store each field's delimiter and pull that here? */}
-          {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
+          {i > 0 && <Box px={1}>{field.delimiter ?? '/'}</Box>}
           <NumericFieldAutosave
             initialValue={convertUnitFormatted(
-              set[field],
-              field,
-              DB_UNITS[field],
-              displayFields.units[field]
+              set[field.source],
+              field.source,
+              DB_UNITS[field.source],
+              displayFields.units[field.source],
+              // this isn't a super robust way to handle conversions, but it works ok
+              // when there's only one field that ever needs a conversion.
+              field.name === 'totalWeight' ? extraWeight : 0
             )}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
               handleSubmit({
-                [field]: convertUnit(
+                [field.source]: convertUnit(
                   value,
-                  field,
-                  displayFields.units[field],
-                  DB_UNITS[field]
+                  field.source,
+                  displayFields.units[field.source],
+                  DB_UNITS[field.source],
+                  field.name === 'totalWeight' ? -extraWeight : 0
                 ),
               })
             }

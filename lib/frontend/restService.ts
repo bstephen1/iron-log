@@ -184,6 +184,7 @@ export function useModifiers() {
 
   return {
     modifiers: data,
+    modifiersIndex: arrayToIndex<Modifier>('name', data),
     isError: error,
     mutate: mutate,
   }

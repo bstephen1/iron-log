@@ -25,7 +25,7 @@ export type Set = {
 
 /** Specifies the possible units for each field in a set */
 export type Units = {
-  [dimension in keyof typeof UNITS]: keyof typeof UNITS[dimension]
+  [dimension in keyof typeof UNITS]: keyof (typeof UNITS)[dimension]
 }
 
 /** Units used to store sets in the database. No matter the units used to display
@@ -70,7 +70,9 @@ export function convertUnit<Dimension extends keyof Units>(
   value: number | undefined,
   dimension: Dimension,
   source: Units[Dimension],
-  dest: Units[Dimension]
+  dest: Units[Dimension],
+  /** for converting plate weight to total weight */
+  addedValue = 0
 ) {
   if (value === undefined) return value
 
@@ -83,7 +85,7 @@ export function convertUnit<Dimension extends keyof Units>(
     return 10 - value
   }
 
-  return (value * sourceFactor) / destFactor
+  return ((value + addedValue) * sourceFactor) / destFactor
 }
 
 /** Convert a unit from source to dest type and format to 2 decimal places.
@@ -93,10 +95,11 @@ export function convertUnitFormatted<Dimension extends keyof Units>(
   value: number | undefined,
   dimension: Dimension,
   source: Units[Dimension],
-  dest: Units[Dimension]
+  dest: Units[Dimension],
+  addedValue = 0
 ) {
   if (value === undefined) return value
   // the "+" converts it from a string to a number, and removes excess zeros
   // @ts-ignore object is not possibly undefined, we already exit early for that.
-  return +convertUnit(value, dimension, source, dest)?.toFixed(2)
+  return +convertUnit(value, dimension, source, dest, addedValue)?.toFixed(2)
 }

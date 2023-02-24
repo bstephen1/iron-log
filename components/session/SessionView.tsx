@@ -196,6 +196,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                   <SwiperSlide key={id}>
                     <RecordCard
                       id={id}
+                      date={date}
                       deleteRecord={handleDeleteRecord}
                       swapRecords={handleSwapRecords}
                       swiperIndex={i}

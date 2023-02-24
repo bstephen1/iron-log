@@ -1,7 +1,10 @@
 import { Notes } from '@mui/icons-material'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { useRouter } from 'next/router'
-import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
+import {
+  DEFAULT_DISPLAY_FIELDS,
+  DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
+} from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import StyledDivider from '../../StyledDivider'
@@ -14,7 +17,11 @@ interface Props {
 }
 export default function HistoryCard({ record }: Props) {
   const router = useRouter()
-  const displayFields = record.exercise?.displayFields ?? DEFAULT_DISPLAY_FIELDS
+  // todo: this isn't rerendering when displayFields in original record's setHeader change.
+  const displayFields =
+    record.exercise?.displayFields ?? record.exercise?.attributes?.bodyweight
+      ? DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT
+      : DEFAULT_DISPLAY_FIELDS
 
   return (
     <Card elevation={0}>
@@ -52,7 +59,11 @@ export default function HistoryCard({ record }: Props) {
             variant="standard"
             readOnly
           />
-          <SetHeader displayFields={displayFields} readOnly />
+          <SetHeader
+            displayFields={displayFields}
+            showSplitWeight={record.exercise?.attributes?.bodyweight}
+            readOnly
+          />
         </Stack>
         <Box sx={{ pb: 0 }}>
           {record.sets.map((set, i) => (
@@ -61,6 +72,7 @@ export default function HistoryCard({ record }: Props) {
               displayFields={displayFields}
               key={i}
               readOnly
+              // extraWeight={ }
             />
           ))}
         </Box>

@@ -1,5 +1,6 @@
 import {
   Box,
+  capitalize,
   Checkbox,
   FormControl,
   Input,
@@ -10,48 +11,63 @@ import {
   SelectProps,
   Stack,
 } from '@mui/material'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { doNothing } from '../../../lib/util'
-import { DisplayFields } from '../../../models/DisplayFields'
-import { Set } from '../../../models/Set'
+import {
+  DisplayFields,
+  ORDERED_DISPLAY_FIELDS,
+  VisibleField,
+} from '../../../models/DisplayFields'
 
-interface Props extends Partial<SelectProps<(keyof Set)[]>> {
+interface Props extends Partial<SelectProps<string[]>> {
   displayFields: DisplayFields
   handleSubmit?: (displayFields: DisplayFields) => void
+  showSplitWeight?: boolean
 }
 export default function SetHeader({
   displayFields,
   handleSubmit = doNothing,
+  showSplitWeight = false,
   ...selectProps
 }: Props) {
   // The Select will submit to db on change so we could just use displayFields,
   // but using state allows for quicker visual updates on change. Just have to add a useEffect.
-  const [selected, setSelected] = useState(displayFields?.visibleFields || [])
-  // todo: dnd this? user pref? per exercise?
-  const fieldOrder: (keyof Set)[] = [
-    'weight',
-    'distance',
-    'time',
-    'reps',
-    'effort',
-  ]
+  const [selectedNames, setSelectedNames] = useState(
+    displayFields?.visibleFields.map((field) => field.name) || []
+  )
+
+  const options: VisibleField[] = useMemo(
+    () =>
+      ORDERED_DISPLAY_FIELDS.filter(
+        (field) =>
+          field.enabled?.splitWeight === undefined ||
+          field.enabled.splitWeight === showSplitWeight
+      ),
+    [showSplitWeight]
+  )
 
   // A different record may update displayFields.
   useEffect(() => {
-    setSelected(displayFields.visibleFields)
+    setSelectedNames(displayFields.visibleFields.map((field) => field.name))
   }, [displayFields])
 
-  const handleChange = (value: string | string[]) => {
-    // According to MUI docs: "On autofill we get a stringified value"
-    // reassigning value isn't updating the type so assigning a new const
-    const valueAsArray = typeof value === 'string' ? value.split(',') : value
+  const handleChange = (rawSelectedNames: string | string[]) => {
+    // According to MUI docs: "On autofill we get a stringified value",
+    // which is the array stringified into a comma separated string.
+    // Reassigning the value isn't updating the type so have to assign to a new var
+    const selectedNames =
+      typeof rawSelectedNames === 'string'
+        ? rawSelectedNames.split(',')
+        : rawSelectedNames
 
-    // we want to ensure the order is consistent
-    const newSelected = fieldOrder.filter((field) =>
-      valueAsArray.some((item) => item === field)
+    // We want to ensure the order is consistent,
+    // so don't use the raw value since that will append new values to the end.
+    const newVisibleFields = options.filter((optionField) =>
+      selectedNames.some((name) => name === optionField.name)
     )
-    setSelected(newSelected)
-    handleSubmit({ ...displayFields, visibleFields: newSelected })
+
+    setSelectedNames(newVisibleFields.map((field) => field.name))
+    handleSubmit({ ...displayFields, visibleFields: newVisibleFields })
   }
 
   return (
@@ -60,11 +76,11 @@ export default function SetHeader({
         Sets
       </InputLabel>
       {/* Select's generic type must match Props  */}
-      <Select<typeof selected>
+      <Select<string[]>
         multiple
         fullWidth
         displayEmpty
-        value={selected}
+        value={selectedNames}
         label="Set Fields"
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
@@ -77,25 +93,32 @@ export default function SetHeader({
               pl: 1,
             }}
           >
-            {!selected.length ? (
+            {!selectedNames.length ? (
               <MenuItem disabled sx={{ p: 0 }}>
                 <em>Select a display field to add sets.</em>
               </MenuItem>
             ) : (
-              selected.map((field, i) => (
-                <Fragment key={i}>
-                  <Box
-                    display="flex"
-                    flexGrow="1"
-                    justifyContent="center"
-                    textOverflow="ellipsis"
-                    overflow="clip"
-                  >
-                    {' '}
-                    {displayFields.units[field]}
-                  </Box>
-                </Fragment>
-              ))
+              selectedNames.map((name, i) => {
+                // cannot be undefined -- there will always be a match
+                const field = options.find(
+                  (option) => option.name === name
+                ) as VisibleField
+                return (
+                  <Fragment key={i}>
+                    <Box
+                      display="flex"
+                      flexGrow="1"
+                      justifyContent="center"
+                      textOverflow="ellipsis"
+                      overflow="clip"
+                    >
+                      {' '}
+                      {field?.unitPrefix ?? ''}
+                      {displayFields.units[field?.source]}
+                    </Box>
+                  </Fragment>
+                )
+              })
             )}
           </Stack>
         )}
@@ -104,14 +127,20 @@ export default function SetHeader({
         <MenuItem disabled value="">
           <em>Select fields to display</em>
         </MenuItem>
-        {fieldOrder.map((field) => (
-          <MenuItem key={field} value={field}>
-            <Checkbox checked={selected.indexOf(field) > -1} />
+        {options.map((field) => (
+          // MenuItem's value is what determines the values of selected. It has to be a primitive type,
+          // so we can't use the field objects directly
+          <MenuItem key={field.name} value={field.name}>
+            <Checkbox
+              checked={selectedNames.some((name) => name === field.name)}
+            />
             <ListItemText
-              primary={`${field} ${
-                displayFields.units[field] === field
+              primary={`${field.label ?? capitalize(field.name)} ${
+                displayFields.units[field.source] === field.name
                   ? ''
-                  : `(${displayFields.units[field]})`
+                  : `(${field.unitPrefix ?? ''}${
+                      displayFields.units[field.source]
+                    })`
               }`}
             />
           </MenuItem>
