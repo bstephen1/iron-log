@@ -1,10 +1,10 @@
-import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useMemo } from 'react'
 import * as yup from 'yup'
 import { useExercises } from '../lib/frontend/restService'
 import Modifier from '../models/Modifier'
 import InputField from './form-fields/InputField'
+import NumericFieldAutosave from './form-fields/NumericFieldAutosave'
 
 interface Props {
   modifier: Modifier
@@ -44,19 +44,23 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
   })
 
   return (
-    <Grid container spacing={2} xs={12}>
+    <Grid container spacing={1} xs={12}>
       <Grid xs={12} sm={6}>
-        <Stack>
-          {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
-            Export the schema and have the hook pull it in?  */}
-          <InputField
-            label="Name"
-            initialValue={modifier.name}
-            required
-            handleSubmit={(value) => handleUpdate({ name: value })}
-            yupValidator={yup.reach(validationSchema, 'name')}
-          />
-        </Stack>
+        <InputField
+          label="Name"
+          initialValue={modifier.name}
+          required
+          handleSubmit={(name) => handleUpdate({ name })}
+          yupValidator={yup.reach(validationSchema, 'name')}
+        />
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <NumericFieldAutosave
+          label="Equipment weight"
+          initialValue={modifier.weight}
+          handleSubmit={(weight) => handleUpdate({ weight })}
+          variant="outlined"
+        />
       </Grid>
       <Grid xs={12} sm={6}>
         {/* <ComboBoxField
