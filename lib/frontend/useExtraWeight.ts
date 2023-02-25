@@ -31,7 +31,7 @@ export default function useExtraWeight({ record }: Props) {
 
   const extraWeight =
     activeModifiers.reduce(
-      (total, name) => (total += modifiersIndex[name].weight ?? 0),
+      (total, name) => (total += modifiersIndex[name]?.weight ?? 0),
       0
     ) + (attributes.bodyweight ? bodyweight : 0)
 
