@@ -98,7 +98,10 @@ export function convertUnitFormatted<Dimension extends keyof Units>(
   dest: Units[Dimension],
   addedValue = 0
 ) {
-  if (value === undefined) return value
+  // if not using any plate weight, still show the total weight
+  if (value === undefined) {
+    return addedValue ? addedValue : undefined
+  }
   // the "+" converts it from a string to a number, and removes excess zeros
   // @ts-ignore object is not possibly undefined, we already exit early for that.
   return +convertUnit(value, dimension, source, dest, addedValue)?.toFixed(2)
