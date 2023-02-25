@@ -1,3 +1,4 @@
+import { InputAdornment } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { useMemo } from 'react'
 import * as yup from 'yup'
@@ -60,6 +61,10 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
           initialValue={modifier.weight}
           handleSubmit={(weight) => handleUpdate({ weight })}
           variant="outlined"
+          // todo: might want to make this selectable between lbs/kg
+          InputProps={{
+            endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+          }}
         />
       </Grid>
       <Grid xs={12} sm={6}>

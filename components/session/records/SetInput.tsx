@@ -3,12 +3,7 @@ import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { doNothing } from '../../../lib/util'
 import { DisplayFields } from '../../../models/DisplayFields'
-import {
-  convertUnit,
-  convertUnitFormatted,
-  DB_UNITS,
-  Set,
-} from '../../../models/Set'
+import { convertUnit, DB_UNITS, Set } from '../../../models/Set'
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 const delimiterWidth = '15px'
@@ -59,14 +54,15 @@ export default function SetInput({
             </Box>
           )}
           <NumericFieldAutosave
-            initialValue={convertUnitFormatted(
+            initialValue={convertUnit(
               set[field.source],
               field.source,
               DB_UNITS[field.source],
               displayFields.units[field.source],
               // this isn't a super robust way to handle conversions, but it works ok
               // when there's only one field that ever needs a conversion.
-              field.name === 'totalWeight' ? extraWeight : 0
+              field.name === 'totalWeight' ? extraWeight : 0,
+              2
             )}
             // todo: add validation that this is a number
             handleSubmit={(value) =>

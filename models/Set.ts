@@ -63,18 +63,43 @@ export const UNITS = Object.freeze({
   effort: { rpe: 1, rir: 1 },
 })
 
-/** Convert a unit from source to dest type. Note the generic type is
- * inferred from the dimension arg so it doesn't need to be provided explicitly.
+/** Convert a unit from source to dest type.
+ * Note the generic type is inferred from the dimension arg so it doesn't need to be provided explicitly.
  */
 export function convertUnit<Dimension extends keyof Units>(
   value: number | undefined,
   dimension: Dimension,
   source: Units[Dimension],
   dest: Units[Dimension],
-  /** for converting plate weight to total weight */
-  addedValue = 0
+  /**  For now, extraValue's units can only be DB_UNITS[dimension]. The only projected
+   *  use is for weight (plate weight + extra weight = total weight) */
+  extraValue = 0,
+  /** number of decimals to round to */
+  roundedDecimals?: number
 ) {
-  if (value === undefined) return value
+  // we want to show extraValue if it exists and value is undefined
+  if (!value && !extraValue) return value
+
+  const convertedValue = convertUnitHelper(value, dimension, source, dest) ?? 0
+
+  // only convert if it exists
+  const convertedExtraValue = extraValue
+    ? convertUnitHelper(extraValue, dimension, DB_UNITS[dimension], dest) ?? 0
+    : 0
+
+  const sum = convertedValue + convertedExtraValue
+  // the "+" converts it from a string to a number, and removes excess zeros
+  return roundedDecimals !== undefined ? +sum.toFixed(roundedDecimals) : sum
+}
+
+function convertUnitHelper<Dimension extends keyof Units>(
+  value: number | undefined,
+  dimension: Dimension,
+  source: Units[Dimension],
+  dest: Units[Dimension]
+) {
+  // This would work if value === 0 too, but have to watch out for "effort" dimension.
+  if (value === undefined) return undefined
 
   // ts doesn't infer the type is number even though it can only be number
   const sourceFactor = UNITS[dimension][source] as number
@@ -85,24 +110,5 @@ export function convertUnit<Dimension extends keyof Units>(
     return 10 - value
   }
 
-  return ((value + addedValue) * sourceFactor) / destFactor
-}
-
-/** Convert a unit from source to dest type and format to 2 decimal places.
- * Note the generic type is inferred from the dimension arg so it doesn't need to be provided explicitly.
- */
-export function convertUnitFormatted<Dimension extends keyof Units>(
-  value: number | undefined,
-  dimension: Dimension,
-  source: Units[Dimension],
-  dest: Units[Dimension],
-  addedValue = 0
-) {
-  // if not using any plate weight, still show the total weight
-  if (value === undefined) {
-    return addedValue ? addedValue : undefined
-  }
-  // the "+" converts it from a string to a number, and removes excess zeros
-  // @ts-ignore object is not possibly undefined, we already exit early for that.
-  return +convertUnit(value, dimension, source, dest, addedValue)?.toFixed(2)
+  return (value * sourceFactor) / destFactor
 }
