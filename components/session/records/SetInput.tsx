@@ -1,7 +1,6 @@
 import { Clear } from '@mui/icons-material'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import { Fragment } from 'react'
 import { doNothing } from '../../../lib/util'
 import { DisplayFields } from '../../../models/DisplayFields'
 import {
@@ -12,22 +11,26 @@ import {
 } from '../../../models/Set'
 import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
+const delimiterWidth = '15px'
+
 interface Props {
   handleSubmit?: (changes: Partial<Set>) => void
   handleDelete?: () => void
   set: Set
   displayFields: DisplayFields
   readOnly?: boolean
+  /** if using split weight: plate weight + extra weight = total weight */
+  extraWeight?: number
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
-// todo: currently not full width if not enough columns to max the width
 export default function SetInput({
   handleSubmit = doNothing,
   handleDelete = doNothing,
   set,
   displayFields,
   readOnly = false,
+  extraWeight = 0,
 }: Props) {
   const pyStack = 0.5
 
@@ -48,24 +51,32 @@ export default function SetInput({
       }}
     >
       {displayFields.visibleFields.map((field, i) => (
-        <Fragment key={i}>
-          {/* todo: store each field's delimiter and pull that here? */}
-          {i > 0 && <Box px={1}>{field === 'effort' ? '@' : '/'}</Box>}
+        <Stack direction="row" key={i} sx={{ flexGrow: 1, flexBasis: 0 }}>
+          {/* extra mt to visually align delimiters with setInput values. They're slightly off center otherwise.  */}
+          {i > 0 && (
+            <Box width={delimiterWidth} mt={0.5}>
+              {field.delimiter ?? '/'}
+            </Box>
+          )}
           <NumericFieldAutosave
             initialValue={convertUnitFormatted(
-              set[field],
-              field,
-              DB_UNITS[field],
-              displayFields.units[field]
+              set[field.source],
+              field.source,
+              DB_UNITS[field.source],
+              displayFields.units[field.source],
+              // this isn't a super robust way to handle conversions, but it works ok
+              // when there's only one field that ever needs a conversion.
+              field.name === 'totalWeight' ? extraWeight : 0
             )}
             // todo: add validation that this is a number
             handleSubmit={(value) =>
               handleSubmit({
-                [field]: convertUnit(
+                [field.source]: convertUnit(
                   value,
-                  field,
-                  displayFields.units[field],
-                  DB_UNITS[field]
+                  field.source,
+                  displayFields.units[field.source],
+                  DB_UNITS[field.source],
+                  field.name === 'totalWeight' ? -extraWeight : 0
                 ),
               })
             }
@@ -74,12 +85,17 @@ export default function SetInput({
               disableUnderline: true,
               readOnly,
             }}
-            sx={{ flexGrow: 1 }}
+            sx={{ flexGrow: 1, flexBasis: 0 }}
           />
-        </Fragment>
+          {/* pad the right side to be equal to the left side */}
+          {i > 0 && <Box minWidth={delimiterWidth}></Box>}
+        </Stack>
       ))}
       {/* todo: maybe make this a "more..." with failed/warmup/delete options */}
-      {!readOnly && (
+      {readOnly ? (
+        // insert a box for padding when clear icon is hidden
+        <Box minWidth={'32px'} />
+      ) : (
         <IconButton
           size="small"
           onClick={handleDelete}

@@ -8,6 +8,7 @@ import {
 import { useNames } from '../lib/util'
 import Exercise from '../models/Exercise'
 import { Status } from '../models/Status'
+import AttributeCheckboxes from './form-fields/AttributeCheckboxes'
 import { ComboBoxField } from './form-fields/ComboBoxField'
 import InputField from './form-fields/InputField'
 import NotesList from './form-fields/NotesList'
@@ -92,6 +93,12 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           options={modifierNames}
           textFieldProps={{ helperText: ' ' }}
           handleSubmit={(modifiers) => handleUpdate({ modifiers })}
+        />
+      </Grid>
+      <Grid xs={12}>
+        <AttributeCheckboxes
+          attributes={exercise.attributes}
+          handleSubmit={(attributes) => handleUpdate({ attributes })}
         />
       </Grid>
       <Grid xs={12}>

@@ -7,7 +7,7 @@ export default class Modifier extends SelectorBaseOption {
   constructor(
     public name: string,
     public status = Status.active,
-    public weight = 0,
+    public weight?: number,
     public canDelete = true
   ) {
     super(name, status)

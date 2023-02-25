@@ -1,7 +1,8 @@
 import { Notes } from '@mui/icons-material'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { useRouter } from 'next/router'
-import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
+import useExtraWeight from '../../../lib/frontend/useExtraWeight'
+import { DisplayFields } from '../../../models/DisplayFields'
 import Record from '../../../models/Record'
 import { ComboBoxField } from '../../form-fields/ComboBoxField'
 import StyledDivider from '../../StyledDivider'
@@ -11,10 +12,19 @@ import SetInput from '../records/SetInput'
 
 interface Props {
   record: Record
+  /** Must use the displayFields of the parent record.
+   * The history record's displayFields will be stale if the parent's fields change.
+   */
+  displayFields: DisplayFields
 }
-export default function HistoryCard({ record }: Props) {
+export default function HistoryCard({ record, displayFields }: Props) {
   const router = useRouter()
-  const displayFields = record.exercise?.displayFields ?? DEFAULT_DISPLAY_FIELDS
+  const extraWeight = useExtraWeight({ record })
+  // use splitWeight if parent record is using it, even if this history record doesn't have the
+  // right modifiers for it to be active
+  const showSplitWeight = displayFields.visibleFields.some((field) =>
+    ['plateWeight', 'totalWeight'].includes(field.name)
+  )
 
   return (
     <Card elevation={0}>
@@ -52,15 +62,14 @@ export default function HistoryCard({ record }: Props) {
             variant="standard"
             readOnly
           />
-          <SetHeader displayFields={displayFields} readOnly />
+          <SetHeader readOnly {...{ displayFields, showSplitWeight }} />
         </Stack>
         <Box sx={{ pb: 0 }}>
           {record.sets.map((set, i) => (
             <SetInput
-              set={set}
-              displayFields={displayFields}
               key={i}
               readOnly
+              {...{ set, displayFields, extraWeight }}
             />
           ))}
         </Box>
