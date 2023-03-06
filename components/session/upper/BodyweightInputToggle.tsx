@@ -1,4 +1,5 @@
-import { Check, ScaleOutlined } from '@mui/icons-material'
+import CheckIcon from '@mui/icons-material/Check'
+import ScaleOutlinedIcon from '@mui/icons-material/ScaleOutlined'
 import {
   IconButton,
   ListItemIcon,
@@ -31,7 +32,7 @@ export default function BodyweightInputToggle({
     <>
       <Tooltip title="options">
         <IconButton onClick={handleOpen} sx={{ p: '2px' }}>
-          <ScaleOutlined />
+          <ScaleOutlinedIcon />
         </IconButton>
       </Tooltip>
       <Menu
@@ -70,7 +71,7 @@ function BodyweightMenuItem({
 }) {
   return (
     <MenuItem onClick={handleClick}>
-      <ListItemIcon>{selected ? <Check /> : <></>}</ListItemIcon>
+      <ListItemIcon>{selected ? <CheckIcon /> : <></>}</ListItemIcon>
       <ListItemText>{text}</ListItemText>
     </MenuItem>
   )

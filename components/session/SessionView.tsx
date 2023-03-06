@@ -21,7 +21,8 @@ import RecordCard from './records/RecordCard'
 import Clock from './upper/Clock'
 import TitleBar from './upper/TitleBar'
 
-import { ArrowBackIosNew, ArrowForwardIos } from '@mui/icons-material'
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { useState } from 'react'
 import {
   A11y,
@@ -147,7 +148,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                 color="primary"
                 disabled={isBeginning}
               >
-                <ArrowBackIosNew />
+                <ArrowBackIosNewIcon />
               </IconButton>
             </Box>
             <Swiper
@@ -231,7 +232,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                 color="primary"
                 disabled={isEnd}
               >
-                <ArrowForwardIos />
+                <ArrowForwardIosIcon />
               </IconButton>
             </Box>
           </Stack>

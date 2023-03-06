@@ -1,4 +1,4 @@
-import { FilterAltOutlined } from '@mui/icons-material'
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import {
   Box,
   Chip,
@@ -55,7 +55,7 @@ export default function CategoryFilter({
       ) : (
         <Tooltip title="Select Category">
           <IconButton onClick={handleOpen} sx={{ p: '4px' }}>
-            <FilterAltOutlined />
+            <FilterAltOutlinedIcon />
           </IconButton>
         </Tooltip>
       )}

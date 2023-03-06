@@ -1,4 +1,4 @@
-import { Build } from '@mui/icons-material'
+import BuildIcon from '@mui/icons-material/Build'
 import {
   Dialog,
   DialogContent,
@@ -34,7 +34,7 @@ export default function RecordUnitsButton({ displayFields, ...props }: Props) {
   return (
     <>
       <RecordHeaderButton title="change units" onClick={() => setOpen(true)}>
-        <Build />
+        <BuildIcon />
       </RecordHeaderButton>
       <Dialog open={open} fullWidth onClose={() => setOpen(false)}>
         <DialogTitle>Change Units</DialogTitle>

@@ -1,5 +1,5 @@
-import { CheckBoxOutlineBlank } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import {
   Autocomplete,
   AutocompleteProps,
@@ -66,7 +66,7 @@ function ComboBoxFieldBase({
       renderOption={(props, modifierName, { selected }) => (
         <li {...props}>
           <Checkbox
-            icon={<CheckBoxOutlineBlank />}
+            icon={<CheckBoxOutlineBlankIcon />}
             checkedIcon={<CheckBoxIcon />}
             style={{ marginRight: 8 }}
             checked={selected}

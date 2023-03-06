@@ -1,5 +1,5 @@
-import { CheckBoxOutlineBlank } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import {
   Checkbox,
   Input,
@@ -53,7 +53,7 @@ export default function TagSelect({
         <MenuItem key={option} value={option}>
           {multiple && (
             <Checkbox
-              icon={<CheckBoxOutlineBlank />}
+              icon={<CheckBoxOutlineBlankIcon />}
               checkedIcon={<CheckBoxIcon />}
               style={{ marginRight: 8 }}
               checked={tags.some((x) => x === option)} // todo: add a "selected" boolean map?

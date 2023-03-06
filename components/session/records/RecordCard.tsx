@@ -1,11 +1,9 @@
-import {
-  Delete,
-  FitnessCenter,
-  KeyboardDoubleArrowLeft,
-  KeyboardDoubleArrowRight,
-  Notes,
-} from '@mui/icons-material'
 import AddIcon from '@mui/icons-material/Add'
+import DeleteIcon from '@mui/icons-material/Delete'
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
+import NotesIcon from '@mui/icons-material/Notes'
 import {
   Box,
   Card,
@@ -258,7 +256,7 @@ export default function RecordCard({
               disabled={!swiperIndex}
               onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
             >
-              <KeyboardDoubleArrowLeft />
+              <KeyboardDoubleArrowLeftIcon />
             </RecordHeaderButton>
             <RecordHeaderButton
               title="Move current record to the right"
@@ -266,11 +264,11 @@ export default function RecordCard({
               disabled={swiperIndex >= swiper.slides?.length - 2}
               onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
             >
-              <KeyboardDoubleArrowRight />
+              <KeyboardDoubleArrowRightIcon />
             </RecordHeaderButton>
             <RecordNotesDialogButton
               notes={[...sessionNotes, ...notes]}
-              Icon={<Notes />}
+              Icon={<NotesIcon />}
               tooltipTitle="Record Notes"
               setsAmount={sets.length}
               handleSubmit={(notes) => handleRecordNotesChange(notes)}
@@ -279,7 +277,7 @@ export default function RecordCard({
               <RecordNotesDialogButton
                 notes={exercise.notes}
                 options={exercise.modifiers}
-                Icon={<FitnessCenter />}
+                Icon={<FitnessCenterIcon />}
                 tooltipTitle="Exercise Notes"
                 handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
                 multiple
@@ -296,7 +294,7 @@ export default function RecordCard({
               color="error"
               onClick={handleDeleteRecord}
             >
-              <Delete />
+              <DeleteIcon />
             </RecordHeaderButton>
           </Box>
         }
