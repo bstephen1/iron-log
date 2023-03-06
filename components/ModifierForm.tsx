@@ -51,6 +51,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
           label="Name"
           initialValue={modifier.name}
           required
+          fullWidth
           handleSubmit={(name) => handleUpdate({ name })}
           yupValidator={yup.reach(validationSchema, 'name')}
         />
@@ -61,6 +62,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
           initialValue={modifier.weight}
           handleSubmit={(weight) => handleUpdate({ weight })}
           variant="outlined"
+          defaultHelperText=" "
           // todo: might want to make this selectable between lbs/kg
           InputProps={{
             endAdornment: <InputAdornment position="end">kg</InputAdornment>,

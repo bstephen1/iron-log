@@ -45,6 +45,15 @@ import RecordUnitsButton from './RecordUnitsButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
+// Note: mui icons MUST use path imports instead of named imports!
+// Otherwise in prod there will be serverless function timeout errors. Path imports also
+// make loading significantly faster. Apparently the auto tree-shaking
+// mui advertises does not actually work, or isn't set up properly.
+// The icons were not causing any issues until 2023/03/06, when an updated
+// prod build retractively made every build fail to work.
+// See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
+// See bug: https://github.com/mui/material-ui/issues/35450
+
 interface Props {
   id: Record['_id']
   date: Dayjs

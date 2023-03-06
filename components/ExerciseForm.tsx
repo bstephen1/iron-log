@@ -85,6 +85,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           initialValue={exercise.weight}
           handleSubmit={(weight) => handleUpdate({ weight })}
           variant="outlined"
+          defaultHelperText=" "
           // todo: might want to make this selectable between lbs/kg
           InputProps={{
             endAdornment: <InputAdornment position="end">kg</InputAdornment>,
