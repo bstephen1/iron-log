@@ -1,3 +1,4 @@
+import { InputAdornment } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import * as yup from 'yup'
 import {
@@ -12,6 +13,7 @@ import AttributeCheckboxes from './form-fields/AttributeCheckboxes'
 import { ComboBoxField } from './form-fields/ComboBoxField'
 import InputField from './form-fields/InputField'
 import NotesList from './form-fields/NotesList'
+import NumericFieldAutosave from './form-fields/NumericFieldAutosave'
 import SelectFieldAutosave from './form-fields/SelectFieldAutosave'
 
 interface Props {
@@ -54,7 +56,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
 
   return (
     <Grid container spacing={1} xs={12}>
-      <Grid xs={12} sm={6}>
+      <Grid xs={12}>
         {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
             Export the schema and have the hook pull it in?  */}
         <InputField
@@ -75,6 +77,18 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           fullWidth
           yupValidator={yup.reach(validationSchema, 'status')}
           handleSubmit={(status) => handleUpdate({ status })}
+        />
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <NumericFieldAutosave
+          label="Equipment weight"
+          initialValue={exercise.weight}
+          handleSubmit={(weight) => handleUpdate({ weight })}
+          variant="outlined"
+          // todo: might want to make this selectable between lbs/kg
+          InputProps={{
+            endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+          }}
         />
       </Grid>
       <Grid xs={12}>

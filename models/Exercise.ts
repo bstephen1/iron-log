@@ -18,6 +18,8 @@ export default class Exercise extends SelectorBaseOption {
     // for the exercise, but that proved to be frustrating and not very useful
     // in practice.
     public displayFields?: DisplayFields,
+    /** inherent base equipment weight of the exercise */
+    public weight?: number,
     public categories: string[] = [],
     public modifiers: string[] = []
   ) {

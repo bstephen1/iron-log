@@ -24,16 +24,18 @@ export default function useExtraWeight({ record }: Props) {
   const attributes = exercise?.attributes ?? {}
 
   // have to account for no bodyweight data
-  const bodyweight = bodyweightData[0]
-    ? bodyweightData[0].value +
-      (bodyweightData[0].type === 'official' ? DEFAULT_CLOTHING_OFFSET : 0)
-    : 0
+  const bodyweight =
+    bodyweightData[0] && attributes.bodyweight
+      ? bodyweightData[0].value +
+        (bodyweightData[0].type === 'official' ? DEFAULT_CLOTHING_OFFSET : 0)
+      : 0
 
-  const extraWeight =
-    activeModifiers.reduce(
-      (total, name) => (total += modifiersIndex[name]?.weight ?? 0),
-      0
-    ) + (attributes.bodyweight ? bodyweight : 0)
+  const baseWeight = exercise?.weight ?? 0
 
-  return extraWeight
+  const modifierWeight = activeModifiers.reduce(
+    (total, name) => (total += modifiersIndex[name]?.weight ?? 0),
+    0
+  )
+
+  return baseWeight + modifierWeight + bodyweight
 }
