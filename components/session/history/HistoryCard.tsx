@@ -1,4 +1,4 @@
-import { Notes } from '@mui/icons-material'
+import NotesIcon from '@mui/icons-material/Notes'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { useRouter } from 'next/router'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
@@ -44,7 +44,7 @@ export default function HistoryCard({ record, displayFields }: Props) {
         action={
           <RecordNotesDialogButton
             notes={record.notes}
-            Icon={<Notes />}
+            Icon={<NotesIcon />}
             tooltipTitle="Record Notes"
             setsAmount={record.sets.length}
             readOnly

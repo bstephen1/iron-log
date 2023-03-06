@@ -1,4 +1,5 @@
-import { Check, Replay } from '@mui/icons-material'
+import CheckIcon from '@mui/icons-material/Check'
+import ReplayIcon from '@mui/icons-material/Replay'
 import { TextField, TextFieldProps, Tooltip } from '@mui/material'
 import { useRef } from 'react'
 import { reach } from 'yup'
@@ -59,12 +60,12 @@ export default function InputField(props: Props & TextFieldProps) {
               onClick={submit}
             >
               <Tooltip title="submit">
-                <Check />
+                <CheckIcon />
               </Tooltip>
             </TransitionIconButton>
             <TransitionIconButton isVisible={isDirty} onClick={onReset}>
               <Tooltip title="reset">
-                <Replay />
+                <ReplayIcon />
               </Tooltip>
             </TransitionIconButton>
             {textFieldProps.InputProps?.endAdornment}

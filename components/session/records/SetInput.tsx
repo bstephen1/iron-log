@@ -1,4 +1,4 @@
-import { Clear } from '@mui/icons-material'
+import ClearIcon from '@mui/icons-material/Clear'
 import { Box, IconButton, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { doNothing } from '../../../lib/util'
@@ -104,7 +104,7 @@ export default function SetInput({
             },
           }}
         >
-          <Clear />
+          <ClearIcon />
         </IconButton>
       )}
     </Stack>

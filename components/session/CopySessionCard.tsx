@@ -1,4 +1,4 @@
-import { ContentCopy } from '@mui/icons-material'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { LoadingButton } from '@mui/lab'
 import { Paper, Stack, Typography } from '@mui/material'
 import { Dayjs } from 'dayjs'
@@ -101,7 +101,7 @@ export default function CopySessionCard({ date, ...props }: Props) {
             loading={isLoading}
             loadingPosition="start"
             // if using loadingPosition, a startIcon is required
-            startIcon={<ContentCopy />}
+            startIcon={<ContentCopyIcon />}
             variant="contained"
             onClick={handleCopy}
           >

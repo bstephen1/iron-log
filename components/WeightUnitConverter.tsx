@@ -1,4 +1,4 @@
-import { SyncAlt } from '@mui/icons-material'
+import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import { InputAdornment, Stack, TextField, TextFieldProps } from '@mui/material'
 import { useState } from 'react'
 
@@ -16,7 +16,7 @@ export default function WeightUnitConverter() {
         value={kg ? format(kg) : ''}
         onChange={(e) => setKg(e.target.value ? +e.target.value : undefined)}
       />
-      <SyncAlt />
+      <SyncAltIcon />
       <ConverterField
         unit="lb"
         value={kg ? format(kg * KG_TO_LB_RATE) : ''}
