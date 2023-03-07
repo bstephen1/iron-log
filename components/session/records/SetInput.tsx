@@ -1,6 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import { Box, IconButton, Input, MenuItem, Select, Stack } from '@mui/material'
-import { grey } from '@mui/material/colors'
+import { blue, grey, lightGreen } from '@mui/material/colors'
+import { useMemo } from 'react'
 import { doNothing } from '../../../lib/util'
 import { DisplayFields } from '../../../models/DisplayFields'
 import { convertUnit, DB_UNITS, Set } from '../../../models/Set'
@@ -29,6 +30,18 @@ export default function SetInput({
 }: Props) {
   const pyStack = 0.5
 
+  // todo: make customizable ?
+  const background = useMemo(() => {
+    switch (set.side) {
+      case 'L':
+        return `${blue[100]}`
+      case 'R':
+        return `${lightGreen[100]}`
+      default:
+        return `${grey[100]}`
+    }
+  }, [set.side])
+
   if (!displayFields.visibleFields.length) {
     return <></>
   }
@@ -40,7 +53,7 @@ export default function SetInput({
       // border is from TextField underline
       sx={{
         borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-        background: `${grey[100]}`, // todo
+        background,
         py: pyStack,
         pl: 1,
       }}
