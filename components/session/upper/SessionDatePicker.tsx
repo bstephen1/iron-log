@@ -54,6 +54,7 @@ export default function SessionDatePicker(props: Props) {
   return (
     <DatePicker
       showDaysOutsideCurrentMonth
+      closeOnSelect // default is true for desktop, false for mobile
       label="Date"
       value={date}
       onChange={(newDate) => setDate(newDate)}
