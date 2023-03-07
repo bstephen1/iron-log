@@ -1,5 +1,5 @@
 import ClearIcon from '@mui/icons-material/Clear'
-import { Box, IconButton, Stack } from '@mui/material'
+import { Box, IconButton, Input, MenuItem, Select, Stack } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { doNothing } from '../../../lib/util'
 import { DisplayFields } from '../../../models/DisplayFields'
@@ -46,43 +46,78 @@ export default function SetInput({
       }}
     >
       {displayFields.visibleFields.map((field, i) => (
-        <Stack direction="row" key={i} sx={{ flexGrow: 1, flexBasis: 0 }}>
+        <Stack
+          direction="row"
+          key={i}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexGrow: 1,
+            flexBasis: 0,
+          }}
+        >
           {/* extra mt to visually align delimiters with setInput values. They're slightly off center otherwise.  */}
           {i > 0 && (
             <Box width={delimiterWidth} mt={0.5}>
               {field.delimiter ?? '/'}
             </Box>
           )}
-          <NumericFieldAutosave
-            initialValue={convertUnit(
-              set[field.source],
-              field.source,
-              DB_UNITS[field.source],
-              displayFields.units[field.source],
-              // this isn't a super robust way to handle conversions, but it works ok
-              // when there's only one field that ever needs a conversion.
-              field.name === 'totalWeight' ? extraWeight : 0,
-              2
-            )}
-            // todo: add validation that this is a number
-            handleSubmit={(value) =>
-              handleSubmit({
-                [field.source]: convertUnit(
-                  value,
-                  field.source,
-                  displayFields.units[field.source],
-                  DB_UNITS[field.source],
-                  field.name === 'totalWeight' ? -extraWeight : 0
-                ),
-              })
-            }
-            inputProps={{ style: { textAlign: 'center' } }}
-            InputProps={{
-              disableUnderline: true,
-              readOnly,
-            }}
-            sx={{ flexGrow: 1, flexBasis: 0 }}
-          />
+          {field.source === 'side' ? (
+            <Select<Set['side']>
+              variant="standard"
+              displayEmpty
+              fullWidth
+              autoWidth
+              input={<Input disableUnderline sx={{ textAlign: 'center' }} />}
+              inputProps={{ sx: { pr: '0px !important' } }} // disable baked in padding for IconComponent
+              IconComponent={() => null}
+              value={set[field.source] ?? ''}
+              onChange={(e) =>
+                handleSubmit({
+                  side: (e.target.value as Set['side']) || undefined,
+                })
+              }
+              renderValue={(selected) => <Box>{selected}</Box>}
+            >
+              {/* values must match type from Set['side'], except empty string which is converted to undefined */}
+              <MenuItem value="">
+                <em>Both</em>
+              </MenuItem>
+              <MenuItem value="L">L</MenuItem>
+              <MenuItem value="R">R</MenuItem>
+            </Select>
+          ) : (
+            <NumericFieldAutosave
+              initialValue={convertUnit(
+                set[field.source],
+                field.source,
+                DB_UNITS[field.source],
+                displayFields.units[field.source],
+                // this isn't a super robust way to handle conversions, but it works ok
+                // when there's only one field that ever needs a conversion.
+                field.name === 'totalWeight' ? extraWeight : 0,
+                2
+              )}
+              // todo: add validation that this is a number
+              handleSubmit={(value) =>
+                handleSubmit({
+                  [field.source]: convertUnit(
+                    value,
+                    field.source,
+                    displayFields.units[field.source],
+                    DB_UNITS[field.source],
+                    field.name === 'totalWeight' ? -extraWeight : 0
+                  ),
+                })
+              }
+              inputProps={{ style: { textAlign: 'center' } }}
+              InputProps={{
+                disableUnderline: true,
+                readOnly,
+              }}
+              sx={{ flexGrow: 1, flexBasis: 0 }}
+            />
+          )}
           {/* pad the right side to be equal to the left side */}
           {i > 0 && <Box minWidth={delimiterWidth}></Box>}
         </Stack>

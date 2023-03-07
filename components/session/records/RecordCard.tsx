@@ -52,7 +52,7 @@ import SetInput from './SetInput'
 // The icons were not causing any issues until 2023/03/06, when an updated
 // prod build retractively made every build fail to work.
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
-// See bug: https://github.com/mui/material-ui/issues/35450
+// See bug: https://github.com/orgs/vercel/discussions/1657
 
 interface Props {
   id: Record['_id']
@@ -344,6 +344,7 @@ export default function RecordCard({
             }
             // also check attributes incase bodyweight is set to true but no bodyweight exists
             showSplitWeight={attributes.bodyweight || !!extraWeight}
+            showUnilateral={attributes.unilateral}
           />
         </Stack>
 

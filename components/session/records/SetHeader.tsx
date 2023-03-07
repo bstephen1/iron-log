@@ -23,11 +23,13 @@ interface Props extends Partial<SelectProps<string[]>> {
   displayFields: DisplayFields
   handleSubmit?: (displayFields: DisplayFields) => void
   showSplitWeight?: boolean
+  showUnilateral?: boolean
 }
 export default function SetHeader({
   displayFields,
   handleSubmit = doNothing,
   showSplitWeight = false,
+  showUnilateral = false,
   ...selectProps
 }: Props) {
   // The Select will submit to db on change so we could just use displayFields,
@@ -40,10 +42,12 @@ export default function SetHeader({
     () =>
       ORDERED_DISPLAY_FIELDS.filter(
         (field) =>
-          field.enabled?.splitWeight === undefined ||
-          field.enabled.splitWeight === showSplitWeight
+          (field.enabled?.unilateral == undefined ||
+            field.enabled.unilateral === showUnilateral) &&
+          (field.enabled?.splitWeight == undefined ||
+            field.enabled.splitWeight === showSplitWeight)
       ),
-    [showSplitWeight]
+    [showSplitWeight, showUnilateral]
   )
 
   // when options change, some selectedNames may have been removed from visible options, but still are

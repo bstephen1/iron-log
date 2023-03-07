@@ -20,8 +20,8 @@ switch from just a "weight" column to added/total weight columns.
 
 /** An exercise set. */
 export type Set = {
-  [field in keyof Units]?: number
-}
+  -readonly [field in keyof Omit<Units, 'side'>]?: number
+} & { side?: 'L' | 'R' }
 
 /** Specifies the possible units for each field in a set */
 export type Units = {
@@ -32,6 +32,7 @@ export type Units = {
  * data on the frontend, they must be converted to these units before sending to the db.
  */
 export const DB_UNITS: Units = Object.freeze({
+  side: 'side',
   weight: 'kg',
   distance: 'm',
   time: 'sec',
@@ -57,8 +58,9 @@ export const UNITS = Object.freeze({
   weight: { kg: 1, lbs: 0.45359237 },
   distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471 },
   time: { sec: 1, min: 60, hr: 3600, 'HH:MM:SS': 1 },
-  /** reps have no units */
+  /** reps and side have no units */
   reps: { reps: 1 },
+  side: { side: 1 },
   /** effort requires a custom conversion */
   effort: { rpe: 1, rir: 1 },
 })
