@@ -52,7 +52,7 @@ import SetInput from './SetInput'
 // The icons were not causing any issues until 2023/03/06, when an updated
 // prod build retractively made every build fail to work.
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
-// See bug: https://github.com/mui/material-ui/issues/35450
+// See bug: https://github.com/orgs/vercel/discussions/1657
 
 interface Props {
   id: Record['_id']
@@ -173,6 +173,19 @@ export default function RecordCard({
       ? { ...sets[sets.length - 1], effort: undefined }
       : ({} as Set)
 
+    // Behavior is a bit up for debate. We've decided to only add a single new set
+    // rather than automatically add an L and R set with values from the latest L and R
+    // sets. This way should be more flexible if the user has a few sets as "both" and only
+    // splits into L/R when it gets near failure. But if the last set was specified as L or R
+    // we switch to the other side for the new set.
+    // Another behavior could be to add L/R sets automatically when adding a new record, but
+    // again the user may want to start with "both" and only split into L/R if they diverge.
+    if (newSet.side === 'L') {
+      newSet.side = 'R'
+    } else if (newSet.side === 'R') {
+      newSet.side = 'L'
+    }
+
     await updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
     mutateRecord({ ...record, sets: sets.concat(newSet) })
   }
@@ -279,7 +292,7 @@ export default function RecordCard({
               notes={[...sessionNotes, ...notes]}
               Icon={<NotesIcon />}
               tooltipTitle="Record Notes"
-              setsAmount={sets.length}
+              sets={sets}
               handleSubmit={(notes) => handleRecordNotesChange(notes)}
             />
             {!!exercise && (
@@ -344,6 +357,7 @@ export default function RecordCard({
             }
             // also check attributes incase bodyweight is set to true but no bodyweight exists
             showSplitWeight={attributes.bodyweight || !!extraWeight}
+            showUnilateral={attributes.unilateral}
           />
         </Stack>
 

@@ -46,7 +46,7 @@ export default function HistoryCard({ record, displayFields }: Props) {
             notes={record.notes}
             Icon={<NotesIcon />}
             tooltipTitle="Record Notes"
-            setsAmount={record.sets.length}
+            sets={record.sets}
             readOnly
           />
         }

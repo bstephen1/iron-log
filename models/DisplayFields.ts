@@ -10,6 +10,7 @@ export type DisplayFields = {
 
 // todo: dnd this? user pref? per exercise?
 export const ORDERED_DISPLAY_FIELDS: VisibleField[] = [
+  { name: 'side', source: 'side', enabled: { unilateral: true } },
   { name: 'weight', source: 'weight', enabled: { splitWeight: false } },
   {
     name: 'plateWeight',
@@ -67,10 +68,10 @@ export interface VisibleField {
    * If the key is undefined, the field is shown regardless of that key's value.
    * Otherwise, the field is only shown when the key equals the defined value.
    */
-  enabled?: { [key in DisplayFieldGroups]: boolean }
+  enabled?: { [key in DisplayFieldGroups]?: boolean }
   /** Overrides the default column delimiter "/" */
   delimiter?: string
 }
 
 /** Valid keys for DisplayField.enabled groups.  */
-type DisplayFieldGroups = 'splitWeight'
+type DisplayFieldGroups = 'splitWeight' | 'unilateral'
