@@ -34,9 +34,9 @@ export default function SetInput({
   const background = useMemo(() => {
     switch (set.side) {
       case 'L':
-        return `${blue[100]}`
+        return `${blue[50]}`
       case 'R':
-        return `${lightGreen[100]}`
+        return `${lightGreen[50]}`
       default:
         return `${grey[100]}`
     }
