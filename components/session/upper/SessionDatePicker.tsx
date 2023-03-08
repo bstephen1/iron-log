@@ -31,6 +31,12 @@ export default function SessionDatePicker(props: Props) {
       .format(DATE_FORMAT),
   })
 
+  useEffect(() => {
+    setDate(props.date)
+    // can't just use props.date because that "changes" every render since it's an object
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.date?.format(DATE_FORMAT)])
+
   // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
 
   const { sessionLogsIndex, isLoading } = useSessionLogs(

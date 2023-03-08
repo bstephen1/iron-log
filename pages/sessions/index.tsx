@@ -9,8 +9,8 @@ export default function Page() {
   // need to wrap router.push in a useEffect because otherwise it would try to
   // render serverside and cause an error since the router doesn't exist yet.
   useEffect(() => {
-    const today = dayjs()
-    router.push(`sessions/${today.format(DATE_FORMAT)}`)
+    const today = dayjs().format(DATE_FORMAT)
+    router.push(`sessions/${today}`)
   }, [router])
 
   return <></>
