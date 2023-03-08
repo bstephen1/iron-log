@@ -14,6 +14,9 @@ export default class Exercise extends SelectorBaseOption {
     // Using undefined means we can avoid repeating the defaults in every record,
     // updating the defaults only updates in one place, and existing prod records
     // are backwards compatible.
+    // Edit: Actually, some exercises in prod have null displayFields instead
+    // of undefined. Not sure why, but doesn't really affect anything except for
+    // manual mongo queries.
     // Originally this was a map with keys for each subset of modifier groupings
     // for the exercise, but that proved to be frustrating and not very useful
     // in practice.

@@ -67,6 +67,11 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
 }: UnitDimensionRadioGroupProps<Dimension>) {
   const unitSymbols = Object.keys(UNITS[dimension])
 
+  // Don't render if there is only one option (eg, reps or side)
+  if (unitSymbols.length < 2) {
+    return <></>
+  }
+
   return (
     <FormControl>
       <FormLabel id={`${dimension}-radio-buttons-label`}>{dimension}</FormLabel>

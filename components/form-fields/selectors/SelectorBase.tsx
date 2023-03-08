@@ -75,8 +75,9 @@ export default function SelectorBase<C extends SelectorBaseOption>({
   )
 
   const resetNewOption = () => {
-    setNewOption(new Constructor(''))
-    setNewOptionStub(new SelectorStub(newOption._id))
+    const newObj = new Constructor('')
+    setNewOption(newObj)
+    setNewOptionStub(new SelectorStub(newObj._id))
   }
 
   return (
