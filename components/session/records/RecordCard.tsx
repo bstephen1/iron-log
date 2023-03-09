@@ -23,7 +23,7 @@ import {
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
@@ -103,20 +103,9 @@ export default function RecordCard({
   const extraWeight = useExtraWeight({ record })
   const router = useRouter()
   const [titleRef, { width: titleWidth }] = useMeasure()
-  const [shouldCondense, setShouldCondense] = useState(false)
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
-
-  useEffect(() => {
-    // during setup the width will be zero
-    if (!titleWidth) {
-      return
-    } else if (titleWidth < 100) {
-      setShouldCondense(true)
-    } else if (titleWidth > 220) {
-      setShouldCondense(false)
-    }
-  }, [titleWidth])
+  const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
 
   useEffect(() => {
     if (!record || lastChangedExercise?._id !== record?.exercise?._id) return
@@ -332,7 +321,8 @@ export default function RecordCard({
   return (
     <Card elevation={3} sx={{ px: 1 }}>
       <CardHeader
-        title={<Box ref={titleRef}>Record {swiperIndex + 1}</Box>}
+        ref={titleRef}
+        title={`Record ${swiperIndex + 1}`}
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <Box className={noSwipingAboveSm} sx={{ cursor: 'default' }}>
