@@ -30,7 +30,7 @@ export default function NavbarDrawer() {
       {/* todo: manage exercises, graphs, light/dark toggle, program management, user account (in top right navbar) */}
       {/* todo: settings -- kg/lbs; rpe/rir  */}
       <Drawer anchor="left" open={open} onClose={toggleOpen}>
-        <List>
+        <List onClick={() => setOpen(false)}>
           <NavbarLink link="/" text="Home" Icon={HomeIcon} />
           <NavbarLink
             link={`/sessions/${today}`}
