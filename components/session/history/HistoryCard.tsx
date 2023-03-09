@@ -53,7 +53,7 @@ export default function HistoryCard({ record, displayFields }: Props) {
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
 
-      <CardContent>
+      <CardContent sx={{ px: 0 }}>
         <Stack spacing={2}>
           <ComboBoxField
             label="Modifiers"

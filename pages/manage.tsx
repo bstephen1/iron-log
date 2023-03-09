@@ -1,6 +1,7 @@
 import { Container, Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { useState } from 'react'
+import { queryTypes, useQueryState } from 'next-usequerystate'
+import { useEffect, useState } from 'react'
 import CategoryForm from '../components/CategoryForm'
 import ExerciseForm from '../components/ExerciseForm'
 import { CategorySelector } from '../components/form-fields/selectors/CategorySelector'
@@ -21,8 +22,12 @@ import Category from '../models/Category'
 import Exercise from '../models/Exercise'
 import Modifier from '../models/Modifier'
 
+type TabValue = 'exercises' | 'modifiers' | 'categories'
+const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']
+
 // todo: ui element showing "changes saved". Snackbar?
 // todo: delete exercise. Delete only for unused exercises?
+// todo: this is really repetitive between exercise/modifier/category logic...
 export default function ManagePage() {
   const { exercises, mutate: mutateExercises } = useExercises()
   const { modifiers, mutate: mutateModifiers } = useModifiers()
@@ -30,12 +35,65 @@ export default function ManagePage() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [modifier, setModifier] = useState<Modifier | null>(null)
   const [category, setCategory] = useState<Category | null>(null)
-  const [tabValue, setTabValue] = useState(0)
-  const tabContent = [
-    { label: 'Exercises' },
-    { label: 'Modifiers' },
-    { label: 'Categories' },
-  ]
+  const [tab, setTab] = useState<TabValue>('exercises')
+
+  // useQueryState is designed to be the source of truth for state. However, it will
+  // not work for tabs because SSR will always render the default value (See: https://github.com/47ng/next-usequerystate#caveats)
+  // and thus if a tab other than the default is selected initially it will result in a hydration error.
+  // It also seems to re-render a lot slower on updates compared to useState.
+  // So instead, we will continue to store tabs in state, and have a separate urlTab state
+  // which can update the default value and ripple any changes from the tab value in state.
+  // Selected exercise/modifier/category names also can't use the url value because they require
+  // the full object, not just the name.
+  const [urlTab, setUrlTab] = useQueryState(
+    'tab',
+    queryTypes.stringEnum<TabValue>(tabs)
+  )
+  const [urlExercise, setUrlExercise] = useQueryState('exercise')
+  const [urlModifier, setUrlModifier] = useQueryState('modifier')
+  const [urlCategory, setUrlCategory] = useQueryState('category')
+
+  // we HAVE to useEffect to set initial tab value. It must default to some tab, then
+  // switch to the urlTab if present. It CANNOT init to the urlTab because SSR will
+  // always render urlTab to its default value before being able to read the url value,
+  // causing a hydration error.
+  useEffect(() => {
+    setTab(urlTab ? urlTab : tab)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    setUrlTab(tab, { scroll: false })
+    // setUrlTab will never change, so it's safe to add as a dep to shut up eslint
+  }, [setUrlTab, tab])
+
+  useEffect(() => {
+    // only want to set value on init
+    if (!!exercise) return
+
+    setExercise(
+      exercises?.find((exercise) => exercise.name === urlExercise) ?? null
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exercises])
+
+  useEffect(() => {
+    if (!!modifier) return
+
+    setModifier(
+      modifiers?.find((modifier) => modifier.name === urlModifier) ?? null
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modifiers])
+
+  useEffect(() => {
+    if (!!category) return
+
+    setCategory(
+      categories?.find((category) => category.name === urlCategory) ?? null
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categories])
 
   /** Trigger a data fetch for exercises, and refresh the currently selected exercise. */
   const revalidateExercises = async () => {
@@ -52,6 +110,7 @@ export default function ManagePage() {
     await updateExerciseFields(exercise, updates)
 
     setExercise(newExercise)
+    setUrlExercise(newExercise.name, { scroll: false })
     // mark exercises as stale and trigger revalidation
     mutateExercises()
   }
@@ -64,6 +123,7 @@ export default function ManagePage() {
 
     mutateModifiers()
     setModifier(newModifier)
+    setUrlModifier(newModifier.name, { scroll: false })
 
     // exercises need to be updated if name was changed
     !!updates.name && revalidateExercises()
@@ -77,26 +137,28 @@ export default function ManagePage() {
 
     mutateCategories()
     setCategory(newCategory)
+    setUrlCategory(newCategory.name, { scroll: false })
 
     // exercises need to be updated if name was changed
     !!updates.name && revalidateExercises()
   }
 
-  const renderForm = () => {
-    switch (tabValue) {
-      case 0:
+  const TabForm = ({ tab }: { tab: TabValue }) => {
+    switch (tab) {
+      default:
+      case 'exercises':
         return exercise ? (
           <ExerciseForm {...{ exercise, handleUpdate: handleUpdateExercise }} />
         ) : (
           <ManageWelcomeCard />
         )
-      case 1:
+      case 'modifiers':
         return modifier ? (
           <ModifierForm {...{ modifier, handleUpdate: handleModifierUpdate }} />
         ) : (
           <ManageWelcomeCard />
         )
-      case 2:
+      case 'categories':
         return category ? (
           <CategoryForm {...{ category, handleUpdate: handleCategoryUpdate }} />
         ) : (
@@ -109,53 +171,61 @@ export default function ManagePage() {
     <Container maxWidth="md">
       <Grid container spacing={2}>
         <Grid xs={12}>
-          <Tabs
-            value={tabValue}
-            onChange={(_, value) => setTabValue(value)}
-            centered
-          >
-            {tabContent.map((tab) => (
-              <Tab key={tab.label} label={tab.label} />
+          <Tabs value={tab} onChange={(_, value) => setTab(value)} centered>
+            {tabs.map((tab) => (
+              <Tab key={tab} label={tab} value={tab} />
             ))}
           </Tabs>
         </Grid>
-        <Grid xs={12}>
-          {tabValue === 0 && (
-            <ExerciseSelector
-              {...{
-                exercise,
-                handleChange: setExercise,
-                exercises,
-                mutate: mutateExercises,
-              }}
-            />
-          )}
-          {tabValue === 1 && (
-            <ModifierSelector
-              {...{
-                modifier,
-                handleChange: setModifier,
-                modifiers,
-                mutate: mutateModifiers,
-              }}
-            />
-          )}
-          {tabValue === 2 && (
-            <CategorySelector
-              {...{
-                category,
-                handleChange: setCategory,
-                categories,
-                mutate: mutateCategories,
-              }}
-            />
-          )}
+        {/* keeping the selectors in the dom when on a different tab prevents them 
+            from flashing null every time the tab switches to them */}
+        <Grid xs={12} sx={{ display: tab === 'exercises' ? 'block' : 'none' }}>
+          <ExerciseSelector
+            {...{
+              exercise,
+              handleChange: (exercise) => {
+                setExercise(exercise)
+                setUrlExercise(exercise?.name ?? null, { scroll: false })
+              },
+              exercises,
+              mutate: mutateExercises,
+              alwaysShowLoading: true,
+            }}
+          />
+        </Grid>
+        <Grid xs={12} sx={{ display: tab === 'modifiers' ? 'block' : 'none' }}>
+          <ModifierSelector
+            {...{
+              modifier,
+              handleChange: (modifier) => {
+                setModifier(modifier)
+                setUrlModifier(modifier?.name ?? null, { scroll: false })
+              },
+              modifiers,
+              mutate: mutateModifiers,
+              alwaysShowLoading: true,
+            }}
+          />
+        </Grid>
+        <Grid xs={12} sx={{ display: tab === 'categories' ? 'block' : 'none' }}>
+          <CategorySelector
+            {...{
+              category,
+              handleChange: (category) => {
+                setCategory(category)
+                setUrlCategory(category?.name ?? null, { scroll: false })
+              },
+              categories,
+              mutate: mutateCategories,
+              alwaysShowLoading: true,
+            }}
+          />
         </Grid>
         <Grid xs={12}>
           <StyledDivider />
         </Grid>
         <Grid container xs={12} justifyContent="center">
-          {renderForm()}
+          <TabForm tab={tab} />
         </Grid>
       </Grid>
     </Container>

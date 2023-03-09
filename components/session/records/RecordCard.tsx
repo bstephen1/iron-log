@@ -3,7 +3,9 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import NotesIcon from '@mui/icons-material/Notes'
+import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
   Card,
@@ -11,6 +13,8 @@ import {
   CardContent,
   CardHeader,
   Fab,
+  Menu,
+  MenuItem,
   Skeleton,
   Stack,
   Tooltip,
@@ -18,7 +22,9 @@ import {
   useTheme,
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
-import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { useEffect, useMemo, useState } from 'react'
+import { useMeasure } from 'react-use'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
@@ -95,6 +101,11 @@ export default function RecordCard({
   })
   const displayFields = useDisplayFields({ record })
   const extraWeight = useExtraWeight({ record })
+  const router = useRouter()
+  const [titleRef, { width: titleWidth }] = useMeasure()
+  const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
+    useState<null | HTMLElement>(null)
+  const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
 
   useEffect(() => {
     if (!record || lastChangedExercise?._id !== record?.exercise?._id) return
@@ -265,29 +276,58 @@ export default function RecordCard({
     })
   }
 
+  const MoveLeftButton = () => (
+    <RecordHeaderButton
+      title="Move current record to the left"
+      disabled={!swiperIndex}
+      onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
+    >
+      <KeyboardDoubleArrowLeftIcon />
+    </RecordHeaderButton>
+  )
+
+  const MoveRightButton = () => (
+    <RecordHeaderButton
+      title="Move current record to the right"
+      // disable on the penultimate slide because the last is the "add record" button
+      disabled={swiperIndex >= swiper.slides?.length - 2}
+      onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
+    >
+      <KeyboardDoubleArrowRightIcon />
+    </RecordHeaderButton>
+  )
+
+  const UnitsButton = () => (
+    <RecordUnitsButton
+      displayFields={displayFields}
+      handleSubmit={(displayFields) =>
+        handleExerciseFieldsChange({ displayFields })
+      }
+      handleClose={() => setMoreButtonsAnchorEl(null)}
+    />
+  )
+
+  const DeleteButton = () => (
+    <RecordHeaderButton
+      title="Delete Record"
+      color="error"
+      onClick={handleDeleteRecord}
+    >
+      <DeleteIcon />
+    </RecordHeaderButton>
+  )
+
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
     <Card elevation={3} sx={{ px: 1 }}>
       <CardHeader
+        ref={titleRef}
         title={`Record ${swiperIndex + 1}`}
         titleTypographyProps={{ variant: 'h6' }}
         action={
           <Box className={noSwipingAboveSm} sx={{ cursor: 'default' }}>
-            <RecordHeaderButton
-              title="Move current record to the left"
-              disabled={!swiperIndex}
-              onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
-            >
-              <KeyboardDoubleArrowLeftIcon />
-            </RecordHeaderButton>
-            <RecordHeaderButton
-              title="Move current record to the right"
-              // disable on the penultimate slide because the last is the "add record" button
-              disabled={swiperIndex >= swiper.slides?.length - 2}
-              onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
-            >
-              <KeyboardDoubleArrowRightIcon />
-            </RecordHeaderButton>
+            {!shouldCondense && <MoveLeftButton />}
+            {!shouldCondense && <MoveRightButton />}
             <RecordNotesDialogButton
               notes={[...sessionNotes, ...notes]}
               Icon={<NotesIcon />}
@@ -305,19 +345,43 @@ export default function RecordCard({
                 multiple
               />
             )}
-            <RecordUnitsButton
-              displayFields={displayFields}
-              handleSubmit={(displayFields) =>
-                handleExerciseFieldsChange({ displayFields })
-              }
-            />
-            <RecordHeaderButton
-              title="Delete Record"
-              color="error"
-              onClick={handleDeleteRecord}
+            {!shouldCondense && <UnitsButton />}
+            {!!exercise && (
+              <RecordHeaderButton
+                title="Manage Exercise"
+                onClick={() => router.push(`/manage?exercise=${exercise.name}`)}
+              >
+                <SettingsIcon />
+              </RecordHeaderButton>
+            )}
+            {!shouldCondense && <DeleteButton />}
+            {shouldCondense && (
+              <RecordHeaderButton
+                title="More..."
+                onClick={(e) => setMoreButtonsAnchorEl(e.currentTarget)}
+              >
+                <MoreVertIcon />
+              </RecordHeaderButton>
+            )}
+            <Menu
+              id="more options menu"
+              anchorEl={moreButtonsAnchorEl}
+              open={!!moreButtonsAnchorEl}
+              onClose={() => setMoreButtonsAnchorEl(null)}
             >
-              <DeleteIcon />
-            </RecordHeaderButton>
+              <MenuItem>
+                <MoveLeftButton />
+              </MenuItem>
+              <MenuItem>
+                <MoveRightButton />
+              </MenuItem>
+              <MenuItem>
+                <UnitsButton />
+              </MenuItem>
+              <MenuItem>
+                <DeleteButton />
+              </MenuItem>
+            </Menu>
           </Box>
         }
       />
@@ -325,7 +389,7 @@ export default function RecordCard({
       <CardContent
         // swiping causes weird behavior on desktop when combined with data input fields
         className={noSwipingAboveSm}
-        sx={{ cursor: { sm: 'default' } }}
+        sx={{ cursor: { sm: 'default' }, px: 1 }}
       >
         <Stack spacing={2}>
           <ExerciseSelector
