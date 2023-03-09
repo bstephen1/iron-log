@@ -4,6 +4,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import NotesIcon from '@mui/icons-material/Notes'
+import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
   Card,
@@ -18,6 +19,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
@@ -95,6 +97,7 @@ export default function RecordCard({
   })
   const displayFields = useDisplayFields({ record })
   const extraWeight = useExtraWeight({ record })
+  const router = useRouter()
 
   useEffect(() => {
     if (!record || lastChangedExercise?._id !== record?.exercise?._id) return
@@ -311,6 +314,14 @@ export default function RecordCard({
                 handleExerciseFieldsChange({ displayFields })
               }
             />
+            {!!exercise && (
+              <RecordHeaderButton
+                title="Manage Exercise"
+                onClick={() => router.push(`/manage?exercise=${exercise.name}`)}
+              >
+                <SettingsIcon />
+              </RecordHeaderButton>
+            )}
             <RecordHeaderButton
               title="Delete Record"
               color="error"

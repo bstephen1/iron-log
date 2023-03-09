@@ -33,7 +33,7 @@ export default function RecordUnitsButton({ displayFields, ...props }: Props) {
 
   return (
     <>
-      <RecordHeaderButton title="change units" onClick={() => setOpen(true)}>
+      <RecordHeaderButton title="Change Units" onClick={() => setOpen(true)}>
         {/* it's proven pretty difficult to find a good "change units" icon...  */}
         <FormatUnderlinedIcon />
       </RecordHeaderButton>

@@ -53,6 +53,10 @@ export default function ManagePage() {
   const [urlModifier, setUrlModifier] = useQueryState('modifier')
   const [urlCategory, setUrlCategory] = useQueryState('category')
 
+  // we HAVE to useEffect to set initial tab value. It must default to some tab, then
+  // switch to the urlTab if present. It CANNOT init to the urlTab because SSR will
+  // always render urlTab to its default value before being able to read the url value,
+  // causing a hydration error.
   useEffect(() => {
     setTab(urlTab ? urlTab : tab)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,8 +64,8 @@ export default function ManagePage() {
 
   useEffect(() => {
     setUrlTab(tab)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab])
+    // setUrlTab will never change, so it's safe to add as a dep to shut up eslint
+  }, [setUrlTab, tab])
 
   useEffect(() => {
     // only want to set value on init
