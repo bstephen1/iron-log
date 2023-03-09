@@ -18,8 +18,13 @@ import RecordHeaderButton from './RecordHeaderButton'
 interface Props {
   displayFields: DisplayFields
   handleSubmit: (fields: DisplayFields) => void
+  handleClose: () => void
 }
-export default function RecordUnitsButton({ displayFields, ...props }: Props) {
+export default function RecordUnitsButton({
+  displayFields,
+  handleClose,
+  ...props
+}: Props) {
   const [open, setOpen] = useState(false)
   const { units } = displayFields
   // sure love that you have to specify that yes, Object.keys(obj) is in fact a list of keyof obj
@@ -37,7 +42,14 @@ export default function RecordUnitsButton({ displayFields, ...props }: Props) {
         {/* it's proven pretty difficult to find a good "change units" icon...  */}
         <FormatUnderlinedIcon />
       </RecordHeaderButton>
-      <Dialog open={open} fullWidth onClose={() => setOpen(false)}>
+      <Dialog
+        open={open}
+        fullWidth
+        onClose={() => {
+          setOpen(false)
+          handleClose()
+        }}
+      >
         <DialogTitle>Change Units</DialogTitle>
         <DialogContent>
           <Stack spacing={1}>
