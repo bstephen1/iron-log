@@ -63,7 +63,7 @@ export default function ManagePage() {
   }, [])
 
   useEffect(() => {
-    setUrlTab(tab)
+    setUrlTab(tab, { scroll: false })
     // setUrlTab will never change, so it's safe to add as a dep to shut up eslint
   }, [setUrlTab, tab])
 
@@ -110,7 +110,7 @@ export default function ManagePage() {
     await updateExerciseFields(exercise, updates)
 
     setExercise(newExercise)
-    setUrlExercise(newExercise.name)
+    setUrlExercise(newExercise.name, { scroll: false })
     // mark exercises as stale and trigger revalidation
     mutateExercises()
   }
@@ -123,7 +123,7 @@ export default function ManagePage() {
 
     mutateModifiers()
     setModifier(newModifier)
-    setUrlModifier(newModifier.name)
+    setUrlModifier(newModifier.name, { scroll: false })
 
     // exercises need to be updated if name was changed
     !!updates.name && revalidateExercises()
@@ -137,7 +137,7 @@ export default function ManagePage() {
 
     mutateCategories()
     setCategory(newCategory)
-    setUrlCategory(newCategory.name)
+    setUrlCategory(newCategory.name, { scroll: false })
 
     // exercises need to be updated if name was changed
     !!updates.name && revalidateExercises()
@@ -185,7 +185,7 @@ export default function ManagePage() {
               exercise,
               handleChange: (exercise) => {
                 setExercise(exercise)
-                setUrlExercise(exercise?.name ?? null)
+                setUrlExercise(exercise?.name ?? null, { scroll: false })
               },
               exercises,
               mutate: mutateExercises,
@@ -199,7 +199,7 @@ export default function ManagePage() {
               modifier,
               handleChange: (modifier) => {
                 setModifier(modifier)
-                setUrlModifier(modifier?.name ?? null)
+                setUrlModifier(modifier?.name ?? null, { scroll: false })
               },
               modifiers,
               mutate: mutateModifiers,
@@ -213,7 +213,7 @@ export default function ManagePage() {
               category,
               handleChange: (category) => {
                 setCategory(category)
-                setUrlCategory(category?.name ?? null)
+                setUrlCategory(category?.name ?? null, { scroll: false })
               },
               categories,
               mutate: mutateCategories,
