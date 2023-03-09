@@ -33,6 +33,7 @@ export interface WithAsyncProps {
   adornmentOpen?: boolean
   // a few textFieldProps are extracted for convenience, but others can be added here
   textFieldProps?: TextFieldProps
+  alwaysShowLoading?: boolean
 }
 // T here is the type of the base component's props. Eg, T = SelectorBaseProps<Exercise, NamedStub>
 // ts aggressively complains that "options" is missing. Searched for a way to get the generic signature
@@ -47,11 +48,12 @@ export default function withAsync<T extends Partial<AutocompletePropsAny>>(
     variant,
     textFieldProps,
     adornmentOpen = false,
+    alwaysShowLoading = false,
     ...baseComponentProps
   }: WithAsyncProps & T) {
     const [open, setOpen] = useState(false)
     const [waitingToOpen, setWaitingToOpen] = useState(false)
-    const loading = open && !baseComponentProps.options
+    const loading = (alwaysShowLoading || open) && !baseComponentProps.options
 
     const handleOpen = useCallback(() => {
       if (!adornmentOpen) {
