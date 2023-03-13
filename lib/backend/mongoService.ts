@@ -384,7 +384,7 @@ export async function fetchBodyweightHistory({
     .toArray()
 }
 
-/** if updating at the same date, it will overwrite. This allows for updating an existing bodyweight
+/** If updating at the same date, it will overwrite. This allows for updating an existing bodyweight
  * instead of always making a new one.
  *
  * Note: two records can exist on the same date if they are different types.
@@ -395,7 +395,14 @@ export async function updateBodyweight(
 ) {
   return await bodyweightHistory.updateOne(
     { userId, date: newBodyweight.date, type: newBodyweight.type },
-    { $set: newBodyweight },
+    // Can't just update the doc because the new one will have a new _id.
+    // setOnInsert only activates if upserting. The upsert inserts a new doc built from
+    // the find query plus the update fields (so all fields have to be manually spelled out).
+    // There might be a way to replace the whole doc, but would have to move the _id to setOnInsert.
+    {
+      $set: { value: newBodyweight.value },
+      $setOnInsert: { _id: newBodyweight._id },
+    },
     {
       upsert: true,
     }

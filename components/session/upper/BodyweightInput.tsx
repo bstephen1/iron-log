@@ -4,7 +4,7 @@ import {
   InputAdornment,
   TextFieldProps,
 } from '@mui/material'
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import * as yup from 'yup'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
@@ -38,18 +38,9 @@ export default function BodyweightInput({
   const loading = data === undefined
 
   const handleSubmit = async (value: string) => {
-    const now = dayjs()
-    const newBodyweight = new Bodyweight(
-      Number(value),
-      bodyweightType,
-      // date will always have default time since it is extracted from the URL date string.
-      // If the date is today, we can add in the current timestamp.
-      date.format(DATE_FORMAT) === now.format(DATE_FORMAT) ? now : date
-    )
+    const newBodyweight = new Bodyweight(Number(value), bodyweightType, date)
 
-    // on days not the current day, the date's time will be whatever the default dayjs() time is.
-    // So any new weigh-ins will overwrite old ones. This is probably fine? Since you can't actually
-    // perform a new weigh-in in the past.
+    // new weigh-ins on the same day and of the same type will overwrite the previous value.
     await updateBodyweight(newBodyweight)
     mutate([newBodyweight])
   }
