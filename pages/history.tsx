@@ -102,11 +102,8 @@ export default function HistoryPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercises])
 
-  // console.log('dateReange')
-  // const now = dayjs()
-  // const unix = now.unix()
-  // console.log(unix)
-  // console.log(dayjs.unix(unix).format(DATE_FORMAT))
+  const convertEpochToDate = (value: number) =>
+    dayjs.unix(value).format('YYYY-MM-DD')
 
   return (
     <Grid container spacing={2}>
@@ -185,17 +182,14 @@ export default function HistoryPage() {
         <Box ref={graphContainerRef} width="100%" height="100%">
           {bodyweightData && (
             // need to specify a height or the grid and container will both defer to each other and result in zero height
-            <ResponsiveContainer
-              height={windowHeight}
-              // ref={graphContainerRef}
-            >
+            <ResponsiveContainer height={windowHeight}>
               <LineChart
                 data={data}
                 margin={{
-                  top: 30,
-                  right: 30,
-                  left: 0,
-                  bottom: 50,
+                  top: 20,
+                  right: 5,
+                  left: 15,
+                  bottom: 10,
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -206,11 +200,11 @@ export default function HistoryPage() {
                     dayjs.unix(value).format(DATE_FORMAT)
                   }
                   domain={['auto', 'auto']}
-                  // angle={-45}
+                  angle={-25}
                   scale="time"
-                  // textAnchor="end"
+                  textAnchor="end"
                   tickMargin={10}
-                  height={45}
+                  height={80}
                 />
                 <YAxis
                   name="weight"
@@ -227,18 +221,14 @@ export default function HistoryPage() {
                 {/* todo: possible to show weigh-in type in tooltip? */}
                 <Tooltip
                   trigger={isDesktop ? 'hover' : 'click'}
-                  labelFormatter={(title) =>
-                    dayjs.unix(title).format(DATE_FORMAT)
-                  }
+                  labelFormatter={convertEpochToDate}
                   formatter={(value) => `${value} kg`}
                 />
                 {/* todo: only show if multiple lines */}
                 <Legend verticalAlign="top" height={30} />
                 <Brush
                   dataKey="epochDate"
-                  tickFormatter={(value) =>
-                    dayjs.unix(value).format('YYYY-MM-DD')
-                  }
+                  tickFormatter={convertEpochToDate}
                   // these doesn't accept percentages...
                   width={graphContainerWidth * 0.6}
                   // could only eyeball this trying to get it centered.
