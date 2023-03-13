@@ -12,6 +12,7 @@ import dayjs from 'dayjs'
 import { useQueryState } from 'next-usequerystate'
 import { useEffect, useMemo, useState } from 'react'
 import {
+  Brush,
   CartesianGrid,
   Legend,
   Line,
@@ -45,6 +46,20 @@ export default function HistoryPage() {
     () => bodyweightData?.filter((bw) => bw.type === 'official'),
     [bodyweightData]
   )
+
+  // const [graphContainerRef, { width: graphContainerWidth }] = useMeasure()
+
+  const [windowHeight, setWindowHeight] = useState(0)
+  useEffect(() => {
+    setWindowHeight(window.innerHeight)
+    const handleWindowResize = () => {
+      setWindowHeight(window.innerHeight)
+    }
+
+    window.addEventListener('resize', handleWindowResize)
+    // supposedly removing eventListener on return prevents memory leaks
+    return window.removeEventListener('resize', handleWindowResize)
+  }, [])
 
   const data = useMemo(() => {
     if (!unofficialBWs || !officialBWs) return []
@@ -85,11 +100,11 @@ export default function HistoryPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercises])
 
-  console.log('dateReange')
-  const now = dayjs()
-  const unix = now.unix()
-  console.log(unix)
-  console.log(dayjs.unix(unix).format(DATE_FORMAT))
+  // console.log('dateReange')
+  // const now = dayjs()
+  // const unix = now.unix()
+  // console.log(unix)
+  // console.log(dayjs.unix(unix).format(DATE_FORMAT))
 
   return (
     <Grid container spacing={2}>
@@ -162,14 +177,18 @@ export default function HistoryPage() {
       <Grid xs={12}>
         <StyledDivider />
       </Grid>
+      <Grid xs={12} height="100%" flex="1 1 auto"></Grid>
       <Grid container xs={12} justifyContent="center">
         {bodyweightData && (
           // need to specify a height or the grid and container will both defer to each other and result in zero height
-          <ResponsiveContainer height={350}>
+          <ResponsiveContainer
+            height={windowHeight}
+            // ref={graphContainerRef}
+          >
             <LineChart
               data={data}
               margin={{
-                top: 5,
+                top: 30,
                 right: 30,
                 left: 0,
                 bottom: 50,
@@ -181,10 +200,11 @@ export default function HistoryPage() {
                 type="number"
                 tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
                 domain={['auto', 'auto']}
-                angle={-45}
+                // angle={-45}
                 scale="time"
-                textAnchor="end"
-                // tickMargin={10}
+                // textAnchor="end"
+                tickMargin={10}
+                height={45}
               />
               <YAxis
                 name="weight"
@@ -208,6 +228,14 @@ export default function HistoryPage() {
               />
               {/* todo: only show if multiple lines */}
               <Legend verticalAlign="top" height={30} />
+              <Brush
+                dataKey="epochDate"
+                tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
+                // this doesn't accept a percentage...
+                // width={graphContainerWidth * .7}
+                // todo: startIndex ~30 days prior to highest date
+                // startIndex
+              />
             </LineChart>
           </ResponsiveContainer>
         )}
