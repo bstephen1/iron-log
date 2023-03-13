@@ -232,7 +232,11 @@ export default function HistoryPage() {
                 <Tooltip
                   trigger={isDesktop ? 'hover' : 'click'}
                   labelFormatter={convertEpochToDate}
-                  formatter={(value) => `${value} kg`}
+                  formatter={(value, _, { payload }) =>
+                    `${value} kg${
+                      payload.type === 'unofficial' ? ' (unofficial)' : ''
+                    }`
+                  }
                 />
                 {/* todo: only show if multiple lines */}
                 <Legend verticalAlign="top" height={30} />
