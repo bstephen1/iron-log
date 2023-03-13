@@ -1,4 +1,5 @@
 import {
+  Box,
   FormControlLabel,
   FormGroup,
   InputAdornment,
@@ -11,6 +12,7 @@ import dayjs from 'dayjs'
 
 import { useQueryState } from 'next-usequerystate'
 import { useEffect, useMemo, useState } from 'react'
+import { useMeasure } from 'react-use'
 import {
   Brush,
   CartesianGrid,
@@ -47,7 +49,7 @@ export default function HistoryPage() {
     [bodyweightData]
   )
 
-  // const [graphContainerRef, { width: graphContainerWidth }] = useMeasure()
+  const [graphContainerRef, { width: graphContainerWidth }] = useMeasure()
 
   const [windowHeight, setWindowHeight] = useState(0)
   useEffect(() => {
@@ -179,66 +181,75 @@ export default function HistoryPage() {
       </Grid>
       <Grid xs={12} height="100%" flex="1 1 auto"></Grid>
       <Grid container xs={12} justifyContent="center">
-        {bodyweightData && (
-          // need to specify a height or the grid and container will both defer to each other and result in zero height
-          <ResponsiveContainer
-            height={windowHeight}
-            // ref={graphContainerRef}
-          >
-            <LineChart
-              data={data}
-              margin={{
-                top: 30,
-                right: 30,
-                left: 0,
-                bottom: 50,
-              }}
+        {/* apparently Grid can't accept a ref (even though it works...) so adding a Box to capture the container width */}
+        <Box ref={graphContainerRef} width="100%" height="100%">
+          {bodyweightData && (
+            // need to specify a height or the grid and container will both defer to each other and result in zero height
+            <ResponsiveContainer
+              height={windowHeight}
+              // ref={graphContainerRef}
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="epochDate"
-                type="number"
-                tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
-                domain={['auto', 'auto']}
-                // angle={-45}
-                scale="time"
-                // textAnchor="end"
-                tickMargin={10}
-                height={45}
-              />
-              <YAxis
-                name="weight"
-                dataKey="value"
-                type="number"
-                unit=" kg"
-                domain={['auto', 'auto']}
+              <LineChart
+                data={data}
+                margin={{
+                  top: 30,
+                  right: 30,
+                  left: 0,
+                  bottom: 50,
+                }}
               >
-                {/* honestly, not sure the label is worth. If using it need to set left margin to 10 or so */}
-                {/* <Label angle={-90} value='weight' position='left' style={{ textAnchor: 'middle' }} /> */}
-              </YAxis>
-              {/* line color is "stroke" */}
-              <Line name="bodyweight" dataKey="value" type="monotone" />
-              {/* todo: possible to show weigh-in type in tooltip? */}
-              <Tooltip
-                trigger={isDesktop ? 'hover' : 'click'}
-                labelFormatter={(title) =>
-                  dayjs.unix(title).format(DATE_FORMAT)
-                }
-                formatter={(value) => `${value} kg`}
-              />
-              {/* todo: only show if multiple lines */}
-              <Legend verticalAlign="top" height={30} />
-              <Brush
-                dataKey="epochDate"
-                tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
-                // this doesn't accept a percentage...
-                // width={graphContainerWidth * .7}
-                // todo: startIndex ~30 days prior to highest date
-                // startIndex
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="epochDate"
+                  type="number"
+                  tickFormatter={(value) =>
+                    dayjs.unix(value).format(DATE_FORMAT)
+                  }
+                  domain={['auto', 'auto']}
+                  // angle={-45}
+                  scale="time"
+                  // textAnchor="end"
+                  tickMargin={10}
+                  height={45}
+                />
+                <YAxis
+                  name="weight"
+                  dataKey="value"
+                  type="number"
+                  unit=" kg"
+                  domain={['auto', 'auto']}
+                >
+                  {/* honestly, not sure the label is worth. If using it need to set left margin to 10 or so */}
+                  {/* <Label angle={-90} value='weight' position='left' style={{ textAnchor: 'middle' }} /> */}
+                </YAxis>
+                {/* line color is "stroke" */}
+                <Line name="bodyweight" dataKey="value" type="monotone" />
+                {/* todo: possible to show weigh-in type in tooltip? */}
+                <Tooltip
+                  trigger={isDesktop ? 'hover' : 'click'}
+                  labelFormatter={(title) =>
+                    dayjs.unix(title).format(DATE_FORMAT)
+                  }
+                  formatter={(value) => `${value} kg`}
+                />
+                {/* todo: only show if multiple lines */}
+                <Legend verticalAlign="top" height={30} />
+                <Brush
+                  dataKey="epochDate"
+                  tickFormatter={(value) =>
+                    dayjs.unix(value).format('YYYY-MM-DD')
+                  }
+                  // these doesn't accept percentages...
+                  width={graphContainerWidth * 0.6}
+                  // could only eyeball this trying to get it centered.
+                  x={graphContainerWidth * 0.2}
+                  // todo: startIndex ~30 days prior to highest date
+                  // startIndex
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </Box>
       </Grid>
     </Grid>
   )
