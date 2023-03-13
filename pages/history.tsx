@@ -114,13 +114,22 @@ export default function HistoryPage() {
 
   const getStartIndex = (dayRange = 60) => {
     let i = graphBodyweightData.length - 1
+
+    if (i < 0) return 0
+
     let mostRecentDate = graphBodyweightData[i].date
     const startDate = dayjs(mostRecentDate)
       .add(-dayRange, 'day')
       .format(DATE_FORMAT)
+
     while (mostRecentDate > startDate) {
+      // return if we reached the beginning of the array without hitting the limit
+      if (!i) return i
+
       mostRecentDate = graphBodyweightData[--i].date
     }
+
+    // if we did hit the limit we've gone past it by one
     return i + 1
   }
 
