@@ -29,6 +29,7 @@ export default function BodyweightInput({
     limit: 1,
     end: date.format(DATE_FORMAT),
     type: bodyweightType,
+    sort: 'newestFirst',
   })
   const validationSchema = yup.object({
     // this will be cast to a number on submit
@@ -56,9 +57,7 @@ export default function BodyweightInput({
   const getHelperText = () => {
     if (loading) return 'Loading...'
     if (!data.length) return `No existing ${bodyweightType} weigh-ins found`
-    return `Using latest ${bodyweightType} weight from ${dayjs(
-      data[0].dateTime
-    ).format(DATE_FORMAT)}`
+    return `Using latest ${bodyweightType} weight from ${data[0].date}`
   }
 
   return (

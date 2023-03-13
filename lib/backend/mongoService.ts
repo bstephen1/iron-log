@@ -30,7 +30,7 @@ interface UpdateFieldsProps<T extends { _id: string }> {
 }
 
 const convertSort = (sort: DateRangeQuery['sort']) =>
-  sort === 'newestFirst' ? -1 : 1
+  sort === 'oldestFirst' ? 1 : -1
 
 // todo: add a guard to not do anything if calling multiple times
 /** sets a Filter to query based on the desired MatchType schema.
@@ -372,29 +372,29 @@ export async function fetchBodyweightHistory({
   start = '0',
   end = '9',
   filter,
+  sort,
 }: MongoQuery<Bodyweight>) {
-  // -1 sorts most recent first
   return await bodyweightHistory
     .find(
-      { userId, dateTime: { $gte: start, $lte: end }, ...filter },
+      { userId, date: { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
-    .sort({ dateTime: -1 })
+    .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
     .toArray()
 }
 
-/** if updating at the same dateTime, it will overwrite. This allows for updating an existing bodyweight
+/** if updating at the same date, it will overwrite. This allows for updating an existing bodyweight
  * instead of always making a new one.
  *
- * Note: two records can exist at the same time if they are different types.
+ * Note: two records can exist on the same date if they are different types.
  */
 export async function updateBodyweight(
   userId: ObjectId,
   newBodyweight: Bodyweight
 ) {
   return await bodyweightHistory.updateOne(
-    { userId, dateTime: newBodyweight.dateTime, type: newBodyweight.type },
+    { userId, date: newBodyweight.date, type: newBodyweight.type },
     { $set: newBodyweight },
     {
       upsert: true,
@@ -402,7 +402,7 @@ export async function updateBodyweight(
   )
 }
 
-// todo: use id, not dateTime.
-export async function deleteBodyweight(userId: ObjectId, dateTime: string) {
-  return await bodyweightHistory.deleteOne({ userId, dateTime })
+// todo: use id, not date.
+export async function deleteBodyweight(userId: ObjectId, date: string) {
+  return await bodyweightHistory.deleteOne({ userId, date })
 }

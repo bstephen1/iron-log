@@ -1,4 +1,4 @@
-import { Container, Tab, Tabs } from '@mui/material'
+import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useEffect, useState } from 'react'
@@ -168,66 +168,64 @@ export default function ManagePage() {
   }
 
   return (
-    <Container maxWidth="md">
-      <Grid container spacing={2}>
-        <Grid xs={12}>
-          <Tabs value={tab} onChange={(_, value) => setTab(value)} centered>
-            {tabs.map((tab) => (
-              <Tab key={tab} label={tab} value={tab} />
-            ))}
-          </Tabs>
-        </Grid>
-        {/* keeping the selectors in the dom when on a different tab prevents them 
-            from flashing null every time the tab switches to them */}
-        <Grid xs={12} sx={{ display: tab === 'exercises' ? 'block' : 'none' }}>
-          <ExerciseSelector
-            {...{
-              exercise,
-              handleChange: (exercise) => {
-                setExercise(exercise)
-                setUrlExercise(exercise?.name ?? null, { scroll: false })
-              },
-              exercises,
-              mutate: mutateExercises,
-              alwaysShowLoading: true,
-            }}
-          />
-        </Grid>
-        <Grid xs={12} sx={{ display: tab === 'modifiers' ? 'block' : 'none' }}>
-          <ModifierSelector
-            {...{
-              modifier,
-              handleChange: (modifier) => {
-                setModifier(modifier)
-                setUrlModifier(modifier?.name ?? null, { scroll: false })
-              },
-              modifiers,
-              mutate: mutateModifiers,
-              alwaysShowLoading: true,
-            }}
-          />
-        </Grid>
-        <Grid xs={12} sx={{ display: tab === 'categories' ? 'block' : 'none' }}>
-          <CategorySelector
-            {...{
-              category,
-              handleChange: (category) => {
-                setCategory(category)
-                setUrlCategory(category?.name ?? null, { scroll: false })
-              },
-              categories,
-              mutate: mutateCategories,
-              alwaysShowLoading: true,
-            }}
-          />
-        </Grid>
-        <Grid xs={12}>
-          <StyledDivider />
-        </Grid>
-        <Grid container xs={12} justifyContent="center">
-          <TabForm tab={tab} />
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid xs={12}>
+        <Tabs value={tab} onChange={(_, value) => setTab(value)} centered>
+          {tabs.map((tab) => (
+            <Tab key={tab} label={tab} value={tab} />
+          ))}
+        </Tabs>
       </Grid>
-    </Container>
+      {/* keeping the selectors in the dom when on a different tab prevents them 
+            from flashing null every time the tab switches to them */}
+      <Grid xs={12} sx={{ display: tab === 'exercises' ? 'block' : 'none' }}>
+        <ExerciseSelector
+          {...{
+            exercise,
+            handleChange: (exercise) => {
+              setExercise(exercise)
+              setUrlExercise(exercise?.name ?? null, { scroll: false })
+            },
+            exercises,
+            mutate: mutateExercises,
+            alwaysShowLoading: true,
+          }}
+        />
+      </Grid>
+      <Grid xs={12} sx={{ display: tab === 'modifiers' ? 'block' : 'none' }}>
+        <ModifierSelector
+          {...{
+            modifier,
+            handleChange: (modifier) => {
+              setModifier(modifier)
+              setUrlModifier(modifier?.name ?? null, { scroll: false })
+            },
+            modifiers,
+            mutate: mutateModifiers,
+            alwaysShowLoading: true,
+          }}
+        />
+      </Grid>
+      <Grid xs={12} sx={{ display: tab === 'categories' ? 'block' : 'none' }}>
+        <CategorySelector
+          {...{
+            category,
+            handleChange: (category) => {
+              setCategory(category)
+              setUrlCategory(category?.name ?? null, { scroll: false })
+            },
+            categories,
+            mutate: mutateCategories,
+            alwaysShowLoading: true,
+          }}
+        />
+      </Grid>
+      <Grid xs={12}>
+        <StyledDivider />
+      </Grid>
+      <Grid container xs={12} justifyContent="center">
+        <TabForm tab={tab} />
+      </Grid>
+    </Grid>
   )
 }
