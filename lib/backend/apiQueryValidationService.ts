@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { Filter, ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
-import Bodyweight, { WeighInType } from '../../models/Bodyweight'
+import Bodyweight, { WeighInType, weighInTypes } from '../../models/Bodyweight'
 import Exercise from '../../models/Exercise'
 import Modifier from '../../models/Modifier'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
@@ -57,18 +57,18 @@ export function buildDateRangeQuery<T>(
 
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildBodyweightQuery(
-  { limit, start, end, type }: ApiReq<BodyweightQuery>,
+  { limit, start, end, type, sort }: ApiReq<BodyweightQuery>,
   userId: ObjectId
 ): MongoQuery<Bodyweight> {
   const query: MongoQuery<Bodyweight> = buildDateRangeQuery<Bodyweight>(
-    { limit, start, end },
+    { limit, start, end, sort },
     userId
   )
   const filter: Filter<Bodyweight> = {}
 
   if (type) {
     if (
-      !(typeof type === 'string' && ['official', 'unofficial'].includes(type))
+      !(typeof type === 'string' && weighInTypes.includes(type as WeighInType))
     ) {
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid weigh-in type.')
     }

@@ -116,6 +116,9 @@ export default function RecordCard({
     // Could address by adding an early return for when lastChangedExercise === null,
     // but then it still gets called way more than it needs to.
     // This should only be called when lastChangedExercise changes.
+
+    // Edit: seems a hook is in the works that will be able to address exactly this issue: useEvent().
+    // Supposedly scheduled for release "soon". See: https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastChangedExercise])
 

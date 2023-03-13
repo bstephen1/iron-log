@@ -171,6 +171,7 @@ describe('build query', () => {
         limit: '5',
         start: '2000-01-01',
         end: '2001-01-01',
+        sort: 'oldestFirst',
       }
       expect(buildBodyweightQuery(apiQuery, userId)).toMatchObject({
         filter: {
@@ -179,6 +180,7 @@ describe('build query', () => {
         start: apiQuery.start,
         end: apiQuery.end,
         limit: Number(apiQuery.limit),
+        sort: 'oldestFirst',
         userId,
       })
     })

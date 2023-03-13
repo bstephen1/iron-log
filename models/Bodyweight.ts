@@ -1,10 +1,11 @@
 import dayjs from 'dayjs'
+import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
 
 export default class Bodyweight {
   readonly _id: string
-  /** ISO8601, e.g. '2020-04-02T08:02:17-05:00' */
-  dateTime: string
+  /** YYYY-MM-DD */
+  date: string
   constructor(
     public value: number,
     public type: WeighInType,
@@ -12,7 +13,7 @@ export default class Bodyweight {
     dayjsDate = dayjs()
   ) {
     this._id = generateId()
-    this.dateTime = dayjsDate.format()
+    this.date = dayjsDate.format(DATE_FORMAT)
   }
 }
 
@@ -21,4 +22,6 @@ export default class Bodyweight {
  * - Unofficial: Used for weigh-ins that include extraneous factors that differentiate them from official weigh-ins.
  * The intended use case is to measure weight lifted for bodyweight exercises at the gym.
  */
-export type WeighInType = 'official' | 'unofficial'
+// See: https://steveholgado.com/typescript-types-from-arrays/
+export type WeighInType = (typeof weighInTypes)[number]
+export const weighInTypes = ['official', 'unofficial'] as const

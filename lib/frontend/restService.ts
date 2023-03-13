@@ -246,16 +246,16 @@ export async function updateCategoryFields(
 // BODYWEIGHT
 //------------
 
-export function useBodyweightHistory({ start, end, ...rest }: BodyweightQuery) {
+export function useBodyweightHistory(query?: BodyweightQuery) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
   // Incrementing to 2020-04-03 will catch everything from the previous day.
   const addDay = (date: string) => dayjs(date).add(1, 'day').format(DATE_FORMAT)
 
-  start = start ? addDay(start) : start
-  end = end ? addDay(end) : end
+  const start = query?.start ? addDay(query.start) : undefined
+  const end = query?.end ? addDay(query.end) : undefined
 
-  const paramString = '?' + stringify({ start, end, ...rest })
+  const paramString = '?' + stringify({ start, end, ...query })
   const { data, error, mutate } = useSWR<Bodyweight[]>(
     URI_BODYWEIGHT + paramString
   )

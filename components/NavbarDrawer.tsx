@@ -1,6 +1,7 @@
 import BuildIcon from '@mui/icons-material/Build'
 import HomeIcon from '@mui/icons-material/Home'
 import MenuIcon from '@mui/icons-material/Menu'
+import TimelineIcon from '@mui/icons-material/Timeline'
 import TodayIcon from '@mui/icons-material/Today'
 import {
   Drawer,
@@ -38,6 +39,7 @@ export default function NavbarDrawer() {
             Icon={TodayIcon}
           />
           <NavbarLink link="/manage" text="Manage" Icon={BuildIcon} />
+          <NavbarLink link="/history" text="History" Icon={TimelineIcon} />
         </List>
       </Drawer>
     </>

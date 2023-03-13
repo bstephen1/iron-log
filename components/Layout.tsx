@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Navbar />
         <main>
-          <Container>{children}</Container>
+          <Container maxWidth="lg">{children}</Container>
         </main>
         <Footer />
       </LocalizationProvider>
