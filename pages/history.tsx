@@ -27,7 +27,12 @@ import {
 import StyledDivider from '../components/StyledDivider'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from '../lib/frontend/constants'
 import { useBodyweightHistory, useExercises } from '../lib/frontend/restService'
+import Bodyweight from '../models/Bodyweight'
 import Exercise from '../models/Exercise'
+
+interface GraphBodyweight extends Bodyweight {
+  epochDate: number
+}
 
 export default function HistoryPage() {
   const { exercises, mutate: mutateExercises } = useExercises()
@@ -49,8 +54,11 @@ export default function HistoryPage() {
     [bodyweightData]
   )
 
+  // to track width we want to use the size of the graph container, since that will be smaller than window width
   const [graphContainerRef, { width: graphContainerWidth }] = useMeasure()
 
+  // Track the full window height so the graph can be fullscreen.
+  // Have to init as 0 so nextjs doesn't error out in SSR trying to find the window.
   const [windowHeight, setWindowHeight] = useState(0)
   useEffect(() => {
     setWindowHeight(window.innerHeight)
@@ -63,15 +71,15 @@ export default function HistoryPage() {
     return window.removeEventListener('resize', handleWindowResize)
   }, [])
 
-  const data = useMemo(() => {
+  const graphBodyweightData = useMemo((): GraphBodyweight[] => {
     if (!unofficialBWs || !officialBWs) return []
 
     const officialData = showBodyweight ? officialBWs : []
 
     const unofficialData = includeUnofficial
-      ? // ignore unofficial weigh-ins if an official weigh-in for that day exists
-        unofficialBWs
+      ? unofficialBWs
           .map((bw) => ({ ...bw, value: bw.value - clothingOffset }))
+          // ignore unofficial weigh-ins if an official weigh-in for that day exists
           .filter(
             (bw) =>
               !officialData.some((officialBw) => officialBw.date === bw.date)
@@ -80,7 +88,6 @@ export default function HistoryPage() {
 
     const data = [...unofficialData, ...officialData]
 
-    // todo: remove unofficial if an official exists
     return data
       .map((bw) => ({ ...bw, epochDate: dayjs(bw.date).unix() }))
       .sort((a, b) => a.epochDate - b.epochDate)
@@ -104,6 +111,18 @@ export default function HistoryPage() {
 
   const convertEpochToDate = (value: number) =>
     dayjs.unix(value).format('YYYY-MM-DD')
+
+  const getStartIndex = (dayRange = 60) => {
+    let i = graphBodyweightData.length - 1
+    let mostRecentDate = graphBodyweightData[i].date
+    const startDate = dayjs(mostRecentDate)
+      .add(-dayRange, 'day')
+      .format(DATE_FORMAT)
+    while (mostRecentDate > startDate) {
+      mostRecentDate = graphBodyweightData[--i].date
+    }
+    return i + 1
+  }
 
   return (
     <Grid container spacing={2}>
@@ -149,12 +168,6 @@ export default function HistoryPage() {
           }}
         />
       </Grid>
-      {/* todo: when both official and unofficial, either add clothing offset to official or subtract from unofficial. input box for setting offset? Also option to not combine them, I guess.  */}
-      {/* when merging, you have to choose to prioritize official or unofficial. Then, if there are official and unofficial weigh-ins on the same day, the chosen type is used and the other discarded.
-            Otherwise, the non-chosen type adds/subtracts the clothing offset */}
-      {/* well.. what's the point though? Isn't it to track an "accurate" weight? Why would you care about unofficial weights? Shouldn't it always prioritize official weigh-ins?
-                And only show unofficial ones if you choose to show them, and there is no conflicting official weigh-in on the same day?  */}
-      {/* So just add a small clothing offset box when unofficial is selected? To the right of bodyweight Select? Same line? */}
       {/* todo: thinking exercises will have to be something like locking all but one set fields. And you can set a field as a don't care.
             So for weight it would be lock reps to 6 or whatever and set everything but weight to don't care. Can overlay on top of bw but would
             need a second y axis unless both are weight. Maybe would be better to always have two axes? A dedicated bw axis.  */}
@@ -184,7 +197,7 @@ export default function HistoryPage() {
             // need to specify a height or the grid and container will both defer to each other and result in zero height
             <ResponsiveContainer height={windowHeight}>
               <LineChart
-                data={data}
+                data={graphBodyweightData}
                 margin={{
                   top: 20,
                   right: 5,
@@ -212,10 +225,7 @@ export default function HistoryPage() {
                   type="number"
                   unit=" kg"
                   domain={['auto', 'auto']}
-                >
-                  {/* honestly, not sure the label is worth. If using it need to set left margin to 10 or so */}
-                  {/* <Label angle={-90} value='weight' position='left' style={{ textAnchor: 'middle' }} /> */}
-                </YAxis>
+                ></YAxis>
                 {/* line color is "stroke" */}
                 <Line name="bodyweight" dataKey="value" type="monotone" />
                 {/* todo: possible to show weigh-in type in tooltip? */}
@@ -234,7 +244,7 @@ export default function HistoryPage() {
                   // could only eyeball this trying to get it centered.
                   x={graphContainerWidth * 0.2}
                   // todo: startIndex ~30 days prior to highest date
-                  // startIndex
+                  startIndex={getStartIndex()}
                 />
               </LineChart>
             </ResponsiveContainer>
