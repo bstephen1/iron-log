@@ -251,7 +251,7 @@ export default function HistoryPage() {
                   <Line
                     name="bodyweight (smoothed)"
                     dataKey="value"
-                    type="basis"
+                    type="basisOpen"
                   />
                 ) : (
                   <Line name="bodyweight" dataKey="value" type="monotone" />
