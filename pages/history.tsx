@@ -41,6 +41,7 @@ export default function HistoryPage() {
   const [showBodyweight, setShowBodyweight] = useState(true)
   const [includeUnofficial, setIncludeUnofficial] = useState(false)
   const [clothingOffset, setClothingOffset] = useState(DEFAULT_CLOTHING_OFFSET)
+  const [showSmoothedBw, setShowSmoothedBw] = useState(false)
 
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
   const isDesktop = useMediaQuery('(pointer: fine)')
@@ -135,7 +136,7 @@ export default function HistoryPage() {
 
   return (
     <Grid container spacing={2}>
-      <Grid xs={10} alignItems="center" display="flex">
+      <Grid xs={8} alignItems="center" display="flex">
         <FormGroup row>
           <FormControlLabel
             control={
@@ -156,9 +157,19 @@ export default function HistoryPage() {
             }
             label="Include unofficial weigh-ins"
           />
+          <FormControlLabel
+            disabled={!showBodyweight}
+            control={
+              <Switch
+                checked={showSmoothedBw}
+                onChange={() => setShowSmoothedBw(!showSmoothedBw)}
+              />
+            }
+            label="Use smoothed line"
+          />
         </FormGroup>
       </Grid>
-      <Grid xs={2}>
+      <Grid xs={4}>
         <TextField
           variant="standard"
           type="number"
@@ -236,7 +247,15 @@ export default function HistoryPage() {
                   domain={['auto', 'auto']}
                 ></YAxis>
                 {/* line color is "stroke" */}
-                <Line name="bodyweight" dataKey="value" type="monotone" />
+                {showSmoothedBw ? (
+                  <Line
+                    name="bodyweight (smoothed)"
+                    dataKey="value"
+                    type="basis"
+                  />
+                ) : (
+                  <Line name="bodyweight" dataKey="value" type="monotone" />
+                )}
                 {/* todo: possible to show weigh-in type in tooltip? */}
                 <Tooltip
                   trigger={isDesktop ? 'hover' : 'click'}
