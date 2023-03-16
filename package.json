@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky install",
-    "test": "jest --watch --coverage",
-    "testall": "jest --watchAll --coverage"
+    "test": "jest --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
