@@ -12,7 +12,8 @@ const customJestConfig: import('jest').Config = {
   moduleDirectories: ['node_modules', '<rootDir>/'],
   testEnvironment: 'jest-environment-jsdom',
   collectCoverage: true,
-  collectCoverageFrom: ['**/*.{ts, tsx, js}'],
+  // don't put spaces after commas in the braces here
+  collectCoverageFrom: ['**/*.{ts,tsx,js}'],
   // can't seem to tell jest to ignore any folder that starts with a dot...
   coveragePathIgnorePatterns: [
     'node_modules',
