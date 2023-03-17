@@ -47,10 +47,13 @@ export default function BodyweightInput({
 
   const getHelperText = () => {
     if (loading) return 'Loading...'
-    if (!data.length) return `No existing ${bodyweightType} weigh-ins found`
+    // check the type to be safe, but there should never be a mismatch in practice
+    if (!data.length || data[0].type !== bodyweightType)
+      return `No existing ${bodyweightType} weigh-ins found`
     return `Using latest ${bodyweightType} weight from ${data[0].date}`
   }
 
+  console.log(data)
   return (
     <InputField
       {...textFieldProps}

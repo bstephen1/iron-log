@@ -18,7 +18,7 @@ it('renders with no data', async () => {
   expect(await screen.findByText(/no existing official/i)).toBeVisible()
 })
 
-it('renders official weigh-in', async () => {
+it('renders official weigh-in initially', async () => {
   const weight = 45
   const date = '2000-01-01'
   server.use(
@@ -35,25 +35,40 @@ it('renders official weigh-in', async () => {
   expect(screen.getByText(date, { exact: false })).toBeVisible()
 })
 
-it('renders unofficial weigh-in', async () => {
+it('renders unofficial weigh-in when switching mode to unofficial', async () => {
   const weight = 45
-  const date = '2000-01-01'
+  const date = '2010-01-01'
+  // initial fetch must return an empty array because there is no official data
+  server.use(rest.get(URI_BODYWEIGHT, (_, res, ctx) => res(ctx.json([]))))
+  render(<BodyweightInput date={date2020} />)
+
+  expect(await screen.findByText(/no existing official/i)).toBeVisible()
+
+  // after switching to unofficial mode we can return the latest unofficial bodyweight
   server.use(
     rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
       res(ctx.json([new Bodyweight(weight, 'unofficial', dayjs(date))]))
     )
   )
 
-  render(<BodyweightInput date={date2020} />)
-
-  // this seems to be persisting the cache from the official test
-  expect(await screen.findByText(/official/i)).toBeVisible()
-
   await userEvent.click(screen.getByLabelText('options'))
   await userEvent.click(screen.getByText('unofficial weigh-ins'))
 
   expect(await screen.findByText(/using latest unofficial/i)).toBeVisible()
   expect(screen.getByText(date, { exact: false })).toBeVisible()
+})
+
+it('does not render data if unexpected weigh-in type is received', async () => {
+  const weight = 45
+  const date = '2010-01-01'
+  server.use(
+    rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
+      res(ctx.json([new Bodyweight(weight, 'unofficial', dayjs(date))]))
+    )
+  )
+  render(<BodyweightInput date={date2020} />)
+
+  expect(await screen.findByText(/no existing official/i)).toBeVisible()
 })
 
 // todo: editing value, submit/reset buttons
