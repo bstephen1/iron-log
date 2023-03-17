@@ -12,7 +12,15 @@ import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { arrayToIndex } from '../util'
-import { DATE_FORMAT } from './constants'
+import {
+  DATE_FORMAT,
+  URI_BODYWEIGHT,
+  URI_CATEGORIES,
+  URI_EXERCISES,
+  URI_MODIFIERS,
+  URI_RECORDS,
+  URI_SESSIONS,
+} from './constants'
 
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
@@ -280,14 +288,3 @@ export async function updateBodyweight(newBodyweight: Bodyweight) {
     body: JSON.stringify(newBodyweight),
   }).catch((e) => console.error(e))
 }
-
-//------
-// URIS
-//------
-
-export const URI_SESSIONS = '/api/sessions/'
-export const URI_EXERCISES = '/api/exercises/'
-export const URI_MODIFIERS = '/api/modifiers/'
-export const URI_CATEGORIES = '/api/categories/'
-export const URI_RECORDS = '/api/records/'
-export const URI_BODYWEIGHT = '/api/bodyweight-history/'
