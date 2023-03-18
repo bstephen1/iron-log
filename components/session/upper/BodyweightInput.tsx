@@ -53,7 +53,6 @@ export default function BodyweightInput({
     return `Using latest ${bodyweightType} weight from ${data[0].date}`
   }
 
-  console.log(data)
   return (
     <InputField
       {...textFieldProps}
@@ -61,11 +60,16 @@ export default function BodyweightInput({
       label="Bodyweight"
       // disable scroll wheel changing the number
       onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
-      initialValue={!data?.length ? '' : String(data[0].value)}
+      initialValue={
+        !data?.length || data[0].type !== bodyweightType
+          ? ''
+          : String(data[0].value)
+      }
       handleSubmit={handleSubmit}
       yupValidator={yup.reach(validationSchema, 'value')}
       InputProps={{
         readOnly: loading,
+        'aria-label': 'bodyweight input',
         // without the box the loading spinner has an uneven width
         startAdornment: (
           <>
