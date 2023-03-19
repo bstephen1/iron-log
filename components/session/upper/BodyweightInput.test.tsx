@@ -6,6 +6,7 @@ import Bodyweight from 'models/Bodyweight'
 import BodyweightInput from './BodyweightInput'
 
 const date2020 = dayjs('2020-01-01')
+const officialBw = new Bodyweight(45, 'official', dayjs('2000-01-01'))
 
 it('renders with no data', async () => {
   useServerGet(URI_BODYWEIGHT, [])
@@ -70,9 +71,7 @@ it('does not render data if unexpected weigh-in type is received', async () => {
 describe('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
     const user = userEvent.setup()
-    useServerGet(URI_BODYWEIGHT, [
-      new Bodyweight(45, 'official', dayjs('2000-01-01')),
-    ])
+    useServerGet(URI_BODYWEIGHT, [officialBw])
     render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -81,6 +80,7 @@ describe('input', () => {
 
     expect(await screen.findByLabelText('reset')).toBeVisible()
     expect(screen.getByLabelText('submit')).toBeVisible()
+    expect(screen.getByDisplayValue('3045')).toBeVisible()
 
     await user.type(input, '{Backspace}{Backspace}')
 
@@ -90,9 +90,7 @@ describe('input', () => {
 
   it('validates against changing an existing value to be empty', async () => {
     const user = userEvent.setup()
-    useServerGet(URI_BODYWEIGHT, [
-      new Bodyweight(45, 'official', dayjs('2000-01-01')),
-    ])
+    useServerGet(URI_BODYWEIGHT, [officialBw])
     render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -108,9 +106,7 @@ describe('input', () => {
 
   it('resets to existing value when button is clicked', async () => {
     const user = userEvent.setup()
-    useServerGet(URI_BODYWEIGHT, [
-      new Bodyweight(45, 'official', dayjs('2000-01-01')),
-    ])
+    useServerGet(URI_BODYWEIGHT, [officialBw])
     render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -123,38 +119,28 @@ describe('input', () => {
     expect(screen.getByLabelText('submit')).not.toBeVisible()
   })
 
-  // getting the Text encoder not defined problem here.
+  it('submits and revalidates when button is clicked', async () => {
+    const user = userEvent.setup()
+    useServerGet(URI_BODYWEIGHT, [officialBw])
+    render(<BodyweightInput date={date2020} />)
+    const input = screen.getByLabelText('bodyweight input')
+    await screen.findByText(/official/i)
 
-  // xit('submits and revalidates when button is clicked', async () => {
-  //   const user = userEvent.setup()
-  //   server.use(
-  //     rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-  //       res(ctx.json([new Bodyweight(45, 'official', dayjs('2000-01-01'))]))
-  //     )
-  //   )
-  //   render(<BodyweightInput date={date2020} />)
-  //   const input = screen.getByLabelText('bodyweight input')
-  //   await screen.findByText(/official/i)
+    // simulate the res from revalidation is different from UI value
+    const newWeight = 15
+    useServerGet(URI_BODYWEIGHT, [
+      new Bodyweight(newWeight, 'official', dayjs('2000-01-01')),
+    ])
+    await user.type(input, '3')
+    await user.click(screen.getByLabelText('submit'))
 
-  //   //
-  //   let apiReq
-  //   server.use(
-  //     rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-  //       res(ctx.json([new Bodyweight(45, 'official', dayjs('2000-01-01'))]))
-  //     ),
-  //     rest.put(URI_BODYWEIGHT, (req, res, ctx) => {
-  //       apiReq = req
-  //       return res(ctx.json(emptyApiResponse))
-  //     })
-  //   )
-  //   await user.type(input, '30')
-  //   await user.click(screen.getByLabelText('submit'))
-
-  //   // the input is uncontrolled. There doesn't seem to be a good way to get a hold of the unsubmitted value
-  //   expect(await screen.findByLabelText('reset')).not.toBeVisible()
-  //   expect(screen.getByLabelText('submit')).not.toBeVisible()
-  //   console.log(apiReq)
-  // })
+    // value should remain as what was inputted while revalidating
+    expect(await screen.findByDisplayValue(345)).toBeVisible()
+    // after revalidation should update to the server response
+    expect(await screen.findByDisplayValue(newWeight)).toBeVisible()
+    expect(screen.getByLabelText('reset')).not.toBeVisible()
+    expect(screen.getByLabelText('submit')).not.toBeVisible()
+  })
 
   // todo: submitting official does not overwrite unofficial, but does overwrite previous official
 })

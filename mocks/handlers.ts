@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
+import { URI_BODYWEIGHT } from 'lib/frontend/constants'
 import { generateId } from 'lib/util'
 import Bodyweight from 'models/Bodyweight'
 import { rest } from 'msw'
@@ -9,7 +10,8 @@ import { rest } from 'msw'
  *  endpoints the test doesn't care about.
  */
 export const handlers = [
-  rest.get('/api/bodyweight-history', (_, res, ctx) =>
+  rest.all(URI_BODYWEIGHT, (_, res, ctx) => res(ctx.status(StatusCodes.OK))),
+  rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
     res(
       ctx.status(StatusCodes.OK),
       ctx.json<Bodyweight[]>([
