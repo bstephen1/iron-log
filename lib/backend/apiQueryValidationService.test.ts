@@ -22,11 +22,6 @@ import {
   validateStatus,
 } from './apiQueryValidationService'
 
-// If this file is causing a TextEncoder error, try this fix:
-// https://stackoverflow.com/a/74377819
-// there is a compatibility issue between a mongo dep and jest and
-// unfortunately it seems the only solution is to modify the node_modules file.
-
 describe('validation', () => {
   describe('validateId', () => {
     it('throws error when not a string', () => {
