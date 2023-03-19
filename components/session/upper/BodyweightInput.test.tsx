@@ -1,16 +1,14 @@
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
-import { render, screen } from 'lib/customRender'
 import { URI_BODYWEIGHT } from 'lib/frontend/constants'
-import { server } from 'mocks/server'
+import { render, screen, useServerGet } from 'lib/testUtils'
 import Bodyweight from 'models/Bodyweight'
-import { rest } from 'msw'
 import BodyweightInput from './BodyweightInput'
 
 const date2020 = dayjs('2020-01-01')
 
 it('renders with no data', async () => {
-  server.use(rest.get(URI_BODYWEIGHT, (_, res, ctx) => res(ctx.json([]))))
+  useServerGet(URI_BODYWEIGHT, [])
   render(<BodyweightInput date={date2020} />)
 
   expect(screen.getByText(/loading/i)).toBeVisible()
@@ -21,11 +19,9 @@ it('renders with no data', async () => {
 it('renders official weigh-in initially', async () => {
   const weight = 45
   const date = '2000-01-01'
-  server.use(
-    rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-      res(ctx.json([new Bodyweight(weight, 'official', dayjs(date))]))
-    )
-  )
+  useServerGet(URI_BODYWEIGHT, [
+    new Bodyweight(weight, 'official', dayjs(date)),
+  ])
 
   render(<BodyweightInput date={date2020} />)
 
@@ -41,17 +37,15 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
   const date = '2010-01-01'
   const user = userEvent.setup()
   // initial fetch must return an empty array because there is no official data
-  server.use(rest.get(URI_BODYWEIGHT, (_, res, ctx) => res(ctx.json([]))))
+  useServerGet(URI_BODYWEIGHT, [])
   render(<BodyweightInput date={date2020} />)
 
   expect(await screen.findByText(/no existing official/i)).toBeVisible()
 
   // after switching to unofficial mode we can return the latest unofficial bodyweight
-  server.use(
-    rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-      res(ctx.json([new Bodyweight(weight, 'unofficial', dayjs(date))]))
-    )
-  )
+  useServerGet(URI_BODYWEIGHT, [
+    new Bodyweight(weight, 'unofficial', dayjs(date)),
+  ])
 
   await user.click(screen.getByLabelText('options'))
   await user.click(screen.getByText('unofficial weigh-ins'))
@@ -64,11 +58,9 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
 it('does not render data if unexpected weigh-in type is received', async () => {
   const weight = 45
   const date = '2010-01-01'
-  server.use(
-    rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-      res(ctx.json([new Bodyweight(weight, 'unofficial', dayjs(date))]))
-    )
-  )
+  useServerGet(URI_BODYWEIGHT, [
+    new Bodyweight(weight, 'unofficial', dayjs(date)),
+  ])
   render(<BodyweightInput date={date2020} />)
 
   expect(await screen.findByText(/no existing official/i)).toBeVisible()
@@ -78,11 +70,9 @@ it('does not render data if unexpected weigh-in type is received', async () => {
 describe('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
     const user = userEvent.setup()
-    server.use(
-      rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-        res(ctx.json([new Bodyweight(45, 'official', dayjs('2000-01-01'))]))
-      )
-    )
+    useServerGet(URI_BODYWEIGHT, [
+      new Bodyweight(45, 'official', dayjs('2000-01-01')),
+    ])
     render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -100,11 +90,9 @@ describe('input', () => {
 
   it('validates against changing an existing value to be empty', async () => {
     const user = userEvent.setup()
-    server.use(
-      rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-        res(ctx.json([new Bodyweight(45, 'official', dayjs('2000-01-01'))]))
-      )
-    )
+    useServerGet(URI_BODYWEIGHT, [
+      new Bodyweight(45, 'official', dayjs('2000-01-01')),
+    ])
     render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -120,11 +108,9 @@ describe('input', () => {
 
   it('resets to existing value when button is clicked', async () => {
     const user = userEvent.setup()
-    server.use(
-      rest.get(URI_BODYWEIGHT, (_, res, ctx) =>
-        res(ctx.json([new Bodyweight(45, 'official', dayjs('2000-01-01'))]))
-      )
-    )
+    useServerGet(URI_BODYWEIGHT, [
+      new Bodyweight(45, 'official', dayjs('2000-01-01')),
+    ])
     render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)

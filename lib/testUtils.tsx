@@ -1,4 +1,7 @@
 import { render, RenderOptions } from '@testing-library/react'
+import { StatusCodes } from 'http-status-codes'
+import { server } from 'mocks/server'
+import { rest } from 'msw'
 import React, { ReactElement } from 'react'
 import { SWRConfig } from 'swr'
 
@@ -32,3 +35,11 @@ const customRender = (
 
 export * from '@testing-library/react'
 export { customRender as render }
+
+export function useServerGet(url: string, json: any = {}) {
+  server.use(
+    rest.get(url, (_, res, ctx) =>
+      res(ctx.status(StatusCodes.OK), ctx.json(json))
+    )
+  )
+}
