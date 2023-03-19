@@ -23,7 +23,7 @@ const customJestConfig: import('jest').Config = {
     'middleware',
     'styles',
   ],
-  coverageReporters: ['html', 'text-summary', ['text', { skipFull: true }]],
+  coverageReporters: ['html', 'text-summary'],
   // todo: turn on when tests are more robust
   // coverageThreshold: {
   //   global: {
