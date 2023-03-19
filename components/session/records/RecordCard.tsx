@@ -26,11 +26,9 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
-  useBodyweightHistory,
   useExercises,
   useModifiers,
   useRecord,
@@ -92,10 +90,6 @@ export default function RecordCard({
     : ''
   const { record, isError, mutate: mutateRecord } = useRecord(id)
   const { modifiersIndex } = useModifiers()
-  const { data: bodyweightData } = useBodyweightHistory({
-    limit: 1,
-    end: date.format(DATE_FORMAT),
-  })
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -138,11 +132,7 @@ export default function RecordCard({
         </CardContent>
       </Card>
     )
-  } else if (
-    record === undefined ||
-    modifiersIndex === undefined ||
-    bodyweightData === undefined
-  ) {
+  } else if (record === undefined || modifiersIndex === undefined) {
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader

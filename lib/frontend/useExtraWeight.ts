@@ -1,5 +1,4 @@
 import Record from '../../models/Record'
-import { DEFAULT_CLOTHING_OFFSET } from './constants'
 import { useBodyweightHistory, useModifiers } from './restService'
 
 interface Props {
@@ -8,7 +7,7 @@ interface Props {
 export default function useExtraWeight({ record }: Props) {
   const { modifiersIndex } = useModifiers()
   const { data: bodyweightData } = useBodyweightHistory({
-    limit: 1,
+    limit: 2,
     end: record?.date,
   })
 
@@ -23,12 +22,27 @@ export default function useExtraWeight({ record }: Props) {
   const { activeModifiers, exercise } = record
   const attributes = exercise?.attributes ?? {}
 
-  // have to account for no bodyweight data
-  const bodyweight =
-    bodyweightData[0] && attributes.bodyweight
-      ? bodyweightData[0].value +
-        (bodyweightData[0].type === 'official' ? DEFAULT_CLOTHING_OFFSET : 0)
-      : 0
+  let bodyweight = 0
+  if (attributes.bodyweight) {
+    switch (bodyweightData.length) {
+      case 1:
+        bodyweight = bodyweightData[0].value
+        break
+      case 2:
+        // if same date use the unofficial weight.
+        if (bodyweightData[0].date !== bodyweightData[1].date) {
+          bodyweight = bodyweightData[0].value
+          break
+        }
+        bodyweight =
+          bodyweightData[0].type === 'unofficial'
+            ? bodyweightData[0].value
+            : bodyweightData[1].value
+      case 0:
+      default:
+        break
+    }
+  }
 
   const baseWeight = exercise?.weight ?? 0
 
