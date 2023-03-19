@@ -141,6 +141,4 @@ describe('input', () => {
     expect(screen.getByLabelText('reset')).not.toBeVisible()
     expect(screen.getByLabelText('submit')).not.toBeVisible()
   })
-
-  // todo: submitting official does not overwrite unofficial, but does overwrite previous official
 })
