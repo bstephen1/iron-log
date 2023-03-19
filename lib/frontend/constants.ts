@@ -5,3 +5,14 @@ export const validDateStringRegex = /^\d{4}-\d{2}-\d{2}$/
 // The value is already fuzzy if weighing with clothes, and if you knew the exact weight
 // you could just input the that instead.
 export const DEFAULT_CLOTHING_OFFSET = 1
+
+//------
+// URIS
+//------
+
+export const URI_SESSIONS = '/api/sessions/'
+export const URI_EXERCISES = '/api/exercises/'
+export const URI_MODIFIERS = '/api/modifiers/'
+export const URI_CATEGORIES = '/api/categories/'
+export const URI_RECORDS = '/api/records/'
+export const URI_BODYWEIGHT = '/api/bodyweight-history/'

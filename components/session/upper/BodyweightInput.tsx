@@ -47,7 +47,9 @@ export default function BodyweightInput({
 
   const getHelperText = () => {
     if (loading) return 'Loading...'
-    if (!data.length) return `No existing ${bodyweightType} weigh-ins found`
+    // check the type to be safe, but there should never be a mismatch in practice
+    if (!data.length || data[0].type !== bodyweightType)
+      return `No existing ${bodyweightType} weigh-ins found`
     return `Using latest ${bodyweightType} weight from ${data[0].date}`
   }
 
@@ -58,11 +60,16 @@ export default function BodyweightInput({
       label="Bodyweight"
       // disable scroll wheel changing the number
       onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
-      initialValue={!data?.length ? '' : String(data[0].value)}
+      initialValue={
+        !data?.length || data[0].type !== bodyweightType
+          ? ''
+          : String(data[0].value)
+      }
       handleSubmit={handleSubmit}
       yupValidator={yup.reach(validationSchema, 'value')}
       InputProps={{
         readOnly: loading,
+        'aria-label': 'bodyweight input',
         // without the box the loading spinner has an uneven width
         startAdornment: (
           <>
