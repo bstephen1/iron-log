@@ -8,11 +8,9 @@ import { server } from './mocks/server'
 // but it doesn't come bundled with jsdom.
 // Here we are manually importing it to avoid the import errors.
 // See: https://stackoverflow.com/questions/68468203/why-am-i-getting-textencoder-is-not-defined-in-jest
-// https://stackoverflow.com/a/74377819
-// there is a compatibility issue between a mongo dep and jest and
-// unfortunately it seems the only solution is to modify the node_modules file.
+// See: https://stackoverflow.com/a/74377819
 global.TextEncoder = TextEncoder
-// Typescript doesn't like this but whatever, it works.
+// Typescript doesn't like the decoder for some reason so we have to force it.
 global.TextDecoder = TextDecoder as any
 
 beforeAll(() => server.listen())

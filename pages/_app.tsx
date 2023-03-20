@@ -5,10 +5,10 @@ import Layout from '../components/Layout'
 import { server } from '../mocks/server'
 import '../styles/globals.css'
 
+// Enabling this will allow mock rest endpoints in dev mode.
 // In the docs this is supposed to need a separate browser setup,
 // but this is working with the node server. I guess it's something
 // with how nextjs is structured.
-// Enabling this will allow mock rest endpoints in dev mode.
 if (process.env.MSW === 'enabled') {
   server.listen()
 }
