@@ -1,6 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ScaleOutlinedIcon from '@mui/icons-material/ScaleOutlined'
 import {
+  Grow,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -25,6 +26,13 @@ export default function BodyweightInputToggle({
     setAnchorEl(e.currentTarget)
   }
 
+  const handleClose = () => setAnchorEl(null)
+
+  const handleChange = (type: WeighInType) => {
+    handleClose()
+    handleTypeChange(type)
+  }
+
   const open = !!anchorEl
   const id = open ? 'bodyweight-options-popper' : undefined
 
@@ -39,7 +47,7 @@ export default function BodyweightInputToggle({
         id={id}
         open={open}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
+        onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -48,12 +56,14 @@ export default function BodyweightInputToggle({
         <BodyweightMenuItem
           selected={type === 'official'}
           text="official weigh-ins"
-          handleClick={() => handleTypeChange('official')}
+          handleClick={() => handleChange('official')}
+          id="official"
         />
         <BodyweightMenuItem
           selected={type === 'unofficial'}
           text="unofficial weigh-ins"
-          handleClick={() => handleTypeChange('unofficial')}
+          handleClick={() => handleChange('unofficial')}
+          id="unofficial"
         />
       </Menu>
     </>
@@ -64,14 +74,20 @@ function BodyweightMenuItem({
   selected,
   text,
   handleClick,
+  id,
 }: {
   selected: boolean
   text: string
   handleClick: () => void
+  id: string
 }) {
   return (
-    <MenuItem onClick={handleClick}>
-      <ListItemIcon>{selected ? <CheckIcon /> : <></>}</ListItemIcon>
+    <MenuItem onClick={handleClick} selected={selected} data-testid={id}>
+      <ListItemIcon>
+        <Grow in={selected}>
+          <CheckIcon />
+        </Grow>
+      </ListItemIcon>
       <ListItemText>{text}</ListItemText>
     </MenuItem>
   )
