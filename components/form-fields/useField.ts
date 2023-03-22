@@ -78,7 +78,7 @@ export default function useField<T = string>({
   }
 
   const validate = (value: T) => {
-    process.env.DEV_LOG_LEVEL === 'verbose' &&
+    process.env.BROWSER_LOG_LEVEL === 'verbose' &&
       console.log(
         `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )

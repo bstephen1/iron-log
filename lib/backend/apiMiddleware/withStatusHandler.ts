@@ -10,7 +10,9 @@ export default function withStatusHandler(handler: ApiHandler) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const userId = await getUserId(req, res)
-      console.log(`Incoming ${req.method} on ${req.url} for user ${userId}`)
+      if (process.env.SERVER_LOG_LEVEL === 'verbose') {
+        console.log(`Incoming ${req.method} on ${req.url} for user ${userId}`)
+      }
 
       const { statusCode, payload, nullOk } = await handler(req, userId)
 
@@ -30,7 +32,9 @@ export default function withStatusHandler(handler: ApiHandler) {
         message = e.message ?? message
       }
 
-      console.error(`Error ${statusCode}: ${message}`)
+      if (process.env.SERVER_LOG_LEVEL === 'verbose') {
+        console.error(`Error ${statusCode}: ${message}`)
+      }
       res.status(statusCode).json(message)
     }
   }

@@ -272,7 +272,10 @@ export async function addModifier(userId: ObjectId, modifier: Modifier) {
   return await modifiers.insertOne({ ...modifier, userId })
 }
 
-export async function fetchModifiers({ filter, userId }: MongoQuery<Modifier>) {
+export async function fetchModifiers({
+  filter,
+  userId,
+}: MongoQuery<Modifier>): Promise<Modifier[]> {
   return await modifiers
     .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
