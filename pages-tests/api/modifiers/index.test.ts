@@ -49,6 +49,7 @@ jest.mock('lib/backend/mongoService', () => ({
 it('fetches modifiers', async () => {
   const data = [new Modifier('hi', Status.active, 5)]
   mockFetchModifiers.mockReturnValue(data)
+
   await testApiHandler<Modifier[]>({
     handler: modifiers,
     test: async ({ fetch }) => {
@@ -59,8 +60,6 @@ it('fetches modifiers', async () => {
 })
 
 it('blocks invalid method types', async () => {
-  const data = [new Modifier('hi', Status.active, 5)]
-  mockFetchModifiers.mockReturnValue(data)
   await testApiHandler<Modifier[]>({
     handler: modifiers,
     test: async ({ fetch }) => {
