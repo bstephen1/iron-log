@@ -16,6 +16,15 @@ global.TextDecoder = TextDecoder as any
 
 dotenv.config({ path: './.env.test' })
 
+// mongoConnect and nextauth cause huge problems for jest.
+// These mocks remove compilation errors. Jest mocks don't affect consts
+// tho so anything that tries to use certain values may break.
+// Eg, mongoService can't use "db" from mongoConnect since it's undefined.
+// This probably is fine because it seems only mongoService is affected and
+// that will also be mocked.
+jest.mock('lib/backend/mongoConnect', () => jest.fn())
+jest.mock('pages/api/auth/[...nextauth]', () => jest.fn())
+
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
