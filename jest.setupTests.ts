@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom'
+import dotenv from 'dotenv'
 import { TextDecoder, TextEncoder } from 'util'
 import 'whatwg-fetch'
 import { server } from './mocks/server'
@@ -12,6 +13,8 @@ import { server } from './mocks/server'
 global.TextEncoder = TextEncoder
 // Typescript doesn't like the decoder for some reason so we have to force it.
 global.TextDecoder = TextDecoder as any
+
+dotenv.config({ path: './.env.test' })
 
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())
