@@ -16,7 +16,11 @@ jest.mock('lib/backend/mongoService', () => ({
   fetchModifiers: (mockFetchModifiers = jest.fn()),
 }))
 
-jest.mock('lib/backend/apiMiddleware/util')
+// can add a __mocks__ folder for this, but still need to call jest.mock every test...
+// jest.mock('lib/backend/mongoConnect', () => jest.fn())
+
+// so, I think we could just mock this?
+jest.mock('pages/api/auth/[...nextauth]', () => jest.fn())
 
 it('fetches modifiers', async () => {
   const data = [new Modifier('hi', Status.active, 5)]
