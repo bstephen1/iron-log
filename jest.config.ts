@@ -10,7 +10,7 @@ const customJestConfig: import('jest').Config = {
   setupFilesAfterEnv: ['./jest.setupTests.ts'],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   moduleDirectories: ['node_modules', '<rootDir>/'],
-  roots: ['<rootDir>', '<rootDir>/mocks'],
+  roots: ['<rootDir>'],
   testEnvironment: 'jest-environment-jsdom',
   collectCoverage: true,
   // don't put spaces after commas in the braces here

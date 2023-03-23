@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import dotenv from 'dotenv'
 import { TextDecoder, TextEncoder } from 'util'
 import 'whatwg-fetch'
-import { server } from './mocks/server'
+import { server } from './msw-mocks/server'
 
 // There is an issue with a mongo dep (whatwg-url) and jest.
 // The mongo dep requires "TextEncoder" to be imported,

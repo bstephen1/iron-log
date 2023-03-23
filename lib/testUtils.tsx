@@ -1,7 +1,7 @@
 import { render, RenderOptions } from '@testing-library/react'
 import { StatusCodes } from 'http-status-codes'
-import { server } from 'mocks/server'
 import { rest } from 'msw'
+import { server } from 'msw-mocks/server'
 import { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 
