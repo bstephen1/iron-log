@@ -1,9 +1,9 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
+import { clientPromise } from 'lib/backend/mongoConnect'
 import { ObjectId } from 'mongodb'
 import type { NextAuthOptions } from 'next-auth'
 import NextAuth, { SessionStrategy } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
-import { clientPromise } from '../../../lib/backend/mongoConnect'
 
 export const authOptions: NextAuthOptions = {
   providers: [
