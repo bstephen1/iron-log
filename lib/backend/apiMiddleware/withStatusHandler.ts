@@ -33,7 +33,9 @@ export default function withStatusHandler(handler: ApiHandler) {
       }
 
       if (process.env.SERVER_LOG_LEVEL === 'verbose') {
-        console.error(`Error ${statusCode}: ${message}`)
+        statusCode > 499
+          ? console.trace(e)
+          : console.error(`Error ${statusCode}: ${message}`)
       }
       res.status(statusCode).json(message)
     }
