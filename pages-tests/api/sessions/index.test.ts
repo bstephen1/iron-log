@@ -1,6 +1,6 @@
 import SessionLog from 'models/SessionLog'
 import { testApiHandler } from 'next-test-api-route-handler'
-import sessions from 'pages/api/sessions'
+import sessions from 'pages/api/sessions/index.api'
 
 var mockFetchSessions: jest.Mock
 jest.mock('lib/backend/mongoService', () => ({

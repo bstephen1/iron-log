@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { ApiError } from 'next/dist/server/api-utils'
-import { authOptions } from '../../../pages/api/auth/[...nextauth]'
+import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
 
 export interface ApiResponse {
   statusCode?: number

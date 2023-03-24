@@ -6,6 +6,7 @@ const nextConfig = {
     config.experiments.topLevelAwait = true
     return config
   },
+  pageExtensions: ['page.tsx', 'api.ts'],
 }
 
 module.exports = nextConfig
