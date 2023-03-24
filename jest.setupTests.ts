@@ -28,7 +28,7 @@ dotenv.config({ path: './.env.test' })
 // An alternate solution is to use a __mocks__ folder, but that only works for
 // node_modules, so we can only mock out next-auth.
 jest.mock('lib/backend/mongoConnect', () => jest.fn())
-jest.mock('pages/api/auth/[...nextauth]', () => jest.fn())
+jest.mock('pages/api/auth/[...nextauth].api', () => jest.fn())
 jest.mock('next-auth', () => ({
   getServerSession: () => ({ user: { id: '1234567890AB' } }),
 }))
