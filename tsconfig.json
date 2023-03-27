@@ -28,7 +28,7 @@
     "scripts/dummyDataMongoGenerator.js",
     "pages/manage/test.jsx",
     "components/testForm.jsx"
-, "middleware.ts"  ],
+, "middleware.api.ts"  ],
   "exclude": [
     "node_modules"
   ]

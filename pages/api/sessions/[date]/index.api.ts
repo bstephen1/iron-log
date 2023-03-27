@@ -29,7 +29,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
       await updateSession(userId, JSON.parse(req.body))
       return emptyApiResponse
     default:
-      return methodNotAllowed
+      throw methodNotAllowed
   }
 }
 
