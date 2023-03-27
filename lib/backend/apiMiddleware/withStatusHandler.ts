@@ -24,12 +24,15 @@ export default function withStatusHandler(handler: ApiHandler) {
       // but undefined is not. So if there is no payload we must send back null instead of undefined.
       // SWR on the frontend also treats undefined as loading and null as "loading finished, no data".
       res.status(statusCode || StatusCodes.OK).json(payload ?? null)
-    } catch (e: unknown) {
+    } catch (e: any) {
       let statusCode = StatusCodes.INTERNAL_SERVER_ERROR
       let message = 'An unexpected error occured.'
       if (e instanceof ApiError) {
         statusCode = e.statusCode ?? statusCode
         message = e.message ?? message
+      } else if (e?.message.includes('JSON')) {
+        statusCode = StatusCodes.BAD_REQUEST
+        message = e.message
       }
 
       if (process.env.SERVER_LOG_LEVEL === 'verbose') {
