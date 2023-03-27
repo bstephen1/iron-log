@@ -1,39 +1,36 @@
 import { StatusCodes } from 'http-status-codes'
-import Modifier from 'models/Modifier'
-import { Status } from 'models/Status'
+import Bodyweight from 'models/Bodyweight'
 import { testApiHandler } from 'next-test-api-route-handler'
-import NameApi from './[name].api'
+import indexApi from './index.api'
 
 var mockFetch: jest.Mock
 var mockAdd: jest.Mock
 var mockUpdate: jest.Mock
 
 jest.mock('lib/backend/mongoService', () => ({
-  fetchModifier: (mockFetch = jest.fn()),
-  addModifier: (mockAdd = jest.fn()),
-  updateModifierFields: (mockUpdate = jest.fn()),
+  fetchBodyweightHistory: (mockFetch = jest.fn()),
+  addBodyweight: (mockAdd = jest.fn()),
+  updateBodyweight: (mockUpdate = jest.fn()),
 }))
 
-const data = new Modifier('hi', Status.active, 5)
+const data = new Bodyweight(50, 'official')
 
-it('fetches given modifier', async () => {
-  mockFetch.mockReturnValue(data)
+it('fetches given bodyweight', async () => {
+  mockFetch.mockReturnValue([data])
 
-  await testApiHandler<Modifier>({
-    handler: NameApi,
-    params: { name: 'name' },
+  await testApiHandler<Bodyweight>({
+    handler: indexApi,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toEqual(data)
+      await expect(res.json()).resolves.toEqual([data])
     },
   })
 })
 
-it('adds given modifier', async () => {
+it('adds given bodyweight', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: indexApi,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
@@ -43,12 +40,11 @@ it('adds given modifier', async () => {
   })
 })
 
-it('updates given modifier', async () => {
+it('updates given bodyweight', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: indexApi,
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PATCH', body: JSON.stringify(data) })
+      const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
       await expect(res.json()).resolves.toBe(null)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
@@ -58,8 +54,7 @@ it('updates given modifier', async () => {
 
 it('blocks invalid method types', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: indexApi,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'TRACE' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
@@ -68,24 +63,11 @@ it('blocks invalid method types', async () => {
   })
 })
 
-it('requires a name', async () => {
-  await testApiHandler({
-    handler: NameApi,
-    // omit the name param
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT' })
-      expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-      expect(await res.json()).toMatch(/name/i)
-    },
-  })
-})
-
 it('handles invalid json body', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: indexApi,
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PATCH', body: 'not json' })
+      const res = await fetch({ method: 'PUT', body: 'not json' })
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
       expect(await res.json()).toMatch(/json/i)
     },

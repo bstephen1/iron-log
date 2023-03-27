@@ -1,19 +1,19 @@
 import { StatusCodes } from 'http-status-codes'
-import SessionLog from 'models/SessionLog'
+import Category from 'models/Category'
 import { testApiHandler } from 'next-test-api-route-handler'
-import sessions from 'pages/api/sessions/index.api'
+import categories from 'pages/api/categories/index.api'
 
-var mockFetchSessions: jest.Mock
+var mockFetch: jest.Mock
 jest.mock('lib/backend/mongoService', () => ({
-  fetchSessions: (mockFetchSessions = jest.fn()),
+  fetchCategories: (mockFetch = jest.fn()),
 }))
 
-it('fetches sessions', async () => {
-  const data = [new SessionLog('2000-01-01')]
-  mockFetchSessions.mockReturnValue(data)
+it('fetches categories', async () => {
+  const data = [new Category('hi')]
+  mockFetch.mockReturnValue(data)
 
-  await testApiHandler<SessionLog[]>({
-    handler: sessions,
+  await testApiHandler<Category[]>({
+    handler: categories,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
@@ -24,7 +24,7 @@ it('fetches sessions', async () => {
 
 it('blocks invalid method types', async () => {
   await testApiHandler({
-    handler: sessions,
+    handler: categories,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)

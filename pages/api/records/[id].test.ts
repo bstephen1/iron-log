@@ -1,27 +1,30 @@
 import { StatusCodes } from 'http-status-codes'
-import Modifier from 'models/Modifier'
-import { Status } from 'models/Status'
+import { generateId } from 'lib/util'
+import Record from 'models/Record'
 import { testApiHandler } from 'next-test-api-route-handler'
-import NameApi from './[name].api'
+import IdApi from './[id].api'
 
 var mockFetch: jest.Mock
 var mockAdd: jest.Mock
 var mockUpdate: jest.Mock
+var mockUpdateFields: jest.Mock
 
 jest.mock('lib/backend/mongoService', () => ({
-  fetchModifier: (mockFetch = jest.fn()),
-  addModifier: (mockAdd = jest.fn()),
-  updateModifierFields: (mockUpdate = jest.fn()),
+  fetchRecord: (mockFetch = jest.fn()),
+  addRecord: (mockAdd = jest.fn()),
+  updateRecord: (mockUpdate = jest.fn()),
+  updateRecordFields: (mockUpdateFields = jest.fn()),
 }))
 
-const data = new Modifier('hi', Status.active, 5)
+const data = new Record('2000-01-01')
+const id = generateId()
 
-it('fetches given modifier', async () => {
+it('fetches given record', async () => {
   mockFetch.mockReturnValue(data)
 
-  await testApiHandler<Modifier>({
-    handler: NameApi,
-    params: { name: 'name' },
+  await testApiHandler<Record>({
+    handler: IdApi,
+    params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
@@ -30,10 +33,10 @@ it('fetches given modifier', async () => {
   })
 })
 
-it('adds given modifier', async () => {
+it('adds given record', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: IdApi,
+    params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
@@ -43,12 +46,25 @@ it('adds given modifier', async () => {
   })
 })
 
-it('updates given modifier', async () => {
+it('updates given record fields', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: IdApi,
+    params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: JSON.stringify(data) })
+      expect(res.status).toBe(StatusCodes.OK)
+      await expect(res.json()).resolves.toBe(null)
+      expect(mockUpdateFields).toHaveBeenCalledTimes(1)
+    },
+  })
+})
+
+it('updates given record', async () => {
+  await testApiHandler({
+    handler: IdApi,
+    params: { id },
+    test: async ({ fetch }) => {
+      const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
       await expect(res.json()).resolves.toBe(null)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
@@ -58,8 +74,8 @@ it('updates given modifier', async () => {
 
 it('blocks invalid method types', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: IdApi,
+    params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'TRACE' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
@@ -68,22 +84,22 @@ it('blocks invalid method types', async () => {
   })
 })
 
-it('requires a name', async () => {
+it('requires an id', async () => {
   await testApiHandler({
-    handler: NameApi,
-    // omit the name param
+    handler: IdApi,
+    // omit the id param
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-      expect(await res.json()).toMatch(/name/i)
+      expect(await res.json()).toMatch(/id/i)
     },
   })
 })
 
 it('handles invalid json body', async () => {
   await testApiHandler({
-    handler: NameApi,
-    params: { name: 'name' },
+    handler: IdApi,
+    params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: 'not json' })
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)

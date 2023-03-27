@@ -1,25 +1,26 @@
 import { StatusCodes } from 'http-status-codes'
-import Modifier from 'models/Modifier'
-import { Status } from 'models/Status'
+import Exercise from 'models/Exercise'
 import { testApiHandler } from 'next-test-api-route-handler'
 import NameApi from './[name].api'
 
 var mockFetch: jest.Mock
 var mockAdd: jest.Mock
 var mockUpdate: jest.Mock
+var mockUpdateFields: jest.Mock
 
 jest.mock('lib/backend/mongoService', () => ({
-  fetchModifier: (mockFetch = jest.fn()),
-  addModifier: (mockAdd = jest.fn()),
-  updateModifierFields: (mockUpdate = jest.fn()),
+  fetchExercise: (mockFetch = jest.fn()),
+  addExercise: (mockAdd = jest.fn()),
+  updateExercise: (mockUpdate = jest.fn()),
+  updateExerciseFields: (mockUpdateFields = jest.fn()),
 }))
 
-const data = new Modifier('hi', Status.active, 5)
+const data = new Exercise('hi')
 
-it('fetches given modifier', async () => {
+it('fetches given exercise', async () => {
   mockFetch.mockReturnValue(data)
 
-  await testApiHandler<Modifier>({
+  await testApiHandler<Exercise>({
     handler: NameApi,
     params: { name: 'name' },
     test: async ({ fetch }) => {
@@ -30,7 +31,7 @@ it('fetches given modifier', async () => {
   })
 })
 
-it('adds given modifier', async () => {
+it('adds given exercise', async () => {
   await testApiHandler({
     handler: NameApi,
     params: { name: 'name' },
@@ -43,12 +44,25 @@ it('adds given modifier', async () => {
   })
 })
 
-it('updates given modifier', async () => {
+it('updates given exercise fields', async () => {
   await testApiHandler({
     handler: NameApi,
     params: { name: 'name' },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: JSON.stringify(data) })
+      expect(res.status).toBe(StatusCodes.OK)
+      await expect(res.json()).resolves.toBe(null)
+      expect(mockUpdateFields).toHaveBeenCalledTimes(1)
+    },
+  })
+})
+
+it('updates given exercise', async () => {
+  await testApiHandler({
+    handler: NameApi,
+    params: { name: 'name' },
+    test: async ({ fetch }) => {
+      const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
       await expect(res.json()).resolves.toBe(null)
       expect(mockUpdate).toHaveBeenCalledTimes(1)

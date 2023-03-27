@@ -32,7 +32,7 @@ it('fetches modifiers', async () => {
 })
 
 it('blocks invalid method types', async () => {
-  await testApiHandler<Modifier[]>({
+  await testApiHandler({
     handler: modifiers,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })

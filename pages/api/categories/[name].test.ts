@@ -1,6 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import Modifier from 'models/Modifier'
-import { Status } from 'models/Status'
+import Category from 'models/Category'
 import { testApiHandler } from 'next-test-api-route-handler'
 import NameApi from './[name].api'
 
@@ -9,17 +8,17 @@ var mockAdd: jest.Mock
 var mockUpdate: jest.Mock
 
 jest.mock('lib/backend/mongoService', () => ({
-  fetchModifier: (mockFetch = jest.fn()),
-  addModifier: (mockAdd = jest.fn()),
-  updateModifierFields: (mockUpdate = jest.fn()),
+  fetchCategory: (mockFetch = jest.fn()),
+  addCategory: (mockAdd = jest.fn()),
+  updateCategoryFields: (mockUpdate = jest.fn()),
 }))
 
-const data = new Modifier('hi', Status.active, 5)
+const data = new Category('hi')
 
-it('fetches given modifier', async () => {
+it('fetches given category', async () => {
   mockFetch.mockReturnValue(data)
 
-  await testApiHandler<Modifier>({
+  await testApiHandler<Category>({
     handler: NameApi,
     params: { name: 'name' },
     test: async ({ fetch }) => {
@@ -30,7 +29,7 @@ it('fetches given modifier', async () => {
   })
 })
 
-it('adds given modifier', async () => {
+it('adds given category', async () => {
   await testApiHandler({
     handler: NameApi,
     params: { name: 'name' },
@@ -43,7 +42,7 @@ it('adds given modifier', async () => {
   })
 })
 
-it('updates given modifier', async () => {
+it('updates given category', async () => {
   await testApiHandler({
     handler: NameApi,
     params: { name: 'name' },
