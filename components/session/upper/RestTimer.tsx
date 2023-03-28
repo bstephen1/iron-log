@@ -1,10 +1,19 @@
+import DoneIcon from '@mui/icons-material/Done'
 import PauseIcon from '@mui/icons-material/Pause'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import ReplayIcon from '@mui/icons-material/Replay'
 import StopIcon from '@mui/icons-material/Stop'
-import { Box, Button, IconButton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Grow,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import dayjs from 'dayjs'
-import { useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 
 const formatTime = (totalSeconds: number) => {
   const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
@@ -20,6 +29,8 @@ const formatTime = (totalSeconds: number) => {
 interface State {
   enabled: boolean
   isRunning: boolean
+  /** When the session is marked as finished the timer will show the total session time. */
+  isFinished: boolean
   /** Value displayed, in ms */
   displayValue: number
   /** When the timer was initially started. Used to calculate total time. Total time cannot be paused or reset. */
@@ -31,14 +42,15 @@ interface State {
 }
 
 interface Action {
-  type: 'start' | 'stop' | 'reset' | 'tick' | 'pause' | 'resume'
+  type: 'start' | 'stop' | 'reset' | 'tick' | 'pause' | 'resume' | 'finish'
 }
 
 const initialTimerState: State = {
   enabled: false,
+  isRunning: false,
+  isFinished: false,
   startTime: 0,
   resumeTime: 0,
-  isRunning: false,
   displayValue: 0,
   accumulatedTime: 0,
 }
@@ -58,12 +70,20 @@ function clockReducer(state: State, action: Action): State {
       }
     case 'stop':
       return initialTimerState
+    case 'finish':
+      return {
+        ...state,
+        isRunning: false,
+        isFinished: true,
+        displayValue: now - state.startTime,
+      }
     case 'reset':
       return {
         ...state,
         resumeTime: dayjs().valueOf(),
         accumulatedTime: 0,
         displayValue: 0,
+        isFinished: false,
       }
     case 'pause':
       return {
@@ -95,7 +115,7 @@ function clockReducer(state: State, action: Action): State {
 
 export default function RestTimer() {
   const [state, dispatch] = useReducer(clockReducer, initialTimerState)
-  const { isRunning, displayValue } = state
+  const { isRunning, displayValue, enabled, isFinished } = state
   // this needs to be <1000 so the rest time can tick out of sync with the total time
   const millisecondsPerInterval = 100
 
@@ -113,10 +133,35 @@ export default function RestTimer() {
     return () => clearInterval(interval)
   }, [isRunning])
 
+  // this needs to be in a useCallback, or outside the parent component. Will not trigger
+  // clicks consistently otherwise.
+  const TimerButton = useCallback(
+    ({
+      type,
+      Icon,
+      tooltip = '',
+      isVisible = true,
+    }: {
+      type: Action['type']
+      Icon: typeof PlayArrowIcon
+      tooltip?: string
+      isVisible?: boolean
+    }) => (
+      <Tooltip title={tooltip}>
+        <Grow in={isVisible}>
+          <IconButton onClick={() => dispatch({ type })} color="primary">
+            <Icon />
+          </IconButton>
+        </Grow>
+      </Tooltip>
+    ),
+    []
+  )
+
   return (
     <>
       <Stack justifyContent="center">
-        {!state.enabled ? (
+        {!enabled ? (
           // extra box so button isn't full width
           <Box display="flex" justifyContent="center">
             <Button onClick={() => dispatch({ type: 'start' })}>
@@ -125,7 +170,11 @@ export default function RestTimer() {
           </Box>
         ) : (
           <>
-            {/* <Typography>Total time: {formatDeltaTime(deltaTime)}</Typography> */}
+            <Grow in={true}>
+              <Typography textAlign="center">
+                {isFinished ? 'Total Session Time' : 'Rest Time'}
+              </Typography>
+            </Grow>
             <Typography
               variant="h3"
               textAlign="center"
@@ -137,36 +186,31 @@ export default function RestTimer() {
               direction="row"
               justifyContent="center"
               spacing={2}
-              sx={{ pb: 2, pt: 1 }}
+              sx={{ pb: 2 }}
             >
               {isRunning ? (
-                <IconButton
-                  onClick={() => dispatch({ type: 'pause' })}
-                  color="primary"
-                  sx={{ height: 40 }}
-                >
-                  <PauseIcon />
-                </IconButton>
+                <TimerButton
+                  type="pause"
+                  Icon={PauseIcon}
+                  tooltip="Pause"
+                  isVisible={!isFinished}
+                />
               ) : (
-                <IconButton
-                  onClick={() => dispatch({ type: 'resume' })}
-                  color="primary"
-                >
-                  <PlayArrowIcon />
-                </IconButton>
+                <TimerButton
+                  type="resume"
+                  Icon={PlayArrowIcon}
+                  tooltip="Resume"
+                  isVisible={!isFinished}
+                />
               )}
-              <IconButton
-                onClick={() => dispatch({ type: 'reset' })}
-                color="primary"
-              >
-                <ReplayIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => dispatch({ type: 'stop' })}
-                color="primary"
-              >
-                <StopIcon />
-              </IconButton>
+              <TimerButton type="reset" Icon={ReplayIcon} tooltip="Reset" />
+              <TimerButton type="stop" Icon={StopIcon} tooltip="Turn Off" />
+              <TimerButton
+                type="finish"
+                Icon={DoneIcon}
+                tooltip="Finish Session"
+                isVisible={!isFinished}
+              />
             </Stack>
           </>
         )}

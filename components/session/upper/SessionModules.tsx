@@ -10,7 +10,13 @@ export default function SessionModules() {
       <Grid xs={12} md={6}>
         <RestTimer />
       </Grid>
-      <Grid xs={12} md={6}>
+      <Grid
+        xs={12}
+        md={6}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
         <WeightUnitConverter />
       </Grid>
     </Grid>
