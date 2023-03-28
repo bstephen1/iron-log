@@ -58,13 +58,5 @@ export const dayjsStringAdd = (
   unit?: dayjs.ManipulateType | undefined
 ) => dayjs(date).add(value, unit).format(DATE_FORMAT)
 
-export const formatTimeFromSeconds = (totalSeconds: number) => {
-  const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
-  const minutes = ('0' + Math.floor((totalSeconds / 60) % 60)).slice(-2)
-  const seconds = ('0' + Math.floor(totalSeconds % 60)).slice(-2)
-
-  return `${hours}:${minutes}:${seconds}`
-}
-
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
 export const doNothing = () => {}

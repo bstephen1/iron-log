@@ -16,9 +16,7 @@ import {
 import Exercise from '../../models/Exercise'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
-import WeightUnitConverter from '../WeightUnitConverter'
 import RecordCard from './records/RecordCard'
-import RestTimer from './upper/RestTimer'
 import TitleBar from './upper/TitleBar'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
@@ -44,6 +42,7 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import Note from '../../models/Note'
 import CopySessionCard from './CopySessionCard'
+import SessionModules from './upper/SessionModules'
 
 export default function SessionView({ date }: { date: Dayjs }) {
   const theme = useTheme()
@@ -122,8 +121,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   return (
     <Stack spacing={2}>
       <TitleBar date={date} />
-      <RestTimer />
-      <WeightUnitConverter />
+      <SessionModules />
       {isLoading ? (
         <Box display="flex" justifyContent="center" py={10}>
           <CircularProgress />
