@@ -43,8 +43,10 @@ import 'swiper/css/scrollbar'
 import Note from '../../models/Note'
 import CopySessionCard from './CopySessionCard'
 import SessionModules from './upper/SessionModules'
+import usePaginationSize from './usePaginationSize'
 
 export default function SessionView({ date }: { date: Dayjs }) {
+  const paginationSize = usePaginationSize()
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
@@ -133,6 +135,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
             display="flex"
             justifyContent="center"
             pt={2}
+            sx={{ ...paginationSize }}
           />
           <Stack direction="row">
             {/* todo: nav button ripples are elongated */}

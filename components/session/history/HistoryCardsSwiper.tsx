@@ -18,6 +18,7 @@ import { useEffect, useMemo, useState } from 'react'
 import 'swiper/css/pagination'
 import { DisplayFields } from '../../../models/DisplayFields'
 import { ArrayMatchType } from '../../../models/query-filters/MongoQuery'
+import usePaginationSize from '../usePaginationSize'
 
 interface Props {
   /** just used as index for pagination className */
@@ -32,6 +33,7 @@ export default function HistoryCardsSwiper({
   displayFields,
   filter,
 }: Props) {
+  const paginationSize = usePaginationSize()
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
   const { records, isLoading } = useRecords({
     ...filter,
@@ -83,6 +85,7 @@ export default function HistoryCardsSwiper({
         display="flex"
         justifyContent="center"
         pt={2}
+        sx={{ ...paginationSize }}
       />
       {/* this box prevents Swiper from deciding it needs to have infinite width for some reason */}
       <Box>
