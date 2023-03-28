@@ -164,7 +164,7 @@ export default function RestTimer() {
         {/* todo: better animations. mui can't really handle stuff that exiting/entering the dom. */}
         {!enabled ? (
           // extra box so button isn't full width
-          <Box display="flex" justifyContent="center">
+          <Box display="flex" justifyContent="center" pb={2}>
             <Button onClick={() => dispatch({ type: 'start' })}>
               Start Rest Timer
             </Button>
