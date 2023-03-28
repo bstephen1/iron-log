@@ -161,6 +161,7 @@ export default function RestTimer() {
   return (
     <>
       <Stack justifyContent="center">
+        {/* todo: better animations. mui can't really handle stuff that exiting/entering the dom. */}
         {!enabled ? (
           // extra box so button isn't full width
           <Box display="flex" justifyContent="center">
@@ -170,18 +171,32 @@ export default function RestTimer() {
           </Box>
         ) : (
           <>
-            <Grow in={true}>
-              <Typography textAlign="center">
-                {isFinished ? 'Total Session Time' : 'Rest Time'}
+            <Grow in={enabled && !isFinished}>
+              <Typography
+                textAlign="center"
+                display={isFinished ? 'none' : 'block'}
+              >
+                Rest Time
               </Typography>
             </Grow>
-            <Typography
-              variant="h3"
-              textAlign="center"
-              // component={isRunning ? Box : BlinkedBox}
-            >
-              {formatDeltaTime(displayValue)}
-            </Typography>
+            <Grow in={enabled && isFinished}>
+              <Typography
+                textAlign="center"
+                display={isFinished ? 'block' : 'none'}
+              >
+                Total Session Time
+              </Typography>
+            </Grow>
+
+            <Grow in={enabled}>
+              <Typography
+                variant="h3"
+                textAlign="center"
+                // component={isRunning ? Box : BlinkedBox}
+              >
+                {formatDeltaTime(displayValue)}
+              </Typography>
+            </Grow>
             <Stack
               direction="row"
               justifyContent="center"
