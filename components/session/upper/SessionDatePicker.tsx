@@ -1,4 +1,4 @@
-import { Badge, TextField } from '@mui/material'
+import { Badge, TextField, TextFieldProps } from '@mui/material'
 import {
   CalendarPickerSkeleton,
   DatePicker,
@@ -10,10 +10,23 @@ import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import { useSessionLogs } from '../../../lib/frontend/restService'
 
 interface Props {
-  date: Dayjs | null
-  handleChange: (date: Dayjs | null) => void
+  date: Dayjs
+  /** Triggered when the picker value changes to a new date.
+   *  Guaranteed to only trigger when the date is valid.
+   */
+  handleDateChange: (date: Dayjs) => void
+  label?: string
+  textFieldProps?: TextFieldProps
 }
-export default function SessionDatePicker({ date, handleChange }: Props) {
+export default function SessionDatePicker({
+  date,
+  label = 'Date',
+  textFieldProps,
+  handleDateChange,
+}: Props) {
+  // You can type freely in a DatePicker. pickerValue updates on input change,
+  // and only triggers handleDateChange when pickerValue changes to a valid date.
+  const [pickerValue, setPickerValue] = useState<Dayjs | null>(date)
   // month is still a full date, but it only updates whenever the month changes
   const [month, setMonth] = useState(date)
   // The query gets data for the current month +/- 1 month so that
@@ -34,6 +47,13 @@ export default function SessionDatePicker({ date, handleChange }: Props) {
     buildSessionLogQuery(0)
   )
 
+  const handleChange = (newPickerValue: Dayjs | null) => {
+    if (newPickerValue?.isValid()) {
+      handleDateChange(newPickerValue)
+    }
+    setPickerValue(newPickerValue)
+  }
+
   // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
 
   // Query the adjacent months to store them in the cache.
@@ -46,10 +66,10 @@ export default function SessionDatePicker({ date, handleChange }: Props) {
     <DatePicker
       showDaysOutsideCurrentMonth
       closeOnSelect // default is true for desktop, false for mobile
-      label="Date"
-      value={date}
+      label={label}
+      value={pickerValue}
       onChange={handleChange}
-      renderInput={(params) => <TextField {...params} fullWidth />}
+      renderInput={(params) => <TextField {...params} {...textFieldProps} />}
       onMonthChange={(newMonth) => setMonth(newMonth)}
       loading={isLoading}
       renderLoading={() => <CalendarPickerSkeleton />}
