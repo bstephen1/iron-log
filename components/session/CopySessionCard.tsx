@@ -13,6 +13,7 @@ import {
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import { Set } from '../../models/Set'
+import SessionDatePicker from './upper/SessionDatePicker'
 
 interface Props {
   handleAddSession: (sessionLog: SessionLog) => void
@@ -22,7 +23,7 @@ export default function CopySessionCard({ date, ...props }: Props) {
   const swiper = useSwiper()
   // may want to init as current day to prevent extra fetch,
   // or optimistically fetch most recent session of the same type
-  const prevDate = date.add(-7, 'day')
+  const [prevDate, setPrevDate] = useState<Dayjs>(date.add(-7, 'day'))
   const { sessionLog: prevSessionLog, isLoading: isSessionLoading } =
     useSessionLog(prevDate)
   const { recordsIndex, isLoading: isRecordLoading } = useRecords({
@@ -30,6 +31,12 @@ export default function CopySessionCard({ date, ...props }: Props) {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
+
+  const handlePrevDateChange = (newPrevDate: Dayjs) => {
+    // reset this so if you tried to copy an empty session the button comes back
+    setIsSessionEmpty(false)
+    setPrevDate(newPrevDate)
+  }
 
   const waitForFetch = () => {
     if (isRecordLoading || isSessionLoading) {
@@ -92,10 +99,16 @@ export default function CopySessionCard({ date, ...props }: Props) {
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
       <Stack spacing={2} alignItems="center">
+        <SessionDatePicker
+          // label="Previous Session"
+          date={prevDate}
+          handleDateChange={handlePrevDateChange}
+          textFieldProps={{ variant: 'standard' }}
+        />
         {/* todo: assign session types to records, and add a selector here
          for latest X session */}
         {isSessionEmpty ? (
-          <Typography> No previous session data!</Typography>
+          <Typography> No session data to copy!</Typography>
         ) : (
           <LoadingButton
             loading={isLoading}
@@ -105,7 +118,7 @@ export default function CopySessionCard({ date, ...props }: Props) {
             variant="contained"
             onClick={handleCopy}
           >
-            Copy last week's session
+            Copy session
           </LoadingButton>
         )}
       </Stack>

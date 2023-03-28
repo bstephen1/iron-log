@@ -1,22 +1,34 @@
-import { Badge, TextField } from '@mui/material'
+import { Badge, TextField, TextFieldProps } from '@mui/material'
 import {
   CalendarPickerSkeleton,
   DatePicker,
   PickersDay,
 } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
-import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import { useSessionLogs } from '../../../lib/frontend/restService'
 
 interface Props {
-  date?: Dayjs | null
+  date: Dayjs
+  /** Triggered when the picker value changes to a new date.
+   *  Guaranteed to only trigger when the date is valid.
+   */
+  handleDateChange: (date: Dayjs) => void
+  label?: string
+  textFieldProps?: TextFieldProps
 }
-export default function SessionDatePicker(props: Props) {
-  const [date, setDate] = useState(props.date)
-  const [month, setMonth] = useState(props.date)
-  const router = useRef(useRouter())
+export default function SessionDatePicker({
+  date,
+  label = 'Date',
+  textFieldProps,
+  handleDateChange,
+}: Props) {
+  // You can type freely in a DatePicker. pickerValue updates on input change,
+  // and only triggers handleDateChange when pickerValue changes to a valid date.
+  const [pickerValue, setPickerValue] = useState<Dayjs | null>(date)
+  // month is still a full date, but it only updates whenever the month changes
+  const [month, setMonth] = useState(date)
   // The query gets data for the current month +/- 1 month so that
   // data for daysOutsideCurrentMonth is still visible on the current month
   const buildSessionLogQuery = (relativeMonth: number) => ({
@@ -31,17 +43,18 @@ export default function SessionDatePicker(props: Props) {
       .format(DATE_FORMAT),
   })
 
-  useEffect(() => {
-    setDate(props.date)
-    // can't just use props.date because that "changes" every render since it's an object
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.date?.format(DATE_FORMAT)])
-
-  // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
-
   const { sessionLogsIndex, isLoading } = useSessionLogs(
     buildSessionLogQuery(0)
   )
+
+  const handleChange = (newPickerValue: Dayjs | null) => {
+    if (newPickerValue?.isValid()) {
+      handleDateChange(newPickerValue)
+    }
+    setPickerValue(newPickerValue)
+  }
+
+  // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
 
   // Query the adjacent months to store them in the cache.
   // UseSwr's cache uses the api uri as the key, so we need to build the same query that the
@@ -49,22 +62,14 @@ export default function SessionDatePicker(props: Props) {
   const _sessionLogsCachePrev = useSessionLogs(buildSessionLogQuery(-1))
   const _sessionLogsCacheNext = useSessionLogs(buildSessionLogQuery(1))
 
-  useEffect(() => {
-    if (date?.isValid()) {
-      // can either useRef here or add router to dep array
-      // not sure which is better. I don't know why router would ever change value
-      router.current.push(`/sessions/${date.format(DATE_FORMAT)}`)
-    }
-  }, [date])
-
   return (
     <DatePicker
       showDaysOutsideCurrentMonth
       closeOnSelect // default is true for desktop, false for mobile
-      label="Date"
-      value={date}
-      onChange={(newDate) => setDate(newDate)}
-      renderInput={(params) => <TextField {...params} fullWidth />}
+      label={label}
+      value={pickerValue}
+      onChange={handleChange}
+      renderInput={(params) => <TextField {...params} {...textFieldProps} />}
       onMonthChange={(newMonth) => setMonth(newMonth)}
       loading={isLoading}
       renderLoading={() => <CalendarPickerSkeleton />}

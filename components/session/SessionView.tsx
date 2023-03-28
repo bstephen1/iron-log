@@ -16,9 +16,7 @@ import {
 import Exercise from '../../models/Exercise'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
-import WeightUnitConverter from '../WeightUnitConverter'
 import RecordCard from './records/RecordCard'
-import Clock from './upper/Clock'
 import TitleBar from './upper/TitleBar'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
@@ -44,8 +42,11 @@ import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
 import Note from '../../models/Note'
 import CopySessionCard from './CopySessionCard'
+import SessionModules from './upper/SessionModules'
+import usePaginationSize from './usePaginationSize'
 
 export default function SessionView({ date }: { date: Dayjs }) {
+  const paginationSize = usePaginationSize()
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
@@ -55,6 +56,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
     useState<Exercise | null>(null)
   // SWR caches this, so it won't need to call the API every render
   const { sessionLog, isError, isLoading, mutate } = useSessionLog(date)
+  const sessionHasRecords = !!sessionLog?.records.length
 
   // todo: this is a placeholder
   if (isError) {
@@ -121,8 +123,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   return (
     <Stack spacing={2}>
       <TitleBar date={date} />
-      <Clock />
-      <WeightUnitConverter />
+      <SessionModules />
       {isLoading ? (
         <Box display="flex" justifyContent="center" py={10}>
           <CircularProgress />
@@ -134,6 +135,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
             display="flex"
             justifyContent="center"
             pt={2}
+            sx={{ ...paginationSize }}
           />
           <Stack direction="row">
             {/* todo: nav button ripples are elongated */}
@@ -189,6 +191,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
               pagination={{
                 el: '.pagination-above',
                 clickable: true,
+                // todo: maybe add a custom render and make the last one a "+" or something.
+                // Kind of tricky to do though.
               }}
               style={{ padding: '15px 10px', flexGrow: '1' }}
             >
@@ -211,12 +215,16 @@ export default function SessionView({ date }: { date: Dayjs }) {
                     </Box>
                   </SwiperSlide>
                 ))}
-              <SwiperSlide>
+
+              <SwiperSlide
+                // if no records, disable swiping. The swiping prevents you from being able to close date picker
+                className={sessionHasRecords ? '' : 'swiper-no-swiping-outer'}
+              >
                 <Stack spacing={2}>
                   <AddRecordCard handleAdd={handleAddRecord} />
                   {/* this looks maybe not great as a separate card now, 
                   but eventually it will have a session type selector */}
-                  {!sessionLog && (
+                  {!sessionHasRecords && (
                     <CopySessionCard
                       date={date}
                       handleAddSession={handleAddSession}
