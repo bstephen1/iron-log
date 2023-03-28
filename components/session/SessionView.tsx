@@ -191,6 +191,8 @@ export default function SessionView({ date }: { date: Dayjs }) {
               pagination={{
                 el: '.pagination-above',
                 clickable: true,
+                // todo: maybe add a custom render and make the last one a "+" or something.
+                // Kind of tricky to do though.
               }}
               style={{ padding: '15px 10px', flexGrow: '1' }}
             >
