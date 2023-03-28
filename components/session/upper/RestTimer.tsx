@@ -1,7 +1,10 @@
-import { Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { useEffect, useReducer } from 'react'
 import { formatTimeFromSeconds } from '../../../lib/util'
+
+import { styled } from '@mui/material/styles'
+import { keyframes } from '@mui/system'
 
 interface State {
   isRunning: boolean
@@ -12,7 +15,7 @@ interface State {
 }
 
 interface Action {
-  type: 'start' | 'resetRest' | 'tick' | 'pause'
+  type: 'start' | 'resetRest' | 'tick' | 'pause' | 'resume'
 }
 
 // this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
@@ -30,6 +33,8 @@ function clockReducer(state: State, action: Action) {
       return { ...state, deltaRestTime: 0, initialRestTime: dayjs().valueOf() }
     case 'pause':
       return { ...state, isRunning: false }
+    case 'resume':
+      return { ...state, isRunning: true }
     case 'tick':
       return {
         ...state,
@@ -41,7 +46,16 @@ function clockReducer(state: State, action: Action) {
   }
 }
 
-export default function Clock() {
+const blink = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`
+
+const BlinkedBox = styled('div')({
+  animation: `${blink} 1s linear infinite`,
+})
+
+export default function RestTimer() {
   const initialClockState: State = {
     initialTime: dayjs().valueOf(),
     initialRestTime: dayjs().valueOf(),
@@ -74,17 +88,21 @@ export default function Clock() {
       {!isRunning && !deltaTime ? (
         <Stack direction="row" justifyContent="center">
           <Button onClick={() => dispatch({ type: 'start' })}>
-            Start Session Clock
+            Start Rest Timer
           </Button>
         </Stack>
       ) : (
         <Stack direction="row" justifyContent="space-between">
-          <Typography>Total time: {formatDeltaTime(deltaTime)}</Typography>
-          <Button onClick={() => dispatch({ type: 'pause' })}>Pause</Button>
-          <Button onClick={() => dispatch({ type: 'resetRest' })}>
-            Reset Rest Time
-          </Button>
-          <Typography>Rest time: {formatDeltaTime(deltaRestTime)}</Typography>
+          {/* <Typography>Total time: {formatDeltaTime(deltaTime)}</Typography> */}
+          <Typography variant="h3" component={isRunning ? Box : BlinkedBox}>
+            {formatDeltaTime(deltaRestTime)}
+          </Typography>
+          {isRunning ? (
+            <Button onClick={() => dispatch({ type: 'pause' })}>Pause</Button>
+          ) : (
+            <Button onClick={() => dispatch({ type: 'resume' })}>Resume</Button>
+          )}
+          <Button onClick={() => dispatch({ type: 'resetRest' })}>Reset</Button>
         </Stack>
       )}
     </>

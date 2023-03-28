@@ -18,7 +18,7 @@ import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import WeightUnitConverter from '../WeightUnitConverter'
 import RecordCard from './records/RecordCard'
-import Clock from './upper/Clock'
+import RestTimer from './upper/RestTimer'
 import TitleBar from './upper/TitleBar'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
@@ -55,6 +55,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
     useState<Exercise | null>(null)
   // SWR caches this, so it won't need to call the API every render
   const { sessionLog, isError, isLoading, mutate } = useSessionLog(date)
+  const sessionHasRecords = !!sessionLog?.records.length
 
   // todo: this is a placeholder
   if (isError) {
@@ -121,7 +122,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   return (
     <Stack spacing={2}>
       <TitleBar date={date} />
-      <Clock />
+      <RestTimer />
       <WeightUnitConverter />
       {isLoading ? (
         <Box display="flex" justifyContent="center" py={10}>
@@ -211,12 +212,16 @@ export default function SessionView({ date }: { date: Dayjs }) {
                     </Box>
                   </SwiperSlide>
                 ))}
-              <SwiperSlide>
+
+              <SwiperSlide
+                // if no records, disable swiping. The swiping prevents you from being able to close date picker
+                className={sessionHasRecords ? '' : 'swiper-no-swiping-outer'}
+              >
                 <Stack spacing={2}>
                   <AddRecordCard handleAdd={handleAddRecord} />
                   {/* this looks maybe not great as a separate card now, 
                   but eventually it will have a session type selector */}
-                  {!sessionLog && (
+                  {!sessionHasRecords && (
                     <CopySessionCard
                       date={date}
                       handleAddSession={handleAddSession}
