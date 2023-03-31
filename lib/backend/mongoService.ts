@@ -69,6 +69,25 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
   }
 }
 
+// todo: would like to extract update functions to a generic function, but it's
+// tough to assign the collection to use. Could probably pass as an arg but the typing
+// is tough
+// async function updateDocument<T extends { _id: string }>(collection: Collection<WithUserId<T>>, userId: ObjectId, document: T) {
+//   // Note: per nodejs mongo adapter docs, ModifyResult<> is deprecated and at some point
+//   // will be removed, leaving findOneAndXXX calls returning just the document itself.
+//   // See: https://mongodb.github.io/node-mongodb-native/5.1/interfaces/ModifyResult.html
+//   const res = await collection.findOneAndReplace(
+//     { userId, _id: document._id },
+//     { ...document, userId },
+//     {
+//       upsert: true,
+//       projection: { userId: 0 },
+//       returnDocument: 'after',
+//     }
+//   )
+//   return res.value
+// }
+
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
 // This is to make the api less tightly coupled to mongo, in case the db changes down the line.
 // Here ObjectId is used instead because this is the service that interfaces with mongo.
@@ -77,15 +96,19 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
 // SESSION
 //---------
 
-export async function addSession(userId: ObjectId, sessionLog: SessionLog) {
-  return await sessions.insertOne({ ...sessionLog, userId })
+export async function addSession(
+  userId: ObjectId,
+  sessionLog: SessionLog
+): Promise<SessionLog> {
+  await sessions.insertOne({ ...sessionLog, userId })
+  return sessionLog
 }
 
-export async function fetchSession(userId: ObjectId, date: string) {
-  return (await sessions.findOne(
-    { userId, date },
-    { projection: { userId: 0 } }
-  )) as SessionLog
+export async function fetchSession(
+  userId: ObjectId,
+  date: string
+): Promise<SessionLog | null> {
+  return await sessions.findOne({ userId, date }, { projection: { userId: 0 } })
 }
 
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
@@ -97,7 +120,7 @@ export async function fetchSessions({
   start = '0',
   end = '9',
   sort = 'newestFirst',
-}: MongoQuery<SessionLog>) {
+}: MongoQuery<SessionLog>): Promise<SessionLog[]> {
   return await sessions
     .find(
       { userId, date: { $gte: start, $lte: end } },
@@ -108,14 +131,20 @@ export async function fetchSessions({
     .toArray()
 }
 
-export async function updateSession(userId: ObjectId, sessionLog: SessionLog) {
-  return await sessions.replaceOne(
+export async function updateSession(
+  userId: ObjectId,
+  sessionLog: SessionLog
+): Promise<SessionLog | null> {
+  const res: ModifyResult<SessionLog> = await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },
     { ...sessionLog, userId },
     {
       upsert: true,
+      projection: { userId: 0 },
+      returnDocument: 'after',
     }
   )
+  return res.value
 }
 
 // todo: make this a transaction?
@@ -123,11 +152,18 @@ export async function deleteSessionRecord(
   userId: ObjectId,
   date: string,
   recordId: string
-) {
-  // $pull is equivalent to removing an element from an array
-  await sessions.updateOne({ userId, date }, { $pull: { records: recordId } })
+): Promise<SessionLog | null> {
   await deleteRecord(userId, recordId)
-  return
+  // $pull is equivalent to removing an element from an array
+  const res: ModifyResult<SessionLog> = await sessions.findOneAndUpdate(
+    { userId, date },
+    { $pull: { records: recordId } },
+    {
+      projection: { userId: 0 },
+      returnDocument: 'after',
+    }
+  )
+  return res.value
 }
 
 // todo: fetch sessions in date range
@@ -136,7 +172,10 @@ export async function deleteSessionRecord(
 // RECORD
 //--------
 
-export async function addRecord(userId: ObjectId, record: Record) {
+export async function addRecord(
+  userId: ObjectId,
+  record: Record
+): Promise<Record> {
   await records.insertOne({ ...record, userId })
   return record
 }
@@ -150,11 +189,11 @@ export async function fetchRecords({
   userId,
   sort = 'newestFirst',
   matchTypes,
-}: MongoQuery<Record>) {
+}: MongoQuery<Record>): Promise<Record[]> {
   setArrayMatchTypes(filter, matchTypes)
 
   // find() returns a cursor, so it has to be converted to an array
-  const res: Record[] = await records
+  return await records
     .aggregate([
       // date range will be overwritten if a specific date is given in the filter
       { $match: { date: { $gte: start, $lte: end }, ...filter, userId } },
@@ -173,13 +212,15 @@ export async function fetchRecords({
     .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
     .toArray()
-  return res
 }
 
 // todo: update record if exercise has been modified since last fetch
-export async function fetchRecord(userId: ObjectId, _id: Record['_id']) {
+export async function fetchRecord(
+  userId: ObjectId,
+  _id: Record['_id']
+): Promise<Record | null> {
   // every interaction with the db collections will have to manually drop the WithUserId<> wrapper
-  const res: Record | null = await records
+  return await records
     .aggregate([
       { $match: { userId, _id } },
       {
@@ -197,10 +238,12 @@ export async function fetchRecord(userId: ObjectId, _id: Record['_id']) {
     ])
     // return just the first (there's only the one)
     .next()
-  return res
 }
 
-export async function updateRecord(userId: ObjectId, record: Record) {
+export async function updateRecord(
+  userId: ObjectId,
+  record: Record
+): Promise<Record | null> {
   // Note: per nodejs mongo adapter docs, ModifyResult<> is deprecated and at some point
   // will be removed, leaving findOneAndXXX calls returning just the document itself.
   // See: https://mongodb.github.io/node-mongodb-native/5.1/interfaces/ModifyResult.html
@@ -219,7 +262,7 @@ export async function updateRecord(userId: ObjectId, record: Record) {
 export async function updateRecordFields(
   userId: ObjectId,
   { id, updates }: UpdateFieldsProps<Record>
-) {
+): Promise<Record | null> {
   const res: ModifyResult<Record> = await records.findOneAndUpdate(
     { userId, _id: id },
     { $set: updates },
@@ -238,8 +281,12 @@ async function deleteRecord(userId: ObjectId, _id: string) {
 // EXERCISE
 //----------
 
-export async function addExercise(userId: ObjectId, exercise: Exercise) {
-  return await exercises.insertOne({ ...exercise, userId })
+export async function addExercise(
+  userId: ObjectId,
+  exercise: Exercise
+): Promise<Exercise> {
+  await exercises.insertOne({ ...exercise, userId })
+  return exercise
 }
 
 /** This fetch supports the array field "categories". By default, a query on categories
@@ -249,7 +296,7 @@ export async function fetchExercises({
   userId,
   filter,
   matchTypes,
-}: MongoQuery<Exercise>) {
+}: MongoQuery<Exercise>): Promise<Exercise[]> {
   setArrayMatchTypes(filter, matchTypes)
 
   return await exercises
@@ -257,34 +304,55 @@ export async function fetchExercises({
     .toArray()
 }
 
-export async function fetchExercise(userId: ObjectId, _id: string) {
+export async function fetchExercise(
+  userId: ObjectId,
+  _id: string
+): Promise<Exercise | null> {
   return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
 // todo: add guard to anything with Status such that Status.new cannot be saved to db.
-export async function updateExercise(userId: ObjectId, exercise: Exercise) {
-  return await exercises.replaceOne(
+export async function updateExercise(
+  userId: ObjectId,
+  exercise: Exercise
+): Promise<Exercise | null> {
+  const res: ModifyResult<Exercise> = await exercises.findOneAndReplace(
     { userId, _id: exercise._id },
     { ...exercise, userId },
     {
       upsert: true,
+      returnDocument: 'after',
+      projection: { userId: 0 },
     }
   )
+  return res.value
 }
 
 export async function updateExerciseFields(
   userId: ObjectId,
   { id, updates }: UpdateFieldsProps<Exercise>
-) {
-  return await exercises.updateOne({ userId, _id: id }, { $set: updates })
+): Promise<Exercise | null> {
+  const res: ModifyResult<Exercise> = await exercises.findOneAndUpdate(
+    { userId, _id: id },
+    { $set: updates },
+    {
+      returnDocument: 'after',
+      projection: { userId: 0 },
+    }
+  )
+  return res.value
 }
 
 //----------
 // MODIFIER
 //----------
 
-export async function addModifier(userId: ObjectId, modifier: Modifier) {
-  return await modifiers.insertOne({ ...modifier, userId })
+export async function addModifier(
+  userId: ObjectId,
+  modifier: Modifier
+): Promise<Modifier> {
+  await modifiers.insertOne({ ...modifier, userId })
+  return modifier
 }
 
 export async function fetchModifiers({
@@ -296,7 +364,10 @@ export async function fetchModifiers({
     .toArray()
 }
 
-export async function fetchModifier(userId: ObjectId, name: string) {
+export async function fetchModifier(
+  userId: ObjectId,
+  name: string
+): Promise<Modifier | null> {
   return await modifiers.findOne(
     { userId, name },
     { projection: { userId: 0, _id: 0 } }
@@ -306,7 +377,7 @@ export async function fetchModifier(userId: ObjectId, name: string) {
 export async function updateModifierFields(
   userId: ObjectId,
   { id, updates }: UpdateFieldsProps<Modifier>
-) {
+): Promise<Modifier | null> {
   if (updates.name) {
     const oldModifier = await modifiers.find({ userId, _id: id }).next()
     await exercises.updateMany(
@@ -329,24 +400,38 @@ export async function updateModifierFields(
       { $set: { 'activeModifiers.$': updates.name } }
     )
   }
-  return await modifiers.updateOne({ userId, _id: id }, { $set: updates })
+  const res: ModifyResult<Modifier> = await modifiers.findOneAndUpdate(
+    { userId, _id: id },
+    { $set: updates },
+    { projection: { userId: 0 }, returnDocument: 'after' }
+  )
+  return res.value
 }
 
 //----------
 // CATEGORY
 //----------
 
-export async function addCategory(userId: ObjectId, category: Category) {
-  return await categories.insertOne({ ...category, userId })
+export async function addCategory(
+  userId: ObjectId,
+  category: Category
+): Promise<Category> {
+  await categories.insertOne({ ...category, userId })
+  return category
 }
 
-export async function fetchCategories(filter?: Filter<Category>) {
+export async function fetchCategories(
+  filter?: Filter<Category>
+): Promise<Category[]> {
   return await categories
     .find({ ...filter }, { projection: { userId: 0 } })
     .toArray()
 }
 
-export async function fetchCategory(userId: ObjectId, name: string) {
+export async function fetchCategory(
+  userId: ObjectId,
+  name: string
+): Promise<Category | null> {
   return await categories.findOne(
     { userId, name },
     { projection: { userId: 0, _id: 0 } }
@@ -356,7 +441,7 @@ export async function fetchCategory(userId: ObjectId, name: string) {
 export async function updateCategoryFields(
   userId: ObjectId,
   { id, updates }: UpdateFieldsProps<Category>
-) {
+): Promise<Category | null> {
   // todo: should this be a transaction? Apparently that requires a cluster
   // can run single testing node as cluster with mongod --replset rs0
   if (updates.name) {
@@ -370,15 +455,24 @@ export async function updateCategoryFields(
       { $set: { category: updates.name } }
     )
   }
-  return await categories.updateOne({ userId, _id: id }, { $set: updates })
+  const res: ModifyResult<Category> = await categories.findOneAndUpdate(
+    { userId, _id: id },
+    { $set: updates },
+    { projection: { userId: 0 }, returnDocument: 'after' }
+  )
+  return res.value
 }
 
 //------------
 // BODYWEIGHT
 //------------
 
-export async function addBodyweight(userId: ObjectId, bodyweight: Bodyweight) {
-  return await bodyweightHistory.insertOne({ ...bodyweight, userId })
+export async function addBodyweight(
+  userId: ObjectId,
+  bodyweight: Bodyweight
+): Promise<Bodyweight> {
+  await bodyweightHistory.insertOne({ ...bodyweight, userId })
+  return bodyweight
 }
 
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
@@ -391,7 +485,7 @@ export async function fetchBodyweightHistory({
   end = '9',
   filter,
   sort,
-}: MongoQuery<Bodyweight>) {
+}: MongoQuery<Bodyweight>): Promise<Bodyweight[]> {
   return await bodyweightHistory
     .find(
       { userId, date: { $gte: start, $lte: end }, ...filter },
@@ -410,24 +504,28 @@ export async function fetchBodyweightHistory({
 export async function updateBodyweight(
   userId: ObjectId,
   newBodyweight: Bodyweight
-) {
-  return await bodyweightHistory.updateOne(
-    { userId, date: newBodyweight.date, type: newBodyweight.type },
-    // Can't just update the doc because the new one will have a new _id.
-    // setOnInsert only activates if upserting. The upsert inserts a new doc built from
-    // the find query plus the update fields (so all fields have to be manually spelled out).
-    // There might be a way to replace the whole doc, but would have to move the _id to setOnInsert.
-    {
-      $set: { value: newBodyweight.value },
-      $setOnInsert: { _id: newBodyweight._id },
-    },
-    {
-      upsert: true,
-    }
-  )
+): Promise<Bodyweight | null> {
+  const res: ModifyResult<Bodyweight> =
+    await bodyweightHistory.findOneAndUpdate(
+      { userId, date: newBodyweight.date, type: newBodyweight.type },
+      // Can't just update the doc because the new one will have a new _id.
+      // setOnInsert only activates if upserting. The upsert inserts a new doc built from
+      // the find query plus the update fields (so all fields have to be manually spelled out).
+      // There might be a way to replace the whole doc, but would have to move the _id to setOnInsert.
+      {
+        $set: { value: newBodyweight.value },
+        $setOnInsert: { _id: newBodyweight._id },
+      },
+      {
+        upsert: true,
+        projection: { userId: 0 },
+        returnDocument: 'after',
+      }
+    )
+  return res.value
 }
 
-// todo: use id, not date.
+// todo: use id, not date. Not currently in use.
 export async function deleteBodyweight(userId: ObjectId, date: string) {
   return await bodyweightHistory.deleteOne({ userId, date })
 }
