@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { ApiError } from 'next/dist/server/api-utils'
 import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
 
+// todo: delete
 export interface ApiResponse<T> {
   /** A null payload is treated as a 404 not found error. An undefined payload means there is no payload to send. */
   payload?: T | null
@@ -15,8 +16,9 @@ export interface ApiResponse<T> {
 export type ApiHandler<T> = (
   req: NextApiRequest,
   userId: UserId
-) => ApiResponse<T> | Promise<ApiResponse<T>>
+) => T | null | Promise<T | null>
 
+// todo: delete
 export const emptyApiResponse = {} as ApiResponse<null>
 
 export const methodNotAllowed = new ApiError(

@@ -14,16 +14,14 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
         console.log(`Incoming ${req.method} on ${req.url} for user ${userId}`)
       }
 
-      const { payload, nullOk } = await handler(req, userId)
+      const payload = await handler(req, userId)
 
-      if (payload === null && !nullOk) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'Record not found.')
-      }
-
-      // .json() must accept a serializable object. Null is considered valid json (returning null),
-      // but undefined is not. So if there is no payload we must send back null instead of undefined.
-      // SWR on the frontend also treats undefined as loading and null as "loading finished, no data".
-      res.status(StatusCodes.OK).json(payload ?? null)
+      // Note: null data is being returned as status 200. Originally it was returning
+      // a 404, but that made implementation more complicated handling the error,
+      // and a 200 makes sense because the request did complete successfully, it was just empty.
+      // A 204 (no content) might semantically make sense, but it breaks json parsing and
+      // the client has to then factor in a null body instead of an empty json object.
+      res.status(StatusCodes.OK).json(payload)
     } catch (e: any) {
       let statusCode = StatusCodes.INTERNAL_SERVER_ERROR
       let message = 'An unexpected error occured.'
