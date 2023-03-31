@@ -1,7 +1,5 @@
-import Record from 'models/Record'
 import type { NextApiRequest } from 'next'
 import {
-  ApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
@@ -9,18 +7,14 @@ import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHand
 import { buildRecordQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchRecords } from '../../../lib/backend/mongoService'
 
-async function handler(
-  req: NextApiRequest,
-  userId: UserId
-): Promise<ApiResponse<Record[]>> {
+async function handler(req: NextApiRequest, userId: UserId) {
   if (req.method !== 'GET') {
     throw methodNotAllowed
   }
 
   const query = buildRecordQuery(req.query, userId)
 
-  const records = await fetchRecords(query)
-  return { payload: records }
+  return await fetchRecords(query)
 }
 
 export default withStatusHandler(handler)

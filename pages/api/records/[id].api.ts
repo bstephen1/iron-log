@@ -1,7 +1,5 @@
-import Record from 'models/Record'
 import type { NextApiRequest } from 'next'
 import {
-  ApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
@@ -14,21 +12,18 @@ import {
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
 
-async function handler(
-  req: NextApiRequest,
-  userId: UserId
-): Promise<ApiResponse<Record>> {
+async function handler(req: NextApiRequest, userId: UserId) {
   const id = validateId(req.query.id)
 
   switch (req.method) {
     case 'GET':
-      return { payload: await fetchRecord(userId, id) }
+      return await fetchRecord(userId, id)
     case 'POST':
-      return { payload: await addRecord(userId, JSON.parse(req.body)) }
+      return await addRecord(userId, JSON.parse(req.body))
     case 'PUT':
-      return { payload: await updateRecord(userId, JSON.parse(req.body)) }
+      return await updateRecord(userId, JSON.parse(req.body))
     case 'PATCH':
-      return { payload: await updateRecordFields(userId, JSON.parse(req.body)) }
+      return await updateRecordFields(userId, JSON.parse(req.body))
     default:
       throw methodNotAllowed
   }
