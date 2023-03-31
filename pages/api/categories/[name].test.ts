@@ -25,31 +25,36 @@ it('fetches given category', async () => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
       await expect(res.json()).resolves.toEqual(data)
+      expect(mockFetch).toHaveBeenCalledTimes(1)
     },
   })
 })
 
 it('adds given category', async () => {
-  await testApiHandler({
+  mockAdd.mockReturnValue(data)
+
+  await testApiHandler<Category>({
     handler: NameApi,
     params: { name: 'name' },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toBe(null)
+      await expect(res.json()).resolves.toEqual(data)
       expect(mockAdd).toHaveBeenCalledTimes(1)
     },
   })
 })
 
 it('updates given category', async () => {
-  await testApiHandler({
+  mockUpdate.mockReturnValue(data)
+
+  await testApiHandler<Category>({
     handler: NameApi,
     params: { name: 'name' },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toBe(null)
+      await expect(res.json()).resolves.toEqual(data)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
     },
   })

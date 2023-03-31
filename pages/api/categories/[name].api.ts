@@ -1,6 +1,7 @@
+import Category from 'models/Category'
 import type { NextApiRequest } from 'next'
 import {
-  emptyApiResponse,
+  ApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
@@ -12,19 +13,21 @@ import {
   updateCategoryFields,
 } from '../../../lib/backend/mongoService'
 
-async function handler(req: NextApiRequest, userId: UserId) {
+async function handler(
+  req: NextApiRequest,
+  userId: UserId
+): Promise<ApiResponse<Category>> {
   const name = validateName(req.query.name)
 
   switch (req.method) {
     case 'GET':
-      const category = await fetchCategory(userId, name)
-      return { payload: category }
+      return { payload: await fetchCategory(userId, name) }
     case 'POST':
-      await addCategory(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return { payload: await addCategory(userId, JSON.parse(req.body)) }
     case 'PATCH':
-      await updateCategoryFields(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return {
+        payload: await updateCategoryFields(userId, JSON.parse(req.body)),
+      }
     default:
       throw methodNotAllowed
   }

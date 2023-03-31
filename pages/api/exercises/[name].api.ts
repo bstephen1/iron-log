@@ -1,6 +1,7 @@
+import Exercise from 'models/Exercise'
 import type { NextApiRequest } from 'next'
 import {
-  emptyApiResponse,
+  ApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
@@ -13,22 +14,23 @@ import {
   updateExerciseFields,
 } from '../../../lib/backend/mongoService'
 
-async function handler(req: NextApiRequest, userId: UserId) {
+async function handler(
+  req: NextApiRequest,
+  userId: UserId
+): Promise<ApiResponse<Exercise>> {
   const name = validateName(req.query.name)
 
   switch (req.method) {
     case 'GET':
-      const exercise = await fetchExercise(userId, name)
-      return { payload: exercise }
+      return { payload: await fetchExercise(userId, name) }
     case 'POST':
-      await addExercise(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return { payload: await addExercise(userId, JSON.parse(req.body)) }
     case 'PUT':
-      await updateExercise(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return { payload: await updateExercise(userId, JSON.parse(req.body)) }
     case 'PATCH':
-      await updateExerciseFields(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return {
+        payload: await updateExerciseFields(userId, JSON.parse(req.body)),
+      }
     default:
       throw methodNotAllowed
   }
