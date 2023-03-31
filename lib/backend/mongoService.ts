@@ -1,4 +1,4 @@
-import { Filter, ObjectId } from 'mongodb'
+import { Filter, ModifyResult, ObjectId } from 'mongodb'
 import Bodyweight from '../../models/Bodyweight'
 import Category from '../../models/Category'
 import Exercise from '../../models/Exercise'
@@ -137,7 +137,8 @@ export async function deleteSessionRecord(
 //--------
 
 export async function addRecord(userId: ObjectId, record: Record) {
-  return await records.insertOne({ ...record, userId })
+  await records.insertOne({ ...record, userId })
+  return record
 }
 
 // todo: pagination
@@ -153,7 +154,7 @@ export async function fetchRecords({
   setArrayMatchTypes(filter, matchTypes)
 
   // find() returns a cursor, so it has to be converted to an array
-  return await records
+  const res: Record[] = await records
     .aggregate([
       // date range will be overwritten if a specific date is given in the filter
       { $match: { date: { $gte: start, $lte: end }, ...filter, userId } },
@@ -172,11 +173,13 @@ export async function fetchRecords({
     .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
     .toArray()
+  return res
 }
 
 // todo: update record if exercise has been modified since last fetch
 export async function fetchRecord(userId: ObjectId, _id: Record['_id']) {
-  return await records
+  // every interaction with the db collections will have to manually drop the WithUserId<> wrapper
+  const res: Record | null = await records
     .aggregate([
       { $match: { userId, _id } },
       {
@@ -194,23 +197,35 @@ export async function fetchRecord(userId: ObjectId, _id: Record['_id']) {
     ])
     // return just the first (there's only the one)
     .next()
+  return res
 }
 
 export async function updateRecord(userId: ObjectId, record: Record) {
-  return await records.replaceOne(
+  // Note: per nodejs mongo adapter docs, ModifyResult<> is deprecated and at some point
+  // will be removed, leaving findOneAndXXX calls returning just the document itself.
+  // See: https://mongodb.github.io/node-mongodb-native/5.1/interfaces/ModifyResult.html
+  const res: ModifyResult<Record> = await records.findOneAndReplace(
     { userId, _id: record._id },
     { ...record, userId },
     {
       upsert: true,
+      projection: { userId: 0 },
+      returnDocument: 'after',
     }
   )
+  return res.value
 }
 
 export async function updateRecordFields(
   userId: ObjectId,
   { id, updates }: UpdateFieldsProps<Record>
 ) {
-  return await records.updateOne({ userId, _id: id }, { $set: updates })
+  const res: ModifyResult<Record> = await records.findOneAndUpdate(
+    { userId, _id: id },
+    { $set: updates },
+    { returnDocument: 'after', projection: { userId: 0 } }
+  )
+  return res.value
 }
 
 // Currently not exporting. To delete call deleteSessionRecord().

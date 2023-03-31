@@ -1,5 +1,6 @@
 import type { NextApiRequest } from 'next'
 import {
+  ApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
@@ -7,7 +8,10 @@ import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHand
 import { buildRecordQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchRecords } from '../../../lib/backend/mongoService'
 
-async function handler(req: NextApiRequest, userId: UserId) {
+async function handler(
+  req: NextApiRequest,
+  userId: UserId
+): Promise<ApiResponse> {
   if (req.method !== 'GET') {
     throw methodNotAllowed
   }
