@@ -6,7 +6,7 @@ import { ApiHandler, getUserId } from './util'
 /** This HOF is responsible for anything involving "res" in the handler.
  * The handler either returns an ApiResponse or throws an ApiError.
  */
-export default function withStatusHandler(handler: ApiHandler) {
+export default function withStatusHandler<T>(handler: ApiHandler<T>) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const userId = await getUserId(req, res)

@@ -1,3 +1,4 @@
+import Record from 'models/Record'
 import type { NextApiRequest } from 'next'
 import {
   ApiResponse,
@@ -11,7 +12,7 @@ import { fetchRecords } from '../../../lib/backend/mongoService'
 async function handler(
   req: NextApiRequest,
   userId: UserId
-): Promise<ApiResponse> {
+): Promise<ApiResponse<Record[]>> {
   if (req.method !== 'GET') {
     throw methodNotAllowed
   }

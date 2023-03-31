@@ -1,3 +1,4 @@
+import Record from 'models/Record'
 import type { NextApiRequest } from 'next'
 import {
   ApiResponse,
@@ -16,7 +17,7 @@ import {
 async function handler(
   req: NextApiRequest,
   userId: UserId
-): Promise<ApiResponse> {
+): Promise<ApiResponse<Record>> {
   const id = validateId(req.query.id)
 
   switch (req.method) {
