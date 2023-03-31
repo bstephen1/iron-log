@@ -190,18 +190,15 @@ export default function RecordCard({
       newSet.side = 'L'
     }
 
-    mutateRecord(
-      { ...record, sets: sets.concat(newSet) },
-      { revalidate: false }
-    )
-    await updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
-    mutateRecord()
+    mutateRecord(updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }), {
+      optimisticData: { ...record, sets: sets.concat(newSet) },
+    })
   }
 
   const handleFieldChange = async (changes: Partial<Record>) => {
-    mutateRecord({ ...record, ...changes }, { revalidate: false })
-    await updateRecordFields(_id, { ...changes })
-    mutateRecord()
+    mutateRecord(updateRecordFields(_id, { ...changes }), {
+      optimisticData: { ...record, ...changes },
+    })
   }
 
   const handleRecordNotesChange = async (notes: Note[]) => {
@@ -234,16 +231,18 @@ export default function RecordCard({
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
     const newSets = [...record.sets]
     newSets[i] = { ...newSets[i], ...changes }
-    mutateRecord({ ...record, sets: newSets }, { revalidate: false })
-    await updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
-    mutateRecord()
+    mutateRecord(
+      updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } }),
+      { optimisticData: { ...record, sets: newSets } }
+    )
   }
 
   const handleDeleteSet = async (i: number) => {
     const newSets = record.sets.filter((_, j) => j !== i)
-    mutateRecord({ ...record, sets: newSets }, { revalidate: false })
-    await updateRecordFields(_id, { ['sets']: newSets })
-    mutateRecord()
+
+    mutateRecord(updateRecordFields(_id, { ['sets']: newSets }), {
+      optimisticData: { ...record, sets: newSets },
+    })
   }
 
   const handleDeleteRecord = async () => {
@@ -265,18 +264,18 @@ export default function RecordCard({
     )
 
     mutateRecord(
-      {
-        ...record,
+      updateRecordFields(_id, {
         exercise: newExercise,
         activeModifiers: remainingModifiers,
-      },
-      { revalidate: false }
+      }),
+      {
+        optimisticData: {
+          ...record,
+          exercise: newExercise,
+          activeModifiers: remainingModifiers,
+        },
+      }
     )
-    await updateRecordFields(_id, {
-      exercise: newExercise,
-      activeModifiers: remainingModifiers,
-    })
-    mutateRecord()
   }
 
   const MoveLeftButton = () => (
@@ -453,15 +452,17 @@ export default function RecordCard({
         }}
       >
         <Tooltip title="Add Set" placement="right">
-          <Fab
-            color="primary"
-            size="medium"
-            disabled={!displayFields?.visibleFields.length}
-            onClick={addSet}
-            className={noSwipingAboveSm}
-          >
-            <AddIcon />
-          </Fab>
+          <span>
+            <Fab
+              color="primary"
+              size="medium"
+              disabled={!displayFields?.visibleFields.length}
+              onClick={addSet}
+              className={noSwipingAboveSm}
+            >
+              <AddIcon />
+            </Fab>
+          </span>
         </Tooltip>
       </CardActions>
     </Card>
