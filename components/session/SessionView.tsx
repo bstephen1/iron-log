@@ -69,30 +69,33 @@ export default function SessionView({ date }: { date: Dayjs }) {
   }
 
   const handleAddSession = async (newSessionLog: SessionLog) => {
+    mutate(newSessionLog, { revalidate: false })
     await updateSessionLog(newSessionLog)
-    mutate(newSessionLog)
+    mutate()
   }
 
   const handleAddRecord = async (exercise: Exercise) => {
     const record = new Record(date.format(DATE_FORMAT), { exercise })
     record.sets.push({})
-    addRecord(record)
     const newSessionLog = sessionLog
       ? {
           ...sessionLog,
           records: sessionLog.records.concat(record._id),
         }
       : new SessionLog(date.format(DATE_FORMAT), [record._id])
+    mutate(newSessionLog, { revalidate: false })
+    await addRecord(record)
     await updateSessionLog(newSessionLog)
-    mutate(newSessionLog)
+    mutate()
   }
 
   const handleNotesChange = async (notes: Note[]) => {
     if (!sessionLog) return
 
     const newSessionLog = { ...sessionLog, notes }
+    mutate(newSessionLog, { revalidate: false })
     await updateSessionLog(newSessionLog)
-    mutate(newSessionLog)
+    mutate()
   }
 
   const handleSwapRecords = async (i: number, j: number) => {
@@ -108,16 +111,18 @@ export default function SessionView({ date }: { date: Dayjs }) {
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
     const newSession = { ...sessionLog, records: newRecords }
+    mutate(newSession, { revalidate: false })
     await updateSessionLog(newSession)
-    mutate(newSession)
+    mutate()
   }
 
   const handleDeleteRecord = async (recordId: string) => {
     if (!sessionLog) return
 
     const newRecords = sessionLog.records.filter((id) => id !== recordId)
+    mutate({ ...sessionLog, records: newRecords }, { revalidate: false })
     await deleteSessionRecord(sessionLog.date, recordId)
-    mutate({ ...sessionLog, records: newRecords })
+    mutate()
   }
 
   return (

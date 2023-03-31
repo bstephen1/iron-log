@@ -105,13 +105,14 @@ export default function SelectorBase<C extends SelectorBaseOption>({
         // add the new record to db if stub is selected
         if (option instanceof SelectorStub) {
           newOption.name = newOptionStub.name
-          await addNewItem(newOption)
           // stub should only ever be a single item at the last index, but filter to be sure.
           // Typescript doesn't recognize the type narrowing though...
           const stubless = (options?.filter(
             (cur) => !(cur instanceof SelectorStub)
           ) || []) as C[]
-          mutateOptions(stubless.concat(newOption))
+          mutateOptions(stubless.concat(newOption), { revalidate: false })
+          await addNewItem(newOption)
+          mutateOptions()
           handleChange(newOption)
           resetNewOption()
         } else {

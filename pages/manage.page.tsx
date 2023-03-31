@@ -107,10 +107,10 @@ export default function ManagePage() {
     if (!exercise) return
 
     const newExercise = { ...exercise, ...updates }
-    await updateExerciseFields(exercise, updates)
-
     setExercise(newExercise)
-    setUrlExercise(newExercise.name, { scroll: false })
+    setUrlExercise(newExercise.name, { scroll: false, shallow: true })
+
+    await updateExerciseFields(exercise, updates)
     // mark exercises as stale and trigger revalidation
     mutateExercises()
   }
@@ -119,11 +119,11 @@ export default function ManagePage() {
     if (!modifier) return
 
     const newModifier = { ...modifier, ...updates }
-    await updateModifierFields(modifier, updates)
-
-    mutateModifiers()
     setModifier(newModifier)
-    setUrlModifier(newModifier.name, { scroll: false })
+    setUrlModifier(newModifier.name, { scroll: false, shallow: true })
+
+    await updateModifierFields(modifier, updates)
+    mutateModifiers()
 
     // exercises need to be updated if name was changed
     !!updates.name && revalidateExercises()
@@ -133,11 +133,11 @@ export default function ManagePage() {
     if (!category) return
 
     const newCategory = { ...category, ...updates }
-    await updateCategoryFields(category, updates)
-
-    mutateCategories()
     setCategory(newCategory)
-    setUrlCategory(newCategory.name, { scroll: false })
+    setUrlCategory(newCategory.name, { scroll: false, shallow: true })
+
+    await updateCategoryFields(category, updates)
+    mutateCategories()
 
     // exercises need to be updated if name was changed
     !!updates.name && revalidateExercises()

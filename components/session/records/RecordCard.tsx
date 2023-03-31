@@ -190,13 +190,18 @@ export default function RecordCard({
       newSet.side = 'L'
     }
 
+    mutateRecord(
+      { ...record, sets: sets.concat(newSet) },
+      { revalidate: false }
+    )
     await updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
-    mutateRecord({ ...record, sets: sets.concat(newSet) })
+    mutateRecord()
   }
 
   const handleFieldChange = async (changes: Partial<Record>) => {
+    mutateRecord({ ...record, ...changes }, { revalidate: false })
     await updateRecordFields(_id, { ...changes })
-    mutateRecord({ ...record, ...changes })
+    mutateRecord()
   }
 
   const handleRecordNotesChange = async (notes: Note[]) => {
@@ -219,25 +224,26 @@ export default function RecordCard({
     if (!exercise) return
 
     const newExercise = { ...exercise, ...changes }
+    mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
     await updateExerciseFields(exercise, { ...changes })
 
-    // setLastChangedExercise() will also mutate the record, but calling it here
-    // will update the currently active card quicker
-    mutateRecord({ ...record, exercise: newExercise })
+    // setLastChangedExercise() will also mutate the record
     setLastChangedExercise(newExercise)
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
-    await updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
     const newSets = [...record.sets]
     newSets[i] = { ...newSets[i], ...changes }
-    mutateRecord({ ...record, sets: newSets })
+    mutateRecord({ ...record, sets: newSets }, { revalidate: false })
+    await updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
+    mutateRecord()
   }
 
   const handleDeleteSet = async (i: number) => {
     const newSets = record.sets.filter((_, j) => j !== i)
+    mutateRecord({ ...record, sets: newSets }, { revalidate: false })
     await updateRecordFields(_id, { ['sets']: newSets })
-    mutateRecord({ ...record, sets: newSets })
+    mutateRecord()
   }
 
   const handleDeleteRecord = async () => {
@@ -258,15 +264,19 @@ export default function RecordCard({
       newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
 
+    mutateRecord(
+      {
+        ...record,
+        exercise: newExercise,
+        activeModifiers: remainingModifiers,
+      },
+      { revalidate: false }
+    )
     await updateRecordFields(_id, {
       exercise: newExercise,
       activeModifiers: remainingModifiers,
     })
-    mutateRecord({
-      ...record,
-      exercise: newExercise,
-      activeModifiers: remainingModifiers,
-    })
+    mutateRecord()
   }
 
   const MoveLeftButton = () => (

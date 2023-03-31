@@ -43,8 +43,9 @@ export default function BodyweightInput({
     const newBodyweight = new Bodyweight(Number(value), bodyweightType, date)
 
     // new weigh-ins on the same day and of the same type will overwrite the previous value.
+    mutate([newBodyweight], { revalidate: false })
     await updateBodyweight(newBodyweight)
-    mutate([newBodyweight])
+    mutate()
   }
 
   const getHelperText = () => {
