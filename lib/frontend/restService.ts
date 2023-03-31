@@ -110,21 +110,21 @@ export function useRecords(query?: RecordQuery) {
   }
 }
 
-export async function addRecord(newRecord: Record) {
+export async function addRecord(newRecord: Record): Promise<Record> {
   return fetch(URI_RECORDS + newRecord._id, {
     method: 'POST',
     body: JSON.stringify(newRecord),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 export async function updateRecordFields(
   id: Record['_id'],
   updates: Partial<Record>
-) {
+): Promise<Record> {
   return fetch(URI_RECORDS + id, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 //----------
