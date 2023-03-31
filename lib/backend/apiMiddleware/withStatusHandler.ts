@@ -14,7 +14,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
         console.log(`Incoming ${req.method} on ${req.url} for user ${userId}`)
       }
 
-      const { statusCode, payload, nullOk } = await handler(req, userId)
+      const { payload, nullOk } = await handler(req, userId)
 
       if (payload === null && !nullOk) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Record not found.')
@@ -23,7 +23,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
       // .json() must accept a serializable object. Null is considered valid json (returning null),
       // but undefined is not. So if there is no payload we must send back null instead of undefined.
       // SWR on the frontend also treats undefined as loading and null as "loading finished, no data".
-      res.status(statusCode || StatusCodes.OK).json(payload ?? null)
+      res.status(StatusCodes.OK).json(payload ?? null)
     } catch (e: any) {
       let statusCode = StatusCodes.INTERNAL_SERVER_ERROR
       let message = 'An unexpected error occured.'

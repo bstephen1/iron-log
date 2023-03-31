@@ -6,7 +6,6 @@ import { ApiError } from 'next/dist/server/api-utils'
 import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
 
 export interface ApiResponse<T> {
-  statusCode?: number
   /** A null payload is treated as a 404 not found error. An undefined payload means there is no payload to send. */
   payload?: T | null
   /** Set to true to allow null payloads without a 404 error */
@@ -18,7 +17,7 @@ export type ApiHandler<T> = (
   userId: UserId
 ) => ApiResponse<T> | Promise<ApiResponse<T>>
 
-export const emptyApiResponse = {} as ApiResponse<any>
+export const emptyApiResponse = {} as ApiResponse<null>
 
 export const methodNotAllowed = new ApiError(
   StatusCodes.METHOD_NOT_ALLOWED,
