@@ -42,7 +42,7 @@ export default function HistoryFilter({ recordId }: Props) {
     }
   }, [record])
 
-  if (!record) return <></>
+  if (!record || !displayFields) return <></>
 
   // todo: may want to merge this into the RecordCard
 
