@@ -11,8 +11,8 @@ export default function useExtraWeight({ record }: Props) {
     end: record?.date,
   })
 
-  if (!record || !modifiersIndex || !bodyweightData) {
-    return 0
+  if (!record || modifiersIndex === undefined || bodyweightData === undefined) {
+    return undefined
   }
 
   const { activeModifiers, exercise } = record
@@ -20,7 +20,7 @@ export default function useExtraWeight({ record }: Props) {
 
   let bodyweight = 0
   if (attributes.bodyweight) {
-    switch (bodyweightData.length) {
+    switch (bodyweightData?.length) {
       case 1:
         bodyweight = bodyweightData[0].value
         break

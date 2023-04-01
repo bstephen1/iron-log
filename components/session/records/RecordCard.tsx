@@ -101,8 +101,9 @@ export default function RecordCard({
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
 
   useEffect(() => {
-    if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id)
+    if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
       return
+    }
 
     mutateRecord({ ...record, exercise: mostRecentlyUpdatedExercise })
 
@@ -117,12 +118,12 @@ export default function RecordCard({
   }, [mostRecentlyUpdatedExercise])
 
   // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
-  // There is an issue where set headers and exercise selector are somehow mounting with null exercise, when
-  // they should only be receiving the record data after it is no longer null.
+  // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
+  // when they should only be receiving the record data after it is no longer null.
 
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
-    console.error('Could not fetch record!')
+    console.trace(isError)
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
@@ -136,7 +137,12 @@ export default function RecordCard({
         </CardContent>
       </Card>
     )
-  } else if (record === undefined || modifiersIndex === undefined) {
+  } else if (
+    record === undefined ||
+    modifiersIndex === undefined ||
+    extraWeight === undefined ||
+    displayFields === undefined
+  ) {
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
