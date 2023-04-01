@@ -63,24 +63,29 @@ export function useSessionLogs(query: DateRangeQuery) {
   }
 }
 
-export async function addSessionLog(session: SessionLog) {
+export async function addSessionLog(session: SessionLog): Promise<SessionLog> {
   return fetch(URI_SESSIONS + session.date, {
     method: 'POST',
     body: JSON.stringify(session),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
-export async function updateSessionLog(newSesson: SessionLog) {
+export async function updateSessionLog(
+  newSesson: SessionLog
+): Promise<SessionLog> {
   return fetch(URI_SESSIONS + newSesson.date, {
     method: 'PUT',
     body: JSON.stringify(newSesson),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
-export async function deleteSessionRecord(date: string, recordId: string) {
+export async function deleteSessionRecord(
+  date: string,
+  recordId: string
+): Promise<SessionLog> {
   return fetch(`${URI_SESSIONS}${date}/records/${recordId}`, {
     method: 'DELETE',
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 //--------
@@ -158,29 +163,29 @@ export function useExercise(id: string | null) {
   }
 }
 
-export async function addExercise(newExercise: Exercise) {
+export async function addExercise(newExercise: Exercise): Promise<Exercise> {
   return fetch(URI_EXERCISES + newExercise.name, {
     method: 'POST',
     body: JSON.stringify(newExercise),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
-export async function updateExercise(newExercise: Exercise) {
+export async function updateExercise(newExercise: Exercise): Promise<Exercise> {
   return fetch(URI_EXERCISES + newExercise.name, {
     method: 'PUT',
     body: JSON.stringify(newExercise),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 export async function updateExerciseFields(
   exercise: Exercise,
   updates: Partial<Exercise>
-) {
+): Promise<Exercise> {
   const id = exercise._id
   return fetch(URI_EXERCISES + exercise.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 //----------
@@ -198,23 +203,23 @@ export function useModifiers() {
   }
 }
 
-export async function addModifier(newModifier: Modifier) {
+export async function addModifier(newModifier: Modifier): Promise<Modifier> {
   return fetch(URI_MODIFIERS + newModifier.name, {
     method: 'POST',
     body: JSON.stringify(newModifier),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 // todo: add a modifiers/id/<id> URI? Weird to use name in uri then send id to backend
 export async function updateModifierFields(
   modifier: Modifier,
   updates: Partial<Modifier>
-) {
+): Promise<Modifier> {
   const id = modifier._id
   return fetch(URI_MODIFIERS + modifier.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 //----------
@@ -231,23 +236,23 @@ export function useCategories() {
   }
 }
 
-export async function addCategory(newCategory: Category) {
+export async function addCategory(newCategory: Category): Promise<Category> {
   return fetch(URI_CATEGORIES + newCategory.name, {
     method: 'POST',
     body: JSON.stringify(newCategory),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 // todo: add a categories/id/<id> URI? Weird to use name in uri then send id to backend
 export async function updateCategoryFields(
   category: Category,
   updates: Partial<Category>
-) {
+): Promise<Category> {
   const id = category._id
   return fetch(URI_CATEGORIES + category.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
 //------------
@@ -275,16 +280,20 @@ export function useBodyweightHistory(query?: BodyweightQuery) {
   }
 }
 
-export async function addBodyweight(newBodyweight: Bodyweight) {
+export async function addBodyweight(
+  newBodyweight: Bodyweight
+): Promise<Bodyweight> {
   return fetch(URI_BODYWEIGHT, {
     method: 'POST',
     body: JSON.stringify(newBodyweight),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
 
-export async function updateBodyweight(newBodyweight: Bodyweight) {
+export async function updateBodyweight(
+  newBodyweight: Bodyweight
+): Promise<Bodyweight> {
   return fetch(URI_BODYWEIGHT, {
     method: 'PUT',
     body: JSON.stringify(newBodyweight),
-  }).catch((e) => console.error(e))
+  }).then((res) => res.json())
 }
