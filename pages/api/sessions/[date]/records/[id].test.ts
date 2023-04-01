@@ -24,7 +24,7 @@ it('fetches given record', async () => {
     params: { id, date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
-      await expect(res.json()).resolves.toEqual(data)
+      await expect(await res.json()).toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
     },
   })
@@ -38,7 +38,7 @@ it('deletes given record', async () => {
     params: { id, date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'DELETE' })
-      expect(res.json()).resolves.toEqual(data)
+      expect(await res.json()).toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
       expect(mockDelete).toHaveBeenCalledTimes(1)
     },
@@ -51,7 +51,7 @@ it('blocks invalid method types', async () => {
     params: { id, date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'TRACE' })
-      expect(res.json()).resolves.toMatch(/not allowed/i)
+      expect(await res.json()).toMatch(/not allowed/i)
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
     },
   })
@@ -63,7 +63,7 @@ it('requires an id', async () => {
     // omit the id param
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
-      expect(res.json()).resolves.toMatch(/id/i)
+      expect(await res.json()).toMatch(/id/i)
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
     },
   })

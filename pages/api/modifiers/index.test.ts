@@ -26,7 +26,7 @@ it('fetches modifiers', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
-      expect(res.json()).resolves.toEqual(data)
+      expect(await res.json()).toEqual(data)
     },
   })
 })
@@ -37,7 +37,7 @@ it('blocks invalid method types', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
-      expect(res.json()).resolves.toMatch(/not allowed/i)
+      expect(await res.json()).toMatch(/not allowed/i)
     },
   })
 })
