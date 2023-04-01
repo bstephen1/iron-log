@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
-import { DATE_FORMAT } from '../lib/frontend/constants'
-import { generateId } from '../lib/util'
+import { DATE_FORMAT } from 'lib/frontend/constants'
+import { generateId } from 'lib/util'
 
 export default class Bodyweight {
   readonly _id: string

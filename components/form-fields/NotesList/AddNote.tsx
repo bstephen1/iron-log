@@ -1,9 +1,9 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
+import TransitionIconButton from 'components/TransitionIconButton'
+import Note from 'models/Note'
 import { useRef, useState } from 'react'
-import Note from '../../../models/Note'
-import TransitionIconButton from '../../TransitionIconButton'
 import useField from '../useField'
 import TagSelect from './TagSelect'
 

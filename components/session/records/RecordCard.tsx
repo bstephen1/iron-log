@@ -21,28 +21,28 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { ComboBoxField } from 'components/form-fields/ComboBoxField'
+import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
+import StyledDivider from 'components/StyledDivider'
 import { Dayjs } from 'dayjs'
-import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
-import { useMeasure } from 'react-use'
-import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
   updateRecordFields,
   useExercises,
   useModifiers,
   useRecord,
-} from '../../../lib/frontend/restService'
-import useDisplayFields from '../../../lib/frontend/useDisplayFields'
-import useExtraWeight from '../../../lib/frontend/useExtraWeight'
-import Exercise from '../../../models/Exercise'
-import Note from '../../../models/Note'
-import Record from '../../../models/Record'
-import { Set } from '../../../models/Set'
-import { Status } from '../../../models/Status'
-import { ComboBoxField } from '../../form-fields/ComboBoxField'
-import { ExerciseSelector } from '../../form-fields/selectors/ExerciseSelector'
-import StyledDivider from '../../StyledDivider'
+} from 'lib/frontend/restService'
+import useDisplayFields from 'lib/frontend/useDisplayFields'
+import useExtraWeight from 'lib/frontend/useExtraWeight'
+import Exercise from 'models/Exercise'
+import Note from 'models/Note'
+import Record from 'models/Record'
+import { Set } from 'models/Set'
+import { Status } from 'models/Status'
+import { useRouter } from 'next/router'
+import { useEffect, useMemo, useState } from 'react'
+import { useMeasure } from 'react-use'
+import { useSwiper, useSwiperSlide } from 'swiper/react'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'

@@ -4,8 +4,8 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
+import { AutocompletePropsAny } from 'lib/util'
 import { ComponentType, useCallback, useEffect, useState } from 'react'
-import { AutocompletePropsAny } from '../../lib/util'
 
 /*
  * HOC to add async loading state to an Autocomplete.

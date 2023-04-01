@@ -1,16 +1,16 @@
-import { Filter, ModifyResult, ObjectId } from 'mongodb'
-import Bodyweight from '../../models/Bodyweight'
-import Category from '../../models/Category'
-import Exercise from '../../models/Exercise'
-import Modifier from '../../models/Modifier'
-import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import Bodyweight from 'models/Bodyweight'
+import Category from 'models/Category'
+import Exercise from 'models/Exercise'
+import Modifier from 'models/Modifier'
+import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import {
   ArrayMatchType,
   MatchTypes,
   MongoQuery,
-} from '../../models/query-filters/MongoQuery'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
+} from 'models/query-filters/MongoQuery'
+import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
+import { Filter, ModifyResult, ObjectId } from 'mongodb'
 import { db } from './mongoConnect'
 
 /** add userId, an extra field only visible to mongo records */

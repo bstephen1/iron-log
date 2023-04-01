@@ -1,4 +1,4 @@
-import { generateId } from '../lib/util'
+import { generateId } from 'lib/util'
 import Note from './Note'
 import Record from './Record'
 

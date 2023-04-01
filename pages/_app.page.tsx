@@ -1,9 +1,9 @@
+import Layout from 'components/Layout'
+import { server } from 'msw-mocks/server'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
+import 'styles/globals.css'
 import { SWRConfig } from 'swr'
-import Layout from '../components/Layout'
-import { server } from '../msw-mocks/server'
-import '../styles/globals.css'
 
 // Enabling this will allow mock rest endpoints in dev mode.
 // In the docs this is supposed to need a separate browser setup,

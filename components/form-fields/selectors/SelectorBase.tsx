@@ -1,9 +1,9 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
+import { GenericAutocompleteProps } from 'lib/util'
+import { SelectorBaseOption } from 'models/SelectorBaseOption'
+import { StatusOrder } from 'models/Status'
 import { useMemo, useState } from 'react'
 import { KeyedMutator } from 'swr'
-import { GenericAutocompleteProps } from '../../../lib/util'
-import { SelectorBaseOption } from '../../../models/SelectorBaseOption'
-import { StatusOrder } from '../../../models/Status'
 
 /** A stub to track the input value so it can be added to the db as a new record.
  * The stub uses a proprietary "Add New" status only available in SelectorBase.

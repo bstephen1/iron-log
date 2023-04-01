@@ -1,15 +1,13 @@
 import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
-import { queryTypes, useQueryState } from 'next-usequerystate'
-import { useEffect, useState } from 'react'
-import CategoryForm from '../components/CategoryForm'
-import ExerciseForm from '../components/ExerciseForm'
-import { CategorySelector } from '../components/form-fields/selectors/CategorySelector'
-import { ExerciseSelector } from '../components/form-fields/selectors/ExerciseSelector'
-import { ModifierSelector } from '../components/form-fields/selectors/ModifierSelector'
-import ManageWelcomeCard from '../components/ManageWelcomeCard'
-import ModifierForm from '../components/ModifierForm'
-import StyledDivider from '../components/StyledDivider'
+import CategoryForm from 'components/CategoryForm'
+import ExerciseForm from 'components/ExerciseForm'
+import { CategorySelector } from 'components/form-fields/selectors/CategorySelector'
+import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
+import { ModifierSelector } from 'components/form-fields/selectors/ModifierSelector'
+import ManageWelcomeCard from 'components/ManageWelcomeCard'
+import ModifierForm from 'components/ModifierForm'
+import StyledDivider from 'components/StyledDivider'
 import {
   updateCategoryFields,
   updateExerciseFields,
@@ -17,10 +15,12 @@ import {
   useCategories,
   useExercises,
   useModifiers,
-} from '../lib/frontend/restService'
-import Category from '../models/Category'
-import Exercise from '../models/Exercise'
-import Modifier from '../models/Modifier'
+} from 'lib/frontend/restService'
+import Category from 'models/Category'
+import Exercise from 'models/Exercise'
+import Modifier from 'models/Modifier'
+import { queryTypes, useQueryState } from 'next-usequerystate'
+import { useEffect, useState } from 'react'
 
 type TabValue = 'exercises' | 'modifiers' | 'categories'
 const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']

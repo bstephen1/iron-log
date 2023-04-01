@@ -7,7 +7,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { doNothing } from '../../lib/util'
+import { doNothing } from 'lib/util'
 import useField from './useField'
 import withAsync from './withAsync'
 

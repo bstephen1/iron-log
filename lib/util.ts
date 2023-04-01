@@ -1,8 +1,8 @@
 import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
 import dayjs from 'dayjs'
+import { SelectorBaseOption } from 'models/SelectorBaseOption'
 import { useMemo } from 'react'
 import { v4 as uuid, validate, version } from 'uuid'
-import { SelectorBaseOption } from '../models/SelectorBaseOption'
 import { DATE_FORMAT } from './frontend/constants'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.

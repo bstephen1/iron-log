@@ -1,4 +1,4 @@
-import { generateId } from '../lib/util'
+import { generateId } from 'lib/util'
 import Exercise from './Exercise'
 import Note from './Note'
 import { Set } from './Set'

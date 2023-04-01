@@ -6,16 +6,16 @@ import {
   useTheme,
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import {
   addRecord,
   deleteSessionRecord,
   updateSessionLog,
   useSessionLog,
-} from '../../lib/frontend/restService'
-import Exercise from '../../models/Exercise'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
+} from 'lib/frontend/restService'
+import Exercise from 'models/Exercise'
+import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
 import RecordCard from './records/RecordCard'
 import TitleBar from './upper/TitleBar'
 
@@ -35,12 +35,12 @@ import AddRecordCard from './AddRecordCard'
 import HistoryFilter from './history/HistoryFilter'
 
 // Swiper needs all these css classes to be imported too
+import Note from 'models/Note'
 import 'swiper/css'
 import 'swiper/css/bundle'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
-import Note from '../../models/Note'
 import CopySessionCard from './CopySessionCard'
 import SessionModules from './upper/SessionModules'
 import usePaginationSize from './usePaginationSize'

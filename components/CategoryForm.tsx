@@ -1,9 +1,9 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
+import { useExercises } from 'lib/frontend/restService'
+import Category from 'models/Category'
 import { useMemo } from 'react'
 import * as yup from 'yup'
-import { useExercises } from '../lib/frontend/restService'
-import Category from '../models/Category'
 import InputField from './form-fields/InputField'
 
 interface Props {

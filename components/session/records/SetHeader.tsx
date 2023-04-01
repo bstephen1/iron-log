@@ -11,13 +11,13 @@ import {
   SelectProps,
   Stack,
 } from '@mui/material'
-import { Fragment, useEffect, useMemo, useState } from 'react'
-import { doNothing } from '../../../lib/util'
+import { doNothing } from 'lib/util'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   VisibleField,
-} from '../../../models/DisplayFields'
+} from 'models/DisplayFields'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 
 interface Props extends Partial<SelectProps<string[]>> {
   displayFields: DisplayFields

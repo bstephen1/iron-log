@@ -1,9 +1,9 @@
+import SessionView from 'components/session/SessionView'
 import dayjs from 'dayjs'
+import { validDateStringRegex } from 'lib/frontend/constants'
 import Error from 'next/error'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import SessionView from '../../components/session/SessionView'
-import { validDateStringRegex } from '../../lib/frontend/constants'
 
 // I guess a separate session number in case you want to do multiple sessions in one day
 // or, add separate sessions to the same day?

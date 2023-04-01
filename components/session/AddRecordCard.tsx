@@ -1,10 +1,10 @@
 import { Button, Paper, Stack } from '@mui/material'
+import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
+import { useExercises } from 'lib/frontend/restService'
+import Exercise from 'models/Exercise'
+import { Status } from 'models/Status'
 import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
-import { useExercises } from '../../lib/frontend/restService'
-import Exercise from '../../models/Exercise'
-import { Status } from '../../models/Status'
-import { ExerciseSelector } from '../form-fields/selectors/ExerciseSelector'
 
 interface Props {
   handleAdd: (exercise: Exercise) => void

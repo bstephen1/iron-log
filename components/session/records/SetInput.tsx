@@ -1,11 +1,11 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import { Box, IconButton, Input, MenuItem, Select, Stack } from '@mui/material'
 import { blue, grey, lightGreen } from '@mui/material/colors'
+import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
+import { doNothing } from 'lib/util'
+import { DisplayFields } from 'models/DisplayFields'
+import { convertUnit, DB_UNITS, Set } from 'models/Set'
 import { useMemo } from 'react'
-import { doNothing } from '../../../lib/util'
-import { DisplayFields } from '../../../models/DisplayFields'
-import { convertUnit, DB_UNITS, Set } from '../../../models/Set'
-import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
 
 const delimiterWidth = '15px'
 

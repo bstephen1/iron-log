@@ -4,17 +4,17 @@ import {
   InputAdornment,
   TextFieldProps,
 } from '@mui/material'
+import InputField from 'components/form-fields/InputField'
 import { Dayjs } from 'dayjs'
-import { useState } from 'react'
-import * as yup from 'yup'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import {
   updateBodyweight,
   useBodyweightHistory,
-} from '../../../lib/frontend/restService'
-import Bodyweight, { WeighInType } from '../../../models/Bodyweight'
-import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
-import InputField from '../../form-fields/InputField'
+} from 'lib/frontend/restService'
+import Bodyweight, { WeighInType } from 'models/Bodyweight'
+import { DEFAULT_DISPLAY_FIELDS } from 'models/DisplayFields'
+import { useState } from 'react'
+import * as yup from 'yup'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
 // todo: when using bw in sets, default this to using the same weight the sets are using

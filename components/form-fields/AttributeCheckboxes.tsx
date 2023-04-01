@@ -5,7 +5,7 @@ import {
   FormControlLabel,
   FormGroup,
 } from '@mui/material'
-import Attributes from '../../models/Attributes'
+import Attributes from 'models/Attributes'
 
 interface Props {
   attributes?: Attributes
