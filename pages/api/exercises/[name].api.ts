@@ -23,9 +23,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'PUT':
       return await updateExercise(userId, JSON.parse(req.body))
     case 'PATCH':
-      return {
-        payload: await updateExerciseFields(userId, JSON.parse(req.body)),
-      }
+      return await updateExerciseFields(userId, JSON.parse(req.body))
     default:
       throw methodNotAllowed
   }
