@@ -110,9 +110,10 @@ export default function SelectorBase<C extends SelectorBaseOption>({
           const stubless = (options?.filter(
             (cur) => !(cur instanceof SelectorStub)
           ) || []) as C[]
-          mutateOptions(stubless.concat(newOption), { revalidate: false })
-          await addNewItem(newOption)
-          mutateOptions()
+          mutateOptions(addNewItem(newOption), {
+            optimisticData: stubless.concat(newOption),
+            revalidate: false,
+          })
           handleChange(newOption)
           resetNewOption()
         } else {
