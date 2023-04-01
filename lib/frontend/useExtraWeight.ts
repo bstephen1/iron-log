@@ -2,7 +2,7 @@ import Record from 'models/Record'
 import { useBodyweightHistory, useModifiers } from './restService'
 
 interface Props {
-  record?: Record
+  record?: Record | null
 }
 export default function useExtraWeight({ record }: Props) {
   const { modifiersIndex } = useModifiers()
@@ -11,11 +11,7 @@ export default function useExtraWeight({ record }: Props) {
     end: record?.date,
   })
 
-  if (
-    record === undefined ||
-    modifiersIndex === undefined ||
-    bodyweightData === undefined
-  ) {
+  if (!record || !modifiersIndex || !bodyweightData) {
     return 0
   }
 

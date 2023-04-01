@@ -116,6 +116,10 @@ export default function RecordCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mostRecentlyUpdatedExercise])
 
+  // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
+  // There is an issue where set headers and exercise selector are somehow mounting with null exercise, when
+  // they should only be receiving the record data after it is no longer null.
+
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
     console.error('Could not fetch record!')
