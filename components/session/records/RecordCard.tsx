@@ -192,12 +192,14 @@ export default function RecordCard({
 
     mutateRecord(updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }), {
       optimisticData: { ...record, sets: sets.concat(newSet) },
+      revalidate: false,
     })
   }
 
   const handleFieldChange = async (changes: Partial<Record>) => {
     mutateRecord(updateRecordFields(_id, { ...changes }), {
       optimisticData: { ...record, ...changes },
+      revalidate: false,
     })
   }
 
@@ -233,7 +235,7 @@ export default function RecordCard({
     newSets[i] = { ...newSets[i], ...changes }
     mutateRecord(
       updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } }),
-      { optimisticData: { ...record, sets: newSets } }
+      { optimisticData: { ...record, sets: newSets }, revalidate: false }
     )
   }
 
@@ -242,6 +244,7 @@ export default function RecordCard({
 
     mutateRecord(updateRecordFields(_id, { ['sets']: newSets }), {
       optimisticData: { ...record, sets: newSets },
+      revalidate: false,
     })
   }
 
@@ -274,6 +277,7 @@ export default function RecordCard({
           exercise: newExercise,
           activeModifiers: remainingModifiers,
         },
+        revalidate: false,
       }
     )
   }
