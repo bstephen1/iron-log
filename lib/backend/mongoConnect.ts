@@ -1,5 +1,5 @@
+import { generateId } from 'lib/util'
 import { MongoClient, W } from 'mongodb'
-import { generateId } from '../util'
 
 if (!process.env.MONGODB_URI) {
   throw new Error('MONGODB_URI is undefined! Define in .env')

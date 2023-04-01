@@ -1,8 +1,8 @@
-import Record from '../../models/Record'
+import Record from 'models/Record'
 import { useBodyweightHistory, useModifiers } from './restService'
 
 interface Props {
-  record?: Record
+  record?: Record | null
 }
 export default function useExtraWeight({ record }: Props) {
   const { modifiersIndex } = useModifiers()
@@ -11,12 +11,8 @@ export default function useExtraWeight({ record }: Props) {
     end: record?.date,
   })
 
-  if (
-    record === undefined ||
-    modifiersIndex === undefined ||
-    bodyweightData === undefined
-  ) {
-    return 0
+  if (!record || modifiersIndex === undefined || bodyweightData === undefined) {
+    return undefined
   }
 
   const { activeModifiers, exercise } = record
@@ -24,7 +20,7 @@ export default function useExtraWeight({ record }: Props) {
 
   let bodyweight = 0
   if (attributes.bodyweight) {
-    switch (bodyweightData.length) {
+    switch (bodyweightData?.length) {
       case 1:
         bodyweight = bodyweightData[0].value
         break

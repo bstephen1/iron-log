@@ -1,4 +1,6 @@
 import { Box, CircularProgress, Stack, Typography } from '@mui/material'
+import { useRecords } from 'lib/frontend/restService'
+import { RecordQuery } from 'models/query-filters/RecordQuery'
 import {
   Controller,
   Navigation,
@@ -7,17 +9,15 @@ import {
   Swiper as SwiperClass,
 } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { useRecords } from '../../../lib/frontend/restService'
-import { RecordQuery } from '../../../models/query-filters/RecordQuery'
 import HistoryCard from './HistoryCard'
 
 import 'swiper/css'
 import 'swiper/css/bundle'
 
+import { DisplayFields } from 'models/DisplayFields'
+import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { useEffect, useMemo, useState } from 'react'
 import 'swiper/css/pagination'
-import { DisplayFields } from '../../../models/DisplayFields'
-import { ArrayMatchType } from '../../../models/query-filters/MongoQuery'
 import usePaginationSize from '../usePaginationSize'
 
 interface Props {

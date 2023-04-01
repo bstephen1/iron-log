@@ -1,5 +1,5 @@
+import { Status } from 'models/Status'
 import { Pool } from 'pg'
-import { Status } from '../../models/Status'
 
 // pool handles managing the client connections
 const pool = new Pool()

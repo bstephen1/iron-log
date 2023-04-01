@@ -1,9 +1,9 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
+import { useExercises } from 'lib/frontend/restService'
+import Modifier from 'models/Modifier'
 import { useMemo } from 'react'
 import * as yup from 'yup'
-import { useExercises } from '../lib/frontend/restService'
-import Modifier from '../models/Modifier'
 import InputField from './form-fields/InputField'
 import NumericFieldAutosave from './form-fields/NumericFieldAutosave'
 

@@ -2,17 +2,13 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { LoadingButton } from '@mui/lab'
 import { Paper, Stack, Typography } from '@mui/material'
 import { Dayjs } from 'dayjs'
+import { DATE_FORMAT } from 'lib/frontend/constants'
+import { addRecord, useRecords, useSessionLog } from 'lib/frontend/restService'
+import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
+import { Set } from 'models/Set'
 import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
-import {
-  addRecord,
-  useRecords,
-  useSessionLog,
-} from '../../lib/frontend/restService'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
-import { Set } from '../../models/Set'
 import SessionDatePicker from './upper/SessionDatePicker'
 
 interface Props {

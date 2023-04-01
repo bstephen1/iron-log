@@ -6,16 +6,16 @@ import {
   useTheme,
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import {
   addRecord,
   deleteSessionRecord,
   updateSessionLog,
   useSessionLog,
-} from '../../lib/frontend/restService'
-import Exercise from '../../models/Exercise'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
+} from 'lib/frontend/restService'
+import Exercise from 'models/Exercise'
+import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
 import RecordCard from './records/RecordCard'
 import TitleBar from './upper/TitleBar'
 
@@ -35,12 +35,12 @@ import AddRecordCard from './AddRecordCard'
 import HistoryFilter from './history/HistoryFilter'
 
 // Swiper needs all these css classes to be imported too
+import Note from 'models/Note'
 import 'swiper/css'
 import 'swiper/css/bundle'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import 'swiper/css/scrollbar'
-import Note from '../../models/Note'
 import CopySessionCard from './CopySessionCard'
 import SessionModules from './upper/SessionModules'
 import usePaginationSize from './usePaginationSize'
@@ -52,7 +52,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
   const [isEnd, setIsEnd] = useState(false)
   // This is used to alert when a record changes an exercise, so other records can
   // be notified and mutate themselves to retrieve the new exercise data.
-  const [lastChangedExercise, setLastChangedExercise] =
+  const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
   // SWR caches this, so it won't need to call the API every render
   const { sessionLog, isError, isLoading, mutate } = useSessionLog(date)
@@ -69,9 +69,10 @@ export default function SessionView({ date }: { date: Dayjs }) {
   }
 
   const handleUpdateSession = async (newSessionLog: SessionLog) => {
-    mutate(newSessionLog, { revalidate: false })
-    await updateSessionLog(newSessionLog)
-    mutate()
+    mutate(updateSessionLog(newSessionLog), {
+      optimisticData: newSessionLog,
+      revalidate: false,
+    })
   }
 
   const handleAddRecord = async (exercise: Exercise) => {
@@ -83,19 +84,21 @@ export default function SessionView({ date }: { date: Dayjs }) {
           records: sessionLog.records.concat(record._id),
         }
       : new SessionLog(date.format(DATE_FORMAT), [record._id])
-    mutate(newSessionLog, { revalidate: false })
+    mutate(updateSessionLog(newSessionLog), {
+      optimisticData: newSessionLog,
+      revalidate: false,
+    })
     await addRecord(record)
-    await updateSessionLog(newSessionLog)
-    mutate()
   }
 
   const handleNotesChange = async (notes: Note[]) => {
     if (!sessionLog) return
 
     const newSessionLog = { ...sessionLog, notes }
-    mutate(newSessionLog, { revalidate: false })
-    await updateSessionLog(newSessionLog)
-    mutate()
+    mutate(updateSessionLog(newSessionLog), {
+      optimisticData: newSessionLog,
+      revalidate: false,
+    })
   }
 
   const handleSwapRecords = async (i: number, j: number) => {
@@ -111,18 +114,20 @@ export default function SessionView({ date }: { date: Dayjs }) {
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
     const newSession = { ...sessionLog, records: newRecords }
-    mutate(newSession, { revalidate: false })
-    await updateSessionLog(newSession)
-    mutate()
+    mutate(updateSessionLog(newSession), {
+      optimisticData: newSession,
+      revalidate: false,
+    })
   }
 
   const handleDeleteRecord = async (recordId: string) => {
     if (!sessionLog) return
 
     const newRecords = sessionLog.records.filter((id) => id !== recordId)
-    mutate({ ...sessionLog, records: newRecords }, { revalidate: false })
-    await deleteSessionRecord(sessionLog.date, recordId)
-    mutate()
+    mutate(deleteSessionRecord(sessionLog.date, recordId), {
+      optimisticData: { ...sessionLog, records: newRecords },
+      revalidate: false,
+    })
   }
 
   return (
@@ -212,8 +217,10 @@ export default function SessionView({ date }: { date: Dayjs }) {
                       swiperIndex={i}
                       updateSessionNotes={handleNotesChange}
                       sessionNotes={sessionLog.notes}
-                      setLastChangedExercise={setLastChangedExercise}
-                      lastChangedExercise={lastChangedExercise}
+                      setMostRecentlyUpdatedExercise={
+                        setMostRecentlyUpdatedExercise
+                      }
+                      mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
                     />
                     <Box py={3}>
                       <HistoryFilter recordId={id} key={id} />

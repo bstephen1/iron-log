@@ -1,18 +1,8 @@
+import { methodNotAllowed, UserId } from 'lib/backend/apiMiddleware/util'
+import withStatusHandler from 'lib/backend/apiMiddleware/withStatusHandler'
+import { valiDate, validateId } from 'lib/backend/apiQueryValidationService'
+import { deleteSessionRecord, fetchRecord } from 'lib/backend/mongoService'
 import type { NextApiRequest } from 'next'
-import {
-  emptyApiResponse,
-  methodNotAllowed,
-  UserId,
-} from '../../../../../lib/backend/apiMiddleware/util'
-import withStatusHandler from '../../../../../lib/backend/apiMiddleware/withStatusHandler'
-import {
-  valiDate,
-  validateId,
-} from '../../../../../lib/backend/apiQueryValidationService'
-import {
-  deleteSessionRecord,
-  fetchRecord,
-} from '../../../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = validateId(req.query.id)
@@ -20,11 +10,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
   switch (req.method) {
     case 'GET':
-      const record = await fetchRecord(userId, id)
-      return { payload: record }
+      return await fetchRecord(userId, id)
     case 'DELETE':
-      await deleteSessionRecord(userId, date, id)
-      return emptyApiResponse
+      return await deleteSessionRecord(userId, date, id)
     default:
       throw methodNotAllowed
   }

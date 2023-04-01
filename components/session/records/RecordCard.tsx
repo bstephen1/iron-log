@@ -21,28 +21,28 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { ComboBoxField } from 'components/form-fields/ComboBoxField'
+import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
+import StyledDivider from 'components/StyledDivider'
 import { Dayjs } from 'dayjs'
-import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
-import { useMeasure } from 'react-use'
-import { useSwiper, useSwiperSlide } from 'swiper/react'
 import {
   updateExerciseFields,
   updateRecordFields,
   useExercises,
   useModifiers,
   useRecord,
-} from '../../../lib/frontend/restService'
-import useDisplayFields from '../../../lib/frontend/useDisplayFields'
-import useExtraWeight from '../../../lib/frontend/useExtraWeight'
-import Exercise from '../../../models/Exercise'
-import Note from '../../../models/Note'
-import Record from '../../../models/Record'
-import { Set } from '../../../models/Set'
-import { Status } from '../../../models/Status'
-import { ComboBoxField } from '../../form-fields/ComboBoxField'
-import { ExerciseSelector } from '../../form-fields/selectors/ExerciseSelector'
-import StyledDivider from '../../StyledDivider'
+} from 'lib/frontend/restService'
+import useDisplayFields from 'lib/frontend/useDisplayFields'
+import useExtraWeight from 'lib/frontend/useExtraWeight'
+import Exercise from 'models/Exercise'
+import Note from 'models/Note'
+import Record from 'models/Record'
+import { Set } from 'models/Set'
+import { Status } from 'models/Status'
+import { useRouter } from 'next/router'
+import { useEffect, useMemo, useState } from 'react'
+import { useMeasure } from 'react-use'
+import { useSwiper, useSwiperSlide } from 'swiper/react'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'
@@ -63,21 +63,20 @@ interface Props {
   date: Dayjs
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
-  setLastChangedExercise: (exercise: Exercise) => void
-  lastChangedExercise: Exercise | null
+  setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
+  /** This allows records within a session that are using the same exercise to see updates to notes/displayFields */
+  mostRecentlyUpdatedExercise: Exercise | null
   updateSessionNotes: (notes: Note[]) => Promise<void>
-  // todo: remove undefined after updating existing prod records to have a session notes array
-  sessionNotes: Note[] | undefined
+  sessionNotes: Note[]
   swiperIndex: number
 }
 export default function RecordCard({
   id,
-  date,
   deleteRecord,
   swapRecords,
   swiperIndex,
-  setLastChangedExercise,
-  lastChangedExercise,
+  setMostRecentlyUpdatedExercise,
+  mostRecentlyUpdatedExercise,
   updateSessionNotes,
   sessionNotes = [],
 }: Props) {
@@ -102,9 +101,11 @@ export default function RecordCard({
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
 
   useEffect(() => {
-    if (!record || lastChangedExercise?._id !== record?.exercise?._id) return
+    if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
+      return
+    }
 
-    mutateRecord({ ...record, exercise: lastChangedExercise })
+    mutateRecord({ ...record, exercise: mostRecentlyUpdatedExercise })
 
     // Adding mutateRecord and record as deps will break the logic.
     // Could address by adding an early return for when lastChangedExercise === null,
@@ -114,11 +115,15 @@ export default function RecordCard({
     // Edit: seems a hook is in the works that will be able to address exactly this issue: useEvent().
     // Supposedly scheduled for release "soon". See: https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastChangedExercise])
+  }, [mostRecentlyUpdatedExercise])
+
+  // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
+  // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
+  // when they should only be receiving the record data after it is no longer null.
 
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
-    console.error('Could not fetch record!')
+    console.trace(isError)
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
@@ -132,7 +137,12 @@ export default function RecordCard({
         </CardContent>
       </Card>
     )
-  } else if (record === undefined || modifiersIndex === undefined) {
+  } else if (
+    record === undefined ||
+    modifiersIndex === undefined ||
+    extraWeight === undefined ||
+    displayFields === undefined
+  ) {
     return (
       <Card elevation={3} sx={{ px: 1 }}>
         <CardHeader
@@ -190,18 +200,17 @@ export default function RecordCard({
       newSet.side = 'L'
     }
 
-    mutateRecord(
-      { ...record, sets: sets.concat(newSet) },
-      { revalidate: false }
-    )
-    await updateRecordFields(_id, { [`sets.${sets.length}`]: newSet })
-    mutateRecord()
+    mutateRecord(updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }), {
+      optimisticData: { ...record, sets: sets.concat(newSet) },
+      revalidate: false,
+    })
   }
 
   const handleFieldChange = async (changes: Partial<Record>) => {
-    mutateRecord({ ...record, ...changes }, { revalidate: false })
-    await updateRecordFields(_id, { ...changes })
-    mutateRecord()
+    mutateRecord(updateRecordFields(_id, { ...changes }), {
+      optimisticData: { ...record, ...changes },
+      revalidate: false,
+    })
   }
 
   const handleRecordNotesChange = async (notes: Note[]) => {
@@ -227,23 +236,26 @@ export default function RecordCard({
     mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
     await updateExerciseFields(exercise, { ...changes })
 
-    // setLastChangedExercise() will also mutate the record
-    setLastChangedExercise(newExercise)
+    // record will be revalidated by useEffect watching the exercise
+    setMostRecentlyUpdatedExercise(newExercise)
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
     const newSets = [...record.sets]
     newSets[i] = { ...newSets[i], ...changes }
-    mutateRecord({ ...record, sets: newSets }, { revalidate: false })
-    await updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } })
-    mutateRecord()
+    mutateRecord(
+      updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } }),
+      { optimisticData: { ...record, sets: newSets }, revalidate: false }
+    )
   }
 
   const handleDeleteSet = async (i: number) => {
     const newSets = record.sets.filter((_, j) => j !== i)
-    mutateRecord({ ...record, sets: newSets }, { revalidate: false })
-    await updateRecordFields(_id, { ['sets']: newSets })
-    mutateRecord()
+
+    mutateRecord(updateRecordFields(_id, { ['sets']: newSets }), {
+      optimisticData: { ...record, sets: newSets },
+      revalidate: false,
+    })
   }
 
   const handleDeleteRecord = async () => {
@@ -265,18 +277,19 @@ export default function RecordCard({
     )
 
     mutateRecord(
-      {
-        ...record,
+      updateRecordFields(_id, {
         exercise: newExercise,
         activeModifiers: remainingModifiers,
-      },
-      { revalidate: false }
+      }),
+      {
+        optimisticData: {
+          ...record,
+          exercise: newExercise,
+          activeModifiers: remainingModifiers,
+        },
+        revalidate: false,
+      }
     )
-    await updateRecordFields(_id, {
-      exercise: newExercise,
-      activeModifiers: remainingModifiers,
-    })
-    mutateRecord()
   }
 
   const MoveLeftButton = () => (
@@ -453,15 +466,17 @@ export default function RecordCard({
         }}
       >
         <Tooltip title="Add Set" placement="right">
-          <Fab
-            color="primary"
-            size="medium"
-            disabled={!displayFields?.visibleFields.length}
-            onClick={addSet}
-            className={noSwipingAboveSm}
-          >
-            <AddIcon />
-          </Fab>
+          <span>
+            <Fab
+              color="primary"
+              size="medium"
+              disabled={!displayFields?.visibleFields.length}
+              onClick={addSet}
+              className={noSwipingAboveSm}
+            >
+              <AddIcon />
+            </Fab>
+          </span>
         </Tooltip>
       </CardActions>
     </Card>

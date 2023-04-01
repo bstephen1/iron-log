@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, Checkbox, Stack } from '@mui/material'
+import { ComboBoxField } from 'components/form-fields/ComboBoxField'
+import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
+import StyledDivider from 'components/StyledDivider'
+import { useRecord } from 'lib/frontend/restService'
+import useDisplayFields from 'lib/frontend/useDisplayFields'
 import { useEffect, useState } from 'react'
-import { useRecord } from '../../../lib/frontend/restService'
-import useDisplayFields from '../../../lib/frontend/useDisplayFields'
-import { ComboBoxField } from '../../form-fields/ComboBoxField'
-import NumericFieldAutosave from '../../form-fields/NumericFieldAutosave'
-import StyledDivider from '../../StyledDivider'
 import HistoryCardsSwiper from './HistoryCardsSwiper'
 
 interface Props {
@@ -42,7 +42,7 @@ export default function HistoryFilter({ recordId }: Props) {
     }
   }, [record])
 
-  if (!record) return <></>
+  if (!record || !displayFields) return <></>
 
   // todo: may want to merge this into the RecordCard
 

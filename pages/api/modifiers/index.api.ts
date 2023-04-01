@@ -1,11 +1,8 @@
+import { methodNotAllowed, UserId } from 'lib/backend/apiMiddleware/util'
+import withStatusHandler from 'lib/backend/apiMiddleware/withStatusHandler'
+import { buildModifierQuery } from 'lib/backend/apiQueryValidationService'
+import { fetchModifiers } from 'lib/backend/mongoService'
 import type { NextApiRequest } from 'next'
-import {
-  methodNotAllowed,
-  UserId,
-} from '../../../lib/backend/apiMiddleware/util'
-import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { buildModifierQuery } from '../../../lib/backend/apiQueryValidationService'
-import { fetchModifiers } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   if (req.method !== 'GET') {
@@ -14,9 +11,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
   const query = buildModifierQuery(req.query, userId)
 
-  const modifiers = await fetchModifiers(query)
-
-  return { payload: modifiers }
+  return await fetchModifiers(query)
 }
 
 export default withStatusHandler(handler)

@@ -1,30 +1,25 @@
-import type { NextApiRequest } from 'next'
-import {
-  emptyApiResponse,
-  methodNotAllowed,
-  UserId,
-} from '../../../lib/backend/apiMiddleware/util'
-import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { buildBodyweightQuery } from '../../../lib/backend/apiQueryValidationService'
+import { methodNotAllowed, UserId } from 'lib/backend/apiMiddleware/util'
+import withStatusHandler from 'lib/backend/apiMiddleware/withStatusHandler'
+import { buildBodyweightQuery } from 'lib/backend/apiQueryValidationService'
 import {
   addBodyweight,
   fetchBodyweightHistory,
   updateBodyweight,
-} from '../../../lib/backend/mongoService'
+} from 'lib/backend/mongoService'
+import type { NextApiRequest } from 'next'
 
+// todo: This endpoint is weird in that it can return a singleton or an array depending on the http method.
+// May want to update it to have a [date].ts for post/put to stay in line with other endpoints.
 async function handler(req: NextApiRequest, userId: UserId) {
   const query = buildBodyweightQuery(req.query, userId)
 
   switch (req.method) {
     case 'GET':
-      const data = await fetchBodyweightHistory(query)
-      return { payload: data }
+      return await fetchBodyweightHistory(query)
     case 'POST':
-      await addBodyweight(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await addBodyweight(userId, JSON.parse(req.body))
     case 'PUT':
-      await updateBodyweight(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await updateBodyweight(userId, JSON.parse(req.body))
     default:
       throw methodNotAllowed
   }

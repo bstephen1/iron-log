@@ -10,6 +10,11 @@ import {
 import Grid from '@mui/system/Unstable_Grid'
 import dayjs from 'dayjs'
 
+import StyledDivider from 'components/StyledDivider'
+import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
+import { useBodyweightHistory, useExercises } from 'lib/frontend/restService'
+import Bodyweight from 'models/Bodyweight'
+import Exercise from 'models/Exercise'
 import { useQueryState } from 'next-usequerystate'
 import { useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
@@ -24,11 +29,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import StyledDivider from '../components/StyledDivider'
-import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from '../lib/frontend/constants'
-import { useBodyweightHistory, useExercises } from '../lib/frontend/restService'
-import Bodyweight from '../models/Bodyweight'
-import Exercise from '../models/Exercise'
 
 interface GraphBodyweight extends Bodyweight {
   epochDate: number

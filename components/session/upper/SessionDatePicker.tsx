@@ -5,9 +5,9 @@ import {
   PickersDay,
 } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
+import { DATE_FORMAT } from 'lib/frontend/constants'
+import { useSessionLogs } from 'lib/frontend/restService'
 import { useState } from 'react'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
-import { useSessionLogs } from '../../../lib/frontend/restService'
 
 interface Props {
   date: Dayjs

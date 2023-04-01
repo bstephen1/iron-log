@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
 
 export default function Page() {
   const router = useRouter()

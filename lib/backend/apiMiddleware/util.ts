@@ -3,22 +3,12 @@ import { ObjectId } from 'mongodb'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { ApiError } from 'next/dist/server/api-utils'
-import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
+import { authOptions } from 'pages/api/auth/[...nextauth].api'
 
-export interface ApiResponse {
-  statusCode?: number
-  /** A null payload is treated as a 404 not found error. An undefined payload means there is no payload to send. */
-  payload?: object | null
-  /** Set to true to allow null payloads without a 404 error */
-  nullOk?: boolean
-}
-
-export type ApiHandler = (
+export type ApiHandler<T> = (
   req: NextApiRequest,
   userId: UserId
-) => ApiResponse | Promise<ApiResponse>
-
-export const emptyApiResponse = {} as ApiResponse
+) => T | null | Promise<T | null>
 
 export const methodNotAllowed = new ApiError(
   StatusCodes.METHOD_NOT_ALLOWED,

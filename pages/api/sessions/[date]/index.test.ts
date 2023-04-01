@@ -31,26 +31,28 @@ it('fetches given session', async () => {
 })
 
 it('fetches null session', async () => {
-  mockFetch.mockReturnValue(null)
+  mockFetch.mockReturnValue(data)
 
   await testApiHandler<SessionLog>({
     handler: IndexApi,
     params: { date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
-      await expect(res.json()).resolves.toEqual(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
     },
   })
 })
 
 it('adds given session', async () => {
+  mockAdd.mockReturnValue(data)
+
   await testApiHandler({
     handler: IndexApi,
     params: { date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
-      await expect(res.json()).resolves.toBe(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
       expect(mockAdd).toHaveBeenCalledTimes(1)
     },
@@ -58,26 +60,28 @@ it('adds given session', async () => {
 })
 
 it('updates given session', async () => {
+  mockUpdate.mockReturnValue(data)
+
   await testApiHandler({
     handler: IndexApi,
     params: { date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
-      await expect(res.json()).resolves.toBe(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
     },
   })
 })
 
-it('xxxxx blocks invalid method types', async () => {
+it('blocks invalid method types', async () => {
   await testApiHandler({
     handler: IndexApi,
     params: { date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'TRACE' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
-      expect(await res.json()).toMatch(/not allowed/i)
+      expect(res.json()).resolves.toMatch(/not allowed/i)
     },
   })
 })
@@ -88,7 +92,7 @@ it('requires a date', async () => {
     // omit the date param
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
-      expect(await res.json()).toMatch(/date/i)
+      expect(res.json()).resolves.toMatch(/date/i)
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
     },
   })

@@ -10,9 +10,9 @@ import {
   RadioGroup,
   Stack,
 } from '@mui/material'
+import { DisplayFields } from 'models/DisplayFields'
+import { UNITS, Units } from 'models/Set'
 import { useState } from 'react'
-import { DisplayFields } from '../../../models/DisplayFields'
-import { UNITS, Units } from '../../../models/Set'
 import RecordHeaderButton from './RecordHeaderButton'
 
 interface Props {

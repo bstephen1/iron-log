@@ -11,13 +11,13 @@ import {
   SelectProps,
   Stack,
 } from '@mui/material'
-import { Fragment, useEffect, useMemo, useState } from 'react'
-import { doNothing } from '../../../lib/util'
+import { doNothing } from 'lib/util'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   VisibleField,
-} from '../../../models/DisplayFields'
+} from 'models/DisplayFields'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 
 interface Props extends Partial<SelectProps<string[]>> {
   displayFields: DisplayFields
@@ -86,7 +86,7 @@ export default function SetHeader({
     // According to MUI docs: "On autofill we get a stringified value",
     // which is the array stringified into a comma separated string.
     // Reassigning the value isn't updating the type so have to assign to a new var
-    const selectedNames =
+    const newSelectedNames =
       typeof rawSelectedNames === 'string'
         ? rawSelectedNames.split(',')
         : rawSelectedNames
@@ -94,11 +94,16 @@ export default function SetHeader({
     // We want to ensure the order is consistent,
     // so don't use the raw value since that will append new values to the end.
     const newVisibleFields = options.filter((optionField) =>
-      selectedNames.some((name) => name === optionField.name)
+      newSelectedNames.some((name) => name === optionField.name)
     )
 
-    setSelectedNames(newVisibleFields.map((field) => field.name))
-    handleSubmit({ ...displayFields, visibleFields: newVisibleFields })
+    // Make sure we aren't submitting if there aren't actually any changes.
+    // Should only need to check the length because if there is a change the length must change.
+    // todo: test for this
+    if (newVisibleFields.length !== selectedNames.length) {
+      setSelectedNames(newVisibleFields.map((field) => field.name))
+      handleSubmit({ ...displayFields, visibleFields: newVisibleFields })
+    }
   }
 
   return (

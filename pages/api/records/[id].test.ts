@@ -34,39 +34,45 @@ it('fetches given record', async () => {
 })
 
 it('adds given record', async () => {
+  mockAdd.mockReturnValue(data)
+
   await testApiHandler({
     handler: IdApi,
     params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toBe(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(mockAdd).toHaveBeenCalledTimes(1)
     },
   })
 })
 
 it('updates given record fields', async () => {
+  mockUpdateFields.mockReturnValue(data)
+
   await testApiHandler({
     handler: IdApi,
     params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toBe(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(mockUpdateFields).toHaveBeenCalledTimes(1)
     },
   })
 })
 
 it('updates given record', async () => {
+  mockUpdate.mockReturnValue(data)
+
   await testApiHandler({
     handler: IdApi,
     params: { id },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toBe(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
     },
   })
@@ -79,7 +85,7 @@ it('blocks invalid method types', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'TRACE' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
-      expect(await res.json()).toMatch(/not allowed/i)
+      expect(res.json()).resolves.toMatch(/not allowed/i)
     },
   })
 })
@@ -103,7 +109,7 @@ it('handles invalid json body', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: 'not json' })
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-      expect(await res.json()).toMatch(/json/i)
+      expect(res.json()).resolves.toMatch(/json/i)
     },
   })
 })

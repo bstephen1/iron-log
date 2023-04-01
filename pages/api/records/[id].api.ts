@@ -1,34 +1,26 @@
-import type { NextApiRequest } from 'next'
-import {
-  emptyApiResponse,
-  methodNotAllowed,
-  UserId,
-} from '../../../lib/backend/apiMiddleware/util'
-import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { validateId } from '../../../lib/backend/apiQueryValidationService'
+import { methodNotAllowed, UserId } from 'lib/backend/apiMiddleware/util'
+import withStatusHandler from 'lib/backend/apiMiddleware/withStatusHandler'
+import { validateId } from 'lib/backend/apiQueryValidationService'
 import {
   addRecord,
   fetchRecord,
   updateRecord,
   updateRecordFields,
-} from '../../../lib/backend/mongoService'
+} from 'lib/backend/mongoService'
+import type { NextApiRequest } from 'next'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = validateId(req.query.id)
 
   switch (req.method) {
     case 'GET':
-      const record = await fetchRecord(userId, id)
-      return { payload: record }
+      return await fetchRecord(userId, id)
     case 'POST':
-      await addRecord(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await addRecord(userId, JSON.parse(req.body))
     case 'PUT':
-      await updateRecord(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await updateRecord(userId, JSON.parse(req.body))
     case 'PATCH':
-      await updateRecordFields(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await updateRecordFields(userId, JSON.parse(req.body))
     default:
       throw methodNotAllowed
   }

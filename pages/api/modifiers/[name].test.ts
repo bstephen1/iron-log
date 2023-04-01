@@ -25,32 +25,37 @@ it('fetches given modifier', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toEqual(data)
+      expect(res.json()).resolves.toEqual(data)
+      expect(mockFetch).toHaveBeenCalledTimes(1)
     },
   })
 })
 
 it('adds given modifier', async () => {
+  mockAdd.mockReturnValue(data)
+
   await testApiHandler({
     handler: NameApi,
     params: { name: 'name' },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toBe(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(mockAdd).toHaveBeenCalledTimes(1)
     },
   })
 })
 
 it('updates given modifier', async () => {
+  mockUpdate.mockReturnValue(data)
+
   await testApiHandler({
     handler: NameApi,
     params: { name: 'name' },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: JSON.stringify(data) })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(res.json()).resolves.toBe(null)
+      expect(res.json()).resolves.toEqual(data)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
     },
   })
@@ -63,7 +68,7 @@ it('blocks invalid method types', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'TRACE' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
-      expect(await res.json()).toMatch(/not allowed/i)
+      expect(res.json()).resolves.toMatch(/not allowed/i)
     },
   })
 })
@@ -75,7 +80,7 @@ it('requires a name', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-      expect(await res.json()).toMatch(/name/i)
+      expect(res.json()).resolves.toMatch(/name/i)
     },
   })
 })
@@ -87,7 +92,7 @@ it('handles invalid json body', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PATCH', body: 'not json' })
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-      expect(await res.json()).toMatch(/json/i)
+      expect(res.json()).resolves.toMatch(/json/i)
     },
   })
 })

@@ -1,7 +1,7 @@
+import { addCategory } from 'lib/frontend/restService'
+import Category from 'models/Category'
 import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
-import { addCategory } from '../../../lib/frontend/restService'
-import Category from '../../../models/Category'
 import withAsync from '../withAsync'
 import SelectorBase from './SelectorBase'
 

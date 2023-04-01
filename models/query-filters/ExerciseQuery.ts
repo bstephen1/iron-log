@@ -1,4 +1,4 @@
-import { Status } from '../Status'
+import { Status } from 'models/Status'
 import { ArrayMatchType } from './MongoQuery'
 
 export interface ExerciseQuery {
