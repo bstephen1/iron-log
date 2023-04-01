@@ -1,6 +1,5 @@
 import type { NextApiRequest } from 'next'
 import {
-  emptyApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../../lib/backend/apiMiddleware/util'
@@ -17,17 +16,11 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
   switch (req.method) {
     case 'GET':
-      const record = await fetchSession(userId, date)
-      // We want to send a null res when there is no session for a given date so the user can
-      // flip through arbitrary dates without creating a bunch of empty SessionLogs. A new
-      // SessionLog should only be created when the user tries to add a Record on an empty date.
-      return { payload: record, nullOk: true }
+      return await fetchSession(userId, date)
     case 'POST':
-      await addSession(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await addSession(userId, JSON.parse(req.body))
     case 'PUT':
-      await updateSession(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await updateSession(userId, JSON.parse(req.body))
     default:
       throw methodNotAllowed
   }

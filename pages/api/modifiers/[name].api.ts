@@ -1,6 +1,5 @@
 import type { NextApiRequest } from 'next'
 import {
-  emptyApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
@@ -17,14 +16,11 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
   switch (req.method) {
     case 'GET':
-      const modifier = await fetchModifier(userId, name)
-      return { payload: modifier }
+      return await fetchModifier(userId, name)
     case 'POST':
-      await addModifier(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await addModifier(userId, JSON.parse(req.body))
     case 'PATCH':
-      await updateModifierFields(userId, JSON.parse(req.body))
-      return emptyApiResponse
+      return await updateModifierFields(userId, JSON.parse(req.body))
     default:
       throw methodNotAllowed
   }

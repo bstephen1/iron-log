@@ -1,6 +1,5 @@
 import type { NextApiRequest } from 'next'
 import {
-  emptyApiResponse,
   methodNotAllowed,
   UserId,
 } from '../../../../../lib/backend/apiMiddleware/util'
@@ -20,11 +19,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
   switch (req.method) {
     case 'GET':
-      const record = await fetchRecord(userId, id)
-      return { payload: record }
+      return await fetchRecord(userId, id)
     case 'DELETE':
-      await deleteSessionRecord(userId, date, id)
-      return emptyApiResponse
+      return await deleteSessionRecord(userId, date, id)
     default:
       throw methodNotAllowed
   }
