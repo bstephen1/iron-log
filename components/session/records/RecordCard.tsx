@@ -63,21 +63,20 @@ interface Props {
   date: Dayjs
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
-  setLastChangedExercise: (exercise: Exercise) => void
-  lastChangedExercise: Exercise | null
+  setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
+  /** This allows records within a session that are using the same exercise to see updates to notes/displayFields */
+  mostRecentlyUpdatedExercise: Exercise | null
   updateSessionNotes: (notes: Note[]) => Promise<void>
-  // todo: remove undefined after updating existing prod records to have a session notes array
-  sessionNotes: Note[] | undefined
+  sessionNotes: Note[]
   swiperIndex: number
 }
 export default function RecordCard({
   id,
-  date,
   deleteRecord,
   swapRecords,
   swiperIndex,
-  setLastChangedExercise,
-  lastChangedExercise,
+  setMostRecentlyUpdatedExercise,
+  mostRecentlyUpdatedExercise,
   updateSessionNotes,
   sessionNotes = [],
 }: Props) {
@@ -102,9 +101,10 @@ export default function RecordCard({
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
 
   useEffect(() => {
-    if (!record || lastChangedExercise?._id !== record?.exercise?._id) return
+    if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id)
+      return
 
-    mutateRecord({ ...record, exercise: lastChangedExercise })
+    mutateRecord({ ...record, exercise: mostRecentlyUpdatedExercise })
 
     // Adding mutateRecord and record as deps will break the logic.
     // Could address by adding an early return for when lastChangedExercise === null,
@@ -114,7 +114,7 @@ export default function RecordCard({
     // Edit: seems a hook is in the works that will be able to address exactly this issue: useEvent().
     // Supposedly scheduled for release "soon". See: https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastChangedExercise])
+  }, [mostRecentlyUpdatedExercise])
 
   // error / loading states repeat a bit of styling from the live record card.
   if (isError) {
@@ -226,8 +226,8 @@ export default function RecordCard({
     mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
     await updateExerciseFields(exercise, { ...changes })
 
-    // setLastChangedExercise() will also mutate the record
-    setLastChangedExercise(newExercise)
+    // record will be revalidated by useEffect watching the exercise
+    setMostRecentlyUpdatedExercise(newExercise)
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
