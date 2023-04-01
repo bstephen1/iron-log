@@ -22,6 +22,8 @@ import {
   URI_SESSIONS,
 } from './constants'
 
+// todo: res.json() breaks if json is null. Have to guard against that.
+
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
 

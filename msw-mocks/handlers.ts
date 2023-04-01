@@ -9,5 +9,7 @@ import { rest } from 'msw'
 export const handlers = [
   // Handler matching is done by order of definition. This handler will
   // match any api endpoint, so it should be defined last and act as a default res.
-  rest.all('/api/*', (_, res, ctx) => res(ctx.status(StatusCodes.OK))),
+  rest.all('/api/*', (_, res, ctx) =>
+    res(ctx.status(StatusCodes.OK), ctx.json({}))
+  ),
 ]

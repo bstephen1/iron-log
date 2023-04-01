@@ -39,11 +39,19 @@ interface ServerOptions {
   delay?: number
   status?: number
 }
-export function useServerGet(url: string, json?: any, options?: ServerOptions) {
+/** Specify an endpoint and json data to return from the mock server.
+ *  This function will intercept the next request at the given endpoint
+ *  over any http method.
+ */
+export function useServerOnce(
+  url: string,
+  json?: any,
+  options?: ServerOptions
+) {
   const { status, delay } = options ?? {}
   server.use(
-    rest.get(url, (_, res, ctx) =>
-      res(
+    rest.all(url, (_, res, ctx) =>
+      res.once(
         ctx.status(status ?? StatusCodes.OK),
         ctx.json(json ?? {}),
         ctx.delay(delay ?? 0)
