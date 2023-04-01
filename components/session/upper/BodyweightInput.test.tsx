@@ -118,7 +118,7 @@ describe('input', () => {
     expect(screen.getByLabelText('submit')).not.toBeVisible()
   })
 
-  fit('submits and revalidates when button is clicked', async () => {
+  it('submits and revalidates when button is clicked', async () => {
     const user = userEvent.setup()
     useServerOnce(URI_BODYWEIGHT, [officialBw])
     render(<BodyweightInput date={date2020} />)
