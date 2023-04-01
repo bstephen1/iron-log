@@ -16,16 +16,18 @@ import { Set } from '../../models/Set'
 import SessionDatePicker from './upper/SessionDatePicker'
 
 interface Props {
-  handleAddSession: (sessionLog: SessionLog) => void
+  handleUpdateSession: (sessionLog: SessionLog) => void
   date: Dayjs
 }
-export default function CopySessionCard({ date, ...props }: Props) {
+export default function CopySessionCard({ date, handleUpdateSession }: Props) {
   const swiper = useSwiper()
   // may want to init as current day to prevent extra fetch,
   // or optimistically fetch most recent session of the same type
   const [prevDate, setPrevDate] = useState<Dayjs>(date.add(-7, 'day'))
-  const { sessionLog: prevSessionLog, isLoading: isSessionLoading } =
+  const { sessionLog: prevSessionLog, isLoading: isPrevSessionLoading } =
     useSessionLog(prevDate)
+  const { sessionLog: curSessionLog, isLoading: isCurSessionLoading } =
+    useSessionLog(date)
   const { recordsIndex, isLoading: isRecordLoading } = useRecords({
     date: prevDate.format(DATE_FORMAT),
   })
@@ -39,7 +41,7 @@ export default function CopySessionCard({ date, ...props }: Props) {
   }
 
   const waitForFetch = () => {
-    if (isRecordLoading || isSessionLoading) {
+    if (isRecordLoading || isPrevSessionLoading || isCurSessionLoading) {
       setTimeout(waitForFetch, 100)
     }
   }
@@ -58,8 +60,10 @@ export default function CopySessionCard({ date, ...props }: Props) {
       return
     }
 
-    // records are ordered via the sessionLog array
-    const newSessionLog = new SessionLog(date.format(DATE_FORMAT))
+    // need to check if the current day already has a session so _id isn't changed
+    const newSessionLog = curSessionLog
+      ? curSessionLog
+      : new SessionLog(date.format(DATE_FORMAT))
 
     // for-await-of construct must be used to ensure the await works properly.
     // See: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
@@ -74,7 +78,7 @@ export default function CopySessionCard({ date, ...props }: Props) {
       await addRecord(newRecord)
       newSessionLog.records.push(newRecord._id)
     }
-    props.handleAddSession(newSessionLog)
+    handleUpdateSession(newSessionLog)
     swiper.update()
 
     if (!newSessionLog.records.length) {

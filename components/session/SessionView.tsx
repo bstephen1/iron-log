@@ -68,7 +68,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
     setIsEnd(swiper.isEnd)
   }
 
-  const handleAddSession = async (newSessionLog: SessionLog) => {
+  const handleUpdateSession = async (newSessionLog: SessionLog) => {
     mutate(newSessionLog, { revalidate: false })
     await updateSessionLog(newSessionLog)
     mutate()
@@ -232,7 +232,7 @@ export default function SessionView({ date }: { date: Dayjs }) {
                   {!sessionHasRecords && (
                     <CopySessionCard
                       date={date}
-                      handleAddSession={handleAddSession}
+                      handleUpdateSession={handleUpdateSession}
                     />
                   )}
                 </Stack>
