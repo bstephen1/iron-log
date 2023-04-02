@@ -135,6 +135,9 @@ export async function updateSession(
   userId: ObjectId,
   sessionLog: SessionLog
 ): Promise<SessionLog | null> {
+  // Note: per nodejs mongo adapter docs, ModifyResult<> is deprecated and at some point
+  // will be removed, leaving findOneAndXXX calls returning just the document itself.
+  // See: https://mongodb.github.io/node-mongodb-native/5.1/interfaces/ModifyResult.html
   const res: ModifyResult<SessionLog> = await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },
     { ...sessionLog, userId },
@@ -244,31 +247,27 @@ export async function updateRecord(
   userId: ObjectId,
   record: Record
 ): Promise<Record | null> {
-  // Note: per nodejs mongo adapter docs, ModifyResult<> is deprecated and at some point
-  // will be removed, leaving findOneAndXXX calls returning just the document itself.
-  // See: https://mongodb.github.io/node-mongodb-native/5.1/interfaces/ModifyResult.html
-  const res: ModifyResult<Record> = await records.findOneAndReplace(
+  await records.replaceOne(
     { userId, _id: record._id },
     { ...record, userId },
     {
       upsert: true,
-      projection: { userId: 0 },
-      returnDocument: 'after',
     }
   )
-  return res.value
+
+  // When updating record, we have to make sure the exercise data is up to date.
+  // Previously mongo functions returned null, so this was done with a separate GET
+  // from the client.
+  // Now, mongo functions are responsible for returning up to date data.
+  return await fetchRecord(userId, record._id)
 }
 
 export async function updateRecordFields(
   userId: ObjectId,
   { id, updates }: UpdateFieldsProps<Record>
 ): Promise<Record | null> {
-  const res: ModifyResult<Record> = await records.findOneAndUpdate(
-    { userId, _id: id },
-    { $set: updates },
-    { returnDocument: 'after', projection: { userId: 0 } }
-  )
-  return res.value
+  await records.updateOne({ userId, _id: id }, { $set: updates })
+  return await fetchRecord(userId, id)
 }
 
 // Currently not exporting. To delete call deleteSessionRecord().
