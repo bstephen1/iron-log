@@ -35,7 +35,11 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
 
     const handleFilterChange = (filtered: Exercise[]) => {
       // if a category is selected and the existing exercise is not in that category, erase the input value.
-      if (exercise && !filtered.some((item) => item.name === exercise.name)) {
+      if (
+        category &&
+        exercise &&
+        !filtered.some((item) => item.name === exercise.name)
+      ) {
         // This was causing a mysterious error for updating a component while
         // rendering a different component.
         // Not sure why but wrapping it in a setTimeout() fixes it.
