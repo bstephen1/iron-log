@@ -177,7 +177,10 @@ export default function ManagePage() {
               exercise,
               handleChange: (exercise) => {
                 setExercise(exercise)
-                setUrlExercise(exercise?.name ?? null, { scroll: false })
+                setUrlExercise(exercise?.name ?? null, {
+                  scroll: false,
+                  shallow: true,
+                })
               },
               exercises,
               mutate: mutateExercises,
@@ -192,7 +195,10 @@ export default function ManagePage() {
               modifier,
               handleChange: (modifier) => {
                 setModifier(modifier)
-                setUrlModifier(modifier?.name ?? null, { scroll: false })
+                setUrlModifier(modifier?.name ?? null, {
+                  scroll: false,
+                  shallow: true,
+                })
               },
               modifiers,
               mutate: mutateModifiers,
@@ -206,7 +212,10 @@ export default function ManagePage() {
               category,
               handleChange: (category) => {
                 setCategory(category)
-                setUrlCategory(category?.name ?? null, { scroll: false })
+                setUrlCategory(category?.name ?? null, {
+                  scroll: false,
+                  shallow: true,
+                })
               },
               categories,
               mutate: mutateCategories,
