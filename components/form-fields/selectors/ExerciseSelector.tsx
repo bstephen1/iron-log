@@ -14,24 +14,23 @@ interface WithExerciseProps {
   exercises: Exercise[] | undefined
   mutate: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
-  handleCategoryFilterChange?: (category: string | null) => void
-  initialCategoryFilter?: string | null
+  handleCategoryChange: (category: string | null) => void
+  category: string | null
 }
 function withExercise(Component: typeof SelectorBase<Exercise>) {
   return function ({
     exercise,
     exercises,
     mutate,
-    handleCategoryFilterChange,
-    initialCategoryFilter = null,
+    handleCategoryChange,
+    category = null,
     ...props
   }: WithExerciseProps) {
     const { categories } = useCategories()
     const categoryNames = useNames(categories)
     const [filterOpen, setFilterOpen] = useState(false)
-    const [category, setCategory] = useState<string | null>(
-      initialCategoryFilter
-    )
+    // It seems that because of the HOC, this whole component gets rerendered on change. So nothing can be set in state
+    // because it will just re-init every render.
 
     const handleFilterChange = (filtered: Exercise[]) => {
       // if a category is selected and the existing exercise is not in that category, erase the input value.
@@ -77,7 +76,7 @@ function withExercise(Component: typeof SelectorBase<Exercise>) {
             {...{
               categories: categoryNames,
               category,
-              setCategory,
+              setCategory: handleCategoryChange,
               handleOpenChange: setFilterOpen,
             }}
           />
