@@ -143,7 +143,7 @@ export default function ManagePage() {
     !!updates.name && revalidateExercises()
   }
 
-  const TabForm = ({ tab }: { tab: TabValue }) => {
+  const Form = ({ tab }: { tab: TabValue }) => {
     switch (tab) {
       default:
       case 'exercises':
@@ -167,6 +167,55 @@ export default function ManagePage() {
     }
   }
 
+  const Selector = ({ tab }: { tab: TabValue }) => {
+    switch (tab) {
+      default:
+      case 'exercises':
+        return (
+          <ExerciseSelector
+            {...{
+              exercise,
+              handleChange: (exercise) => {
+                setExercise(exercise)
+                setUrlExercise(exercise?.name ?? null, { scroll: false })
+              },
+              exercises,
+              mutate: mutateExercises,
+              alwaysShowLoading: true,
+            }}
+          />
+        )
+      case 'modifiers':
+        return (
+          <ModifierSelector
+            {...{
+              modifier,
+              handleChange: (modifier) => {
+                setModifier(modifier)
+                setUrlModifier(modifier?.name ?? null, { scroll: false })
+              },
+              modifiers,
+              mutate: mutateModifiers,
+            }}
+          />
+        )
+      case 'categories':
+        return (
+          <CategorySelector
+            {...{
+              category,
+              handleChange: (category) => {
+                setCategory(category)
+                setUrlCategory(category?.name ?? null, { scroll: false })
+              },
+              categories,
+              mutate: mutateCategories,
+            }}
+          />
+        )
+    }
+  }
+
   return (
     <Grid container spacing={2}>
       <Grid xs={12}>
@@ -176,55 +225,14 @@ export default function ManagePage() {
           ))}
         </Tabs>
       </Grid>
-      {/* keeping the selectors in the dom when on a different tab prevents them 
-            from flashing null every time the tab switches to them */}
-      <Grid xs={12} sx={{ display: tab === 'exercises' ? 'block' : 'none' }}>
-        <ExerciseSelector
-          {...{
-            exercise,
-            handleChange: (exercise) => {
-              setExercise(exercise)
-              setUrlExercise(exercise?.name ?? null, { scroll: false })
-            },
-            exercises,
-            mutate: mutateExercises,
-            alwaysShowLoading: true,
-          }}
-        />
-      </Grid>
-      <Grid xs={12} sx={{ display: tab === 'modifiers' ? 'block' : 'none' }}>
-        <ModifierSelector
-          {...{
-            modifier,
-            handleChange: (modifier) => {
-              setModifier(modifier)
-              setUrlModifier(modifier?.name ?? null, { scroll: false })
-            },
-            modifiers,
-            mutate: mutateModifiers,
-            alwaysShowLoading: true,
-          }}
-        />
-      </Grid>
-      <Grid xs={12} sx={{ display: tab === 'categories' ? 'block' : 'none' }}>
-        <CategorySelector
-          {...{
-            category,
-            handleChange: (category) => {
-              setCategory(category)
-              setUrlCategory(category?.name ?? null, { scroll: false })
-            },
-            categories,
-            mutate: mutateCategories,
-            alwaysShowLoading: true,
-          }}
-        />
+      <Grid xs={12}>
+        <Selector tab={tab} />
       </Grid>
       <Grid xs={12}>
         <StyledDivider />
       </Grid>
       <Grid container xs={12} justifyContent="center">
-        <TabForm tab={tab} />
+        <Form tab={tab} />
       </Grid>
     </Grid>
   )

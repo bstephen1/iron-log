@@ -2,7 +2,7 @@ import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
 import { GenericAutocompleteProps } from 'lib/util'
 import { SelectorBaseOption } from 'models/SelectorBaseOption'
 import { StatusOrder } from 'models/Status'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { KeyedMutator } from 'swr'
 
 /** A stub to track the input value so it can be added to the db as a new record.
@@ -73,6 +73,9 @@ export default function SelectorBase<C extends SelectorBaseOption>({
   const [newOptionStub, setNewOptionStub] = useState(
     new SelectorStub(newOption._id)
   )
+  const [inputValue, setInputValue] = useState(
+    autocompleteProps.value?.name ?? ''
+  )
 
   const resetNewOption = () => {
     const newObj = new Constructor('')
@@ -80,9 +83,32 @@ export default function SelectorBase<C extends SelectorBaseOption>({
     setNewOptionStub(new SelectorStub(newObj._id))
   }
 
+  // This is almost equivalent to updating onInputChange when reason === 'reset',
+  // but it also captures the case where the autocomplete value actually does change on the initial render
+  // (eg, Manage screen since it starts as null until data is fetched)
+  useEffect(() => {
+    setInputValue(autocompleteProps.value?.name ?? '')
+  }, [autocompleteProps.value?.name])
+
   return (
     <Autocomplete<C | SelectorStub>
       renderInput={(params) => <TextField {...params} label={label} />}
+      // Autocomplete has a bug where the input flashes null on mount if it has a preset value.
+      // This is because it calls onInputChange with 'reset' on initial render.
+      // Using inputValue / onInputChange makes the input controlled. By doing this, you can see that on mount the
+      // autocomplete calls onInputChange with a null event and reason 'reset'. By ignoring this the input remains
+      // populated as it should without flashing null. See:
+      // https://github.com/mui/material-ui/issues/19423#issuecomment-639659875
+      // https://stackoverflow.com/a/65679069
+      // https://github.com/mui/material-ui/issues/20939
+      inputValue={inputValue}
+      onInputChange={(_, value, reason) => {
+        // input is reset whenever selecting something from the dropdown menu and on mount
+        if (reason === 'reset') {
+          return
+        }
+        setInputValue(value)
+      }}
       openOnFocus
       fullWidth
       selectOnFocus
