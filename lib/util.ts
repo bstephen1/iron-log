@@ -26,13 +26,12 @@ export interface GenericAutocompletePropsDeprecated<T>
  *  Note mui exports other related prop sets such as UseAutocompleteProps, but these do NOT
  *  contain all relevant props. The only one that does is AutocompleteProps.
  */
-export interface GenericAutocompleteProps<T>
-  extends AutocompleteProps<
-    T,
-    boolean | undefined,
-    boolean | undefined,
-    boolean | undefined
-  > {}
+export interface GenericAutocompleteProps<
+  T,
+  Multiple extends boolean | undefined,
+  DisableClearable extends boolean | undefined,
+  FreeSolo extends boolean | undefined
+> extends AutocompleteProps<T, Multiple, DisableClearable, FreeSolo> {}
 
 /**  memoize mapping out the names so the mapping doesn't run every render */
 export const useNames = (entities?: SelectorBaseOption[]) =>
