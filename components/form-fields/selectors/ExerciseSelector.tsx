@@ -13,21 +13,20 @@ interface ExerciseSelectorProps {
   exercises: Exercise[] | undefined
   mutate: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
-  handleCategoryFilterChange?: (category: string | null) => void
-  initialCategoryFilter?: string | null
+  handleCategoryChange: (category: string | null) => void
+  category: string | null
 }
 export default function ExerciseSelector({
   exercise,
   exercises,
   mutate,
-  handleCategoryFilterChange,
-  initialCategoryFilter = null,
+  handleCategoryChange,
+  category = null,
   ...asyncSelectorProps
 }: ExerciseSelectorProps) {
   const { categories } = useCategories()
   const categoryNames = useNames(categories)
   const [filterOpen, setFilterOpen] = useState(false)
-  const [category, setCategory] = useState<string | null>(initialCategoryFilter)
 
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
@@ -73,7 +72,7 @@ export default function ExerciseSelector({
           {...{
             categories: categoryNames,
             category,
-            setCategory,
+            setCategory: handleCategoryChange,
             handleOpenChange: setFilterOpen,
           }}
         />

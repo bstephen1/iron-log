@@ -410,10 +410,8 @@ export default function RecordCard({
         <Stack spacing={2}>
           <ExerciseSelector
             variant="standard"
-            initialCategoryFilter={record.category}
-            handleCategoryFilterChange={(category) =>
-              handleFieldChange({ category })
-            }
+            category={record.category}
+            handleCategoryChange={(category) => handleFieldChange({ category })}
             {...{
               exercise,
               exercises,
