@@ -237,7 +237,7 @@ export async function fetchRecord(
       // if preserveNull is false the whole record becomes null if exercise is null
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
       // $project is the equivalent of "projection" for aggregate pipelines
-      { $project: { userId: 0 } },
+      { $project: { userId: 0, 'exercise.userId': 0 } },
     ])
     // return just the first (there's only the one)
     .next()
