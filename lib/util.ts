@@ -1,6 +1,5 @@
-import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
+import { AsyncSelectorOption } from 'components/form-fields/selectors/AsyncSelector'
 import dayjs from 'dayjs'
-import { SelectorBaseOption } from 'models/SelectorBaseOption'
 import { useMemo } from 'react'
 import { v4 as uuid, validate, version } from 'uuid'
 import { DATE_FORMAT } from './frontend/constants'
@@ -16,23 +15,8 @@ export const generateId = () => uuid()
  */
 export const isValidId = (id: string) => validate(id) && version(id) === 4
 
-/** shortcut interface to bypass AutocompleteProps' unwieldy generic type */
-// This used to be "undefined" instead of "false" but suddenly ts started complaining about that.
-// Potentially may have been caused by an npm update to mui. The change seems to not be affecting anything else.
-export interface GenericAutocompleteProps<T>
-  extends AutocompleteProps<T, false, false, false> {}
-
-/** With AutocompleteProps only "any" works, but with UseAutocompleteProps we can say boolean | undefined. */
-export interface AutocompletePropsAny
-  extends UseAutocompleteProps<
-    any,
-    boolean | undefined,
-    boolean | undefined,
-    boolean | undefined
-  > {}
-
 /**  memoize mapping out the names so the mapping doesn't run every render */
-export const useNames = (entities?: SelectorBaseOption[]) =>
+export const useNames = (entities?: AsyncSelectorOption[]) =>
   useMemo(() => entities?.map((entity) => entity.name) || [], [entities])
 
 /** Takes an array of objects which each have a given index field and converts them to an object of objects indexed by the given field.

@@ -2,9 +2,9 @@ import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/system/Unstable_Grid'
 import CategoryForm from 'components/CategoryForm'
 import ExerciseForm from 'components/ExerciseForm'
-import { CategorySelector } from 'components/form-fields/selectors/CategorySelector'
-import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
-import { ModifierSelector } from 'components/form-fields/selectors/ModifierSelector'
+import CategorySelector from 'components/form-fields/selectors/CategorySelector'
+import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
+import ModifierSelector from 'components/form-fields/selectors/ModifierSelector'
 import ManageWelcomeCard from 'components/ManageWelcomeCard'
 import ModifierForm from 'components/ModifierForm'
 import StyledDivider from 'components/StyledDivider'
@@ -36,6 +36,7 @@ export default function ManagePage() {
   const [modifier, setModifier] = useState<Modifier | null>(null)
   const [category, setCategory] = useState<Category | null>(null)
   const [tab, setTab] = useState<TabValue>('exercises')
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
 
   // useQueryState is designed to be the source of truth for state. However, it will
   // not work for tabs because SSR will always render the default value (See: https://github.com/47ng/next-usequerystate#caveats)
@@ -143,7 +144,7 @@ export default function ManagePage() {
     !!updates.name && revalidateExercises()
   }
 
-  const TabForm = ({ tab }: { tab: TabValue }) => {
+  const Form = ({ tab }: { tab: TabValue }) => {
     switch (tab) {
       default:
       case 'exercises':
@@ -167,6 +168,66 @@ export default function ManagePage() {
     }
   }
 
+  const Selector = ({ tab }: { tab: TabValue }) => {
+    switch (tab) {
+      default:
+      case 'exercises':
+        return (
+          <ExerciseSelector
+            {...{
+              exercise,
+              handleChange: (exercise) => {
+                setExercise(exercise)
+                setUrlExercise(exercise?.name ?? null, {
+                  scroll: false,
+                  shallow: true,
+                })
+              },
+              exercises,
+              mutate: mutateExercises,
+              alwaysShowLoading: true,
+              category: categoryFilter,
+              handleCategoryChange: setCategoryFilter,
+            }}
+          />
+        )
+      case 'modifiers':
+        return (
+          <ModifierSelector
+            {...{
+              modifier,
+              handleChange: (modifier) => {
+                setModifier(modifier)
+                setUrlModifier(modifier?.name ?? null, {
+                  scroll: false,
+                  shallow: true,
+                })
+              },
+              modifiers,
+              mutate: mutateModifiers,
+            }}
+          />
+        )
+      case 'categories':
+        return (
+          <CategorySelector
+            {...{
+              category,
+              handleChange: (category) => {
+                setCategory(category)
+                setUrlCategory(category?.name ?? null, {
+                  scroll: false,
+                  shallow: true,
+                })
+              },
+              categories,
+              mutate: mutateCategories,
+            }}
+          />
+        )
+    }
+  }
+
   return (
     <Grid container spacing={2}>
       <Grid xs={12}>
@@ -176,55 +237,14 @@ export default function ManagePage() {
           ))}
         </Tabs>
       </Grid>
-      {/* keeping the selectors in the dom when on a different tab prevents them 
-            from flashing null every time the tab switches to them */}
-      <Grid xs={12} sx={{ display: tab === 'exercises' ? 'block' : 'none' }}>
-        <ExerciseSelector
-          {...{
-            exercise,
-            handleChange: (exercise) => {
-              setExercise(exercise)
-              setUrlExercise(exercise?.name ?? null, { scroll: false })
-            },
-            exercises,
-            mutate: mutateExercises,
-            alwaysShowLoading: true,
-          }}
-        />
-      </Grid>
-      <Grid xs={12} sx={{ display: tab === 'modifiers' ? 'block' : 'none' }}>
-        <ModifierSelector
-          {...{
-            modifier,
-            handleChange: (modifier) => {
-              setModifier(modifier)
-              setUrlModifier(modifier?.name ?? null, { scroll: false })
-            },
-            modifiers,
-            mutate: mutateModifiers,
-            alwaysShowLoading: true,
-          }}
-        />
-      </Grid>
-      <Grid xs={12} sx={{ display: tab === 'categories' ? 'block' : 'none' }}>
-        <CategorySelector
-          {...{
-            category,
-            handleChange: (category) => {
-              setCategory(category)
-              setUrlCategory(category?.name ?? null, { scroll: false })
-            },
-            categories,
-            mutate: mutateCategories,
-            alwaysShowLoading: true,
-          }}
-        />
+      <Grid xs={12}>
+        <Selector tab={tab} />
       </Grid>
       <Grid xs={12}>
         <StyledDivider />
       </Grid>
       <Grid container xs={12} justifyContent="center">
-        <TabForm tab={tab} />
+        <Form tab={tab} />
       </Grid>
     </Grid>
   )

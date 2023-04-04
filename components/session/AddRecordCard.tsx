@@ -1,5 +1,5 @@
 import { Button, Paper, Stack } from '@mui/material'
-import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
+import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from 'lib/frontend/restService'
 import Exercise from 'models/Exercise'
 import { Status } from 'models/Status'
@@ -12,6 +12,7 @@ interface Props {
 export default function AddRecordCard(props: Props) {
   const swiper = useSwiper()
   const [exercise, setExercise] = useState<Exercise | null>(null)
+  const [category, setCategory] = useState<string | null>(null)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -35,6 +36,8 @@ export default function AddRecordCard(props: Props) {
             exercises,
             handleChange: (newExercise) => setExercise(newExercise),
             mutate: mutateExercises,
+            category,
+            handleCategoryChange: setCategory,
           }}
         />
         <Button

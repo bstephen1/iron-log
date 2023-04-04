@@ -25,7 +25,6 @@ export default function CategoryFilter({
   setCategory,
   sx,
   handleOpenChange,
-  ...props
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 

@@ -1,9 +1,22 @@
-import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
-import { GenericAutocompleteProps } from 'lib/util'
-import { SelectorBaseOption } from 'models/SelectorBaseOption'
-import { StatusOrder } from 'models/Status'
-import { useMemo, useState } from 'react'
+import { createFilterOptions } from '@mui/material'
+import AsyncAutocomplete, {
+  AsyncAutocompleteProps,
+} from 'components/AsyncAutocomplete'
+import { generateId } from 'lib/util'
+import { Status, StatusOrder } from 'models/Status'
+import { useEffect, useMemo, useState } from 'react'
 import { KeyedMutator } from 'swr'
+
+/** Objects used in AsyncSelector must extend this class. */
+export abstract class AsyncSelectorOption {
+  readonly _id: string
+  protected constructor(
+    public name: string,
+    public status: Status = Status.active
+  ) {
+    this._id = generateId()
+  }
+}
 
 /** A stub to track the input value so it can be added to the db as a new record.
  * The stub uses a proprietary "Add New" status only available in SelectorBase.
@@ -26,11 +39,8 @@ const SelectorStatusOrder = {
   [AddNewStatus.new]: Infinity,
 }
 
-export interface SelectorBaseProps<C>
-  // Partial because this component defines all required Autocomplete props.
-  // Any explicitly given AutocompleteProps will override the defaults
-  extends Partial<GenericAutocompleteProps<C | SelectorStub>> {
-  label?: string
+export interface AsyncSelectorProps<C extends AsyncSelectorOption>
+  extends AsyncAutocompleteProps<C | SelectorStub, false> {
   filterCustom?: (value: C, inputValue?: string) => boolean
   /** This function can be used to reset the input value to null
    * based on the current options in the dropdown */
@@ -43,13 +53,10 @@ export interface SelectorBaseProps<C>
   Constructor: new (name: string) => C
   /**  function to add new C to db */
   addNewItem: (value: C) => Promise<any>
-  /**  withAsync() uses this. It's too cumbersome trying to extend withAsync's props on top of extending SelectorBase so it's included here.  */
-  adornmentOpen?: boolean
-  startAdornment?: JSX.Element // only used in withAsync. Here to make TS happy.
+  /** This component does not support multiple selections. */
+  multiple?: false
 }
-// this component is intended to be ingested as the base layer of a HOC.
-export default function SelectorBase<C extends SelectorBaseOption>({
-  label,
+export default function AsyncSelector<C extends AsyncSelectorOption>({
   filterCustom,
   handleFilterChange,
   handleChange,
@@ -57,9 +64,8 @@ export default function SelectorBase<C extends SelectorBaseOption>({
   mutateOptions,
   Constructor,
   addNewItem,
-  startAdornment,
-  ...autocompleteProps
-}: SelectorBaseProps<C>) {
+  ...asyncAutocompleteProps
+}: AsyncSelectorProps<C>) {
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic. So, useMemo to cache the result
@@ -73,6 +79,9 @@ export default function SelectorBase<C extends SelectorBaseOption>({
   const [newOptionStub, setNewOptionStub] = useState(
     new SelectorStub(newOption._id)
   )
+  const [inputValue, setInputValue] = useState(
+    asyncAutocompleteProps.value?.name ?? ''
+  )
 
   const resetNewOption = () => {
     const newObj = new Constructor('')
@@ -80,9 +89,31 @@ export default function SelectorBase<C extends SelectorBaseOption>({
     setNewOptionStub(new SelectorStub(newObj._id))
   }
 
+  // This is almost equivalent to updating onInputChange when reason === 'reset',
+  // but it also captures the case where the autocomplete value actually does change on the initial render
+  // (eg, Manage screen since it starts as null until data is fetched)
+  useEffect(() => {
+    setInputValue(asyncAutocompleteProps.value?.name ?? '')
+  }, [asyncAutocompleteProps.value?.name])
+
   return (
-    <Autocomplete<C | SelectorStub>
-      renderInput={(params) => <TextField {...params} label={label} />}
+    <AsyncAutocomplete
+      // Autocomplete has a bug where the input flashes null on mount if it has a preset value.
+      // This is because it calls onInputChange with 'reset' on initial render.
+      // Using inputValue / onInputChange makes the input controlled. By doing this, you can see that on mount the
+      // autocomplete calls onInputChange with a null event and reason 'reset'. By ignoring this the input remains
+      // populated as it should without flashing null. See:
+      // https://github.com/mui/material-ui/issues/19423#issuecomment-639659875
+      // https://stackoverflow.com/a/65679069
+      // https://github.com/mui/material-ui/issues/20939
+      inputValue={inputValue}
+      onInputChange={(_, value, reason) => {
+        // reason is reset whenever selecting something from the dropdown menu and on mount
+        if (reason === 'reset') {
+          return
+        }
+        setInputValue(value)
+      }}
       openOnFocus
       fullWidth
       selectOnFocus
@@ -123,7 +154,6 @@ export default function SelectorBase<C extends SelectorBaseOption>({
           handleChange(option)
         }
       }}
-      // todo: extract Add New to yet another HOC? Can add to ComboBoxField
       filterOptions={(options, params) => {
         const { inputValue } = params
         let filtered = filter(options, params)
@@ -150,7 +180,7 @@ export default function SelectorBase<C extends SelectorBaseOption>({
 
         return filtered
       }}
-      {...autocompleteProps}
+      {...asyncAutocompleteProps}
     />
   )
 }
