@@ -53,7 +53,6 @@ export default function AsyncSelector<C extends SelectorBaseOption>({
   mutateOptions,
   Constructor,
   addNewItem,
-  startAdornment,
   ...asyncAutocompleteProps
 }: AsyncSelectorProps<C>) {
   // This allows the autocomplete to filter options as the user types, in real time.

@@ -3,7 +3,7 @@ import Grid from '@mui/system/Unstable_Grid'
 import CategoryForm from 'components/CategoryForm'
 import ExerciseForm from 'components/ExerciseForm'
 import CategorySelector from 'components/form-fields/selectors/CategorySelector'
-import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
+import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import ModifierSelector from 'components/form-fields/selectors/ModifierSelector'
 import ManageWelcomeCard from 'components/ManageWelcomeCard'
 import ModifierForm from 'components/ModifierForm'
@@ -36,7 +36,6 @@ export default function ManagePage() {
   const [modifier, setModifier] = useState<Modifier | null>(null)
   const [category, setCategory] = useState<Category | null>(null)
   const [tab, setTab] = useState<TabValue>('exercises')
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
 
   // useQueryState is designed to be the source of truth for state. However, it will
   // not work for tabs because SSR will always render the default value (See: https://github.com/47ng/next-usequerystate#caveats)
@@ -186,8 +185,6 @@ export default function ManagePage() {
               exercises,
               mutate: mutateExercises,
               alwaysShowLoading: true,
-              category: categoryFilter,
-              handleCategoryChange: setCategoryFilter,
             }}
           />
         )

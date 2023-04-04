@@ -22,7 +22,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
-import { ExerciseSelector } from 'components/form-fields/selectors/ExerciseSelector'
+import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import StyledDivider from 'components/StyledDivider'
 import { Dayjs } from 'dayjs'
 import {
@@ -410,8 +410,10 @@ export default function RecordCard({
         <Stack spacing={2}>
           <ExerciseSelector
             variant="standard"
-            category={record.category}
-            handleCategoryChange={(category) => handleFieldChange({ category })}
+            initialCategoryFilter={record.category}
+            handleCategoryFilterChange={(category) =>
+              handleFieldChange({ category })
+            }
             {...{
               exercise,
               exercises,

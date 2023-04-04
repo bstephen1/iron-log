@@ -14,11 +14,11 @@ export default function ModifierSelector({
   modifiers,
   modifier,
   mutate,
-  ...selectorBaseProps
+  ...asyncSelectorProps
 }: Props) {
   return (
     <AsyncSelector
-      {...selectorBaseProps}
+      {...asyncSelectorProps}
       options={modifiers}
       mutateOptions={mutate}
       value={modifier}

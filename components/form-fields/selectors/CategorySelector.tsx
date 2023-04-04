@@ -2,7 +2,7 @@ import { addCategory } from 'lib/frontend/restService'
 import Category from 'models/Category'
 import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
-import SelectorBase from './SelectorBase'
+import AsyncSelector from './AsyncSelector'
 
 interface Props {
   categories?: Category[]
@@ -14,11 +14,11 @@ export default function CategorySelector({
   categories,
   category,
   mutate,
-  ...props
+  ...asyncSelectorProps
 }: Props) {
   return (
-    <SelectorBase
-      {...props}
+    <AsyncSelector
+      {...asyncSelectorProps}
       options={categories}
       mutateOptions={mutate}
       value={category}
