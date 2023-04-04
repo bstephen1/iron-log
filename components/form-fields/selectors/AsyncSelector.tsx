@@ -2,10 +2,21 @@ import { createFilterOptions } from '@mui/material'
 import AsyncAutocomplete, {
   AsyncAutocompleteProps,
 } from 'components/AsyncAutocomplete'
-import { SelectorBaseOption } from 'models/SelectorBaseOption'
-import { StatusOrder } from 'models/Status'
+import { generateId } from 'lib/util'
+import { Status, StatusOrder } from 'models/Status'
 import { useEffect, useMemo, useState } from 'react'
 import { KeyedMutator } from 'swr'
+
+/** Objects used in AsyncSelector must extend this class. */
+export abstract class AsyncSelectorOption {
+  readonly _id: string
+  protected constructor(
+    public name: string,
+    public status: Status = Status.active
+  ) {
+    this._id = generateId()
+  }
+}
 
 /** A stub to track the input value so it can be added to the db as a new record.
  * The stub uses a proprietary "Add New" status only available in SelectorBase.
@@ -28,7 +39,7 @@ const SelectorStatusOrder = {
   [AddNewStatus.new]: Infinity,
 }
 
-export interface AsyncSelectorProps<C extends SelectorBaseOption>
+export interface AsyncSelectorProps<C extends AsyncSelectorOption>
   extends AsyncAutocompleteProps<C | SelectorStub, false> {
   filterCustom?: (value: C, inputValue?: string) => boolean
   /** This function can be used to reset the input value to null
@@ -45,7 +56,7 @@ export interface AsyncSelectorProps<C extends SelectorBaseOption>
   /** This component does not support multiple selections. */
   multiple?: false
 }
-export default function AsyncSelector<C extends SelectorBaseOption>({
+export default function AsyncSelector<C extends AsyncSelectorOption>({
   filterCustom,
   handleFilterChange,
   handleChange,

@@ -1,10 +1,10 @@
+import { AsyncSelectorOption } from 'components/form-fields/selectors/AsyncSelector'
 import Attributes from './Attributes'
 import { DisplayFields } from './DisplayFields'
 import Note from './Note'
-import { SelectorBaseOption } from './SelectorBaseOption'
 import { Status } from './Status'
 
-export default class Exercise extends SelectorBaseOption {
+export default class Exercise extends AsyncSelectorOption {
   constructor(
     public name: string,
     public status: Status = Status.active,
