@@ -7,7 +7,7 @@ import AsyncAutocomplete, {
 import { doNothing } from 'lib/util'
 import useField from './useField'
 
-interface ComboBoxFieldProps extends AsyncAutocompleteProps<string> {
+interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
   options?: string[]
   initialValue: string[]
   handleSubmit?: (value: string[]) => void

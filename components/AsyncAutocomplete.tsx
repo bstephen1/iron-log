@@ -1,15 +1,26 @@
 import {
   Autocomplete,
+  AutocompleteProps,
   AutocompleteRenderInputParams,
   CircularProgress,
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { GenericAutocompleteProps } from 'lib/util'
 import { useCallback, useEffect, useState } from 'react'
 
-export interface AsyncAutocompleteProps<T>
-  extends Partial<GenericAutocompleteProps<T>> {
+// Extending Autocomplete is a lesson in frustration.
+// Long story short, it needs to have a generic signature that exactly matches
+// the generics from AutocompleteProps.
+// Autocomplete infers its type from the generics, so if they aren't right
+// all the other props will have the wrong type too.
+// Anything that extends this also needs to add the same generic signature.
+// For our case, we don't currently want DisableClearable or FreeSolo, so we
+// can set them as false to avoid some of the tedium.
+// Note also that multiple, freeSolo etc can't be called as props for the base
+// autocomplete, they must be called in the parent component.
+// See: https://github.com/mui/material-ui/issues/25502
+export interface AsyncAutocompleteProps<T, Multiple extends boolean | undefined>
+  extends Partial<AutocompleteProps<T, Multiple, false, false>> {
   label?: string
   startAdornment?: JSX.Element
   placeholder?: string
@@ -22,8 +33,15 @@ export interface AsyncAutocompleteProps<T>
   loadingText?: string
   /** for normal Autocompletes options are required, but in async they may be undefined while loading */
   options?: T[]
+  /** freeSolo is disabled. To enable it must be added as a generic. */
+  freeSolo?: false
+  /** disableClearable is disabled. To enable it must be added as a generic. */
+  disableClearable?: false
 }
-export default function AsyncAutocomplete<T>({
+export default function AsyncAutocomplete<
+  T,
+  Multiple extends boolean | undefined
+>({
   label,
   startAdornment,
   placeholder,
@@ -34,7 +52,7 @@ export default function AsyncAutocomplete<T>({
   loadingText = 'Loading...',
   options,
   ...autocompleteProps
-}: AsyncAutocompleteProps<T>) {
+}: AsyncAutocompleteProps<T, Multiple>) {
   const [open, setOpen] = useState(false)
   const [waitingToOpen, setWaitingToOpen] = useState(false)
   const loading = (alwaysShowLoading || open) && !options
