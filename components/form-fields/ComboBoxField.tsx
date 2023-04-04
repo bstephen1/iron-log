@@ -1,32 +1,25 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import {
-  Autocomplete,
-  AutocompleteProps,
-  Checkbox,
-  TextField,
-  TextFieldProps,
-} from '@mui/material'
+import { Checkbox, TextFieldProps } from '@mui/material'
+import AsyncAutocomplete, {
+  AsyncAutocompleteProps,
+} from 'components/AsyncAutocomplete'
 import { doNothing } from 'lib/util'
 import useField from './useField'
-import withAsync from './withAsync'
 
-export const ComboBoxField = withAsync(ComboBoxFieldBase)
-
-interface ComboBoxFieldProps
-  extends Partial<AutocompleteProps<string, true, false, false>> {
+interface ComboBoxFieldProps extends AsyncAutocompleteProps<string> {
   options?: string[]
   initialValue: string[]
   handleSubmit?: (value: string[]) => void
   textFieldProps?: Partial<TextFieldProps>
 }
-// todo: doesn't send to db if clicking X on chips
-function ComboBoxFieldBase({
-  options = [],
+// todo: closes when any value changes (since that triggers onSubmit and rerenders it)
+export function ComboBoxField({
+  options,
   initialValue,
   handleSubmit = doNothing,
   textFieldProps,
-  ...autocompleteProps
+  ...asyncAutocompleteProps
 }: ComboBoxFieldProps) {
   const { control, value, setValue, isDirty } = useField<string[]>({
     handleSubmit,
@@ -37,9 +30,11 @@ function ComboBoxFieldBase({
     isDirty && handleSubmit(value)
   }
 
-  const handleChange = (value: string[]) => {
-    setValue(value)
-    handleSubmit(value)
+  const handleChange = (value: string[] | string | null) => {
+    const newValue = typeof value === 'string' ? value.split(',') : value
+
+    setValue(newValue ?? [])
+    handleSubmit(newValue ?? [])
   }
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.
@@ -48,10 +43,8 @@ function ComboBoxFieldBase({
   // wasn't updating if you clicked delete on the chips. But that means now it might send extra requests
   // if multiple values are being changed.
   return (
-    <Autocomplete
+    <AsyncAutocomplete
       {...control()}
-      // useless renderInput to satisfy ts. Overwritten by autocompleteProps
-      renderInput={(params) => <TextField {...params} />}
       onChange={(_, value) => handleChange(value)}
       fullWidth
       // size="small"  // todo: use small sizes?
@@ -60,7 +53,7 @@ function ComboBoxFieldBase({
       // ChipProps={{ color: 'primary', variant: 'outlined' }}
       onClose={handleClose}
       disabled={initialValue == null}
-      options={options ?? []}
+      options={options}
       disableCloseOnSelect
       autoHighlight
       renderOption={(props, modifierName, { selected }) => (
@@ -74,7 +67,10 @@ function ComboBoxFieldBase({
           {modifierName}
         </li>
       )}
-      {...autocompleteProps}
+      textFieldProps={{
+        helperText: ' ',
+      }}
+      {...asyncAutocompleteProps}
     />
   )
 }

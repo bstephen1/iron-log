@@ -4,7 +4,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { AutocompletePropsAny } from 'lib/util'
+import { GenericAutocompleteProps } from 'lib/util'
 import { ComponentType, useCallback, useEffect, useState } from 'react'
 
 /*
@@ -38,9 +38,9 @@ export interface WithAsyncProps {
 // T here is the type of the base component's props. Eg, T = SelectorBaseProps<Exercise, NamedStub>
 // ts aggressively complains that "options" is missing. Searched for a way to get the generic signature
 // out of T to pass to AutocompleteProps instead of any, but couldn't find a way to do it.
-export default function withAsync<T extends Partial<AutocompletePropsAny>>(
-  Component: ComponentType<T>
-) {
+export default function withAsync<
+  T extends Partial<GenericAutocompleteProps<T>>
+>(Component: ComponentType<T>) {
   return function ({
     label,
     startAdornment,

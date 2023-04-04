@@ -1,4 +1,4 @@
-import { AutocompleteProps, UseAutocompleteProps } from '@mui/material'
+import { AutocompleteProps } from '@mui/material'
 import dayjs from 'dayjs'
 import { SelectorBaseOption } from 'models/SelectorBaseOption'
 import { useMemo } from 'react'
@@ -19,13 +19,16 @@ export const isValidId = (id: string) => validate(id) && version(id) === 4
 /** shortcut interface to bypass AutocompleteProps' unwieldy generic type */
 // This used to be "undefined" instead of "false" but suddenly ts started complaining about that.
 // Potentially may have been caused by an npm update to mui. The change seems to not be affecting anything else.
-export interface GenericAutocompleteProps<T>
+export interface GenericAutocompletePropsDeprecated<T>
   extends AutocompleteProps<T, false, false, false> {}
 
-/** With AutocompleteProps only "any" works, but with UseAutocompleteProps we can say boolean | undefined. */
-export interface AutocompletePropsAny
-  extends UseAutocompleteProps<
-    any,
+/** Wrapper for AutocompleteProps to avoid having to give all the generic args it wants.
+ *  Note mui exports other related prop sets such as UseAutocompleteProps, but these do NOT
+ *  contain all relevant props. The only one that does is AutocompleteProps.
+ */
+export interface GenericAutocompleteProps<T>
+  extends AutocompleteProps<
+    T,
     boolean | undefined,
     boolean | undefined,
     boolean | undefined

@@ -1,5 +1,5 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material'
-import { GenericAutocompleteProps } from 'lib/util'
+import { GenericAutocompletePropsDeprecated } from 'lib/util'
 import { SelectorBaseOption } from 'models/SelectorBaseOption'
 import { StatusOrder } from 'models/Status'
 import { useEffect, useMemo, useState } from 'react'
@@ -29,7 +29,7 @@ const SelectorStatusOrder = {
 export interface SelectorBaseProps<C>
   // Partial because this component defines all required Autocomplete props.
   // Any explicitly given AutocompleteProps will override the defaults
-  extends Partial<GenericAutocompleteProps<C | SelectorStub>> {
+  extends Partial<GenericAutocompletePropsDeprecated<C | SelectorStub>> {
   label?: string
   filterCustom?: (value: C, inputValue?: string) => boolean
   /** This function can be used to reset the input value to null
