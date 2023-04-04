@@ -11,7 +11,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
     try {
       const userId = await getUserId(req, res)
       if (process.env.SERVER_LOG_LEVEL === 'verbose') {
-        console.log(`Incoming ${req.method} on ${req.url} for user ${userId}`)
+        console.log(`${req.method} ${req.url} for user ${userId}`)
       }
 
       const payload = await handler(req, userId)
