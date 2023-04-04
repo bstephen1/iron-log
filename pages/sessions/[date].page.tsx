@@ -1,13 +1,37 @@
 import SessionView from 'components/session/SessionView'
-import dayjs from 'dayjs'
+import { getUserId } from 'lib/backend/apiMiddleware/util'
+import { valiDate } from 'lib/backend/apiQueryValidationService'
+import { fetchRecord, fetchSession } from 'lib/backend/mongoService'
 import { validDateStringRegex } from 'lib/frontend/constants'
+import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
+import { GetServerSidePropsContext } from 'next'
 import Error from 'next/error'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
+export async function getServerSideProps({
+  req,
+  res,
+  query,
+}: GetServerSidePropsContext) {
+  const userId = await getUserId(req, res)
+  const date = valiDate(query.date)
+  const sessionLog = await fetchSession(userId, date)
+  const records = await Promise.all(
+    sessionLog?.records.map((id) => fetchRecord(userId, id)) || []
+  )
+
+  return { props: { sessionLog, records } }
+}
+
+interface Props {
+  sessionLog: SessionLog
+  records: Record[]
+}
 // I guess a separate session number in case you want to do multiple sessions in one day
 // or, add separate sessions to the same day?
-export default function SessionPage() {
+export default function SessionPage({ sessionLog, records }: Props) {
   const router = useRouter()
   const { date } = router.query
 
@@ -27,7 +51,7 @@ export default function SessionPage() {
         <title>Record for {date}</title>
       </Head>
       <main>
-        <SessionView date={dayjs(date)} />
+        <SessionView sessionLog={sessionLog} records={records} />
       </main>
     </>
   )

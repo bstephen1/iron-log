@@ -37,9 +37,9 @@ import {
 // SESSION
 //---------
 
-export function useSessionLog(date: Dayjs) {
+export function useSessionLog(date: Dayjs | string) {
   const { data, error, isLoading, mutate } = useSWR<SessionLog>(
-    URI_SESSIONS + date.format(DATE_FORMAT)
+    URI_SESSIONS + (typeof date === 'string' ? date : date.format(DATE_FORMAT))
   )
 
   return {
