@@ -28,6 +28,8 @@ export default function ExerciseSelector({
   const categoryNames = useNames(categories)
   const [filterOpen, setFilterOpen] = useState(false)
 
+  // todo: when switching category, input should null out if it's not in the new category.
+  // Used to do that before pulling category state out to parent.
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
     if (
@@ -64,7 +66,6 @@ export default function ExerciseSelector({
       addNewItem={addExercise}
       // inputRef={inputRef}
       // todo: anchor to the bottom of the input?
-      // todo: any way to get label to offset and not shrink with startAdornment? Not officially supported by mui bc "too hard" apparently. Is placeholder an ok comrpromise?
       startAdornment={
         <CategoryFilter
           // standard variant bizzarely removes left input padding. Easier to add it back to Category filter

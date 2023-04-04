@@ -154,7 +154,6 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
           handleChange(option)
         }
       }}
-      // todo: extract Add New to yet another HOC? Can add to ComboBoxField
       filterOptions={(options, params) => {
         const { inputValue } = params
         let filtered = filter(options, params)
