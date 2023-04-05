@@ -3,7 +3,7 @@ import {
   addRecord,
   deleteSessionRecord,
   updateSessionLog,
-  useSessionLog,
+  useGuaranteedSessionLog,
 } from 'lib/frontend/restService'
 import Exercise from 'models/Exercise'
 import Record from 'models/Record'
@@ -28,6 +28,7 @@ import HistoryFilter from './history/HistoryFilter'
 
 // Swiper needs all these css classes to be imported too
 import dayjs from 'dayjs'
+import { Index } from 'lib/util'
 import Note from 'models/Note'
 import 'swiper/css'
 import 'swiper/css/bundle'
@@ -39,11 +40,14 @@ import SessionModules from './upper/SessionModules'
 import usePaginationSize from './usePaginationSize'
 
 interface Props {
-  sessionLog: SessionLog
-  records: Record[]
+  initialSessionLog: SessionLog
+  initialRecords: Index<Record>
 }
-export default function SessionView({ sessionLog, records }: Props) {
-  const { date } = sessionLog
+export default function SessionView({
+  initialSessionLog,
+  initialRecords,
+}: Props) {
+  const { date } = initialSessionLog
   const paginationSize = usePaginationSize()
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
@@ -52,9 +56,8 @@ export default function SessionView({ sessionLog, records }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  // SWR caches this, so it won't need to call the API every render
-  const { mutate } = useSessionLog(date)
-  const sessionHasRecords = !!records.length
+  const { sessionLog, mutate } = useGuaranteedSessionLog(initialSessionLog)
+  const sessionHasRecords = !!sessionLog.records.length
 
   const updateSwiper = (swiper: SwiperClass) => {
     setIsBeginning(swiper.isBeginning)
@@ -198,7 +201,7 @@ export default function SessionView({ sessionLog, records }: Props) {
               sessionLog.records.map((id, i) => (
                 <SwiperSlide key={id}>
                   <RecordCard
-                    id={id}
+                    initialRecord={initialRecords[id]}
                     date={dayjs(date)}
                     deleteRecord={handleDeleteRecord}
                     swapRecords={handleSwapRecords}
@@ -211,7 +214,10 @@ export default function SessionView({ sessionLog, records }: Props) {
                     mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
                   />
                   <Box py={3}>
-                    <HistoryFilter recordId={id} key={id} />
+                    <HistoryFilter
+                      initialRecord={initialRecords[id]}
+                      key={id}
+                    />
                   </Box>
                 </SwiperSlide>
               ))}
@@ -222,8 +228,6 @@ export default function SessionView({ sessionLog, records }: Props) {
             >
               <Stack spacing={2}>
                 <AddRecordCard handleAdd={handleAddRecord} />
-                {/* this looks maybe not great as a separate card now, 
-                  but eventually it will have a session type selector */}
                 {!sessionHasRecords && (
                   <CopySessionCard
                     date={dayjs(date)}

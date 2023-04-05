@@ -2,16 +2,17 @@ import { Card, CardContent, CardHeader, Checkbox, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import StyledDivider from 'components/StyledDivider'
-import { useRecord } from 'lib/frontend/restService'
+import { useGuaranteedRecord } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
+import Record from 'models/Record'
 import { useEffect, useState } from 'react'
 import HistoryCardsSwiper from './HistoryCardsSwiper'
 
 interface Props {
-  recordId: string
+  initialRecord: Record
 }
-export default function HistoryFilter({ recordId }: Props) {
-  const { record } = useRecord(recordId)
+export default function HistoryFilter({ initialRecord }: Props) {
+  const { record } = useGuaranteedRecord(initialRecord)
   const [modifierFilter, setModifierFilter] = useState<string[]>([])
   const [repFilter, setRepFilter] = useState<number>()
   const [repsChecked, setRepsChecked] = useState(false)
@@ -19,10 +20,6 @@ export default function HistoryFilter({ recordId }: Props) {
   const displayFields = useDisplayFields({ record })
 
   useEffect(() => {
-    if (!record) {
-      return
-    }
-
     // only filter if there is a value.
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     setModifiersChecked(!!record.activeModifiers.length)
@@ -42,10 +39,7 @@ export default function HistoryFilter({ recordId }: Props) {
     }
   }, [record])
 
-  if (!record || !displayFields) return <></>
-
   // todo: may want to merge this into the RecordCard
-
   return (
     <Stack spacing={2}>
       <Card elevation={3} sx={{ px: 1 }}>
@@ -85,7 +79,7 @@ export default function HistoryFilter({ recordId }: Props) {
               />
             </Stack>
             <HistoryCardsSwiper
-              recordId={recordId}
+              recordId={record._id}
               currentDate={record.date}
               displayFields={displayFields}
               filter={{
