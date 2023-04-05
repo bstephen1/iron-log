@@ -210,7 +210,7 @@ export async function fetchRecords({
       },
       // if preserveNull is false the whole record becomes null if exercise is null
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
-      { $project: { userId: 0 } },
+      { $project: { userId: 0, 'exercise.userId': 0 } },
     ])
     .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)

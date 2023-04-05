@@ -11,7 +11,7 @@ import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
 import { stringify } from 'querystring'
-import useSWR from 'swr'
+import useSWR, { SWRConfiguration } from 'swr'
 import {
   DATE_FORMAT,
   URI_BODYWEIGHT,
@@ -37,9 +37,21 @@ import {
 // SESSION
 //---------
 
-export function useSessionLog(date: Dayjs) {
-  const { data, error, isLoading, mutate } = useSWR<SessionLog>(
-    URI_SESSIONS + date.format(DATE_FORMAT)
+export function useGuaranteedSessionLog(initialSessionLog: SessionLog) {
+  const res = useSessionLog(initialSessionLog.date, {
+    fallbackData: initialSessionLog,
+  })
+
+  return {
+    ...res,
+    sessionLog: res.sessionLog as SessionLog,
+  }
+}
+
+export function useSessionLog(date: Dayjs | string, config?: SWRConfiguration) {
+  const { data, error, isLoading, mutate } = useSWR<SessionLog | null>(
+    URI_SESSIONS + (typeof date === 'string' ? date : date.format(DATE_FORMAT)),
+    config
   )
 
   return {
@@ -94,8 +106,20 @@ export async function deleteSessionRecord(
 // RECORD
 //--------
 
-export function useRecord(id: Record['_id']) {
-  const { data, error, mutate } = useSWR<Record>(URI_RECORDS + id)
+export function useGuaranteedRecord(initialRecord: Record) {
+  const res = useRecord(initialRecord._id, { fallbackData: initialRecord })
+
+  return {
+    ...res,
+    record: res.record as Record,
+  }
+}
+
+export function useRecord(id: string, config?: SWRConfiguration) {
+  const { data, error, mutate } = useSWR<Record | null>(
+    URI_RECORDS + id,
+    config
+  )
 
   return {
     record: data,
