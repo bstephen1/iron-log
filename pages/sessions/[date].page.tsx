@@ -21,17 +21,24 @@ export async function getServerSideProps({
   // todo: avoid awaits AMAP, end with a Promise.all()
   const userId = await getUserId(req, res)
   const date = valiDate(query.date)
-  const sessionLog = await fetchSession(userId, date)
-  const recordsArray = await fetchRecords({ userId, filter: { date } })
-  const records = arrayToIndex<Record>('_id', recordsArray)
-  const bodyweight = await fetchBodyweightHistory({
+
+  const sessionLogPromise = fetchSession(userId, date)
+  const recordsPromise = fetchRecords({ userId, filter: { date } })
+  const bodyweightPromise = fetchBodyweightHistory({
     userId,
     limit: 1,
     sort: 'newestFirst',
     filter: { type: 'official' },
   })
 
-  return { props: { sessionLog, records, bodyweight } }
+  return Promise.all([
+    sessionLogPromise,
+    recordsPromise,
+    bodyweightPromise,
+  ]).then(([sessionLog, recordsArray, bodyweight]) => {
+    const records = arrayToIndex<Record>('_id', recordsArray)
+    return { props: { sessionLog, records, bodyweight } }
+  })
 }
 
 interface Props {
