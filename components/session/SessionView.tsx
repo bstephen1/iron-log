@@ -29,6 +29,7 @@ import HistoryFilter from './history/HistoryFilter'
 // Swiper needs all these css classes to be imported too
 import dayjs from 'dayjs'
 import { Index } from 'lib/util'
+import Bodyweight from 'models/Bodyweight'
 import Note from 'models/Note'
 import 'swiper/css'
 import 'swiper/css/bundle'
@@ -40,14 +41,11 @@ import SessionModules from './upper/SessionModules'
 import usePaginationSize from './usePaginationSize'
 
 interface Props {
-  initialSessionLog: SessionLog
-  initialRecords: Index<Record>
+  sessionLog: SessionLog
+  records: Index<Record>
+  bodyweight: Bodyweight | null
 }
-export default function SessionView({
-  initialSessionLog,
-  initialRecords,
-}: Props) {
-  const { date } = initialSessionLog
+export default function SessionView(initial: Props) {
   const paginationSize = usePaginationSize()
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
@@ -56,8 +54,9 @@ export default function SessionView({
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const { sessionLog, mutate } = useGuaranteedSessionLog(initialSessionLog)
+  const { sessionLog, mutate } = useGuaranteedSessionLog(initial.sessionLog)
   const sessionHasRecords = !!sessionLog.records.length
+  const { date } = sessionLog
 
   const updateSwiper = (swiper: SwiperClass) => {
     setIsBeginning(swiper.isBeginning)
@@ -201,7 +200,7 @@ export default function SessionView({
               sessionLog.records.map((id, i) => (
                 <SwiperSlide key={id}>
                   <RecordCard
-                    initialRecord={initialRecords[id]}
+                    initialRecord={initial.records[id]}
                     date={dayjs(date)}
                     deleteRecord={handleDeleteRecord}
                     swapRecords={handleSwapRecords}
@@ -215,7 +214,7 @@ export default function SessionView({
                   />
                   <Box py={3}>
                     <HistoryFilter
-                      initialRecord={initialRecords[id]}
+                      initialRecord={initial.records[id]}
                       key={id}
                     />
                   </Box>
