@@ -134,6 +134,7 @@ export default function HistoryPage() {
     return i + 1
   }
 
+  // todo: scroll snap?
   return (
     <Grid container spacing={2}>
       <Grid xs={8} alignItems="center" display="flex">

@@ -11,9 +11,15 @@ export default function Navbar() {
   // when scrolling down y1 relative pixels it hides, and when scrolling up y2
   // relative pixels it unhides.
   const handleScroll = () => {
-    setIsVisible(window.scrollY < 250)
+    if (window.scrollY < 180) {
+      setIsVisible(true)
+    } else if (window.scrollY > 200) {
+      setIsVisible(false)
+    }
   }
 
+  //  layers.async-pan-zoom.enable = false
+  //  set browser.ui.scroll-toolbar-threshold to 0
   // mui has a "useScrollTrigger" hook that it recommends using for this situation,
   // but said hook has horrendous performance on firefox, and even produces a console warning.
   useEffect(() => {
