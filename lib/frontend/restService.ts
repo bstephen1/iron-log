@@ -37,14 +37,18 @@ import {
 // SESSION
 //---------
 
-export function useGuaranteedSessionLog(initialSessionLog: SessionLog) {
-  const res = useSessionLog(initialSessionLog.date, {
+/** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
+export function useSessionLogWithInit(
+  date: string,
+  initialSessionLog: SessionLog | null
+) {
+  const res = useSessionLog(date, {
     fallbackData: initialSessionLog,
   })
 
   return {
     ...res,
-    sessionLog: res.sessionLog as SessionLog,
+    sessionLog: res.sessionLog as SessionLog | null,
   }
 }
 
@@ -106,7 +110,8 @@ export async function deleteSessionRecord(
 // RECORD
 //--------
 
-export function useGuaranteedRecord(initialRecord: Record) {
+/** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
+export function useRecordWithInit(initialRecord: Record) {
   const res = useRecord(initialRecord._id, { fallbackData: initialRecord })
 
   return {

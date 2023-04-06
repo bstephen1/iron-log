@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, Checkbox, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import StyledDivider from 'components/StyledDivider'
-import { useGuaranteedRecord } from 'lib/frontend/restService'
+import { useRecordWithInit } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import Record from 'models/Record'
 import { useEffect, useState } from 'react'
@@ -12,7 +12,7 @@ interface Props {
   initialRecord: Record
 }
 export default function HistoryFilter({ initialRecord }: Props) {
-  const { record } = useGuaranteedRecord(initialRecord)
+  const { record } = useRecordWithInit(initialRecord)
   const [modifierFilter, setModifierFilter] = useState<string[]>([])
   const [repFilter, setRepFilter] = useState<number>()
   const [repsChecked, setRepsChecked] = useState(false)

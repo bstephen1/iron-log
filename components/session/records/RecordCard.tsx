@@ -28,7 +28,7 @@ import {
   updateExerciseFields,
   updateRecordFields,
   useExercises,
-  useGuaranteedRecord,
+  useRecordWithInit,
 } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
@@ -85,7 +85,7 @@ export default function RecordCard({
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
     ? 'swiper-no-swiping-outer'
     : ''
-  const { record, mutate: mutateRecord } = useGuaranteedRecord(initialRecord)
+  const { record, mutate: mutateRecord } = useRecordWithInit(initialRecord)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })

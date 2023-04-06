@@ -3,7 +3,7 @@ import {
   addRecord,
   deleteSessionRecord,
   updateSessionLog,
-  useGuaranteedSessionLog,
+  useSessionLogWithInit,
 } from 'lib/frontend/restService'
 import Exercise from 'models/Exercise'
 import Record from 'models/Record'
@@ -41,11 +41,12 @@ import SessionModules from './upper/SessionModules'
 import usePaginationSize from './usePaginationSize'
 
 interface Props {
-  sessionLog: SessionLog
+  sessionLog: SessionLog | null
   records: Index<Record>
   bodyweight: Bodyweight | null
+  date: string
 }
-export default function SessionView(initial: Props) {
+export default function SessionView({ date, ...initial }: Props) {
   const paginationSize = usePaginationSize()
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
@@ -54,9 +55,8 @@ export default function SessionView(initial: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const { sessionLog, mutate } = useGuaranteedSessionLog(initial.sessionLog)
-  const sessionHasRecords = !!sessionLog.records.length
-  const { date } = sessionLog
+  const { sessionLog, mutate } = useSessionLogWithInit(date, initial.sessionLog)
+  const sessionHasRecords = !!sessionLog?.records.length
 
   const updateSwiper = (swiper: SwiperClass) => {
     setIsBeginning(swiper.isBeginning)
@@ -83,6 +83,8 @@ export default function SessionView(initial: Props) {
       optimisticData: newSessionLog,
       revalidate: false,
     })
+    // Record card requires passing an initial record, so we have to add new records to the initial records
+    initial.records[record._id] = record
     await addRecord(record)
   }
 
@@ -196,30 +198,26 @@ export default function SessionView(initial: Props) {
             }}
             style={{ padding: '15px 10px', flexGrow: '1' }}
           >
-            {!!sessionLog &&
-              sessionLog.records.map((id, i) => (
-                <SwiperSlide key={id}>
-                  <RecordCard
-                    initialRecord={initial.records[id]}
-                    date={dayjs(date)}
-                    deleteRecord={handleDeleteRecord}
-                    swapRecords={handleSwapRecords}
-                    swiperIndex={i}
-                    updateSessionNotes={handleNotesChange}
-                    sessionNotes={sessionLog.notes}
-                    setMostRecentlyUpdatedExercise={
-                      setMostRecentlyUpdatedExercise
-                    }
-                    mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
-                  />
-                  <Box py={3}>
-                    <HistoryFilter
-                      initialRecord={initial.records[id]}
-                      key={id}
-                    />
-                  </Box>
-                </SwiperSlide>
-              ))}
+            {sessionLog?.records.map((id, i) => (
+              <SwiperSlide key={id}>
+                <RecordCard
+                  initialRecord={initial.records[id]}
+                  date={dayjs(date)}
+                  deleteRecord={handleDeleteRecord}
+                  swapRecords={handleSwapRecords}
+                  swiperIndex={i}
+                  updateSessionNotes={handleNotesChange}
+                  sessionNotes={sessionLog.notes}
+                  setMostRecentlyUpdatedExercise={
+                    setMostRecentlyUpdatedExercise
+                  }
+                  mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
+                />
+                <Box py={3}>
+                  <HistoryFilter initialRecord={initial.records[id]} key={id} />
+                </Box>
+              </SwiperSlide>
+            ))}
 
             <SwiperSlide
               // if no records, disable swiping. The swiping prevents you from being able to close date picker

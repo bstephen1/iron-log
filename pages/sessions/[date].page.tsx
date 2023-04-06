@@ -18,7 +18,6 @@ export async function getServerSideProps({
   res,
   query,
 }: GetServerSidePropsContext) {
-  // todo: avoid awaits AMAP, end with a Promise.all()
   const userId = await getUserId(req, res)
   const date = valiDate(query.date)
 
@@ -37,14 +36,15 @@ export async function getServerSideProps({
     bodyweightPromise,
   ]).then(([sessionLog, recordsArray, bodyweight]) => {
     const records = arrayToIndex<Record>('_id', recordsArray)
-    return { props: { sessionLog, records, bodyweight } }
+    return { props: { sessionLog, records, bodyweight, date } }
   })
 }
 
 interface Props {
-  sessionLog: SessionLog
+  sessionLog: SessionLog | null
   records: Index<Record>
   bodyweight: Bodyweight | null
+  date: string
 }
 // todo: I guess a separate session number in case you want to do multiple sessions in one day
 // or, add separate sessions to the same day?
@@ -53,7 +53,7 @@ export default function SessionPage(props: Props) {
     <>
       <Head>
         {/* this needs to be a single string or it throws a warning */}
-        <title>${`Iron Log - ${props.sessionLog.date}`}</title>
+        <title>${`Iron Log - ${props.date}`}</title>
       </Head>
       <main>
         <SessionView {...props} />
