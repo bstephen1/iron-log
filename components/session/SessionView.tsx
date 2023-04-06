@@ -160,9 +160,10 @@ export default function SessionView({ date, ...initial }: Props) {
             // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
             onSwiper={updateSwiper}
             onSlideChange={updateSwiper}
-            // cssMode makes animations a LOT smoother on mobile. There is only one notable breaking change:
-            // it disables dragging with a mouse.
-            // It also makes pagination bullets animate each change onClick instead of just going to the final one.
+            // cssMode makes animations a LOT smoother on mobile. It does have some noticeable differences:
+            // - disables dragging with a mouse.
+            // - makes pagination bullets animate each change onClick instead of just going to the final one (desktop)
+            // - removes stretching animation when trying to scroll past end of list
             cssMode={!isDesktop}
             // update when number of slides changes
             onUpdate={updateSwiper}

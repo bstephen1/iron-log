@@ -119,6 +119,8 @@ export default function HistoryCardsSwiper({
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
+            // dynamic bullets cause a total crash when navigating from SessionView to some other page, then back to SessionView.
+            // This appears to only occur in production.
             // dynamicBullets: true,
             // dynamicMainBullets: 5,
           }}
