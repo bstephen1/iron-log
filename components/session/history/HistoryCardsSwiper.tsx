@@ -1,10 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Stack,
-  Typography,
-  useMediaQuery,
-} from '@mui/material'
+import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import {
@@ -38,7 +32,6 @@ export default function HistoryCardsSwiper({
   displayFields,
   filter,
 }: Props) {
-  const isDesktop = useMediaQuery('(pointer: fine)')
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
   // todo: limit this to something like 10 records before/after the date, then fetch more if the swiper gets close to either end.
   const { records, isLoading } = useRecords({
@@ -110,11 +103,7 @@ export default function HistoryCardsSwiper({
           onSwiper={setSwiper}
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
-          // Unlike the parent swiper, enabling cssMode does break something here: autoheight.
-          // Autoheight can be disabled though, and then the height just matches the tallest slide.
-          // Which is... acceptable.
-          cssMode={!isDesktop}
-          autoHeight={isDesktop}
+          autoHeight
           grabCursor
           pagination={{
             el: `.${paginationClassName}`,
