@@ -1,34 +1,34 @@
-import {
-  AppBar,
-  Box,
-  Slide,
-  Toolbar,
-  Typography,
-  useScrollTrigger,
-} from '@mui/material'
+import { AppBar, Box, Slide, Toolbar, Typography } from '@mui/material'
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import LoginButton from './LoginButton'
 import NavbarDrawer from './NavbarDrawer'
 
 export default function Navbar() {
   function HideOnScroll({ children }: { children: ReactElement }) {
-    // todo: This scroll trigger is way too sensitive and there's no way to fix that.
-    // disableHysteresis means it will trigger at the Y value given in threshold.
-    // So you can only make it hide at a certain Y value.
-    // Without disableHysteresis it will also immediately unhide if the scroll Y value
-    // increases AT ALL. Which means if you slightly tap the screen on mobile, or anything
-    // gets added to the dom (thus increasing its length), the app bar pops back up.
-    // This is just a stopgap solution currently. Ideally the trigger should have separate
-    // "down" and "up" thresholds, which are both relative values rather than the absolute
-    // Y position.
-    const trigger = useScrollTrigger({
-      disableHysteresis: true,
-      threshold: 250,
-    })
+    const [isVisible, setIsVisible] = useState(true)
+
+    // This is a simple static Y value. May want to expand it such that
+    // when scrolling down y1 relative pixels it hides, and when scrolling up y2
+    // relative pixels it unhides.
+    const handleScroll = () => {
+      setIsVisible(window.scrollY < 250)
+    }
+
+    // mui has a "useScrollTrigger" hook that it recommends using for this situation,
+    // but said hook has horrendous performance on firefox, and even produces a console warning.
+    useEffect(() => {
+      // adding "passive" is supposed to increase performance for scrolling. See:
+      // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#improving_scrolling_performance_with_passive_listeners
+      window.addEventListener('scroll', handleScroll, { passive: true })
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll)
+      }
+    }, [])
 
     return (
-      <Slide appear={false} direction="down" in={!trigger}>
+      <Slide appear={false} direction="down" in={isVisible}>
         {children}
       </Slide>
     )
