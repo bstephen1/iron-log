@@ -18,7 +18,6 @@ import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { useEffect, useMemo, useState } from 'react'
 import 'swiper/css/pagination'
-import usePaginationSize from '../usePaginationSize'
 
 interface Props {
   /** just used as index for pagination className */
@@ -33,8 +32,8 @@ export default function HistoryCardsSwiper({
   displayFields,
   filter,
 }: Props) {
-  const paginationSize = usePaginationSize()
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
+  // todo: limit this to something like 10 records before/after the date, then fetch more if the swiper gets close to either end.
   const { records, isLoading } = useRecords({
     ...filter,
     modifierMatchType: ArrayMatchType.Equivalent,
@@ -79,16 +78,26 @@ export default function HistoryCardsSwiper({
   }
 
   return (
-    <Stack>
-      <Box
-        className={paginationClassName}
-        display="flex"
-        justifyContent="center"
-        pt={2}
-        sx={{ ...paginationSize }}
-      />
-      {/* this box prevents Swiper from deciding it needs to have infinite width for some reason */}
+    <Stack alignItems="center">
+      {/* Dynamic pagination css is very finnicky and opaque. 
+          Finally got centered by wrapping them in this centered box to force them
+          to be centered. Also requires position relative for some reason. */}
       <Box>
+        <Box
+          className={paginationClassName}
+          display="flex"
+          justifyContent="center"
+          pt={2}
+          position="relative"
+          // Setting pagination size overwrites the dynamic bullet size.
+          // Couldn't find a way to set the main and dynamic bullets separately.
+          // CSS classes are swiper-pagination-bullet-active-main and swiper-pagination-bullet-active-next
+          // Swiper css is in swiper/swiper-bundle.css, which has the class used to change pagination size,
+          // but there's no obvious equivalent for dynamic bullets.
+        />
+      </Box>
+      {/* this box prevents Swiper from deciding it needs to have infinite width for some reason. Width is required when stack has alignItems centered */}
+      <Box width="100%">
         <Swiper
           spaceBetween={20}
           onSwiper={setSwiper}
@@ -99,9 +108,8 @@ export default function HistoryCardsSwiper({
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
-            // todo: may want to add these when adding a limit to useRecords fetch
-            // Note: they appear to break the centering css
-            // dynamicBullets: true,
+            dynamicBullets: true,
+            dynamicMainBullets: 5,
           }}
           modules={[Pagination, Navigation, Scrollbar, Controller]}
         >
