@@ -37,21 +37,6 @@ import {
 // SESSION
 //---------
 
-/** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
-export function useSessionLogWithInit(
-  date: string,
-  initialSessionLog: SessionLog | null
-) {
-  const res = useSessionLog(date, {
-    fallbackData: initialSessionLog,
-  })
-
-  return {
-    ...res,
-    sessionLog: res.sessionLog as SessionLog | null,
-  }
-}
-
 export function useSessionLog(date: Dayjs | string, config?: SWRConfiguration) {
   const { data, error, isLoading, mutate } = useSWR<SessionLog | null>(
     URI_SESSIONS + (typeof date === 'string' ? date : date.format(DATE_FORMAT)),
@@ -109,16 +94,6 @@ export async function deleteSessionRecord(
 //--------
 // RECORD
 //--------
-
-/** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
-export function useRecordWithInit(initialRecord: Record) {
-  const res = useRecord(initialRecord._id, { fallbackData: initialRecord })
-
-  return {
-    ...res,
-    record: res.record as Record,
-  }
-}
 
 export function useRecord(id: string, config?: SWRConfiguration) {
   const { data, error, mutate } = useSWR<Record | null>(
@@ -183,7 +158,7 @@ export function useExercises(query?: ExerciseQuery) {
 
 export function useExercise(id: string | null) {
   // passing null to useSWR disables fetching
-  const { data, error, mutate } = useSWR<Exercise>(
+  const { data, error, mutate } = useSWR<Exercise | null>(
     id ? URI_EXERCISES + id : null
   )
 
