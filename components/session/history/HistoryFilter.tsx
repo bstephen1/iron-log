@@ -2,16 +2,17 @@ import { Card, CardContent, CardHeader, Checkbox, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import StyledDivider from 'components/StyledDivider'
-import { useRecord } from 'lib/frontend/restService'
+import { useRecordWithInit } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
+import Record from 'models/Record'
 import { useEffect, useState } from 'react'
 import HistoryCardsSwiper from './HistoryCardsSwiper'
 
 interface Props {
-  id: string
+  initialRecord: Record
 }
-export default function HistoryFilter({ id }: Props) {
-  const { record } = useRecord(id)
+export default function HistoryFilter({ initialRecord }: Props) {
+  const { record } = useRecordWithInit(initialRecord)
   const [modifierFilter, setModifierFilter] = useState<string[]>([])
   const [repFilter, setRepFilter] = useState<number>()
   const [repsChecked, setRepsChecked] = useState(false)
@@ -19,10 +20,6 @@ export default function HistoryFilter({ id }: Props) {
   const displayFields = useDisplayFields({ record })
 
   useEffect(() => {
-    if (!record) {
-      return
-    }
-
     // only filter if there is a value.
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     setModifiersChecked(!!record.activeModifiers.length)
@@ -41,8 +38,6 @@ export default function HistoryFilter({ id }: Props) {
       setRepFilter(undefined)
     }
   }, [record])
-
-  if (!record || !displayFields) return <></>
 
   // todo: may want to merge this into the RecordCard
   return (

@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { GetServerSidePropsContext, NextApiRequest } from 'next'
 import { getServerSession } from 'next-auth'
 import { ApiError } from 'next/dist/server/api-utils'
 import { authOptions } from 'pages/api/auth/[...nextauth].api'
@@ -26,8 +26,11 @@ export interface UserId extends ObjectId {}
 
 /** Return the userId, formatted as a UserId. */
 export async function getUserId(
-  req: NextApiRequest,
-  res: NextApiResponse
+  // Can't use NextApiRequest because getServerSideProps gives different req/res objects.
+  // NextApiReq/Res extend these types though. They actually now match the object shape that
+  // getServerSession is expecting exactly, whereas NextApiReq/Res have additional fields.
+  req: GetServerSidePropsContext['req'],
+  res: GetServerSidePropsContext['res']
 ): Promise<UserId> {
   // req and res appear to be required. You can call the function without them but it won't work correctly.
   const session = await getServerSession(req, res, authOptions)

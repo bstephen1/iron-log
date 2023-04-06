@@ -15,7 +15,6 @@ import {
   Fab,
   Menu,
   MenuItem,
-  Skeleton,
   Stack,
   Tooltip,
   useMediaQuery,
@@ -29,8 +28,7 @@ import {
   updateExerciseFields,
   updateRecordFields,
   useExercises,
-  useModifiers,
-  useRecord,
+  useRecordWithInit,
 } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
@@ -59,7 +57,7 @@ import SetInput from './SetInput'
 // See bug: https://github.com/orgs/vercel/discussions/1657
 
 interface Props {
-  id: string
+  initialRecord: Record
   date: Dayjs
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
@@ -71,7 +69,7 @@ interface Props {
   swiperIndex: number
 }
 export default function RecordCard({
-  id,
+  initialRecord,
   deleteRecord,
   swapRecords,
   swiperIndex,
@@ -87,8 +85,7 @@ export default function RecordCard({
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
     ? 'swiper-no-swiping-outer'
     : ''
-  const { modifiersIndex } = useModifiers()
-  const { record, isError, mutate: mutateRecord } = useRecord(id)
+  const { record, mutate: mutateRecord } = useRecordWithInit(initialRecord)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -99,6 +96,8 @@ export default function RecordCard({
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
+  const { exercise, activeModifiers, sets, notes, _id } = record
+  const attributes = exercise?.attributes ?? {}
 
   useEffect(() => {
     if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
@@ -120,66 +119,6 @@ export default function RecordCard({
   // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
   // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
   // when they should only be receiving the record data after it is no longer null.
-  // error / loading states repeat a bit of styling from the live record card.
-  if (isError) {
-    console.trace(isError)
-    return (
-      <Card elevation={3} sx={{ px: 1 }}>
-        <CardHeader
-          title={`Record ${swiperIndex + 1}`}
-          titleTypographyProps={{ variant: 'h6' }}
-        />
-        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
-
-        <CardContent sx={{ justifyContent: 'center', display: 'flex' }}>
-          <Box>Error: Could not fetch record.</Box>
-        </CardContent>
-      </Card>
-    )
-  } else if (
-    record === undefined ||
-    modifiersIndex === undefined ||
-    extraWeight === undefined ||
-    displayFields === undefined
-  ) {
-    return (
-      <Card elevation={3} sx={{ px: 1 }}>
-        <CardHeader
-          title={`Record ${swiperIndex + 1}`}
-          titleTypographyProps={{ variant: 'h6' }}
-        />
-        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
-
-        <CardContent>
-          <Skeleton height="50px" />
-          <Skeleton height="50px" />
-          <Skeleton height="50px" />
-        </CardContent>
-        <CardActions sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}>
-          <Skeleton variant="circular" height="50px" width="50px" />
-        </CardActions>
-      </Card>
-    )
-    // this shouldn't ever happen
-  } else if (record === null) {
-    return (
-      <Card elevation={3} sx={{ px: 1 }}>
-        <CardHeader
-          title={`Record ${swiperIndex + 1}`}
-          titleTypographyProps={{ variant: 'h6' }}
-        />
-        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
-
-        <CardContent>
-          <Box>Could not find record {id}</Box>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  // define after null checks so record must exist
-  const { exercise, activeModifiers, sets, notes, _id } = record
-  const attributes = exercise?.attributes ?? {}
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]

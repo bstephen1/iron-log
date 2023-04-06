@@ -1,16 +1,9 @@
-import {
-  Box,
-  CircularProgress,
-  IconButton,
-  Stack,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import { Box, IconButton, Stack, useMediaQuery, useTheme } from '@mui/material'
 import {
   addRecord,
   deleteSessionRecord,
   updateSessionLog,
-  useSessionLog,
+  useSessionLogWithInit,
 } from 'lib/frontend/restService'
 import Exercise from 'models/Exercise'
 import Record from 'models/Record'
@@ -34,8 +27,9 @@ import AddRecordCard from './AddRecordCard'
 import HistoryFilter from './history/HistoryFilter'
 
 // Swiper needs all these css classes to be imported too
-import dayjs, { Dayjs } from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
+import dayjs from 'dayjs'
+import { Index } from 'lib/util'
+import Bodyweight from 'models/Bodyweight'
 import Note from 'models/Note'
 import 'swiper/css'
 import 'swiper/css/bundle'
@@ -47,10 +41,12 @@ import SessionModules from './upper/SessionModules'
 import usePaginationSize from './usePaginationSize'
 
 interface Props {
-  date: Dayjs
+  sessionLog: SessionLog | null
+  records: Index<Record>
+  bodyweight: Bodyweight | null
+  date: string
 }
-export default function SessionView({ date }: Props) {
-  const formattedDate = date.format(DATE_FORMAT)
+export default function SessionView({ date, ...initial }: Props) {
   const isDesktop = useMediaQuery('(pointer: fine)')
   const paginationSize = usePaginationSize()
   const theme = useTheme()
@@ -60,13 +56,8 @@ export default function SessionView({ date }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const { sessionLog, isError, isLoading, mutate } = useSessionLog(date)
+  const { sessionLog, mutate } = useSessionLogWithInit(date, initial.sessionLog)
   const sessionHasRecords = !!sessionLog?.records.length
-
-  // todo: this is a placeholder
-  if (isError) {
-    return <>Error fetching Session data!</>
-  }
 
   const updateSwiper = (swiper: SwiperClass) => {
     setIsBeginning(swiper.isBeginning)
@@ -81,19 +72,20 @@ export default function SessionView({ date }: Props) {
   }
 
   const handleAddRecord = async (exercise: Exercise) => {
-    const record = new Record(formattedDate, { exercise })
+    const record = new Record(date, { exercise })
     record.sets.push({})
     const newSessionLog = sessionLog
       ? {
           ...sessionLog,
           records: sessionLog.records.concat(record._id),
         }
-      : new SessionLog(formattedDate, [record._id])
+      : new SessionLog(date, [record._id])
     mutate(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
-
+    // Record card requires passing an initial record, so we have to add new records to the initial records
+    initial.records[record._id] = record
     await addRecord(record)
   }
 
@@ -138,133 +130,127 @@ export default function SessionView({ date }: Props) {
 
   return (
     <Stack spacing={2}>
-      <TitleBar date={date} />
+      <TitleBar date={dayjs(date)} />
       <SessionModules />
-      {isLoading ? (
-        <Box display="flex" justifyContent="center" py={10}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Box>
-          <Box
-            className="pagination-above"
-            display="flex"
-            justifyContent="center"
-            pt={2}
-            sx={{ ...paginationSize }}
-          />
-          <Stack direction="row">
-            {/* todo: nav button ripples are elongated */}
-            {/* todo: actually thinking of making these ListItemButtons, 
+      <Box>
+        <Box
+          className="pagination-above"
+          display="flex"
+          justifyContent="center"
+          pt={2}
+          sx={{ ...paginationSize }}
+        />
+        <Stack direction="row">
+          {/* todo: nav button ripples are elongated */}
+          {/* todo: actually thinking of making these ListItemButtons, 
             HistoryCards are within the single Swiper, and the Icon can be sticky
             and scroll down the screen. The ListItemButton will be clickable 
             over the whole gutter. */}
-            <Box display="flex" width="auto" alignItems="center">
-              <IconButton
-                sx={{ display: { xs: 'none', sm: 'block' } }}
-                className="nav-prev"
-                color="primary"
-                disabled={isBeginning}
-              >
-                <ArrowBackIosNewIcon />
-              </IconButton>
-            </Box>
-            <Swiper
-              // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
-              onSwiper={updateSwiper}
-              onSlideChange={updateSwiper}
-              // cssMode makes animations a LOT smoother on mobile. There is only one notable breaking change:
-              // it disables dragging with a mouse.
-              // It also makes pagination bullets animate each change onClick instead of just going to the final one.
-              cssMode={!isDesktop}
-              // update when number of slides changes
-              onUpdate={updateSwiper}
-              noSwipingClass="swiper-no-swiping-outer"
-              modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
-              // breakpoints catch everything >= the given value
-              breakpoints={{
-                [theme.breakpoints.values.sm]: {
-                  slidesPerView: 1,
-                },
-                [theme.breakpoints.values.md]: {
-                  slidesPerView: 2,
-                  centeredSlides: false,
-                  centerInsufficientSlides: true,
-                },
-                [theme.breakpoints.values.lg]: {
-                  slidesPerView: 3,
-                  centeredSlides: true,
-                  centerInsufficientSlides: false,
-                },
-              }}
-              spaceBetween={20}
-              keyboard
-              centeredSlides
-              navigation={{
-                prevEl: '.nav-prev',
-                nextEl: '.nav-next',
-              }}
-              grabCursor
-              watchOverflow
-              // need this for CSS to hide slides that are partially offscreen
-              watchSlidesProgress
-              pagination={{
-                el: '.pagination-above',
-                clickable: true,
-                // todo: maybe add a custom render and make the last one a "+" or something.
-                // Kind of tricky to do though.
-              }}
-              style={{ padding: '11px 4px', flexGrow: '1' }}
+          <Box display="flex" width="auto" alignItems="center">
+            <IconButton
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+              className="nav-prev"
+              color="primary"
+              disabled={isBeginning}
             >
-              {sessionLog?.records.map((id, i) => (
-                <SwiperSlide key={id}>
-                  <RecordCard
-                    id={id}
-                    date={dayjs(date)}
-                    deleteRecord={handleDeleteRecord}
-                    swapRecords={handleSwapRecords}
-                    swiperIndex={i}
-                    updateSessionNotes={handleNotesChange}
-                    sessionNotes={sessionLog.notes}
-                    setMostRecentlyUpdatedExercise={
-                      setMostRecentlyUpdatedExercise
-                    }
-                    mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
-                  />
-                  <Box py={3}>
-                    <HistoryFilter id={id} key={id} />
-                  </Box>
-                </SwiperSlide>
-              ))}
-
-              <SwiperSlide
-                // if no records, disable swiping. The swiping prevents you from being able to close date picker
-                className={sessionHasRecords ? '' : 'swiper-no-swiping-outer'}
-              >
-                <Stack spacing={2}>
-                  <AddRecordCard handleAdd={handleAddRecord} />
-                  {!sessionHasRecords && (
-                    <CopySessionCard
-                      date={dayjs(date)}
-                      handleUpdateSession={handleUpdateSession}
-                    />
-                  )}
-                </Stack>
+              <ArrowBackIosNewIcon />
+            </IconButton>
+          </Box>
+          <Swiper
+            // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
+            onSwiper={updateSwiper}
+            onSlideChange={updateSwiper}
+            // cssMode makes animations a LOT smoother on mobile. There is only one notable breaking change:
+            // it disables dragging with a mouse.
+            // It also makes pagination bullets animate each change onClick instead of just going to the final one.
+            cssMode={!isDesktop}
+            // update when number of slides changes
+            onUpdate={updateSwiper}
+            noSwipingClass="swiper-no-swiping-outer"
+            modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
+            // breakpoints catch everything >= the given value
+            breakpoints={{
+              [theme.breakpoints.values.sm]: {
+                slidesPerView: 1,
+              },
+              [theme.breakpoints.values.md]: {
+                slidesPerView: 2,
+                centeredSlides: false,
+                centerInsufficientSlides: true,
+              },
+              [theme.breakpoints.values.lg]: {
+                slidesPerView: 3,
+                centeredSlides: true,
+                centerInsufficientSlides: false,
+              },
+            }}
+            spaceBetween={20}
+            keyboard
+            centeredSlides
+            navigation={{
+              prevEl: '.nav-prev',
+              nextEl: '.nav-next',
+            }}
+            grabCursor
+            watchOverflow
+            // need this for CSS to hide slides that are partially offscreen
+            watchSlidesProgress
+            pagination={{
+              el: '.pagination-above',
+              clickable: true,
+              // todo: maybe add a custom render and make the last one a "+" or something.
+              // Kind of tricky to do though.
+            }}
+            style={{ padding: '11px 4px', flexGrow: '1' }}
+          >
+            {sessionLog?.records.map((id, i) => (
+              <SwiperSlide key={id}>
+                <RecordCard
+                  initialRecord={initial.records[id]}
+                  date={dayjs(date)}
+                  deleteRecord={handleDeleteRecord}
+                  swapRecords={handleSwapRecords}
+                  swiperIndex={i}
+                  updateSessionNotes={handleNotesChange}
+                  sessionNotes={sessionLog.notes}
+                  setMostRecentlyUpdatedExercise={
+                    setMostRecentlyUpdatedExercise
+                  }
+                  mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
+                />
+                <Box py={3}>
+                  <HistoryFilter initialRecord={initial.records[id]} key={id} />
+                </Box>
               </SwiperSlide>
-            </Swiper>
-            <Box display="flex" alignItems="center">
-              <IconButton
-                sx={{ display: { xs: 'none', sm: 'block' } }}
-                className="nav-next"
-                color="primary"
-                disabled={isEnd}
-              >
-                <ArrowForwardIosIcon />
-              </IconButton>
-            </Box>
-          </Stack>
-        </Box>
-      )}
+            ))}
+
+            <SwiperSlide
+              // if no records, disable swiping. The swiping prevents you from being able to close date picker
+              className={sessionHasRecords ? '' : 'swiper-no-swiping-outer'}
+            >
+              <Stack spacing={2}>
+                <AddRecordCard handleAdd={handleAddRecord} />
+                {!sessionHasRecords && (
+                  <CopySessionCard
+                    date={dayjs(date)}
+                    handleUpdateSession={handleUpdateSession}
+                  />
+                )}
+              </Stack>
+            </SwiperSlide>
+          </Swiper>
+          <Box display="flex" alignItems="center">
+            <IconButton
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+              className="nav-next"
+              color="primary"
+              disabled={isEnd}
+            >
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </Box>
+        </Stack>
+      </Box>
     </Stack>
   )
 }
