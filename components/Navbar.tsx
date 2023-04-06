@@ -7,22 +7,24 @@ import NavbarDrawer from './NavbarDrawer'
 export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true)
 
-  // This is a simple static Y value. May want to expand it such that
-  // when scrolling down y1 relative pixels it hides, and when scrolling up y2
-  // relative pixels it unhides.
-  const handleScroll = () => {
-    if (window.scrollY < 180) {
-      setIsVisible(true)
-    } else if (window.scrollY > 200) {
-      setIsVisible(false)
-    }
-  }
-
-  //  layers.async-pan-zoom.enable = false
-  //  set browser.ui.scroll-toolbar-threshold to 0
   // mui has a "useScrollTrigger" hook that it recommends using for this situation,
-  // but said hook has horrendous performance on firefox, and even produces a console warning.
+  // but it's very functionally limited and can't be modified much.
   useEffect(() => {
+    // mobile firefox has horrendous performance for performing a Slide transition
+    // while scrolling. Seems to be related to a "scroll-linked positioning effect"
+    // console warning. Also seems that there is NO way to do anything about it
+    // and still keep the transition.
+    // if (isSlowBrowser) {
+    //   return
+    // }
+
+    // This is a simple static Y value. May want to expand it such that
+    // when scrolling down y1 relative pixels it hides, and when scrolling up y2
+    // relative pixels it unhides.
+    const handleScroll = () => {
+      setIsVisible(window.scrollY < 200)
+    }
+
     // adding "passive" is supposed to increase performance for scrolling. See:
     // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#improving_scrolling_performance_with_passive_listeners
     window.addEventListener('scroll', handleScroll, { passive: true })
