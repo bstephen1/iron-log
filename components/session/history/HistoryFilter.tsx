@@ -42,7 +42,7 @@ export default function HistoryFilter({ initialRecord }: Props) {
   // todo: may want to merge this into the RecordCard
   return (
     <Stack spacing={2}>
-      <Card elevation={3} sx={{ px: 1 }}>
+      <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
         <CardHeader
           title={`History`}
           titleTypographyProps={{ variant: 'h6' }}

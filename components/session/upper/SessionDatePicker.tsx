@@ -69,7 +69,17 @@ export default function SessionDatePicker({
       label={label}
       value={pickerValue}
       onChange={handleChange}
-      renderInput={(params) => <TextField {...params} {...textFieldProps} />}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          {...textFieldProps}
+          InputLabelProps={{
+            ...params.InputLabelProps,
+            ...textFieldProps?.InputLabelProps,
+            shrink: true,
+          }}
+        />
+      )}
       onMonthChange={(newMonth) => setMonth(newMonth)}
       loading={isLoading}
       renderLoading={() => <CalendarPickerSkeleton />}

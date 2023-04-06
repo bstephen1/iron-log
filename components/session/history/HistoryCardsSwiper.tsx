@@ -1,4 +1,10 @@
-import { Box, CircularProgress, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  CircularProgress,
+  Stack,
+  Typography,
+  useMediaQuery,
+} from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import {
@@ -32,6 +38,7 @@ export default function HistoryCardsSwiper({
   displayFields,
   filter,
 }: Props) {
+  const isDesktop = useMediaQuery('(pointer: fine)')
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
   // todo: limit this to something like 10 records before/after the date, then fetch more if the swiper gets close to either end.
   const { records, isLoading } = useRecords({
@@ -84,16 +91,16 @@ export default function HistoryCardsSwiper({
           to be centered. Also requires position relative for some reason. */}
       <Box>
         <Box
-          className={paginationClassName}
-          display="flex"
-          justifyContent="center"
-          pt={2}
-          position="relative"
           // Setting pagination size overwrites the dynamic bullet size.
           // Couldn't find a way to set the main and dynamic bullets separately.
           // CSS classes are swiper-pagination-bullet-active-main and swiper-pagination-bullet-active-next
           // Swiper css is in swiper/swiper-bundle.css, which has the class used to change pagination size,
           // but there's no obvious equivalent for dynamic bullets.
+          className={paginationClassName}
+          display="flex"
+          justifyContent="center"
+          pt={2}
+          position="relative"
         />
       </Box>
       {/* this box prevents Swiper from deciding it needs to have infinite width for some reason. Width is required when stack has alignItems centered */}
@@ -104,9 +111,10 @@ export default function HistoryCardsSwiper({
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
           // Unlike the parent swiper, enabling cssMode does break something here: autoheight.
-          // This also makes scrolling awkward because it will scroll within the inner swiper, not the whole page.
-          // cssMode
-          autoHeight
+          // Autoheight can be disabled though, and then the height just matches the tallest slide.
+          // Which is... acceptable.
+          cssMode={!isDesktop}
+          autoHeight={isDesktop}
           grabCursor
           pagination={{
             el: `.${paginationClassName}`,
