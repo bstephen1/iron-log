@@ -164,6 +164,7 @@ export default function SessionView({ date, ...initial }: Props) {
             // - disables dragging with a mouse.
             // - makes pagination bullets animate each change onClick instead of just going to the final one (desktop)
             // - removes stretching animation when trying to scroll past end of list
+            // - makes scrolling more sensitive (like a higher dpi on a mouse)
             cssMode={!isDesktop}
             // update when number of slides changes
             onUpdate={updateSwiper}
