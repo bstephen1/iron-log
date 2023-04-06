@@ -53,7 +53,7 @@ export default function SessionPage(props: Props) {
     <>
       <Head>
         {/* this needs to be a single string or it throws a warning */}
-        <title>${`Iron Log - ${props.date}`}</title>
+        <title>{`Iron Log - ${props.date}`}</title>
       </Head>
       <main>
         <SessionView {...props} />
