@@ -100,7 +100,7 @@ export default function HistoryCardsSwiper({
           display="flex"
           justifyContent="center"
           pt={2}
-          position="relative"
+          // position="relative"
         />
       </Box>
       {/* this box prevents Swiper from deciding it needs to have infinite width for some reason. Width is required when stack has alignItems centered */}
@@ -119,8 +119,8 @@ export default function HistoryCardsSwiper({
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
-            dynamicBullets: true,
-            dynamicMainBullets: 5,
+            // dynamicBullets: true,
+            // dynamicMainBullets: 5,
           }}
           modules={[Pagination, Navigation, Scrollbar, Controller]}
         >
