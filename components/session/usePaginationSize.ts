@@ -6,5 +6,5 @@ import { useMediaQuery } from '@mui/material'
 export default function usePaginationSize() {
   const isDesktop = useMediaQuery('(pointer: fine)')
 
-  return { '--swiper-pagination-bullet-size': isDesktop ? '8px' : '16px' }
+  return { '--swiper-pagination-bullet-size': isDesktop ? '8px' : '14px' }
 }
