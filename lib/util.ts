@@ -1,7 +1,6 @@
 import { AsyncSelectorOption } from 'components/form-fields/selectors/AsyncSelector'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
-import { isFirefox, isMobileOnly } from 'react-device-detect'
 import { v4 as uuid, validate, version } from 'uuid'
 import { DATE_FORMAT } from './frontend/constants'
 
@@ -46,5 +45,3 @@ export const dayjsStringAdd = (
 
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
 export const doNothing = () => {}
-
-export const isSlowBrowser = isFirefox && isMobileOnly
