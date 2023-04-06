@@ -159,6 +159,7 @@ export default function SessionView({ date, ...initial }: Props) {
             // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
             onSwiper={updateSwiper}
             onSlideChange={updateSwiper}
+            cssMode
             // update when number of slides changes
             onUpdate={updateSwiper}
             noSwipingClass="swiper-no-swiping-outer"

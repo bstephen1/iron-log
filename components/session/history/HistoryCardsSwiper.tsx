@@ -103,6 +103,7 @@ export default function HistoryCardsSwiper({
           onSwiper={setSwiper}
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
+          cssMode
           autoHeight
           grabCursor
           pagination={{
