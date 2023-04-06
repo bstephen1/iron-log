@@ -273,7 +273,7 @@ export default function RecordCard({
 
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
-    <Card elevation={3} sx={{ px: 1 }}>
+    <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
       <CardHeader
         ref={titleRef}
         title={`Record ${swiperIndex + 1}`}

@@ -159,6 +159,9 @@ export default function SessionView({ date, ...initial }: Props) {
             // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
             onSwiper={updateSwiper}
             onSlideChange={updateSwiper}
+            // cssMode makes animations a LOT smoother. Slightly changes RecordCard padding/margins,
+            // but it can siphon off extra padding from this component.
+            // Nothing else noticeably breaks after enabling.
             cssMode
             // update when number of slides changes
             onUpdate={updateSwiper}
@@ -197,7 +200,7 @@ export default function SessionView({ date, ...initial }: Props) {
               // todo: maybe add a custom render and make the last one a "+" or something.
               // Kind of tricky to do though.
             }}
-            style={{ padding: '15px 10px', flexGrow: '1' }}
+            style={{ padding: '11px 4px', flexGrow: '1' }}
           >
             {sessionLog?.records.map((id, i) => (
               <SwiperSlide key={id}>

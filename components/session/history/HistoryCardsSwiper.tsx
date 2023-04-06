@@ -103,7 +103,9 @@ export default function HistoryCardsSwiper({
           onSwiper={setSwiper}
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
-          cssMode
+          // Unlike the parent swiper, enabling cssMode does break something here: autoheight.
+          // This also makes scrolling awkward because it will scroll within the inner swiper, not the whole page.
+          // cssMode
           autoHeight
           grabCursor
           pagination={{
