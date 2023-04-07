@@ -14,6 +14,7 @@ export async function getServerSideProps({
   query,
 }: GetServerSidePropsContext) {
   console.log(req)
+  // https://stackoverflow.com/questions/71333002/how-to-enable-cache-for-getserversideprops
   const userId = await getUserId(req, res)
   const date = valiDate(query.date)
 
