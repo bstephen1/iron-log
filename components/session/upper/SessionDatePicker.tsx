@@ -14,7 +14,7 @@ interface Props {
   /** Triggered when the picker value changes to a new date.
    *  Guaranteed to only trigger when the date is valid.
    */
-  handleDateChange: (date: Dayjs) => void
+  handleDateChange: (date: string) => void
   label?: string
   textFieldProps?: TextFieldProps
 }
@@ -49,7 +49,7 @@ export default function SessionDatePicker({
 
   const handleChange = (newPickerValue: Dayjs | null) => {
     if (newPickerValue?.isValid()) {
-      handleDateChange(newPickerValue)
+      handleDateChange(newPickerValue.format(DATE_FORMAT))
     }
     setPickerValue(newPickerValue)
   }
