@@ -1,11 +1,12 @@
 import Layout from 'components/Layout'
-import LoadingIndicator from 'components/LoadingIndicator'
 import { server } from 'msw-mocks/server'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { Router, useRouter } from 'next/router'
+import Nprogress from 'nprogress'
 import { useEffect, useState } from 'react'
 import 'styles/globals.css'
+import 'styles/nprogress.css'
 import { SWRConfig } from 'swr'
 
 // Enabling this will allow mock rest endpoints in dev mode.
@@ -27,16 +28,30 @@ function IronLog({ Component, pageProps }: AppProps<IronLogPageProps>) {
   // routeChangeStart is not called on first page load, only when navigating within the app.
   // router.isReady may be useful for first load but that seemed unreliable.
   const [isRouterLoading, setIsRouterLoading] = useState(false)
+  const [path, setPath] = useState('')
   const router = useRouter()
 
   useEffect(() => {
-    const handleLoadingStart = (_: Url, { shallow }: TransitionOptions) => {
+    const handlePathChange = (url: Url) => {
+      console.log(`Navigating to ${url}`)
+      setPath(typeof url === 'string' ? url : url.pathname ?? '')
+    }
+
+    const handleLoadingStart = (url: Url, { shallow }: TransitionOptions) => {
+      console.log('starting route')
+      handlePathChange(url)
       // shallow routing cancels the route, triggering routeChangeError (error has "cancelled" set as true).
       // But by checking here first we can prevent loading from quickly toggling on and flashing the screen
-      !shallow && setIsRouterLoading(true)
+      if (shallow) return
+
+      setIsRouterLoading(true)
+      Nprogress.start()
     }
     const handleLoadingStop = () => {
+      console.log('stopping route')
+
       setIsRouterLoading(false)
+      Nprogress.done()
     }
 
     router.events.on('routeChangeStart', handleLoadingStart)
@@ -58,11 +73,7 @@ function IronLog({ Component, pageProps }: AppProps<IronLogPageProps>) {
         value={{ fetcher: (url: string) => fetch(url).then((r) => r.json()) }}
       >
         <Layout>
-          {isRouterLoading ? (
-            <LoadingIndicator />
-          ) : (
-            <Component {...pageProps} />
-          )}
+          <Component {...pageProps} />
         </Layout>
       </SWRConfig>
     </SessionProvider>
