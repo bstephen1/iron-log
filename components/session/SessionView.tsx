@@ -30,7 +30,6 @@ import HistoryFilter from './history/HistoryFilter'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import dayjs from 'dayjs'
 import { Index } from 'lib/util'
-import Bodyweight from 'models/Bodyweight'
 import Note from 'models/Note'
 import { RouterLoadingContext } from 'pages/_app.page'
 import 'swiper/css'
@@ -45,7 +44,6 @@ import usePaginationSize from './usePaginationSize'
 interface Props {
   sessionLog: SessionLog | null
   records: Index<Record>
-  bodyweight: Bodyweight | null
   date: string
 }
 export default function SessionView({ date, ...initial }: Props) {
