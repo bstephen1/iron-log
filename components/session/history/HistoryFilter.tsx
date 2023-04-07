@@ -18,7 +18,7 @@ export default function HistoryFilter({ id }: Props) {
   const [repsChecked, setRepsChecked] = useState(false)
   const [modifiersChecked, setModifiersChecked] = useState(false)
   const displayFields = useDisplayFields({ record })
-  const swiperSlide = useSwiperSlide()
+  const { isVisible, isPrev, isNext } = useSwiperSlide()
 
   useEffect(() => {
     if (!record) return
@@ -85,8 +85,10 @@ export default function HistoryFilter({ id }: Props) {
             </Stack>
             {/* Only render the swiper if the parent record card is actually visible. 
                 This prevents a large initial spike trying to load the history for 
-                every record in the session at once. */}
-            {swiperSlide.isVisible && (
+                every record in the session at once. 
+                isPrev/isNext provide a buffer so the swiper doesn't glitch out when swiping.
+                */}
+            {(isVisible || isPrev || isNext) && (
               <HistoryCardsSwiper
                 recordId={record._id}
                 currentDate={record.date}
