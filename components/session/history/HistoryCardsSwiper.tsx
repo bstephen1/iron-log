@@ -112,6 +112,7 @@ export default function HistoryCardsSwiper({
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
           grabCursor
+          observer
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,

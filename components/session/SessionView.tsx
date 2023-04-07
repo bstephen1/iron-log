@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack, useMediaQuery, useTheme } from '@mui/material'
+import { Box, IconButton, Stack, useTheme } from '@mui/material'
 import {
   addRecord,
   deleteSessionRecord,
@@ -157,6 +157,7 @@ export default function SessionView({ date }: Props) {
               onSlideChange={updateSwiper}
               // update when number of slides changes
               onUpdate={updateSwiper}
+              resistance={false}
               noSwipingClass="swiper-no-swiping-outer"
               modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
               // breakpoints catch everything >= the given value
