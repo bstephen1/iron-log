@@ -121,7 +121,7 @@ export function useRecordWithInit(initialRecord: Record) {
 }
 
 export function useRecord(id: string, config?: SWRConfiguration) {
-  const { data, error, mutate } = useSWR<Record | null>(
+  const { data, error, isLoading, mutate } = useSWR<Record | null>(
     URI_RECORDS + id,
     config
   )
@@ -129,6 +129,7 @@ export function useRecord(id: string, config?: SWRConfiguration) {
   return {
     record: data,
     isError: error,
+    isLoading,
     // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
     mutate: mutate,
   }
