@@ -25,6 +25,7 @@ interface IronLogPageProps {
 }
 function IronLog({ Component, pageProps }: AppProps<IronLogPageProps>) {
   // routeChangeStart is not called on first page load, only when navigating within the app.
+  // router.isReady may be useful for first load but that seemed unreliable.
   const [isRouterLoading, setIsRouterLoading] = useState(false)
   const router = useRouter()
 
@@ -37,8 +38,6 @@ function IronLog({ Component, pageProps }: AppProps<IronLogPageProps>) {
     const handleLoadingStop = () => {
       setIsRouterLoading(false)
     }
-
-    router.events
 
     router.events.on('routeChangeStart', handleLoadingStart)
     router.events.on('routeChangeComplete', handleLoadingStop)
