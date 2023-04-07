@@ -100,7 +100,6 @@ export default function CopySessionCard({ date, handleUpdateSession }: Props) {
     <Paper elevation={3} sx={{ p: 2 }}>
       <Stack spacing={2} alignItems="center">
         <SessionDatePicker
-          // label="Previous Session"
           date={prevDate}
           handleDateChange={handlePrevDateChange}
           textFieldProps={{ variant: 'standard' }}

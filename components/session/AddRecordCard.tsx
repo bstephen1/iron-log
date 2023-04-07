@@ -27,7 +27,7 @@ export default function AddRecordCard(props: Props) {
   }
 
   return (
-    <Paper elevation={3} sx={{ p: 2, m: 0.5 }}>
+    <Paper elevation={3} sx={{ p: 2 }}>
       <Stack spacing={2} alignItems="center">
         <ExerciseSelector
           variant="standard"

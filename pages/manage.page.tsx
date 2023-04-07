@@ -64,7 +64,7 @@ export default function ManagePage() {
   }, [])
 
   useEffect(() => {
-    setUrlTab(tab, { scroll: false })
+    setUrlTab(tab, { scroll: false, shallow: true })
     // setUrlTab will never change, so it's safe to add as a dep to shut up eslint
   }, [setUrlTab, tab])
 

@@ -13,7 +13,7 @@ import TitleBar from './upper/TitleBar'
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import {
   A11y,
   Keyboard,
@@ -27,10 +27,12 @@ import AddRecordCard from './AddRecordCard'
 import HistoryFilter from './history/HistoryFilter'
 
 // Swiper needs all these css classes to be imported too
+import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import dayjs from 'dayjs'
 import { Index } from 'lib/util'
 import Bodyweight from 'models/Bodyweight'
 import Note from 'models/Note'
+import { RouterLoadingContext } from 'pages/_app.page'
 import 'swiper/css'
 import 'swiper/css/bundle'
 import 'swiper/css/navigation'
@@ -47,6 +49,7 @@ interface Props {
   date: string
 }
 export default function SessionView({ date, ...initial }: Props) {
+  const isRouterLoading = useContext(RouterLoadingContext)
   const isDesktop = useMediaQuery('(pointer: fine)')
   const paginationSize = usePaginationSize()
   const theme = useTheme()
@@ -205,6 +208,11 @@ export default function SessionView({ date, ...initial }: Props) {
             }}
             style={{ padding: '11px 4px', flexGrow: '1' }}
           >
+            {isRouterLoading && (
+              <SwiperSlide>
+                <RecordCardSkeleton />{' '}
+              </SwiperSlide>
+            )}
             {sessionLog?.records.map((id, i) => (
               <SwiperSlide key={id}>
                 <RecordCard
@@ -230,7 +238,7 @@ export default function SessionView({ date, ...initial }: Props) {
               // if no records, disable swiping. The swiping prevents you from being able to close date picker
               className={sessionHasRecords ? '' : 'swiper-no-swiping-outer'}
             >
-              <Stack spacing={2}>
+              <Stack spacing={2} sx={{ p: 0.5 }}>
                 <AddRecordCard handleAdd={handleAddRecord} />
                 {!sessionHasRecords && (
                   <CopySessionCard

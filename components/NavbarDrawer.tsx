@@ -15,7 +15,7 @@ import {
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import Link from 'next/link'
-import { useState } from 'react'
+import { ComponentProps, useState } from 'react'
 
 const today = dayjs().format(DATE_FORMAT)
 
@@ -32,28 +32,28 @@ export default function NavbarDrawer() {
       {/* todo: settings -- kg/lbs; rpe/rir  */}
       <Drawer anchor="left" open={open} onClose={toggleOpen}>
         <List onClick={() => setOpen(false)}>
-          <NavbarLink link="/" text="Home" Icon={HomeIcon} />
+          <NavbarLink href="/" text="Home" Icon={HomeIcon} />
           <NavbarLink
-            link={`/sessions/${today}`}
+            href={`/sessions/${today}`}
             text="Today"
             Icon={TodayIcon}
           />
-          <NavbarLink link="/manage" text="Manage" Icon={BuildIcon} />
-          <NavbarLink link="/history" text="History" Icon={TimelineIcon} />
+          <NavbarLink href="/manage" text="Manage" Icon={BuildIcon} />
+          <NavbarLink href="/history" text="History" Icon={TimelineIcon} />
         </List>
       </Drawer>
     </>
   )
 }
 
-interface LinkProps {
-  link: string
+interface NavbarLinkProps extends ComponentProps<typeof Link> {
   text: string
   Icon: typeof HomeIcon
 }
-function NavbarLink({ link, text, Icon }: LinkProps) {
+function NavbarLink({ text, Icon, ...linkProps }: NavbarLinkProps) {
+  // Shallow routing only works within the same url, so it won't do anything here.
   return (
-    <Link href={link}>
+    <Link {...linkProps}>
       <ListItem disablePadding>
         <ListItemButton>
           <ListItemIcon>
