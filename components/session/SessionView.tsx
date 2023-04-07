@@ -230,7 +230,7 @@ export default function SessionView({ date, ...initial }: Props) {
               // if no records, disable swiping. The swiping prevents you from being able to close date picker
               className={sessionHasRecords ? '' : 'swiper-no-swiping-outer'}
             >
-              <Stack spacing={2}>
+              <Stack spacing={2} sx={{ p: 0.5 }}>
                 <AddRecordCard handleAdd={handleAddRecord} />
                 {!sessionHasRecords && (
                   <CopySessionCard
