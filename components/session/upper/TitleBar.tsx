@@ -12,8 +12,9 @@ interface Props {
 export default function TitleBar({ date }: Props) {
   const router = useRouter()
 
-  const handleDateChange = (newDate: string) => {
-    router.push(`/sessions/${newDate}`)
+  const handleDateChange = (newDate: Dayjs) => {
+    const date = newDate.format(DATE_FORMAT)
+    router.push(date)
   }
 
   return (
