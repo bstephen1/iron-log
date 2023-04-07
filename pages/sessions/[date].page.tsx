@@ -29,9 +29,7 @@ export default function SessionPage({ date }: Props) {
         {/* this needs to be a single string or it throws a warning */}
         <title>{`Iron Log - ${date}`}</title>
       </Head>
-      <main>
-        <SessionView {...{ date }} />
-      </main>
+      <SessionView {...{ date }} />
     </>
   )
 }

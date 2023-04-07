@@ -5,6 +5,7 @@ import StyledDivider from 'components/StyledDivider'
 import { useRecord } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import { useEffect, useState } from 'react'
+import { useSwiperSlide } from 'swiper/react'
 import HistoryCardsSwiper from './HistoryCardsSwiper'
 
 interface Props {
@@ -17,6 +18,7 @@ export default function HistoryFilter({ id }: Props) {
   const [repsChecked, setRepsChecked] = useState(false)
   const [modifiersChecked, setModifiersChecked] = useState(false)
   const displayFields = useDisplayFields({ record })
+  const swiperSlide = useSwiperSlide()
 
   useEffect(() => {
     if (!record) return
@@ -81,16 +83,21 @@ export default function HistoryFilter({ id }: Props) {
                 variant="standard"
               />
             </Stack>
-            <HistoryCardsSwiper
-              recordId={record._id}
-              currentDate={record.date}
-              displayFields={displayFields}
-              filter={{
-                exercise: record.exercise?.name,
-                reps: repsChecked ? repFilter : undefined,
-                modifier: modifiersChecked ? modifierFilter : undefined,
-              }}
-            />
+            {/* Only render the swiper if the parent record card is actually visible. 
+                This prevents a large initial spike trying to load the history for 
+                every record in the session at once. */}
+            {swiperSlide.isVisible && (
+              <HistoryCardsSwiper
+                recordId={record._id}
+                currentDate={record.date}
+                displayFields={displayFields}
+                filter={{
+                  exercise: record.exercise?.name,
+                  reps: repsChecked ? repFilter : undefined,
+                  modifier: modifiersChecked ? modifierFilter : undefined,
+                }}
+              />
+            )}
           </Stack>
         </CardContent>
       </Card>
