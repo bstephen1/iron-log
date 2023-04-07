@@ -34,7 +34,7 @@ export default function HistoryCardsSwiper({
 }: Props) {
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
   // parent swiper from SessionView
-  const { isVisible } = useSwiperSlide()
+  const { isVisible, isPrev, isNext } = useSwiperSlide()
   // todo: limit this to something like 10 records before/after the date, then fetch more if the swiper gets close to either end.
   // Only try to fetch if the parent record card is actually visible.
   // This prevents a large initial spike trying to load the history for
@@ -45,7 +45,7 @@ export default function HistoryCardsSwiper({
       modifierMatchType: ArrayMatchType.Equivalent,
       sort: 'oldestFirst',
     },
-    isVisible
+    isVisible || isPrev || isNext
   )
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${recordId}`
