@@ -1,26 +1,24 @@
 import SessionView from 'components/session/SessionView'
-import { getUserId } from 'lib/backend/apiMiddleware/util'
-import { valiDate } from 'lib/backend/apiQueryValidationService'
-import { fetchRecords, fetchSession } from 'lib/backend/mongoService'
-import { arrayToIndex, Index } from 'lib/util'
-import Record from 'models/Record'
-import SessionLog from 'models/SessionLog'
-import { GetServerSidePropsContext } from 'next'
+import { validDateStringRegex } from 'lib/frontend/constants'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
-export function getServerSideProps({ query }: GetServerSidePropsContext) {
-  const date = valiDate(query.date)
-  return { props: { date } }
-}
-
-interface Props {
-  sessionLog: SessionLog | null
-  records: Index<Record>
-  date: string
-}
 // todo: I guess a separate session number in case you want to do multiple sessions in one day
 // or, add separate sessions to the same day?
-export default function SessionPage({ date }: Props) {
+export default function SessionPage() {
+  const router = useRouter()
+  const { date } = router.query
+
+  // in first render router.query is an empty object
+  if (!date) {
+    return <></>
+  }
+
+  // it won't ever not be a string but need to make typescript happy
+  if (typeof date !== 'string' || !date.match(validDateStringRegex)) {
+    return <></>
+  }
+
   return (
     <>
       <Head>
@@ -28,7 +26,7 @@ export default function SessionPage({ date }: Props) {
         <title>{`Iron Log - ${date}`}</title>
       </Head>
       <main>
-        <SessionView {...{ date }} />
+        <SessionView date={date} />
       </main>
     </>
   )
