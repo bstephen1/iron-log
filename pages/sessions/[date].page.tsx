@@ -8,25 +8,9 @@ import SessionLog from 'models/SessionLog'
 import { GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 
-export async function getServerSideProps({
-  req,
-  res,
-  query,
-}: GetServerSidePropsContext) {
-  console.log(req)
-  // https://stackoverflow.com/questions/71333002/how-to-enable-cache-for-getserversideprops
-  const userId = await getUserId(req, res)
+export function getServerSideProps({ query }: GetServerSidePropsContext) {
   const date = valiDate(query.date)
-
-  const sessionLogPromise = fetchSession(userId, date)
-  const recordsPromise = fetchRecords({ userId, filter: { date } })
-
-  return Promise.all([sessionLogPromise, recordsPromise]).then(
-    ([sessionLog, recordsArray]) => {
-      const records = arrayToIndex<Record>('_id', recordsArray)
-      return { props: { sessionLog, records, date } }
-    }
-  )
+  return { props: { date } }
 }
 
 interface Props {
@@ -36,15 +20,15 @@ interface Props {
 }
 // todo: I guess a separate session number in case you want to do multiple sessions in one day
 // or, add separate sessions to the same day?
-export default function SessionPage(props: Props) {
+export default function SessionPage({ date }: Props) {
   return (
     <>
       <Head>
         {/* this needs to be a single string or it throws a warning */}
-        <title>{`Iron Log - ${props.date}`}</title>
+        <title>{`Iron Log - ${date}`}</title>
       </Head>
       <main>
-        <SessionView {...props} />
+        <SessionView {...{ date }} />
       </main>
     </>
   )

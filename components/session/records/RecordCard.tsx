@@ -22,13 +22,14 @@ import {
 } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
+import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
 import { Dayjs } from 'dayjs'
 import {
   updateExerciseFields,
   updateRecordFields,
   useExercises,
-  useRecordWithInit,
+  useRecord,
 } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
@@ -57,7 +58,7 @@ import SetInput from './SetInput'
 // See bug: https://github.com/orgs/vercel/discussions/1657
 
 interface Props {
-  initialRecord: Record
+  id: string
   date: Dayjs
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
@@ -69,7 +70,7 @@ interface Props {
   swiperIndex: number
 }
 export default function RecordCard({
-  initialRecord,
+  id,
   deleteRecord,
   swapRecords,
   swiperIndex,
@@ -85,7 +86,7 @@ export default function RecordCard({
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
     ? 'swiper-no-swiping-outer'
     : ''
-  const { record, mutate: mutateRecord } = useRecordWithInit(initialRecord)
+  const { record, mutate: mutateRecord, isLoading } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -96,8 +97,6 @@ export default function RecordCard({
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
-  const { exercise, activeModifiers, sets, notes, _id } = record
-  const attributes = exercise?.attributes ?? {}
 
   useEffect(() => {
     if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
@@ -119,6 +118,15 @@ export default function RecordCard({
   // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
   // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
   // when they should only be receiving the record data after it is no longer null.
+
+  if (isLoading || !displayFields || extraWeight == null) {
+    return <RecordCardSkeleton />
+  } else if (!record) {
+    return <>Could not find record</>
+  }
+
+  const { exercise, activeModifiers, sets, notes, _id } = record
+  const attributes = exercise?.attributes ?? {}
 
   const addSet = async () => {
     const newSet = sets[sets.length - 1]
