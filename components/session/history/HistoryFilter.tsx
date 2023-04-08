@@ -5,6 +5,7 @@ import StyledDivider from 'components/StyledDivider'
 import { useRecord } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import { useEffect, useState } from 'react'
+import { useSwiperSlide } from 'swiper/react'
 import HistoryCardsSwiper from './HistoryCardsSwiper'
 
 interface Props {
@@ -17,6 +18,12 @@ export default function HistoryFilter({ id }: Props) {
   const [repsChecked, setRepsChecked] = useState(false)
   const [modifiersChecked, setModifiersChecked] = useState(false)
   const displayFields = useDisplayFields({ record })
+  const { isVisible } = useSwiperSlide()
+  const [hasBeenVisible, setHasBeenVisible] = useState(false)
+
+  useEffect(() => {
+    isVisible && setHasBeenVisible(true)
+  }, [isVisible])
 
   useEffect(() => {
     if (!record) return
@@ -81,17 +88,25 @@ export default function HistoryFilter({ id }: Props) {
                 variant="standard"
               />
             </Stack>
-
-            <HistoryCardsSwiper
-              recordId={record._id}
-              currentDate={record.date}
-              displayFields={displayFields}
-              filter={{
-                exercise: record.exercise?.name,
-                reps: repsChecked ? repFilter : undefined,
-                modifier: modifiersChecked ? modifierFilter : undefined,
-              }}
-            />
+            {/* Only render the swiper if the parent record card has been viewed.
+                This prevents a large initial spike trying to load the history for
+                every record in the session at once. Keeping it in the dom afterwards prevents
+                lagginess on mobile from frequent creation of swipers.
+                It also doesn't hinder desktop experience, where multiple slides may be
+                visible at once but the added load is not likely to degrade performance.
+              */}
+            {hasBeenVisible && (
+              <HistoryCardsSwiper
+                recordId={record._id}
+                currentDate={record.date}
+                displayFields={displayFields}
+                filter={{
+                  exercise: record.exercise?.name,
+                  reps: repsChecked ? repFilter : undefined,
+                  modifier: modifiersChecked ? modifierFilter : undefined,
+                }}
+              />
+            )}
           </Stack>
         </CardContent>
       </Card>

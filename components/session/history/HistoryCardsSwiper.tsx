@@ -8,7 +8,7 @@ import {
   Scrollbar,
   Swiper as SwiperClass,
 } from 'swiper'
-import { Swiper, SwiperSlide, useSwiperSlide } from 'swiper/react'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import HistoryCard from './HistoryCard'
 
 import 'swiper/css'
@@ -33,20 +33,12 @@ export default function HistoryCardsSwiper({
   filter,
 }: Props) {
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
-  // parent swiper from SessionView
-  const { isVisible, isPrev, isNext } = useSwiperSlide()
   // todo: limit this to something like 10 records before/after the date, then fetch more if the swiper gets close to either end.
-  // Only try to fetch if the parent record card is actually visible.
-  // This prevents a large initial spike trying to load the history for
-  // every record in the session at once.
-  const { records, isLoading } = useRecords(
-    {
-      ...filter,
-      modifierMatchType: ArrayMatchType.Equivalent,
-      sort: 'oldestFirst',
-    },
-    isVisible || isPrev || isNext
-  )
+  const { records, isLoading } = useRecords({
+    ...filter,
+    modifierMatchType: ArrayMatchType.Equivalent,
+    sort: 'oldestFirst',
+  })
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${recordId}`
   const mostRecentDateIndex = useMemo(
@@ -112,7 +104,7 @@ export default function HistoryCardsSwiper({
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
           grabCursor
-          observer
+          autoHeight
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
