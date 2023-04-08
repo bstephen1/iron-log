@@ -1,4 +1,4 @@
-import { Box, IconButton, Stack, useTheme } from '@mui/material'
+import { Box, IconButton, Stack, useMediaQuery, useTheme } from '@mui/material'
 import {
   addRecord,
   deleteSessionRecord,
@@ -42,6 +42,7 @@ interface Props {
   date: string
 }
 export default function SessionView({ date }: Props) {
+  const isDesktop = useMediaQuery('(pointer: fine)')
   const paginationSize = usePaginationSize()
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
@@ -155,6 +156,12 @@ export default function SessionView({ date }: Props) {
               // for some reason passing the swiper object to state doesn't update it, so added in an intermediary function
               onSwiper={updateSwiper}
               onSlideChange={updateSwiper}
+              // cssMode makes animations a LOT smoother on mobile. It does have some noticeable differences:
+              // - disables dragging with a mouse.
+              // - makes pagination bullets animate each change onClick instead of just going to the final one (desktop)
+              // - removes stretching animation when trying to scroll past end of list
+              // - makes scrolling more sensitive (like a higher dpi on a mouse)
+              cssMode={!isDesktop}
               // update when number of slides changes
               onUpdate={updateSwiper}
               noSwipingClass="swiper-no-swiping-outer"
