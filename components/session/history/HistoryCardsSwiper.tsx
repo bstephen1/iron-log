@@ -1,10 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Stack,
-  Typography,
-  useMediaQuery,
-} from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import {
@@ -22,7 +16,7 @@ import 'swiper/css/bundle'
 
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import 'swiper/css/pagination'
 
 interface Props {
@@ -38,7 +32,6 @@ export default function HistoryCardsSwiper({
   displayFields,
   filter,
 }: Props) {
-  const isDesktop = useMediaQuery('(pointer: fine)')
   const [swiper, setSwiper] = useState<SwiperClass | null>(null)
   // todo: limit this to something like 10 records before/after the date, then fetch more if the swiper gets close to either end.
   const { records, isLoading } = useRecords({
@@ -48,37 +41,8 @@ export default function HistoryCardsSwiper({
   })
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${recordId}`
-  const mostRecentDateIndex = useMemo(
-    () =>
-      records
-        ? records.findIndex((record) => record.date === currentDate) - 1
-        : 0,
-    [records, currentDate]
-  )
 
-  // When the records get updated (ie, filters change) we need to slide to the new most recent slide.
-  // Can't use swiper's initialSlide because the swiper doesn't get always get rerendered when records change.
-  useEffect(() => {
-    // guard against just initialized/destroyed swiper
-    if (typeof swiper?.activeIndex === 'number') {
-      // This behavior might not be great UX in practice. It's a bit tricky though. If you swap around the filters
-      // you may expect to stay on the same date if it still exists on the new filter. But the filter is usually
-      // something you'd set up initially, before browsing. And in that case the filter can be too restricted initially
-      // and end up not showing the most recent record when you do set it up.
-      swiper.slideTo(mostRecentDateIndex)
-    }
-  }, [mostRecentDateIndex, swiper])
-
-  if (isLoading || !records) {
-    return (
-      <Box display="flex" alignItems="center" justifyContent="center">
-        <CircularProgress color="primary" size={20} />
-      </Box>
-    )
-  }
-
-  // length will be 1 at minimum because the current record will always be fetched
-  if (records && records.length < 2) {
+  if (records && !records?.length) {
     return (
       <Typography textAlign="center">No records with those filters!</Typography>
     )
@@ -110,12 +74,12 @@ export default function HistoryCardsSwiper({
           onSwiper={setSwiper}
           noSwipingClass="swiper-no-swiping-inner"
           className="swiper-no-swiping-outer"
-          // Unlike the parent swiper, enabling cssMode does break something here: autoheight.
-          // Autoheight can be disabled though, and then the height just matches the tallest slide.
-          // Which is... acceptable.
-          cssMode={!isDesktop}
-          autoHeight={isDesktop}
           grabCursor
+          // This isn't documented, but the out of bounds behavior sets the active slide to
+          // the closest valid index (first slide starting at 0). This makes it pretty easy
+          // to default to the most recent date.
+          initialSlide={filter.limit}
+          autoHeight
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,

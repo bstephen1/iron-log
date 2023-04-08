@@ -19,11 +19,6 @@ export default function HistoryFilter({ id }: Props) {
   const [modifiersChecked, setModifiersChecked] = useState(false)
   const displayFields = useDisplayFields({ record })
   const { isVisible } = useSwiperSlide()
-  const [hasBeenVisible, setHasBeenVisible] = useState(false)
-
-  useEffect(() => {
-    isVisible && setHasBeenVisible(true)
-  }, [isVisible])
 
   useEffect(() => {
     if (!record) return
@@ -88,14 +83,13 @@ export default function HistoryFilter({ id }: Props) {
                 variant="standard"
               />
             </Stack>
-            {/* Only render the swiper if the parent record card has been viewed.
+            {/* Only render the swiper if the parent record card is currently visible.
                 This prevents a large initial spike trying to load the history for
-                every record in the session at once. Keeping it in the dom afterwards prevents
-                lagginess on mobile from frequent creation of swipers.
+                every record in the session at once.
                 It also doesn't hinder desktop experience, where multiple slides may be
                 visible at once but the added load is not likely to degrade performance.
               */}
-            {hasBeenVisible && (
+            {isVisible && (
               <HistoryCardsSwiper
                 recordId={record._id}
                 currentDate={record.date}
@@ -104,6 +98,12 @@ export default function HistoryFilter({ id }: Props) {
                   exercise: record.exercise?.name,
                   reps: repsChecked ? repFilter : undefined,
                   modifier: modifiersChecked ? modifierFilter : undefined,
+                  // todo: try to find a better way of limiting this so you can go back
+                  // further if you want. Maybe a dedicated history page?
+                  // The history swipers start to cause significant lag on mobile if they
+                  // get too large so the limit has to be fairly aggressive.
+                  limit: 5,
+                  end: record.date,
                 }}
               />
             )}
