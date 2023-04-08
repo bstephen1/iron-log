@@ -19,6 +19,11 @@ export default function HistoryFilter({ id }: Props) {
   const [modifiersChecked, setModifiersChecked] = useState(false)
   const displayFields = useDisplayFields({ record })
   const { isVisible } = useSwiperSlide()
+  const [hasBeenVisible, setHasBeenVisible] = useState(false)
+
+  useEffect(() => {
+    isVisible && setHasBeenVisible(true)
+  }, [isVisible])
 
   useEffect(() => {
     if (!record) return
@@ -89,7 +94,7 @@ export default function HistoryFilter({ id }: Props) {
                 It also doesn't hinder desktop experience, where multiple slides may be
                 visible at once but the added load is not likely to degrade performance.
               */}
-            {isVisible && (
+            {hasBeenVisible && (
               <HistoryCardsSwiper
                 recordId={record._id}
                 currentDate={record.date}
