@@ -1,4 +1,7 @@
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { Box, IconButton, Stack, useTheme } from '@mui/material'
+import dayjs from 'dayjs'
 import {
   addRecord,
   deleteSessionRecord,
@@ -6,36 +9,21 @@ import {
   useSessionLog,
 } from 'lib/frontend/restService'
 import Exercise from 'models/Exercise'
+import Note from 'models/Note'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
-import RecordCard from './records/RecordCard'
-import TitleBar from './upper/TitleBar'
-
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { useState } from 'react'
-import {
-  A11y,
-  Keyboard,
-  Navigation,
-  Pagination,
-  Scrollbar,
-  Swiper as SwiperClass,
-} from 'swiper'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import AddRecordCard from './AddRecordCard'
-import HistoryFilter from './history/HistoryFilter'
-
-// Swiper needs all these css classes to be imported too
-import dayjs from 'dayjs'
-import Note from 'models/Note'
+import { Keyboard, Navigation, Pagination, Swiper as SwiperClass } from 'swiper'
 import 'swiper/css'
-import 'swiper/css/bundle'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import 'swiper/css/scrollbar'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
+import HistoryFilter from './history/HistoryFilter'
+import RecordCard from './records/RecordCard'
 import SessionModules from './upper/SessionModules'
+import TitleBar from './upper/TitleBar'
 import usePaginationSize from './usePaginationSize'
 
 interface Props {
@@ -168,7 +156,7 @@ export default function SessionView({ date }: Props) {
               // update when number of slides changes
               onUpdate={updateSwiper}
               noSwipingClass="swiper-no-swiping-outer"
-              modules={[Navigation, Pagination, Scrollbar, A11y, Keyboard]}
+              modules={[Navigation, Pagination, Keyboard]}
               // breakpoints catch everything >= the given value
               breakpoints={{
                 [theme.breakpoints.values.sm]: {
