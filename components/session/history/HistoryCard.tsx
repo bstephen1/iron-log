@@ -19,7 +19,7 @@ interface Props {
 }
 export default function HistoryCard({ record, displayFields }: Props) {
   const router = useRouter()
-  const extraWeight = useExtraWeight({ record })
+  const extraWeight = useExtraWeight(record)
   // use splitWeight if parent record is using it, even if this history record doesn't have the
   // right modifiers for it to be active
   const showSplitWeight = displayFields.visibleFields.some((field) =>

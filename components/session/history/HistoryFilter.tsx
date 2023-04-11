@@ -17,7 +17,7 @@ export default function HistoryFilter({ id }: Props) {
   const [repFilter, setRepFilter] = useState<number>()
   const [repsChecked, setRepsChecked] = useState(false)
   const [modifiersChecked, setModifiersChecked] = useState(false)
-  const displayFields = useDisplayFields({ record })
+  const displayFields = useDisplayFields(record)
   const { isVisible } = useSwiperSlide()
   const [hasBeenVisible, setHasBeenVisible] = useState(false)
 

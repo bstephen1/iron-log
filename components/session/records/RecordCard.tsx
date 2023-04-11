@@ -90,8 +90,8 @@ export default function RecordCard({
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
-  const displayFields = useDisplayFields({ record })
-  const extraWeight = useExtraWeight({ record })
+  const displayFields = useDisplayFields(record)
+  const extraWeight = useExtraWeight(record)
   const router = useRouter()
   const [titleRef, { width: titleWidth }] = useMeasure()
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
