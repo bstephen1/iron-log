@@ -20,7 +20,6 @@ import 'swiper/css/pagination'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
-import HistoryFilter from './history/HistoryFilter'
 import RecordCard from './records/RecordCard'
 import SessionModules from './upper/SessionModules'
 import TitleBar from './upper/TitleBar'
@@ -184,7 +183,6 @@ export default function SessionView({ date }: Props) {
                 <SwiperSlide key={id}>
                   <RecordCard
                     id={id}
-                    date={dayjs(date)}
                     deleteRecord={handleDeleteRecord}
                     swapRecords={handleSwapRecords}
                     swiperIndex={i}
@@ -195,9 +193,6 @@ export default function SessionView({ date }: Props) {
                     }
                     mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
                   />
-                  <Box py={3}>
-                    <HistoryFilter id={id} key={id} />
-                  </Box>
                 </SwiperSlide>
               ))}
 
