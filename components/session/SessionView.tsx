@@ -23,13 +23,11 @@ import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
 import SessionModules from './upper/SessionModules'
 import TitleBar from './upper/TitleBar'
-import usePaginationSize from './usePaginationSize'
 
 interface Props {
   date: string
 }
 export default function SessionView({ date }: Props) {
-  const paginationSize = usePaginationSize()
   const theme = useTheme()
   const [isBeginning, setIsBeginning] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
