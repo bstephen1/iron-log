@@ -87,7 +87,13 @@ export default function HistoryCardsSwiper({
         >
           {records?.map((record) => (
             <SwiperSlide key={record._id}>
-              <HistoryCard {...{ record, displayFields }} />
+              <HistoryCard
+                {...{
+                  record,
+                  displayFields,
+                  filterModifiers: filter.modifier || [],
+                }}
+              />
             </SwiperSlide>
           ))}
         </Swiper>

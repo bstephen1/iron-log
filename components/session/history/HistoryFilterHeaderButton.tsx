@@ -9,23 +9,26 @@ import RecordHeaderButton from '../records/RecordHeaderButton'
 
 interface Props {
   record: Record
+  filter: RecordQuery
   handleFilterChange: (changes: Partial<RecordQuery>) => void
 }
 export default function HistoryFilterHeaderButton({
   record,
+  filter,
   handleFilterChange,
 }: Props) {
   const [open, setOpen] = useState(false)
+  const repsDisabled =
+    filter.modifier?.includes('amrap') || filter.modifier?.includes('myo')
 
   useEffect(() => {
-    console.log('calling uef')
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     // todo: amrap/myo should be special default modifiers rather than hardcoding here
     const reps =
       record.sets[0]?.reps &&
       !record.activeModifiers.includes('amrap') &&
       !record.activeModifiers.includes('myo')
-        ? record.sets[0].reps
+        ? record.sets[0]?.reps
         : undefined
 
     handleFilterChange({
@@ -35,7 +38,7 @@ export default function HistoryFilterHeaderButton({
       limit: 5,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record.activeModifiers, record.sets[0].reps])
+  }, [record.activeModifiers, record.sets[0]?.reps])
 
   return (
     <>
@@ -56,7 +59,7 @@ export default function HistoryFilterHeaderButton({
               label="Modifiers"
               emptyPlaceholder="No filter"
               options={record.exercise?.modifiers}
-              initialValue={record.activeModifiers}
+              initialValue={filter.modifier || []}
               variant="standard"
               handleSubmit={(modifier) => handleFilterChange({ modifier })}
             />
@@ -64,10 +67,16 @@ export default function HistoryFilterHeaderButton({
             <NumericFieldAutosave
               label="Reps"
               placeholder="No filter"
-              initialValue={record.sets[0]?.reps}
+              initialValue={filter.reps}
               handleSubmit={(reps) => handleFilterChange({ reps })}
               variant="standard"
+              disabled={repsDisabled}
               InputLabelProps={{ shrink: true }}
+              helperText={
+                repsDisabled
+                  ? "Can't filter reps with myo or amrap modifiers enabled"
+                  : ' '
+              }
             />
           </Stack>
         </DialogContent>
