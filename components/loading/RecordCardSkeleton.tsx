@@ -19,7 +19,7 @@ interface Props {
   sx?: SxProps
 }
 export default function RecordCardSkeleton({
-  title = '',
+  title = 'Record',
   elevation = 3,
   noSetButton,
   Content,
