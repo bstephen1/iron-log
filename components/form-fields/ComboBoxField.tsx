@@ -10,6 +10,10 @@ import useField from './useField'
 interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
   options?: string[]
   initialValue: string[]
+  /** Placeholder that will only show if there are no values selected.
+   *  If normal placeholder is provided it will overwrite this.
+   */
+  emptyPlaceholder?: string
   handleSubmit?: (value: string[]) => void
   textFieldProps?: Partial<TextFieldProps>
 }
@@ -17,6 +21,7 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
 export function ComboBoxField({
   options,
   initialValue,
+  emptyPlaceholder = '',
   handleSubmit = doNothing,
   textFieldProps,
   ...asyncAutocompleteProps
@@ -45,6 +50,7 @@ export function ComboBoxField({
   return (
     <AsyncAutocomplete
       {...control()}
+      placeholder={value.length ? '' : emptyPlaceholder}
       onChange={(_, value) => handleChange(value)}
       fullWidth
       // size="small"  // todo: use small sizes?
