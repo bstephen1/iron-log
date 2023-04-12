@@ -45,7 +45,6 @@ export default function HistoryCard({
   return (
     <Card elevation={0}>
       <CardHeader
-        sx={{ pt: 0 }}
         title={
           <Box
             // todo: Could add the record number so swiper can directly link to the record.
