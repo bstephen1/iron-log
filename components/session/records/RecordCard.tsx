@@ -86,7 +86,7 @@ export default function RecordCard({
   const { isActive, isNext, isPrev } = useSwiperSlide()
   const theme = useTheme()
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
-    ? 'swiper-no-swiping-outer'
+    ? 'swiper-no-swiping-record'
     : ''
   const { record, mutate: mutateRecord, isLoading } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({

@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import { Pagination, Swiper as SwiperClass } from 'swiper'
+import { Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import HistoryCard from './HistoryCard'
 
@@ -11,7 +11,6 @@ import 'swiper/css/pagination'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
-import { useState } from 'react'
 import 'swiper/css/pagination'
 
 interface Props {
@@ -26,7 +25,6 @@ export default function HistoryCardsSwiper({
   displayFields,
   filter,
 }: Props) {
-  const [swiper, setSwiper] = useState<SwiperClass | null>(null)
   // todo: limit this to something like 10 records before/after the date, then fetch more if the swiper gets close to either end.
   const { records, isLoading } = useRecords({
     ...filter,
@@ -79,12 +77,9 @@ export default function HistoryCardsSwiper({
         />
       </Box>
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
-      <Box width="100%">
+      <Box width="100%" className="swiper-no-swiping-record">
         <Swiper
           spaceBetween={20}
-          onSwiper={setSwiper}
-          noSwipingClass="swiper-no-swiping-inner"
-          className="swiper-no-swiping-outer"
           grabCursor
           // This isn't documented, but the out of bounds behavior sets the active slide to
           // the closest valid index (first slide starting at 0). This makes it pretty easy

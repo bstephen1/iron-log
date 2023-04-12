@@ -142,7 +142,7 @@ export default function SessionView({ date }: Props) {
               cssMode
               // update when number of slides changes
               onUpdate={updateSwiper}
-              noSwipingClass="swiper-no-swiping-outer"
+              noSwipingClass="swiper-no-swiping-record"
               modules={[Navigation, Pagination, Keyboard]}
               // breakpoints catch everything >= the given value
               breakpoints={{
@@ -198,7 +198,7 @@ export default function SessionView({ date }: Props) {
 
               <SwiperSlide
                 // if no records, disable swiping. The swiping prevents you from being able to close date picker
-                className={sessionHasRecords ? '' : 'swiper-no-swiping-outer'}
+                className={sessionHasRecords ? '' : 'swiper-no-swiping-record'}
               >
                 <Stack spacing={2} sx={{ p: 0.5 }}>
                   <AddRecordCard handleAdd={handleAddRecord} />
