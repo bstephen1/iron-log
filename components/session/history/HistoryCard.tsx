@@ -43,8 +43,9 @@ export default function HistoryCard({
   )
 
   return (
-    <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
+    <Card elevation={0}>
       <CardHeader
+        sx={{ pt: 0 }}
         title={
           <Box
             // todo: Could add the record number so swiper can directly link to the record.
@@ -69,6 +70,7 @@ export default function HistoryCard({
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
 
+      {/* Note -- cannot override pb normally. See: https://stackoverflow.com/questions/54236623/cant-remove-padding-bottom-from-card-content-in-material-ui */}
       <CardContent sx={{ px: 1 }}>
         <Stack spacing={2}>
           {showModifiers && (

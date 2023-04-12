@@ -34,7 +34,15 @@ export default function HistoryCardsSwiper({
   const paginationClassName = `pagination-history-${paginationId}`
 
   if (isLoading || !records) {
-    return <RecordCardSkeleton title="History" noSetButton />
+    return (
+      <RecordCardSkeleton
+        noSetButton
+        title="History"
+        titleTypographyProps={{ textAlign: 'center' }}
+        elevation={0}
+        sx={{ px: 0, m: 0 }}
+      />
+    )
   }
 
   // assumes filter has end date set to the current record's date (so will exclude it)
@@ -42,6 +50,9 @@ export default function HistoryCardsSwiper({
     return (
       <RecordCardSkeleton
         title="History"
+        titleTypographyProps={{ textAlign: 'center' }}
+        elevation={0}
+        sx={{ px: 0, m: 0 }}
         Content={
           <>
             <Typography textAlign="center">
@@ -75,7 +86,8 @@ export default function HistoryCardsSwiper({
           // the closest valid index (first slide starting at 0). This makes it pretty easy
           // to default to the last index when length is unknown, but has a max possible value.
           initialSlide={filter.limit}
-          // autoHeight should not be enabled if parent swiper is not also using autoheight because it won't do anything.
+          // disable autoHeight if cssMode is enabled
+          autoHeight
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,

@@ -453,23 +453,22 @@ export default function RecordCard({
             </span>
           </Tooltip>
         </CardActions>
-      </Card>
-
-      {/* Only render the swiper if the record card has ever been visible.
+        {/* Only render the swiper if the record card has ever been visible.
           This prevents a large initial spike trying to load the history for
           every record in the session at once.
           It also doesn't hinder desktop experience, where multiple slides may be
           visible at once but the added load is not likely to degrade performance.
         */}
-      {hasBeenVisible && (
-        <Box py={3}>
-          <HistoryCardsSwiper
-            filter={historyFilter}
-            paginationId={_id}
-            displayFields={displayFields}
-          />
-        </Box>
-      )}
+        {hasBeenVisible && (
+          <Box pt={3}>
+            <HistoryCardsSwiper
+              filter={historyFilter}
+              paginationId={_id}
+              displayFields={displayFields}
+            />
+          </Box>
+        )}
+      </Card>
     </>
   )
 }

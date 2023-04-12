@@ -4,6 +4,8 @@ import {
   CardContent,
   CardHeader,
   Skeleton,
+  SxProps,
+  TypographyProps,
 } from '@mui/material'
 import StyledDivider from 'components/StyledDivider'
 
@@ -12,18 +14,27 @@ interface Props {
   noSetButton?: boolean
   /** Override all card content.  */
   Content?: JSX.Element
+  elevation?: number
+  titleTypographyProps?: Partial<TypographyProps>
+  sx?: SxProps
 }
 export default function RecordCardSkeleton({
-  title = 'Record',
+  title = '',
+  elevation = 3,
   noSetButton,
   Content,
+  titleTypographyProps,
+  sx,
 }: Props) {
   return (
-    <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
-      <CardHeader title={title} titleTypographyProps={{ variant: 'h6' }} />
+    <Card elevation={elevation} sx={{ px: 1, m: 0.5, ...sx }}>
+      <CardHeader
+        title={title}
+        titleTypographyProps={{ variant: 'h6', ...titleTypographyProps }}
+      />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
 
-      <CardContent>
+      <CardContent sx={{ px: 1 }}>
         {Content ? (
           Content
         ) : (
