@@ -75,15 +75,12 @@ export default function HistoryCardsSwiper({
 
   return (
     <Stack alignItems="center">
-      <HistoryTitle />
-      <Box>
-        <Box
-          className={paginationClassName}
-          display="flex"
-          justifyContent="center"
-          pt={2}
-        />
-      </Box>
+      <Box
+        className={paginationClassName}
+        display="flex"
+        justifyContent="center"
+        pt={2}
+      />
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
       <Box width="100%" className="swiper-no-swiping-record">
         <Swiper
