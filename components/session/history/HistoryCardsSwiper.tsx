@@ -8,6 +8,7 @@ import HistoryCard from './HistoryCard'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
+import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { useState } from 'react'
@@ -35,10 +36,27 @@ export default function HistoryCardsSwiper({
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${paginationId}`
 
+  if (isLoading || !records) {
+    return <RecordCardSkeleton title="History" readOnly />
+  }
+
   // assumes filter has end date set to the current record's date (so will exclude it)
-  if (records && !records?.length) {
+  if (!records.length) {
     return (
-      <Typography textAlign="center">No records with those filters!</Typography>
+      <RecordCardSkeleton
+        title="History"
+        readOnly
+        Content={
+          <>
+            <Typography textAlign="center">
+              No history found for this exercise!
+            </Typography>
+            <Typography textAlign="center">
+              Try changing the filters.
+            </Typography>
+          </>
+        }
+      />
     )
   }
 

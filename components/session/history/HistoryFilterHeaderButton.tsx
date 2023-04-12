@@ -2,6 +2,8 @@ import HistoryIcon from '@mui/icons-material/History'
 import { Dialog, DialogContent, DialogTitle, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
+import dayjs from 'dayjs'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import { useEffect, useState } from 'react'
@@ -34,7 +36,8 @@ export default function HistoryFilterHeaderButton({
     handleFilterChange({
       reps,
       modifier: record.activeModifiers,
-      end: record.date,
+      // don't want to include the actual record in its own history
+      end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
       limit: 5,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,7 +55,7 @@ export default function HistoryFilterHeaderButton({
           setOpen(false)
         }}
       >
-        <DialogTitle>History Filter</DialogTitle>
+        <DialogTitle>History Filters</DialogTitle>
         <DialogContent>
           <Stack spacing={2}>
             <ComboBoxField
