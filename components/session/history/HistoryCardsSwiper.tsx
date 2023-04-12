@@ -14,15 +14,14 @@ import { useState } from 'react'
 import 'swiper/css/pagination'
 
 interface Props {
-  /** just used as index for pagination className */
-  recordId: string
+  paginationId: string
+  /** A record's displayFields are only up to date on fetch, so the current value must
+   * be passed in to ensure it is in sync */
   displayFields: DisplayFields
-  currentDate: string
   filter: RecordQuery
 }
 export default function HistoryCardsSwiper({
-  recordId,
-  currentDate,
+  paginationId,
   displayFields,
   filter,
 }: Props) {
@@ -34,8 +33,9 @@ export default function HistoryCardsSwiper({
     sort: 'oldestFirst',
   })
   // each record's history needs a unique className
-  const paginationClassName = `pagination-history-${recordId}`
+  const paginationClassName = `pagination-history-${paginationId}`
 
+  // assumes filter has end date set to the current record's date (so will exclude it)
   if (records && !records?.length) {
     return (
       <Typography textAlign="center">No records with those filters!</Typography>
@@ -61,7 +61,7 @@ export default function HistoryCardsSwiper({
           // position="relative"
         />
       </Box>
-      {/* this box prevents Swiper from deciding it needs to have infinite width for some reason. Width is required when stack has alignItems centered */}
+      {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
       <Box width="100%">
         <Swiper
           spaceBetween={20}
@@ -71,7 +71,7 @@ export default function HistoryCardsSwiper({
           grabCursor
           // This isn't documented, but the out of bounds behavior sets the active slide to
           // the closest valid index (first slide starting at 0). This makes it pretty easy
-          // to default to the most recent date.
+          // to default to the last index when length is unknown, but has a max possible value.
           initialSlide={filter.limit}
           autoHeight
           pagination={{
@@ -84,13 +84,11 @@ export default function HistoryCardsSwiper({
           }}
           modules={[Pagination]}
         >
-          {records
-            ?.filter((record) => record.date !== currentDate)
-            .map((record) => (
-              <SwiperSlide key={record._id}>
-                <HistoryCard {...{ record, displayFields }} />
-              </SwiperSlide>
-            ))}
+          {records?.map((record) => (
+            <SwiperSlide key={record._id}>
+              <HistoryCard {...{ record, displayFields }} />
+            </SwiperSlide>
+          ))}
         </Swiper>
       </Box>
     </Stack>

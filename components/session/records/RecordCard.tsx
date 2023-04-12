@@ -24,7 +24,6 @@ import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
-import { Dayjs } from 'dayjs'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -35,6 +34,7 @@ import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
 import Exercise from 'models/Exercise'
 import Note from 'models/Note'
+import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import { Set } from 'models/Set'
 import { Status } from 'models/Status'
@@ -42,6 +42,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
 import { useSwiper, useSwiperSlide } from 'swiper/react'
+import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
+import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'
@@ -59,7 +61,6 @@ import SetInput from './SetInput'
 
 interface Props {
   id: string
-  date: Dayjs
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
   setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
@@ -80,8 +81,8 @@ export default function RecordCard({
   sessionNotes = [],
 }: Props) {
   const swiper = useSwiper()
-  // this hook needs to be called for useSwiper() to update the activeIndex, but is otherwise unused
-  const _ = useSwiperSlide()
+  // this hook needs to be called for useSwiper() to update the activeIndex
+  const { isActive, isNext, isPrev } = useSwiperSlide()
   const theme = useTheme()
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
     ? 'swiper-no-swiping-outer'
@@ -97,6 +98,12 @@ export default function RecordCard({
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
+  const [historyFilter, setHistoryFilter] = useState<RecordQuery>({})
+  const [hasBeenVisible, setHasBeenVisible] = useState(false)
+
+  useEffect(() => {
+    ;(isActive || isNext || isPrev) && setHasBeenVisible(true)
+  }, [isActive, isNext, isPrev])
 
   useEffect(() => {
     if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
@@ -157,6 +164,10 @@ export default function RecordCard({
       optimisticData: { ...record, ...changes },
       revalidate: false,
     })
+  }
+
+  const handleFilterChange = (changes: Partial<RecordQuery>) => {
+    setHistoryFilter({ ...historyFilter, ...changes })
   }
 
   const handleRecordNotesChange = async (notes: Note[]) => {
@@ -281,148 +292,177 @@ export default function RecordCard({
 
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
-    <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
-      <CardHeader
-        ref={titleRef}
-        title={`Record ${swiperIndex + 1}`}
-        titleTypographyProps={{ variant: 'h6' }}
-        action={
-          <Box className={noSwipingAboveSm} sx={{ cursor: 'default' }}>
-            {!shouldCondense && <MoveLeftButton />}
-            {!shouldCondense && <MoveRightButton />}
-            <RecordNotesDialogButton
-              notes={[...sessionNotes, ...notes]}
-              Icon={<NotesIcon />}
-              tooltipTitle="Record Notes"
-              sets={sets}
-              handleSubmit={(notes) => handleRecordNotesChange(notes)}
-            />
-            {!!exercise && (
+    <>
+      <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
+        <CardHeader
+          ref={titleRef}
+          title={`Record ${swiperIndex + 1}`}
+          titleTypographyProps={{ variant: 'h6' }}
+          action={
+            <Box className={noSwipingAboveSm} sx={{ cursor: 'default' }}>
+              {!shouldCondense && <MoveLeftButton />}
+              {!shouldCondense && <MoveRightButton />}
               <RecordNotesDialogButton
-                notes={exercise.notes}
-                options={exercise.modifiers}
-                Icon={<FitnessCenterIcon />}
-                tooltipTitle="Exercise Notes"
-                handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
-                multiple
+                notes={[...sessionNotes, ...notes]}
+                Icon={<NotesIcon />}
+                tooltipTitle="Record Notes"
+                sets={sets}
+                handleSubmit={(notes) => handleRecordNotesChange(notes)}
               />
-            )}
-            {!shouldCondense && <UnitsButton />}
-            {!!exercise && (
-              <RecordHeaderButton
-                title="Manage Exercise"
-                onClick={() => router.push(`/manage?exercise=${exercise.name}`)}
+              {!!exercise && (
+                <RecordNotesDialogButton
+                  notes={exercise.notes}
+                  options={exercise.modifiers}
+                  Icon={<FitnessCenterIcon />}
+                  tooltipTitle="Exercise Notes"
+                  handleSubmit={(notes) =>
+                    handleExerciseFieldsChange({ notes })
+                  }
+                  multiple
+                />
+              )}
+              {!!record && (
+                <HistoryFilterHeaderButton
+                  {...{ record, filter: historyFilter, handleFilterChange }}
+                />
+              )}
+              {!shouldCondense && <UnitsButton />}
+              {!!exercise && (
+                <RecordHeaderButton
+                  title="Manage Exercise"
+                  onClick={() =>
+                    router.push(`/manage?exercise=${exercise.name}`)
+                  }
+                >
+                  <SettingsIcon />
+                </RecordHeaderButton>
+              )}
+              {!shouldCondense && <DeleteButton />}
+              {shouldCondense && (
+                <RecordHeaderButton
+                  title="More..."
+                  onClick={(e) => setMoreButtonsAnchorEl(e.currentTarget)}
+                >
+                  <MoreVertIcon />
+                </RecordHeaderButton>
+              )}
+              <Menu
+                id="more options menu"
+                anchorEl={moreButtonsAnchorEl}
+                open={!!moreButtonsAnchorEl}
+                onClose={() => setMoreButtonsAnchorEl(null)}
               >
-                <SettingsIcon />
-              </RecordHeaderButton>
-            )}
-            {!shouldCondense && <DeleteButton />}
-            {shouldCondense && (
-              <RecordHeaderButton
-                title="More..."
-                onClick={(e) => setMoreButtonsAnchorEl(e.currentTarget)}
-              >
-                <MoreVertIcon />
-              </RecordHeaderButton>
-            )}
-            <Menu
-              id="more options menu"
-              anchorEl={moreButtonsAnchorEl}
-              open={!!moreButtonsAnchorEl}
-              onClose={() => setMoreButtonsAnchorEl(null)}
-            >
-              <MenuItem>
-                <MoveLeftButton />
-              </MenuItem>
-              <MenuItem>
-                <MoveRightButton />
-              </MenuItem>
-              <MenuItem>
-                <UnitsButton />
-              </MenuItem>
-              <MenuItem>
-                <DeleteButton />
-              </MenuItem>
-            </Menu>
-          </Box>
-        }
-      />
-      <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
-      <CardContent
-        // swiping causes weird behavior on desktop when combined with data input fields
-        className={noSwipingAboveSm}
-        sx={{ cursor: { sm: 'default' }, px: 1 }}
-      >
-        <Stack spacing={2}>
-          <ExerciseSelector
-            variant="standard"
-            category={record.category}
-            handleCategoryChange={(category) => handleFieldChange({ category })}
-            {...{
-              exercise,
-              exercises,
-              handleChange: handleExerciseChange,
-              mutate: mutateExercises,
-            }}
-          />
-          <ComboBoxField
-            label="Modifiers"
-            options={exercise?.modifiers}
-            initialValue={activeModifiers}
-            variant="standard"
-            handleSubmit={(value: string[]) =>
-              handleFieldChange({ activeModifiers: value })
-            }
-          />
-          <SetHeader
-            displayFields={displayFields}
-            handleSubmit={(displayFields) =>
-              handleExerciseFieldsChange({ displayFields })
-            }
-            // also check attributes incase bodyweight is set to true but no bodyweight exists
-            showSplitWeight={attributes.bodyweight || !!extraWeight}
-            showUnilateral={attributes.unilateral}
-          />
-        </Stack>
-
-        {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
-        <Box sx={{ pb: 0 }}>
-          {sets.map((set, i) => (
-            <SetInput
-              key={i}
-              set={set}
-              displayFields={displayFields}
-              handleSubmit={(changes: Partial<Set>) =>
-                handleSetChange(changes, i)
+                <MenuItem>
+                  <MoveLeftButton />
+                </MenuItem>
+                <MenuItem>
+                  <MoveRightButton />
+                </MenuItem>
+                <MenuItem>
+                  <UnitsButton />
+                </MenuItem>
+                <MenuItem>
+                  <DeleteButton />
+                </MenuItem>
+              </Menu>
+            </Box>
+          }
+        />
+        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+        <CardContent
+          // swiping causes weird behavior on desktop when combined with data input fields
+          className={noSwipingAboveSm}
+          sx={{ cursor: { sm: 'default' }, px: 1 }}
+        >
+          <Stack spacing={2}>
+            <ExerciseSelector
+              variant="standard"
+              category={record.category}
+              handleCategoryChange={(category) =>
+                handleFieldChange({ category })
               }
-              handleDelete={() => handleDeleteSet(i)}
-              extraWeight={extraWeight}
+              {...{
+                exercise,
+                exercises,
+                handleChange: handleExerciseChange,
+                mutate: mutateExercises,
+              }}
             />
-          ))}
+            <ComboBoxField
+              label="Modifiers"
+              options={exercise?.modifiers}
+              initialValue={activeModifiers}
+              variant="standard"
+              handleSubmit={(value: string[]) =>
+                handleFieldChange({ activeModifiers: value })
+              }
+            />
+            <SetHeader
+              displayFields={displayFields}
+              handleSubmit={(displayFields) =>
+                handleExerciseFieldsChange({ displayFields })
+              }
+              // also check attributes incase bodyweight is set to true but no bodyweight exists
+              showSplitWeight={attributes.bodyweight || !!extraWeight}
+              showUnilateral={attributes.unilateral}
+            />
+          </Stack>
+
+          {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
+          <Box sx={{ pb: 0 }}>
+            {sets.map((set, i) => (
+              <SetInput
+                key={i}
+                set={set}
+                displayFields={displayFields}
+                handleSubmit={(changes: Partial<Set>) =>
+                  handleSetChange(changes, i)
+                }
+                handleDelete={() => handleDeleteSet(i)}
+                extraWeight={extraWeight}
+              />
+            ))}
+          </Box>
+        </CardContent>
+        <CardActions
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            px: 2,
+            pb: 2,
+          }}
+        >
+          <Tooltip title="Add Set" placement="right">
+            <span>
+              <Fab
+                color="primary"
+                size="medium"
+                disabled={!displayFields?.visibleFields.length}
+                onClick={addSet}
+                className={noSwipingAboveSm}
+              >
+                <AddIcon />
+              </Fab>
+            </span>
+          </Tooltip>
+        </CardActions>
+      </Card>
+
+      {/* Only render the swiper if the record card has ever been visible.
+          This prevents a large initial spike trying to load the history for
+          every record in the session at once.
+          It also doesn't hinder desktop experience, where multiple slides may be
+          visible at once but the added load is not likely to degrade performance.
+        */}
+      {hasBeenVisible && (
+        <Box py={3}>
+          <HistoryCardsSwiper
+            filter={historyFilter}
+            paginationId={_id}
+            displayFields={displayFields}
+          />
         </Box>
-      </CardContent>
-      <CardActions
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          px: 2,
-          pb: 2,
-        }}
-      >
-        <Tooltip title="Add Set" placement="right">
-          <span>
-            <Fab
-              color="primary"
-              size="medium"
-              disabled={!displayFields?.visibleFields.length}
-              onClick={addSet}
-              className={noSwipingAboveSm}
-            >
-              <AddIcon />
-            </Fab>
-          </span>
-        </Tooltip>
-      </CardActions>
-    </Card>
+      )}
+    </>
   )
 }

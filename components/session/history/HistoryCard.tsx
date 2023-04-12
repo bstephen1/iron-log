@@ -27,7 +27,7 @@ export default function HistoryCard({ record, displayFields }: Props) {
   )
 
   return (
-    <Card elevation={0}>
+    <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
       <CardHeader
         title={
           <Box
