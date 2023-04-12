@@ -29,7 +29,6 @@ export default function HistoryCardsSwiper({
   const { records, isLoading } = useRecords({
     ...filter,
     modifierMatchType: ArrayMatchType.Equivalent,
-    sort: 'oldestFirst',
   })
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${paginationId}`
@@ -59,21 +58,12 @@ export default function HistoryCardsSwiper({
 
   return (
     <Stack alignItems="center">
-      {/* Dynamic pagination css is very finnicky and opaque. 
-          Finally got centered by wrapping them in this centered box to force them
-          to be centered. Also requires position relative for some reason. */}
       <Box>
         <Box
-          // Setting pagination size overwrites the dynamic bullet size.
-          // Couldn't find a way to set the main and dynamic bullets separately.
-          // CSS classes are swiper-pagination-bullet-active-main and swiper-pagination-bullet-active-next
-          // Swiper css is in swiper/swiper-bundle.css, which has the class used to change pagination size,
-          // but there's no obvious equivalent for dynamic bullets.
           className={paginationClassName}
           display="flex"
           justifyContent="center"
           pt={2}
-          position="relative"
         />
       </Box>
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
@@ -89,25 +79,27 @@ export default function HistoryCardsSwiper({
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
-            // dynamic bullets cause a total crash when navigating from SessionView to some other page, then back to SessionView.
-            // This appears to only occur in production.
-            dynamicBullets: true,
-            dynamicMainBullets: 5,
+            // dynamic bullets work now without crashing, but they sometimes start shrinking and disappear.
+            // Normal bullets are more reliable.
           }}
           modules={[Pagination]}
           style={{ padding: '11px 4px' }}
         >
-          {records?.map((record) => (
-            <SwiperSlide key={record._id}>
-              <HistoryCard
-                {...{
-                  record,
-                  displayFields,
-                  filterModifiers: filter.modifier || [],
-                }}
-              />
-            </SwiperSlide>
-          ))}
+          {records
+            ?.map((record) => (
+              <SwiperSlide key={record._id}>
+                <HistoryCard
+                  {...{
+                    record,
+                    displayFields,
+                    filterModifiers: filter.modifier || [],
+                  }}
+                />
+              </SwiperSlide>
+              // need to reverse so newest is on the right, not left. Can't do it in useRecords because
+              // mongo applies sort before the limit. Also, reverse should be after map because it mutates the array.
+            ))
+            .reverse()}
         </Swiper>
       </Box>
     </Stack>
