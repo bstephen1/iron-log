@@ -73,7 +73,7 @@ export default function HistoryCardsSwiper({
           // the closest valid index (first slide starting at 0). This makes it pretty easy
           // to default to the last index when length is unknown, but has a max possible value.
           initialSlide={filter.limit}
-          autoHeight
+          // autoHeight should not be enabled if parent swiper is not also using autoheight because it won't do anything.
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
@@ -83,6 +83,7 @@ export default function HistoryCardsSwiper({
             // dynamicMainBullets: 5,
           }}
           modules={[Pagination]}
+          style={{ padding: '11px 4px' }}
         >
           {records?.map((record) => (
             <SwiperSlide key={record._id}>
