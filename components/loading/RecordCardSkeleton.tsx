@@ -11,6 +11,7 @@ import StyledDivider from 'components/StyledDivider'
 
 interface Props {
   title?: string
+  noHeader?: boolean
   noSetButton?: boolean
   /** Override all card content.  */
   Content?: JSX.Element
@@ -20,6 +21,7 @@ interface Props {
 }
 export default function RecordCardSkeleton({
   title = 'Record',
+  noHeader,
   elevation = 3,
   noSetButton,
   Content,
@@ -28,12 +30,15 @@ export default function RecordCardSkeleton({
 }: Props) {
   return (
     <Card elevation={elevation} sx={{ px: 1, m: 0.5, ...sx }}>
-      <CardHeader
-        title={title}
-        titleTypographyProps={{ variant: 'h6', ...titleTypographyProps }}
-      />
-      <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
-
+      {!noHeader && (
+        <>
+          <CardHeader
+            title={title}
+            titleTypographyProps={{ variant: 'h6', ...titleTypographyProps }}
+          />
+          <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+        </>
+      )}
       <CardContent sx={{ px: 1 }}>
         {Content ? (
           Content

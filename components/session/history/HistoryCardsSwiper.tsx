@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { Pagination } from 'swiper'
@@ -35,40 +35,47 @@ export default function HistoryCardsSwiper({
 
   if (isLoading || !records) {
     return (
-      <RecordCardSkeleton
-        noSetButton
-        title="History"
-        titleTypographyProps={{ textAlign: 'center' }}
-        elevation={0}
-        sx={{ px: 0, m: 0 }}
-      />
+      <>
+        <HistoryTitle />
+        <RecordCardSkeleton
+          noHeader
+          noSetButton
+          titleTypographyProps={{ textAlign: 'center' }}
+          elevation={0}
+          sx={{ px: 0, m: 0 }}
+        />
+      </>
     )
   }
 
   // assumes filter has end date set to the current record's date (so will exclude it)
   if (!records.length) {
     return (
-      <RecordCardSkeleton
-        title="History"
-        titleTypographyProps={{ textAlign: 'center' }}
-        elevation={0}
-        sx={{ px: 0, m: 0 }}
-        Content={
-          <>
-            <Typography textAlign="center">
-              No history found for this exercise!
-            </Typography>
-            <Typography textAlign="center">
-              Try changing the filters.
-            </Typography>
-          </>
-        }
-      />
+      <>
+        <HistoryTitle />
+        <RecordCardSkeleton
+          noHeader
+          titleTypographyProps={{ textAlign: 'center' }}
+          elevation={0}
+          sx={{ px: 0, m: 0 }}
+          Content={
+            <>
+              <Typography textAlign="center">
+                No history found for this exercise!
+              </Typography>
+              <Typography textAlign="center">
+                Try changing the filters.
+              </Typography>
+            </>
+          }
+        />
+      </>
     )
   }
 
   return (
     <Stack alignItems="center">
+      <HistoryTitle />
       <Box>
         <Box
           className={paginationClassName}
@@ -115,5 +122,30 @@ export default function HistoryCardsSwiper({
         </Swiper>
       </Box>
     </Stack>
+  )
+}
+
+function HistoryTitle() {
+  const theme = useTheme()
+
+  return (
+    <Box
+      width="100%"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Divider
+        sx={{
+          fontSize: 12,
+          width: '80%',
+          '&::before, &::after': {
+            borderColor: theme.palette.primary.main,
+          },
+        }}
+      >
+        <Typography variant="h6">History</Typography>
+      </Divider>
+    </Box>
   )
 }
