@@ -73,7 +73,7 @@ export default function HistoryCardsSwiper({
           display="flex"
           justifyContent="center"
           pt={2}
-          // position="relative"
+          position="relative"
         />
       </Box>
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
@@ -91,8 +91,8 @@ export default function HistoryCardsSwiper({
             clickable: true,
             // dynamic bullets cause a total crash when navigating from SessionView to some other page, then back to SessionView.
             // This appears to only occur in production.
-            // dynamicBullets: true,
-            // dynamicMainBullets: 5,
+            dynamicBullets: true,
+            dynamicMainBullets: 5,
           }}
           modules={[Pagination]}
           style={{ padding: '11px 4px' }}
