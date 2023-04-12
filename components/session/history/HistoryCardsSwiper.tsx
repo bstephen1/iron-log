@@ -37,7 +37,7 @@ export default function HistoryCardsSwiper({
   const paginationClassName = `pagination-history-${paginationId}`
 
   if (isLoading || !records) {
-    return <RecordCardSkeleton title="History" readOnly />
+    return <RecordCardSkeleton title="History" noSetButton />
   }
 
   // assumes filter has end date set to the current record's date (so will exclude it)
@@ -45,7 +45,6 @@ export default function HistoryCardsSwiper({
     return (
       <RecordCardSkeleton
         title="History"
-        readOnly
         Content={
           <>
             <Typography textAlign="center">

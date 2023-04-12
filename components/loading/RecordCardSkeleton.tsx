@@ -9,12 +9,13 @@ import StyledDivider from 'components/StyledDivider'
 
 interface Props {
   title?: string
-  readOnly?: boolean
+  noSetButton?: boolean
+  /** Override all card content.  */
   Content?: JSX.Element
 }
 export default function RecordCardSkeleton({
   title = 'Record',
-  readOnly,
+  noSetButton,
   Content,
 }: Props) {
   return (
@@ -33,7 +34,7 @@ export default function RecordCardSkeleton({
           </>
         )}
       </CardContent>
-      {!readOnly && (
+      {!noSetButton && !Content && (
         <CardActions sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}>
           <Skeleton variant="circular" height="50px" width="50px" />
         </CardActions>

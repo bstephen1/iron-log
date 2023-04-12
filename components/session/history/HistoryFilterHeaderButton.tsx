@@ -38,6 +38,7 @@ export default function HistoryFilterHeaderButton({
       modifier: record.activeModifiers,
       // don't want to include the actual record in its own history
       end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
+      exercise: record.exercise?.name,
       limit: 5,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

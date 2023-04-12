@@ -17,6 +17,7 @@ import {
   MenuItem,
   Stack,
   Tooltip,
+  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -129,7 +130,15 @@ export default function RecordCard({
   if (isLoading || !displayFields || extraWeight == null) {
     return <RecordCardSkeleton />
   } else if (!record) {
-    return <>Could not find record</>
+    return (
+      <RecordCardSkeleton
+        Content={
+          <Typography textAlign="center">
+            Could not find record! Try reloading.
+          </Typography>
+        }
+      />
+    )
   }
 
   const { exercise, activeModifiers, sets, notes, _id } = record
@@ -321,11 +330,9 @@ export default function RecordCard({
                   multiple
                 />
               )}
-              {!!record && (
-                <HistoryFilterHeaderButton
-                  {...{ record, filter: historyFilter, handleFilterChange }}
-                />
-              )}
+              <HistoryFilterHeaderButton
+                {...{ record, filter: historyFilter, handleFilterChange }}
+              />
               {!shouldCondense && <UnitsButton />}
               {!!exercise && (
                 <RecordHeaderButton
