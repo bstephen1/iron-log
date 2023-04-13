@@ -1,10 +1,9 @@
-import { Box, Button } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import styles from 'styles/Home.module.css'
 
 const Home: NextPage = () => {
   return (
@@ -15,14 +14,14 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <Box>Welcome</Box>
+      <Stack>
+        <Typography textAlign="center">Welcome</Typography>
         <Button>
           <Link href={`/sessions/${dayjs().format(DATE_FORMAT)}/`}>
             Today's Log
           </Link>
         </Button>
-      </main>
+      </Stack>
     </>
   )
 }
