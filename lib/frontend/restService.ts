@@ -137,7 +137,7 @@ export function useRecord(id: string, config?: SWRConfiguration) {
 
 export function useRecords(query?: RecordQuery, shouldFetch = true) {
   const paramString = '?' + stringify({ ...query })
-  const { data, isLoading, error } = useSWR<Record[]>(
+  const { data, isLoading, error, mutate } = useSWR<Record[]>(
     shouldFetch ? URI_RECORDS + paramString : null
   )
 
@@ -145,6 +145,7 @@ export function useRecords(query?: RecordQuery, shouldFetch = true) {
     records: data,
     recordsIndex: arrayToIndex<Record>('_id', data),
     isError: error,
+    mutate,
     isLoading,
   }
 }

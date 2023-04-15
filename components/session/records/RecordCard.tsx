@@ -29,7 +29,7 @@ import {
   updateExerciseFields,
   updateRecordFields,
   useExercises,
-  useRecord,
+  useRecordWithInit,
 } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
@@ -62,7 +62,7 @@ import SetInput from './SetInput'
 
 interface Props {
   id: string
-  initialRecord?: Record
+  initialRecord: Record
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
   setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
@@ -89,9 +89,7 @@ export default function RecordCard({
     ? 'swiper-no-swiping-record'
     : ''
   // can't use isLoading because that will be true even if there is fallbackData
-  const { record, mutate: mutateRecord } = useRecord(id, {
-    fallbackData: initialRecord,
-  })
+  const { record, mutate: mutateRecord } = useRecordWithInit(initialRecord)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -126,7 +124,7 @@ export default function RecordCard({
   // when they should only be receiving the record data after it is no longer null.
 
   if (record === undefined || !displayFields || extraWeight == null) {
-    return <RecordCardSkeleton />
+    return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
   } else if (!record) {
     return (
       <RecordCardSkeleton
@@ -222,18 +220,6 @@ export default function RecordCard({
     })
   }
 
-  const handleDeleteRecord = async () => {
-    await deleteRecord(_id)
-    swiper.update() // have to update swiper whenever changing swiper elements
-  }
-
-  const handleSwapRecords = async (i: number, j: number) => {
-    await swapRecords(i, j)
-    swiper.update()
-    // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
-    swiper.slideTo(j, 0)
-  }
-
   const handleExerciseChange = async (newExercise: Exercise | null) => {
     // if an exercise changes, discard any modifiers that are not valid for the new exercise
     const remainingModifiers = activeModifiers.filter((modifier) =>
@@ -260,7 +246,7 @@ export default function RecordCard({
     <RecordHeaderButton
       title="Move current record to the left"
       disabled={!swiperIndex}
-      onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
+      onClick={() => swapRecords(swiperIndex, swiperIndex - 1)}
     >
       <KeyboardDoubleArrowLeftIcon />
     </RecordHeaderButton>
@@ -271,7 +257,7 @@ export default function RecordCard({
       title="Move current record to the right"
       // disable on the penultimate slide because the last is the "add record" button
       disabled={swiperIndex >= swiper.slides?.length - 2}
-      onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
+      onClick={() => swapRecords(swiperIndex, swiperIndex + 1)}
     >
       <KeyboardDoubleArrowRightIcon />
     </RecordHeaderButton>
@@ -291,7 +277,7 @@ export default function RecordCard({
     <RecordHeaderButton
       title="Delete Record"
       color="error"
-      onClick={handleDeleteRecord}
+      onClick={() => deleteRecord(_id)}
     >
       <DeleteIcon />
     </RecordHeaderButton>

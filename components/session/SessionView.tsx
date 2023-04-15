@@ -5,17 +5,18 @@ import {
   addRecord,
   deleteSessionRecord,
   updateSessionLog,
+  useRecords,
   useSessionLog,
 } from 'lib/frontend/restService'
 import Exercise from 'models/Exercise'
 import Note from 'models/Note'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { Swiper, SwiperSlide } from 'swiper/react'
+import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
@@ -31,8 +32,19 @@ export default function SessionView({ date }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const [newRecord, setNewRecord] = useState<Record>()
-  const { sessionLog, mutate, isLoading } = useSessionLog(date)
+  const {
+    sessionLog,
+    mutate,
+    isLoading: isSessionLoading,
+  } = useSessionLog(date)
+  const {
+    records,
+    recordsIndex,
+    isLoading: areRecordsLoading,
+    mutate: mutateRecords,
+  } = useRecords({ date })
+  // const recordsIndex = arrayToIndex<Record>('_id', records)
+  const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
   const paginationClassName = 'pagination-record-cards'
   const navPrevClassName = 'nav-prev-record-cards'
@@ -47,21 +59,28 @@ export default function SessionView({ date }: Props) {
 
   // todo: add the current record instead of having to fetch it
   const handleAddRecord = async (exercise: Exercise) => {
-    const record = new Record(date, { exercise })
-    record.sets.push({})
+    // have to check at function runtime if swiper.current exists bc a value change does not re-render
+    const swiper = swiperElRef.current?.swiper
+    if (!swiper || !records) return
+
+    const newRecord = new Record(date, { exercise })
+    newRecord.sets.push({})
     const newSessionLog = sessionLog
       ? {
           ...sessionLog,
-          records: sessionLog.records.concat(record._id),
+          records: sessionLog.records.concat(newRecord._id),
         }
-      : new SessionLog(date, [record._id])
-    setNewRecord(record)
+      : new SessionLog(date, [newRecord._id])
+    const newRecords = [...records, newRecord]
     mutate(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
-    // don't await this because we want to update swiper with the created record
-    addRecord(record)
+    mutateRecords(newRecords, { revalidate: false })
+    swiper.update()
+
+    // don't need to await result
+    addRecord(newRecord)
   }
 
   const handleNotesChange = async (notes: Note[]) => {
@@ -75,7 +94,8 @@ export default function SessionView({ date }: Props) {
   }
 
   const handleSwapRecords = async (i: number, j: number) => {
-    if (!sessionLog) return
+    const swiper = swiperElRef.current?.swiper
+    if (!sessionLog || !swiper) return
 
     const length = sessionLog.records.length
     if (i < 0 || i >= length || j < 0 || j >= length) {
@@ -91,16 +111,22 @@ export default function SessionView({ date }: Props) {
       optimisticData: newSession,
       revalidate: false,
     })
+    swiper.update()
+    // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
+    swiper.slideTo(j, 0)
   }
 
   const handleDeleteRecord = async (recordId: string) => {
-    if (!sessionLog) return
+    const swiper = swiperElRef.current?.swiper
+    if (!sessionLog || !swiper) return
 
     const newRecords = sessionLog.records.filter((id) => id !== recordId)
     mutate(deleteSessionRecord(sessionLog.date, recordId), {
       optimisticData: { ...sessionLog, records: newRecords },
       revalidate: false,
     })
+    swiper.update()
+    swiper.slidePrev()
   }
 
   // todo: add blank space or something under the swiper. On the longest record
@@ -110,9 +136,10 @@ export default function SessionView({ date }: Props) {
     <Stack spacing={2}>
       <TitleBar date={dayjs(date)} />
       <SessionModules />
-      {!isLoading && (
+      {!(isSessionLoading || areRecordsLoading) && (
         // after making changes to the swiper component the page needs to be reloaded
         <Swiper
+          ref={swiperElRef}
           // Note: it is CRITICAL to not use state to track slide changes in the
           // component that contains a Swiper. A state change during a slide transition
           // will cause the entire component to re-render, and if that component contains
@@ -176,7 +203,7 @@ export default function SessionView({ date }: Props) {
               <RecordCard
                 id={id}
                 // for newly added records, we can pass in the new record instead of waiting to fetch it
-                initialRecord={newRecord?._id == id ? newRecord : undefined}
+                initialRecord={recordsIndex[id]}
                 deleteRecord={handleDeleteRecord}
                 swapRecords={handleSwapRecords}
                 swiperIndex={i}
