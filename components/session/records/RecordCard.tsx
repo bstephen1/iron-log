@@ -62,6 +62,7 @@ import SetInput from './SetInput'
 
 interface Props {
   id: string
+  initialRecord?: Record
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
   setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
@@ -73,6 +74,7 @@ interface Props {
 }
 export default function RecordCard({
   id,
+  initialRecord,
   deleteRecord,
   swapRecords,
   swiperIndex,
@@ -86,7 +88,10 @@ export default function RecordCard({
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
     ? 'swiper-no-swiping-record'
     : ''
-  const { record, mutate: mutateRecord, isLoading } = useRecord(id)
+  // can't use isLoading because that will be true even if there is fallbackData
+  const { record, mutate: mutateRecord } = useRecord(id, {
+    fallbackData: initialRecord,
+  })
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -120,7 +125,7 @@ export default function RecordCard({
   // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
   // when they should only be receiving the record data after it is no longer null.
 
-  if (isLoading || !displayFields || extraWeight == null) {
+  if (record === undefined || !displayFields || extraWeight == null) {
     return <RecordCardSkeleton />
   } else if (!record) {
     return (

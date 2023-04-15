@@ -31,6 +31,7 @@ export default function SessionView({ date }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
+  const [newRecord, setNewRecord] = useState<Record>()
   const { sessionLog, mutate, isLoading } = useSessionLog(date)
   const sessionHasRecords = !!sessionLog?.records.length
   const paginationClassName = 'pagination-record-cards'
@@ -54,11 +55,13 @@ export default function SessionView({ date }: Props) {
           records: sessionLog.records.concat(record._id),
         }
       : new SessionLog(date, [record._id])
+    setNewRecord(record)
     mutate(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
-    await addRecord(record)
+    // don't await this because we want to update swiper with the created record
+    addRecord(record)
   }
 
   const handleNotesChange = async (notes: Note[]) => {
@@ -174,6 +177,8 @@ export default function SessionView({ date }: Props) {
             <SwiperSlide key={id}>
               <RecordCard
                 id={id}
+                // for newly added records, we can pass in the new record instead of waiting to fetch it
+                initialRecord={newRecord?._id == id ? newRecord : undefined}
                 deleteRecord={handleDeleteRecord}
                 swapRecords={handleSwapRecords}
                 swiperIndex={i}
