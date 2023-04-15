@@ -1,6 +1,5 @@
 import { Stack, useTheme } from '@mui/material'
-import NavigationArrow from 'components/slider/NavigationArrow'
-import PaginationBullets from 'components/slider/PaginationBullets'
+import NavigationBar from 'components/slider/NavigationBar'
 import dayjs from 'dayjs'
 import {
   addRecord,
@@ -15,7 +14,6 @@ import SessionLog from 'models/SessionLog'
 import { useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
-import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import AddRecordCard from './AddRecordCard'
@@ -35,9 +33,9 @@ export default function SessionView({ date }: Props) {
     useState<Exercise | null>(null)
   const { sessionLog, mutate, isLoading } = useSessionLog(date)
   const sessionHasRecords = !!sessionLog?.records.length
-  const paginationClassName = 'pagination-record-card'
-  const navPrevClassName = 'nav-prev'
-  const navNextClassName = 'nav-next'
+  const paginationClassName = 'pagination-record-cards'
+  const navPrevClassName = 'nav-prev-record-cards'
+  const navNextClassName = 'nav-next-records-cards'
 
   const handleUpdateSession = async (newSessionLog: SessionLog) => {
     mutate(updateSessionLog(newSessionLog), {
@@ -102,6 +100,9 @@ export default function SessionView({ date }: Props) {
     })
   }
 
+  // todo: add blank space or something under the swiper. On the longest record
+  // if you swap between history it scrolls up when a small history is selected, but won't scroll back down
+  // when a bigger one appears.
   return (
     <Stack spacing={2}>
       <TitleBar date={dayjs(date)} />
@@ -161,11 +162,14 @@ export default function SessionView({ date }: Props) {
                   the useSwiper hook. Could manually pass them the swiper ref instead.
                   This solves another problem though: variable slide height moving the arrows
                   around. And, it allows the history swiper to also have nav arrows.  */}
-          <Stack direction="row" slot="container-start">
-            <NavigationArrow direction="prev" className={navPrevClassName} />
-            <PaginationBullets className={paginationClassName} />
-            <NavigationArrow direction="next" className={navNextClassName} />
-          </Stack>
+          <NavigationBar
+            {...{
+              navNextClassName,
+              navPrevClassName,
+              paginationClassName,
+              slot: 'container-start',
+            }}
+          />
           {sessionLog?.records.map((id, i) => (
             <SwiperSlide key={id}>
               <RecordCard

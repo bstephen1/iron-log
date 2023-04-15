@@ -1,7 +1,7 @@
 import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import { Pagination } from 'swiper'
+import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import HistoryCard from './HistoryCard'
 
@@ -9,6 +9,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
+import NavigationBar from 'components/slider/NavigationBar'
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import 'swiper/css/pagination'
@@ -32,6 +33,8 @@ export default function HistoryCardsSwiper({
   })
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${paginationId}`
+  const navPrevClassName = `nav-prev-history-${paginationId}`
+  const navNextClassName = `nav-next-history-${paginationId}`
 
   if (isLoading || !records) {
     return (
@@ -99,9 +102,21 @@ export default function HistoryCardsSwiper({
             // dynamic bullets work now without crashing, but they sometimes start shrinking and disappear.
             // Normal bullets are more reliable.
           }}
-          modules={[Pagination]}
+          navigation={{
+            prevEl: `.${navPrevClassName}`,
+            nextEl: `.${navNextClassName}`,
+          }}
+          modules={[Pagination, Navigation]}
           style={{ padding: '11px 4px' }}
         >
+          <NavigationBar
+            {...{
+              navNextClassName,
+              navPrevClassName,
+              paginationClassName,
+              slot: 'container-start',
+            }}
+          />
           {records
             ?.map((record) => (
               <SwiperSlide key={record._id}>
