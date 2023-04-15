@@ -141,6 +141,7 @@ export default function SessionView({ date }: Props) {
           }}
           spaceBetween={20}
           keyboard
+          // not sure if autoheight is good. Will jump up if a smaller record appears (eg, "add record")
           // Change the default where dragging will only work on the slides, but not the space between them.
           touchEventsTarget="container"
           centeredSlides
@@ -149,9 +150,6 @@ export default function SessionView({ date }: Props) {
             nextEl: `.${navNextClassName}`,
           }}
           grabCursor
-          watchOverflow
-          // need this for CSS to hide slides that are partially offscreen
-          // watchSlidesProgress
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
