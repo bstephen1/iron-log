@@ -86,7 +86,7 @@ export default function HistoryCardsSwiper({
         pt={2}
       />
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
-      <Box width="100%" className="swiper-no-swiping-record">
+      <Box width="100%">
         <Swiper
           spaceBetween={20}
           grabCursor
@@ -119,7 +119,10 @@ export default function HistoryCardsSwiper({
           />
           {records
             ?.map((record) => (
-              <SwiperSlide key={record._id}>
+              <SwiperSlide
+                key={record._id}
+                className="swiper-no-swiping-record"
+              >
                 <HistoryCard
                   {...{
                     record,
