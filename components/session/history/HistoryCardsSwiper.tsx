@@ -75,6 +75,7 @@ export default function HistoryCardsSwiper({
 
   return (
     <Stack alignItems="center">
+      {/* todo: add nav arrows */}
       <Box
         className={paginationClassName}
         display="flex"
