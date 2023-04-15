@@ -158,7 +158,6 @@ export default function SessionView({ date }: Props) {
             // todo: maybe add a custom render and make the last one a "+" or something.
             // Kind of tricky to do though.
           }}
-          style={{ padding: '11px 4px', flexGrow: '1' }}
         >
           {/* Originally had the arrows in line with slides, but there isn't a good
                   way to do that while keeping them inside the swiper to take advantage of 
@@ -170,6 +169,7 @@ export default function SessionView({ date }: Props) {
               navNextClassName,
               navPrevClassName,
               paginationClassName,
+              sx: { pb: 2, pt: 3 },
               slot: 'container-start',
             }}
           />

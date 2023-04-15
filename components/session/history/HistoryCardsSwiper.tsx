@@ -78,13 +78,6 @@ export default function HistoryCardsSwiper({
 
   return (
     <Stack alignItems="center">
-      {/* todo: add nav arrows */}
-      <Box
-        className={paginationClassName}
-        display="flex"
-        justifyContent="center"
-        pt={2}
-      />
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
       <Box width="100%">
         <Swiper
@@ -107,7 +100,6 @@ export default function HistoryCardsSwiper({
             nextEl: `.${navNextClassName}`,
           }}
           modules={[Pagination, Navigation]}
-          style={{ padding: '11px 4px' }}
         >
           <NavigationBar
             {...{
