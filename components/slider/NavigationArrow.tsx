@@ -2,6 +2,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { Box, IconButton } from '@mui/material'
 import { useState } from 'react'
+import Swiper from 'swiper'
 import { useSwiper } from 'swiper/react'
 
 interface Props {
@@ -18,15 +19,20 @@ export default function NavigationArrow({ direction, className }: Props) {
   )
   const [isLocked, setIsLocked] = useState(swiper.isLocked)
 
+  const handleDisabledCheck = (swiper: Swiper) => {
+    setDisabled(isPrev ? swiper.isBeginning : swiper.isEnd)
+  }
+
   // useSwiper returns a ref. This means components won't update
   // when its values change. To listen for changes, we must use swiper.on to
   // setup an event listener for a supported swiper event.
-  swiper.on('slideChange', (swiper) =>
-    setDisabled(isPrev ? swiper.isBeginning : swiper.isEnd)
-  )
+  swiper.on('slideChange', (swiper) => handleDisabledCheck(swiper))
 
   swiper.on('lock', () => setIsLocked(true))
-  swiper.on('unlock', () => setIsLocked(false))
+  swiper.on('unlock', (swiper) => {
+    setIsLocked(false)
+    handleDisabledCheck(swiper)
+  })
 
   // todo: nav button ripples are elongated
   return (
