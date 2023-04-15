@@ -16,6 +16,7 @@ export default function NavigationArrow({ direction, className }: Props) {
   const [disabled, setDisabled] = useState(
     isPrev ? swiper.isBeginning : swiper.isEnd
   )
+  const [isLocked, setIsLocked] = useState(swiper.isLocked)
 
   // useSwiper returns a ref. This means components won't update
   // when its values change. To listen for changes, we must use swiper.on to
@@ -24,9 +25,12 @@ export default function NavigationArrow({ direction, className }: Props) {
     setDisabled(isPrev ? swiper.isBeginning : swiper.isEnd)
   )
 
+  swiper.on('lock', () => setIsLocked(true))
+  swiper.on('unlock', () => setIsLocked(false))
+
   // todo: nav button ripples are elongated
   return (
-    <Box display="flex" width="auto" alignItems="center">
+    <Box display={isLocked ? 'none' : 'flex'} width="auto" alignItems="center">
       <IconButton
         sx={{ display: { xs: 'none', sm: 'block' } }}
         className={className}

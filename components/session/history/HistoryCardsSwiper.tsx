@@ -87,7 +87,6 @@ export default function HistoryCardsSwiper({
           // the closest valid index (first slide starting at 0). This makes it pretty easy
           // to default to the last index when length is unknown, but has a max possible value.
           initialSlide={filter.limit}
-          // disable autoHeight if cssMode is enabled
           autoHeight
           pagination={{
             el: `.${paginationClassName}`,
