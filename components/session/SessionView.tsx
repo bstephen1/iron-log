@@ -5,7 +5,6 @@ import {
   addRecord,
   deleteSessionRecord,
   updateSessionLog,
-  useRecords,
   useSessionLog,
 } from 'lib/frontend/restService'
 import Exercise from 'models/Exercise'
@@ -32,17 +31,7 @@ export default function SessionView({ date }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const {
-    sessionLog,
-    mutate,
-    isLoading: isSessionLoading,
-  } = useSessionLog(date)
-  const {
-    records,
-    recordsIndex,
-    isLoading: areRecordsLoading,
-    mutate: mutateRecords,
-  } = useRecords({ date })
+  const { sessionLog, mutate, isLoading } = useSessionLog(date)
   // const recordsIndex = arrayToIndex<Record>('_id', records)
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
@@ -58,10 +47,11 @@ export default function SessionView({ date }: Props) {
   }
 
   // todo: add the current record instead of having to fetch it
+  // Very strange behavior when trying to do that though. Hard to get to the bottom of it.
   const handleAddRecord = async (exercise: Exercise) => {
     // have to check at function runtime if swiper.current exists bc a value change does not re-render
     const swiper = swiperElRef.current?.swiper
-    if (!swiper || !records) return
+    if (!swiper) return
 
     const newRecord = new Record(date, { exercise })
     newRecord.sets.push({})
@@ -71,12 +61,12 @@ export default function SessionView({ date }: Props) {
           records: sessionLog.records.concat(newRecord._id),
         }
       : new SessionLog(date, [newRecord._id])
-    const newRecords = [...records, newRecord]
+
     mutate(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
-    mutateRecords(newRecords, { revalidate: false })
+
     swiper.update()
 
     // don't need to await result
@@ -136,7 +126,7 @@ export default function SessionView({ date }: Props) {
     <Stack spacing={2}>
       <TitleBar date={dayjs(date)} />
       <SessionModules />
-      {!(isSessionLoading || areRecordsLoading) && (
+      {!isLoading && (
         // after making changes to the swiper component the page needs to be reloaded
         <Swiper
           ref={swiperElRef}
@@ -202,8 +192,6 @@ export default function SessionView({ date }: Props) {
             <SwiperSlide key={id}>
               <RecordCard
                 id={id}
-                // for newly added records, we can pass in the new record instead of waiting to fetch it
-                initialRecord={recordsIndex[id]}
                 deleteRecord={handleDeleteRecord}
                 swapRecords={handleSwapRecords}
                 swiperIndex={i}
