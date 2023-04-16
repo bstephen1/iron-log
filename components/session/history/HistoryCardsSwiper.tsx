@@ -1,7 +1,7 @@
 import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import { Pagination } from 'swiper'
+import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import HistoryCard from './HistoryCard'
 
@@ -9,9 +9,13 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
+import NavigationBar from 'components/slider/NavigationBar'
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import 'swiper/css/pagination'
+
+// todo: useSWRInfinite for infinite loading?
+// https://swr.vercel.app/docs/pagination
 
 interface Props {
   paginationId: string
@@ -32,6 +36,8 @@ export default function HistoryCardsSwiper({
   })
   // each record's history needs a unique className
   const paginationClassName = `pagination-history-${paginationId}`
+  const navPrevClassName = `nav-prev-history-${paginationId}`
+  const navNextClassName = `nav-next-history-${paginationId}`
 
   if (isLoading || !records) {
     return (
@@ -75,14 +81,8 @@ export default function HistoryCardsSwiper({
 
   return (
     <Stack alignItems="center">
-      <Box
-        className={paginationClassName}
-        display="flex"
-        justifyContent="center"
-        pt={2}
-      />
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
-      <Box width="100%" className="swiper-no-swiping-record">
+      <Box width="100%">
         <Swiper
           spaceBetween={20}
           grabCursor
@@ -90,7 +90,6 @@ export default function HistoryCardsSwiper({
           // the closest valid index (first slide starting at 0). This makes it pretty easy
           // to default to the last index when length is unknown, but has a max possible value.
           initialSlide={filter.limit}
-          // disable autoHeight if cssMode is enabled
           autoHeight
           pagination={{
             el: `.${paginationClassName}`,
@@ -98,12 +97,26 @@ export default function HistoryCardsSwiper({
             // dynamic bullets work now without crashing, but they sometimes start shrinking and disappear.
             // Normal bullets are more reliable.
           }}
-          modules={[Pagination]}
-          style={{ padding: '11px 4px' }}
+          navigation={{
+            prevEl: `.${navPrevClassName}`,
+            nextEl: `.${navNextClassName}`,
+          }}
+          modules={[Pagination, Navigation]}
         >
+          <NavigationBar
+            {...{
+              navNextClassName,
+              navPrevClassName,
+              paginationClassName,
+              slot: 'container-start',
+            }}
+          />
           {records
             ?.map((record) => (
-              <SwiperSlide key={record._id}>
+              <SwiperSlide
+                key={record._id}
+                className="swiper-no-swiping-record"
+              >
                 <HistoryCard
                   {...{
                     record,

@@ -1,6 +1,7 @@
 import { Box, useMediaQuery } from '@mui/material'
 
-const defaultSize = 8
+// swiper's default is 8
+const defaultSize = 10
 
 interface Props {
   className: string
@@ -21,7 +22,7 @@ export default function PaginationBullets({
       className={className}
       display="flex"
       justifyContent="center"
-      pt={2}
+      alignItems="center"
       sx={{
         '--swiper-pagination-bullet-size': `${
           isDesktop ? desktopSize : mobileSize

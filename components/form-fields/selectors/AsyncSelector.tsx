@@ -142,6 +142,7 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
             (cur) => !(cur instanceof SelectorStub)
           ) || []) as C[]
 
+          // todo: should be able to use a function to modify the return to concat the new option
           // Note addNewItem only returns the single new option, so we can't
           // combine it into mutateOptions, which needs the full options array
           mutateOptions(stubless.concat(newOption), { revalidate: false })

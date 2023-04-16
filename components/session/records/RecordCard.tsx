@@ -42,7 +42,7 @@ import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
-import { useSwiper, useSwiperSlide } from 'swiper/react'
+import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
 import RecordHeaderButton from './RecordHeaderButton'
@@ -82,13 +82,11 @@ export default function RecordCard({
   sessionNotes = [],
 }: Props) {
   const swiper = useSwiper()
-  // this hook needs to be called for useSwiper() to update the activeIndex
-  const { isActive, isNext, isPrev } = useSwiperSlide()
   const theme = useTheme()
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
     ? 'swiper-no-swiping-record'
     : ''
-  const { record, mutate: mutateRecord, isLoading } = useRecord(id)
+  const { record, mutate: mutateRecord } = useRecord(id)
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -100,11 +98,6 @@ export default function RecordCard({
     useState<null | HTMLElement>(null)
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>({})
-  const [hasBeenVisible, setHasBeenVisible] = useState(false)
-
-  useEffect(() => {
-    ;(isActive || isNext || isPrev) && setHasBeenVisible(true)
-  }, [isActive, isNext, isPrev])
 
   useEffect(() => {
     if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
@@ -127,8 +120,8 @@ export default function RecordCard({
   // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
   // when they should only be receiving the record data after it is no longer null.
 
-  if (isLoading || !displayFields || extraWeight == null) {
-    return <RecordCardSkeleton />
+  if (record === undefined || !displayFields || extraWeight == undefined) {
+    return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
   } else if (!record) {
     return (
       <RecordCardSkeleton
@@ -224,18 +217,6 @@ export default function RecordCard({
     })
   }
 
-  const handleDeleteRecord = async () => {
-    await deleteRecord(_id)
-    swiper.update() // have to update swiper whenever changing swiper elements
-  }
-
-  const handleSwapRecords = async (i: number, j: number) => {
-    await swapRecords(i, j)
-    swiper.update()
-    // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
-    swiper.slideTo(j, 0)
-  }
-
   const handleExerciseChange = async (newExercise: Exercise | null) => {
     // if an exercise changes, discard any modifiers that are not valid for the new exercise
     const remainingModifiers = activeModifiers.filter((modifier) =>
@@ -262,7 +243,7 @@ export default function RecordCard({
     <RecordHeaderButton
       title="Move current record to the left"
       disabled={!swiperIndex}
-      onClick={() => handleSwapRecords(swiperIndex, swiperIndex - 1)}
+      onClick={() => swapRecords(swiperIndex, swiperIndex - 1)}
     >
       <KeyboardDoubleArrowLeftIcon />
     </RecordHeaderButton>
@@ -273,7 +254,7 @@ export default function RecordCard({
       title="Move current record to the right"
       // disable on the penultimate slide because the last is the "add record" button
       disabled={swiperIndex >= swiper.slides?.length - 2}
-      onClick={() => handleSwapRecords(swiperIndex, swiperIndex + 1)}
+      onClick={() => swapRecords(swiperIndex, swiperIndex + 1)}
     >
       <KeyboardDoubleArrowRightIcon />
     </RecordHeaderButton>
@@ -293,7 +274,7 @@ export default function RecordCard({
     <RecordHeaderButton
       title="Delete Record"
       color="error"
-      onClick={handleDeleteRecord}
+      onClick={() => deleteRecord(_id)}
     >
       <DeleteIcon />
     </RecordHeaderButton>
@@ -453,21 +434,13 @@ export default function RecordCard({
             </span>
           </Tooltip>
         </CardActions>
-        {/* Only render the swiper if the record card has ever been visible.
-          This prevents a large initial spike trying to load the history for
-          every record in the session at once.
-          It also doesn't hinder desktop experience, where multiple slides may be
-          visible at once but the added load is not likely to degrade performance.
-        */}
-        {hasBeenVisible && (
-          <Box pt={3}>
-            <HistoryCardsSwiper
-              filter={historyFilter}
-              paginationId={_id}
-              displayFields={displayFields}
-            />
-          </Box>
-        )}
+        <Box pt={3}>
+          <HistoryCardsSwiper
+            filter={historyFilter}
+            paginationId={_id}
+            displayFields={displayFields}
+          />
+        </Box>
       </Card>
     </>
   )
