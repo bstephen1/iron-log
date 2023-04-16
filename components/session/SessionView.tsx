@@ -22,6 +22,9 @@ import RecordCard from './records/RecordCard'
 import SessionModules from './upper/SessionModules'
 import TitleBar from './upper/TitleBar'
 
+// todo: look into prefetching data / preloading pages
+// https://swr.vercel.app/docs/prefetching
+
 interface Props {
   date: string
 }
@@ -31,7 +34,7 @@ export default function SessionView({ date }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const { sessionLog, mutate, isLoading } = useSessionLog(date)
+  const { sessionLog, mutate: mutateSession, isLoading } = useSessionLog(date)
   // const recordsIndex = arrayToIndex<Record>('_id', records)
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
@@ -40,14 +43,12 @@ export default function SessionView({ date }: Props) {
   const navNextClassName = 'nav-next-records-cards'
 
   const handleUpdateSession = async (newSessionLog: SessionLog) => {
-    mutate(updateSessionLog(newSessionLog), {
+    mutateSession(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
   }
 
-  // todo: add the current record instead of having to fetch it
-  // Very strange behavior when trying to do that though. Hard to get to the bottom of it.
   const handleAddRecord = async (exercise: Exercise) => {
     // have to check at function runtime if swiper.current exists bc a value change does not re-render
     const swiper = swiperElRef.current?.swiper
@@ -62,22 +63,31 @@ export default function SessionView({ date }: Props) {
         }
       : new SessionLog(date, [newRecord._id])
 
-    mutate(updateSessionLog(newSessionLog), {
+    mutateSession(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
+    // todo: add the current record instead of having to fetch it
+    // very baffling behavior when setting optimistic data. Freezes on clicking add record button
+    // instead of showing loading screen.
+    // it seems like it's waiting for the other mutate to finish first. But the same thing
+    // happens if using Ref or State instead of mutate for the new record.
+    // console logs do get triggered in AddRecordCard so that indicates this function is
+    // actually finishing, but it's like a re-render is somehow getting blocked.
+    // mutate(`/api/records/${newRecord._id}`, newRecord, {
+    //   optimisticData: newRecord,
+    //   revalidate: false,
+    // })
 
-    swiper.update()
-
-    // don't need to await result
     addRecord(newRecord)
+    swiper.update()
   }
 
   const handleNotesChange = async (notes: Note[]) => {
     if (!sessionLog) return
 
     const newSessionLog = { ...sessionLog, notes }
-    mutate(updateSessionLog(newSessionLog), {
+    mutateSession(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
@@ -97,7 +107,7 @@ export default function SessionView({ date }: Props) {
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
     const newSession = { ...sessionLog, records: newRecords }
-    mutate(updateSessionLog(newSession), {
+    mutateSession(updateSessionLog(newSession), {
       optimisticData: newSession,
       revalidate: false,
     })
@@ -111,7 +121,7 @@ export default function SessionView({ date }: Props) {
     if (!sessionLog || !swiper) return
 
     const newRecords = sessionLog.records.filter((id) => id !== recordId)
-    mutate(deleteSessionRecord(sessionLog.date, recordId), {
+    mutateSession(deleteSessionRecord(sessionLog.date, recordId), {
       optimisticData: { ...sessionLog, records: newRecords },
       revalidate: false,
     })

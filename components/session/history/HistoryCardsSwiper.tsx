@@ -14,6 +14,9 @@ import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import 'swiper/css/pagination'
 
+// todo: useSWRInfinite for infinite loading?
+// https://swr.vercel.app/docs/pagination
+
 interface Props {
   paginationId: string
   /** A record's displayFields are only up to date on fetch, so the current value must
