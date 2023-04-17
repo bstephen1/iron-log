@@ -15,9 +15,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'GET':
       return await fetchSession(userId, date)
     case 'POST':
-      return await addSession(userId, JSON.parse(req.body))
+      return await addSession(userId, req.body)
     case 'PUT':
-      return await updateSession(userId, JSON.parse(req.body))
+      return await updateSession(userId, req.body)
     default:
       throw methodNotAllowed
   }

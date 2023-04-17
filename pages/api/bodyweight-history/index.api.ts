@@ -13,13 +13,14 @@ import type { NextApiRequest } from 'next'
 async function handler(req: NextApiRequest, userId: UserId) {
   const query = buildBodyweightQuery(req.query, userId)
 
+  // todo: some kind of guard against req.body. Should make sure content type is application json and body is Bodyweight object
   switch (req.method) {
     case 'GET':
       return await fetchBodyweightHistory(query)
     case 'POST':
-      return await addBodyweight(userId, JSON.parse(req.body))
+      return await addBodyweight(userId, req.body)
     case 'PUT':
-      return await updateBodyweight(userId, JSON.parse(req.body))
+      return await updateBodyweight(userId, req.body)
     default:
       throw methodNotAllowed
   }

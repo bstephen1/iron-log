@@ -15,9 +15,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'GET':
       return await fetchModifier(userId, name)
     case 'POST':
-      return await addModifier(userId, JSON.parse(req.body))
+      return await addModifier(userId, req.body)
     case 'PATCH':
-      return await updateModifierFields(userId, JSON.parse(req.body))
+      return await updateModifierFields(userId, req.body)
     default:
       throw methodNotAllowed
   }

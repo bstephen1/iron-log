@@ -87,6 +87,7 @@ export async function addSessionLog(session: SessionLog): Promise<SessionLog> {
   return fetch(URI_SESSIONS + session.date, {
     method: 'POST',
     body: JSON.stringify(session),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -96,6 +97,7 @@ export async function updateSessionLog(
   return fetch(URI_SESSIONS + newSesson.date, {
     method: 'PUT',
     body: JSON.stringify(newSesson),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -156,6 +158,7 @@ export async function addRecord(newRecord: Record): Promise<Record> {
   return fetch(URI_RECORDS + newRecord._id, {
     method: 'POST',
     body: JSON.stringify(newRecord),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -166,6 +169,7 @@ export async function updateRecordFields(
   return fetch(URI_RECORDS + id, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -202,6 +206,7 @@ export async function addExercise(newExercise: Exercise): Promise<Exercise> {
   return fetch(URI_EXERCISES + newExercise.name, {
     method: 'POST',
     body: JSON.stringify(newExercise),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -209,6 +214,7 @@ export async function updateExercise(newExercise: Exercise): Promise<Exercise> {
   return fetch(URI_EXERCISES + newExercise.name, {
     method: 'PUT',
     body: JSON.stringify(newExercise),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -220,6 +226,7 @@ export async function updateExerciseFields(
   return fetch(URI_EXERCISES + exercise.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -242,6 +249,7 @@ export async function addModifier(newModifier: Modifier): Promise<Modifier> {
   return fetch(URI_MODIFIERS + newModifier.name, {
     method: 'POST',
     body: JSON.stringify(newModifier),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -254,6 +262,7 @@ export async function updateModifierFields(
   return fetch(URI_MODIFIERS + modifier.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -275,6 +284,7 @@ export async function addCategory(newCategory: Category): Promise<Category> {
   return fetch(URI_CATEGORIES + newCategory.name, {
     method: 'POST',
     body: JSON.stringify(newCategory),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -287,6 +297,7 @@ export async function updateCategoryFields(
   return fetch(URI_CATEGORIES + category.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -323,6 +334,7 @@ export async function addBodyweight(
   return fetch(URI_BODYWEIGHT, {
     method: 'POST',
     body: JSON.stringify(newBodyweight),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }
 
@@ -332,5 +344,6 @@ export async function updateBodyweight(
   return fetch(URI_BODYWEIGHT, {
     method: 'PUT',
     body: JSON.stringify(newBodyweight),
+    headers: { 'content-type': 'application/json' },
   }).then((res) => res.json())
 }

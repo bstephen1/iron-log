@@ -16,11 +16,11 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'GET':
       return await fetchRecord(userId, id)
     case 'POST':
-      return await addRecord(userId, JSON.parse(req.body))
+      return await addRecord(userId, req.body)
     case 'PUT':
-      return await updateRecord(userId, JSON.parse(req.body))
+      return await updateRecord(userId, req.body)
     case 'PATCH':
-      return await updateRecordFields(userId, JSON.parse(req.body))
+      return await updateRecordFields(userId, req.body)
     default:
       throw methodNotAllowed
   }
