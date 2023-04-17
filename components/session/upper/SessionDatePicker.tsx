@@ -95,7 +95,7 @@ export default function SessionDatePicker({
             overlap="circular"
             variant="dot"
             color="secondary"
-            invisible={!sessionLogsIndex[day]}
+            invisible={!sessionLogsIndex[day]?.records.length}
           >
             <PickersDay {...DayComponentProps} />
           </Badge>
