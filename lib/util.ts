@@ -45,3 +45,5 @@ export const dayjsStringAdd = (
 
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
 export const doNothing = () => {}
+
+export const swrFetcher = (url: string) => fetch(url).then((r) => r.json())

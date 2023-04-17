@@ -10,7 +10,7 @@ import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
-import { stringify } from 'querystring'
+import { ParsedUrlQueryInput, stringify } from 'querystring'
 import useSWR, { SWRConfiguration } from 'swr'
 import {
   DATE_FORMAT,
@@ -32,6 +32,9 @@ import {
 // the validator filters that out. Might be ok to leave as is.
 // Also, note that stringify doesn't add the leading '?'.
 // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
+
+/** Parse a Query object into a rest param string. Query objects should be spread into this function. */
+export const paramify = (query: ParsedUrlQueryInput) => '?' + stringify(query)
 
 //---------
 // SESSION
@@ -67,9 +70,8 @@ export function useSessionLog(date: Dayjs | string, config?: SWRConfiguration) {
 }
 
 export function useSessionLogs(query: DateRangeQuery) {
-  const paramString = '?' + stringify({ ...query })
   const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
-    URI_SESSIONS + paramString
+    URI_SESSIONS + paramify({ ...query })
   )
 
   return {
@@ -136,9 +138,8 @@ export function useRecord(id: string, config?: SWRConfiguration) {
 }
 
 export function useRecords(query?: RecordQuery, shouldFetch = true) {
-  const paramString = '?' + stringify({ ...query })
   const { data, isLoading, error, mutate } = useSWR<Record[]>(
-    shouldFetch ? URI_RECORDS + paramString : null
+    shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
   )
 
   return {
@@ -172,10 +173,8 @@ export async function updateRecordFields(
 //----------
 
 export function useExercises(query?: ExerciseQuery) {
-  const paramString = '?' + stringify({ ...query })
-
   const { data, error, mutate } = useSWR<Exercise[]>(
-    URI_EXERCISES + paramString
+    URI_EXERCISES + paramify({ ...query })
   )
 
   return {
@@ -303,9 +302,8 @@ export function useBodyweightHistory(query?: BodyweightQuery) {
   const start = query?.start ? addDay(query.start) : undefined
   const end = query?.end ? addDay(query.end) : undefined
 
-  const paramString = '?' + stringify({ start, end, ...query })
   const { data, error, mutate } = useSWR<Bodyweight[]>(
-    URI_BODYWEIGHT + paramString
+    URI_BODYWEIGHT + paramify({ start, end, ...query })
   )
 
   return {

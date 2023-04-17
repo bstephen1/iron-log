@@ -5,9 +5,25 @@ import {
   PickersDay,
 } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
-import { useSessionLogs } from 'lib/frontend/restService'
+import { DATE_FORMAT, URI_SESSIONS } from 'lib/frontend/constants'
+import { paramify, useSessionLogs } from 'lib/frontend/restService'
+import { swrFetcher } from 'lib/util'
 import { useEffect, useState } from 'react'
+import { preload } from 'swr'
+
+// The query gets data for the current month +/- 1 month so that
+// data for daysOutsideCurrentMonth is still visible on the current month
+const buildSessionLogQuery = (relativeMonth: number, month: Dayjs) => ({
+  limit: 0,
+  start: month
+    .startOf('month')
+    .add(relativeMonth - 1, 'month')
+    .format(DATE_FORMAT),
+  end: month
+    .endOf('month')
+    .add(relativeMonth + 1, 'month')
+    .format(DATE_FORMAT),
+})
 
 interface Props {
   date: Dayjs
@@ -29,22 +45,9 @@ export default function SessionDatePicker({
   const [pickerValue, setPickerValue] = useState<Dayjs | null>(date)
   // month is still a full date, but it only updates whenever the month changes
   const [month, setMonth] = useState(date)
-  // The query gets data for the current month +/- 1 month so that
-  // data for daysOutsideCurrentMonth is still visible on the current month
-  const buildSessionLogQuery = (relativeMonth: number) => ({
-    limit: 0,
-    start: month
-      ?.startOf('month')
-      .add(relativeMonth - 1, 'month')
-      .format(DATE_FORMAT),
-    end: month
-      ?.endOf('month')
-      .add(relativeMonth + 1, 'month')
-      .format(DATE_FORMAT),
-  })
 
   const { sessionLogsIndex, isLoading } = useSessionLogs(
-    buildSessionLogQuery(0)
+    buildSessionLogQuery(0, month)
   )
 
   useEffect(() => {
@@ -60,11 +63,15 @@ export default function SessionDatePicker({
 
   // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
 
-  // Query the adjacent months to store them in the cache.
-  // UseSwr's cache uses the api uri as the key, so we need to build the same query that the
+  // Preload adjacent months in useSWR's cache.
+  // The cache uses the api uri as the key, so we need to build the same query that the
   // currently selected month will use instead of widening the range.
-  const _sessionLogsCachePrev = useSessionLogs(buildSessionLogQuery(-1))
-  const _sessionLogsCacheNext = useSessionLogs(buildSessionLogQuery(1))
+  useEffect(() => {
+    const prev = buildSessionLogQuery(-1, month)
+    const next = buildSessionLogQuery(1, month)
+    preload(URI_SESSIONS + paramify({ ...prev }), swrFetcher)
+    preload(URI_SESSIONS + paramify({ ...next }), swrFetcher)
+  }, [month])
 
   return (
     <DatePicker

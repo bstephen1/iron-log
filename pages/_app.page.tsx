@@ -1,5 +1,6 @@
 import Layout from 'components/Layout'
 import useRouterLoading from 'components/loading/useRouterLoading'
+import { swrFetcher } from 'lib/util'
 import { server } from 'msw-mocks/server'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
@@ -26,9 +27,7 @@ function IronLog({ Component, pageProps }: AppProps<IronLogPageProps>) {
 
   return (
     <SessionProvider session={pageProps.session}>
-      <SWRConfig
-        value={{ fetcher: (url: string) => fetch(url).then((r) => r.json()) }}
-      >
+      <SWRConfig value={{ fetcher: swrFetcher }}>
         <Layout>
           <RouterLoadingContext.Provider value={isRouterLoading}>
             <Component {...pageProps} />

@@ -315,6 +315,7 @@ export default function RecordCard({
                 {...{ record, filter: historyFilter, handleFilterChange }}
               />
               {!shouldCondense && <UnitsButton />}
+              {/* todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  */}
               {!!exercise && (
                 <RecordHeaderButton
                   title="Manage Exercise"
