@@ -161,7 +161,6 @@ export default function SessionView({ date }: Props) {
             },
           }}
           spaceBetween={20}
-          autoHeight
           keyboard
           // not sure if autoheight is good. Will jump up if a smaller record appears (eg, "add record")
           // Change the default where dragging will only work on the slides, but not the space between them.
