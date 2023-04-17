@@ -16,6 +16,7 @@ import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
+import { useSWRConfig } from 'swr'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
@@ -35,8 +36,7 @@ export default function SessionView({ date }: Props) {
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
   const { sessionLog, mutate: mutateSession, isLoading } = useSessionLog(date)
-  // const { mutate } = useSWRConfig()
-  // const recordsIndex = arrayToIndex<Record>('_id', records)
+  const { mutate } = useSWRConfig()
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
   const paginationClassName = 'pagination-record-cards'
@@ -68,18 +68,12 @@ export default function SessionView({ date }: Props) {
       optimisticData: newSessionLog,
       revalidate: false,
     })
-    // todo: add the current record instead of having to fetch it
-    // very baffling behavior when setting optimistic data. Freezes on clicking add record button
-    // instead of showing loading screen.
-    // it seems like it's waiting for the other mutate to finish first. But the same thing
-    // happens if using Ref or State instead of mutate for the new record.
-    // console logs do get triggered in AddRecordCard so that indicates this function is
-    // actually finishing, but it's like a re-render is somehow getting blocked.
-    // mutate(`/api/records/${newRecord._id}`, newRecord, {
-    //   revalidate: false,
-    // })
+    // Add new record to swr cache so it doesn't have to be fetched.
+    mutate(`/api/records/${newRecord._id}`, addRecord(newRecord), {
+      revalidate: false,
+      optimisticData: newRecord,
+    })
 
-    addRecord(newRecord)
     swiper.update()
   }
 
