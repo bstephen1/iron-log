@@ -27,6 +27,9 @@ export default function NavigationArrow({ direction, className }: Props) {
   // when its values change. To listen for changes, we must use swiper.on to
   // setup an event listener for a supported swiper event.
   swiper.on('slideChange', (swiper) => handleDisabledCheck(swiper))
+  // this is only triggered when swiper.update() is called, which does NOT include slideChange.
+  // Needed for adding a record, since that doese not trigger a slide change.
+  swiper.on('update', (swiper) => handleDisabledCheck(swiper))
 
   swiper.on('lock', () => setIsLocked(true))
   swiper.on('unlock', (swiper) => {
