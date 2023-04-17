@@ -161,6 +161,7 @@ export default function SessionView({ date }: Props) {
             },
           }}
           spaceBetween={20}
+          autoHeight
           keyboard
           // not sure if autoheight is good. Will jump up if a smaller record appears (eg, "add record")
           // Change the default where dragging will only work on the slides, but not the space between them.
@@ -177,6 +178,7 @@ export default function SessionView({ date }: Props) {
             // todo: maybe add a custom render and make the last one a "+" or something.
             // Kind of tricky to do though.
           }}
+          style={{ paddingBottom: '250px' }}
         >
           {/* Originally had the arrows in line with slides, but there isn't a good
                   way to do that while keeping them inside the swiper to take advantage of 
