@@ -178,7 +178,10 @@ export default function SessionView({ date }: Props) {
             // todo: maybe add a custom render and make the last one a "+" or something.
             // Kind of tricky to do though.
           }}
-          style={{ paddingBottom: '250px' }}
+          // Extra padding lets autoHeight remember scroll position for longer slides.
+          // Has to be large enough to still be showing swiper on AddRecord slide,
+          // but small enough that it isn't bigger than record cards
+          style={{ paddingBottom: '60vh' }}
         >
           {/* Originally had the arrows in line with slides, but there isn't a good
                   way to do that while keeping them inside the swiper to take advantage of 
