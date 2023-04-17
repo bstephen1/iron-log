@@ -122,7 +122,7 @@ export default function HistoryCardsSwiper({
             ?.map((record) => (
               <SwiperSlide
                 key={record._id}
-                className="swiper-no-swiping-record"
+                className={records.length > 1 ? 'swiper-no-swiping-record' : ''}
               >
                 <HistoryCard
                   {...{
