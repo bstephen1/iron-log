@@ -143,8 +143,9 @@ export function useRecords(query?: RecordQuery, shouldFetch = true) {
   )
 
   return {
-    records: data,
-    recordsIndex: arrayToIndex<Record>('_id', data),
+    // data will be undefined forever if the fetch is null
+    records: shouldFetch ? data : [],
+    recordsIndex: shouldFetch ? arrayToIndex<Record>('_id', data) : {},
     isError: error,
     mutate,
     isLoading,
@@ -293,7 +294,10 @@ export async function updateCategoryFields(
 // BODYWEIGHT
 //------------
 
-export function useBodyweightHistory(query?: BodyweightQuery) {
+export function useBodyweightHistory(
+  query?: BodyweightQuery,
+  shouldFetch = true
+) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
   // Incrementing to 2020-04-03 will catch everything from the previous day.
@@ -303,11 +307,11 @@ export function useBodyweightHistory(query?: BodyweightQuery) {
   const end = query?.end ? addDay(query.end) : undefined
 
   const { data, error, mutate } = useSWR<Bodyweight[]>(
-    URI_BODYWEIGHT + paramify({ start, end, ...query })
+    shouldFetch ? URI_BODYWEIGHT + paramify({ start, end, ...query }) : null
   )
 
   return {
-    data: data,
+    data: shouldFetch ? data : [],
     isError: error,
     mutate: mutate,
   }

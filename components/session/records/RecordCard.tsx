@@ -97,7 +97,7 @@ export default function RecordCard({
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
-  const [historyFilter, setHistoryFilter] = useState<RecordQuery>({})
+  const [historyFilter, setHistoryFilter] = useState<RecordQuery>()
 
   useEffect(() => {
     if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {

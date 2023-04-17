@@ -3,10 +3,13 @@ import { useBodyweightHistory, useModifiers } from './restService'
 
 export default function useExtraWeight(record?: Record | null) {
   const { modifiersIndex } = useModifiers()
-  const { data: bodyweightData } = useBodyweightHistory({
-    limit: 2,
-    end: record?.date,
-  })
+  const { data: bodyweightData } = useBodyweightHistory(
+    {
+      limit: 2,
+      end: record?.date,
+    },
+    record?.exercise?.attributes?.bodyweight
+  )
 
   if (!record || modifiersIndex === undefined || bodyweightData === undefined) {
     return undefined

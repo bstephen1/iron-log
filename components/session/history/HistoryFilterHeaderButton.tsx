@@ -11,7 +11,7 @@ import RecordHeaderButton from '../records/RecordHeaderButton'
 
 interface Props {
   record: Record
-  filter: RecordQuery
+  filter?: RecordQuery
   handleFilterChange: (changes: Partial<RecordQuery>) => void
 }
 export default function HistoryFilterHeaderButton({
@@ -21,7 +21,7 @@ export default function HistoryFilterHeaderButton({
 }: Props) {
   const [open, setOpen] = useState(false)
   const repsDisabled =
-    filter.modifier?.includes('amrap') || filter.modifier?.includes('myo')
+    filter?.modifier?.includes('amrap') || filter?.modifier?.includes('myo')
 
   useEffect(() => {
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
@@ -63,7 +63,7 @@ export default function HistoryFilterHeaderButton({
               label="Modifiers"
               emptyPlaceholder="No filter"
               options={record.exercise?.modifiers}
-              initialValue={filter.modifier || []}
+              initialValue={filter?.modifier || []}
               variant="standard"
               handleSubmit={(modifier) => handleFilterChange({ modifier })}
             />
@@ -71,7 +71,7 @@ export default function HistoryFilterHeaderButton({
             <NumericFieldAutosave
               label="Reps"
               placeholder="No filter"
-              initialValue={filter.reps}
+              initialValue={filter?.reps}
               handleSubmit={(reps) => handleFilterChange({ reps })}
               variant="standard"
               disabled={repsDisabled}

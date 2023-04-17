@@ -35,6 +35,7 @@ export default function SessionView({ date }: Props) {
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
   const { sessionLog, mutate: mutateSession, isLoading } = useSessionLog(date)
+  // const { mutate } = useSWRConfig()
   // const recordsIndex = arrayToIndex<Record>('_id', records)
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
@@ -75,7 +76,6 @@ export default function SessionView({ date }: Props) {
     // console logs do get triggered in AddRecordCard so that indicates this function is
     // actually finishing, but it's like a re-render is somehow getting blocked.
     // mutate(`/api/records/${newRecord._id}`, newRecord, {
-    //   optimisticData: newRecord,
     //   revalidate: false,
     // })
 
