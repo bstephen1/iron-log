@@ -14,6 +14,10 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
         console.log(`${req.method} ${req.url} for user ${userId}`)
       }
 
+      if (req.body && req.headers['content-type'] !== 'application/json') {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'content type must be json')
+      }
+
       const payload = await handler(req, userId)
 
       // Note: null data is being returned as status 200. Originally it was returning
@@ -28,9 +32,6 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
       if (e instanceof ApiError) {
         statusCode = e.statusCode ?? statusCode
         message = e.message ?? message
-      } else if (e?.message.includes('JSON')) {
-        statusCode = StatusCodes.BAD_REQUEST
-        message = e.message
       }
 
       if (process.env.SERVER_LOG_LEVEL === 'verbose') {

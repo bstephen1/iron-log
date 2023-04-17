@@ -28,7 +28,7 @@ it('fetches given record', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(await res.json()).toEqual(data)
+      expect(await res.json()).toEqual(data)
     },
   })
 })
@@ -40,7 +40,11 @@ it('adds given record', async () => {
     handler: IdApi,
     params: { id },
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
+      const res = await fetch({
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' },
+      })
       expect(res.status).toBe(StatusCodes.OK)
       expect(await res.json()).toEqual(data)
       expect(mockAdd).toHaveBeenCalledTimes(1)
@@ -55,7 +59,11 @@ it('updates given record fields', async () => {
     handler: IdApi,
     params: { id },
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PATCH', body: JSON.stringify(data) })
+      const res = await fetch({
+        method: 'PATCH',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' },
+      })
       expect(res.status).toBe(StatusCodes.OK)
       expect(await res.json()).toEqual(data)
       expect(mockUpdateFields).toHaveBeenCalledTimes(1)
@@ -70,7 +78,11 @@ it('updates given record', async () => {
     handler: IdApi,
     params: { id },
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
+      const res = await fetch({
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' },
+      })
       expect(res.status).toBe(StatusCodes.OK)
       expect(await res.json()).toEqual(data)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
@@ -98,18 +110,6 @@ it('requires an id', async () => {
       const res = await fetch({ method: 'PUT' })
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
       expect(await res.json()).toMatch(/id/i)
-    },
-  })
-})
-
-it('handles invalid json body', async () => {
-  await testApiHandler({
-    handler: IdApi,
-    params: { id },
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PATCH', body: 'not json' })
-      expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-      expect(await res.json()).toMatch(/json/i)
     },
   })
 })

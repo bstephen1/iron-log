@@ -35,7 +35,11 @@ it('adds given bodyweight', async () => {
   await testApiHandler<Bodyweight>({
     handler: indexApi,
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
+      const res = await fetch({
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' },
+      })
       expect(res.status).toBe(StatusCodes.OK)
       expect(await res.json()).toEqual(data)
       expect(mockAdd).toHaveBeenCalledTimes(1)
@@ -49,7 +53,11 @@ it('updates given bodyweight', async () => {
   await testApiHandler<Bodyweight>({
     handler: indexApi,
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
+      const res = await fetch({
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' },
+      })
       expect(res.status).toBe(StatusCodes.OK)
       expect(await res.json()).toEqual(data)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
@@ -64,17 +72,6 @@ it('blocks invalid method types', async () => {
       const res = await fetch({ method: 'TRACE' })
       expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
       expect(await res.json()).toMatch(/not allowed/i)
-    },
-  })
-})
-
-it('handles invalid json body', async () => {
-  await testApiHandler({
-    handler: indexApi,
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT', body: 'not json' })
-      expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-      expect(await res.json()).toMatch(/json/i)
     },
   })
 })

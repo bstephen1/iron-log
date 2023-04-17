@@ -51,7 +51,11 @@ it('adds given session', async () => {
     handler: IndexApi,
     params: { date },
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'POST', body: JSON.stringify(data) })
+      const res = await fetch({
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' },
+      })
       expect(await res.json()).toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
       expect(mockAdd).toHaveBeenCalledTimes(1)
@@ -66,7 +70,11 @@ it('updates given session', async () => {
     handler: IndexApi,
     params: { date },
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT', body: JSON.stringify(data) })
+      const res = await fetch({
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' },
+      })
       expect(await res.json()).toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
       expect(mockUpdate).toHaveBeenCalledTimes(1)
