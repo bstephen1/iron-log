@@ -36,7 +36,6 @@ export default function HistoryCardsSwiper({
       modifierMatchType: ArrayMatchType.Equivalent,
       // minimize load if filter does not set a limit
       limit: 1,
-      sort: 'oldestFirst',
       ...filter,
     },
     !!filter
@@ -119,20 +118,24 @@ export default function HistoryCardsSwiper({
               slot: 'container-start',
             }}
           />
-          {records?.map((record) => (
-            <SwiperSlide
-              key={record._id}
-              className={records.length > 1 ? 'swiper-no-swiping-record' : ''}
-            >
-              <HistoryCard
-                {...{
-                  record,
-                  displayFields,
-                  filterModifiers: filter?.modifier || [],
-                }}
-              />
-            </SwiperSlide>
-          ))}
+          {records
+            ?.map((record) => (
+              <SwiperSlide
+                key={record._id}
+                className={records.length > 1 ? 'swiper-no-swiping-record' : ''}
+              >
+                <HistoryCard
+                  {...{
+                    record,
+                    displayFields,
+                    filterModifiers: filter?.modifier || [],
+                  }}
+                />
+              </SwiperSlide>
+              // need to reverse so newest is on the right, not left. Can't do it in useRecords because
+              // mongo applies sort before the limit. Also, reverse should be after map because it mutates the array.
+            ))
+            .reverse()}
         </Swiper>
       </Box>
     </Stack>
