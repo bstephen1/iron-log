@@ -24,7 +24,7 @@ it('fetches given session', async () => {
     params: { date },
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
-      await expect(await res.json()).toEqual(data)
+      expect(await res.json()).toEqual(data)
       expect(res.status).toBe(StatusCodes.OK)
     },
   })

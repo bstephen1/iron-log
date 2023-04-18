@@ -24,7 +24,7 @@ it('fetches given category', async () => {
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(await res.json()).toEqual(data)
+      expect(await res.json()).toEqual(data)
       expect(mockFetch).toHaveBeenCalledTimes(1)
     },
   })
@@ -43,7 +43,7 @@ it('adds given category', async () => {
         headers: { 'content-type': 'application/json' },
       })
       expect(res.status).toBe(StatusCodes.OK)
-      await expect(await res.json()).toEqual(data)
+      expect(await res.json()).toEqual(data)
       expect(mockAdd).toHaveBeenCalledTimes(1)
     },
   })
