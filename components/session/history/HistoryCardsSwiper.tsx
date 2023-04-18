@@ -2,7 +2,7 @@ import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { Navigation, Pagination } from 'swiper'
-import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import HistoryCard from './HistoryCard'
 
 import 'swiper/css'
@@ -30,7 +30,6 @@ export default function HistoryCardsSwiper({
   displayFields,
   filter,
 }: Props) {
-  const swiper = useSwiper()
   // todo: then fetch more if the swiper gets close to the end. (Also for future dates?)
   const { records, isLoading } = useRecords(
     {
@@ -61,9 +60,6 @@ export default function HistoryCardsSwiper({
       </>
     )
   }
-
-  // have to update after records load
-  swiper.updateAutoHeight()
 
   // assumes filter has end date set to the current record's date (so will exclude it)
   if (!records.length) {
