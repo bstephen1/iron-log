@@ -1,7 +1,9 @@
-import { StatusCodes } from 'http-status-codes'
+import {
+  expectApiErrorsOnInvalidMethod,
+  expectApiRespondsWithData,
+} from 'lib/testUtils'
 import Bodyweight from 'models/Bodyweight'
-import { testApiHandler } from 'next-test-api-route-handler'
-import indexApi from './index.api'
+import handler from './index.api'
 
 var mockFetch: jest.Mock
 var mockAdd: jest.Mock
@@ -18,60 +20,21 @@ const data = new Bodyweight(50, 'official')
 it('fetches given bodyweight', async () => {
   mockFetch.mockReturnValue([data])
 
-  await testApiHandler<Bodyweight[]>({
-    handler: indexApi,
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'GET' })
-      expect(res.status).toBe(StatusCodes.OK)
-      expect(await res.json()).toEqual([data])
-      expect(mockFetch).toHaveBeenCalledTimes(1)
-    },
-  })
+  await expectApiRespondsWithData({ data: [data], handler })
 })
 
 it('adds given bodyweight', async () => {
   mockAdd.mockReturnValue(data)
 
-  await testApiHandler<Bodyweight>({
-    handler: indexApi,
-    test: async ({ fetch }) => {
-      const res = await fetch({
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'content-type': 'application/json' },
-      })
-      expect(res.status).toBe(StatusCodes.OK)
-      expect(await res.json()).toEqual(data)
-      expect(mockAdd).toHaveBeenCalledTimes(1)
-    },
-  })
+  await expectApiRespondsWithData({ data, handler, method: 'POST' })
 })
 
 it('updates given bodyweight', async () => {
   mockUpdate.mockReturnValue(data)
 
-  await testApiHandler<Bodyweight>({
-    handler: indexApi,
-    test: async ({ fetch }) => {
-      const res = await fetch({
-        method: 'PUT',
-        body: JSON.stringify(data),
-        headers: { 'content-type': 'application/json' },
-      })
-      expect(res.status).toBe(StatusCodes.OK)
-      expect(await res.json()).toEqual(data)
-      expect(mockUpdate).toHaveBeenCalledTimes(1)
-    },
-  })
+  await expectApiRespondsWithData({ data, handler, method: 'PUT' })
 })
 
 it('blocks invalid method types', async () => {
-  await testApiHandler({
-    handler: indexApi,
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'TRACE' })
-      expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
-      expect(await res.json()).toMatch(/not allowed/i)
-    },
-  })
+  await expectApiErrorsOnInvalidMethod({ handler })
 })

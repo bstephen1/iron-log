@@ -9,7 +9,8 @@
     ],
     "spaced-comment": ["error", "always", { "exceptions": ["-", "*"] }],
     "react/display-name": "off",
-    "jest/no-test-prefixes": "off"
+    "jest/no-test-prefixes": "off",
+    "jest/expect-expect": "off"
   },
   "plugins": ["jest"]
 }

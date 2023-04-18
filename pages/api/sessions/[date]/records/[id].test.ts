@@ -1,8 +1,11 @@
-import { StatusCodes } from 'http-status-codes'
+import {
+  expectApiErrorsOnInvalidMethod,
+  expectApiErrorsOnMissingParams,
+  expectApiRespondsWithData,
+} from 'lib/testUtils'
 import { generateId } from 'lib/util'
 import Record from 'models/Record'
-import { testApiHandler } from 'next-test-api-route-handler'
-import IdApi from './[id].api'
+import handler from './[id].api'
 
 var mockFetch: jest.Mock
 var mockDelete: jest.Mock
@@ -15,56 +18,24 @@ jest.mock('lib/backend/mongoService', () => ({
 const date = '2000-01-01'
 const data = new Record(date)
 const id = generateId()
+const params = { id, date }
 
 it('fetches given record', async () => {
   mockFetch.mockReturnValue(data)
 
-  await testApiHandler<Record>({
-    handler: IdApi,
-    params: { id, date },
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'GET' })
-      expect(await res.json()).toEqual(data)
-      expect(res.status).toBe(StatusCodes.OK)
-    },
-  })
+  await expectApiRespondsWithData({ data, handler, params })
 })
 
 it('deletes given record', async () => {
   mockDelete.mockReturnValue(data)
 
-  await testApiHandler({
-    handler: IdApi,
-    params: { id, date },
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'DELETE' })
-      expect(await res.json()).toEqual(data)
-      expect(res.status).toBe(StatusCodes.OK)
-      expect(mockDelete).toHaveBeenCalledTimes(1)
-    },
-  })
+  await expectApiRespondsWithData({ data, handler, params, method: 'DELETE' })
 })
 
 it('blocks invalid method types', async () => {
-  await testApiHandler({
-    handler: IdApi,
-    params: { id, date },
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'TRACE' })
-      expect(await res.json()).toMatch(/not allowed/i)
-      expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
-    },
-  })
+  await expectApiErrorsOnInvalidMethod({ handler, params })
 })
 
 it('requires an id', async () => {
-  await testApiHandler({
-    handler: IdApi,
-    // omit the id param
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT' })
-      expect(await res.json()).toMatch(/id/i)
-      expect(res.status).toBe(StatusCodes.BAD_REQUEST)
-    },
-  })
+  await expectApiErrorsOnMissingParams({ handler })
 })

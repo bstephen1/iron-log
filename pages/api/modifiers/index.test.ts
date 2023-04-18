@@ -1,8 +1,10 @@
-import { StatusCodes } from 'http-status-codes'
+import {
+  expectApiErrorsOnInvalidMethod,
+  expectApiRespondsWithData,
+} from 'lib/testUtils'
 import Modifier from 'models/Modifier'
 import { Status } from 'models/Status'
-import { testApiHandler } from 'next-test-api-route-handler'
-import modifiers from 'pages/api/modifiers/index.api'
+import handler from './index.api'
 
 // jest.mock is hoisted to the top of the file, but const mockfn = jest.fn()
 // is NOT (despite jest docs saying variables starting with "mock" are hoisted).
@@ -21,23 +23,9 @@ it('fetches modifiers', async () => {
   const data = [new Modifier('hi', Status.active, 5)]
   mockFetchModifiers.mockReturnValue(data)
 
-  await testApiHandler<Modifier[]>({
-    handler: modifiers,
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'GET' })
-      expect(res.status).toBe(StatusCodes.OK)
-      expect(await res.json()).toEqual(data)
-    },
-  })
+  await expectApiRespondsWithData({ data, handler })
 })
 
 it('blocks invalid method types', async () => {
-  await testApiHandler({
-    handler: modifiers,
-    test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT' })
-      expect(res.status).toBe(StatusCodes.METHOD_NOT_ALLOWED)
-      expect(await res.json()).toMatch(/not allowed/i)
-    },
-  })
+  await expectApiErrorsOnInvalidMethod({ handler })
 })
