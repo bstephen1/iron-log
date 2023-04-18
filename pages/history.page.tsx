@@ -37,7 +37,7 @@ interface GraphBodyweight extends Bodyweight {
 export default function HistoryPage() {
   const { exercises, mutate: mutateExercises } = useExercises()
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const { data: bodyweightData } = useBodyweightHistory({ sort: 'oldestFirst' })
+  const { data: bodyweightData } = useBodyweightHistory()
   const [showBodyweight, setShowBodyweight] = useState(true)
   const [includeUnofficial, setIncludeUnofficial] = useState(false)
   const [clothingOffset, setClothingOffset] = useState(DEFAULT_CLOTHING_OFFSET)
