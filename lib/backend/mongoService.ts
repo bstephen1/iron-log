@@ -126,8 +126,8 @@ export async function fetchSessions({
       { userId, date: { $gte: start, $lte: end } },
       { projection: { userId: 0 } }
     )
-    .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
+    .sort({ date: convertSort(sort) })
     .toArray()
 }
 
@@ -212,8 +212,8 @@ export async function fetchRecords({
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
       { $project: { userId: 0, 'exercise.userId': 0 } },
     ])
-    .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
+    .sort({ date: convertSort(sort) })
     .toArray()
 }
 
@@ -490,8 +490,8 @@ export async function fetchBodyweightHistory({
       { userId, date: { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
-    .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
+    .sort({ date: convertSort(sort) })
     .toArray()
 }
 
