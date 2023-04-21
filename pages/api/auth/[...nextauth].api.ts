@@ -1,9 +1,29 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
 import { clientPromise } from 'lib/backend/mongoConnect'
-import { ObjectId } from 'mongodb'
-import type { NextAuthOptions } from 'next-auth'
+import type { NextAuthOptions, Session } from 'next-auth'
 import NextAuth, { SessionStrategy } from 'next-auth'
+import { JWT } from 'next-auth/jwt'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
+
+const devProviders =
+  process.env.NODE_ENV !== 'production'
+    ? [
+        // This provider logs on as the test user for dev mode.
+        // todo: could also use this pattern to setup a (readonly?) "guest" account for new users to look around
+        CredentialsProvider({
+          name: 'Dev User',
+          credentials: {},
+          async authorize() {
+            // ObjectId from '1234567890AB'
+            const user = { id: '313233343536373839304142' }
+
+            // Any object returned will be saved in `user` property of the JWT
+            return user
+          },
+        }),
+      ]
+    : []
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,15 +32,12 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.NEXTAUTH_GITHUB_SECRET || '',
       id: 'github',
     }),
+    ...devProviders,
   ],
-
-  // this was in the docs but not sure if needed and can no longer find it. Says it isn't a valid option
-  // database: process.env.DATABASE_URL || '',
-
   // using a database adapter changes the strategy to "database", which causes an infinite redirect loop.
   // See: https://github.com/nextauthjs/next-auth/issues/5392
-  // Per the docs, jwt seems to store user session data in the client instead of in the database.
-  // So seems like it should be fine? See: https://next-auth.js.org/adapters/overview
+  // Per the docs, jwt stores user session data in the client instead of in the database.
+  // See: https://next-auth.js.org/adapters/overview
   session: { strategy: 'jwt' as SessionStrategy },
   // The official adapter uses an auto generated mongo ObjectId for the id.
   // We could define a custom adapter to use our own generateId() function but that adds a maintenance and complexity cost.
@@ -29,18 +46,9 @@ export const authOptions: NextAuthOptions = {
   // By default the client receives only minimal information. Callbacks allow us to add needed properties to the client model.
   // (We want the id)
   callbacks: {
-    // called whenever a session is checked
-    // todo: does this have better typing?
-    async session({ session, token }: { session: any; token: any }) {
-      // in dev mode we can set an arbitrary id for testing
-      if (process.env.NEXTAUTH_DUMMY_SESSION_ID) {
-        const userObjectId = new ObjectId(process.env.NEXTAUTH_DUMMY_SESSION_ID)
-        session.user.id = userObjectId.toString()
-        return session
-      }
-
-      // for some reason the mongo id is stored under token.sub
-      session.user.id = token.sub
+    async session({ session, token }: { session: Session; token: JWT }) {
+      // token.sub is the mongo userId. Will never be undefined.
+      session.user = { ...session.user, id: token.sub || '' }
       return session
     },
   },
