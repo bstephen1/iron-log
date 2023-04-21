@@ -2,7 +2,6 @@ import Layout from 'components/Layout'
 import useRouterLoading from 'components/loading/useRouterLoading'
 import useSWRCacheProvider from 'components/useSWRCacheProvider'
 import { swrFetcher } from 'lib/util'
-import { server } from 'msw-mocks/server'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { createContext } from 'react'
@@ -12,23 +11,12 @@ import { SWRConfig } from 'swr'
 
 export const RouterLoadingContext = createContext(false)
 
-// Enabling this will allow mock rest endpoints in dev mode.
-// In the docs this is supposed to need a separate browser setup,
-// but this is working with the node server. I guess it's something
-// with how nextjs is structured.
-if (process.env.MSW === 'enabled') {
-  server.listen()
-}
-
-interface IronLogPageProps {
-  session?: any // todo: not sure how to import Session from next-auth
-}
-function IronLog({ Component, pageProps }: AppProps<IronLogPageProps>) {
+function IronLog({ Component, pageProps }: AppProps) {
   const isRouterLoading = useRouterLoading()
   const provider = useSWRCacheProvider()
 
   return (
-    <SessionProvider session={pageProps.session}>
+    <SessionProvider>
       <SWRConfig value={{ fetcher: swrFetcher, provider }}>
         <Layout>
           <RouterLoadingContext.Provider value={isRouterLoading}>
