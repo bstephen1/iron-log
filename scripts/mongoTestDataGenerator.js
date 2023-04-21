@@ -3,7 +3,7 @@ const { ObjectId } = require('mongodb')
 
 const db = connect('mongodb://localhost:27017/test')
 
-// NEXTAUTH_DUMMY_SESSION_ID in .env.development must match a userId to show the corresponding records
+// NEXT_PUBLIC_DUMMY_SESSION_ID in .env.development must match a userId to show the corresponding records
 const dummyUserId = new ObjectId('1234567890AB')
 const dummyUserId2 = new ObjectId('1234567890CC')
 
