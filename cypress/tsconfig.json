@@ -1,0 +1,19 @@
+// Cypress globally defines Mocha-based expect/it etc that conflict with jest.
+// To resolve, the top level tsconfig.json needs to exclude cypress files,
+// and this secondary tsconfig.json needs to point to the cypress files and
+// give them the right cypress types.
+// Also, removing the default import definition in commands.ts seemed to help.
+// See: https://github.com/cypress-io/cypress/issues/22059
+{
+  "compilerOptions": {
+    "strict": true,
+    // this is important; ignores some jest/cypress conflicts in node_modules types
+    "skipLibCheck": true,
+    "target": "es5",
+    "lib": ["es5", "dom"],
+    // if adding testing library, add as a type. https://testing-library.com/docs/cypress-testing-library/intro/
+    "types": ["cypress", "dayjs"]
+  },
+  // this is a relative path
+  "include": ["./**/*.ts", "../cypress.config.js"]
+}

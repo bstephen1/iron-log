@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "typeRoots": ["./types", "./node_modules/@types"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -19,17 +15,22 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": "./",
+    "baseUrl": "./"
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "scripts/dummyDataMongoGenerator.js",
-    "pages/manage/test.jsx",
-    "components/testForm.jsx"
-, "middleware.api.ts"  ],
+    "middleware.api.ts",
+    "cypress.config.js"
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    // cypress redefines jest assertion types. See: https://stackoverflow.com/a/69990369
+    "cypress",
+    "cypress.config.js",
+    // this is only if any cypress tests are outside the cypress folder
+    "**/*.cy.ts*"
   ]
 }
