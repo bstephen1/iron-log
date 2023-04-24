@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from '@mui/material'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import type { NextPage } from 'next'
@@ -16,11 +16,13 @@ const Home: NextPage = () => {
 
       <Stack>
         <Typography textAlign="center">Welcome</Typography>
-        <Button>
-          <Link href={`/sessions/${dayjs().format(DATE_FORMAT)}/`}>
-            Today's Log
-          </Link>
-        </Button>
+        <Box display="flex" justifyContent="center">
+          <Button>
+            <Link href={`/sessions/${dayjs().format(DATE_FORMAT)}/`}>
+              Today's Log
+            </Link>
+          </Button>
+        </Box>
       </Stack>
     </>
   )
