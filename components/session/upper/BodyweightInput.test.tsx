@@ -1,4 +1,3 @@
-import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { URI_BODYWEIGHT } from 'lib/frontend/constants'
 import { render, screen, useServerOnce } from 'lib/testUtils'
@@ -36,10 +35,9 @@ it('renders official weigh-in initially', async () => {
 it('renders unofficial weigh-in when switching mode to unofficial', async () => {
   const weight = 45
   const date = '2010-01-01'
-  const user = userEvent.setup()
   // initial fetch must return an empty array because there is no official data
   useServerOnce(URI_BODYWEIGHT, [])
-  render(<BodyweightInput date={date2020} />)
+  const { user } = render(<BodyweightInput date={date2020} />)
 
   expect(await screen.findByText(/no existing official/i)).toBeVisible()
 
@@ -70,9 +68,8 @@ it('does not render data if unexpected weigh-in type is received', async () => {
 
 describe('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
-    const user = userEvent.setup()
     useServerOnce(URI_BODYWEIGHT, [officialBw])
-    render(<BodyweightInput date={date2020} />)
+    const { user } = render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
@@ -89,9 +86,8 @@ describe('input', () => {
   })
 
   it('validates against changing an existing value to be empty', async () => {
-    const user = userEvent.setup()
     useServerOnce(URI_BODYWEIGHT, [officialBw])
-    render(<BodyweightInput date={date2020} />)
+    const { user } = render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
@@ -105,9 +101,8 @@ describe('input', () => {
   })
 
   it('resets to existing value when button is clicked', async () => {
-    const user = userEvent.setup()
     useServerOnce(URI_BODYWEIGHT, [officialBw])
-    render(<BodyweightInput date={date2020} />)
+    const { user } = render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
@@ -119,9 +114,8 @@ describe('input', () => {
   })
 
   it('submits and revalidates when button is clicked', async () => {
-    const user = userEvent.setup()
     useServerOnce(URI_BODYWEIGHT, [officialBw])
-    render(<BodyweightInput date={date2020} />)
+    const { user } = render(<BodyweightInput date={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 

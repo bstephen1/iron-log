@@ -1,4 +1,5 @@
 import { render, RenderOptions } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
 import { rest } from 'msw'
 import { server } from 'msw-mocks/server'
@@ -30,10 +31,23 @@ const FrontendLayout = ({ children }: { children: ReactNode }) => (
   </SWRConfig>
 )
 
+/** Custom render implementation that wraps the element with necessary layout components (eg, SWRConfig).
+ *  Also returns a user object to remove the need to setup a userEvent.
+ */
+// This does do an unnecessary setup if there's no interaction, but that's probably not a big deal.
+// setup() is supposed to make negligable performance impact and it would probably be more annoying
+// juggling two render functions depending on whether user interaction is needed.
+// Using setup() is supposed to prevent very rare but very tricky bugs.
+// See:
+// https://github.com/testing-library/user-event/discussions/1036
+// https://github.com/testing-library/user-event/discussions/1052
 const customRender = (
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
-) => render(ui, { wrapper: FrontendLayout, ...options })
+) => ({
+  user: userEvent.setup(),
+  ...render(ui, { wrapper: FrontendLayout, ...options }),
+})
 
 export * from '@testing-library/react'
 export { customRender as render }
