@@ -15,5 +15,5 @@
     "types": ["cypress", "dayjs"]
   },
   // this is a relative path
-  "include": ["./**/*.ts", "../cypress.config.js"]
+  "include": ["./**/*.ts"]
 }

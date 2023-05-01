@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky install",
+    "cy": "npx cypress open --config-file cypress/cypress.config.ts",
     "test": "jest --watch"
   },
   "dependencies": {
