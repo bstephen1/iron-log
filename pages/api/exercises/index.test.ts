@@ -5,9 +5,9 @@ import {
 import Exercise from 'models/Exercise'
 import handler from './index.api'
 
-var mockFetch: jest.Mock
-jest.mock('lib/backend/mongoService', () => ({
-  fetchExercises: (mockFetch = jest.fn()),
+var mockFetch: vi.mock
+vi.mock('lib/backend/mongoService', () => ({
+  fetchExercises: (mockFetch = vi.fn()),
 }))
 
 it('fetches exercises', async () => {

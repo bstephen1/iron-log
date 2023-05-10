@@ -5,9 +5,9 @@ import {
 import Record from 'models/Record'
 import handler from './index.api'
 
-var mockFetch: jest.Mock
-jest.mock('lib/backend/mongoService', () => ({
-  fetchRecords: (mockFetch = jest.fn()),
+var mockFetch: vi.mock
+vi.mock('lib/backend/mongoService', () => ({
+  fetchRecords: (mockFetch = vi.fn()),
 }))
 
 const date = '2000-01-01'

@@ -7,14 +7,14 @@ import Modifier from 'models/Modifier'
 import { Status } from 'models/Status'
 import handler from './[name].api'
 
-var mockFetch: jest.Mock
-var mockAdd: jest.Mock
-var mockUpdate: jest.Mock
+var mockFetch: vi.mock
+var mockAdd: vi.mock
+var mockUpdate: vi.mock
 
-jest.mock('lib/backend/mongoService', () => ({
-  fetchModifier: (mockFetch = jest.fn()),
-  addModifier: (mockAdd = jest.fn()),
-  updateModifierFields: (mockUpdate = jest.fn()),
+vi.mock('lib/backend/mongoService', () => ({
+  fetchModifier: (mockFetch = vi.fn()),
+  addModifier: (mockAdd = vi.fn()),
+  updateModifierFields: (mockUpdate = vi.fn()),
 }))
 
 const data = new Modifier('hi', Status.active, 5)

@@ -6,14 +6,14 @@ import {
 import Category from 'models/Category'
 import handler from './[name].api'
 
-var mockFetch: jest.Mock
-var mockAdd: jest.Mock
-var mockUpdate: jest.Mock
+var mockFetch: vi.mock
+var mockAdd: vi.mock
+var mockUpdate: vi.mock
 
-jest.mock('lib/backend/mongoService', () => ({
-  fetchCategory: (mockFetch = jest.fn()),
-  addCategory: (mockAdd = jest.fn()),
-  updateCategoryFields: (mockUpdate = jest.fn()),
+vi.mock('lib/backend/mongoService', () => ({
+  fetchCategory: (mockFetch = vi.fn()),
+  addCategory: (mockAdd = vi.fn()),
+  updateCategoryFields: (mockUpdate = vi.fn()),
 }))
 
 const data = new Category('hi')

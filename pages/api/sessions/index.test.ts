@@ -5,9 +5,9 @@ import {
 import SessionLog from 'models/SessionLog'
 import handler from './index.api'
 
-var mockFetchSessions: jest.Mock
-jest.mock('lib/backend/mongoService', () => ({
-  fetchSessions: (mockFetchSessions = jest.fn()),
+var mockFetchSessions: vi.mock
+vi.mock('lib/backend/mongoService', () => ({
+  fetchSessions: (mockFetchSessions = vi.fn()),
 }))
 
 it('fetches sessions', async () => {

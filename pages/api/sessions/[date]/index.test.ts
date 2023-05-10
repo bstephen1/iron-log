@@ -6,14 +6,14 @@ import {
 import SessionLog from 'models/SessionLog'
 import handler from './index.api'
 
-var mockFetch: jest.Mock
-var mockAdd: jest.Mock
-var mockUpdate: jest.Mock
+var mockFetch: vi.mock
+var mockAdd: vi.mock
+var mockUpdate: vi.mock
 
-jest.mock('lib/backend/mongoService', () => ({
-  fetchSession: (mockFetch = jest.fn()),
-  addSession: (mockAdd = jest.fn()),
-  updateSession: (mockUpdate = jest.fn()),
+vi.mock('lib/backend/mongoService', () => ({
+  fetchSession: (mockFetch = vi.fn()),
+  addSession: (mockAdd = vi.fn()),
+  updateSession: (mockUpdate = vi.fn()),
 }))
 
 const date = '2000-01-01'

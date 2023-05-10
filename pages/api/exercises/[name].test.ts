@@ -6,16 +6,16 @@ import {
 import Exercise from 'models/Exercise'
 import handler from './[name].api'
 
-var mockFetch: jest.Mock
-var mockAdd: jest.Mock
-var mockUpdate: jest.Mock
-var mockUpdateFields: jest.Mock
+var mockFetch: vi.mock
+var mockAdd: vi.mock
+var mockUpdate: vi.mock
+var mockUpdateFields: vi.mock
 
-jest.mock('lib/backend/mongoService', () => ({
-  fetchExercise: (mockFetch = jest.fn()),
-  addExercise: (mockAdd = jest.fn()),
-  updateExercise: (mockUpdate = jest.fn()),
-  updateExerciseFields: (mockUpdateFields = jest.fn()),
+vi.mock('lib/backend/mongoService', () => ({
+  fetchExercise: (mockFetch = vi.fn()),
+  addExercise: (mockAdd = vi.fn()),
+  updateExercise: (mockUpdate = vi.fn()),
+  updateExerciseFields: (mockUpdateFields = vi.fn()),
 }))
 
 const data = new Exercise('hi')

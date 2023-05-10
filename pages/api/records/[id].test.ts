@@ -7,16 +7,16 @@ import { generateId } from 'lib/util'
 import Record from 'models/Record'
 import handler from './[id].api'
 
-var mockFetch: jest.Mock
-var mockAdd: jest.Mock
-var mockUpdate: jest.Mock
-var mockUpdateFields: jest.Mock
+var mockFetch: vi.mock
+var mockAdd: vi.mock
+var mockUpdate: vi.mock
+var mockUpdateFields: vi.mock
 
-jest.mock('lib/backend/mongoService', () => ({
-  fetchRecord: (mockFetch = jest.fn()),
-  addRecord: (mockAdd = jest.fn()),
-  updateRecord: (mockUpdate = jest.fn()),
-  updateRecordFields: (mockUpdateFields = jest.fn()),
+vi.mock('lib/backend/mongoService', () => ({
+  fetchRecord: (mockFetch = vi.fn()),
+  addRecord: (mockAdd = vi.fn()),
+  updateRecord: (mockUpdate = vi.fn()),
+  updateRecordFields: (mockUpdateFields = vi.fn()),
 }))
 
 const data = new Record('2000-01-01')

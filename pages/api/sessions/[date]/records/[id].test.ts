@@ -7,12 +7,12 @@ import { generateId } from 'lib/util'
 import Record from 'models/Record'
 import handler from './[id].api'
 
-var mockFetch: jest.Mock
-var mockDelete: jest.Mock
+var mockFetch: vi.mock
+var mockDelete: vi.mock
 
-jest.mock('lib/backend/mongoService', () => ({
-  fetchRecord: (mockFetch = jest.fn()),
-  deleteSessionRecord: (mockDelete = jest.fn()),
+vi.mock('lib/backend/mongoService', () => ({
+  fetchRecord: (mockFetch = vi.fn()),
+  deleteSessionRecord: (mockDelete = vi.fn()),
 }))
 
 const date = '2000-01-01'

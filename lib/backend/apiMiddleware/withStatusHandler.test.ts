@@ -1,9 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
 import { testApiHandler } from 'next-test-api-route-handler'
 import { ApiError } from 'next/dist/server/api-utils'
+import { vi } from 'vitest'
 import withStatusHandler from './withStatusHandler'
 
-const mockHandler = jest.fn()
+const mockHandler = vi.fn()
 
 beforeEach(() => {
   mockHandler.mockClear()
@@ -11,7 +12,7 @@ beforeEach(() => {
 
 it('should set the response body to the returned non-null payload', async () => {
   const payload = 'payload'
-  mockHandler.mockReturnValueOnce(payload)
+  mockHandler.mockResolvedValueOnce(payload)
   await testApiHandler({
     handler: withStatusHandler(mockHandler),
     test: async ({ fetch }) => {

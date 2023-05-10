@@ -5,14 +5,14 @@ import {
 import Bodyweight from 'models/Bodyweight'
 import handler from './index.api'
 
-var mockFetch: jest.Mock
-var mockAdd: jest.Mock
-var mockUpdate: jest.Mock
+var mockFetch: vi.mock
+var mockAdd: vi.mock
+var mockUpdate: vi.mock
 
-jest.mock('lib/backend/mongoService', () => ({
-  fetchBodyweightHistory: (mockFetch = jest.fn()),
-  addBodyweight: (mockAdd = jest.fn()),
-  updateBodyweight: (mockUpdate = jest.fn()),
+vi.mock('lib/backend/mongoService', () => ({
+  fetchBodyweightHistory: (mockFetch = vi.fn()),
+  addBodyweight: (mockAdd = vi.fn()),
+  updateBodyweight: (mockUpdate = vi.fn()),
 }))
 
 const data = new Bodyweight(50, 'official')

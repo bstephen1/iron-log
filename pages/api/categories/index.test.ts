@@ -5,9 +5,9 @@ import {
 import Category from 'models/Category'
 import handler from './index.api'
 
-var mockFetch: jest.Mock
-jest.mock('lib/backend/mongoService', () => ({
-  fetchCategories: (mockFetch = jest.fn()),
+var mockFetch: vi.mock
+vi.mock('lib/backend/mongoService', () => ({
+  fetchCategories: (mockFetch = vi.fn()),
 }))
 
 it('fetches categories', async () => {
