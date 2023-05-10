@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   root: './',
   test: {
+    coverage: {
+      provider: 'c8',
+      reporter: ['text-summary', 'html'],
+    },
     globals: true,
     environment: 'jsdom',
     setupFiles: 'vitest.setup.ts',
