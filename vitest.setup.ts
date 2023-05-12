@@ -1,9 +1,8 @@
 import '@testing-library/jest-dom'
 import dotenv from 'dotenv'
-import { TextDecoder, TextEncoder } from 'util'
+import { vi } from 'vitest'
 import 'whatwg-fetch'
 import { server } from './msw-mocks/server'
-import { vi } from 'vitest'
 
 // load env variables
 // todo: does vitest have a different way of doing this?
