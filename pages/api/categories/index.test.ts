@@ -1,18 +1,15 @@
+import { fetchCategories } from 'lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Category from 'models/Category'
+import { vi } from 'vitest'
 import handler from './index.api'
-
-var mockFetch: vi.mock
-vi.mock('lib/backend/mongoService', () => ({
-  fetchCategories: (mockFetch = vi.fn()),
-}))
 
 it('fetches categories', async () => {
   const data = [new Category('hi')]
-  mockFetch.mockReturnValue(data)
+  vi.mocked(fetchCategories).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })
 })

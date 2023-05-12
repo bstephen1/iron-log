@@ -1,46 +1,41 @@
 import {
+  addExercise,
+  fetchExercise,
+  updateExercise,
+  updateExerciseFields,
+} from 'lib/backend/mongoService'
+import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Exercise from 'models/Exercise'
+import { vi } from 'vitest'
 import handler from './[name].api'
-
-var mockFetch: vi.mock
-var mockAdd: vi.mock
-var mockUpdate: vi.mock
-var mockUpdateFields: vi.mock
-
-vi.mock('lib/backend/mongoService', () => ({
-  fetchExercise: (mockFetch = vi.fn()),
-  addExercise: (mockAdd = vi.fn()),
-  updateExercise: (mockUpdate = vi.fn()),
-  updateExerciseFields: (mockUpdateFields = vi.fn()),
-}))
 
 const data = new Exercise('hi')
 const params = { name: 'name' }
 
 it('fetches given exercise', async () => {
-  mockFetch.mockReturnValue(data)
+  vi.mocked(fetchExercise).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
 })
 
 it('adds given exercise', async () => {
-  mockAdd.mockReturnValue(data)
+  vi.mocked(addExercise).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'POST' })
 })
 
 it('updates given exercise fields', async () => {
-  mockUpdateFields.mockReturnValue(data)
+  vi.mocked(updateExerciseFields).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PATCH' })
 })
 
 it('updates given exercise', async () => {
-  mockUpdate.mockReturnValue(data)
+  vi.mocked(updateExercise).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
 })

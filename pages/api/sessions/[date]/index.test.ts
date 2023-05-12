@@ -1,39 +1,35 @@
 import {
+  addSession,
+  fetchSession,
+  updateSession,
+} from 'lib/backend/mongoService'
+import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import SessionLog from 'models/SessionLog'
+import { vi } from 'vitest'
 import handler from './index.api'
-
-var mockFetch: vi.mock
-var mockAdd: vi.mock
-var mockUpdate: vi.mock
-
-vi.mock('lib/backend/mongoService', () => ({
-  fetchSession: (mockFetch = vi.fn()),
-  addSession: (mockAdd = vi.fn()),
-  updateSession: (mockUpdate = vi.fn()),
-}))
 
 const date = '2000-01-01'
 const data = new SessionLog(date)
 const params = { date }
 
 it('fetches given session', async () => {
-  mockFetch.mockReturnValue(data)
+  vi.mocked(fetchSession).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
 })
 
 it('adds given session', async () => {
-  mockAdd.mockReturnValue(data)
+  vi.mocked(addSession).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'POST' })
 })
 
 it('updates given session', async () => {
-  mockUpdate.mockReturnValue(data)
+  vi.mocked(updateSession).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
 })
