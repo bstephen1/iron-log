@@ -8,9 +8,21 @@ export default defineConfig({
   test: {
     coverage: {
       reporter: ['text-summary', 'html'],
+      all: true,
+      // skipFull: true, // only works for 'text'
+      enabled: true,
+      thresholdAutoUpdate: true,
+      include: ['components', 'lib', 'pages', 'models'],
+      // exclude: ['cypress', '.next', 'styles', 'msw-mocks'],
     },
     globals: true,
+    // happy-dom?
     environment: 'jsdom',
+    // environmentMatchGlobs: [
+    //   ['*.tsx', 'jsdom'],
+    //   ['*.ts', 'node'],
+    // ],
     setupFiles: 'vitest.setup.ts',
+    restoreMocks: true,
   },
 })
