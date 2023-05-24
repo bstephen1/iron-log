@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom'
+import { configure } from '@testing-library/react'
 import dotenv from 'dotenv'
 import { vi } from 'vitest'
 import 'whatwg-fetch'
@@ -19,6 +20,14 @@ vi.mock('pages/api/auth/[...nextauth].api', () => ({ authOptions: vi.fn() }))
 vi.mock('next-auth', () => ({
   getServerSession: () => ({ user: { id: '1234567890AB' } }),
 }))
+
+// configure testing-library options
+configure({
+  // Change default in *byRole queries to omit expensive visibility check.
+  // The typical use case will be expect(...).toBeVisible(), so having the *byRole
+  // query internally perform a visibility check is redundant.
+  defaultHidden: true,
+})
 
 // msw server
 beforeAll(() => server.listen())
