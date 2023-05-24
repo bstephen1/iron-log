@@ -1,3 +1,4 @@
+import { deleteSessionRecord, fetchRecord } from 'lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
@@ -5,31 +6,31 @@ import {
 } from 'lib/testUtils'
 import { generateId } from 'lib/util'
 import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
+import { vi } from 'vitest'
 import handler from './[id].api'
 
-var mockFetch: jest.Mock
-var mockDelete: jest.Mock
-
-jest.mock('lib/backend/mongoService', () => ({
-  fetchRecord: (mockFetch = jest.fn()),
-  deleteSessionRecord: (mockDelete = jest.fn()),
-}))
-
 const date = '2000-01-01'
-const data = new Record(date)
+const record = new Record(date)
+const session = new SessionLog(date)
 const id = generateId()
 const params = { id, date }
 
 it('fetches given record', async () => {
-  mockFetch.mockReturnValue(data)
+  vi.mocked(fetchRecord).mockResolvedValue(record)
 
-  await expectApiRespondsWithData({ data, handler, params })
+  await expectApiRespondsWithData({ data: record, handler, params })
 })
 
 it('deletes given record', async () => {
-  mockDelete.mockReturnValue(data)
+  vi.mocked(deleteSessionRecord).mockResolvedValue(session)
 
-  await expectApiRespondsWithData({ data, handler, params, method: 'DELETE' })
+  await expectApiRespondsWithData({
+    data: session,
+    handler,
+    params,
+    method: 'DELETE',
+  })
 })
 
 it('blocks invalid method types', async () => {

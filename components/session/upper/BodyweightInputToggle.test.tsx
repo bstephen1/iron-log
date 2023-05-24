@@ -1,8 +1,9 @@
 import userEvent from '@testing-library/user-event'
 import { render, screen, within } from 'lib/testUtils'
 import BodyweightInputToggle from './BodyweightInputToggle'
+import { vi } from 'vitest'
 
-const handleTypeChange = jest.fn()
+const handleTypeChange = vi.fn()
 
 it('renders with given type selected', async () => {
   render(<BodyweightInputToggle type="unofficial" {...{ handleTypeChange }} />)

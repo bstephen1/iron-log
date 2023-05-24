@@ -1,18 +1,15 @@
+import { fetchRecords } from 'lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Record from 'models/Record'
+import { vi } from 'vitest'
 import handler from './index.api'
-
-var mockFetch: jest.Mock
-jest.mock('lib/backend/mongoService', () => ({
-  fetchRecords: (mockFetch = jest.fn()),
-}))
 
 it('fetches records', async () => {
   const data = [new Record('2000-01-01')]
-  mockFetch.mockReturnValue(data)
+  vi.mocked(fetchRecords).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })
 })

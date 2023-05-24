@@ -19,7 +19,8 @@ export const isValidId = (id: string) => validate(id) && version(id) === 4
 export const useNames = (entities?: AsyncSelectorOption[]) =>
   useMemo(() => entities?.map((entity) => entity.name) || [], [entities])
 
-export type Index<T> = { [key: string]: T }
+// manually have to specify undefined is possible
+export type Index<T> = { [key: string]: T | undefined }
 /** Takes an array of objects which each have a given index field and converts them to an object of objects indexed by the given field.
  * Index field values must be strings
  *
