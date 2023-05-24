@@ -6,8 +6,18 @@ import dayjs from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
+import { Set } from 'models/Set'
 import { useEffect, useState } from 'react'
 import RecordHeaderButton from '../records/RecordHeaderButton'
+
+const allSameReps = (sets: Set[]) => {
+  let reps = sets[0].reps
+  for (const set of sets) {
+    reps = set.reps === reps ? reps : 0
+    if (!reps) return undefined
+  }
+  return reps
+}
 
 interface Props {
   record: Record
@@ -26,12 +36,7 @@ export default function HistoryFilterHeaderButton({
   useEffect(() => {
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     // todo: amrap/myo should be special default modifiers rather than hardcoding here
-    const reps =
-      record.sets[0]?.reps &&
-      !record.activeModifiers.includes('amrap') &&
-      !record.activeModifiers.includes('myo')
-        ? record.sets[0]?.reps
-        : undefined
+    const reps = repsDisabled ? undefined : allSameReps(record.sets)
 
     handleFilterChange({
       reps,
@@ -42,7 +47,7 @@ export default function HistoryFilterHeaderButton({
       limit: 10,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record.activeModifiers, record.sets[0]?.reps])
+  }, [record.activeModifiers, record.sets])
 
   return (
     <>
