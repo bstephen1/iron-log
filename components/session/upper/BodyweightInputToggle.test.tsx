@@ -1,14 +1,15 @@
-import userEvent from '@testing-library/user-event'
 import { render, screen, within } from 'lib/testUtils'
-import BodyweightInputToggle from './BodyweightInputToggle'
 import { vi } from 'vitest'
+import BodyweightInputToggle from './BodyweightInputToggle'
 
 const handleTypeChange = vi.fn()
 
 it('renders with given type selected', async () => {
-  render(<BodyweightInputToggle type="unofficial" {...{ handleTypeChange }} />)
+  const { user } = render(
+    <BodyweightInputToggle type="unofficial" {...{ handleTypeChange }} />
+  )
 
-  await userEvent.click(screen.getByRole('button'))
+  await user.click(screen.getByTestId('ScaleOutlinedIcon'))
 
   // ariaLabel isn't doing anything so resorting to testid
   const listItem = await screen.findByTestId('unofficial')
@@ -18,10 +19,12 @@ it('renders with given type selected', async () => {
 
 it('switches type when different type clicked', async () => {
   handleTypeChange.mockClear()
-  render(<BodyweightInputToggle type="unofficial" {...{ handleTypeChange }} />)
+  const { user } = render(
+    <BodyweightInputToggle type="unofficial" {...{ handleTypeChange }} />
+  )
 
-  await userEvent.click(screen.getByRole('button'))
-  await userEvent.click(await screen.findByText('official weigh-ins'))
+  await user.click(screen.getByTestId('ScaleOutlinedIcon'))
+  await user.click(await screen.findByText('official weigh-ins'))
 
   // menu closes on change
   expect(screen.queryByText('official')).not.toBeInTheDocument()
@@ -32,10 +35,12 @@ it('switches type when different type clicked', async () => {
 
 it('switches type when same type clicked', async () => {
   handleTypeChange.mockClear()
-  render(<BodyweightInputToggle type="unofficial" {...{ handleTypeChange }} />)
+  const { user } = render(
+    <BodyweightInputToggle type="unofficial" {...{ handleTypeChange }} />
+  )
 
-  await userEvent.click(screen.getByRole('button'))
-  await userEvent.click(await screen.findByText('unofficial', { exact: false }))
+  await user.click(screen.getByTestId('ScaleOutlinedIcon'))
+  await user.click(await screen.findByText('unofficial', { exact: false }))
 
   expect(screen.queryByText('unofficial')).not.toBeInTheDocument()
   expect(handleTypeChange).toHaveBeenCalledTimes(1)
