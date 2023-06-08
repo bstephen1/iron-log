@@ -9,7 +9,7 @@
     "lint": "next lint",
     "prepare": "husky install",
     "cy": "npx cypress open --config-file cypress/cypress.config.ts",
-    "test": "vitest run"
+    "test": "vitest --ui --open=false"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",

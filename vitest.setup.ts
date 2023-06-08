@@ -1,13 +1,15 @@
 import '@testing-library/jest-dom'
 import { configure } from '@testing-library/react'
-import dotenv from 'dotenv'
 import { vi } from 'vitest'
 import 'whatwg-fetch'
 import { server } from './msw-mocks/server'
 
-// load env variables
-// todo: does vitest have a different way of doing this?
-dotenv.config({ path: './.env.test' })
+// set env variables with import.meta.env
+// note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
+// note: node only supports string vars. See: https://vitest.dev/api/vi.html#vi-stubenv
+
+// increase limit for printing dom on failed expect(). Default is 7000 and usually cuts off too soon.
+import.meta.env.DEBUG_PRINT_LIMIT = '50000'
 
 // vi.mock will import the actual module and automock all exports.
 // If a factory is provided, it replaces the actual module with the factory.
