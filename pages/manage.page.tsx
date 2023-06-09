@@ -106,6 +106,8 @@ export default function ManagePage() {
 
   const onExerciseUpdate = async (newExercise: Exercise) => {
     setUrlExercise(newExercise.name, { scroll: false, shallow: true })
+    // updates ExerciseSelector if the name has changed
+    setExercise(newExercise)
   }
 
   const handleModifierUpdate = async (updates: Partial<Modifier>) => {
