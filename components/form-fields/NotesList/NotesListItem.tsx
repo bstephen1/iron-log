@@ -30,10 +30,13 @@ export default function NotesListItem(props: Props) {
 
   const inputRef = useRef<HTMLInputElement>()
   const handleSubmit = (value: string) =>
-    handleUpdate(index, { ...note, value: value.trim() })
+    handleUpdate(index, { ...note, value })
   const { control, isEmpty } = useField({
     handleSubmit,
     initialValue: note.value,
+    // lower debounce causes a lot of strangeness on mobile (words duplicated on save, etc)
+    // need to be very sure the user is done typing before trying to autosave
+    debounceMilliseconds: 5000,
   })
 
   return (
@@ -41,7 +44,9 @@ export default function NotesListItem(props: Props) {
       {...control()}
       multiline
       size="small"
-      onBlur={() => isEmpty && handleDelete(index)}
+      onBlur={(e) =>
+        isEmpty ? handleDelete(index) : handleSubmit(e.target.value)
+      }
       placeholder={placeholder}
       autoComplete="off"
       readOnly={readOnly}
