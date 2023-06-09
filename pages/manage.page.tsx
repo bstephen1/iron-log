@@ -10,7 +10,6 @@ import ModifierForm from 'components/ModifierForm'
 import StyledDivider from 'components/StyledDivider'
 import {
   updateCategoryFields,
-  updateExerciseFields,
   updateModifierFields,
   useCategories,
   useExercises,
@@ -20,7 +19,7 @@ import Category from 'models/Category'
 import Exercise from 'models/Exercise'
 import Modifier from 'models/Modifier'
 import { queryTypes, useQueryState } from 'next-usequerystate'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 type TabValue = 'exercises' | 'modifiers' | 'categories'
 const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']
@@ -28,6 +27,7 @@ const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']
 // todo: ui element showing "changes saved". Snackbar?
 // todo: delete exercise. Delete only for unused exercises?
 // todo: this is really repetitive between exercise/modifier/category logic...
+// todo: something about all the ignoring exhaustive deps
 export default function ManagePage() {
   const { exercises, mutate: mutateExercises } = useExercises()
   const { modifiers, mutate: mutateModifiers } = useModifiers()
@@ -104,16 +104,8 @@ export default function ManagePage() {
     setExercise(updatedExercise)
   }
 
-  const handleUpdateExercise = async (updates: Partial<Exercise>) => {
-    if (!exercise) return
-
-    const newExercise = { ...exercise, ...updates }
-    setExercise(newExercise)
+  const onExerciseUpdate = async (newExercise: Exercise) => {
     setUrlExercise(newExercise.name, { scroll: false, shallow: true })
-
-    await updateExerciseFields(exercise, updates)
-    // mark exercises as stale and trigger revalidation
-    mutateExercises()
   }
 
   const handleModifierUpdate = async (updates: Partial<Modifier>) => {
@@ -144,29 +136,52 @@ export default function ManagePage() {
     !!updates.name && revalidateExercises()
   }
 
-  const Form = ({ tab }: { tab: TabValue }) => {
-    switch (tab) {
-      default:
-      case 'exercises':
-        return exercise ? (
-          <ExerciseForm {...{ exercise, handleUpdate: handleUpdateExercise }} />
-        ) : (
-          <ManageWelcomeCard />
-        )
-      case 'modifiers':
-        return modifier ? (
-          <ModifierForm {...{ modifier, handleUpdate: handleModifierUpdate }} />
-        ) : (
-          <ManageWelcomeCard />
-        )
-      case 'categories':
-        return category ? (
-          <CategoryForm {...{ category, handleUpdate: handleCategoryUpdate }} />
-        ) : (
-          <ManageWelcomeCard />
-        )
-    }
-  }
+  // useCallback is crucial here. It prevents the entire form from resetting whenever
+  // the swr arrays (useExercises, etc) are revalidated. The form should only be rerendered
+  // when the selected item changes (ie, the _id field).
+  // Note also the forms must internally handle mutations instead of using the
+  // initial value they are given, because the callback will prevent rerenders if the data changes.
+  // Note: This only affects controlled form elements which need to rerender to display their changes, so
+  // uncontrolled inputs are unaffected. Since modifier/category forms are simple uncontrolled inputs,
+  // the parent can still handle the state.
+  const Form = useCallback(
+    ({ tab }: { tab: TabValue }) => {
+      // console.log('callback')
+      switch (tab) {
+        default:
+        case 'exercises':
+          return exercise ? (
+            <ExerciseForm
+              {...{
+                initialExercise: exercise,
+                onUpdate: onExerciseUpdate,
+              }}
+            />
+          ) : (
+            <ManageWelcomeCard />
+          )
+        case 'modifiers':
+          return modifier ? (
+            <ModifierForm
+              {...{ modifier, handleUpdate: handleModifierUpdate }}
+            />
+          ) : (
+            <ManageWelcomeCard />
+          )
+        case 'categories':
+          return category ? (
+            <CategoryForm
+              {...{ category, handleUpdate: handleCategoryUpdate }}
+            />
+          ) : (
+            <ManageWelcomeCard />
+          )
+      }
+    },
+    // todo: consider declaring the functions with useRef. Only thing would be I'd prefer to use an immutable ref but not sure that's possible
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [category?._id, exercise?._id, modifier?._id]
+  )
 
   const Selector = ({ tab }: { tab: TabValue }) => {
     switch (tab) {

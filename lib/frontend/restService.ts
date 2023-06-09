@@ -63,7 +63,7 @@ export function useSessionLog(date: Dayjs | string, config?: SWRConfiguration) {
 
   return {
     sessionLog: data,
-    isError: error,
+    isError: !!error,
     isLoading,
     mutate,
   }
@@ -78,7 +78,7 @@ export function useSessionLogs(query: DateRangeQuery) {
     sessionLogs: data,
     sessionLogsIndex: arrayToIndex<SessionLog>('date', data),
     isLoading,
-    isError: error,
+    isError: !!error,
     mutate: mutate,
   }
 }
@@ -132,7 +132,7 @@ export function useRecord(id: string, config?: SWRConfiguration) {
 
   return {
     record: data,
-    isError: error,
+    isError: !!error,
     isLoading,
     // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
     mutate: mutate,
@@ -148,7 +148,7 @@ export function useRecords(query?: RecordQuery, shouldFetch = true) {
     // data will be undefined forever if the fetch is null
     records: shouldFetch ? data : [],
     recordsIndex: shouldFetch ? arrayToIndex<Record>('_id', data) : {},
-    isError: error,
+    isError: !!error,
     mutate,
     isLoading,
   }
@@ -184,22 +184,30 @@ export function useExercises(query?: ExerciseQuery) {
 
   return {
     exercises: data,
-    isError: error,
+    isError: !!error,
     mutate: mutate,
   }
 }
 
-export function useExercise(id: string | null) {
+export function useExercise(id: string | null, config?: SWRConfiguration) {
   // passing null to useSWR disables fetching
   const { data, error, mutate } = useSWR<Exercise>(
-    id ? URI_EXERCISES + id : null
+    id ? URI_EXERCISES + id : null,
+    config
   )
 
   return {
     exercise: data,
-    isError: error,
+    isError: !!error,
     mutate: mutate,
   }
+}
+
+/** A wrapper for useExercise to guarantee that the exercise will never be undefined, and assert correct typing.  */
+export function useGuaranteedExercise(id: string, fallbackData: Exercise) {
+  const res = useExercise(id, { fallbackData })
+
+  return { ...res, exercise: res.exercise as Exercise }
 }
 
 export async function addExercise(newExercise: Exercise): Promise<Exercise> {
@@ -240,7 +248,7 @@ export function useModifiers() {
   return {
     modifiers: data,
     modifiersIndex: arrayToIndex<Modifier>('name', data),
-    isError: error,
+    isError: !!error,
     mutate: mutate,
   }
 }
@@ -275,7 +283,7 @@ export function useCategories() {
 
   return {
     categories: data,
-    isError: error,
+    isError: !!error,
     mutate: mutate,
   }
 }
@@ -323,7 +331,7 @@ export function useBodyweightHistory(
 
   return {
     data: shouldFetch ? data : [],
-    isError: error,
+    isError: !!error,
     mutate: mutate,
   }
 }
