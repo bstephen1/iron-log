@@ -1,4 +1,4 @@
-import HistoryIcon from '@mui/icons-material/History'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import { Dialog, DialogContent, DialogTitle, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
@@ -52,7 +52,7 @@ export default function HistoryFilterHeaderButton({
   return (
     <>
       <RecordHeaderButton title="History Filter" onClick={() => setOpen(true)}>
-        <HistoryIcon />
+        <AccessTimeIcon />
       </RecordHeaderButton>
       <Dialog
         open={open}
