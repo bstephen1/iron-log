@@ -31,16 +31,15 @@ export type Units = {
 /** Units used to store sets in the database. No matter the units used to display
  * data on the frontend, they must be converted to these units before sending to the db.
  */
-export const DB_UNITS: Units = Object.freeze({
+export const DB_UNITS: Units = {
   side: 'side',
   weight: 'kg',
   distance: 'm',
   time: 'sec',
   reps: 'reps',
   effort: 'rpe',
-})
+}
 
-// todo: deep freeze? normal freeze is shallow
 /** Lists all possible units and their factors used in conversions.
  *
  * A factor is defined such that the base unit of the same dimension times that factor
@@ -54,16 +53,18 @@ export const DB_UNITS: Units = Object.freeze({
  */
 // Don't want to give this a type because the type should explicitly be the listed values.
 // Think that's making ts complain in convertUnit() that the symbols could potentially not be numbers.
-export const UNITS = Object.freeze({
+export const UNITS = {
   weight: { kg: 1, lbs: 0.45359237 },
-  distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471 },
+  distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471, cm: 0.01, in: 0.0254 },
   time: { sec: 1, min: 60, hr: 3600, 'HH:MM:SS': 1 },
-  /** reps and side have no units */
+  /** reps have no units */
   reps: { reps: 1 },
+  /** side has no units */
   side: { side: 1 },
   /** effort requires a custom conversion */
   effort: { rpe: 1, rir: 1 },
-})
+  // const assertion is being favored over Object.freeze(), which is more strict but doesn't freeze nested fields
+} as const
 
 /** Convert a unit from source to dest type.
  * Note the generic type is inferred from the dimension arg so it doesn't need to be provided explicitly.
