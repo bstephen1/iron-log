@@ -1,3 +1,5 @@
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { render, RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
@@ -27,7 +29,9 @@ const FrontendLayout = ({ children }: { children: ReactNode }) => (
       provider: () => new Map(),
     }}
   >
-    {children}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {children}
+    </LocalizationProvider>
   </SWRConfig>
 )
 
