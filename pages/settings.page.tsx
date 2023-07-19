@@ -1,5 +1,5 @@
 import { FormControlLabel, FormGroup, Switch, Typography } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
+import Grid from '@mui/material/Unstable_Grid2'
 import useLocalStorageState from 'use-local-storage-state'
 
 export default function SettingsPage() {

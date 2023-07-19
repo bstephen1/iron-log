@@ -7,7 +7,7 @@ import {
   TextField,
   useMediaQuery,
 } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
+import Grid from '@mui/material/Unstable_Grid2'
 import dayjs from 'dayjs'
 
 import StyledDivider from 'components/StyledDivider'

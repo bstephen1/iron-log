@@ -1,5 +1,5 @@
 import { TextField } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
+import Grid from '@mui/material/Unstable_Grid2'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import { useRouter } from 'next/router'

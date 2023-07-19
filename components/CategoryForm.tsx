@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
+import Grid from '@mui/material/Unstable_Grid2'
 import { useExercises } from 'lib/frontend/restService'
 import Category from 'models/Category'
 import { useMemo } from 'react'
