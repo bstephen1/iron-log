@@ -1,7 +1,7 @@
 import { Stack, useTheme } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+import WeightUnitConverter from 'components/session/upper/WeightUnitConverter'
 import NavigationBar from 'components/slider/NavigationBar'
-import WeightUnitConverter from 'components/WeightUnitConverter'
 import dayjs from 'dayjs'
 import {
   addRecord,

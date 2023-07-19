@@ -1,27 +1,29 @@
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import { InputAdornment, Stack, TextField, TextFieldProps } from '@mui/material'
+import { convertUnit } from 'models/Set'
 import { useState } from 'react'
 
 export default function WeightUnitConverter() {
-  // the Textfield's value is a string, but it's based of kg here which is a number
+  // the Textfield's value is a string, but it's based off kg here which is a number
   const [kg, setKg] = useState<number>()
-  const KG_TO_LB_RATE = 2.2
-
-  const format = (num: number) => +num.toFixed(2)
 
   return (
     <Stack direction="row" sx={{ justifyContent: 'center' }}>
       <ConverterField
         unit="kg"
-        value={kg ? format(kg) : ''}
+        value={kg ? convertUnit(kg, 'weight', 'kg', 'kg', 0, 2) : ''}
         onChange={(e) => setKg(e.target.value ? +e.target.value : undefined)}
       />
       <SyncAltIcon />
       <ConverterField
         unit="lb"
-        value={kg ? format(kg * KG_TO_LB_RATE) : ''}
+        value={kg ? convertUnit(kg, 'weight', 'kg', 'lbs', 0, 2) : ''}
         onChange={(e) =>
-          setKg(e.target.value ? +e.target.value / KG_TO_LB_RATE : undefined)
+          setKg(
+            e.target.value
+              ? convertUnit(+e.target.value, 'weight', 'lbs', 'kg')
+              : undefined
+          )
         }
       />
     </Stack>
