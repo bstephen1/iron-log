@@ -81,6 +81,7 @@ function clockReducer(state: State, action: Action): State {
       return {
         ...state,
         resumeTime: dayjs().valueOf(),
+        isRunning: true,
         accumulatedTime: 0,
         displayValue: 0,
         isFinished: false,
@@ -98,8 +99,6 @@ function clockReducer(state: State, action: Action): State {
         ...state,
         displayValue: deltaTime + state.accumulatedTime,
       }
-    default:
-      throw new Error('unexpected action type given to reducer')
   }
 }
 

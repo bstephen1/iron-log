@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs'
-import { arrayToIndex } from 'lib/util'
+import { arrayToIndex, fetchJson } from 'lib/util'
 import Bodyweight from 'models/Bodyweight'
 import Category from 'models/Category'
 import Exercise from 'models/Exercise'
@@ -84,30 +84,30 @@ export function useSessionLogs(query: DateRangeQuery) {
 }
 
 export async function addSessionLog(session: SessionLog): Promise<SessionLog> {
-  return fetch(URI_SESSIONS + session.date, {
+  return fetchJson(URI_SESSIONS + session.date, {
     method: 'POST',
     body: JSON.stringify(session),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 export async function updateSessionLog(
   newSesson: SessionLog
 ): Promise<SessionLog> {
-  return fetch(URI_SESSIONS + newSesson.date, {
+  return fetchJson(URI_SESSIONS + newSesson.date, {
     method: 'PUT',
     body: JSON.stringify(newSesson),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 export async function deleteSessionRecord(
   date: string,
   recordId: string
 ): Promise<SessionLog> {
-  return fetch(`${URI_SESSIONS}${date}/records/${recordId}`, {
+  return fetchJson(`${URI_SESSIONS}${date}/records/${recordId}`, {
     method: 'DELETE',
-  }).then((res) => res.json())
+  })
 }
 
 //--------
@@ -155,22 +155,22 @@ export function useRecords(query?: RecordQuery, shouldFetch = true) {
 }
 
 export async function addRecord(newRecord: Record): Promise<Record> {
-  return fetch(URI_RECORDS + newRecord._id, {
+  return fetchJson(URI_RECORDS + newRecord._id, {
     method: 'POST',
     body: JSON.stringify(newRecord),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 export async function updateRecordFields(
   id: Record['_id'],
   updates: Partial<Record>
 ): Promise<Record> {
-  return fetch(URI_RECORDS + id, {
+  return fetchJson(URI_RECORDS + id, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 //----------
@@ -211,19 +211,19 @@ export function useGuaranteedExercise(id: string, fallbackData: Exercise) {
 }
 
 export async function addExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetch(URI_EXERCISES + newExercise.name, {
+  return fetchJson(URI_EXERCISES + newExercise.name, {
     method: 'POST',
     body: JSON.stringify(newExercise),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 export async function updateExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetch(URI_EXERCISES + newExercise.name, {
+  return fetchJson(URI_EXERCISES + newExercise.name, {
     method: 'PUT',
     body: JSON.stringify(newExercise),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 export async function updateExerciseFields(
@@ -231,11 +231,11 @@ export async function updateExerciseFields(
   updates: Partial<Exercise>
 ): Promise<Exercise> {
   const id = exercise._id
-  return fetch(URI_EXERCISES + exercise.name, {
+  return fetchJson(URI_EXERCISES + exercise.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 //----------
@@ -254,11 +254,11 @@ export function useModifiers() {
 }
 
 export async function addModifier(newModifier: Modifier): Promise<Modifier> {
-  return fetch(URI_MODIFIERS + newModifier.name, {
+  return fetchJson(URI_MODIFIERS + newModifier.name, {
     method: 'POST',
     body: JSON.stringify(newModifier),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 // todo: add a modifiers/id/<id> URI? Weird to use name in uri then send id to backend
@@ -267,11 +267,11 @@ export async function updateModifierFields(
   updates: Partial<Modifier>
 ): Promise<Modifier> {
   const id = modifier._id
-  return fetch(URI_MODIFIERS + modifier.name, {
+  return fetchJson(URI_MODIFIERS + modifier.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 //----------
@@ -289,11 +289,11 @@ export function useCategories() {
 }
 
 export async function addCategory(newCategory: Category): Promise<Category> {
-  return fetch(URI_CATEGORIES + newCategory.name, {
+  return fetchJson(URI_CATEGORIES + newCategory.name, {
     method: 'POST',
     body: JSON.stringify(newCategory),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 // todo: add a categories/id/<id> URI? Weird to use name in uri then send id to backend
@@ -302,11 +302,11 @@ export async function updateCategoryFields(
   updates: Partial<Category>
 ): Promise<Category> {
   const id = category._id
-  return fetch(URI_CATEGORIES + category.name, {
+  return fetchJson(URI_CATEGORIES + category.name, {
     method: 'PATCH',
     body: JSON.stringify({ id, updates }),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 //------------
@@ -339,19 +339,19 @@ export function useBodyweightHistory(
 export async function addBodyweight(
   newBodyweight: Bodyweight
 ): Promise<Bodyweight> {
-  return fetch(URI_BODYWEIGHT, {
+  return fetchJson(URI_BODYWEIGHT, {
     method: 'POST',
     body: JSON.stringify(newBodyweight),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }
 
 export async function updateBodyweight(
   newBodyweight: Bodyweight
 ): Promise<Bodyweight> {
-  return fetch(URI_BODYWEIGHT, {
+  return fetchJson(URI_BODYWEIGHT, {
     method: 'PUT',
     body: JSON.stringify(newBodyweight),
     headers: { 'content-type': 'application/json' },
-  }).then((res) => res.json())
+  })
 }

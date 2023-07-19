@@ -47,4 +47,17 @@ export const dayjsStringAdd = (
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
 export const doNothing = () => {}
 
-export const swrFetcher = (url: string) => fetch(url).then((r) => r.json())
+export const swrFetcher = (url: string) => fetchJson(url)
+
+/** performs a fetch and pulls out the json from the res.
+ *  Also checks if the res is an error. Note just calling fetch() by itself
+ *  has no inherent error checking!
+ */
+export const fetchJson = async (...params: Parameters<typeof fetch>) => {
+  const res = await fetch(...params)
+  const json = await res.json()
+  if (res.ok) {
+    return json
+  }
+  throw json
+}

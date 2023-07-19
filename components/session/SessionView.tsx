@@ -1,4 +1,6 @@
 import { Stack, useTheme } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2'
+import WeightUnitConverter from 'components/session/upper/WeightUnitConverter'
 import NavigationBar from 'components/slider/NavigationBar'
 import dayjs from 'dayjs'
 import {
@@ -20,7 +22,7 @@ import { useSWRConfig } from 'swr'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
-import SessionModules from './upper/SessionModules'
+import RestTimer from './upper/RestTimer'
 import TitleBar from './upper/TitleBar'
 
 // todo: look into prefetching data / preloading pages
@@ -129,7 +131,20 @@ export default function SessionView({ date }: Props) {
   return (
     <Stack spacing={2}>
       <TitleBar date={dayjs(date)} />
-      <SessionModules />
+      <Grid container>
+        <Grid xs={12} md={6}>
+          <RestTimer />
+        </Grid>
+        <Grid
+          xs={12}
+          md={6}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <WeightUnitConverter />
+        </Grid>
+      </Grid>
       {!isLoading && (
         // after making changes to the swiper component the page needs to be reloaded
         <Swiper

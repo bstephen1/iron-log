@@ -1,3 +1,5 @@
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { render, RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
@@ -8,6 +10,7 @@ import { NtarhParameters, testApiHandler } from 'next-test-api-route-handler'
 import { ApiError } from 'next/dist/server/api-utils'
 import { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
+import { vi } from 'vitest'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
 
 // This file overwrites @testing-library's render and wraps it with components that
@@ -27,7 +30,9 @@ const FrontendLayout = ({ children }: { children: ReactNode }) => (
       provider: () => new Map(),
     }}
   >
-    {children}
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      {children}
+    </LocalizationProvider>
   </SWRConfig>
 )
 
@@ -43,9 +48,20 @@ const FrontendLayout = ({ children }: { children: ReactNode }) => (
 // https://github.com/testing-library/user-event/discussions/1052
 const customRender = (
   ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
+  options?: Omit<RenderOptions, 'wrapper'> & {
+    /** this MUST be enabled if using vi.useFakeTimers(). Otherwise the test will hang indefinitely.
+     *  It cannot be enabled globally because then any test NOT using fake timers will fail.
+     */
+    useFakeTimers?: boolean
+  }
 ) => ({
-  user: userEvent.setup(),
+  user: userEvent.setup(
+    options?.useFakeTimers
+      ? {
+          advanceTimers: vi.advanceTimersByTime,
+        }
+      : undefined
+  ),
   ...render(ui, { wrapper: FrontendLayout, ...options }),
 })
 

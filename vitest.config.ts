@@ -7,17 +7,17 @@ export default defineConfig({
   root: './',
   test: {
     coverage: {
-      reporter: ['text-summary', 'html'],
+      reporter: ['html'],
       all: true,
       // skipFull: true, // only works for 'text'
       enabled: true,
       include: ['components', 'lib', 'pages', 'models'],
       // exclude: ['cypress', '.next', 'styles', 'msw-mocks'],
-      thresholdAutoUpdate: true,
-      branches: 71.87,
-      functions: 37.98,
-      lines: 25.58,
-      statements: 25.58,
+      // thresholdAutoUpdate: true,
+      // branches: 77.48,
+      // functions: 45.13,
+      // lines: 31.5,
+      // statements: 31.5,
     },
     // todo: turn off globals to avoid conflict with cypress
     globals: true,

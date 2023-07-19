@@ -37,7 +37,7 @@ export default function BodyweightInput({
     // this will be cast to a number on submit
     value: yup.string().required('Must have a value'),
   })
-  const loading = data === undefined
+  const loading = !data
 
   const handleSubmit = async (value: string) => {
     const newBodyweight = new Bodyweight(Number(value), bodyweightType, date)

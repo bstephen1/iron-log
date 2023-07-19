@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom'
 import { configure } from '@testing-library/react'
+import { server } from 'msw-mocks/server'
 import { vi } from 'vitest'
 import 'whatwg-fetch'
-import { server } from './msw-mocks/server'
 
 // set env variables with import.meta.env
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
@@ -32,6 +32,17 @@ configure({
 })
 
 // msw server
-beforeAll(() => server.listen())
+beforeAll(() => {
+  server.listen()
+  // @testing-library/react explicitly hardcodes "jest.advanceTimersByTime" when using fake timers,
+  // causing any test using vi.useFakeTimers() to hang indefinitely when using user.click().
+  // This workaround reassigns advanceTimersByTime to vitest's version.
+  // Note userEvent.setup must also include {advanceTimers: vi.advanceTimersByTime},
+  // but this must be done on a per-test basis as it will break any test not using fake timers
+  // See: https://github.com/testing-library/react-testing-library/issues/1197
+  ;(globalThis.jest as Record<string, unknown>) = {
+    advanceTimersByTime: vi.advanceTimersByTime.bind(vi),
+  }
+})
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())

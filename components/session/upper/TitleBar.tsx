@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
-import dayjs, { Dayjs } from 'dayjs'
+import Grid from '@mui/material/Unstable_Grid2'
+import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import { useRouter } from 'next/router'
 import BodyweightInput from './BodyweightInput'
@@ -34,8 +34,7 @@ export default function TitleBar({ date }: Props) {
             possibly give days a 'type' instead of title, with an associated icon;
             could also highlight different programs / meso cycles */}
       <Grid xs={12} sm={4}>
-        {' '}
-        <BodyweightInput date={date ?? dayjs()} fullWidth />
+        <BodyweightInput date={date} fullWidth />
       </Grid>
     </Grid>
   )

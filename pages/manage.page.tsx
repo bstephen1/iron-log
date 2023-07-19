@@ -1,5 +1,5 @@
 import { Tab, Tabs } from '@mui/material'
-import Grid from '@mui/system/Unstable_Grid'
+import Grid from '@mui/material/Unstable_Grid2'
 import CategoryForm from 'components/CategoryForm'
 import ExerciseForm from 'components/ExerciseForm'
 import CategorySelector from 'components/form-fields/selectors/CategorySelector'
