@@ -3,6 +3,7 @@ import {
   CalendarPickerSkeleton,
   DatePicker,
   PickersDay,
+  PickersDayProps,
 } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT, URI_SESSIONS } from 'lib/frontend/constants'
@@ -73,6 +74,7 @@ export default function SessionDatePicker({
     preload(URI_SESSIONS + paramify({ ...next }), swrFetcher)
   }, [month])
 
+  // todo: If using arrow keys while picker is open it should stop propagation so the underlying swiper doesn't move too.
   return (
     <DatePicker
       showDaysOutsideCurrentMonth
@@ -94,15 +96,21 @@ export default function SessionDatePicker({
       onMonthChange={(newMonth) => setMonth(newMonth)}
       loading={isLoading}
       renderLoading={() => <CalendarPickerSkeleton />}
-      renderDay={(dayjs, _selectedDays, DayComponentProps) => {
-        const day = dayjs?.format(DATE_FORMAT) ?? ''
+      // apparently this needs PickersDayProps' type defined to infer types for the other args
+      renderDay={(dayjs, _, DayComponentProps: PickersDayProps<Dayjs>) => {
+        const day = dayjs.format(DATE_FORMAT)
+        const isBadgeVisible = sessionLogsIndex[day]?.records.length
+        // todo: can populate this with more info, like session type (after that's implemented)
         return (
           <Badge
             key={day}
             overlap="circular"
             variant="dot"
             color="secondary"
-            invisible={!sessionLogsIndex[day]?.records.length}
+            aria-label={`${day}, ${
+              isBadgeVisible ? 'Session data exists' : 'No session'
+            }`}
+            invisible={!isBadgeVisible}
           >
             <PickersDay {...DayComponentProps} />
           </Badge>
