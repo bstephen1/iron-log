@@ -60,7 +60,7 @@ export default function AddNote({
         <>
           <TransitionIconButton
             isVisible={!isEmpty}
-            onClick={submit}
+            onClick={() => submit()}
             aria-label="add note"
           >
             <CheckIcon />

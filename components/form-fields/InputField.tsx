@@ -2,8 +2,8 @@ import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
 import { TextField, TextFieldProps, Tooltip } from '@mui/material'
 import { useRef } from 'react'
-import TransitionIconButton from '../TransitionIconButton'
 import { reach } from 'yup'
+import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
 
 interface Props {
@@ -32,7 +32,7 @@ export default function InputField(props: Props & TextFieldProps) {
   })
 
   const onReset = () => {
-    reset(initialValue)
+    reset()
     inputRef.current?.focus()
   }
 
@@ -57,7 +57,7 @@ export default function InputField(props: Props & TextFieldProps) {
             <TransitionIconButton
               isVisible={isDirty}
               disabled={!!error}
-              onClick={submit}
+              onClick={() => submit()}
               data-testid="submit button"
             >
               <Tooltip title="submit">

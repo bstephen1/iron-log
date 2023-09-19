@@ -37,8 +37,6 @@ export default function useField<T = string>({
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
   const [value, setValue] = useState(initialValue)
-  const [hasValidated, setHasValidated] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const isDirty = value !== initialValue
 
   // Spread this into an input component to set up the value.
@@ -63,63 +61,58 @@ export default function useField<T = string>({
   }
 
   const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setValue(e.target.value as T) // todo: tell ts this is for strings only
-    validate(e.target.value as T)
+    const newValue = e.target.value as T
+    setValue(newValue)
+    // Get instant feedback on whether value is valid.
+    // submit() will also run validate so no need to pass the result to debouncedSubmit().
+    validate(newValue)
 
-    autoSubmit && debouncedSubmit()
+    autoSubmit && debouncedSubmit(newValue)
   }
 
-  const debouncedSubmit = () => {
+  const debouncedSubmit = (value: T) => {
     clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(
-      () => setIsSubmitting(true),
-      debounceMilliseconds
-    )
+    timerRef.current = setTimeout(() => submit(value), debounceMilliseconds)
   }
 
-  const validate = (value: T) => {
+  /** validate value and return whether the value is valid (true) or not (false) */
+  const validate = async (value: T): Promise<boolean> => {
     process.env.NEXT_PUBLIC_BROWSER_LOG_LEVEL === 'verbose' &&
       console.log(
         `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )
     if (!yupValidator || value === initialValue) {
-      setHasValidated(true)
-      return
+      return true
     }
 
-    yupValidator
+    return await yupValidator
       .validate(value)
-      .then(setError(''))
-      .catch((e: yup.ValidationError) => setError(e.message))
-      .finally(setHasValidated(true))
+      .then(() => {
+        setError('')
+        return true
+      })
+      .catch((e: yup.ValidationError) => {
+        setError(e.message)
+        return false
+      })
   }
 
-  const submit = () => {
-    validate(value)
-    setIsSubmitting(true)
+  const submit = async (newValue = value) => {
+    if (await validate(newValue)) {
+      handleSubmit(newValue)
+    }
   }
 
-  const reset = useRef((value: T) => {
+  const reset = useRef((value = initialValue) => {
     setError('')
     setValue(value)
-    setIsSubmitting(false)
-    setHasValidated(false)
+    // must make sure to clear any pending timers
+    clearTimeout(timerRef.current)
   })
 
   useEffect(() => {
     reset.current(initialValue)
   }, [initialValue])
-
-  // todo: definitely DON'T want this to needlessly trigger every time value changes.
-  // maybe this https://stackoverflow.com/questions/69331438/wise-to-exclude-this-useeffect-dependency-array-variable-lint-recommends-3-but
-  useEffect(() => {
-    if (isSubmitting && hasValidated && !error) {
-      handleSubmit(value)
-      setIsSubmitting(false)
-      setHasValidated(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasValidated, isSubmitting, error])
 
   return {
     control,
