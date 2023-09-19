@@ -162,11 +162,6 @@ export default function RecordCard({
     })
   }
 
-  // just pass setState directly?
-  const handleFilterChange = (changes: Partial<RecordQuery>) => {
-    setHistoryFilter({ ...historyFilter, ...changes })
-  }
-
   const handleRecordNotesChange = async (notes: Note[]) => {
     let sessionNotes = []
     let recordNotes = []
@@ -307,7 +302,11 @@ export default function RecordCard({
                 />
               )}
               <HistoryFilterHeaderButton
-                {...{ record, filter: historyFilter, handleFilterChange }}
+                {...{
+                  record,
+                  filter: historyFilter,
+                  setFilter: setHistoryFilter,
+                }}
               />
               {!shouldCondense && <UnitsButton />}
               {/* todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  */}

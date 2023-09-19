@@ -7,7 +7,7 @@ import { DATE_FORMAT } from 'lib/frontend/constants'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import { Set } from 'models/Set'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import RecordHeaderButton from '../records/RecordHeaderButton'
 
 const allSameReps = (sets: Set[]) => {
@@ -22,32 +22,40 @@ const allSameReps = (sets: Set[]) => {
 interface Props {
   record: Record
   filter?: RecordQuery
-  handleFilterChange: (changes: Partial<RecordQuery>) => void
+  setFilter: Dispatch<SetStateAction<RecordQuery | undefined>>
 }
 export default function HistoryFilterHeaderButton({
   record,
   filter,
-  handleFilterChange,
+  setFilter,
 }: Props) {
   const [open, setOpen] = useState(false)
   const repsDisabled =
     filter?.modifier?.includes('amrap') || filter?.modifier?.includes('myo')
 
+  // Update filter when record changes. In practice this will only update when activeModifiers or sets are changed.
   useEffect(() => {
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     // todo: amrap/myo should be special default modifiers rather than hardcoding here
     const reps = repsDisabled ? undefined : allSameReps(record.sets)
 
-    handleFilterChange({
+    setFilter((prevState) => ({
+      ...prevState,
       reps,
       modifier: record.activeModifiers,
       // don't want to include the actual record in its own history
       end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
       exercise: record.exercise?.name,
       limit: 10,
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record.activeModifiers, record.sets])
+    }))
+  }, [
+    setFilter, // must be memoized via useCallback if not directly using setState
+    record.activeModifiers,
+    record.date,
+    record.exercise?.name,
+    record.sets,
+    repsDisabled,
+  ])
 
   return (
     <>
@@ -70,14 +78,14 @@ export default function HistoryFilterHeaderButton({
               options={record.exercise?.modifiers}
               initialValue={filter?.modifier || []}
               variant="standard"
-              handleSubmit={(modifier) => handleFilterChange({ modifier })}
+              handleSubmit={(modifier) => setFilter({ modifier })}
             />
             {/* todo: make a range slider? Would also have to update backend to support range queries */}
             <NumericFieldAutosave
               label="Reps"
               placeholder="No filter"
               initialValue={filter?.reps}
-              handleSubmit={(reps) => handleFilterChange({ reps })}
+              handleSubmit={(reps) => setFilter({ reps })}
               variant="standard"
               disabled={repsDisabled}
               InputLabelProps={{ shrink: true }}
