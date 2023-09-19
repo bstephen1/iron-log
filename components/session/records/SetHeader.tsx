@@ -17,7 +17,7 @@ import {
   ORDERED_DISPLAY_FIELDS,
   VisibleField,
 } from 'models/DisplayFields'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useMemo } from 'react'
 
 interface Props extends Partial<SelectProps<string[]>> {
   displayFields: DisplayFields
@@ -32,11 +32,11 @@ export default function SetHeader({
   showUnilateral = false,
   ...selectProps
 }: Props) {
-  // The Select will submit to db on change so we could just use displayFields,
-  // but using state allows for quicker visual updates on change. Just have to add a useEffect.
-  const [selectedNames, setSelectedNames] = useState(
+  // Note that other records may need to update when the current record updates.
+  // Eg, multiple RecordCards with the same exercise, or history cards.
+  // The non-current cards will have a slight delay updating since they need to detect the change first.
+  const selectedNames =
     displayFields?.visibleFields.map((field) => field.name) || []
-  )
 
   const options: VisibleField[] = useMemo(
     () =>
@@ -49,38 +49,6 @@ export default function SetHeader({
       ),
     [showSplitWeight, showUnilateral]
   )
-
-  // when options change, some selectedNames may have been removed from visible options, but still are
-  // selected internally. We have to unselect them. Also, if weight / split weight were selected, swap
-  // to the newly visible option
-  useEffect(() => {
-    const hiddenSelected = selectedNames.filter(
-      (name) => !options.find((field) => field.name === name)
-    )
-    let newSelected = selectedNames.filter(
-      (name) => !hiddenSelected.includes(name)
-    )
-
-    if (hiddenSelected.includes('weight')) {
-      newSelected = [...newSelected, 'plateWeight', 'totalWeight']
-    } else if (
-      hiddenSelected.some(
-        (name) => name === 'plateWeight' || name === 'totalWeight'
-      )
-    ) {
-      newSelected = [...newSelected, 'weight']
-    }
-
-    handleChange(newSelected)
-
-    // do not want to call this if handleChange or selectedNames change, only options.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options])
-
-  // A different record may update displayFields.
-  useEffect(() => {
-    setSelectedNames(displayFields.visibleFields.map((field) => field.name))
-  }, [displayFields])
 
   const handleChange = (rawSelectedNames: string | string[]) => {
     // According to MUI docs: "On autofill we get a stringified value",
@@ -101,7 +69,6 @@ export default function SetHeader({
     // Should only need to check the length because if there is a change the length must change.
     // todo: test for this
     if (newVisibleFields.length !== selectedNames.length) {
-      setSelectedNames(newVisibleFields.map((field) => field.name))
       handleSubmit({ ...displayFields, visibleFields: newVisibleFields })
     }
   }
