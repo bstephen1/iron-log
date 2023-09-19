@@ -100,21 +100,15 @@ export default function RecordCard({
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>()
 
   useEffect(() => {
-    if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
+    if (mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
       return
     }
 
-    mutateRecord({ ...record, exercise: mostRecentlyUpdatedExercise })
-
-    // Adding mutateRecord and record as deps will break the logic.
-    // Could address by adding an early return for when lastChangedExercise === null,
-    // but then it still gets called way more than it needs to.
-    // This should only be called when lastChangedExercise changes.
-
-    // Edit: seems a hook is in the works that will be able to address exactly this issue: useEvent().
-    // Supposedly scheduled for release "soon". See: https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mostRecentlyUpdatedExercise])
+    // revalidate with updated exercise if it has changed
+    mutateRecord((record) =>
+      record ? { ...record, exercise: mostRecentlyUpdatedExercise } : record
+    )
+  }, [mostRecentlyUpdatedExercise, mutateRecord, record?.exercise?._id])
 
   // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
   // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
@@ -168,6 +162,7 @@ export default function RecordCard({
     })
   }
 
+  // just pass setState directly?
   const handleFilterChange = (changes: Partial<RecordQuery>) => {
     setHistoryFilter({ ...historyFilter, ...changes })
   }
