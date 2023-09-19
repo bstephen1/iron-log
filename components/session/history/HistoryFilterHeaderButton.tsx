@@ -7,7 +7,7 @@ import { DATE_FORMAT } from 'lib/frontend/constants'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import { Set } from 'models/Set'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import RecordHeaderButton from '../records/RecordHeaderButton'
 
 const allSameReps = (sets: Set[]) => {
@@ -22,12 +22,13 @@ const allSameReps = (sets: Set[]) => {
 interface Props {
   record: Record
   filter?: RecordQuery
-  setFilter: Dispatch<SetStateAction<RecordQuery | undefined>>
+  /** must be memoized with useCallback, or use setState directly */
+  handleFilterChange: (changes: Partial<RecordQuery>) => void
 }
 export default function HistoryFilterHeaderButton({
   record,
   filter,
-  setFilter,
+  handleFilterChange,
 }: Props) {
   const [open, setOpen] = useState(false)
   const repsDisabled =
@@ -39,17 +40,16 @@ export default function HistoryFilterHeaderButton({
     // todo: amrap/myo should be special default modifiers rather than hardcoding here
     const reps = repsDisabled ? undefined : allSameReps(record.sets)
 
-    setFilter((prevState) => ({
-      ...prevState,
+    handleFilterChange({
       reps,
       modifier: record.activeModifiers,
       // don't want to include the actual record in its own history
       end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
       exercise: record.exercise?.name,
       limit: 10,
-    }))
+    })
   }, [
-    setFilter, // must be memoized via useCallback if not directly using setState
+    handleFilterChange,
     record.activeModifiers,
     record.date,
     record.exercise?.name,
@@ -78,14 +78,14 @@ export default function HistoryFilterHeaderButton({
               options={record.exercise?.modifiers}
               initialValue={filter?.modifier || []}
               variant="standard"
-              handleSubmit={(modifier) => setFilter({ modifier })}
+              handleSubmit={(modifier) => handleFilterChange({ modifier })}
             />
             {/* todo: make a range slider? Would also have to update backend to support range queries */}
             <NumericFieldAutosave
               label="Reps"
               placeholder="No filter"
               initialValue={filter?.reps}
-              handleSubmit={(reps) => setFilter({ reps })}
+              handleSubmit={(reps) => handleFilterChange({ reps })}
               variant="standard"
               disabled={repsDisabled}
               InputLabelProps={{ shrink: true }}

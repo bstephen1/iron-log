@@ -40,7 +40,7 @@ import Record from 'models/Record'
 import { Set } from 'models/Set'
 import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
 import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
@@ -109,6 +109,11 @@ export default function RecordCard({
       record ? { ...record, exercise: mostRecentlyUpdatedExercise } : record
     )
   }, [mostRecentlyUpdatedExercise, mutateRecord, record?.exercise?._id])
+
+  // useCallback needed so child useEffect doesn't infinitely retrigger
+  const handleFilterChange = useCallback((changes: Partial<RecordQuery>) => {
+    setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
+  }, [])
 
   // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
   // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
@@ -305,7 +310,7 @@ export default function RecordCard({
                 {...{
                   record,
                   filter: historyFilter,
-                  setFilter: setHistoryFilter,
+                  handleFilterChange,
                 }}
               />
               {!shouldCondense && <UnitsButton />}
