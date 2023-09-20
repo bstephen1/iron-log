@@ -21,10 +21,21 @@ export default function useExerciseForm() {
   useEffect(() => {
     if (!!exercise || !exercises || !urlExercise) return
 
-    setExercise(
+    const initialExercise =
       exercises.find((exercise) => exercise.name === urlExercise) ?? null
-    )
-  }, [exercise, exercises, urlExercise])
+
+    // Only set if exercise is valid given the category filter.
+    // This prevents an infinite loop of trying to set exercise then having it null out from categoryFilter
+    if (categoryFilter) {
+      setExercise(
+        initialExercise?.categories.includes(categoryFilter)
+          ? initialExercise
+          : null
+      )
+    } else {
+      setExercise(initialExercise)
+    }
+  }, [categoryFilter, exercise, exercises, urlExercise])
 
   const onExerciseUpdate = async (newExercise: Exercise) => {
     setUrlExercise(newExercise.name, { scroll: false, shallow: true })

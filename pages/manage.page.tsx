@@ -27,14 +27,17 @@ export default function ManagePage() {
     case 'exercises': {
       Selector = ExerciseSelector
       Form = ExerciseForm
+      break
     }
     case 'modifiers': {
       Selector = ModifierSelector
       Form = ModifierForm
+      break
     }
     case 'categories': {
       Selector = CategorySelector
       Form = CategoryForm
+      break
     }
   }
 
