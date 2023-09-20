@@ -32,7 +32,7 @@ export default function InputField(props: Props & TextFieldProps) {
   })
 
   const onReset = () => {
-    reset()
+    reset(initialValue)
     inputRef.current?.focus()
   }
 
