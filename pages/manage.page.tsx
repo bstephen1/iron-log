@@ -28,7 +28,6 @@ const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']
 // todo: ui element showing "changes saved". Snackbar?
 // todo: delete exercise. Delete only for unused exercises?
 // todo: this is really repetitive between exercise/modifier/category logic...
-// todo: something about all the ignoring exhaustive deps
 export default function ManagePage() {
   // Must wait for router to be ready for useQueryState, or there will be hydration errors. Router is not available server side.
   const { isReady } = useRouter()
@@ -119,12 +118,9 @@ export default function ManagePage() {
 
   // useCallback is crucial here. It prevents the entire form from resetting whenever
   // the swr arrays (useExercises, etc) are revalidated. The form should only be rerendered
-  // when the selected item changes (ie, the _id field).
+  // when the selected item changes (ie, the name field).
   // Note also the forms must internally handle mutations instead of using the
   // initial value they are given, because the callback will prevent rerenders if the data changes.
-  // Note: This only affects controlled form elements which need to rerender to display their changes, so
-  // uncontrolled inputs are unaffected. Since modifier/category forms are simple uncontrolled inputs,
-  // the parent can still handle the state.
   const Form = useCallback(
     ({ tab }: { tab: TabValue | null }) => {
       switch (tab) {
@@ -160,7 +156,7 @@ export default function ManagePage() {
     },
     // todo: consider declaring the functions with useRef. Only thing would be I'd prefer to use an immutable ref but not sure that's possible
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [category?._id, exercise?._id, modifier?._id]
+    [category?.name, exercise?.name, modifier?.name]
   )
 
   const Selector = ({ tab }: { tab: TabValue | null }) => {
