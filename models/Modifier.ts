@@ -7,7 +7,7 @@ export default class Modifier extends AsyncSelectorOption {
   constructor(
     public name: string,
     public status = Status.active,
-    public weight?: number,
+    public weight?: number | null,
     public canDelete = true
   ) {
     super(name, status)

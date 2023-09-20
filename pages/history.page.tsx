@@ -100,16 +100,6 @@ export default function HistoryPage() {
     clothingOffset,
   ])
 
-  useEffect(() => {
-    // only want to set value on init
-    if (!!exercise) return
-
-    setExercise(
-      exercises?.find((exercise) => exercise.name === urlExercise) ?? null
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exercises])
-
   const convertEpochToDate = (value: number) =>
     dayjs.unix(value).format('YYYY-MM-DD')
 

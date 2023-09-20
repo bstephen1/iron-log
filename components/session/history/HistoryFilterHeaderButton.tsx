@@ -22,6 +22,7 @@ const allSameReps = (sets: Set[]) => {
 interface Props {
   record: Record
   filter?: RecordQuery
+  /** must be memoized with useCallback, or use setState directly */
   handleFilterChange: (changes: Partial<RecordQuery>) => void
 }
 export default function HistoryFilterHeaderButton({
@@ -33,6 +34,7 @@ export default function HistoryFilterHeaderButton({
   const repsDisabled =
     filter?.modifier?.includes('amrap') || filter?.modifier?.includes('myo')
 
+  // Update filter when record changes. In practice this will only update when activeModifiers or sets are changed.
   useEffect(() => {
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     // todo: amrap/myo should be special default modifiers rather than hardcoding here
@@ -46,8 +48,14 @@ export default function HistoryFilterHeaderButton({
       exercise: record.exercise?.name,
       limit: 10,
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record.activeModifiers, record.sets])
+  }, [
+    handleFilterChange,
+    record.activeModifiers,
+    record.date,
+    record.exercise?.name,
+    record.sets,
+    repsDisabled,
+  ])
 
   return (
     <>

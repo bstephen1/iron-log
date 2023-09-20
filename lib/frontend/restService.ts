@@ -36,6 +36,19 @@ import {
 /** Parse a Query object into a rest param string. Query objects should be spread into this function. */
 export const paramify = (query: ParsedUrlQueryInput) => '?' + stringify(query)
 
+/** Formats an object to a json string, converting any undefined values to null instead.
+ *  Undefined is not considered a valid json value, so it gets ignored.
+ *
+ *  JSON.stringify() should never be used directly outside this function, or updates may not go through
+ *  when calling PATCH functions.
+ *
+ *  Any data fields that may be undefined should also expect "null" as a value.
+ */
+const toJson = (obj: Object) =>
+  JSON.stringify(obj, (_, value) =>
+    typeof value === 'undefined' ? null : value
+  )
+
 //---------
 // SESSION
 //---------
@@ -86,7 +99,7 @@ export function useSessionLogs(query: DateRangeQuery) {
 export async function addSessionLog(session: SessionLog): Promise<SessionLog> {
   return fetchJson(URI_SESSIONS + session.date, {
     method: 'POST',
-    body: JSON.stringify(session),
+    body: toJson(session),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -96,7 +109,7 @@ export async function updateSessionLog(
 ): Promise<SessionLog> {
   return fetchJson(URI_SESSIONS + newSesson.date, {
     method: 'PUT',
-    body: JSON.stringify(newSesson),
+    body: toJson(newSesson),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -157,7 +170,7 @@ export function useRecords(query?: RecordQuery, shouldFetch = true) {
 export async function addRecord(newRecord: Record): Promise<Record> {
   return fetchJson(URI_RECORDS + newRecord._id, {
     method: 'POST',
-    body: JSON.stringify(newRecord),
+    body: toJson(newRecord),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -168,7 +181,7 @@ export async function updateRecordFields(
 ): Promise<Record> {
   return fetchJson(URI_RECORDS + id, {
     method: 'PATCH',
-    body: JSON.stringify({ id, updates }),
+    body: toJson({ id, updates }),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -213,7 +226,7 @@ export function useGuaranteedExercise(id: string, fallbackData: Exercise) {
 export async function addExercise(newExercise: Exercise): Promise<Exercise> {
   return fetchJson(URI_EXERCISES + newExercise.name, {
     method: 'POST',
-    body: JSON.stringify(newExercise),
+    body: toJson(newExercise),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -221,7 +234,7 @@ export async function addExercise(newExercise: Exercise): Promise<Exercise> {
 export async function updateExercise(newExercise: Exercise): Promise<Exercise> {
   return fetchJson(URI_EXERCISES + newExercise.name, {
     method: 'PUT',
-    body: JSON.stringify(newExercise),
+    body: toJson(newExercise),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -233,7 +246,7 @@ export async function updateExerciseFields(
   const id = exercise._id
   return fetchJson(URI_EXERCISES + exercise.name, {
     method: 'PATCH',
-    body: JSON.stringify({ id, updates }),
+    body: toJson({ id, updates }),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -256,7 +269,7 @@ export function useModifiers() {
 export async function addModifier(newModifier: Modifier): Promise<Modifier> {
   return fetchJson(URI_MODIFIERS + newModifier.name, {
     method: 'POST',
-    body: JSON.stringify(newModifier),
+    body: toJson(newModifier),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -269,7 +282,7 @@ export async function updateModifierFields(
   const id = modifier._id
   return fetchJson(URI_MODIFIERS + modifier.name, {
     method: 'PATCH',
-    body: JSON.stringify({ id, updates }),
+    body: toJson({ id, updates }),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -291,7 +304,7 @@ export function useCategories() {
 export async function addCategory(newCategory: Category): Promise<Category> {
   return fetchJson(URI_CATEGORIES + newCategory.name, {
     method: 'POST',
-    body: JSON.stringify(newCategory),
+    body: toJson(newCategory),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -304,7 +317,7 @@ export async function updateCategoryFields(
   const id = category._id
   return fetchJson(URI_CATEGORIES + category.name, {
     method: 'PATCH',
-    body: JSON.stringify({ id, updates }),
+    body: toJson({ id, updates }),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -341,7 +354,7 @@ export async function addBodyweight(
 ): Promise<Bodyweight> {
   return fetchJson(URI_BODYWEIGHT, {
     method: 'POST',
-    body: JSON.stringify(newBodyweight),
+    body: toJson(newBodyweight),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -351,7 +364,7 @@ export async function updateBodyweight(
 ): Promise<Bodyweight> {
   return fetchJson(URI_BODYWEIGHT, {
     method: 'PUT',
-    body: JSON.stringify(newBodyweight),
+    body: toJson(newBodyweight),
     headers: { 'content-type': 'application/json' },
   })
 }

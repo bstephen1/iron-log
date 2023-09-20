@@ -40,7 +40,7 @@ import Record from 'models/Record'
 import { Set } from 'models/Set'
 import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
 import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
@@ -100,21 +100,20 @@ export default function RecordCard({
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>()
 
   useEffect(() => {
-    if (!record || mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
+    if (mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
       return
     }
 
-    mutateRecord({ ...record, exercise: mostRecentlyUpdatedExercise })
+    // revalidate with updated exercise if it has changed
+    mutateRecord((record) =>
+      record ? { ...record, exercise: mostRecentlyUpdatedExercise } : record
+    )
+  }, [mostRecentlyUpdatedExercise, mutateRecord, record?.exercise?._id])
 
-    // Adding mutateRecord and record as deps will break the logic.
-    // Could address by adding an early return for when lastChangedExercise === null,
-    // but then it still gets called way more than it needs to.
-    // This should only be called when lastChangedExercise changes.
-
-    // Edit: seems a hook is in the works that will be able to address exactly this issue: useEvent().
-    // Supposedly scheduled for release "soon". See: https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mostRecentlyUpdatedExercise])
+  // useCallback needed so child useEffect doesn't infinitely retrigger
+  const handleFilterChange = useCallback((changes: Partial<RecordQuery>) => {
+    setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
+  }, [])
 
   // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
   // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
@@ -166,10 +165,6 @@ export default function RecordCard({
       optimisticData: { ...record, ...changes },
       revalidate: false,
     })
-  }
-
-  const handleFilterChange = (changes: Partial<RecordQuery>) => {
-    setHistoryFilter({ ...historyFilter, ...changes })
   }
 
   const handleRecordNotesChange = async (notes: Note[]) => {
@@ -312,7 +307,11 @@ export default function RecordCard({
                 />
               )}
               <HistoryFilterHeaderButton
-                {...{ record, filter: historyFilter, handleFilterChange }}
+                {...{
+                  record,
+                  filter: historyFilter,
+                  handleFilterChange,
+                }}
               />
               {!shouldCondense && <UnitsButton />}
               {/* todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  */}

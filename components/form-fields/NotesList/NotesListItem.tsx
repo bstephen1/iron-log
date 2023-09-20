@@ -31,7 +31,7 @@ export default function NotesListItem(props: Props) {
   const inputRef = useRef<HTMLInputElement>()
   const handleSubmit = (value: string) =>
     handleUpdate(index, { ...note, value })
-  const { control, isEmpty } = useField({
+  const { control, isEmpty, reset } = useField({
     handleSubmit,
     initialValue: note.value,
     // lower debounce causes a lot of strangeness on mobile (words duplicated on save, etc)
@@ -39,14 +39,18 @@ export default function NotesListItem(props: Props) {
     debounceMilliseconds: 5000,
   })
 
+  const onDelete = (index: number) => {
+    // have to reset to ensure the debounce timer is cancelled
+    reset()
+    handleDelete(index)
+  }
+
   return (
     <OutlinedInput
       {...control()}
       multiline
       size="small"
-      onBlur={(e) =>
-        isEmpty ? handleDelete(index) : handleSubmit(e.target.value)
-      }
+      onBlur={(e) => (isEmpty ? onDelete(index) : handleSubmit(e.target.value))}
       placeholder={placeholder}
       autoComplete="off"
       readOnly={readOnly}
@@ -70,7 +74,7 @@ export default function NotesListItem(props: Props) {
           {!readOnly && (
             <TransitionIconButton
               isVisible={!isEmpty}
-              onClick={() => handleDelete(index)}
+              onClick={() => onDelete(index)}
               aria-label="delete item"
             >
               {/* todo: should this be a different icon so clear button => clear, not delete? */}

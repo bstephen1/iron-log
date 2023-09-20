@@ -1,8 +1,8 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { useExercises } from 'lib/frontend/restService'
+import { useModifiers } from 'lib/frontend/restService'
+import { useNames } from 'lib/util'
 import Modifier from 'models/Modifier'
-import { useMemo } from 'react'
 import * as yup from 'yup'
 import InputField from './form-fields/InputField'
 import NumericFieldAutosave from './form-fields/NumericFieldAutosave'
@@ -12,14 +12,9 @@ interface Props {
   handleUpdate: (updates: Partial<Modifier>) => void
 }
 export default function ModifierForm({ modifier, handleUpdate }: Props) {
-  const { exercises } = useExercises()
+  const { modifiers } = useModifiers()
 
-  const exerciseNames = useMemo(
-    () => exercises?.map((exercise) => exercise.name) || [],
-    [exercises]
-  )
-
-  const assignExercises = (value: string[]) => {}
+  const modifierNames = useNames(modifiers)
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
@@ -40,7 +35,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
       .required('Must have a name')
       // todo: ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
       // @ts-ignore
-      .unique('This exercise already exists!', exerciseNames),
+      .unique('This modifier already exists!', modifierNames),
     status: yup.string().required('Must have a status'),
   })
 

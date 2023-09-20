@@ -8,7 +8,7 @@ import InputFieldAutosave, {
 // (number | undefined) & (string | undefined) => undefined
 type Props = {
   units?: string
-  initialValue?: number
+  initialValue?: number | null
   handleSubmit: (value?: number) => void
 } & Omit<InputFieldAutosaveProps, 'initialValue' | 'handleSubmit'>
 /** A wrapper for InputFields that takes in a number and converts it to a string for the InputField. */

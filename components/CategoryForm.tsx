@@ -1,8 +1,8 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { useExercises } from 'lib/frontend/restService'
+import { useCategories } from 'lib/frontend/restService'
+import { useNames } from 'lib/util'
 import Category from 'models/Category'
-import { useMemo } from 'react'
 import * as yup from 'yup'
 import InputField from './form-fields/InputField'
 
@@ -11,14 +11,8 @@ interface Props {
   handleUpdate: (updates: Partial<Category>) => void
 }
 export default function CategoryForm({ category, handleUpdate }: Props) {
-  const { exercises } = useExercises()
-
-  const exerciseNames = useMemo(
-    () => exercises?.map((exercise) => exercise.name) || [],
-    [exercises]
-  )
-
-  const assignExercises = (value: string[]) => {}
+  const { categories } = useCategories()
+  const categoryNames = useNames(categories)
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
@@ -39,7 +33,7 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
       .required('Must have a name')
       // todo: ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
       // @ts-ignore
-      .unique('This exercise already exists!', exerciseNames),
+      .unique('This category already exists!', categoryNames),
     status: yup.string().required('Must have a status'),
   })
 
