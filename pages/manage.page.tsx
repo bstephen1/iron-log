@@ -19,6 +19,7 @@ import Category from 'models/Category'
 import Exercise from 'models/Exercise'
 import Modifier from 'models/Modifier'
 import { queryTypes, useQueryState } from 'next-usequerystate'
+import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
 
 type TabValue = 'exercises' | 'modifiers' | 'categories'
@@ -29,72 +30,50 @@ const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']
 // todo: this is really repetitive between exercise/modifier/category logic...
 // todo: something about all the ignoring exhaustive deps
 export default function ManagePage() {
+  // Must wait for router to be ready for useQueryState, or there will be hydration errors. Router is not available server side.
+  const { isReady } = useRouter()
   const { exercises, mutate: mutateExercises } = useExercises()
   const { modifiers, mutate: mutateModifiers } = useModifiers()
   const { categories, mutate: mutateCategories } = useCategories()
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const [modifier, setModifier] = useState<Modifier | null>(null)
   const [category, setCategory] = useState<Category | null>(null)
-  const [tab, setTab] = useState<TabValue>('exercises')
+  const [modifier, setModifier] = useState<Modifier | null>(null)
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
 
-  // useQueryState is designed to be the source of truth for state. However, it will
-  // not work for tabs because SSR will always render the default value (See: https://github.com/47ng/next-usequerystate#caveats)
-  // and thus if a tab other than the default is selected initially it will result in a hydration error.
-  // It also seems to re-render a lot slower on updates compared to useState.
-  // So instead, we will continue to store tabs in state, and have a separate urlTab state
-  // which can update the default value and ripple any changes from the tab value in state.
-  // Selected exercise/modifier/category names also can't use the url value because they require
-  // the full object, not just the name.
   const [urlTab, setUrlTab] = useQueryState(
     'tab',
     queryTypes.stringEnum<TabValue>(tabs)
   )
+  // Url values other than urlTab are only used to set the initial value.
+  // These need access to their full object instead of just a string.
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
   const [urlModifier, setUrlModifier] = useQueryState('modifier')
   const [urlCategory, setUrlCategory] = useQueryState('category')
 
-  // we HAVE to useEffect to set initial tab value. It must default to some tab, then
-  // switch to the urlTab if present. It CANNOT init to the urlTab because SSR will
-  // always render urlTab to its default value before being able to read the url value,
-  // causing a hydration error.
+  // setup initial state values when SWR is done loading if a url value exists
   useEffect(() => {
-    setTab(urlTab ? urlTab : tab)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    setUrlTab(tab, { scroll: false, shallow: true })
-    // setUrlTab will never change, so it's safe to add as a dep to shut up eslint
-  }, [setUrlTab, tab])
-
-  useEffect(() => {
-    // only want to set value on init
-    if (!!exercise) return
+    if (!!exercise || !exercises || !urlExercise) return
 
     setExercise(
-      exercises?.find((exercise) => exercise.name === urlExercise) ?? null
+      exercises.find((exercise) => exercise.name === urlExercise) ?? null
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exercises])
+  }, [exercise, exercises, urlExercise])
 
   useEffect(() => {
-    if (!!modifier) return
+    if (!!modifier || !modifiers || !urlModifier) return
 
     setModifier(
-      modifiers?.find((modifier) => modifier.name === urlModifier) ?? null
+      modifiers.find((modifier) => modifier.name === urlModifier) ?? null
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modifiers])
+  }, [modifier, modifiers, urlModifier])
 
   useEffect(() => {
-    if (!!category) return
+    if (!!category || !categories || !urlCategory) return
 
     setCategory(
-      categories?.find((category) => category.name === urlCategory) ?? null
+      categories.find((category) => category.name === urlCategory) ?? null
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories])
+  }, [categories, category, urlCategory])
 
   /** Trigger a data fetch for exercises, and refresh the currently selected exercise. */
   const revalidateExercises = async () => {
@@ -147,8 +126,7 @@ export default function ManagePage() {
   // uncontrolled inputs are unaffected. Since modifier/category forms are simple uncontrolled inputs,
   // the parent can still handle the state.
   const Form = useCallback(
-    ({ tab }: { tab: TabValue }) => {
-      // console.log('callback')
+    ({ tab }: { tab: TabValue | null }) => {
       switch (tab) {
         default:
         case 'exercises':
@@ -185,7 +163,7 @@ export default function ManagePage() {
     [category?._id, exercise?._id, modifier?._id]
   )
 
-  const Selector = ({ tab }: { tab: TabValue }) => {
+  const Selector = ({ tab }: { tab: TabValue | null }) => {
     switch (tab) {
       default:
       case 'exercises':
@@ -245,24 +223,30 @@ export default function ManagePage() {
     }
   }
 
-  return (
+  return isReady ? (
     <Grid container spacing={2}>
       <Grid xs={12}>
-        <Tabs value={tab} onChange={(_, value) => setTab(value)} centered>
-          {tabs.map((tab) => (
+        <Tabs
+          value={urlTab ?? 'exercises'}
+          onChange={(_, value) => setUrlTab(value)}
+          centered
+        >
+          {tabs.map((tab: TabValue) => (
             <Tab key={tab} label={tab} value={tab} />
           ))}
         </Tabs>
       </Grid>
       <Grid xs={12}>
-        <Selector tab={tab} />
+        <Selector tab={urlTab} />
       </Grid>
       <Grid xs={12}>
         <StyledDivider />
       </Grid>
       <Grid container xs={12} justifyContent="center">
-        <Form tab={tab} />
+        <Form tab={urlTab} />
       </Grid>
     </Grid>
+  ) : (
+    <></>
   )
 }
