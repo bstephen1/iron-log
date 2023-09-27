@@ -27,7 +27,9 @@ export default function ExerciseSelector({
 }: ExerciseSelectorProps) {
   const { categories } = useCategories()
   const categoryNames = useNames(categories)
-  const [filterOpen, setFilterOpen] = useState(false)
+  const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
+    null
+  )
 
   // todo: when switching category, input should null out if it's not in the new category.
   // Used to do that before pulling category state out to parent.
@@ -62,7 +64,7 @@ export default function ExerciseSelector({
       placeholder="Select or Add New Exercise"
       filterCustom={filterCategories}
       handleFilterChange={handleFilterChange}
-      adornmentOpen={filterOpen}
+      adornmentOpen={!!categoryAnchorEl}
       Constructor={Exercise}
       addNewItem={addExercise}
       // inputRef={inputRef}
@@ -76,7 +78,8 @@ export default function ExerciseSelector({
               categories: categoryNames,
               category,
               setCategory: handleCategoryChange,
-              handleOpenChange: setFilterOpen,
+              anchorEl: categoryAnchorEl,
+              setAnchorEl: setCategoryAnchorEl,
             }}
           />
         )
