@@ -343,7 +343,7 @@ export function useBodyweightHistory(
   )
 
   return {
-    data: data ?? [],
+    data: shouldFetch ? data : [],
     isError: !!error,
     mutate,
   }
