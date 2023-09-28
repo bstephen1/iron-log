@@ -1,13 +1,10 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import {
-  updateExerciseFields,
   useCategories,
   useExercises,
-  useGuaranteedExercise,
   useModifiers,
 } from 'lib/frontend/restService'
-import { useNames } from 'lib/util'
 import Exercise from 'models/Exercise'
 import { Status } from 'models/Status'
 import * as yup from 'yup'
@@ -19,38 +16,13 @@ import NumericFieldAutosave from './form-fields/NumericFieldAutosave'
 import SelectFieldAutosave from './form-fields/SelectFieldAutosave'
 
 interface Props {
-  initialExercise: Exercise
-  onUpdate: (newExercise: Exercise) => void
+  exercise: Exercise
+  handleUpdate: (updates: Partial<Exercise>) => void
 }
-export default function ExerciseForm({ initialExercise, onUpdate }: Props) {
-  const { modifiers } = useModifiers()
-  const { categories } = useCategories()
-  const { exercises, mutate: mutateExercises } = useExercises()
-  // The parent form already has fetched the exercise via useExercises() so it can be used to avoid loading time.
-  // But, we don't actually want to use that value for mutations because it means
-  // the parent has to store the exercise in state, so ANY time it changes, it will be a new
-  // object and rerender the child.
-  // Storing the exercise here makes it so only the changed form fields rerender,
-  // which avoids losing focus / closing dropdowns any time a field is touched.
-  const { exercise, mutate } = useGuaranteedExercise(
-    initialExercise._id,
-    initialExercise
-  )
-
-  const modifierNames = useNames(modifiers)
-  const exerciseNames = useNames(exercises)
-  const categoryNames = useNames(categories)
-
-  const handleUpdate = (updates: Partial<Exercise>) => {
-    const newExercise = { ...exercise, ...updates }
-    mutate(updateExerciseFields(exercise, updates), {
-      optimisticData: newExercise,
-      revalidate: false,
-    })
-    // mark exercises as stale and trigger revalidation
-    mutateExercises()
-    onUpdate(newExercise)
-  }
+export default function ExerciseForm({ exercise, handleUpdate }: Props) {
+  const { modifierNames } = useModifiers()
+  const { categoryNames } = useCategories()
+  const { exerciseNames } = useExercises()
 
   // todo: validate (drop empty notes)
 

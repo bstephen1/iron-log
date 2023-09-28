@@ -1,3 +1,4 @@
+import { AsyncSelectorOption } from 'components/form-fields/selectors/AsyncSelector'
 import dayjs, { Dayjs } from 'dayjs'
 import { arrayToIndex, fetchJson } from 'lib/util'
 import Bodyweight from 'models/Bodyweight'
@@ -49,6 +50,9 @@ const toJson = (obj: Object) =>
     typeof value === 'undefined' ? null : value
   )
 
+const toNames = (entities?: AsyncSelectorOption[]) =>
+  entities?.map((entity) => entity.name) ?? []
+
 //---------
 // SESSION
 //---------
@@ -92,7 +96,7 @@ export function useSessionLogs(query: DateRangeQuery) {
     sessionLogsIndex: arrayToIndex<SessionLog>('date', data),
     isLoading,
     isError: !!error,
-    mutate: mutate,
+    mutate,
   }
 }
 
@@ -148,7 +152,7 @@ export function useRecord(id: string, config?: SWRConfiguration) {
     isError: !!error,
     isLoading,
     // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
-    mutate: mutate,
+    mutate,
   }
 }
 
@@ -197,8 +201,9 @@ export function useExercises(query?: ExerciseQuery) {
 
   return {
     exercises: data,
+    exerciseNames: toNames(data),
     isError: !!error,
-    mutate: mutate,
+    mutate,
   }
 }
 
@@ -212,15 +217,8 @@ export function useExercise(id: string | null, config?: SWRConfiguration) {
   return {
     exercise: data,
     isError: !!error,
-    mutate: mutate,
+    mutate,
   }
-}
-
-/** A wrapper for useExercise to guarantee that the exercise will never be undefined, and assert correct typing.  */
-export function useGuaranteedExercise(id: string, fallbackData: Exercise) {
-  const res = useExercise(id, { fallbackData })
-
-  return { ...res, exercise: res.exercise as Exercise }
 }
 
 export async function addExercise(newExercise: Exercise): Promise<Exercise> {
@@ -261,8 +259,9 @@ export function useModifiers() {
   return {
     modifiers: data,
     modifiersIndex: arrayToIndex<Modifier>('name', data),
+    modifierNames: toNames(data),
     isError: !!error,
-    mutate: mutate,
+    mutate,
   }
 }
 
@@ -296,8 +295,9 @@ export function useCategories() {
 
   return {
     categories: data,
+    categoryNames: toNames(data),
     isError: !!error,
-    mutate: mutate,
+    mutate,
   }
 }
 
@@ -343,9 +343,9 @@ export function useBodyweightHistory(
   )
 
   return {
-    data: shouldFetch ? data : [],
+    data: data ?? [],
     isError: !!error,
-    mutate: mutate,
+    mutate,
   }
 }
 

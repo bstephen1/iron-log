@@ -1,7 +1,6 @@
 import { TextFieldProps } from '@mui/material'
 import CategoryFilter from 'components/CategoryFilter'
 import { addExercise, useCategories } from 'lib/frontend/restService'
-import { useNames } from 'lib/util'
 import Exercise from 'models/Exercise'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
@@ -25,8 +24,7 @@ export default function ExerciseSelector({
   category = null,
   ...asyncSelectorProps
 }: ExerciseSelectorProps) {
-  const { categories } = useCategories()
-  const categoryNames = useNames(categories)
+  const { categoryNames } = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
   )
