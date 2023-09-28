@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import * as yup from 'yup'
 
 /*
@@ -20,23 +20,22 @@ interface Props<T = string> {
   yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
   handleSubmit: (value: T) => void
-
   // required so we can determine the type. Cannot be undefined.
-  // Note: If T is an array/object, use a const defined outside the component for
-  // empty values or useEffect will infinitely re-render with a new object every render
   initialValue: T
   autoSubmit?: boolean
 }
 export default function useField<T = string>({
   yupValidator,
   debounceMilliseconds = 800,
-  initialValue,
   autoSubmit = true,
   handleSubmit,
+  ...props
 }: Props<T>) {
   const timerRef = useRef<NodeJS.Timeout>()
   const [error, setError] = useState('')
-  const [value, setValue] = useState(initialValue)
+  // initialValue must be stored in state so we can determine if the prop has changed
+  const [initialValue, setInitialValue] = useState(props.initialValue)
+  const [value, setValue] = useState(props.initialValue)
   const isDirty = value !== initialValue
 
   // Spread this into an input component to set up the value.
@@ -103,16 +102,17 @@ export default function useField<T = string>({
     }
   }
 
-  const reset = useRef((value = initialValue) => {
+  const reset = (value = initialValue) => {
     setError('')
     setValue(value)
+    setInitialValue(value)
     // must make sure to clear any pending timers
     clearTimeout(timerRef.current)
-  })
+  }
 
-  useEffect(() => {
-    reset.current(initialValue)
-  }, [initialValue])
+  if (initialValue !== props.initialValue) {
+    reset(props.initialValue)
+  }
 
   return {
     control,
@@ -120,7 +120,7 @@ export default function useField<T = string>({
     validate,
     submit,
     error,
-    reset: reset.current,
+    reset,
     value,
     setValue,
     isEmpty: !value,

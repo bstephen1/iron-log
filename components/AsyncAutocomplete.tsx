@@ -6,7 +6,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // Extending Autocomplete is a lesson in frustration.
 // Long story short, it needs to have a generic signature that exactly matches
@@ -54,30 +54,16 @@ export default function AsyncAutocomplete<
   ...autocompleteProps
 }: AsyncAutocompleteProps<T, Multiple>) {
   const [open, setOpen] = useState(false)
-  const [waitingToOpen, setWaitingToOpen] = useState(false)
   const loading = (alwaysShowLoading || open) && !options
 
-  const handleOpen = useCallback(() => {
-    if (!adornmentOpen) {
-      setOpen(true)
-    } else {
-      setWaitingToOpen(true)
-    }
-  }, [adornmentOpen])
+  const handleOpen = () => {
+    // extra guard prevents opening both menus via keypresses
+    !adornmentOpen && setOpen(true)
+  }
 
   const handleClose = () => {
     setOpen(false)
   }
-
-  useEffect(() => {
-    if (adornmentOpen) {
-      handleClose()
-      // the adornment dropdown closes before state gets updated so waitingToOpen makes sure it will be able to open.
-    } else if (!adornmentOpen && waitingToOpen) {
-      handleOpen()
-      setWaitingToOpen(false)
-    }
-  }, [adornmentOpen, handleOpen, waitingToOpen])
 
   return (
     <Autocomplete
