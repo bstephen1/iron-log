@@ -118,7 +118,14 @@ export default function RecordCard(props: Props) {
       mostRecentlyUpdatedExercise?._id === record.exercise?._id
         ? mostRecentlyUpdatedExercise
         : record.exercise
-    return <LoadedRecordCard {...props} record={{ ...record, exercise }} />
+    return (
+      <LoadedRecordCard
+        // key resets history filter when exercise changes or is renamed
+        key={exercise?.name}
+        {...props}
+        record={{ ...record, exercise }}
+      />
+    )
   }
 }
 
@@ -256,7 +263,6 @@ function LoadedRecordCard({
       newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
 
-    updateFilter({ exercise: newExercise?.name })
     mutateRecord(
       updateRecordFields(_id, {
         exercise: newExercise,
