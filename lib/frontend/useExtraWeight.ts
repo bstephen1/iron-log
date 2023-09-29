@@ -1,7 +1,7 @@
 import Record from 'models/Record'
 import { useBodyweightHistory, useModifiers } from './restService'
 
-export default function useExtraWeight(record?: Record | null) {
+export default function useExtraWeight(record: Record) {
   const { modifiersIndex } = useModifiers()
   const { data: bodyweightData } = useBodyweightHistory(
     {
@@ -11,8 +11,8 @@ export default function useExtraWeight(record?: Record | null) {
     record?.exercise?.attributes?.bodyweight
   )
 
-  if (!record || modifiersIndex === undefined || bodyweightData === undefined) {
-    return undefined
+  if (modifiersIndex === undefined || bodyweightData === undefined) {
+    return 0
   }
 
   const { activeModifiers, exercise } = record
