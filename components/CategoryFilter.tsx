@@ -43,19 +43,19 @@ export default function CategoryFilter({
 
   return (
     <Box sx={sx}>
-      {!!category ? (
-        <Chip
-          label={category}
-          onClick={handleOpen}
-          onDelete={() => setCategory(null)}
-        />
-      ) : (
-        <Tooltip title="Select Category">
+      <Tooltip title="Select Category">
+        {!!category ? (
+          <Chip
+            label={category}
+            onClick={handleOpen}
+            onDelete={() => setCategory(null)}
+          />
+        ) : (
           <IconButton onClick={handleOpen} sx={{ p: '4px' }}>
             <FilterAltOutlinedIcon />
           </IconButton>
-        </Tooltip>
-      )}
+        )}
+      </Tooltip>
       <Menu
         id={id}
         open={open}
