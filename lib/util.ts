@@ -1,6 +1,4 @@
-import { AsyncSelectorOption } from 'components/form-fields/selectors/AsyncSelector'
 import dayjs from 'dayjs'
-import { useMemo } from 'react'
 import { v4 as uuid, validate, version } from 'uuid'
 import { DATE_FORMAT } from './frontend/constants'
 
@@ -14,10 +12,6 @@ export const generateId = () => uuid()
  v4 is total random generation instead of using time / hardware to generate the uuid.
  */
 export const isValidId = (id: string) => validate(id) && version(id) === 4
-
-/**  memoize mapping out the names so the mapping doesn't run every render */
-export const useNames = (entities?: AsyncSelectorOption[]) =>
-  useMemo(() => entities?.map((entity) => entity.name) || [], [entities])
 
 // manually have to specify undefined is possible
 export type Index<T> = { [key: string]: T | undefined }

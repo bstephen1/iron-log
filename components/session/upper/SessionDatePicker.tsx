@@ -9,18 +9,18 @@ import { Dayjs } from 'dayjs'
 import { DATE_FORMAT, URI_SESSIONS } from 'lib/frontend/constants'
 import { paramify, useSessionLogs } from 'lib/frontend/restService'
 import { swrFetcher } from 'lib/util'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { preload } from 'swr'
 
 // The query gets data for the current month +/- 1 month so that
 // data for daysOutsideCurrentMonth is still visible on the current month
-const buildSessionLogQuery = (relativeMonth: number, month: Dayjs) => ({
+const buildSessionLogQuery = (relativeMonth: number, date: Dayjs) => ({
   limit: 0,
-  start: month
+  start: date
     .startOf('month')
     .add(relativeMonth - 1, 'month')
     .format(DATE_FORMAT),
-  end: month
+  end: date
     .endOf('month')
     .add(relativeMonth + 1, 'month')
     .format(DATE_FORMAT),
@@ -35,7 +35,13 @@ interface Props {
   label?: string
   textFieldProps?: TextFieldProps
 }
-export default function SessionDatePicker({
+export default function SessionDatePicker(props: Props) {
+  return (
+    <SessionDatePickerInner key={props.date.format(DATE_FORMAT)} {...props} />
+  )
+}
+
+function SessionDatePickerInner({
   date,
   label = 'Date',
   textFieldProps,
@@ -44,16 +50,19 @@ export default function SessionDatePicker({
   // You can type freely in a DatePicker. pickerValue updates on input change,
   // and only triggers handleDateChange when pickerValue changes to a valid date.
   const [pickerValue, setPickerValue] = useState<Dayjs | null>(date)
-  // month is still a full date, but it only updates whenever the month changes
-  const [month, setMonth] = useState(date)
-
   const { sessionLogsIndex, isLoading } = useSessionLogs(
-    buildSessionLogQuery(0, month)
+    buildSessionLogQuery(0, date)
   )
 
-  useEffect(() => {
-    setPickerValue(date)
-  }, [date])
+  // Preload adjacent months in useSWR's cache.
+  // The cache uses the same api uri as the key, so we need to build the same query that the
+  // currently selected month will use instead of widening the range.
+  const fetchNearbyMonths = (newMonth: Dayjs) => {
+    const prev = buildSessionLogQuery(-1, newMonth)
+    const next = buildSessionLogQuery(1, newMonth)
+    preload(URI_SESSIONS + paramify({ ...prev }), swrFetcher)
+    preload(URI_SESSIONS + paramify({ ...next }), swrFetcher)
+  }
 
   const handleChange = (newPickerValue: Dayjs | null) => {
     if (newPickerValue?.isValid()) {
@@ -62,19 +71,11 @@ export default function SessionDatePicker({
     setPickerValue(newPickerValue)
   }
 
-  // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
-
-  // Preload adjacent months in useSWR's cache.
-  // The cache uses the api uri as the key, so we need to build the same query that the
-  // currently selected month will use instead of widening the range.
-  useEffect(() => {
-    const prev = buildSessionLogQuery(-1, month)
-    const next = buildSessionLogQuery(1, month)
-    preload(URI_SESSIONS + paramify({ ...prev }), swrFetcher)
-    preload(URI_SESSIONS + paramify({ ...next }), swrFetcher)
-  }, [month])
+  // prefetch on init
+  fetchNearbyMonths(date)
 
   // todo: If using arrow keys while picker is open it should stop propagation so the underlying swiper doesn't move too.
+  // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
   return (
     <DatePicker
       showDaysOutsideCurrentMonth
@@ -93,7 +94,7 @@ export default function SessionDatePicker({
           }}
         />
       )}
-      onMonthChange={(newMonth) => setMonth(newMonth)}
+      onMonthChange={fetchNearbyMonths}
       loading={isLoading}
       renderLoading={() => <CalendarPickerSkeleton />}
       // apparently this needs PickersDayProps' type defined to infer types for the other args

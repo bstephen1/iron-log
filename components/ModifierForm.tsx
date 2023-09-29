@@ -1,7 +1,6 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { useModifiers } from 'lib/frontend/restService'
-import { useNames } from 'lib/util'
 import Modifier from 'models/Modifier'
 import * as yup from 'yup'
 import InputField from './form-fields/InputField'
@@ -12,9 +11,7 @@ interface Props {
   handleUpdate: (updates: Partial<Modifier>) => void
 }
 export default function ModifierForm({ modifier, handleUpdate }: Props) {
-  const { modifiers } = useModifiers()
-
-  const modifierNames = useNames(modifiers)
+  const { modifierNames } = useModifiers()
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.

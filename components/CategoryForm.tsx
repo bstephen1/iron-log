@@ -1,7 +1,6 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { useCategories } from 'lib/frontend/restService'
-import { useNames } from 'lib/util'
 import Category from 'models/Category'
 import * as yup from 'yup'
 import InputField from './form-fields/InputField'
@@ -11,8 +10,7 @@ interface Props {
   handleUpdate: (updates: Partial<Category>) => void
 }
 export default function CategoryForm({ category, handleUpdate }: Props) {
-  const { categories } = useCategories()
-  const categoryNames = useNames(categories)
+  const { categoryNames } = useCategories()
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.

@@ -1,7 +1,6 @@
 import { TextFieldProps } from '@mui/material'
 import CategoryFilter from 'components/CategoryFilter'
 import { addExercise, useCategories } from 'lib/frontend/restService'
-import { useNames } from 'lib/util'
 import Exercise from 'models/Exercise'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
@@ -25,9 +24,10 @@ export default function ExerciseSelector({
   category = null,
   ...asyncSelectorProps
 }: ExerciseSelectorProps) {
-  const { categories } = useCategories()
-  const categoryNames = useNames(categories)
-  const [filterOpen, setFilterOpen] = useState(false)
+  const { categoryNames } = useCategories()
+  const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
+    null
+  )
 
   // todo: when switching category, input should null out if it's not in the new category.
   // Used to do that before pulling category state out to parent.
@@ -62,7 +62,7 @@ export default function ExerciseSelector({
       placeholder="Select or Add New Exercise"
       filterCustom={filterCategories}
       handleFilterChange={handleFilterChange}
-      adornmentOpen={filterOpen}
+      adornmentOpen={!!categoryAnchorEl}
       Constructor={Exercise}
       addNewItem={addExercise}
       // inputRef={inputRef}
@@ -76,7 +76,8 @@ export default function ExerciseSelector({
               categories: categoryNames,
               category,
               setCategory: handleCategoryChange,
-              handleOpenChange: setFilterOpen,
+              anchorEl: categoryAnchorEl,
+              setAnchorEl: setCategoryAnchorEl,
             }}
           />
         )

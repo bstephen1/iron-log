@@ -8,61 +8,59 @@ import {
   SxProps,
   Tooltip,
 } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 interface Props {
-  anchorEl?: HTMLElement
   categories?: string[]
   category: string | null
   setCategory: (category: string | null) => void
-  /** function that is called when the open state changes */
-  handleOpenChange?: (open: boolean) => void
   sx?: SxProps
+  /** Determines whether menu is open. Null means it is closed. */
+  anchorEl: HTMLElement | null
+  setAnchorEl: Dispatch<SetStateAction<HTMLElement | null>>
 }
 export default function CategoryFilter({
   categories,
   category,
   setCategory,
   sx,
-  handleOpenChange,
+  anchorEl,
+  setAnchorEl,
 }: Props) {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+  const open = !!anchorEl
+  const id = open ? 'exercise-filter-popper' : undefined
 
   const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget)
   }
 
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
   // todo: onClose without selection: don't focus ExerciseSelector input
   // todo: use the TagSelect from notes list? add category to db?
 
-  // essentially, anchorEl is acting as "open", this just converts it to a boolean
-  const open = !!anchorEl
-  const id = open ? 'exercise-filter-popper' : undefined
-
-  useEffect(() => {
-    handleOpenChange?.(open)
-  }, [open, handleOpenChange])
-
   return (
     <Box sx={sx}>
-      {!!category ? (
-        <Chip
-          label={category}
-          onClick={handleOpen}
-          onDelete={() => setCategory(null)}
-        />
-      ) : (
-        <Tooltip title="Select Category">
+      <Tooltip title="Select Category">
+        {!!category ? (
+          <Chip
+            label={category}
+            onClick={handleOpen}
+            onDelete={() => setCategory(null)}
+          />
+        ) : (
           <IconButton onClick={handleOpen} sx={{ p: '4px' }}>
             <FilterAltOutlinedIcon />
           </IconButton>
-        </Tooltip>
-      )}
+        )}
+      </Tooltip>
       <Menu
         id={id}
         open={open}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
+        onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -76,7 +74,7 @@ export default function CategoryFilter({
               // for some reason e.target.value is NOT returning the value, even though it is visible in e.target
               onClick={(_) => {
                 setCategory(newCategory)
-                setAnchorEl(null)
+                handleClose()
               }}
             >
               {newCategory}

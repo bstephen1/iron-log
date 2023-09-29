@@ -25,6 +25,8 @@ import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
+import dayjs from 'dayjs'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -40,7 +42,7 @@ import Record from 'models/Record'
 import { Set } from 'models/Set'
 import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
 import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
@@ -60,6 +62,28 @@ import SetInput from './SetInput'
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
 // See bug: https://github.com/orgs/vercel/discussions/1657
 
+/** Calculates the reps field for the history filter for auto updates */
+const calculateRepsFilter = (record: Record) => {
+  /** If the given sets all have the same number of reps, returns that number.
+   *  Otherwise returns undefined.
+   */
+  const findSameReps = (sets: Set[]) => {
+    let reps = sets[0].reps
+    for (const set of sets) {
+      reps = set.reps === reps ? reps : 0
+      if (!reps) return undefined
+    }
+    return reps
+  }
+
+  // todo: amrap/myo should be special default modifiers rather than hardcoding here
+  const shouldExcludeReps =
+    record.activeModifiers?.includes('amrap') ||
+    record.activeModifiers?.includes('myo')
+
+  return shouldExcludeReps ? undefined : findSameReps(record.sets)
+}
+
 interface Props {
   id: string
   deleteRecord: (id: string) => Promise<void>
@@ -71,57 +95,13 @@ interface Props {
   sessionNotes: Note[]
   swiperIndex: number
 }
-export default function RecordCard({
-  id,
-  deleteRecord,
-  swapRecords,
-  swiperIndex,
-  setMostRecentlyUpdatedExercise,
-  mostRecentlyUpdatedExercise,
-  updateSessionNotes,
-  sessionNotes = [],
-}: Props) {
-  const swiper = useSwiper()
-  const theme = useTheme()
-  const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
-    ? 'swiper-no-swiping-record'
-    : ''
-  const { record, mutate: mutateRecord } = useRecord(id)
-  const { exercises, mutate: mutateExercises } = useExercises({
-    status: Status.active,
-  })
-  const displayFields = useDisplayFields(record)
-  const extraWeight = useExtraWeight(record)
-  const router = useRouter()
-  const [titleRef, { width: titleWidth }] = useMeasure()
-  const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
-    useState<null | HTMLElement>(null)
-  const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
-  const [historyFilter, setHistoryFilter] = useState<RecordQuery>()
+export default function RecordCard(props: Props) {
+  const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
+  const { record } = useRecord(id)
 
-  useEffect(() => {
-    if (mostRecentlyUpdatedExercise?._id !== record?.exercise?._id) {
-      return
-    }
-
-    // revalidate with updated exercise if it has changed
-    mutateRecord((record) =>
-      record ? { ...record, exercise: mostRecentlyUpdatedExercise } : record
-    )
-  }, [mostRecentlyUpdatedExercise, mutateRecord, record?.exercise?._id])
-
-  // useCallback needed so child useEffect doesn't infinitely retrigger
-  const handleFilterChange = useCallback((changes: Partial<RecordQuery>) => {
-    setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
-  }, [])
-
-  // todo: probably need to split this up. Loading/error, header, content, with an encapsulating controller.
-  // There is a possibly related issue where set headers and exercise selector are somehow mounting with null exercise,
-  // when they should only be receiving the record data after it is no longer null.
-
-  if (record === undefined || !displayFields || extraWeight == undefined) {
+  if (record === undefined) {
     return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
-  } else if (!record) {
+  } else if (record === null) {
     return (
       <RecordCardSkeleton
         Content={
@@ -131,7 +111,59 @@ export default function RecordCard({
         }
       />
     )
+  } else {
+    // Use the newly updated exercise so multiple cards with the same exercise will ripple their updates.
+    // Note this doesn't mutate the underlying cache, but the cache is set up to mutate when the exercise is updated.
+    const exercise =
+      mostRecentlyUpdatedExercise?._id === record.exercise?._id
+        ? mostRecentlyUpdatedExercise
+        : record.exercise
+    return <LoadedRecordCard {...props} record={{ ...record, exercise }} />
   }
+}
+
+function LoadedRecordCard({
+  id,
+  deleteRecord,
+  swapRecords,
+  swiperIndex,
+  setMostRecentlyUpdatedExercise,
+  updateSessionNotes,
+  sessionNotes = [],
+  record,
+}: Props & {
+  record: Record
+}) {
+  const swiper = useSwiper()
+  const theme = useTheme()
+  const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
+    ? 'swiper-no-swiping-record'
+    : ''
+  const { mutate: mutateRecord } = useRecord(id)
+  const { exercises, mutate: mutateExercises } = useExercises({
+    status: Status.active,
+  })
+  const router = useRouter()
+  const displayFields = useDisplayFields(record)
+  const extraWeight = useExtraWeight(record)
+  const [titleRef, { width: titleWidth }] = useMeasure()
+  const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
+    useState<null | HTMLElement>(null)
+  const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
+  // filter will auto update until user manually changes a filter field
+  const [autoUpdateFilter, setAutoUpdateFilter] = useState(true)
+  const [historyFilter, setHistoryFilter] = useState<RecordQuery>({
+    reps: calculateRepsFilter(record),
+    // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
+    modifier: record.activeModifiers,
+    // don't want to include the current record in its own history
+    end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
+    exercise: record.exercise?.name,
+    limit: 10,
+  })
+
+  const updateFilter = (changes: Partial<RecordQuery>) =>
+    setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
 
   const { exercise, activeModifiers, sets, notes, _id } = record
   const attributes = exercise?.attributes ?? {}
@@ -161,6 +193,9 @@ export default function RecordCard({
   }
 
   const handleFieldChange = async (changes: Partial<Record>) => {
+    if (autoUpdateFilter && changes.activeModifiers) {
+      updateFilter({ modifier: changes.activeModifiers })
+    }
     mutateRecord(updateRecordFields(_id, { ...changes }), {
       optimisticData: { ...record, ...changes },
       revalidate: false,
@@ -190,16 +225,19 @@ export default function RecordCard({
     mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
     await updateExerciseFields(exercise, { ...changes })
 
-    // record will be revalidated by useEffect watching the exercise
     setMostRecentlyUpdatedExercise(newExercise)
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
     const newSets = [...record.sets]
     newSets[i] = { ...newSets[i], ...changes }
+    const newRecord = { ...record, sets: newSets }
+    if (autoUpdateFilter) {
+      updateFilter({ reps: calculateRepsFilter(newRecord) })
+    }
     mutateRecord(
       updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } }),
-      { optimisticData: { ...record, sets: newSets }, revalidate: false }
+      { optimisticData: newRecord, revalidate: false }
     )
   }
 
@@ -218,6 +256,7 @@ export default function RecordCard({
       newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
 
+    updateFilter({ exercise: newExercise?.name })
     mutateRecord(
       updateRecordFields(_id, {
         exercise: newExercise,
@@ -310,7 +349,11 @@ export default function RecordCard({
                 {...{
                   record,
                   filter: historyFilter,
-                  handleFilterChange,
+                  // todo: could instead add an auto update toggle in the dialog
+                  updateFilter: (changes) => {
+                    updateFilter(changes)
+                    setAutoUpdateFilter(false)
+                  },
                 }}
               />
               {!shouldCondense && <UnitsButton />}

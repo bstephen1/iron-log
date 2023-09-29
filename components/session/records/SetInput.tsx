@@ -16,7 +16,7 @@ interface Props {
   displayFields: DisplayFields
   readOnly?: boolean
   /** if using split weight: plate weight + extra weight = total weight */
-  extraWeight?: number
+  extraWeight: number
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
@@ -26,7 +26,7 @@ export default function SetInput({
   set,
   displayFields,
   readOnly = false,
-  extraWeight = 0,
+  extraWeight,
 }: Props) {
   const pyStack = 0.5
 
