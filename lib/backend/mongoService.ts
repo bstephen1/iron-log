@@ -185,7 +185,7 @@ export async function addRecord(
 
 // todo: pagination
 export async function fetchRecords({
-  filter,
+  filter = {},
   limit,
   start = '0',
   end = '9',
@@ -195,11 +195,21 @@ export async function fetchRecords({
 }: MongoQuery<Record>): Promise<Record[]> {
   setArrayMatchTypes(filter, matchTypes)
 
-  // find() returns a cursor, so it has to be converted to an array
+  // Records do not store up-to-date exercise data; they pull in updated data on fetch.
+  // So for this query anything within the "exercise" object must be
+  // matched AFTER the exercises $lookup.
+  // For better efficiency we can split the filter into pre and post $lookup matches.
+  // We put as much as possible in pre-lookup to reduce the amount of exercise lookup
+  // (instead of looking up the exercise for every record first before starting to filter),
+  // and only put the filters that depend on current exercise data into post-lookup.
+  const { 'exercise.name': name, ...otherFilters } = filter
+
   return await records
     .aggregate([
       // date range will be overwritten if a specific date is given in the filter
-      { $match: { date: { $gte: start, $lte: end }, ...filter, userId } },
+      {
+        $match: { date: { $gte: start, $lte: end }, ...otherFilters, userId },
+      },
       {
         $lookup: {
           from: 'exercises',
@@ -208,12 +218,16 @@ export async function fetchRecords({
           as: 'exercise',
         },
       },
+      {
+        $match: name ? { 'exercise.name': name } : {},
+      },
       // if preserveNull is false the whole record becomes null if exercise is null
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
       { $project: { userId: 0, 'exercise.userId': 0 } },
     ])
     .sort({ date: convertSort(sort) })
     .limit(limit ?? 50)
+    // find() returns a cursor, so it has to be converted to an array
     .toArray()
 }
 
