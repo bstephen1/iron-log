@@ -91,9 +91,8 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
 
   return (
     <AsyncAutocomplete
-      // Autocomplete has a bug where the input flashes null on mount if it has a preset value.
-      // By making inputValue controlled we can provide an initial value to avoid this.
-      // This previously needed a more involved fix but refactoring to avoid useEffects apparently simplified it. See:
+      // Autocomplete has a bug where the input inits as null even if it has a preset value.
+      // By making inputValue controlled we can provide an initial value to avoid this. See:
       // https://github.com/mui/material-ui/issues/19423#issuecomment-639659875
       // https://stackoverflow.com/a/65679069
       // https://github.com/mui/material-ui/issues/20939
