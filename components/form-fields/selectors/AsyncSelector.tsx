@@ -60,7 +60,7 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
   filterCustom,
   handleFilterChange,
   handleChange,
-  options,
+  options = [],
   mutateOptions,
   Constructor,
   addNewItem,
@@ -106,12 +106,10 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
       autoHighlight
       options={
         // have to spread options since it is readonly and sort() mutates the array
-        !!options
-          ? [...options].sort(
-              (a, b) =>
-                SelectorStatusOrder[a.status] - SelectorStatusOrder[b.status]
-            )
-          : []
+        [...options].sort(
+          (a, b) =>
+            SelectorStatusOrder[a.status] - SelectorStatusOrder[b.status]
+        )
       }
       isOptionEqualToValue={(option, value) => option._id === value._id}
       getOptionLabel={(option) => option.name}
@@ -122,9 +120,9 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
           newOption.name = newOptionStub.name
           // stub should only ever be a single item at the last index, but filter to be sure.
           // Typescript doesn't recognize the type narrowing though...
-          const stubless = (options?.filter(
+          const stubless = options.filter(
             (cur) => !(cur instanceof SelectorStub)
-          ) || []) as C[]
+          ) as C[]
 
           // todo: should be able to use a function to modify the return to concat the new option
           // Note addNewItem only returns the single new option, so we can't
