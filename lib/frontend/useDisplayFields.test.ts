@@ -1,0 +1,42 @@
+import { renderHook } from '@testing-library/react'
+import {
+  DEFAULT_DISPLAY_FIELDS,
+  DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
+  DisplayFields,
+} from 'models/DisplayFields'
+import Exercise from 'models/Exercise'
+import Record from 'models/Record'
+import { DB_UNITS } from 'models/Set'
+import useDisplayFields from './useDisplayFields'
+
+it('returns display fields from record', () => {
+  const displayFields: DisplayFields = {
+    visibleFields: [],
+    units: DB_UNITS,
+  }
+  const exercise = new Exercise('lift heavy thing', { displayFields })
+  const { result } = renderHook(() =>
+    useDisplayFields(new Record('2000-01-01', { exercise }))
+  )
+
+  expect(result.current).toBe(displayFields)
+})
+
+it('returns default split weight fields', () => {
+  const exercise = new Exercise('lift something', {
+    attributes: { bodyweight: true },
+  })
+  const { result } = renderHook(() =>
+    useDisplayFields(new Record('2000-01-01', { exercise }))
+  )
+
+  expect(result.current).toBe(DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT)
+})
+
+it('returns default fields', () => {
+  const { result } = renderHook(() =>
+    useDisplayFields(new Record('2000-01-01'))
+  )
+
+  expect(result.current).toBe(DEFAULT_DISPLAY_FIELDS)
+})
