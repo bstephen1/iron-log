@@ -61,8 +61,9 @@ function SessionDatePickerInner({
   // You can type freely in a DatePicker. pickerValue updates on input change,
   // and only triggers handleDateChange when pickerValue changes to a valid date.
   const [pickerValue, setPickerValue] = useState<Dayjs | null>(date)
+  const [visibleMonth, setVisibleMonth] = useState(date)
   const { sessionLogsIndex, isLoading } = useSessionLogs(
-    buildSessionLogQuery(0, date)
+    buildSessionLogQuery(0, visibleMonth)
   )
 
   const handleChange = (newPickerValue: Dayjs | null) => {
@@ -99,7 +100,12 @@ function SessionDatePickerInner({
           }}
         />
       )}
-      onMonthChange={fetchNearbyMonths}
+      // onChange only changes when a new date is actually selected.
+      // onMonthChange changes when the visible month in the calendar changes.
+      onMonthChange={(newMonth) => {
+        fetchNearbyMonths(newMonth)
+        setVisibleMonth(newMonth)
+      }}
       loading={isLoading}
       renderLoading={() => <CalendarPickerSkeleton />}
       // apparently this needs PickersDayProps' type defined to infer types for the other args
