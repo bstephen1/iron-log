@@ -1,3 +1,4 @@
+import { capitalize } from '@mui/material'
 import { DB_UNITS, Set, Units } from './Set'
 
 /** signifies which Set fields are visible, and which units they are using.  */
@@ -75,3 +76,11 @@ export interface VisibleField {
 
 /** Valid keys for DisplayField.enabled groups.  */
 type DisplayFieldGroups = 'splitWeight' | 'unilateral'
+
+/** Prints the field's name (or label, if provided) followed by the appropriate units for that field, if applicable. */
+export const printFieldWithUnits = (field: VisibleField, units: Units) =>
+  `${field.label ?? capitalize(field.name)} ${
+    units[field.source] === field.name
+      ? ''
+      : `(${field.unitPrefix ?? ''}${units[field.source]})`
+  }`

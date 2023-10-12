@@ -1,6 +1,5 @@
 import {
   Box,
-  capitalize,
   Checkbox,
   FormControl,
   Input,
@@ -15,6 +14,7 @@ import { doNothing } from 'lib/util'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
+  printFieldWithUnits,
   VisibleField,
 } from 'models/DisplayFields'
 import { Fragment, useMemo } from 'react'
@@ -140,13 +140,7 @@ export default function SetHeader({
               checked={selectedNames.some((name) => name === field.name)}
             />
             <ListItemText
-              primary={`${field.label ?? capitalize(field.name)} ${
-                displayFields.units[field.source] === field.name
-                  ? ''
-                  : `(${field.unitPrefix ?? ''}${
-                      displayFields.units[field.source]
-                    })`
-              }`}
+              primary={printFieldWithUnits(field, displayFields.units)}
             />
           </MenuItem>
         ))}
