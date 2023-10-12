@@ -34,7 +34,6 @@ export default function SetHeader({
 }: Props) {
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
-  // The non-current cards will have a slight delay updating since they need to detect the change first.
   const selectedNames =
     displayFields?.visibleFields.map((field) => field.name) || []
 
