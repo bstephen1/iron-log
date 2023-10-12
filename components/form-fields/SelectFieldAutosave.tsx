@@ -33,6 +33,8 @@ export default function SelectFieldAutosave<V extends string, O = V>(
     handleSubmit,
     initialValue,
     yupValidator,
+    // select should submit as soon as a new option is picked
+    debounceMilliseconds: 0,
   })
 
   /** Using standard variant causes input background to gray after selecting something.

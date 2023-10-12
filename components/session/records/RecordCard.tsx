@@ -38,7 +38,7 @@ import useExtraWeight from 'lib/frontend/useExtraWeight'
 import Exercise from 'models/Exercise'
 import Note from 'models/Note'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import Record from 'models/Record'
+import Record, { SetType } from 'models/Record'
 import { Set } from 'models/Set'
 import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
@@ -52,6 +52,7 @@ import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
+import SetTypeSelect from './SetTypeSelect'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -172,7 +173,7 @@ function LoadedRecordCard({
   const updateFilter = (changes: Partial<RecordQuery>) =>
     setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
 
-  const { exercise, activeModifiers, sets, notes, _id } = record
+  const { exercise, activeModifiers, sets, notes, setType, _id } = record
   const attributes = exercise?.attributes ?? {}
 
   const addSet = async () => {
@@ -230,9 +231,17 @@ function LoadedRecordCard({
 
     const newExercise = { ...exercise, ...changes }
     mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
-    await updateExerciseFields(exercise, { ...changes })
-
     setMostRecentlyUpdatedExercise(newExercise)
+    await updateExerciseFields(exercise, { ...changes })
+  }
+
+  const handleSetTypeChange = async (changes: Partial<SetType>) => {
+    const newSetType = { ...setType, ...changes }
+    const newRecord = { ...record, setType: newSetType }
+    mutateRecord(updateRecordFields(_id, { setType: newSetType }), {
+      optimisticData: newRecord,
+      revalidate: false,
+    })
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
@@ -335,7 +344,7 @@ function LoadedRecordCard({
               <RecordNotesDialogButton
                 notes={[...sessionNotes, ...notes]}
                 Icon={<NotesIcon />}
-                tooltipTitle="Record Notes"
+                title="Record Notes"
                 sets={sets}
                 handleSubmit={(notes) => handleRecordNotesChange(notes)}
               />
@@ -344,7 +353,7 @@ function LoadedRecordCard({
                   notes={exercise.notes}
                   options={exercise.modifiers}
                   Icon={<FitnessCenterIcon />}
-                  tooltipTitle="Exercise Notes"
+                  title="Exercise Notes"
                   handleSubmit={(notes) =>
                     handleExerciseFieldsChange({ notes })
                   }
@@ -430,9 +439,15 @@ function LoadedRecordCard({
               options={exercise?.modifiers}
               initialValue={activeModifiers}
               variant="standard"
+              helperText=""
               handleSubmit={(value: string[]) =>
                 handleFieldChange({ activeModifiers: value })
               }
+            />
+            <SetTypeSelect
+              setType={setType}
+              units={displayFields.units}
+              handleSubmit={handleSetTypeChange}
             />
             <SetHeader
               displayFields={displayFields}
