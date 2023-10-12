@@ -61,7 +61,7 @@ export default function HistoryCard({
           <RecordNotesDialogButton
             notes={record.notes}
             Icon={<NotesIcon />}
-            tooltipTitle="Record Notes"
+            title="Record Notes"
             sets={record.sets}
             readOnly
           />
