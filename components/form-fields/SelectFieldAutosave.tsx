@@ -13,6 +13,7 @@ interface Props<V, O> {
   children?: ReactNode
   // manually add in generic type that TextField fails to pass on
   SelectProps?: Partial<SelectProps<V>>
+  readOnly?: boolean
 }
 /** Renders a TextField Select. By default renders the given options directly as MenuItems.
  *  Children must be manually provided if options is a list of objects, along with secondary generic param.
@@ -28,6 +29,7 @@ export default function SelectFieldAutosave<V extends string, O = V>(
     handleSubmit,
     yupValidator,
     children,
+    readOnly,
     ...textFieldProps
   } = props
 
@@ -65,6 +67,10 @@ export default function SelectFieldAutosave<V extends string, O = V>(
       disabled={initialValue == null}
       helperText={defaultHelperText}
       {...textFieldProps}
+      InputProps={{
+        readOnly,
+        ...textFieldProps.InputProps,
+      }}
       // @ts-ignore TextField fails to pass the generic param to SelectProps, so it incorrectly assumes the default, unknown
       SelectProps={{ ...fixStandardBackground, ...textFieldProps.SelectProps }}
     >

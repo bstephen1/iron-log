@@ -35,6 +35,7 @@ interface Props {
   setType: SetType
   handleSubmit: (changes: Partial<SetType>) => void
   sets: Set[]
+  readOnly?: boolean
 }
 export default function SetTypeSelect({
   units,
@@ -42,6 +43,7 @@ export default function SetTypeSelect({
   setType: { field, value, operator, min, max } = DEFAULT_SET_TYPE,
   handleSubmit,
   sets,
+  readOnly,
 }: Props) {
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const total = calculateTotal(sets, field)
@@ -72,6 +74,7 @@ export default function SetTypeSelect({
           }}
           variant="standard"
           defaultHelperText=""
+          readOnly={readOnly}
         />
       </Grid>
       <Grid xs={5} pr={2} display="flex" alignItems="flex-end">
@@ -82,6 +85,7 @@ export default function SetTypeSelect({
               initialValue={min}
               handleSubmit={(min) => handleSubmit({ min })}
               variant="standard"
+              readOnly={readOnly}
             />
             <Typography>and</Typography>
             <NumericFieldAutosave
@@ -89,6 +93,7 @@ export default function SetTypeSelect({
               initialValue={max}
               handleSubmit={(max) => handleSubmit({ max })}
               variant="standard"
+              readOnly={readOnly}
             />
           </Stack>
         ) : (
@@ -97,6 +102,7 @@ export default function SetTypeSelect({
             initialValue={value}
             handleSubmit={(value) => handleSubmit({ value })}
             variant="standard"
+            readOnly={readOnly}
           />
         )}
       </Grid>
@@ -109,6 +115,7 @@ export default function SetTypeSelect({
           handleSubmit={(field) => handleSubmit({ field })}
           variant="standard"
           defaultHelperText=""
+          readOnly={readOnly}
           SelectProps={{
             renderValue: (field) => {
               return getUnit(field, units)
