@@ -11,12 +11,14 @@ interface Props<V, O> {
   handleSubmit: (value: V) => void
   yupValidator?: ReturnType<typeof yup.reach>
   children?: ReactNode
+  // manually add in generic type that TextField fails to pass on
+  SelectProps?: Partial<SelectProps<V>>
 }
 /** Renders a TextField Select. By default renders the given options directly as MenuItems.
  *  Children must be manually provided if options is a list of objects, along with secondary generic param.
  */
 export default function SelectFieldAutosave<V extends string, O = V>(
-  props: Props<V, O> & TextFieldProps
+  props: Props<V, O> & Omit<TextFieldProps, 'SelectProps'>
 ) {
   const {
     label,
@@ -63,6 +65,7 @@ export default function SelectFieldAutosave<V extends string, O = V>(
       disabled={initialValue == null}
       helperText={defaultHelperText}
       {...textFieldProps}
+      // @ts-ignore TextField fails to pass the generic param to SelectProps, so it incorrectly assumes the default, unknown
       SelectProps={{ ...fixStandardBackground, ...textFieldProps.SelectProps }}
     >
       {children ??

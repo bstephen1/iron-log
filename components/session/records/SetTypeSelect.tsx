@@ -24,23 +24,31 @@ const timeField = ORDERED_DISPLAY_FIELDS.filter(
   (field) => field.source === 'time'
 )
 
+const calculateTotal = (sets: Set[], field: SetType['field']) =>
+  sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
+
+const getUnit = (field: SetType['field'], units: Units) =>
+  units[field as keyof Units] ?? field
+
 interface Props {
   units: Units
   setType: SetType
   handleSubmit: (changes: Partial<SetType>) => void
+  sets: Set[]
 }
 export default function SetTypeSelect({
   units,
   // todo: remove DEFAULT when all records properly have been init'd with a set type
   setType: { field, value, operator, range } = DEFAULT_SET_TYPE,
   handleSubmit,
+  sets,
 }: Props) {
   const { min, max } = range ?? {}
   const fieldOptions = operator === 'rest' ? timeField : normalFields
+  const total = calculateTotal(sets, field)
+  const remaining = (value ?? 0) - total
 
-  // todo:
-  // total shows remaining reps
-  // maybe store prevOperator so when switching back from rest it changes back from "time" to whatever you had before
+  // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
 
   return (
     <Grid container>
@@ -103,8 +111,8 @@ export default function SetTypeSelect({
           variant="standard"
           defaultHelperText=""
           SelectProps={{
-            renderValue: (fieldName) => {
-              return units[fieldName as keyof Units] ?? fieldName
+            renderValue: (field) => {
+              return getUnit(field, units)
             },
           }}
         >
@@ -115,6 +123,20 @@ export default function SetTypeSelect({
           ))}
         </SelectFieldAutosave>
       </Grid>
+      {operator === 'total' && (
+        <>
+          <Grid xs={6}>
+            <Typography pt={1}>
+              total: {total} {getUnit(field, units)}
+            </Typography>
+          </Grid>
+          <Grid xs={6} justifyContent="flex-end" display="flex">
+            <Typography pt={1}>
+              remaining: {remaining > 0 ? remaining : 0} {getUnit(field, units)}
+            </Typography>
+          </Grid>
+        </>
+      )}
     </Grid>
   )
 }

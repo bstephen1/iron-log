@@ -177,8 +177,8 @@ function LoadedRecordCard({
   const attributes = exercise?.attributes ?? {}
 
   const addSet = async () => {
-    const newSet = sets[sets.length - 1]
-      ? { ...sets[sets.length - 1], effort: undefined }
+    const newSet = sets.at(-1)
+      ? { ...sets.at(-1), effort: undefined }
       : ({} as Set)
 
     // Behavior is a bit up for debate. We've decided to only add a single new set
@@ -448,6 +448,7 @@ function LoadedRecordCard({
               setType={setType}
               units={displayFields.units}
               handleSubmit={handleSetTypeChange}
+              sets={sets}
             />
             <SetHeader
               displayFields={displayFields}
