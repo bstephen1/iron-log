@@ -20,6 +20,10 @@ const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
 )
 
+const timeField = ORDERED_DISPLAY_FIELDS.filter(
+  (field) => field.source === 'time'
+)
+
 interface Props {
   units: Units
   setType: SetType
@@ -32,12 +36,11 @@ export default function SetTypeSelect({
   handleSubmit,
 }: Props) {
   const { min, max } = range ?? {}
-  const gridSize =
-    operator === 'between'
-      ? [4, 5, 3]
-      : // not sure I like either option...
-        [5, 3, 4]
-  // :  [4, 5, 3]
+  const fieldOptions = operator === 'rest' ? timeField : normalFields
+
+  // todo:
+  // total shows remaining reps
+  // maybe store prevOperator so when switching back from rest it changes back from "time" to whatever you had before
 
   return (
     <Grid container>
@@ -47,18 +50,24 @@ export default function SetTypeSelect({
           Set Type
         </InputLabel>
       </Grid>
-      <Grid xs={gridSize[0]} pr={2}>
+      <Grid xs={4} pr={2}>
         <SelectFieldAutosave<typeof operator>
           label=""
           fullWidth
           initialValue={operator ?? ''}
           options={[...setOperators]}
-          handleSubmit={(operator) => handleSubmit({ operator })}
+          handleSubmit={(operator) => {
+            // "rest" only applies to time
+            handleSubmit({
+              operator,
+              field: operator === 'rest' ? 'time' : field,
+            })
+          }}
           variant="standard"
           defaultHelperText=""
         />
       </Grid>
-      <Grid xs={gridSize[1]} pr={2} display="flex" alignItems="flex-end">
+      <Grid xs={5} pr={2} display="flex" alignItems="flex-end">
         {operator === 'between' ? (
           <Stack direction="row" alignItems="center" spacing={1}>
             <NumericFieldAutosave
@@ -84,12 +93,12 @@ export default function SetTypeSelect({
           />
         )}
       </Grid>
-      <Grid xs={gridSize[2]} display="flex" alignItems="flex-end">
+      <Grid xs={3} display="flex" alignItems="flex-end">
         <SelectFieldAutosave<keyof Set, VisibleField>
           label=""
           fullWidth
           initialValue={field ?? ''}
-          options={normalFields}
+          options={fieldOptions}
           handleSubmit={(field) => handleSubmit({ field })}
           variant="standard"
           defaultHelperText=""
@@ -99,7 +108,7 @@ export default function SetTypeSelect({
             },
           }}
         >
-          {normalFields.map((field) => (
+          {fieldOptions.map((field) => (
             <MenuItem key={field.name} value={field.name}>
               <ListItemText primary={printFieldWithUnits(field, units)} />
             </MenuItem>
