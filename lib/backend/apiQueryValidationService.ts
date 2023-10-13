@@ -85,11 +85,15 @@ export function buildRecordQuery(
     date,
     modifier,
     modifierMatchType,
-    reps,
     start,
     end,
     limit,
     sort,
+    field,
+    operator,
+    value,
+    min,
+    max,
   }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
@@ -113,8 +117,23 @@ export function buildRecordQuery(
       matchTypes.activeModifiers = validateMatchType(modifierMatchType)
     }
   }
-  if (reps) {
-    filter['sets.reps'] = validateNumber(reps, 'Reps')
+
+  // SetType fields
+  if (field) {
+    // todo: validate union type, not just string
+    filter['setType.field'] = validateString(field, 'Field')
+  }
+  if (operator) {
+    filter['setType.operator'] = validateString(operator, 'Operator')
+  }
+  if (value) {
+    filter['setType.value'] = validateNumber(value, 'Value')
+  }
+  if (min) {
+    filter['setType.min'] = validateNumber(min, 'Min')
+  }
+  if (max) {
+    filter['setType.max'] = validateNumber(max, 'Max')
   }
 
   return { ...query, filter, matchTypes }

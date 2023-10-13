@@ -142,6 +142,9 @@ function LoadedRecordCard({
 }: Props & {
   record: Record
 }) {
+  const { exercise, activeModifiers, sets, notes, setType, _id } = record
+  const attributes = exercise?.attributes ?? {}
+
   const swiper = useSwiper()
   const theme = useTheme()
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
@@ -161,20 +164,17 @@ function LoadedRecordCard({
   // filter will auto update until user manually changes a filter field
   const [autoUpdateFilter, setAutoUpdateFilter] = useState(true)
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>({
-    reps: calculateRepsFilter(record),
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     modifier: record.activeModifiers,
     // don't want to include the current record in its own history
     end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
     exercise: record.exercise?.name,
     limit: 10,
+    ...setType,
   })
 
   const updateFilter = (changes: Partial<RecordQuery>) =>
     setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
-
-  const { exercise, activeModifiers, sets, notes, setType, _id } = record
-  const attributes = exercise?.attributes ?? {}
 
   const addSet = async () => {
     const newSet = sets.at(-1)
@@ -238,6 +238,9 @@ function LoadedRecordCard({
   const handleSetTypeChange = async (changes: Partial<SetType>) => {
     const newSetType = { ...setType, ...changes }
     const newRecord = { ...record, setType: newSetType }
+    if (autoUpdateFilter) {
+      updateFilter(changes)
+    }
     mutateRecord(updateRecordFields(_id, { setType: newSetType }), {
       optimisticData: newRecord,
       revalidate: false,
@@ -248,9 +251,7 @@ function LoadedRecordCard({
     const newSets = [...record.sets]
     newSets[i] = { ...newSets[i], ...changes }
     const newRecord = { ...record, sets: newSets }
-    if (autoUpdateFilter) {
-      updateFilter({ reps: calculateRepsFilter(newRecord) })
-    }
+
     mutateRecord(
       updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } }),
       { optimisticData: newRecord, revalidate: false }
@@ -364,6 +365,8 @@ function LoadedRecordCard({
                 {...{
                   record,
                   filter: historyFilter,
+                  units: displayFields.units,
+                  setType,
                   // todo: could instead add an auto update toggle in the dialog
                   updateFilter: (changes) => {
                     updateFilter(changes)

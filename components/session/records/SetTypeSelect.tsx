@@ -39,11 +39,10 @@ interface Props {
 export default function SetTypeSelect({
   units,
   // todo: remove DEFAULT when all records properly have been init'd with a set type
-  setType: { field, value, operator, range } = DEFAULT_SET_TYPE,
+  setType: { field, value, operator, min, max } = DEFAULT_SET_TYPE,
   handleSubmit,
   sets,
 }: Props) {
-  const { min, max } = range ?? {}
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const total = calculateTotal(sets, field)
   const remaining = (value ?? 0) - total
@@ -81,14 +80,14 @@ export default function SetTypeSelect({
             <NumericFieldAutosave
               placeholder="min"
               initialValue={min}
-              handleSubmit={(min) => handleSubmit({ range: { min, max } })}
+              handleSubmit={(min) => handleSubmit({ min })}
               variant="standard"
             />
             <Typography>and</Typography>
             <NumericFieldAutosave
               placeholder="max"
               initialValue={max}
-              handleSubmit={(max) => handleSubmit({ range: { min, max } })}
+              handleSubmit={(max) => handleSubmit({ max })}
               variant="standard"
             />
           </Stack>

@@ -1,21 +1,26 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import { Dialog, DialogContent, DialogTitle, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
-import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import Record from 'models/Record'
+import Record, { SetType } from 'models/Record'
+import { Units } from 'models/Set'
 import { useState } from 'react'
 import RecordHeaderButton from '../records/RecordHeaderButton'
+import SetTypeSelect from '../records/SetTypeSelect'
 
 interface Props {
   record: Record
   filter?: RecordQuery
   updateFilter: (changes: Partial<RecordQuery>) => void
+  units: Units
+  setType: SetType
 }
 export default function HistoryFilterHeaderButton({
   record,
   filter,
   updateFilter,
+  units,
+  setType,
 }: Props) {
   const [open, setOpen] = useState(false)
 
@@ -33,7 +38,7 @@ export default function HistoryFilterHeaderButton({
       >
         <DialogTitle>History Filters</DialogTitle>
         <DialogContent>
-          <Stack spacing={2}>
+          <Stack spacing={3} pb={3}>
             <ComboBoxField
               label="Modifiers"
               emptyPlaceholder="No filter"
@@ -41,15 +46,13 @@ export default function HistoryFilterHeaderButton({
               initialValue={filter?.modifier || []}
               variant="standard"
               handleSubmit={(modifier) => updateFilter({ modifier })}
+              helperText=""
             />
-            {/* todo: make a range slider? Would also have to update backend to support range queries */}
-            <NumericFieldAutosave
-              label="Reps"
-              placeholder="No filter"
-              initialValue={filter?.reps}
-              handleSubmit={(reps) => updateFilter({ reps })}
-              variant="standard"
-              InputLabelProps={{ shrink: true }}
+            <SetTypeSelect
+              units={units}
+              setType={setType}
+              handleSubmit={updateFilter}
+              sets={[]}
             />
           </Stack>
         </DialogContent>

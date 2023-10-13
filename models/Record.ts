@@ -32,7 +32,10 @@ export interface SetType {
   field: keyof Set
   operator: SetOperator
   value?: number
-  range?: { min?: number; max?: number }
+  /** used for "between" operator */
+  min?: number
+  /** used for "between" operator */
+  max?: number
 }
 
 export type SetOperator = (typeof setOperators)[number]

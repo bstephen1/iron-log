@@ -55,6 +55,7 @@ function addRecord(
   fields,
   notes,
   category = '',
+  setType = { operator: 'exactly', value: 6, field: 'reps' },
   userId = dummyUserId
 ) {
   return {
@@ -66,6 +67,7 @@ function addRecord(
     notes,
     _id: randomUUID(),
     category,
+    setType,
     userId,
   }
 }
