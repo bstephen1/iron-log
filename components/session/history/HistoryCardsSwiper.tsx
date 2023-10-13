@@ -24,11 +24,13 @@ interface Props {
   displayFields: DisplayFields
   /** filter to query for record history. If no filter is provided no records will be fetched. */
   filter?: RecordQuery
+  shouldSync?: boolean
 }
 export default function HistoryCardsSwiper({
   paginationId,
   displayFields,
   filter,
+  shouldSync,
 }: Props) {
   // todo: then fetch more if the swiper gets close to the end. (Also for future dates?)
   const { records, isLoading } = useRecords(
@@ -121,13 +123,15 @@ export default function HistoryCardsSwiper({
           {records
             ?.map((record) => (
               <SwiperSlide
-                key={record._id}
+                // have to recalculate autoHeight when matchesRecord changes
+                key={record._id + shouldSync}
                 className={records.length > 1 ? 'swiper-no-swiping-record' : ''}
               >
                 <HistoryCard
                   {...{
                     record,
                     displayFields,
+                    shouldSync,
                     filterModifiers: filter?.modifier || [],
                   }}
                 />

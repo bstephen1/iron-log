@@ -43,3 +43,14 @@ export enum ArrayMatchType {
    * This is treated as the default ArrayMatchType when one is not otherwise specified. */
   Exact = 'exact',
 }
+
+export const ArrayMatchTypeDescription = {
+  [ArrayMatchType.Any]: 'matches records with any one of the provided values',
+  [ArrayMatchType.All]:
+    'matches records with all of the provided values (but may have more)',
+  [ArrayMatchType.Equivalent]:
+    'matches records with exactly the provided values in any order',
+  [ArrayMatchType.Exact]:
+    'matches records with exactly the provided values in the same order',
+  none: '',
+}
