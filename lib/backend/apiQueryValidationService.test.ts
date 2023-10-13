@@ -1,3 +1,4 @@
+import { generateId } from 'lib/util'
 import BodyweightQuery from 'models/query-filters/BodyweightQuery'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
@@ -6,7 +7,6 @@ import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { Status } from 'models/Status'
 import { ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
-import { generateId } from 'lib/util'
 import { v1 as invalidUuid } from 'uuid'
 import {
   ApiReq,
@@ -222,18 +222,26 @@ describe('build query', () => {
         date: '2000-01-01',
         modifier: 'modifier',
         modifierMatchType: ArrayMatchType.All,
-        reps: '5',
         start: '2022-01-01',
         end: '2022-02-02',
         limit: '6',
         sort: 'oldestFirst',
+        operator: 'exactly',
+        field: 'reps',
+        value: '5',
+        min: '1',
+        max: '8',
       }
       expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
         filter: {
           date: apiQuery.date,
           activeModifiers: [apiQuery.modifier],
-          'sets.reps': Number(apiQuery.reps),
           'exercise.name': apiQuery.exercise,
+          'setType.operator': apiQuery.operator,
+          'setType.field': apiQuery.field,
+          'setType.value': Number(apiQuery.value),
+          'setType.min': Number(apiQuery.min),
+          'setType.max': Number(apiQuery.max),
         },
         start: apiQuery.start,
         end: apiQuery.end,
@@ -306,11 +314,41 @@ describe('build query', () => {
       ).toMatchObject({ userId })
     })
 
-    it('validates reps', () => {
-      expect(() => buildRecordQuery({ reps: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
-      expect(() => buildRecordQuery({ reps: ['5'] }, userId)).toThrow(ApiError)
+    describe('setType', () => {
+      it('validates field', () => {
+        expect(() => buildRecordQuery({ field: ['invalid'] }, userId)).toThrow(
+          ApiError
+        )
+      })
+
+      it('validates operator', () => {
+        expect(() =>
+          buildRecordQuery({ operator: ['invalid'] }, userId)
+        ).toThrow(ApiError)
+      })
+
+      it('validates value', () => {
+        expect(() => buildRecordQuery({ value: 'invalid' }, userId)).toThrow(
+          ApiError
+        )
+        expect(() => buildRecordQuery({ value: ['5'] }, userId)).toThrow(
+          ApiError
+        )
+      })
+
+      it('validates min', () => {
+        expect(() => buildRecordQuery({ min: 'invalid' }, userId)).toThrow(
+          ApiError
+        )
+        expect(() => buildRecordQuery({ min: ['5'] }, userId)).toThrow(ApiError)
+      })
+
+      it('validates max', () => {
+        expect(() => buildRecordQuery({ max: 'invalid' }, userId)).toThrow(
+          ApiError
+        )
+        expect(() => buildRecordQuery({ max: ['5'] }, userId)).toThrow(ApiError)
+      })
     })
   })
 
