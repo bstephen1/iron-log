@@ -16,6 +16,10 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
   emptyPlaceholder?: string
   handleSubmit?: (value: string[]) => void
   textFieldProps?: Partial<TextFieldProps>
+  /** Helper text defaults to a single whitespace to provide padding.
+   *  To disable, set to an empty string.
+   */
+  helperText?: string
 }
 // todo: closes when any value changes (since that triggers onSubmit and rerenders it)
 export function ComboBoxField({
@@ -24,6 +28,7 @@ export function ComboBoxField({
   emptyPlaceholder = '',
   handleSubmit = doNothing,
   textFieldProps,
+  helperText = ' ',
   ...asyncAutocompleteProps
 }: ComboBoxFieldProps) {
   const { control, value, setValue, isDirty } = useField<string[]>({
@@ -74,7 +79,7 @@ export function ComboBoxField({
         </li>
       )}
       textFieldProps={{
-        helperText: ' ',
+        helperText,
       }}
       {...asyncAutocompleteProps}
     />

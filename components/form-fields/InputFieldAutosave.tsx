@@ -9,6 +9,7 @@ export type InputFieldAutosaveProps = {
   defaultHelperText?: string
   handleSubmit: (value: string) => void
   yupValidator?: ReturnType<typeof yup.reach>
+  readOnly?: boolean
 } & Partial<TextFieldProps>
 export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const {
@@ -17,6 +18,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     initialValue = '',
     handleSubmit,
     yupValidator,
+    readOnly,
     ...textFieldProps
   } = props
 
@@ -33,8 +35,9 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       error={!!error}
       fullWidth
       helperText={error || defaultHelperText}
-      InputLabelProps={{ shrink: !isEmpty }}
       {...textFieldProps}
+      InputLabelProps={{ shrink: !isEmpty, ...textFieldProps.InputLabelProps }}
+      InputProps={{ readOnly, ...textFieldProps.InputProps }}
     />
   )
 }

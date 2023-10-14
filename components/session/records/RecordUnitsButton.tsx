@@ -101,6 +101,8 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
             value={symbol}
             control={<Radio />}
             label={symbol}
+            // todo: support HH:MM:SS
+            disabled={symbol === 'HH:MM:SS'}
           />
         ))}
       </RadioGroup>

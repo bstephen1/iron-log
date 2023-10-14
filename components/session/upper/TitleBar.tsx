@@ -28,7 +28,8 @@ export default function TitleBar({ date }: Props) {
         />
       </Grid>
       <Grid xs={12} sm={4}>
-        <TextField label="Session Type" fullWidth />
+        {/* todo: session type */}
+        <TextField label="Session Type" fullWidth disabled />
       </Grid>
       {/* todo: customize to show days that have a record; possibly show title; 
             possibly give days a 'type' instead of title, with an associated icon;

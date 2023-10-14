@@ -15,7 +15,7 @@ export interface Props
   initialTags?: string[]
   handleSubmit?: (notes: Note[]) => void
   multiple?: boolean
-  tooltipTitle?: string
+  title?: string
   readOnly?: boolean
 }
 export default function RecordNotesDialogButton({
@@ -26,7 +26,7 @@ export default function RecordNotesDialogButton({
   initialTags = [],
   handleSubmit = doNothing,
   multiple,
-  tooltipTitle = '',
+  title = '',
   readOnly = false,
   ...recordHeaderButtonProps
 }: Props) {
@@ -69,7 +69,7 @@ export default function RecordNotesDialogButton({
   return (
     <>
       <RecordHeaderButton
-        title={tooltipTitle}
+        title={title}
         onClick={() => setOpen(true)}
         {...recordHeaderButtonProps}
       >
@@ -78,7 +78,7 @@ export default function RecordNotesDialogButton({
         </Badge>
       </RecordHeaderButton>
       <Dialog open={open} fullWidth onClose={() => setOpen(false)}>
-        <DialogTitle>Notes</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
         <DialogContent>
           <NotesList
             {...{

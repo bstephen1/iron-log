@@ -1,6 +1,5 @@
 import {
   Box,
-  capitalize,
   Checkbox,
   FormControl,
   Input,
@@ -15,6 +14,7 @@ import { doNothing } from 'lib/util'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
+  printFieldWithUnits,
   VisibleField,
 } from 'models/DisplayFields'
 import { Fragment, useMemo } from 'react'
@@ -34,7 +34,6 @@ export default function SetHeader({
 }: Props) {
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
-  // The non-current cards will have a slight delay updating since they need to detect the change first.
   const selectedNames =
     displayFields?.visibleFields.map((field) => field.name) || []
 
@@ -141,13 +140,7 @@ export default function SetHeader({
               checked={selectedNames.some((name) => name === field.name)}
             />
             <ListItemText
-              primary={`${field.label ?? capitalize(field.name)} ${
-                displayFields.units[field.source] === field.name
-                  ? ''
-                  : `(${field.unitPrefix ?? ''}${
-                      displayFields.units[field.source]
-                    })`
-              }`}
+              primary={printFieldWithUnits(field, displayFields.units)}
             />
           </MenuItem>
         ))}

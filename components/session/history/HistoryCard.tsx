@@ -3,13 +3,14 @@ import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import StyledDivider from 'components/StyledDivider'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
+import { doNothing } from 'lib/util'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
 import RecordNotesDialogButton from '../records/RecordNotesDialogButton'
 import SetHeader from '../records/SetHeader'
 import SetInput from '../records/SetInput'
+import SetTypeSelect from '../records/SetTypeSelect'
 
 interface Props {
   record: Record
@@ -17,13 +18,13 @@ interface Props {
    * The history record's displayFields will be stale if the parent's fields change.
    */
   displayFields: DisplayFields
-  /** Modifiers being filtered. Will display the history record's modifiers if they are different from the active record's modifiers. */
-  filterModifiers: string[]
+  /** if true, some record fields will be hidden since they are the same as the parent  */
+  shouldSync?: boolean
 }
 export default function HistoryCard({
   record,
   displayFields,
-  filterModifiers,
+  shouldSync,
 }: Props) {
   const router = useRouter()
   const extraWeight = useExtraWeight(record)
@@ -31,15 +32,6 @@ export default function HistoryCard({
   // right modifiers for it to be active
   const showSplitWeight = displayFields.visibleFields.some((field) =>
     ['plateWeight', 'totalWeight'].includes(field.name)
-  )
-
-  const showModifiers = useMemo(
-    () =>
-      (!filterModifiers.length && record.activeModifiers.length) ||
-      record.activeModifiers.some(
-        (modifier) => !filterModifiers.includes(modifier)
-      ),
-    [record.activeModifiers, filterModifiers]
   )
 
   return (
@@ -61,7 +53,7 @@ export default function HistoryCard({
           <RecordNotesDialogButton
             notes={record.notes}
             Icon={<NotesIcon />}
-            tooltipTitle="Record Notes"
+            title="Record Notes"
             sets={record.sets}
             readOnly
           />
@@ -71,8 +63,8 @@ export default function HistoryCard({
 
       {/* Note -- cannot override pb normally. See: https://stackoverflow.com/questions/54236623/cant-remove-padding-bottom-from-card-content-in-material-ui */}
       <CardContent sx={{ px: 1 }}>
-        <Stack spacing={2}>
-          {showModifiers && (
+        <Stack>
+          {!shouldSync && (
             <ComboBoxField
               label="Modifiers"
               options={record.activeModifiers}
@@ -81,6 +73,16 @@ export default function HistoryCard({
               readOnly
             />
           )}
+          {!shouldSync && (
+            <SetTypeSelect
+              units={displayFields.units}
+              setType={record.setType}
+              sets={record.sets}
+              handleSubmit={doNothing}
+              readOnly
+            />
+          )}
+          <Box sx={{ p: 1, height: '100%' }}></Box>
           <SetHeader readOnly {...{ displayFields, showSplitWeight }} />
         </Stack>
         <Box sx={{ pb: 0 }}>

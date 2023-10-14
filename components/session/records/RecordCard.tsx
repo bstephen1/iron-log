@@ -37,8 +37,9 @@ import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
 import Exercise from 'models/Exercise'
 import Note from 'models/Note'
+import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import Record from 'models/Record'
+import Record, { SetType } from 'models/Record'
 import { Set } from 'models/Set'
 import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
@@ -52,6 +53,7 @@ import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
+import SetTypeSelect from './SetTypeSelect'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -141,6 +143,9 @@ function LoadedRecordCard({
 }: Props & {
   record: Record
 }) {
+  const { exercise, activeModifiers, sets, notes, setType, _id } = record
+  const attributes = exercise?.attributes ?? {}
+
   const swiper = useSwiper()
   const theme = useTheme()
   const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
@@ -157,27 +162,24 @@ function LoadedRecordCard({
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
   const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
-  // filter will auto update until user manually changes a filter field
-  const [autoUpdateFilter, setAutoUpdateFilter] = useState(true)
+  const [shouldSyncFilter, setShouldSyncFilter] = useState(true)
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>({
-    reps: calculateRepsFilter(record),
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     modifier: record.activeModifiers,
     // don't want to include the current record in its own history
     end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
     exercise: record.exercise?.name,
     limit: 10,
+    modifierMatchType: ArrayMatchType.Equivalent,
+    ...setType,
   })
 
   const updateFilter = (changes: Partial<RecordQuery>) =>
     setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
 
-  const { exercise, activeModifiers, sets, notes, _id } = record
-  const attributes = exercise?.attributes ?? {}
-
   const addSet = async () => {
-    const newSet = sets[sets.length - 1]
-      ? { ...sets[sets.length - 1], effort: undefined }
+    const newSet = sets.at(-1)
+      ? { ...sets.at(-1), effort: undefined }
       : ({} as Set)
 
     // Behavior is a bit up for debate. We've decided to only add a single new set
@@ -200,7 +202,7 @@ function LoadedRecordCard({
   }
 
   const handleFieldChange = async (changes: Partial<Record>) => {
-    if (autoUpdateFilter && changes.activeModifiers) {
+    if (shouldSyncFilter && changes.activeModifiers) {
       updateFilter({ modifier: changes.activeModifiers })
     }
     mutateRecord(updateRecordFields(_id, { ...changes }), {
@@ -230,18 +232,27 @@ function LoadedRecordCard({
 
     const newExercise = { ...exercise, ...changes }
     mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
-    await updateExerciseFields(exercise, { ...changes })
-
     setMostRecentlyUpdatedExercise(newExercise)
+    await updateExerciseFields(exercise, { ...changes })
+  }
+
+  const handleSetTypeChange = async (changes: Partial<SetType>) => {
+    const newSetType = { ...setType, ...changes }
+    const newRecord = { ...record, setType: newSetType }
+    if (shouldSyncFilter) {
+      updateFilter(changes)
+    }
+    mutateRecord(updateRecordFields(_id, { setType: newSetType }), {
+      optimisticData: newRecord,
+      revalidate: false,
+    })
   }
 
   const handleSetChange = async (changes: Partial<Set>, i: number) => {
     const newSets = [...record.sets]
     newSets[i] = { ...newSets[i], ...changes }
     const newRecord = { ...record, sets: newSets }
-    if (autoUpdateFilter) {
-      updateFilter({ reps: calculateRepsFilter(newRecord) })
-    }
+
     mutateRecord(
       updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } }),
       { optimisticData: newRecord, revalidate: false }
@@ -335,7 +346,7 @@ function LoadedRecordCard({
               <RecordNotesDialogButton
                 notes={[...sessionNotes, ...notes]}
                 Icon={<NotesIcon />}
-                tooltipTitle="Record Notes"
+                title="Record Notes"
                 sets={sets}
                 handleSubmit={(notes) => handleRecordNotesChange(notes)}
               />
@@ -344,7 +355,7 @@ function LoadedRecordCard({
                   notes={exercise.notes}
                   options={exercise.modifiers}
                   Icon={<FitnessCenterIcon />}
-                  tooltipTitle="Exercise Notes"
+                  title="Exercise Notes"
                   handleSubmit={(notes) =>
                     handleExerciseFieldsChange({ notes })
                   }
@@ -355,10 +366,23 @@ function LoadedRecordCard({
                 {...{
                   record,
                   filter: historyFilter,
-                  // todo: could instead add an auto update toggle in the dialog
+                  units: displayFields.units,
+                  shouldSync: shouldSyncFilter,
+                  onSyncChange: (shouldSync) => {
+                    setShouldSyncFilter(shouldSync)
+
+                    // reset filter to current match current record
+                    if (shouldSync) {
+                      updateFilter({
+                        ...setType,
+                        modifier: activeModifiers,
+                        modifierMatchType: ArrayMatchType.Equivalent,
+                      })
+                    }
+                  },
                   updateFilter: (changes) => {
                     updateFilter(changes)
-                    setAutoUpdateFilter(false)
+                    setShouldSyncFilter(false)
                   },
                 }}
               />
@@ -430,9 +454,16 @@ function LoadedRecordCard({
               options={exercise?.modifiers}
               initialValue={activeModifiers}
               variant="standard"
+              helperText=""
               handleSubmit={(value: string[]) =>
                 handleFieldChange({ activeModifiers: value })
               }
+            />
+            <SetTypeSelect
+              setType={setType}
+              units={displayFields.units}
+              handleSubmit={handleSetTypeChange}
+              sets={sets}
             />
             <SetHeader
               displayFields={displayFields}
@@ -486,6 +517,7 @@ function LoadedRecordCard({
         <Box pt={3}>
           <HistoryCardsSwiper
             filter={historyFilter}
+            shouldSync={shouldSyncFilter}
             paginationId={_id}
             displayFields={displayFields}
           />
