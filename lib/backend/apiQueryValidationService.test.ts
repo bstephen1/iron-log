@@ -314,41 +314,65 @@ describe('build query', () => {
 
     describe('setType', () => {
       it('validates field', () => {
-        expect(() => buildRecordQuery({ field: ['invalid'] }, userId)).toThrow(
-          ApiError
-        )
+        expect(() =>
+          buildRecordQuery(
+            { field: ['invalid'], operator: 'exactly', value: '1' },
+            userId
+          )
+        ).toThrow(ApiError)
       })
 
       it('validates operator', () => {
         expect(() =>
-          buildRecordQuery({ operator: ['invalid'] }, userId)
+          buildRecordQuery(
+            { operator: ['invalid'], field: 'reps', value: '1' },
+            userId
+          )
         ).toThrow(ApiError)
       })
 
       it('validates value', () => {
-        expect(() => buildRecordQuery({ value: 'invalid' }, userId)).toThrow(
-          ApiError
-        )
-        expect(() => buildRecordQuery({ value: ['5'] }, userId)).toThrow(
-          ApiError
-        )
+        expect(() =>
+          buildRecordQuery(
+            { value: 'invalid', operator: 'exactly', field: 'reps' },
+            userId
+          )
+        ).toThrow(ApiError)
+        expect(() =>
+          buildRecordQuery(
+            { value: ['5'], operator: 'exactly', field: 'reps' },
+            userId
+          )
+        ).toThrow(ApiError)
       })
 
       it('validates min', () => {
         expect(() =>
-          buildRecordQuery({ min: 'invalid', operator: 'between' }, userId)
+          buildRecordQuery(
+            { min: 'invalid', operator: 'between', field: 'reps' },
+            userId
+          )
         ).toThrow(ApiError)
         expect(() =>
-          buildRecordQuery({ min: ['5'], operator: 'between' }, userId)
+          buildRecordQuery(
+            { min: ['5'], operator: 'between', field: 'reps' },
+            userId
+          )
         ).toThrow(ApiError)
       })
 
       it('validates max', () => {
         expect(() =>
-          buildRecordQuery({ max: 'invalid', operator: 'between' }, userId)
+          buildRecordQuery(
+            { max: 'invalid', operator: 'between', field: 'reps' },
+            userId
+          )
         ).toThrow(ApiError)
         expect(() =>
-          buildRecordQuery({ max: ['5'], operator: 'between' }, userId)
+          buildRecordQuery(
+            { max: ['5'], operator: 'between', field: 'reps' },
+            userId
+          )
         ).toThrow(ApiError)
       })
 
@@ -358,6 +382,7 @@ describe('build query', () => {
           value: '5',
           min: '1',
           max: '8',
+          field: 'reps',
         }
         expect(buildRecordQuery(apiQuery, userId)).not.toMatchObject({
           filter: {
@@ -373,10 +398,42 @@ describe('build query', () => {
           value: '5',
           min: '1',
           max: '8',
+          field: 'reps',
         }
         expect(buildRecordQuery(apiQuery, userId)).not.toMatchObject({
           filter: {
             'setType.value': Number(apiQuery.value),
+          },
+        })
+      })
+
+      it('ignores invalid setType', () => {
+        expect(
+          buildRecordQuery({ operator: 'exactly' }, userId)
+        ).not.toMatchObject({
+          filter: {
+            'setType.operator': 'exactly',
+          },
+        })
+        expect(buildRecordQuery({ field: 'reps' }, userId)).not.toMatchObject({
+          filter: {
+            'setType.field': 'reps',
+          },
+        })
+        expect(
+          buildRecordQuery({ operator: 'exactly', field: 'reps' }, userId)
+        ).not.toMatchObject({
+          filter: {
+            'setType.operator': 'exactly',
+            'setType.field': 'reps',
+          },
+        })
+        expect(
+          buildRecordQuery({ operator: 'between', field: 'reps' }, userId)
+        ).not.toMatchObject({
+          filter: {
+            'setType.operator': 'between',
+            'setType.field': 'reps',
           },
         })
       })

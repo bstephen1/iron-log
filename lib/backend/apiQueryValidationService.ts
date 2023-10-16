@@ -13,7 +13,7 @@ import {
   MatchTypes,
   MongoQuery,
 } from 'models/query-filters/MongoQuery'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
+import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import { Status } from 'models/Status'
 import { Filter, ObjectId } from 'mongodb'
@@ -94,6 +94,7 @@ export function buildRecordQuery(
     value,
     min,
     max,
+    setMatchType = SetMatchType.SetType,
   }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
@@ -118,14 +119,20 @@ export function buildRecordQuery(
     }
   }
 
-  // SetType fields
   const isRange = operator === 'between'
+  const isValidSetType = !!operator && !!field && (isRange ? min || max : value)
+
+  if (setMatchType === SetMatchType.SetType && !isValidSetType) {
+    return { ...query, filter, matchTypes }
+  }
+
+  if (operator) {
+    filter['setType.operator'] = validateString(operator, 'Operator')
+  }
+
   if (field) {
     // todo: validate union type, not just string
     filter['setType.field'] = validateString(field, 'Field')
-  }
-  if (operator) {
-    filter['setType.operator'] = validateString(operator, 'Operator')
   }
   // value & min/max are mutually exclusive
   if (value && !isRange) {

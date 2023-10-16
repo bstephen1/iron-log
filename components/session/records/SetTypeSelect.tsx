@@ -36,6 +36,9 @@ interface Props {
   handleSubmit: (changes: Partial<SetType>) => void
   sets: Set[]
   readOnly?: boolean
+  showTotal?: boolean
+  /** label for empty option  */
+  emptyOption?: string
 }
 export default function SetTypeSelect({
   units,
@@ -44,6 +47,8 @@ export default function SetTypeSelect({
   handleSubmit,
   sets,
   readOnly,
+  showTotal,
+  emptyOption,
 }: Props) {
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const total = calculateTotal(sets, field)
@@ -52,6 +57,7 @@ export default function SetTypeSelect({
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
 
   return (
+    // columnSpacing adds unwanted padding to far left/right areas
     <Grid container>
       <Grid xs={12}>
         {/* todo: probably needs better aria labels */}
@@ -59,7 +65,7 @@ export default function SetTypeSelect({
           Set Type
         </InputLabel>
       </Grid>
-      <Grid xs={4} pr={2}>
+      <Grid xs={!!operator ? 4 : 12} pr={!!operator ? 2 : 0}>
         <SelectFieldAutosave<typeof operator>
           label=""
           fullWidth
@@ -75,61 +81,66 @@ export default function SetTypeSelect({
           variant="standard"
           defaultHelperText=""
           readOnly={readOnly}
+          emptyOption={emptyOption}
         />
       </Grid>
-      <Grid xs={5} pr={2} display="flex" alignItems="flex-end">
-        {operator === 'between' ? (
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <NumericFieldAutosave
-              placeholder="min"
-              initialValue={min}
-              handleSubmit={(min) => handleSubmit({ min })}
+      {!!operator && (
+        <>
+          <Grid xs={5} pr={2} display="flex" alignItems="flex-end">
+            {operator === 'between' ? (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <NumericFieldAutosave
+                  placeholder="min"
+                  initialValue={min}
+                  handleSubmit={(min) => handleSubmit({ min })}
+                  variant="standard"
+                  readOnly={readOnly}
+                />
+                <Typography>and</Typography>
+                <NumericFieldAutosave
+                  placeholder="max"
+                  initialValue={max}
+                  handleSubmit={(max) => handleSubmit({ max })}
+                  variant="standard"
+                  readOnly={readOnly}
+                />
+              </Stack>
+            ) : (
+              <NumericFieldAutosave
+                placeholder="value"
+                initialValue={value}
+                handleSubmit={(value) => handleSubmit({ value })}
+                variant="standard"
+                readOnly={readOnly}
+              />
+            )}
+          </Grid>
+          <Grid xs={3} display="flex" alignItems="flex-end">
+            <SelectFieldAutosave<keyof Set, VisibleField>
+              label=""
+              fullWidth
+              initialValue={field ?? ''}
+              options={fieldOptions}
+              handleSubmit={(field) => handleSubmit({ field })}
               variant="standard"
+              defaultHelperText=""
               readOnly={readOnly}
-            />
-            <Typography>and</Typography>
-            <NumericFieldAutosave
-              placeholder="max"
-              initialValue={max}
-              handleSubmit={(max) => handleSubmit({ max })}
-              variant="standard"
-              readOnly={readOnly}
-            />
-          </Stack>
-        ) : (
-          <NumericFieldAutosave
-            placeholder="value"
-            initialValue={value}
-            handleSubmit={(value) => handleSubmit({ value })}
-            variant="standard"
-            readOnly={readOnly}
-          />
-        )}
-      </Grid>
-      <Grid xs={3} display="flex" alignItems="flex-end">
-        <SelectFieldAutosave<keyof Set, VisibleField>
-          label=""
-          fullWidth
-          initialValue={field ?? ''}
-          options={fieldOptions}
-          handleSubmit={(field) => handleSubmit({ field })}
-          variant="standard"
-          defaultHelperText=""
-          readOnly={readOnly}
-          SelectProps={{
-            renderValue: (field) => {
-              return getUnit(field, units)
-            },
-          }}
-        >
-          {fieldOptions.map((field) => (
-            <MenuItem key={field.name} value={field.name}>
-              <ListItemText primary={printFieldWithUnits(field, units)} />
-            </MenuItem>
-          ))}
-        </SelectFieldAutosave>
-      </Grid>
-      {operator === 'total' && (
+              SelectProps={{
+                renderValue: (field) => {
+                  return getUnit(field, units)
+                },
+              }}
+            >
+              {fieldOptions.map((field) => (
+                <MenuItem key={field.name} value={field.name}>
+                  <ListItemText primary={printFieldWithUnits(field, units)} />
+                </MenuItem>
+              ))}
+            </SelectFieldAutosave>
+          </Grid>
+        </>
+      )}
+      {operator === 'total' && showTotal && (
         <>
           <Grid xs={6}>
             <Typography pt={1}>

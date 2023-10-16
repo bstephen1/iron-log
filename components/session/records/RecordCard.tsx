@@ -38,7 +38,7 @@ import useExtraWeight from 'lib/frontend/useExtraWeight'
 import Exercise from 'models/Exercise'
 import Note from 'models/Note'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
+import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
 import Record, { SetType } from 'models/Record'
 import { Set } from 'models/Set'
 import { Status } from 'models/Status'
@@ -171,6 +171,7 @@ function LoadedRecordCard({
     exercise: record.exercise?.name,
     limit: 10,
     modifierMatchType: ArrayMatchType.Equivalent,
+    setMatchType: SetMatchType.SetType,
     ...setType,
   })
 
@@ -464,6 +465,7 @@ function LoadedRecordCard({
               units={displayFields.units}
               handleSubmit={handleSetTypeChange}
               sets={sets}
+              showTotal
             />
             <SetHeader
               displayFields={displayFields}
