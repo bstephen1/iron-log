@@ -119,6 +119,7 @@ export function buildRecordQuery(
   }
 
   // SetType fields
+  const isRange = operator === 'between'
   if (field) {
     // todo: validate union type, not just string
     filter['setType.field'] = validateString(field, 'Field')
@@ -126,13 +127,14 @@ export function buildRecordQuery(
   if (operator) {
     filter['setType.operator'] = validateString(operator, 'Operator')
   }
-  if (value) {
+  // value & min/max are mutually exclusive
+  if (value && !isRange) {
     filter['setType.value'] = validateNumber(value, 'Value')
   }
-  if (min) {
+  if (min && isRange) {
     filter['setType.min'] = validateNumber(min, 'Min')
   }
-  if (max) {
+  if (max && isRange) {
     filter['setType.max'] = validateNumber(max, 'Max')
   }
 

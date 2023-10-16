@@ -216,7 +216,7 @@ describe('build query', () => {
   })
 
   describe('buildRecordQuery', () => {
-    it('builds full query', () => {
+    it('builds full non-range query', () => {
       const apiQuery: ApiReq<RecordQuery> = {
         exercise: 'exercise',
         date: '2000-01-01',
@@ -240,8 +240,6 @@ describe('build query', () => {
           'setType.operator': apiQuery.operator,
           'setType.field': apiQuery.field,
           'setType.value': Number(apiQuery.value),
-          'setType.min': Number(apiQuery.min),
-          'setType.max': Number(apiQuery.max),
         },
         start: apiQuery.start,
         end: apiQuery.end,
@@ -337,17 +335,50 @@ describe('build query', () => {
       })
 
       it('validates min', () => {
-        expect(() => buildRecordQuery({ min: 'invalid' }, userId)).toThrow(
-          ApiError
-        )
-        expect(() => buildRecordQuery({ min: ['5'] }, userId)).toThrow(ApiError)
+        expect(() =>
+          buildRecordQuery({ min: 'invalid', operator: 'between' }, userId)
+        ).toThrow(ApiError)
+        expect(() =>
+          buildRecordQuery({ min: ['5'], operator: 'between' }, userId)
+        ).toThrow(ApiError)
       })
 
       it('validates max', () => {
-        expect(() => buildRecordQuery({ max: 'invalid' }, userId)).toThrow(
-          ApiError
-        )
-        expect(() => buildRecordQuery({ max: ['5'] }, userId)).toThrow(ApiError)
+        expect(() =>
+          buildRecordQuery({ max: 'invalid', operator: 'between' }, userId)
+        ).toThrow(ApiError)
+        expect(() =>
+          buildRecordQuery({ max: ['5'], operator: 'between' }, userId)
+        ).toThrow(ApiError)
+      })
+
+      it('ignores min/max when not using range operator', () => {
+        const apiQuery: ApiReq<RecordQuery> = {
+          operator: 'exactly',
+          value: '5',
+          min: '1',
+          max: '8',
+        }
+        expect(buildRecordQuery(apiQuery, userId)).not.toMatchObject({
+          filter: {
+            'setType.min': Number(apiQuery.min),
+            'setType.max': Number(apiQuery.max),
+          },
+        })
+      })
+
+      it('ignores value when using range operator', () => {
+        const apiQuery: ApiReq<RecordQuery> = {
+          operator: 'between',
+          value: '5',
+          min: '1',
+          max: '8',
+        }
+        expect(buildRecordQuery(apiQuery, userId)).not.toMatchObject({
+          filter: {
+            'setType.value': Number(apiQuery.value),
+          },
+        })
       })
     })
   })
