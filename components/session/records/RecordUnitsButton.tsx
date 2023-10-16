@@ -1,4 +1,4 @@
-import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined'
+import DesignServicesIcon from '@mui/icons-material/DesignServices'
 import {
   Dialog,
   DialogContent,
@@ -40,7 +40,7 @@ export default function RecordUnitsButton({
     <>
       <RecordHeaderButton title="Change Units" onClick={() => setOpen(true)}>
         {/* it's proven pretty difficult to find a good "change units" icon...  */}
-        <FormatUnderlinedIcon />
+        <DesignServicesIcon />
       </RecordHeaderButton>
       <Dialog
         open={open}
