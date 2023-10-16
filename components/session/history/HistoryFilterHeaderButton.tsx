@@ -99,6 +99,7 @@ export default function HistoryFilterHeaderButton({
               setType={setType}
               handleSubmit={updateFilter}
               sets={[]}
+              emptyOption="no filter"
             />
           </Stack>
         </DialogContent>

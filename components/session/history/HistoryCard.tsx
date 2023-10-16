@@ -80,6 +80,7 @@ export default function HistoryCard({
               sets={record.sets}
               handleSubmit={doNothing}
               readOnly
+              showTotal
             />
           )}
           <Box sx={{ p: 1, height: '100%' }}></Box>

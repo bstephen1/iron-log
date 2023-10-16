@@ -14,6 +14,8 @@ interface Props<V, O> {
   // manually add in generic type that TextField fails to pass on
   SelectProps?: Partial<SelectProps<V>>
   readOnly?: boolean
+  /** label for empty option  */
+  emptyOption?: string
 }
 /** Renders a TextField Select. By default renders the given options directly as MenuItems.
  *  Children must be manually provided if options is a list of objects, along with secondary generic param.
@@ -30,6 +32,7 @@ export default function SelectFieldAutosave<V extends string, O = V>(
     yupValidator,
     children,
     readOnly,
+    emptyOption,
     ...textFieldProps
   } = props
 
@@ -72,8 +75,17 @@ export default function SelectFieldAutosave<V extends string, O = V>(
         ...textFieldProps.InputProps,
       }}
       // @ts-ignore TextField fails to pass the generic param to SelectProps, so it incorrectly assumes the default, unknown
-      SelectProps={{ ...fixStandardBackground, ...textFieldProps.SelectProps }}
+      SelectProps={{
+        displayEmpty: !!emptyOption,
+        ...fixStandardBackground,
+        ...textFieldProps.SelectProps,
+      }}
     >
+      {emptyOption && (
+        <MenuItem value="">
+          <em>{emptyOption}</em>
+        </MenuItem>
+      )}
       {children ??
         options.map((option) =>
           typeof option === 'string' ? (
