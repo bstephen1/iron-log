@@ -14,9 +14,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
     "types": ["vite/client"],
-    "baseUrl": "./"
+    "baseUrl": ".",
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",

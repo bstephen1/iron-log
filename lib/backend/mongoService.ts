@@ -1,7 +1,7 @@
 import Bodyweight from 'models/Bodyweight'
-import Category from 'models/Category'
-import Exercise from 'models/Exercise'
-import Modifier from 'models/Modifier'
+import Category from 'models/AsyncSelectorOption/Category'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
+import Modifier from 'models/AsyncSelectorOption/Modifier'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import {
   ArrayMatchType,
@@ -11,18 +11,17 @@ import {
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
 import { Filter, ModifyResult, ObjectId } from 'mongodb'
-import { db } from './mongoConnect'
+import { getCollections, getDb } from './mongoConnect'
 
-/** add userId, an extra field only visible to mongo records */
-type WithUserId<T> = { userId: ObjectId } & T
-
-const sessions = db.collection<WithUserId<SessionLog>>('sessions')
-const exercises = db.collection<WithUserId<Exercise>>('exercises')
-const modifiers = db.collection<WithUserId<Modifier>>('modifiers')
-const categories = db.collection<WithUserId<Category>>('categories')
-const records = db.collection<WithUserId<Record>>('records')
-const bodyweightHistory =
-  db.collection<WithUserId<Bodyweight>>('bodyweightHistory')
+const db = await getDb()
+const {
+  sessions,
+  exercises,
+  modifiers,
+  categories,
+  records,
+  bodyweightHistory,
+} = getCollections(db)
 
 interface UpdateFieldsProps<T extends { _id: string }> {
   id: T['_id']
