@@ -13,6 +13,7 @@ import Record from '../models/Record'
 import SessionLog from '../models/SessionLog'
 import { DB_UNITS } from '../models/Set'
 import { Status } from '../models/Status'
+import './polyfills'
 
 const getDisplayFields = (names: VisibleField['name'][]): DisplayFields => ({
   visibleFields: ORDERED_DISPLAY_FIELDS.filter((field) =>
