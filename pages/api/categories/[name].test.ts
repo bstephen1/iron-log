@@ -8,7 +8,7 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from 'lib/testUtils'
-import Category from 'models/Category'
+import Category from 'models/AsyncSelectorOption/Category'
 import { vi } from 'vitest'
 import handler from './[name].api'
 

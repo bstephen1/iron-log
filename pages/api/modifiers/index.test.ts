@@ -3,7 +3,7 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from 'lib/testUtils'
-import Modifier from 'models/Modifier'
+import Modifier from 'models/AsyncSelectorOption/Modifier'
 import { Status } from 'models/Status'
 import { vi } from 'vitest'
 import handler from './index.api'

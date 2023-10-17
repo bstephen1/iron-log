@@ -1,7 +1,7 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { useModifiers } from 'lib/frontend/restService'
-import Modifier from 'models/Modifier'
+import Modifier from 'models/AsyncSelectorOption/Modifier'
 import * as yup from 'yup'
 import InputField from './form-fields/InputField'
 import NumericFieldAutosave from './form-fields/NumericFieldAutosave'

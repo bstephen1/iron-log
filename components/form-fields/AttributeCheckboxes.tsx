@@ -1,10 +1,5 @@
-import {
-  capitalize,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  FormGroup,
-} from '@mui/material'
+import { Checkbox, Divider, FormControlLabel, FormGroup } from '@mui/material'
+import { capitalize } from 'lib/util'
 import Attributes from 'models/Attributes'
 
 interface Props {

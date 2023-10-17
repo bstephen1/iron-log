@@ -1,4 +1,4 @@
-import { capitalize } from '@mui/material'
+import { capitalize } from 'lib/util'
 import { DB_UNITS, Set, Units } from './Set'
 
 /** signifies which Set fields are visible, and which units they are using.  */
@@ -10,7 +10,7 @@ export type DisplayFields = {
 }
 
 // todo: dnd this? user pref? per exercise?
-export const ORDERED_DISPLAY_FIELDS: VisibleField[] = [
+export const ORDERED_DISPLAY_FIELDS: readonly VisibleField[] = [
   { name: 'side', source: 'side', enabled: { unilateral: true } },
   { name: 'weight', source: 'weight', enabled: { splitWeight: false } },
   {
@@ -31,7 +31,7 @@ export const ORDERED_DISPLAY_FIELDS: VisibleField[] = [
   { name: 'time', source: 'time' },
   { name: 'reps', source: 'reps' },
   { name: 'effort', source: 'effort', delimiter: '@' },
-]
+] as const
 
 /** display fields to use when no others are found. Currently does not change but
  * may be user editable down the line
@@ -43,7 +43,9 @@ export const DEFAULT_DISPLAY_FIELDS: DisplayFields = {
     )
   ),
   units: DB_UNITS,
-}
+} as const
+
+export const why = 'why'
 
 export const DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT: DisplayFields = {
   visibleFields: ORDERED_DISPLAY_FIELDS.filter((field) =>
@@ -52,7 +54,7 @@ export const DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT: DisplayFields = {
     ).includes(field.name)
   ),
   units: DB_UNITS,
-}
+} as const
 
 export interface VisibleField {
   /** unique identifier for the field */

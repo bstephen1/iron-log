@@ -1,5 +1,5 @@
 import { addCategory } from 'lib/frontend/restService'
-import Category from 'models/Category'
+import Category from 'models/AsyncSelectorOption/Category'
 import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
 import AsyncSelector from './AsyncSelector'

@@ -4,7 +4,7 @@ import {
   DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
   DisplayFields,
 } from 'models/DisplayFields'
-import Exercise from 'models/Exercise'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record from 'models/Record'
 import { DB_UNITS } from 'models/Set'
 import useDisplayFields from './useDisplayFields'

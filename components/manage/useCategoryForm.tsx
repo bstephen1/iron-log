@@ -6,7 +6,7 @@ import {
   useCategories,
   useExercises,
 } from 'lib/frontend/restService'
-import Category from 'models/Category'
+import Category from 'models/AsyncSelectorOption/Category'
 import { useQueryState } from 'next-usequerystate'
 
 export default function useCategoryForm() {

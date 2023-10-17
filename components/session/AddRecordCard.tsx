@@ -1,7 +1,7 @@
 import { Button, Paper, Stack } from '@mui/material'
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from 'lib/frontend/restService'
-import Exercise from 'models/Exercise'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { Status } from 'models/Status'
 import { useState } from 'react'
 

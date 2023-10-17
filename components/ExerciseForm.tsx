@@ -5,7 +5,7 @@ import {
   useExercises,
   useModifiers,
 } from 'lib/frontend/restService'
-import Exercise from 'models/Exercise'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { Status } from 'models/Status'
 import * as yup from 'yup'
 import AttributeCheckboxes from './form-fields/AttributeCheckboxes'
