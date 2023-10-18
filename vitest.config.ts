@@ -7,6 +7,7 @@ export default defineConfig({
   root: './',
   test: {
     coverage: {
+      provider: 'v8', // default is v8
       reporter: ['html'],
       all: true,
       enabled: true,
@@ -18,7 +19,10 @@ export default defineConfig({
       // statements: 31.5,
     },
     // todo: turn off globals to avoid conflict with cypress
-    globals: true,
+    // import suggestions aren't picking up certain vitest functions (mainly describe / it).
+    // If those aren't able to be suggested it will be a huge a pain to manually type out imports
+    // for every test file and seems not worth.
+    // globals: true,
     // happy-dom? Supposed to be faster, but seems to not work well with mui components
     environment: 'jsdom',
     // environmentMatchGlobs: [
