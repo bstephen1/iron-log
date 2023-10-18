@@ -2,12 +2,11 @@ import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
+// See: https://vitest.dev/config/
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  root: './',
   test: {
     coverage: {
-      provider: 'v8', // default is v8
       reporter: ['html'],
       all: true,
       enabled: true,
@@ -19,9 +18,8 @@ export default defineConfig({
       // statements: 31.5,
     },
     // todo: turn off globals to avoid conflict with cypress
-    // import suggestions aren't picking up certain vitest functions (mainly describe / it).
-    // If those aren't able to be suggested it will be a huge a pain to manually type out imports
-    // for every test file and seems not worth.
+    // non-global should work currently, but vscode can't consistently detect vitest imports,
+    // so all test files would need to manually manage any vitest imports
     globals: true,
     // happy-dom? Supposed to be faster, but seems to not work well with mui components
     environment: 'jsdom',
