@@ -9,10 +9,8 @@ export default defineConfig({
     coverage: {
       reporter: ['html'],
       all: true,
-      // skipFull: true, // only works for 'text'
       enabled: true,
       include: ['components', 'lib', 'pages', 'models'],
-      // exclude: ['cypress', '.next', 'styles', 'msw-mocks'],
       // thresholdAutoUpdate: true,
       // branches: 77.48,
       // functions: 45.13,

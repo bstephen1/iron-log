@@ -14,8 +14,10 @@ import.meta.env.DEBUG_PRINT_LIMIT = '50000'
 // vi.mock will import the actual module and automock all exports.
 // If a factory is provided, it replaces the actual module with the factory.
 vi.mock('lib/backend/mongoConnect', () => ({
-  db: { collection: vi.fn() },
-  clientPromise: vi.fn(),
+  getDb: () => ({
+    collections: vi.fn(),
+  }),
+  getCollections: () => vi.fn(),
 }))
 vi.mock('lib/backend/mongoService')
 vi.mock('pages/api/auth/[...nextauth].api', () => ({ authOptions: vi.fn() }))

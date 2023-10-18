@@ -9,6 +9,13 @@ import SessionLog from 'models/SessionLog'
 
 /** add userId, an extra field only visible to mongo records */
 type WithUserId<T> = { userId: ObjectId } & T
+
+// pkFactory overwrites the default mongo _id generation
+const options = { w: 'majority' as W, pkFactory: { createPk: generateId } }
+
+let clientPromise: Promise<MongoClient> | undefined
+
+/** return db collections with proper typing */
 export const getCollections = (db: Db) => ({
   sessions: db.collection<WithUserId<SessionLog>>('sessions'),
   exercises: db.collection<WithUserId<Exercise>>('exercises'),
@@ -18,15 +25,11 @@ export const getCollections = (db: Db) => ({
   bodyweightHistory: db.collection<WithUserId<Bodyweight>>('bodyweightHistory'),
 })
 
-// pkFactory overwrites the default mongo _id generation
-const options = { w: 'majority' as W, pkFactory: { createPk: generateId } }
-
-let clientPromise: Promise<MongoClient>
-
 /** Connect to the local db. For use in scripts that don't have access to env vars.
- *  Uri and db name should use the same values from env.development.
+ *  Uri and db name use the same values from env.development.
  *
  * Note: to terminate the script, client.close() must be called.
+ * Also db operations are async and should be awaited.
  */
 export const connectToLocalDb = async () => {
   const client = await new MongoClient(
