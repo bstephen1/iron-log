@@ -22,7 +22,7 @@ export default defineConfig({
     // import suggestions aren't picking up certain vitest functions (mainly describe / it).
     // If those aren't able to be suggested it will be a huge a pain to manually type out imports
     // for every test file and seems not worth.
-    // globals: true,
+    globals: true,
     // happy-dom? Supposed to be faster, but seems to not work well with mui components
     environment: 'jsdom',
     // environmentMatchGlobs: [
