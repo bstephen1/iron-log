@@ -4,7 +4,7 @@ import {
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Record from 'models/Record'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './index.api'
 
 const date = '2000-01-01'

@@ -10,7 +10,7 @@ import { NtarhParameters, testApiHandler } from 'next-test-api-route-handler'
 import { ApiError } from 'next/dist/server/api-utils'
 import { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
-import { vi } from 'vitest'
+import { expect, vi } from 'vitest'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
 
 // This file overwrites @testing-library's render and wraps it with components that

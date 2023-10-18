@@ -4,7 +4,7 @@ import {
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import SessionLog from 'models/SessionLog'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './index.api'
 
 it('fetches sessions', async () => {

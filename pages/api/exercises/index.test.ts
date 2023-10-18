@@ -4,7 +4,7 @@ import {
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './index.api'
 
 it('fetches exercises', async () => {

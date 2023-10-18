@@ -1,5 +1,5 @@
 import { render, screen } from 'lib/testUtils'
-import { vi } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import ModifierSelector from './ModifierSelector'
 
 it('renders with expected text', async () => {

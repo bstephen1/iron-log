@@ -1,4 +1,5 @@
 import { render, screen } from 'lib/testUtils'
+import { expect, it } from 'vitest'
 import WeightUnitConverter from './WeightUnitConverter'
 
 it('converts between kg and lbs with 2 decimal places', async () => {

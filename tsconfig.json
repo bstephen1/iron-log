@@ -14,7 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "types": ["vite/client", "vitest/globals"],
+    "types": ["vite/client"],
     "baseUrl": ".",
     "incremental": true
   },

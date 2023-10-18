@@ -3,7 +3,7 @@ import { render, screen, useServerOnce } from 'lib/testUtils'
 import Category from 'models/AsyncSelectorOption/Category'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { ComponentProps } from 'react'
-import { vi } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import ExerciseSelector from './ExerciseSelector'
 
 const mockHandleChange = vi.fn()

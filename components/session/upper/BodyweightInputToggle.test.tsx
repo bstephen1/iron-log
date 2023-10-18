@@ -1,5 +1,5 @@
 import { render, screen, within } from 'lib/testUtils'
-import { vi } from 'vitest'
+import { expect, vi, it } from 'vitest'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
 const handleTypeChange = vi.fn()

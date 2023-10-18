@@ -11,7 +11,7 @@ import {
 } from 'lib/testUtils'
 import { generateId } from 'lib/util'
 import Record from 'models/Record'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './[id].api'
 
 const data = new Record('2000-01-01')

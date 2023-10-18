@@ -8,6 +8,7 @@ import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record from 'models/Record'
 import { DB_UNITS } from 'models/Set'
 import useDisplayFields from './useDisplayFields'
+import { expect, it } from 'vitest'
 
 it('returns display fields from record', () => {
   const displayFields: DisplayFields = {

@@ -9,7 +9,7 @@ import {
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Category from 'models/AsyncSelectorOption/Category'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './[name].api'
 
 const data = new Category('hi')

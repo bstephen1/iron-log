@@ -8,7 +8,7 @@ import {
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Bodyweight from 'models/Bodyweight'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './index.api'
 
 const data = new Bodyweight(50, 'official')

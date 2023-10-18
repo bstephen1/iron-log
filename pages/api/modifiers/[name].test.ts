@@ -10,7 +10,7 @@ import {
 } from 'lib/testUtils'
 import Modifier from 'models/AsyncSelectorOption/Modifier'
 import { Status } from 'models/Status'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './[name].api'
 
 const data = new Modifier('hi', Status.active, 5)

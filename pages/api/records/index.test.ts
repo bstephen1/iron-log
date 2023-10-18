@@ -4,7 +4,7 @@ import {
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Record from 'models/Record'
-import { vi } from 'vitest'
+import { it, vi } from 'vitest'
 import handler from './index.api'
 
 it('fetches records', async () => {
