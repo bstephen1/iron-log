@@ -20,16 +20,16 @@ import BodyweightInputToggle from './BodyweightInputToggle'
 // todo: when using bw in sets, default this to using the same weight the sets are using
 
 interface Props {
-  date: Dayjs
+  day: Dayjs
 }
 export default function BodyweightInput({
-  date,
+  day,
   ...textFieldProps
 }: Props & TextFieldProps) {
   const [bodyweightType, setBodyweightType] = useState<WeighInType>('official')
   const { data, mutate } = useBodyweightHistory({
     limit: 1,
-    end: date.format(DATE_FORMAT),
+    end: day.format(DATE_FORMAT),
     type: bodyweightType,
     sort: 'newestFirst',
   })
@@ -40,7 +40,7 @@ export default function BodyweightInput({
   const loading = !data
 
   const handleSubmit = async (value: string) => {
-    const newBodyweight = new Bodyweight(Number(value), bodyweightType, date)
+    const newBodyweight = new Bodyweight(Number(value), bodyweightType, day)
 
     // new weigh-ins on the same day and of the same type will overwrite the previous value.
     // updateBodweight returns a single bw, so have to convert it to an array

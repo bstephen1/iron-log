@@ -72,9 +72,9 @@ export function useSessionLogWithInit(
   }
 }
 
-export function useSessionLog(date: Dayjs | string, config?: SWRConfiguration) {
+export function useSessionLog(day: Dayjs | string, config?: SWRConfiguration) {
   const { data, error, isLoading, mutate } = useSWR<SessionLog | null>(
-    URI_SESSIONS + (typeof date === 'string' ? date : date.format(DATE_FORMAT)),
+    URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)),
     config
   )
 

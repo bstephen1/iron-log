@@ -14,13 +14,13 @@ import { preload } from 'swr'
 
 // The query gets data for the current month +/- 1 month so that
 // data for daysOutsideCurrentMonth is still visible on the current month
-const buildSessionLogQuery = (relativeMonth: number, date: Dayjs) => ({
+const buildSessionLogQuery = (relativeMonth: number, day: Dayjs) => ({
   limit: 0,
-  start: date
+  start: day
     .startOf('month')
     .add(relativeMonth - 1, 'month')
     .format(DATE_FORMAT),
-  end: date
+  end: day
     .endOf('month')
     .add(relativeMonth + 1, 'month')
     .format(DATE_FORMAT),
@@ -38,37 +38,37 @@ const fetchNearbyMonths = (newMonth: Dayjs) => {
 }
 
 interface Props {
-  date: Dayjs
+  day: Dayjs
   /** Triggered when the picker value changes to a new date.
    *  Guaranteed to only trigger when the date is valid.
    */
-  handleDateChange: (date: Dayjs) => void
+  handleDayChange: (day: Dayjs) => void
   label?: string
   textFieldProps?: TextFieldProps
 }
 export default function SessionDatePicker(props: Props) {
   return (
-    <SessionDatePickerInner key={props.date.format(DATE_FORMAT)} {...props} />
+    <SessionDatePickerInner key={props.day.format(DATE_FORMAT)} {...props} />
   )
 }
 
 function SessionDatePickerInner({
-  date,
+  day,
   label = 'Date',
   textFieldProps,
-  handleDateChange,
+  handleDayChange,
 }: Props) {
   // You can type freely in a DatePicker. pickerValue updates on input change,
   // and only triggers handleDateChange when pickerValue changes to a valid date.
-  const [pickerValue, setPickerValue] = useState<Dayjs | null>(date)
-  const [visibleMonth, setVisibleMonth] = useState(date)
+  const [pickerValue, setPickerValue] = useState<Dayjs | null>(day)
+  const [visibleMonth, setVisibleMonth] = useState(day)
   const { sessionLogsIndex, isLoading } = useSessionLogs(
     buildSessionLogQuery(0, visibleMonth)
   )
 
   const handleChange = (newPickerValue: Dayjs | null) => {
     if (newPickerValue?.isValid()) {
-      handleDateChange(newPickerValue)
+      handleDayChange(newPickerValue)
     }
     setPickerValue(newPickerValue)
   }
@@ -77,7 +77,7 @@ function SessionDatePickerInner({
   // or there will be an error on mount saying absolute url required.
   // Apparently preload() only works client side.
   useEffect(() => {
-    fetchNearbyMonths(date)
+    fetchNearbyMonths(day)
   }, [])
 
   // todo: If using arrow keys while picker is open it should stop propagation so the underlying swiper doesn't move too.

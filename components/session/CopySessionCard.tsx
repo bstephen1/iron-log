@@ -13,27 +13,27 @@ import SessionDatePicker from './upper/SessionDatePicker'
 
 interface Props {
   handleUpdateSession: (sessionLog: SessionLog) => void
-  date: Dayjs
+  day: Dayjs
 }
-export default function CopySessionCard({ date, handleUpdateSession }: Props) {
+export default function CopySessionCard({ day, handleUpdateSession }: Props) {
   const swiper = useSwiper()
   // may want to init as current day to prevent extra fetch,
   // or optimistically fetch most recent session of the same type
-  const [prevDate, setPrevDate] = useState<Dayjs>(date.add(-7, 'day'))
+  const [prevDay, setPrevDay] = useState<Dayjs>(day.add(-7, 'day'))
   const { sessionLog: prevSessionLog, isLoading: isPrevSessionLoading } =
-    useSessionLog(prevDate)
+    useSessionLog(prevDay)
   const { sessionLog: curSessionLog, isLoading: isCurSessionLoading } =
-    useSessionLog(date)
+    useSessionLog(day)
   const { recordsIndex, isLoading: isRecordLoading } = useRecords({
-    date: prevDate.format(DATE_FORMAT),
+    date: prevDay.format(DATE_FORMAT),
   })
   const [isLoading, setIsLoading] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
 
-  const handlePrevDateChange = (newPrevDate: Dayjs) => {
+  const handlePrevDayChange = (newPrevDay: Dayjs) => {
     // reset this so if you tried to copy an empty session the button comes back
     setIsSessionEmpty(false)
-    setPrevDate(newPrevDate)
+    setPrevDay(newPrevDay)
   }
 
   const waitForFetch = () => {
@@ -59,14 +59,14 @@ export default function CopySessionCard({ date, handleUpdateSession }: Props) {
     // need to check if the current day already has a session so _id isn't changed
     const newSessionLog = curSessionLog
       ? curSessionLog
-      : new SessionLog(date.format(DATE_FORMAT))
+      : new SessionLog(day.format(DATE_FORMAT))
 
     // for-await-of construct must be used to ensure the await works properly.
     // See: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
     for await (const id of prevSessionLog.records) {
       const prevRecord = recordsIndex[id]
       // const newSets = createNewSets(prevRecord.sets, prevRecord.activeModifiers)
-      const newRecord = new Record(date.format(DATE_FORMAT), {
+      const newRecord = new Record(day.format(DATE_FORMAT), {
         ...prevRecord,
         notes: [],
       })
@@ -100,8 +100,8 @@ export default function CopySessionCard({ date, handleUpdateSession }: Props) {
     <Paper elevation={3} sx={{ p: 2 }}>
       <Stack spacing={2} alignItems="center">
         <SessionDatePicker
-          date={prevDate}
-          handleDateChange={handlePrevDateChange}
+          day={prevDay}
+          handleDayChange={handlePrevDayChange}
           textFieldProps={{ variant: 'standard' }}
         />
         {/* todo: assign session types to records, and add a selector here

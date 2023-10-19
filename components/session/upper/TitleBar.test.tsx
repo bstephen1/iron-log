@@ -13,7 +13,7 @@ vi.mock('next/router', () => ({
 }))
 
 it('updates router on date change', async () => {
-  const { user } = render(<TitleBar date={dayjs('2020-01-01')} />)
+  const { user } = render(<TitleBar day={dayjs('2020-01-01')} />)
 
   // have to use the date format the input uses
   await user.clear(screen.getByDisplayValue('01/01/2020'))
