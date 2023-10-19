@@ -13,7 +13,7 @@ import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
-import { useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -30,8 +30,9 @@ import TitleBar from './upper/TitleBar'
 
 interface Props {
   date: string
+  setDate: Dispatch<SetStateAction<string>>
 }
-export default function SessionView({ date }: Props) {
+export default function SessionView({ date, setDate }: Props) {
   const theme = useTheme()
   // This is used to alert when a record changes an exercise, so other records can
   // be notified and mutate themselves to retrieve the new exercise data.
@@ -130,7 +131,7 @@ export default function SessionView({ date }: Props) {
   // when a bigger one appears.
   return (
     <Stack spacing={2}>
-      <TitleBar date={dayjs(date)} />
+      <TitleBar day={dayjs(date)} setDate={setDate} />
       <Grid container>
         <Grid xs={12} md={6}>
           <RestTimer />
@@ -234,7 +235,7 @@ export default function SessionView({ date }: Props) {
               <AddRecordCard handleAdd={handleAddRecord} />
               {!sessionHasRecords && (
                 <CopySessionCard
-                  date={dayjs(date)}
+                  day={dayjs(date)}
                   handleUpdateSession={handleUpdateSession}
                 />
               )}
