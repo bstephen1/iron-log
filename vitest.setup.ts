@@ -47,5 +47,5 @@ beforeAll(() => {
     advanceTimersByTime: vi.advanceTimersByTime.bind(vi),
   }
 })
-afterEach(() => server.resetHandlers())
+beforeEach(() => server.resetHandlers())
 afterAll(() => server.close())

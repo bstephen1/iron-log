@@ -17,9 +17,12 @@ export default defineConfig({
       // lines: 31.5,
       // statements: 31.5,
     },
-    // todo: turn off globals to avoid conflict with cypress
-    // non-global should work currently, but vscode can't consistently detect vitest imports,
-    // so all test files would need to manually manage any vitest imports
+    // Unlike jest, vitest has the option to not globally import describe/it etc keywords.
+    // This is desireable to avoid conflicts with cypress, which also globally defines those keywords.
+    // However, disabling this causes two major issues with no easily traceable cause or solution:
+    // - vscode can only sometimes detect vitest package to auto import keywords, so you have to manually type in imports
+    // - tests start failing because apparently server.resetHandlers() stops being called before each test for unknown reasons
+    // In light of these issues we've opted to keep globals enabled and work around the cypress conflicts.
     globals: true,
     // happy-dom? Supposed to be faster, but seems to not work well with mui components
     environment: 'jsdom',
