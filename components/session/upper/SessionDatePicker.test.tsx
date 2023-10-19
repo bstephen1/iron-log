@@ -9,8 +9,8 @@ const mockHandleDateChange = vi.fn()
 it('triggers date change when the new value is a valid date', async () => {
   const { user } = render(
     <SessionDatePicker
-      date={dayjs('2020-01-01')}
-      handleDateChange={mockHandleDateChange}
+      day={dayjs('2020-01-01')}
+      handleDayChange={mockHandleDateChange}
     />
   )
 
@@ -33,8 +33,8 @@ it('shows existing session data with badges', async () => {
   ])
   const { user } = render(
     <SessionDatePicker
-      date={dayjs('2020-01-01')}
-      handleDateChange={mockHandleDateChange}
+      day={dayjs('2020-01-01')}
+      handleDayChange={mockHandleDateChange}
     />
   )
 
@@ -54,8 +54,8 @@ it('handles changing month', async () => {
   ])
   const { user } = render(
     <SessionDatePicker
-      date={dayjs('2020-01-01')}
-      handleDateChange={mockHandleDateChange}
+      day={dayjs('2020-01-01')}
+      handleDayChange={mockHandleDateChange}
       // don't really need to test this, just define it for the coverage
       textFieldProps={{}}
     />
