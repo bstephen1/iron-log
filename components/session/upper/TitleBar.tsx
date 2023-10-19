@@ -9,16 +9,15 @@ import SessionDatePicker from './SessionDatePicker'
 
 interface Props {
   day: Dayjs
-  setDate: Dispatch<SetStateAction<string>>
+  setTargetDate: Dispatch<SetStateAction<string>>
 }
-export default function TitleBar({ day, setDate }: Props) {
+export default function TitleBar({ day, setTargetDate }: Props) {
   const router = useRouter()
 
   const handleDateChange = (newDay: Dayjs) => {
     const date = newDay.format(DATE_FORMAT)
-    setDate(date)
-    // date picker already validates date, so we can enable shallow to skip getServerSideProps validation
-    router.push(date, undefined, { shallow: true })
+    setTargetDate(date)
+    router.push(date)
   }
 
   return (

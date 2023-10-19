@@ -9,7 +9,7 @@ import { Dayjs } from 'dayjs'
 import { DATE_FORMAT, URI_SESSIONS } from 'lib/frontend/constants'
 import { paramify, useSessionLogs } from 'lib/frontend/restService'
 import { swrFetcher } from 'lib/util'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { preload } from 'swr'
 
 // The query gets data for the current month +/- 1 month so that
@@ -31,6 +31,9 @@ const buildSessionLogQuery = (relativeMonth: number, day: Dayjs) => ({
  * currently selected month will use instead of widening the range.
  */
 const fetchNearbyMonths = (newMonth: Dayjs) => {
+  // preload() apparently only works client side. If called server side it complains about absolute url.
+  if (typeof window === 'undefined') return
+
   const prev = buildSessionLogQuery(-1, newMonth)
   const next = buildSessionLogQuery(1, newMonth)
   preload(URI_SESSIONS + paramify({ ...prev }), swrFetcher)
@@ -73,12 +76,8 @@ function SessionDatePickerInner({
     setPickerValue(newPickerValue)
   }
 
-  // Prefetch on init. Must be in a useEffect to avoid being called server side,
-  // or there will be an error on mount saying absolute url required.
-  // Apparently preload() only works client side.
-  useEffect(() => {
-    fetchNearbyMonths(day)
-  }, [])
+  // Prefetch on init
+  fetchNearbyMonths(day)
 
   // todo: If using arrow keys while picker is open it should stop propagation so the underlying swiper doesn't move too.
   // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
@@ -103,6 +102,7 @@ function SessionDatePickerInner({
       // onChange only changes when a new date is actually selected.
       // onMonthChange changes when the visible month in the calendar changes.
       onMonthChange={(newMonth) => {
+        console.log(newMonth)
         fetchNearbyMonths(newMonth)
         setVisibleMonth(newMonth)
       }}

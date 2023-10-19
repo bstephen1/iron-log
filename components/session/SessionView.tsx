@@ -1,5 +1,6 @@
 import { Stack, useTheme } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+import LoadingSpinner from 'components/loading/LoadingSpinner'
 import WeightUnitConverter from 'components/session/upper/WeightUnitConverter'
 import NavigationBar from 'components/slider/NavigationBar'
 import dayjs from 'dayjs'
@@ -13,7 +14,7 @@ import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
-import { Dispatch, SetStateAction, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -30,21 +31,29 @@ import TitleBar from './upper/TitleBar'
 
 interface Props {
   date: string
-  setDate: Dispatch<SetStateAction<string>>
 }
-export default function SessionView({ date, setDate }: Props) {
+export default function SessionView({ date }: Props) {
   const theme = useTheme()
   // This is used to alert when a record changes an exercise, so other records can
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const { sessionLog, mutate: mutateSession, isLoading } = useSessionLog(date)
+  const {
+    sessionLog,
+    mutate: mutateSession,
+    isLoading: isLoadingSessions,
+  } = useSessionLog(date)
+  // When router changes there can be a delay before swiper updates.
+  // targetDate stores the date that should be displayed, so the component knows if it is in a loading state.
+  const [targetDate, setTargetDate] = useState(date)
   const { mutate } = useSWRConfig()
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
   const paginationClassName = 'pagination-record-cards'
   const navPrevClassName = 'nav-prev-record-cards'
   const navNextClassName = 'nav-next-records-cards'
+
+  const isLoading = isLoadingSessions || date !== targetDate
 
   const handleUpdateSession = async (newSessionLog: SessionLog) => {
     mutateSession(updateSessionLog(newSessionLog), {
@@ -131,7 +140,7 @@ export default function SessionView({ date, setDate }: Props) {
   // when a bigger one appears.
   return (
     <Stack spacing={2}>
-      <TitleBar day={dayjs(date)} setDate={setDate} />
+      <TitleBar day={dayjs(date)} setTargetDate={setTargetDate} />
       <Grid container>
         <Grid xs={12} md={6}>
           <RestTimer />
@@ -146,7 +155,9 @@ export default function SessionView({ date, setDate }: Props) {
           <WeightUnitConverter />
         </Grid>
       </Grid>
-      {!isLoading && (
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
         // after making changes to the swiper component the page needs to be reloaded
         <Swiper
           ref={swiperElRef}
