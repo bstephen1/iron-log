@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { useCategories } from 'lib/frontend/restService'
-import Category from 'models/Category'
+import Category from 'models/AsyncSelectorOption/Category'
 import * as yup from 'yup'
 import InputField from './form-fields/InputField'
 

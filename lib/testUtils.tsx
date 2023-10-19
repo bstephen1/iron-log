@@ -19,8 +19,7 @@ import { methodNotAllowed } from './backend/apiMiddleware/util'
 // Any frontend component that uses SWR needs to be wrapped in SWRConfig to set the fetcher value.
 // Also, resetting provider resets the SWR cache between tests.
 // Components that don't use SWR can use the normal render.
-// Note: fetch() needs to be polyfilled or it will be undefined (just need to add "import 'whatwg-fetch'").
-// This should be setup already in jest's setup file.
+// Note: fetch() needs to be polyfilled or it will be undefined (just need to add "import 'whatwg-fetch'" in the test setup file).
 // See: https://testing-library.com/docs/react-testing-library/setup/#configuring-jest-with-test-utils
 // See: https://mswjs.io/docs/faq#swr
 const FrontendLayout = ({ children }: { children: ReactNode }) => (

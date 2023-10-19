@@ -9,7 +9,7 @@ import {
   updateSessionLog,
   useSessionLog,
 } from 'lib/frontend/restService'
-import Exercise from 'models/Exercise'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'

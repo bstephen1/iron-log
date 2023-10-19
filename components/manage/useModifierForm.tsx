@@ -6,7 +6,7 @@ import {
   useExercises,
   useModifiers,
 } from 'lib/frontend/restService'
-import Modifier from 'models/Modifier'
+import Modifier from 'models/AsyncSelectorOption/Modifier'
 import { useQueryState } from 'next-usequerystate'
 
 export default function useModifierForm() {

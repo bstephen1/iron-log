@@ -3,7 +3,7 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from 'lib/testUtils'
-import Exercise from 'models/Exercise'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { vi } from 'vitest'
 import handler from './index.api'
 

@@ -35,7 +35,7 @@ import {
 } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
-import Exercise from 'models/Exercise'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'

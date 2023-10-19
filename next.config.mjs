@@ -1,3 +1,7 @@
+// This file is required for nextjs projects.
+// Typescript is not currently supported. For ESM .mjs is required.
+// See: https://nextjs.org/docs/pages/api-reference/next-config-js
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -9,4 +13,4 @@ const nextConfig = {
   pageExtensions: ['page.tsx', 'api.ts'],
 }
 
-module.exports = nextConfig
+export default nextConfig

@@ -1,5 +1,5 @@
 import { addModifier } from 'lib/frontend/restService'
-import Modifier from 'models/Modifier'
+import Modifier from 'models/AsyncSelectorOption/Modifier'
 import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
 import AsyncSelector from './AsyncSelector'

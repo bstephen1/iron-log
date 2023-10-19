@@ -1,5 +1,5 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
-import { clientPromise } from 'lib/backend/mongoConnect'
+import { createMongoConnection } from 'lib/backend/mongoConnect'
 import type { NextAuthOptions, Session } from 'next-auth'
 import NextAuth, { SessionStrategy } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
   // The official adapter uses an auto generated mongo ObjectId for the id.
   // We could define a custom adapter to use our own generateId() function but that adds a maintenance and complexity cost.
   // So for now we're going with the stock adapter and seeing if that causes issues.
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(createMongoConnection()),
   // By default the client receives only minimal information. Callbacks allow us to add needed properties to the client model.
   // (We want the id)
   callbacks: {

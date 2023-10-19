@@ -1,10 +1,9 @@
-import { AsyncSelectorOption } from 'components/form-fields/selectors/AsyncSelector'
 import dayjs, { Dayjs } from 'dayjs'
 import { arrayToIndex, fetchJson } from 'lib/util'
 import Bodyweight from 'models/Bodyweight'
-import Category from 'models/Category'
-import Exercise from 'models/Exercise'
-import Modifier from 'models/Modifier'
+import Category from 'models/AsyncSelectorOption/Category'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
+import Modifier from 'models/AsyncSelectorOption/Modifier'
 import BodyweightQuery from 'models/query-filters/BodyweightQuery'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
@@ -22,6 +21,7 @@ import {
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
+import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 
 // todo: res.json() breaks if json is null. Have to guard against that.
 

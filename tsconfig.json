@@ -14,17 +14,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
-    "types": ["vite/client"],
-    "baseUrl": "./"
+    "types": ["vite/client", "vitest/globals"],
+    "baseUrl": ".",
+    "incremental": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "scripts/dummyDataMongoGenerator.js",
-    "middleware.api.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": [
     "node_modules",
     // cypress redefines jest assertion types. See: https://stackoverflow.com/a/69990369

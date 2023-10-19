@@ -2,21 +2,10 @@ import { createFilterOptions } from '@mui/material'
 import AsyncAutocomplete, {
   AsyncAutocompleteProps,
 } from 'components/AsyncAutocomplete'
-import { generateId } from 'lib/util'
-import { Status, StatusOrder } from 'models/Status'
+import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
+import { StatusOrder } from 'models/Status'
 import { useMemo, useState } from 'react'
 import { KeyedMutator } from 'swr'
-
-/** Objects used in AsyncSelector must extend this class. */
-export abstract class AsyncSelectorOption {
-  readonly _id: string
-  protected constructor(
-    public name: string,
-    public status: Status = Status.active
-  ) {
-    this._id = generateId()
-  }
-}
 
 /** A stub to track the input value so it can be added to the db as a new record.
  * The stub uses a proprietary "Add New" status only available in SelectorBase.
