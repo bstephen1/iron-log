@@ -11,18 +11,13 @@ vi.mock('next/router', () => ({
     push: mocks.push,
   }),
 }))
-const mockSetDate = vi.fn()
 
 it('updates on date change', async () => {
-  const { user } = render(
-    <TitleBar day={dayjs('2020-01-01')} setDate={mockSetDate} />
-  )
+  const { user } = render(<TitleBar day={dayjs('2020-01-01')} />)
 
   // have to use the date format the input uses
   await user.clear(screen.getByDisplayValue('01/01/2020'))
   await user.paste('01/05/2020')
 
-  // router call may have extra options. Can't assert just the date without having to assert every arg.
-  expect(mocks.push).toHaveBeenCalled()
-  expect(mockSetDate).toHaveBeenCalledWith('2020-01-05')
+  expect(mocks.push).toHaveBeenCalledWith('2020-01-05')
 })

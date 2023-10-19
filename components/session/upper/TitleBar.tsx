@@ -3,22 +3,18 @@ import Grid from '@mui/material/Unstable_Grid2'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import { useRouter } from 'next/router'
-import { Dispatch, SetStateAction } from 'react'
 import BodyweightInput from './BodyweightInput'
 import SessionDatePicker from './SessionDatePicker'
 
 interface Props {
   day: Dayjs
-  setDate: Dispatch<SetStateAction<string>>
 }
-export default function TitleBar({ day, setDate }: Props) {
+export default function TitleBar({ day }: Props) {
   const router = useRouter()
 
   const handleDateChange = (newDay: Dayjs) => {
     const date = newDay.format(DATE_FORMAT)
-    setDate(date)
-    // date picker already validates date, so we can enable shallow to skip getServerSideProps validation
-    router.push(date, undefined, { shallow: true })
+    router.push(date)
   }
 
   return (
