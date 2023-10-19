@@ -161,7 +161,8 @@ function LoadedRecordCard({
   const [titleRef, { width: titleWidth }] = useMeasure()
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
-  const shouldCondense = useMemo(() => titleWidth < 360, [titleWidth])
+  // todo: width resets to 0 on date change due to component rerender, making this always flash to true
+  const shouldCondense = titleWidth < 400
   const [shouldSyncFilter, setShouldSyncFilter] = useState(true)
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>({
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
