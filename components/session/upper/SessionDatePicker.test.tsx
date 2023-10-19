@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { render, screen, useServerOnce } from 'lib/testUtils'
 import SessionLog from 'models/SessionLog'
-import { expect, it, vi } from 'vitest'
+import { vi } from 'vitest'
 import SessionDatePicker from './SessionDatePicker'
 
 const mockHandleDateChange = vi.fn()

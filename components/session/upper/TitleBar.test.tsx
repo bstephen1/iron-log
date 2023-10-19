@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { render, screen } from 'lib/testUtils'
-import { expect, vi, it } from 'vitest'
+import { vi } from 'vitest'
 import TitleBar from './TitleBar'
 
 const mocks = vi.hoisted(() => ({

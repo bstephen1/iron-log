@@ -4,7 +4,7 @@ import {
   expectApiRespondsWithData,
 } from 'lib/testUtils'
 import Category from 'models/AsyncSelectorOption/Category'
-import { it, vi } from 'vitest'
+import { vi } from 'vitest'
 import handler from './index.api'
 
 it('fetches categories', async () => {

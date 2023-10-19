@@ -7,7 +7,7 @@ import {
 import { generateId } from 'lib/util'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
-import { it, vi } from 'vitest'
+import { vi } from 'vitest'
 import handler from './[id].api'
 
 const date = '2000-01-01'

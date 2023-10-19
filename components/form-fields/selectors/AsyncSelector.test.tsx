@@ -2,7 +2,7 @@ import { render, screen } from 'lib/testUtils'
 import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 import { Status } from 'models/Status'
 import { ComponentProps } from 'react'
-import { expect, it, vi } from 'vitest'
+import { vi } from 'vitest'
 import AsyncSelector from './AsyncSelector'
 
 const mockConstructor = vi.fn()

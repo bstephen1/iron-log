@@ -1,4 +1,3 @@
-import { expect, it, describe } from 'vitest'
 import { convertUnit } from './Set'
 
 describe('convertUnit', () => {

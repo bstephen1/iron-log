@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest'
 import { configure } from '@testing-library/react'
 import { server } from 'msw-mocks/server'
-import { afterAll, afterEach, beforeAll, vi } from 'vitest'
+import { vi } from 'vitest'
 import 'whatwg-fetch'
 
 // set env variables with import.meta.env

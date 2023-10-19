@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest'
 import { arrayToIndex } from './util'
 
 describe('arrayToIndex', () => {

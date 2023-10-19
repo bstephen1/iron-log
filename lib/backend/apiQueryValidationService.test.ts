@@ -8,7 +8,6 @@ import { Status } from 'models/Status'
 import { ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
 import { v1 as invalidUuid } from 'uuid'
-import { describe, expect, it } from 'vitest'
 import {
   ApiReq,
   buildBodyweightQuery,

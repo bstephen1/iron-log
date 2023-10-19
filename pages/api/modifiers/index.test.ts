@@ -5,7 +5,7 @@ import {
 } from 'lib/testUtils'
 import Modifier from 'models/AsyncSelectorOption/Modifier'
 import { Status } from 'models/Status'
-import { it, vi } from 'vitest'
+import { vi } from 'vitest'
 import handler from './index.api'
 
 it('fetches modifiers', async () => {
