@@ -11,6 +11,7 @@ import 'whatwg-fetch'
 // increase limit for printing dom on failed expect(). Default is 7000 and usually cuts off too soon.
 // typing is from vite/client in tsconfig
 import.meta.env.DEBUG_PRINT_LIMIT = '50000'
+// import.meta.env.COLORS = false
 
 // vi.mock will import the actual module and automock all exports.
 // If a factory is provided, it replaces the actual module with the factory.
