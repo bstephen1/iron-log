@@ -3,17 +3,20 @@ import Grid from '@mui/material/Unstable_Grid2'
 import { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import { useRouter } from 'next/router'
+import { Dispatch, SetStateAction } from 'react'
 import BodyweightInput from './BodyweightInput'
 import SessionDatePicker from './SessionDatePicker'
 
 interface Props {
   day: Dayjs
+  setTargetDate: Dispatch<SetStateAction<string>>
 }
-export default function TitleBar({ day }: Props) {
+export default function TitleBar({ day, setTargetDate }: Props) {
   const router = useRouter()
 
   const handleDateChange = (newDay: Dayjs) => {
     const date = newDay.format(DATE_FORMAT)
+    setTargetDate(date)
     router.push(date)
   }
 
