@@ -18,6 +18,7 @@ import 'swiper/css/pagination'
 // https://swr.vercel.app/docs/pagination
 
 interface Props {
+  isQuickRender?: boolean
   paginationId: string
   /** A record's displayFields are only up to date on fetch, so the current value must
    * be passed in to ensure it is in sync */
@@ -27,6 +28,7 @@ interface Props {
   shouldSync?: boolean
 }
 export default function HistoryCardsSwiper({
+  isQuickRender,
   paginationId,
   displayFields,
   filter,
@@ -48,7 +50,7 @@ export default function HistoryCardsSwiper({
   const navPrevClassName = `nav-prev-history-${paginationId}`
   const navNextClassName = `nav-next-history-${paginationId}`
 
-  if (isLoading || !records) {
+  if (isQuickRender || isLoading || !records) {
     return (
       <>
         <HistoryTitle />

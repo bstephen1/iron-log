@@ -64,31 +64,9 @@ import SetTypeSelect from './SetTypeSelect'
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
 // See bug: https://github.com/orgs/vercel/discussions/1657
 
-/** Calculates the reps field for the history filter for auto updates */
-const calculateRepsFilter = (record: Record) => {
-  /** If the given sets all have the same number of reps, returns that number.
-   *  Otherwise returns undefined.
-   */
-  const findSameReps = (sets: Set[]) => {
-    let reps = sets[0].reps
-    for (const set of sets) {
-      reps = set.reps === reps ? reps : 0
-      if (!reps) return undefined
-    }
-    return reps
-  }
-
-  // todo: amrap/myo should be special default modifiers rather than hardcoding here
-  const shouldExcludeReps =
-    record.activeModifiers?.includes('amrap') ||
-    record.activeModifiers?.includes('myo')
-
-  return shouldExcludeReps ? undefined : findSameReps(record.sets)
-}
-
 interface Props {
   id: string
-  isLoading?: boolean
+  isQuickRender?: boolean
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
   setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
@@ -102,7 +80,7 @@ export default function RecordCard(props: Props) {
   const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
   const { record } = useRecord(id)
 
-  if (record === undefined || props.isLoading) {
+  if (record === undefined || (props.isQuickRender && swiperIndex > 1)) {
     return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
   } else if (record === null) {
     return (
@@ -141,6 +119,7 @@ function LoadedRecordCard({
   updateSessionNotes,
   sessionNotes = [],
   record,
+  isQuickRender,
 }: Props & {
   record: Record
 }) {
@@ -480,7 +459,6 @@ function LoadedRecordCard({
             />
           </Stack>
 
-          {/* todo: the header could lock in constant values? Eg, reps = 5 (or, would that be too much?) */}
           <Box sx={{ pb: 0 }}>
             {sets.map((set, i) => (
               <SetInput
@@ -520,6 +498,7 @@ function LoadedRecordCard({
         </CardActions>
         <Box pt={3}>
           <HistoryCardsSwiper
+            isQuickRender={isQuickRender}
             filter={historyFilter}
             shouldSync={shouldSyncFilter}
             paginationId={_id}

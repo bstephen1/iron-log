@@ -223,7 +223,7 @@ export default function SessionView({ date }: Props) {
           {sessionLog?.records.map((id, i) => (
             <SwiperSlide key={id}>
               <RecordCard
-                isLoading={isQuickRender && i > 1}
+                isQuickRender={isQuickRender}
                 id={id}
                 deleteRecord={handleDeleteRecord}
                 swapRecords={handleSwapRecords}
