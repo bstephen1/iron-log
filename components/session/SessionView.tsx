@@ -14,7 +14,7 @@ import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import Record from 'models/Record'
 import SessionLog from 'models/SessionLog'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -38,22 +38,19 @@ export default function SessionView({ date }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const {
-    sessionLog,
-    mutate: mutateSession,
-    isLoading: isLoadingSessions,
-  } = useSessionLog(date)
-  // When router changes there can be a delay before swiper updates.
-  // targetDate stores the date that should be displayed, so the component knows if it is in a loading state.
-  const [targetDate, setTargetDate] = useState(date)
+  const { sessionLog, mutate: mutateSession, isLoading } = useSessionLog(date)
   const { mutate } = useSWRConfig()
+  // quick render reduces load time for initial render by only rendering the visible RecordCards.
+  const [isQuickRender, setIsQuickRender] = useState(true)
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
   const paginationClassName = 'pagination-record-cards'
   const navPrevClassName = 'nav-prev-record-cards'
   const navNextClassName = 'nav-next-records-cards'
 
-  const isLoading = isLoadingSessions || date !== targetDate
+  useEffect(() => {
+    setIsQuickRender(false)
+  }, [])
 
   const handleUpdateSession = async (newSessionLog: SessionLog) => {
     mutateSession(updateSessionLog(newSessionLog), {
@@ -140,7 +137,7 @@ export default function SessionView({ date }: Props) {
   // when a bigger one appears.
   return (
     <Stack spacing={2}>
-      <TitleBar day={dayjs(date)} setTargetDate={setTargetDate} />
+      <TitleBar day={dayjs(date)} />
       <Grid container>
         <Grid xs={12} md={6}>
           <RestTimer />
@@ -226,6 +223,7 @@ export default function SessionView({ date }: Props) {
           {sessionLog?.records.map((id, i) => (
             <SwiperSlide key={id}>
               <RecordCard
+                isLoading={isQuickRender && i > 1}
                 id={id}
                 deleteRecord={handleDeleteRecord}
                 swapRecords={handleSwapRecords}

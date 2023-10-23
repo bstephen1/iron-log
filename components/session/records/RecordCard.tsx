@@ -88,6 +88,7 @@ const calculateRepsFilter = (record: Record) => {
 
 interface Props {
   id: string
+  isLoading?: boolean
   deleteRecord: (id: string) => Promise<void>
   swapRecords: (i: number, j: number) => Promise<void>
   setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
@@ -101,7 +102,7 @@ export default function RecordCard(props: Props) {
   const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
   const { record } = useRecord(id)
 
-  if (record === undefined) {
+  if (record === undefined || props.isLoading) {
     return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
   } else if (record === null) {
     return (
