@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
-import useRecordCard from '../useRecordCard'
+import useCurrentRecord from '../useCurrentRecord'
 import AddSetButton from './AddSetButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
@@ -21,7 +21,7 @@ export default function RenderSets({
   displayFields,
   showSplitWeight,
 }: Props) {
-  const { sets } = useRecordCard()
+  const { sets } = useCurrentRecord()
   const readOnly = !handleExerciseFieldsChange
 
   return (

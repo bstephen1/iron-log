@@ -18,7 +18,7 @@ import {
   VisibleField,
 } from 'models/DisplayFields'
 import { Fragment, useMemo } from 'react'
-import useRecordCard from '../useRecordCard'
+import useCurrentRecord from '../useCurrentRecord'
 
 interface Props extends Partial<SelectProps<string[]>> {
   handleSubmit?: (displayFields: DisplayFields) => void
@@ -31,7 +31,7 @@ export default function SetHeader({
   showSplitWeight: showSplitWeightOverride,
   ...selectProps
 }: Props) {
-  const { exercise, extraWeight } = useRecordCard()
+  const { exercise, extraWeight } = useCurrentRecord()
   // also check attributes incase bodyweight is set to true but no bodyweight exists
   const showSplitWeight =
     showSplitWeightOverride ??

@@ -3,10 +3,10 @@ import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
 import { deleteSessionRecord } from 'lib/frontend/restService'
 import { useSwiper } from 'swiper/react'
 import RecordHeaderButton from '../RecordHeaderButton'
-import useRecordCard from '../useRecordCard'
+import useCurrentRecord from '../useCurrentRecord'
 
 export default function DeleteRecordButton() {
-  const { _id } = useRecordCard()
+  const { _id } = useCurrentRecord()
   const swiper = useSwiper()
   const { sessionLog, mutate } = useCurrentSessionLog()
 

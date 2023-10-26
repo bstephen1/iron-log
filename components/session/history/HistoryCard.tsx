@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import RecordNotesDialogButton from '../records/RecordNotesDialogButton'
 import RenderSets from '../records/sets/RenderSets'
 import SetTypeSelect from '../records/SetTypeSelect'
-import useRecordCard from '../records/useRecordCard'
+import useCurrentRecord from '../records/useCurrentRecord'
 
 interface Props {
   /** Must use the displayFields of the parent record.
@@ -20,7 +20,7 @@ interface Props {
 }
 export default function HistoryCard({ displayFields, shouldSync }: Props) {
   const router = useRouter()
-  const { date, notes, sets, activeModifiers, setType } = useRecordCard()
+  const { date, notes, sets, activeModifiers, setType } = useCurrentRecord()
   // use splitWeight if parent record is using it, even if this history record doesn't have the
   // right modifiers for it to be active
   const showSplitWeight = displayFields.visibleFields.some((field) =>

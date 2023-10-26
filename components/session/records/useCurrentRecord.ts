@@ -6,7 +6,7 @@ import { useRecordContext } from './RecordContext'
 /** Use within RecordContext to retrieve record data and mutators.
  *  Record fields are spread out directly for convenient access.
  */
-export default function useRecordCard() {
+export default function useCurrentRecord() {
   const context = useRecordContext()
   const { record, mutate } = useGuaranteedRecord(context.record)
   const displayFields = useDisplayFields(record)

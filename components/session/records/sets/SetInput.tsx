@@ -6,7 +6,7 @@ import { updateRecordFields } from 'lib/frontend/restService'
 import { DisplayFields } from 'models/DisplayFields'
 import { convertUnit, DB_UNITS, Set } from 'models/Set'
 import { useMemo } from 'react'
-import useRecordCard from '../useRecordCard'
+import useCurrentRecord from '../useCurrentRecord'
 
 const delimiterWidth = '15px'
 
@@ -24,7 +24,7 @@ export default function SetInput({
   set,
   displayFields,
 }: Props) {
-  const { record, mutate, extraWeight, _id } = useRecordCard()
+  const { record, mutate, extraWeight, _id } = useCurrentRecord()
   const pyStack = 0.5
 
   // todo: make customizable ?

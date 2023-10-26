@@ -44,7 +44,7 @@ import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'
 import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
-import useRecordCard from './useRecordCard'
+import useCurrentRecord from './useCurrentRecord'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -116,7 +116,7 @@ function LoadedRecordCard({
     record,
     displayFields,
     mutate: mutateRecord,
-  } = useRecordCard()
+  } = useCurrentRecord()
 
   const swiper = useSwiper()
   const noSwipingClassName = useNoSwipingSmScreen()

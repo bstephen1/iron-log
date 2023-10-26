@@ -3,10 +3,10 @@ import { Box, Fab, Tooltip } from '@mui/material'
 import { updateRecordFields } from 'lib/frontend/restService'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import { Set } from 'models/Set'
-import useRecordCard from '../useRecordCard'
+import useCurrentRecord from '../useCurrentRecord'
 
 export default function AddSetButton() {
-  const { record, displayFields, sets, mutate, _id } = useRecordCard()
+  const { record, displayFields, sets, mutate, _id } = useCurrentRecord()
   const className = useNoSwipingSmScreen()
 
   const addSet = async () => {
