@@ -18,20 +18,26 @@ import {
   VisibleField,
 } from 'models/DisplayFields'
 import { Fragment, useMemo } from 'react'
+import useRecordCard from '../useRecordCard'
 
 interface Props extends Partial<SelectProps<string[]>> {
-  displayFields: DisplayFields
   handleSubmit?: (displayFields: DisplayFields) => void
+  displayFields: DisplayFields
   showSplitWeight?: boolean
-  showUnilateral?: boolean
 }
 export default function SetHeader({
-  displayFields,
   handleSubmit = doNothing,
-  showSplitWeight = false,
-  showUnilateral = false,
+  displayFields,
+  showSplitWeight: showSplitWeightOverride,
   ...selectProps
 }: Props) {
+  const { exercise, extraWeight } = useRecordCard()
+  // also check attributes incase bodyweight is set to true but no bodyweight exists
+  const showSplitWeight =
+    showSplitWeightOverride ??
+    (exercise?.attributes?.bodyweight || !!extraWeight)
+  const showUnilateral = exercise?.attributes?.unilateral
+
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
   const selectedNames =

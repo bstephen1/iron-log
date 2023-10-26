@@ -1,13 +1,13 @@
-import Exercise from 'models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_DISPLAY_FIELDS,
   DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
 } from 'models/DisplayFields'
+import Record from 'models/Record'
 
-export default function useDisplayFields(exercise?: Exercise | null) {
+export default function useDisplayFields(record?: Record | null) {
   return (
-    exercise?.displayFields ??
-    (exercise?.attributes?.bodyweight
+    record?.exercise?.displayFields ??
+    (record?.exercise?.attributes?.bodyweight
       ? DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT
       : DEFAULT_DISPLAY_FIELDS)
   )

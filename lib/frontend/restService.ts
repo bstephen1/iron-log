@@ -1,9 +1,10 @@
 import dayjs, { Dayjs } from 'dayjs'
 import { arrayToIndex, fetchJson } from 'lib/util'
-import Bodyweight from 'models/Bodyweight'
+import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 import Category from 'models/AsyncSelectorOption/Category'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Modifier from 'models/AsyncSelectorOption/Modifier'
+import Bodyweight from 'models/Bodyweight'
 import BodyweightQuery from 'models/query-filters/BodyweightQuery'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
@@ -21,7 +22,6 @@ import {
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
-import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 
 // todo: res.json() breaks if json is null. Have to guard against that.
 
@@ -58,17 +58,17 @@ const toNames = (entities?: AsyncSelectorOption[]) =>
 //---------
 
 /** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
-export function useSessionLogWithInit(
+export function useGuaranteedSessionLog(
   date: string,
-  initialSessionLog: SessionLog | null
+  fallbackSession: SessionLog | null
 ) {
   const res = useSessionLog(date, {
-    fallbackData: initialSessionLog,
+    fallbackData: fallbackSession,
   })
 
   return {
     ...res,
-    sessionLog: res.sessionLog as SessionLog | null,
+    sessionLog: res.sessionLog ?? fallbackSession,
   }
 }
 
@@ -131,13 +131,13 @@ export async function deleteSessionRecord(
 // RECORD
 //--------
 
-/** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
-export function useRecordWithInit(initialRecord: Record) {
-  const res = useRecord(initialRecord._id, { fallbackData: initialRecord })
+/** An fallback value must be provided to this function, which ensures the record is never undefined */
+export function useGuaranteedRecord(fallbackRecord: Record) {
+  const res = useRecord(fallbackRecord._id, { fallbackData: fallbackRecord })
 
   return {
     ...res,
-    record: res.record as Record,
+    record: res.record ?? fallbackRecord,
   }
 }
 

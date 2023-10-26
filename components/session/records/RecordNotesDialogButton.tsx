@@ -1,6 +1,5 @@
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import NotesList from 'components/form-fields/NotesList'
-import { doNothing } from 'lib/util'
 import Note from 'models/Note'
 import { Set } from 'models/Set'
 import { ComponentProps, ReactElement, useState } from 'react'
@@ -16,7 +15,6 @@ export interface Props
   handleSubmit?: (notes: Note[]) => void
   multiple?: boolean
   title?: string
-  readOnly?: boolean
 }
 export default function RecordNotesDialogButton({
   notes,
@@ -24,10 +22,9 @@ export default function RecordNotesDialogButton({
   options,
   Icon,
   initialTags = [],
-  handleSubmit = doNothing,
+  handleSubmit,
   multiple,
   title = '',
-  readOnly = false,
   ...recordHeaderButtonProps
 }: Props) {
   const [open, setOpen] = useState(false)
@@ -87,7 +84,6 @@ export default function RecordNotesDialogButton({
               notes,
               initialTags,
               multiple,
-              readOnly,
             }}
           />
         </DialogContent>

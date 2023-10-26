@@ -1,4 +1,3 @@
-import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
@@ -9,17 +8,12 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
-  Fab,
   Menu,
   MenuItem,
   Stack,
-  Tooltip,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
@@ -33,14 +27,12 @@ import {
   useExercises,
   useRecord,
 } from 'lib/frontend/restService'
-import useDisplayFields from 'lib/frontend/useDisplayFields'
-import useExtraWeight from 'lib/frontend/useExtraWeight'
+import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
 import Record, { SetType } from 'models/Record'
-import { Set } from 'models/Set'
 import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -48,12 +40,13 @@ import { useMeasure } from 'react-use'
 import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
+import { RecordContext } from './RecordContext'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'
-import SetHeader from './SetHeader'
-import SetInput from './SetInput'
+import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
+import useRecordCard from './useRecordCard'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -63,7 +56,6 @@ import SetTypeSelect from './SetTypeSelect'
 // prod build retractively made every build fail to work.
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
 // See bug: https://github.com/orgs/vercel/discussions/1657
-
 interface Props {
   id: string
   isQuickRender?: boolean
@@ -100,44 +92,44 @@ export default function RecordCard(props: Props) {
         ? mostRecentlyUpdatedExercise
         : record.exercise
     return (
-      <LoadedRecordCard
-        // key resets history filter when exercise changes or is renamed
-        key={exercise?.name}
-        {...props}
-        record={{ ...record, exercise }}
-      />
+      <RecordContext.Provider value={{ record }}>
+        <LoadedRecordCard
+          // key resets history filter when exercise changes or is renamed
+          key={exercise?.name}
+          {...props}
+        />
+      </RecordContext.Provider>
     )
   }
 }
 
 function LoadedRecordCard({
-  id,
   deleteRecord,
   swapRecords,
   swiperIndex,
   setMostRecentlyUpdatedExercise,
   updateSessionNotes,
   sessionNotes = [],
-  record,
   isQuickRender,
-}: Props & {
-  record: Record
-}) {
-  const { exercise, activeModifiers, sets, notes, setType, _id } = record
-  const attributes = exercise?.attributes ?? {}
+}: Props) {
+  const {
+    exercise,
+    activeModifiers,
+    sets,
+    notes,
+    setType,
+    _id,
+    record,
+    displayFields,
+    mutate: mutateRecord,
+  } = useRecordCard()
 
   const swiper = useSwiper()
-  const theme = useTheme()
-  const noSwipingAboveSm = useMediaQuery(theme.breakpoints.up('sm'))
-    ? 'swiper-no-swiping-record'
-    : ''
-  const { mutate: mutateRecord } = useRecord(id)
+  const noSwipingClassName = useNoSwipingSmScreen()
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
   const router = useRouter()
-  const displayFields = useDisplayFields(record)
-  const extraWeight = useExtraWeight(record)
   const [titleRef, { width: titleWidth }] = useMeasure()
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
@@ -158,30 +150,6 @@ function LoadedRecordCard({
 
   const updateFilter = (changes: Partial<RecordQuery>) =>
     setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
-
-  const addSet = async () => {
-    const newSet = sets.at(-1)
-      ? { ...sets.at(-1), effort: undefined }
-      : ({} as Set)
-
-    // Behavior is a bit up for debate. We've decided to only add a single new set
-    // rather than automatically add an L and R set with values from the latest L and R
-    // sets. This way should be more flexible if the user has a few sets as "both" and only
-    // splits into L/R when it gets near failure. But if the last set was specified as L or R
-    // we switch to the other side for the new set.
-    // Another behavior could be to add L/R sets automatically when adding a new record, but
-    // again the user may want to start with "both" and only split into L/R if they diverge.
-    if (newSet.side === 'L') {
-      newSet.side = 'R'
-    } else if (newSet.side === 'R') {
-      newSet.side = 'L'
-    }
-
-    mutateRecord(updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }), {
-      optimisticData: { ...record, sets: sets.concat(newSet) },
-      revalidate: false,
-    })
-  }
 
   const handleFieldChange = async (changes: Partial<Record>) => {
     if (shouldSyncFilter && changes.activeModifiers) {
@@ -226,26 +194,6 @@ function LoadedRecordCard({
     }
     mutateRecord(updateRecordFields(_id, { setType: newSetType }), {
       optimisticData: newRecord,
-      revalidate: false,
-    })
-  }
-
-  const handleSetChange = async (changes: Partial<Set>, i: number) => {
-    const newSets = [...record.sets]
-    newSets[i] = { ...newSets[i], ...changes }
-    const newRecord = { ...record, sets: newSets }
-
-    mutateRecord(
-      updateRecordFields(_id, { [`sets.${i}`]: { ...sets[i], ...changes } }),
-      { optimisticData: newRecord, revalidate: false }
-    )
-  }
-
-  const handleDeleteSet = async (i: number) => {
-    const newSets = record.sets.filter((_, j) => j !== i)
-
-    mutateRecord(updateRecordFields(_id, { ['sets']: newSets }), {
-      optimisticData: { ...record, sets: newSets },
       revalidate: false,
     })
   }
@@ -322,7 +270,7 @@ function LoadedRecordCard({
           title={`Record ${swiperIndex + 1}`}
           titleTypographyProps={{ variant: 'h6' }}
           action={
-            <Box className={noSwipingAboveSm} sx={{ cursor: 'default' }}>
+            <Box className={noSwipingClassName} sx={{ cursor: 'default' }}>
               {!shouldCondense && <MoveLeftButton />}
               {!shouldCondense && <MoveRightButton />}
               <RecordNotesDialogButton
@@ -414,7 +362,7 @@ function LoadedRecordCard({
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
         <CardContent
           // swiping causes weird behavior on desktop when combined with data input fields
-          className={noSwipingAboveSm}
+          className={noSwipingClassName}
           sx={{ cursor: { sm: 'default' }, px: 1 }}
         >
           <Stack spacing={2}>
@@ -448,54 +396,12 @@ function LoadedRecordCard({
               sets={sets}
               showTotal
             />
-            <SetHeader
+            <RenderSets
+              handleExerciseFieldsChange={handleExerciseFieldsChange}
               displayFields={displayFields}
-              handleSubmit={(displayFields) =>
-                handleExerciseFieldsChange({ displayFields })
-              }
-              // also check attributes incase bodyweight is set to true but no bodyweight exists
-              showSplitWeight={attributes.bodyweight || !!extraWeight}
-              showUnilateral={attributes.unilateral}
             />
           </Stack>
-
-          <Box sx={{ pb: 0 }}>
-            {sets.map((set, i) => (
-              <SetInput
-                key={i}
-                set={set}
-                displayFields={displayFields}
-                handleSubmit={(changes: Partial<Set>) =>
-                  handleSetChange(changes, i)
-                }
-                handleDelete={() => handleDeleteSet(i)}
-                extraWeight={extraWeight}
-              />
-            ))}
-          </Box>
         </CardContent>
-        <CardActions
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            px: 2,
-            pb: 2,
-          }}
-        >
-          <Tooltip title="Add Set" placement="right">
-            <span>
-              <Fab
-                color="primary"
-                size="medium"
-                disabled={!displayFields?.visibleFields.length}
-                onClick={addSet}
-                className={noSwipingAboveSm}
-              >
-                <AddIcon />
-              </Fab>
-            </span>
-          </Tooltip>
-        </CardActions>
         <Box pt={3}>
           <HistoryCardsSwiper
             isQuickRender={isQuickRender}

@@ -13,6 +13,7 @@ import NavigationBar from 'components/slider/NavigationBar'
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import 'swiper/css/pagination'
+import { RecordContext } from '../records/RecordContext'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination
@@ -129,14 +130,15 @@ export default function HistoryCardsSwiper({
                 key={record._id + shouldSync}
                 className={records.length > 1 ? 'swiper-no-swiping-record' : ''}
               >
-                <HistoryCard
-                  {...{
-                    record,
-                    displayFields,
-                    shouldSync,
-                    filterModifiers: filter?.modifier || [],
-                  }}
-                />
+                <RecordContext.Provider value={{ record }}>
+                  <HistoryCard
+                    {...{
+                      displayFields,
+                      shouldSync,
+                      filterModifiers: filter?.modifier || [],
+                    }}
+                  />
+                </RecordContext.Provider>
               </SwiperSlide>
               // need to reverse so newest is on the right, not left. Can't do it in useRecords because
               // mongo applies sort before the limit. Also, reverse should be after map because it mutates the array.

@@ -9,10 +9,10 @@ interface Props {
   addItemPlaceholder?: string
   listItemPlaceholder?: string
   initialTags?: string[]
-  handleSubmit: (notes: Note[]) => void
+  /** considered readOnly if omitted */
+  handleSubmit?: (notes: Note[]) => void
   notes: Note[]
   multiple?: boolean
-  readOnly?: boolean
 }
 export default function NotesList(props: Props) {
   const {
@@ -24,17 +24,18 @@ export default function NotesList(props: Props) {
     initialTags,
     handleSubmit,
     multiple,
-    readOnly = false,
   } = props
+
+  const readOnly = !handleSubmit
 
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
-  const handleAdd = (newNote: Note) => handleSubmit([newNote, ...notes])
+  const handleAdd = (newNote: Note) => handleSubmit?.([newNote, ...notes])
   const handleDelete = (i: number) => {
-    handleSubmit(notes.slice(0, i).concat(notes.slice(i + 1)))
+    handleSubmit?.(notes.slice(0, i).concat(notes.slice(i + 1)))
   }
   const handleUpdate = (i: number, newNote: Note) => {
-    handleSubmit(
+    handleSubmit?.(
       notes
         .slice(0, i)
         .concat(newNote)

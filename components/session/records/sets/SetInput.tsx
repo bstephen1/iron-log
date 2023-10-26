@@ -2,32 +2,29 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { Box, IconButton, Input, MenuItem, Select, Stack } from '@mui/material'
 import { blue, grey, lightGreen } from '@mui/material/colors'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
-import { doNothing } from 'lib/util'
+import { updateRecordFields } from 'lib/frontend/restService'
 import { DisplayFields } from 'models/DisplayFields'
 import { convertUnit, DB_UNITS, Set } from 'models/Set'
 import { useMemo } from 'react'
+import useRecordCard from '../useRecordCard'
 
 const delimiterWidth = '15px'
 
 interface Props {
-  handleSubmit?: (changes: Partial<Set>) => void
-  handleDelete?: () => void
+  readOnly?: boolean
+  index: number
   set: Set
   displayFields: DisplayFields
-  readOnly?: boolean
-  /** if using split weight: plate weight + extra weight = total weight */
-  extraWeight: number
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
 export default function SetInput({
-  handleSubmit = doNothing,
-  handleDelete = doNothing,
+  readOnly = false,
+  index,
   set,
   displayFields,
-  readOnly = false,
-  extraWeight,
 }: Props) {
+  const { record, mutate, extraWeight, _id } = useRecordCard()
   const pyStack = 0.5
 
   // todo: make customizable ?
@@ -44,6 +41,28 @@ export default function SetInput({
 
   if (!displayFields.visibleFields.length) {
     return <></>
+  }
+
+  const handleSetChange = async (changes: Partial<Set>) => {
+    const newSets = [...record.sets]
+    newSets[index] = { ...newSets[index], ...changes }
+    const newRecord = { ...record, sets: newSets }
+
+    mutate(
+      updateRecordFields(_id, {
+        [`sets.${index}`]: { ...record.sets[index], ...changes },
+      }),
+      { optimisticData: newRecord, revalidate: false }
+    )
+  }
+
+  const handleDeleteSet = async () => {
+    const newSets = record.sets.filter((_, j) => j !== index)
+
+    mutate(updateRecordFields(_id, { ['sets']: newSets }), {
+      optimisticData: { ...record, sets: newSets },
+      revalidate: false,
+    })
   }
 
   return (
@@ -86,7 +105,7 @@ export default function SetInput({
               IconComponent={() => null}
               value={set[field.source] ?? ''}
               onChange={(e) =>
-                handleSubmit({
+                handleSetChange({
                   side: (e.target.value as Set['side']) || undefined,
                 })
               }
@@ -113,7 +132,7 @@ export default function SetInput({
               )}
               // todo: add validation that this is a number
               handleSubmit={(value) =>
-                handleSubmit({
+                handleSetChange({
                   [field.source]: convertUnit(
                     value,
                     field.source,
@@ -142,7 +161,7 @@ export default function SetInput({
       ) : (
         <IconButton
           size="small"
-          onClick={handleDelete}
+          onClick={handleDeleteSet}
           sx={{
             my: -pyStack,
             p: 1,
