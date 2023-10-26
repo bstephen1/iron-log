@@ -6,7 +6,6 @@ import NavigationBar from 'components/slider/NavigationBar'
 import dayjs from 'dayjs'
 import {
   addRecord,
-  deleteSessionRecord,
   updateSessionLog,
   useSessionLog,
 } from 'lib/frontend/restService'
@@ -23,6 +22,7 @@ import { useSWRConfig } from 'swr'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
+import { SessionLogContext } from './SessionLogContext'
 import RestTimer from './upper/RestTimer'
 import TitleBar from './upper/TitleBar'
 
@@ -38,7 +38,7 @@ export default function SessionView({ date }: Props) {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const { sessionLog, mutate: mutateSession, isLoading } = useSessionLog(date)
+  const { sessionLog, mutate: mutateSession } = useSessionLog(date)
   const { mutate } = useSWRConfig()
   // quick render reduces load time for initial render by only rendering the visible RecordCards.
   const [isQuickRender, setIsQuickRender] = useState(true)
@@ -47,6 +47,9 @@ export default function SessionView({ date }: Props) {
   const paginationClassName = 'pagination-record-cards'
   const navPrevClassName = 'nav-prev-record-cards'
   const navNextClassName = 'nav-next-records-cards'
+
+  // instead of using isLoading from useSessionLog do this to let ts know it's not undefined
+  const isLoading = sessionLog === undefined
 
   useEffect(() => {
     setIsQuickRender(false)
@@ -96,42 +99,6 @@ export default function SessionView({ date }: Props) {
     })
   }
 
-  const handleSwapRecords = async (i: number, j: number) => {
-    const swiper = swiperElRef.current?.swiper
-    if (!sessionLog || !swiper) return
-
-    const length = sessionLog.records.length
-    if (i < 0 || i >= length || j < 0 || j >= length) {
-      console.error(`Tried swapping records out of range: ${i}, ${j}`)
-      return
-    }
-
-    // todo: avoid the semi colon?
-    const newRecords = [...sessionLog.records]
-    ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
-    const newSession = { ...sessionLog, records: newRecords }
-    mutateSession(updateSessionLog(newSession), {
-      optimisticData: newSession,
-      revalidate: false,
-    })
-    swiper.update()
-    // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
-    swiper.slideTo(j, 0)
-  }
-
-  const handleDeleteRecord = async (recordId: string) => {
-    const swiper = swiperElRef.current?.swiper
-    if (!sessionLog || !swiper) return
-
-    const newRecords = sessionLog.records.filter((id) => id !== recordId)
-    mutateSession(deleteSessionRecord(sessionLog.date, recordId), {
-      optimisticData: { ...sessionLog, records: newRecords },
-      revalidate: false,
-    })
-    swiper.update()
-    swiper.slidePrev()
-  }
-
   // todo: add blank space or something under the swiper. On the longest record
   // if you swap between history it scrolls up when a small history is selected, but won't scroll back down
   // when a bigger one appears.
@@ -152,110 +119,112 @@ export default function SessionView({ date }: Props) {
           <WeightUnitConverter />
         </Grid>
       </Grid>
-      {/* after making code changes to the swiper component the page needs to be reloaded */}
-      <Swiper
-        ref={swiperElRef}
-        // Note: it is CRITICAL to not use state to track slide changes in the
-        // component that contains a Swiper. A state change during a slide transition
-        // will cause the entire component to re-render, and if that component contains
-        // the transitioning swiper it will pause the transition and cause noticeable
-        // lag on every swipe. Any state manipulation should be handled by isolated
-        // child components that will only re-render themselves.
-        // Note that the useSwiperSlide hook uses state internally, so it will cause
-        // this same lag.
-        noSwipingClass="swiper-no-swiping-record"
-        modules={[Navigation, Pagination, Keyboard]}
-        // breakpoints catch everything >= the given value
-        breakpoints={{
-          [theme.breakpoints.values.sm]: {
-            slidesPerView: 1,
-          },
-          [theme.breakpoints.values.md]: {
-            slidesPerView: 2,
-            centeredSlides: false,
-            centerInsufficientSlides: true,
-          },
-          [theme.breakpoints.values.lg]: {
-            slidesPerView: 3,
-            centeredSlides: true,
-            centerInsufficientSlides: false,
-          },
-        }}
-        spaceBetween={20}
-        keyboard
-        // not sure if autoheight is good. Will jump up if a smaller record appears (eg, "add record")
-        // Change the default where dragging will only work on the slides, but not the space between them.
-        touchEventsTarget="container"
-        centeredSlides
-        navigation={{
-          prevEl: `.${navPrevClassName}`,
-          nextEl: `.${navNextClassName}`,
-        }}
-        grabCursor
-        pagination={{
-          el: `.${paginationClassName}`,
-          clickable: true,
-          // todo: maybe add a custom render and make the last one a "+" or something.
-          // Kind of tricky to do though.
-        }}
-        // Extra padding lets autoHeight remember scroll position for longer slides.
-        // Has to be large enough to still be showing swiper on AddRecord slide,
-        // but small enough that it isn't bigger than record cards
-        style={{ paddingBottom: '60vh' }}
+      {/* Provider has to be outside swiper. Swiper ends up ignoring the provider if placed within. */}
+      <SessionLogContext.Provider
+        value={{ sessionLog: sessionLog ?? null, date }}
       >
-        {/* Keeping navigation above slides instead of inline to the left/right solves problem of 
-            how to vertically align them given variable slide height.  */}
-        <NavigationBar
-          {...{
-            isLoading,
-            navNextClassName,
-            navPrevClassName,
-            paginationClassName,
-            sx: { pb: 2, pt: 3 },
-            slot: 'container-start',
+        {/* after making code changes to the swiper component the page needs to be reloaded */}
+        <Swiper
+          ref={swiperElRef}
+          // Note: it is CRITICAL to not use state to track slide changes in the
+          // component that contains a Swiper. A state change during a slide transition
+          // will cause the entire component to re-render, and if that component contains
+          // the transitioning swiper it will pause the transition and cause noticeable
+          // lag on every swipe. Any state manipulation should be handled by isolated
+          // child components that will only re-render themselves.
+          // Note that the useSwiperSlide hook uses state internally, so it will cause
+          // this same lag.
+          noSwipingClass="swiper-no-swiping-record"
+          modules={[Navigation, Pagination, Keyboard]}
+          // breakpoints catch everything >= the given value
+          breakpoints={{
+            [theme.breakpoints.values.sm]: {
+              slidesPerView: 1,
+            },
+            [theme.breakpoints.values.md]: {
+              slidesPerView: 2,
+              centeredSlides: false,
+              centerInsufficientSlides: true,
+            },
+            [theme.breakpoints.values.lg]: {
+              slidesPerView: 3,
+              centeredSlides: true,
+              centerInsufficientSlides: false,
+            },
           }}
-        />
-        {/* Load inside the swiper to increase performance -- swiper is already rendered when loading finishes. 
+          spaceBetween={20}
+          keyboard
+          // not sure if autoheight is good. Will jump up if a smaller record appears (eg, "add record")
+          // Change the default where dragging will only work on the slides, but not the space between them.
+          touchEventsTarget="container"
+          centeredSlides
+          navigation={{
+            prevEl: `.${navPrevClassName}`,
+            nextEl: `.${navNextClassName}`,
+          }}
+          grabCursor
+          pagination={{
+            el: `.${paginationClassName}`,
+            clickable: true,
+            // todo: maybe add a custom render and make the last one a "+" or something.
+            // Kind of tricky to do though.
+          }}
+          // Extra padding lets autoHeight remember scroll position for longer slides.
+          // Has to be large enough to still be showing swiper on AddRecord slide,
+          // but small enough that it isn't bigger than record cards
+          style={{ paddingBottom: '60vh' }}
+        >
+          {/* Keeping navigation above slides instead of inline to the left/right solves problem of 
+            how to vertically align them given variable slide height.  */}
+          <NavigationBar
+            {...{
+              isLoading,
+              navNextClassName,
+              navPrevClassName,
+              paginationClassName,
+              sx: { pb: 2, pt: 3 },
+              slot: 'container-start',
+            }}
+          />
+          {/* Load inside the swiper to increase performance -- swiper is already rendered when loading finishes. 
             Pagination doesn't work properly inside the isLoading check so it has to be extracted too. */}
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : (
-          <>
-            {sessionLog?.records.map((id, i) => (
-              <SwiperSlide key={id}>
-                <RecordCard
-                  isQuickRender={isQuickRender}
-                  id={id}
-                  deleteRecord={handleDeleteRecord}
-                  swapRecords={handleSwapRecords}
-                  swiperIndex={i}
-                  updateSessionNotes={handleNotesChange}
-                  sessionNotes={sessionLog.notes}
-                  setMostRecentlyUpdatedExercise={
-                    setMostRecentlyUpdatedExercise
-                  }
-                  mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
-                />
-              </SwiperSlide>
-            ))}
-
-            <SwiperSlide
-              // if no records, disable swiping. The swiping prevents you from being able to close date picker
-              className={sessionHasRecords ? '' : 'swiper-no-swiping-record'}
-            >
-              <Stack spacing={2} sx={{ p: 0.5 }}>
-                <AddRecordCard handleAdd={handleAddRecord} />
-                {!sessionHasRecords && (
-                  <CopySessionCard
-                    day={dayjs(date)}
-                    handleUpdateSession={handleUpdateSession}
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              {sessionLog?.records.map((id, i) => (
+                <SwiperSlide key={id}>
+                  <RecordCard
+                    isQuickRender={isQuickRender}
+                    id={id}
+                    swiperIndex={i}
+                    updateSessionNotes={handleNotesChange}
+                    sessionNotes={sessionLog.notes}
+                    setMostRecentlyUpdatedExercise={
+                      setMostRecentlyUpdatedExercise
+                    }
+                    mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
                   />
-                )}
-              </Stack>
-            </SwiperSlide>
-          </>
-        )}
-      </Swiper>
+                </SwiperSlide>
+              ))}
+              <SwiperSlide
+                // if no records, disable swiping. The swiping prevents you from being able to close date picker
+                className={sessionHasRecords ? '' : 'swiper-no-swiping-record'}
+              >
+                <Stack spacing={2} sx={{ p: 0.5 }}>
+                  <AddRecordCard handleAdd={handleAddRecord} />
+                  {!sessionHasRecords && (
+                    <CopySessionCard
+                      day={dayjs(date)}
+                      handleUpdateSession={handleUpdateSession}
+                    />
+                  )}
+                </Stack>
+              </SwiperSlide>
+            </>
+          )}
+        </Swiper>
+      </SessionLogContext.Provider>
     </Stack>
   )
 }

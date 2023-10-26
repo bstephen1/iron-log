@@ -1,7 +1,4 @@
-import DeleteIcon from '@mui/icons-material/Delete'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import NotesIcon from '@mui/icons-material/Notes'
 import SettingsIcon from '@mui/icons-material/Settings'
 import {
@@ -38,7 +35,9 @@ import { useMeasure } from 'react-use'
 import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
+import DeleteRecordButton from './actions/DeleteRecordButton'
 import MoreActionsButton from './actions/MoreActionsButton'
+import SwapRecordButton from './actions/SwapRecordButton'
 import { RecordContext } from './RecordContext'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
@@ -58,8 +57,6 @@ import useRecordCard from './useRecordCard'
 interface Props {
   id: string
   isQuickRender?: boolean
-  deleteRecord: (id: string) => Promise<void>
-  swapRecords: (i: number, j: number) => Promise<void>
   setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
   /** This allows records within a session that are using the same exercise to see updates to notes/displayFields */
   mostRecentlyUpdatedExercise: Exercise | null
@@ -103,8 +100,6 @@ export default function RecordCard(props: Props) {
 }
 
 function LoadedRecordCard({
-  deleteRecord,
-  swapRecords,
   swiperIndex,
   setMostRecentlyUpdatedExercise,
   updateSessionNotes,
@@ -218,27 +213,6 @@ function LoadedRecordCard({
     )
   }
 
-  const MoveLeftButton = () => (
-    <RecordHeaderButton
-      title="Move current record to the left"
-      disabled={!swiperIndex}
-      onClick={() => swapRecords(swiperIndex, swiperIndex - 1)}
-    >
-      <KeyboardDoubleArrowLeftIcon />
-    </RecordHeaderButton>
-  )
-
-  const MoveRightButton = () => (
-    <RecordHeaderButton
-      title="Move current record to the right"
-      // disable on the penultimate slide because the last is the "add record" button
-      disabled={swiperIndex >= swiper.slides?.length - 2}
-      onClick={() => swapRecords(swiperIndex, swiperIndex + 1)}
-    >
-      <KeyboardDoubleArrowRightIcon />
-    </RecordHeaderButton>
-  )
-
   const UnitsButton = () => (
     <RecordUnitsButton
       displayFields={displayFields}
@@ -248,16 +222,6 @@ function LoadedRecordCard({
       handleClose={doNothing}
       // handleClose={() => setMoreButtonsAnchorEl(null)}
     />
-  )
-
-  const DeleteButton = () => (
-    <RecordHeaderButton
-      title="Delete Record"
-      color="error"
-      onClick={() => deleteRecord(_id)}
-    >
-      <DeleteIcon />
-    </RecordHeaderButton>
   )
 
   const actionButtons = [
@@ -271,6 +235,7 @@ function LoadedRecordCard({
     />,
     !!exercise && (
       <RecordNotesDialogButton
+        key="exercise notes"
         notes={exercise.notes}
         options={exercise.modifiers}
         Icon={<FitnessCenterIcon />}
@@ -308,26 +273,29 @@ function LoadedRecordCard({
     //  todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  }
     !!exercise && (
       <RecordHeaderButton
+        key="manage"
         title="Manage Exercise"
         onClick={() => router.push(`/manage?exercise=${exercise.name}`)}
       >
         <SettingsIcon />
       </RecordHeaderButton>
     ),
-    <DeleteButton key="delete" />,
+    <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
+    <SwapRecordButton key="right" direction="right" index={swiperIndex} />,
+    <DeleteRecordButton key="delete" />,
   ]
 
   const [visibleActions, setVisibleActions] = useState(actionButtons.length)
-  console.log(titleWidth)
   // todo: incredibly slow because it's rerendering the entire record card.
   // should be limited to just the header
   // todo: same with opening the "more..." menu. It rerenders the ENTIRE record card
   const maxVisibleActions = Math.floor((titleWidth - 132) / 40)
   // const maxVisibleActions = 4
-  console.log(maxVisibleActions)
   useEffect(() => {
     setVisibleActions(maxVisibleActions > 0 ? maxVisibleActions : 0)
   }, [maxVisibleActions])
+
+  // todo: if there would only be a single item in the menu, don't render as a menu
 
   // total - 40x + 8 > 100
   // x = floor((total - 92) /  40)
