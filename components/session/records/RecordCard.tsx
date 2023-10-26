@@ -2,7 +2,6 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
 import NotesIcon from '@mui/icons-material/Notes'
 import SettingsIcon from '@mui/icons-material/Settings'
 import {
@@ -10,8 +9,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Menu,
-  MenuItem,
   Stack,
   Typography,
 } from '@mui/material'
@@ -28,6 +25,7 @@ import {
   useRecord,
 } from 'lib/frontend/restService'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
+import { doNothing } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
@@ -35,11 +33,12 @@ import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
 import Record, { SetType } from 'models/Record'
 import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
 import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
+import MoreActionsButton from './actions/MoreActionsButton'
 import { RecordContext } from './RecordContext'
 import RecordHeaderButton from './RecordHeaderButton'
 import RecordNotesDialogButton from './RecordNotesDialogButton'
@@ -130,9 +129,8 @@ function LoadedRecordCard({
     status: Status.active,
   })
   const router = useRouter()
-  const [titleRef, { width: titleWidth }] = useMeasure()
-  const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
-    useState<null | HTMLElement>(null)
+  const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
+
   // todo: width resets to 0 on date change due to component rerender, making this always flash to true
   const shouldCondense = titleWidth < 400
   const [shouldSyncFilter, setShouldSyncFilter] = useState(true)
@@ -247,7 +245,8 @@ function LoadedRecordCard({
       handleSubmit={(displayFields) =>
         handleExerciseFieldsChange({ displayFields })
       }
-      handleClose={() => setMoreButtonsAnchorEl(null)}
+      handleClose={doNothing}
+      // handleClose={() => setMoreButtonsAnchorEl(null)}
     />
   )
 
@@ -261,6 +260,78 @@ function LoadedRecordCard({
     </RecordHeaderButton>
   )
 
+  const actionButtons = [
+    <RecordNotesDialogButton
+      key="record notes"
+      notes={[...sessionNotes, ...notes]}
+      Icon={<NotesIcon />}
+      title="Record Notes"
+      sets={sets}
+      handleSubmit={(notes) => handleRecordNotesChange(notes)}
+    />,
+    !!exercise && (
+      <RecordNotesDialogButton
+        notes={exercise.notes}
+        options={exercise.modifiers}
+        Icon={<FitnessCenterIcon />}
+        title="Exercise Notes"
+        handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
+        multiple
+      />
+    ),
+    <HistoryFilterHeaderButton
+      key="filter"
+      {...{
+        record,
+        filter: historyFilter,
+        units: displayFields.units,
+        shouldSync: shouldSyncFilter,
+        onSyncChange: (shouldSync) => {
+          setShouldSyncFilter(shouldSync)
+
+          // reset filter to current match current record
+          if (shouldSync) {
+            updateFilter({
+              ...setType,
+              modifier: activeModifiers,
+              modifierMatchType: ArrayMatchType.Equivalent,
+            })
+          }
+        },
+        updateFilter: (changes) => {
+          updateFilter(changes)
+          setShouldSyncFilter(false)
+        },
+      }}
+    />,
+    <UnitsButton key="units" />,
+    //  todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  }
+    !!exercise && (
+      <RecordHeaderButton
+        title="Manage Exercise"
+        onClick={() => router.push(`/manage?exercise=${exercise.name}`)}
+      >
+        <SettingsIcon />
+      </RecordHeaderButton>
+    ),
+    <DeleteButton key="delete" />,
+  ]
+
+  const [visibleActions, setVisibleActions] = useState(actionButtons.length)
+  console.log(titleWidth)
+  // todo: incredibly slow because it's rerendering the entire record card.
+  // should be limited to just the header
+  // todo: same with opening the "more..." menu. It rerenders the ENTIRE record card
+  const maxVisibleActions = Math.floor((titleWidth - 132) / 40)
+  // const maxVisibleActions = 4
+  console.log(maxVisibleActions)
+  useEffect(() => {
+    setVisibleActions(maxVisibleActions > 0 ? maxVisibleActions : 0)
+  }, [maxVisibleActions])
+
+  // total - 40x + 8 > 100
+  // x = floor((total - 92) /  40)
+
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
     <>
@@ -270,92 +341,12 @@ function LoadedRecordCard({
           title={`Record ${swiperIndex + 1}`}
           titleTypographyProps={{ variant: 'h6' }}
           action={
-            <Box className={noSwipingClassName} sx={{ cursor: 'default' }}>
-              {!shouldCondense && <MoveLeftButton />}
-              {!shouldCondense && <MoveRightButton />}
-              <RecordNotesDialogButton
-                notes={[...sessionNotes, ...notes]}
-                Icon={<NotesIcon />}
-                title="Record Notes"
-                sets={sets}
-                handleSubmit={(notes) => handleRecordNotesChange(notes)}
-              />
-              {!!exercise && (
-                <RecordNotesDialogButton
-                  notes={exercise.notes}
-                  options={exercise.modifiers}
-                  Icon={<FitnessCenterIcon />}
-                  title="Exercise Notes"
-                  handleSubmit={(notes) =>
-                    handleExerciseFieldsChange({ notes })
-                  }
-                  multiple
-                />
-              )}
-              <HistoryFilterHeaderButton
-                {...{
-                  record,
-                  filter: historyFilter,
-                  units: displayFields.units,
-                  shouldSync: shouldSyncFilter,
-                  onSyncChange: (shouldSync) => {
-                    setShouldSyncFilter(shouldSync)
-
-                    // reset filter to current match current record
-                    if (shouldSync) {
-                      updateFilter({
-                        ...setType,
-                        modifier: activeModifiers,
-                        modifierMatchType: ArrayMatchType.Equivalent,
-                      })
-                    }
-                  },
-                  updateFilter: (changes) => {
-                    updateFilter(changes)
-                    setShouldSyncFilter(false)
-                  },
-                }}
-              />
-              {!shouldCondense && <UnitsButton />}
-              {/* todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  */}
-              {!!exercise && (
-                <RecordHeaderButton
-                  title="Manage Exercise"
-                  onClick={() =>
-                    router.push(`/manage?exercise=${exercise.name}`)
-                  }
-                >
-                  <SettingsIcon />
-                </RecordHeaderButton>
-              )}
-              {!shouldCondense && <DeleteButton />}
-              {shouldCondense && (
-                <RecordHeaderButton
-                  title="More..."
-                  onClick={(e) => setMoreButtonsAnchorEl(e.currentTarget)}
-                >
-                  <MoreVertIcon />
-                </RecordHeaderButton>
-              )}
-              <Menu
-                id="more options menu"
-                anchorEl={moreButtonsAnchorEl}
-                open={!!moreButtonsAnchorEl}
-                onClose={() => setMoreButtonsAnchorEl(null)}
-              >
-                <MenuItem>
-                  <MoveLeftButton />
-                </MenuItem>
-                <MenuItem>
-                  <MoveRightButton />
-                </MenuItem>
-                <MenuItem>
-                  <UnitsButton />
-                </MenuItem>
-                <MenuItem>
-                  <DeleteButton />
-                </MenuItem>
-              </Menu>
+            <Box
+              className={noSwipingClassName}
+              sx={{ cursor: 'default', width: '100%' }}
+            >
+              {actionButtons.slice(0, visibleActions)}
+              <MoreActionsButton {...{ actionButtons, visibleActions }} />
             </Box>
           }
         />
