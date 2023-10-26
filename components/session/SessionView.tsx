@@ -4,21 +4,14 @@ import LoadingSpinner from 'components/loading/LoadingSpinner'
 import WeightUnitConverter from 'components/session/upper/WeightUnitConverter'
 import NavigationBar from 'components/slider/NavigationBar'
 import dayjs from 'dayjs'
-import {
-  addRecord,
-  updateSessionLog,
-  useSessionLog,
-} from 'lib/frontend/restService'
+import { updateSessionLog, useSessionLog } from 'lib/frontend/restService'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
-import Record from 'models/Record'
-import SessionLog from 'models/SessionLog'
 import { useEffect, useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
-import { useSWRConfig } from 'swr'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
@@ -39,7 +32,6 @@ export default function SessionView({ date }: Props) {
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
   const { sessionLog, mutate: mutateSession } = useSessionLog(date)
-  const { mutate } = useSWRConfig()
   // quick render reduces load time for initial render by only rendering the visible RecordCards.
   const [isQuickRender, setIsQuickRender] = useState(true)
   const swiperElRef = useRef<SwiperRef>(null)
@@ -54,40 +46,6 @@ export default function SessionView({ date }: Props) {
   useEffect(() => {
     setIsQuickRender(false)
   }, [])
-
-  const handleUpdateSession = async (newSessionLog: SessionLog) => {
-    mutateSession(updateSessionLog(newSessionLog), {
-      optimisticData: newSessionLog,
-      revalidate: false,
-    })
-  }
-
-  const handleAddRecord = async (exercise: Exercise) => {
-    // have to check at function runtime if swiper.current exists bc a value change does not re-render
-    const swiper = swiperElRef.current?.swiper
-    if (!swiper) return
-
-    const newRecord = new Record(date, { exercise })
-    newRecord.sets.push({})
-    const newSessionLog = sessionLog
-      ? {
-          ...sessionLog,
-          records: sessionLog.records.concat(newRecord._id),
-        }
-      : new SessionLog(date, [newRecord._id])
-
-    mutateSession(updateSessionLog(newSessionLog), {
-      optimisticData: newSessionLog,
-      revalidate: false,
-    })
-    // Add new record to swr cache so it doesn't have to be fetched.
-    mutate(`/api/records/${newRecord._id}`, addRecord(newRecord), {
-      revalidate: false,
-      optimisticData: newRecord,
-    })
-
-    swiper.update()
-  }
 
   const handleNotesChange = async (notes: Note[]) => {
     if (!sessionLog) return
@@ -212,13 +170,8 @@ export default function SessionView({ date }: Props) {
                 className={sessionHasRecords ? '' : 'swiper-no-swiping-record'}
               >
                 <Stack spacing={2} sx={{ p: 0.5 }}>
-                  <AddRecordCard handleAdd={handleAddRecord} />
-                  {!sessionHasRecords && (
-                    <CopySessionCard
-                      day={dayjs(date)}
-                      handleUpdateSession={handleUpdateSession}
-                    />
-                  )}
+                  <AddRecordCard />
+                  {!sessionHasRecords && <CopySessionCard />}
                 </Stack>
               </SwiperSlide>
             </>

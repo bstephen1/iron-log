@@ -15,5 +15,7 @@ export default function useCurrentSessionLog() {
     sessionLog,
     mutate,
     ...sessionLog,
+    // date is always defined, even for null sessions
+    date: context.date,
   }
 }
