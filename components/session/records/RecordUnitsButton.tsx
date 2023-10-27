@@ -13,7 +13,7 @@ import {
 import { DisplayFields } from 'models/DisplayFields'
 import { UNITS, Units } from 'models/Set'
 import { useState } from 'react'
-import RecordHeaderButton from './RecordHeaderButton'
+import TooltipIconButton from '../../TooltipIconButton'
 
 interface Props {
   displayFields: DisplayFields
@@ -38,10 +38,10 @@ export default function RecordUnitsButton({
 
   return (
     <>
-      <RecordHeaderButton title="Change Units" onClick={() => setOpen(true)}>
+      <TooltipIconButton title="Change Units" onClick={() => setOpen(true)}>
         {/* it's proven pretty difficult to find a good "change units" icon...  */}
         <DesignServicesIcon />
-      </RecordHeaderButton>
+      </TooltipIconButton>
       <Dialog
         open={open}
         fullWidth

@@ -1,7 +1,7 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Menu, MenuItem } from '@mui/material'
 import { ReactNode, useState } from 'react'
-import RecordHeaderButton from '../RecordHeaderButton'
+import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
   actionButtons: ReactNode[]
@@ -19,12 +19,12 @@ export default function MoreActionsButton({
 
   return isVisible ? (
     <>
-      <RecordHeaderButton
+      <TooltipIconButton
         title="More..."
         onClick={(e) => setMoreButtonsAnchorEl(e.currentTarget)}
       >
         <MoreVertIcon />
-      </RecordHeaderButton>
+      </TooltipIconButton>
       <Menu
         id="more options menu"
         anchorEl={moreButtonsAnchorEl}

@@ -3,7 +3,7 @@ import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import NotesList from 'components/form-fields/NotesList'
 import Note from 'models/Note'
 import { useState } from 'react'
-import RecordHeaderButton from '../RecordHeaderButton'
+import TooltipIconButton from '../../../TooltipIconButton'
 import useCurrentRecord from '../useCurrentRecord'
 
 const title = 'Exercise Notes'
@@ -22,7 +22,7 @@ export default function ExerciseNotesButton({ handleSubmit }: Props) {
 
   return (
     <>
-      <RecordHeaderButton
+      <TooltipIconButton
         title={title}
         onClick={() => setOpen(true)}
         disabled={!exercise}
@@ -30,7 +30,7 @@ export default function ExerciseNotesButton({ handleSubmit }: Props) {
         <Badge badgeContent={notes.length} color="primary">
           <FitnessCenterIcon />
         </Badge>
-      </RecordHeaderButton>
+      </TooltipIconButton>
       <Dialog open={open} fullWidth onClose={() => setOpen(false)}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>

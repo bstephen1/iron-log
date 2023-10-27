@@ -27,16 +27,16 @@ import Record, { SetType } from 'models/Record'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
+import TooltipIconButton from '../../TooltipIconButton'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
-import DeleteRecordButton from './actions/DeleteRecordButton'
-import ExerciseNotesButton from './actions/ExerciseNotesButton'
-import MoreActionsButton from './actions/MoreActionsButton'
-import RecordNotesButton from './actions/ReccordNotesButton'
-import SwapRecordButton from './actions/SwapRecordButton'
+import DeleteRecordButton from './header/DeleteRecordButton'
+import ExerciseNotesButton from './header/ExerciseNotesButton'
+import MoreActionsButton from './header/MoreActionsButton'
+import RecordNotesButton from './header/ReccordNotesButton'
+import SwapRecordButton from './header/SwapRecordButton'
 import { RecordContext } from './RecordContext'
 import RecordExerciseSelector from './RecordExerciseSelector'
-import RecordHeaderButton from './RecordHeaderButton'
 import RecordUnitsButton from './RecordUnitsButton'
 import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
@@ -207,13 +207,13 @@ function LoadedRecordCard({
     <UnitsButton key="units" />,
     //  todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  }
     !!exercise && (
-      <RecordHeaderButton
+      <TooltipIconButton
         key="manage"
         title="Manage Exercise"
         onClick={() => router.push(`/manage?exercise=${exercise.name}`)}
       >
         <SettingsIcon />
-      </RecordHeaderButton>
+      </TooltipIconButton>
     ),
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
     <SwapRecordButton key="right" direction="right" index={swiperIndex} />,

@@ -2,7 +2,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
 import { deleteSessionRecord } from 'lib/frontend/restService'
 import { useSwiper } from 'swiper/react'
-import RecordHeaderButton from '../RecordHeaderButton'
+import TooltipIconButton from '../../../TooltipIconButton'
 import useCurrentRecord from '../useCurrentRecord'
 
 export default function DeleteRecordButton() {
@@ -23,12 +23,12 @@ export default function DeleteRecordButton() {
   }
 
   return (
-    <RecordHeaderButton
+    <TooltipIconButton
       title="Delete Record"
       color="error"
       onClick={() => deleteRecord(_id)}
     >
       <DeleteIcon />
-    </RecordHeaderButton>
+    </TooltipIconButton>
   )
 }

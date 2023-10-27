@@ -17,7 +17,7 @@ import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record, { DEFAULT_SET_TYPE, SetType } from 'models/Record'
 import { Units } from 'models/Set'
 import { useState } from 'react'
-import RecordHeaderButton from '../records/RecordHeaderButton'
+import TooltipIconButton from '../../TooltipIconButton'
 import SetTypeSelect from '../records/SetTypeSelect'
 
 interface Props {
@@ -48,9 +48,9 @@ export default function HistoryFilterHeaderButton({
 
   return (
     <>
-      <RecordHeaderButton title="History Filter" onClick={() => setOpen(true)}>
+      <TooltipIconButton title="History Filter" onClick={() => setOpen(true)}>
         <AccessTimeIcon />
-      </RecordHeaderButton>
+      </TooltipIconButton>
       <Dialog
         open={open}
         fullWidth

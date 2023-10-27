@@ -10,7 +10,7 @@ interface Props extends Partial<IconButtonProps> {
   children?: JSX.Element
   tooltipProps?: Partial<TooltipProps>
 }
-export default function RecordHeaderButton({
+export default function TooltipIconButton({
   title,
   tooltipProps,
   children,

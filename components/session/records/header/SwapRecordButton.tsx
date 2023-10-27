@@ -3,7 +3,7 @@ import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArro
 import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
 import { updateSessionLog } from 'lib/frontend/restService'
 import { useSwiper } from 'swiper/react'
-import RecordHeaderButton from '../RecordHeaderButton'
+import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
   direction: 'left' | 'right'
@@ -43,7 +43,7 @@ export default function SwapRecordButton({ direction, index }: Props) {
   }
 
   return (
-    <RecordHeaderButton
+    <TooltipIconButton
       title={`Move current record to the ${direction}`}
       disabled={isLeft ? leftDisabled : rightDisabled}
       onClick={() => swapRecords(index, newIndex)}
@@ -53,6 +53,6 @@ export default function SwapRecordButton({ direction, index }: Props) {
       ) : (
         <KeyboardDoubleArrowRightIcon />
       )}
-    </RecordHeaderButton>
+    </TooltipIconButton>
   )
 }

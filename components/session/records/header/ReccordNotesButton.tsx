@@ -4,7 +4,7 @@ import NotesList from 'components/form-fields/NotesList'
 import { updateSessionLog, useSessionLog } from 'lib/frontend/restService'
 import Note from 'models/Note'
 import { useState } from 'react'
-import RecordHeaderButton from '../RecordHeaderButton'
+import TooltipIconButton from '../../../TooltipIconButton'
 import useCurrentRecord from '../useCurrentRecord'
 
 const title = 'Record Notes'
@@ -71,11 +71,11 @@ export default function RecordNotesButton({ readOnly }: Props) {
 
   return (
     <>
-      <RecordHeaderButton title={title} onClick={() => setOpen(true)}>
+      <TooltipIconButton title={title} onClick={() => setOpen(true)}>
         <Badge badgeContent={notes.length} color="primary">
           <NotesIcon />
         </Badge>
-      </RecordHeaderButton>
+      </TooltipIconButton>
       <Dialog open={open} fullWidth onClose={() => setOpen(false)}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
