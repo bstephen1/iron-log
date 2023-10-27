@@ -1,38 +1,18 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Box, Card, CardContent, Stack, Typography } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
-import {
-  updateExerciseFields,
-  updateRecordFields,
-  useRecord,
-} from 'lib/frontend/restService'
+import { updateExerciseFields, useRecord } from 'lib/frontend/restService'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
-import Record, { SetType } from 'models/Record'
-import { useEffect, useState } from 'react'
-import { useMeasure } from 'react-use'
+import { useState } from 'react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
-import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
-import ChangeUnitsButton from './header/ChangeUnitsButton'
-import DeleteRecordButton from './header/DeleteRecordButton'
-import ExerciseNotesButton from './header/ExerciseNotesButton'
-import ManageExerciseButton from './header/ManageExerciseButton'
-import MoreActionsButton from './header/MoreActionsButton'
-import RecordNotesButton from './header/ReccordNotesButton'
-import SwapRecordButton from './header/SwapRecordButton'
+import RecordCardHeader from './header/RecordCardHeader'
 import { RecordContext } from './RecordContext'
 import RecordExerciseSelector from './RecordExerciseSelector'
 import RenderSets from './sets/RenderSets'
@@ -100,18 +80,16 @@ function LoadedRecordCard({
   const {
     exercise,
     activeModifiers,
-    sets,
     setType,
     _id,
     record,
     displayFields,
     mutate: mutateRecord,
+    updateFields,
   } = useCurrentRecord()
 
   const noSwipingClassName = useNoSwipingSmScreen()
-  const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
 
-  const [shouldSyncFilter, setShouldSyncFilter] = useState(true)
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>({
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     modifier: record.activeModifiers,
@@ -127,113 +105,28 @@ function LoadedRecordCard({
   const updateFilter = (changes: Partial<RecordQuery>) =>
     setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
 
-  const handleFieldChange = async (changes: Partial<Record>) => {
-    if (shouldSyncFilter && changes.activeModifiers) {
-      updateFilter({ modifier: changes.activeModifiers })
-    }
-    mutateRecord(updateRecordFields(_id, { ...changes }), {
-      optimisticData: { ...record, ...changes },
-      revalidate: false,
-    })
-  }
-
   const handleExerciseFieldsChange = async (changes: Partial<Exercise>) => {
     if (!exercise) return
 
     const newExercise = { ...exercise, ...changes }
+    // todo: is there a way to get swr to revalidate specific records?
+    // Need to revalidate any record with the same exercise._id
     mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
     setMostRecentlyUpdatedExercise(newExercise)
     await updateExerciseFields(exercise, { ...changes })
   }
 
-  const handleSetTypeChange = async (changes: Partial<SetType>) => {
-    const newSetType = { ...setType, ...changes }
-    const newRecord = { ...record, setType: newSetType }
-    if (shouldSyncFilter) {
-      updateFilter(changes)
-    }
-    mutateRecord(updateRecordFields(_id, { setType: newSetType }), {
-      optimisticData: newRecord,
-      revalidate: false,
-    })
-  }
-
-  const actionButtons = [
-    <RecordNotesButton key="record notes" />,
-    <ExerciseNotesButton
-      key="exercise notes"
-      handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
-    />,
-    <HistoryFilterHeaderButton
-      key="filter"
-      {...{
-        record,
-        filter: historyFilter,
-        units: displayFields.units,
-        shouldSync: shouldSyncFilter,
-        onSyncChange: (shouldSync) => {
-          setShouldSyncFilter(shouldSync)
-
-          // reset filter to current match current record
-          if (shouldSync) {
-            updateFilter({
-              ...setType,
-              modifier: activeModifiers,
-              modifierMatchType: ArrayMatchType.Equivalent,
-            })
-          }
-        },
-        updateFilter: (changes) => {
-          updateFilter(changes)
-          setShouldSyncFilter(false)
-        },
-      }}
-    />,
-    <ChangeUnitsButton
-      key="units"
-      handleSubmit={(displayFields) =>
-        handleExerciseFieldsChange({ displayFields })
-      }
-    />,
-    <ManageExerciseButton key="manage" />,
-    <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
-    <SwapRecordButton key="right" direction="right" index={swiperIndex} />,
-    <DeleteRecordButton key="delete" />,
-  ]
-
-  const [visibleActions, setVisibleActions] = useState(actionButtons.length)
-  // todo: incredibly slow because it's rerendering the entire record card.
-  // should be limited to just the header
-  // todo: same with opening the "more..." menu. It rerenders the ENTIRE record card
-  const maxVisibleActions = Math.floor((titleWidth - 132) / 40)
-  // const maxVisibleActions = 4
-  useEffect(() => {
-    setVisibleActions(maxVisibleActions > 0 ? maxVisibleActions : 0)
-  }, [maxVisibleActions])
-  // todo: width resets to 0 on date change due to component rerender, making this always flash to true
-
-  // todo: if there would only be a single item in the menu, don't render as a menu
-
-  // total - 40x + 8 > 100
-  // x = floor((total - 92) /  40)
-
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
     <>
       <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
-        <CardHeader
-          ref={titleRef}
-          title={`Record ${swiperIndex + 1}`}
-          titleTypographyProps={{ variant: 'h6' }}
-          action={
-            <Box
-              className={noSwipingClassName}
-              sx={{ cursor: 'default', width: '100%' }}
-            >
-              {actionButtons.slice(0, visibleActions)}
-              <MoreActionsButton {...{ actionButtons, visibleActions }} />
-            </Box>
-          }
+        <RecordCardHeader
+          {...{
+            historyFilter,
+            updateFilter,
+            handleExerciseFieldsChange,
+            swiperIndex,
+          }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
         <CardContent
@@ -250,16 +143,10 @@ function LoadedRecordCard({
               variant="standard"
               helperText=""
               handleSubmit={(value: string[]) =>
-                handleFieldChange({ activeModifiers: value })
+                updateFields({ activeModifiers: value })
               }
             />
-            <SetTypeSelect
-              setType={setType}
-              units={displayFields.units}
-              handleSubmit={handleSetTypeChange}
-              sets={sets}
-              showTotal
-            />
+            <SetTypeSelect showTotal />
             <RenderSets
               handleExerciseFieldsChange={handleExerciseFieldsChange}
               displayFields={displayFields}
@@ -270,7 +157,6 @@ function LoadedRecordCard({
           <HistoryCardsSwiper
             isQuickRender={isQuickRender}
             filter={historyFilter}
-            shouldSync={shouldSyncFilter}
             paginationId={_id}
             displayFields={displayFields}
           />

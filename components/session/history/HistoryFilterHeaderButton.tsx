@@ -14,36 +14,39 @@ import {
   ArrayMatchTypeDescription,
 } from 'models/query-filters/MongoQuery'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import Record, { DEFAULT_SET_TYPE, SetType } from 'models/Record'
-import { Units } from 'models/Set'
 import { useState } from 'react'
 import TooltipIconButton from '../../TooltipIconButton'
 import SetTypeSelect from '../records/SetTypeSelect'
+import useCurrentRecord from '../records/useCurrentRecord'
 
 interface Props {
-  record: Record
   filter: RecordQuery
   updateFilter: (changes: Partial<RecordQuery>) => void
-  units: Units
-  shouldSync: boolean
-  onSyncChange: (matches: boolean) => void
 }
 export default function HistoryFilterHeaderButton({
-  record,
   filter,
   updateFilter,
-  units,
-  shouldSync,
-  onSyncChange,
 }: Props) {
   const [open, setOpen] = useState(false)
+  const [shouldSync, setShouldSync] = useState(true)
+  const { record } = useCurrentRecord()
 
-  const setType: SetType = {
-    operator: filter.operator ?? DEFAULT_SET_TYPE.operator,
-    field: filter.field ?? DEFAULT_SET_TYPE.field,
-    value: filter.value,
-    min: filter.min,
-    max: filter.max,
+  const onSyncChange = (checked: boolean) => {
+    setShouldSync(checked)
+
+    // reset filter to record's current values
+    if (checked) {
+      updateFilter({
+        ...record.setType,
+        modifier: record.activeModifiers,
+        modifierMatchType: ArrayMatchType.Equivalent,
+      })
+    }
+  }
+
+  const handleFilterChange = (changes: Partial<RecordQuery>) => {
+    setShouldSync(false)
+    updateFilter(changes)
   }
 
   return (
@@ -76,7 +79,7 @@ export default function HistoryFilterHeaderButton({
               options={record.exercise?.modifiers}
               initialValue={filter?.modifier || []}
               variant="standard"
-              handleSubmit={(modifier) => updateFilter({ modifier })}
+              handleSubmit={(modifier) => handleFilterChange({ modifier })}
               helperText=""
             />
             <SelectFieldAutosave
@@ -84,7 +87,7 @@ export default function HistoryFilterHeaderButton({
               label="Modifier Match Type"
               options={Object.values(ArrayMatchType)}
               handleSubmit={(modifierMatchType) =>
-                updateFilter({ modifierMatchType })
+                handleFilterChange({ modifierMatchType })
               }
               initialValue={
                 filter.modifierMatchType ?? ArrayMatchType.Equivalent
@@ -94,13 +97,7 @@ export default function HistoryFilterHeaderButton({
                 filter.modifierMatchType ?? 'none'
               ].replaceAll('values', 'modifiers')}
             />
-            <SetTypeSelect
-              units={units}
-              setType={setType}
-              handleSubmit={updateFilter}
-              sets={[]}
-              emptyOption="no filter"
-            />
+            <SetTypeSelect emptyOption="no filter" />
           </Stack>
         </DialogContent>
       </Dialog>

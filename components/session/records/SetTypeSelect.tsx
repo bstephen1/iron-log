@@ -13,8 +13,9 @@ import {
   printFieldWithUnits,
   VisibleField,
 } from 'models/DisplayFields'
-import { DEFAULT_SET_TYPE, setOperators, SetType } from 'models/Record'
+import { setOperators, SetType } from 'models/Record'
 import { Set, Units } from 'models/Set'
+import useCurrentRecord from './useCurrentRecord'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
@@ -31,28 +32,32 @@ const getUnit = (field: SetType['field'], units: Units) =>
   units[field as keyof Units] ?? field
 
 interface Props {
-  units: Units
-  setType: SetType
-  handleSubmit: (changes: Partial<SetType>) => void
-  sets: Set[]
   readOnly?: boolean
   showTotal?: boolean
   /** label for empty option  */
   emptyOption?: string
 }
 export default function SetTypeSelect({
-  units,
-  // todo: remove DEFAULT when all records properly have been init'd with a set type
-  setType: { field, value, operator, min, max } = DEFAULT_SET_TYPE,
-  handleSubmit,
-  sets,
   readOnly,
   showTotal,
   emptyOption,
 }: Props) {
+  const {
+    updateFields,
+    sets,
+    setType,
+    displayFields: { units },
+  } = useCurrentRecord()
+  const { field, value, operator, min, max } = setType
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const total = calculateTotal(sets, field)
   const remaining = (value ?? 0) - total
+
+  const updateSetType = async (changes: Partial<SetType>) => {
+    const newSetType = { ...setType, ...changes }
+
+    updateFields({ setType: newSetType })
+  }
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
 
@@ -73,7 +78,7 @@ export default function SetTypeSelect({
           options={[...setOperators]}
           handleSubmit={(operator) => {
             // "rest" only applies to time
-            handleSubmit({
+            updateSetType({
               operator,
               field: operator === 'rest' ? 'time' : field,
             })
@@ -92,7 +97,7 @@ export default function SetTypeSelect({
                 <NumericFieldAutosave
                   placeholder="min"
                   initialValue={min}
-                  handleSubmit={(min) => handleSubmit({ min })}
+                  handleSubmit={(min) => updateSetType({ min })}
                   variant="standard"
                   readOnly={readOnly}
                 />
@@ -100,7 +105,7 @@ export default function SetTypeSelect({
                 <NumericFieldAutosave
                   placeholder="max"
                   initialValue={max}
-                  handleSubmit={(max) => handleSubmit({ max })}
+                  handleSubmit={(max) => updateSetType({ max })}
                   variant="standard"
                   readOnly={readOnly}
                 />
@@ -109,7 +114,7 @@ export default function SetTypeSelect({
               <NumericFieldAutosave
                 placeholder="value"
                 initialValue={value}
-                handleSubmit={(value) => handleSubmit({ value })}
+                handleSubmit={(value) => updateSetType({ value })}
                 variant="standard"
                 readOnly={readOnly}
               />
@@ -121,7 +126,7 @@ export default function SetTypeSelect({
               fullWidth
               initialValue={field ?? ''}
               options={fieldOptions}
-              handleSubmit={(field) => handleSubmit({ field })}
+              handleSubmit={(field) => updateSetType({ field })}
               variant="standard"
               defaultHelperText=""
               readOnly={readOnly}
