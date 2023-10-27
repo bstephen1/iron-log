@@ -1,21 +1,19 @@
-import { useGuaranteedSessionLog } from 'lib/frontend/restService'
-import { useSessionLogContext } from './SessionLogContext'
+import { useSessionLog } from 'lib/frontend/restService'
+import { useDateContext } from 'pages/sessions/[date].page'
 
-/** Use within SessionLogContext to retrieve record data and mutators.
+/** Use within DateContext to retrieve session data and mutators.
  *  Session fields are spread out directly for convenient access.
  */
 export default function useCurrentSessionLog() {
-  const context = useSessionLogContext()
-  const { sessionLog, mutate } = useGuaranteedSessionLog(
-    context.date,
-    context.sessionLog
-  )
+  const date = useDateContext()
+  const { sessionLog, mutate } = useSessionLog(date)
 
   return {
     sessionLog,
     mutate,
     ...sessionLog,
-    // date is always defined, even for null sessions
-    date: context.date,
+    // Make sure sessionLog spread doesn't overwrite date.
+    // Data would be the same, but would allow undefined types
+    date,
   }
 }

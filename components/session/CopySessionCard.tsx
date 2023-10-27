@@ -17,6 +17,7 @@ import { useSwiper } from 'swiper/react'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
 
+/** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
   const swiper = useSwiper()
   const { date, mutate } = useCurrentSessionLog()
