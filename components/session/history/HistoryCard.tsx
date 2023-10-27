@@ -1,7 +1,13 @@
-import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Stack,
+  TextField,
+} from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import StyledDivider from 'components/StyledDivider'
-import { doNothing } from 'lib/util'
 import { DisplayFields } from 'models/DisplayFields'
 import { useRouter } from 'next/router'
 import RecordNotesButton from '../records/header/ReccordNotesButton'
@@ -14,12 +20,10 @@ interface Props {
    * The history record's displayFields will be stale if the parent's fields change.
    */
   displayFields: DisplayFields
-  /** if true, some record fields will be hidden since they are the same as the parent  */
-  shouldSync?: boolean
 }
-export default function HistoryCard({ displayFields, shouldSync }: Props) {
+export default function HistoryCard({ displayFields }: Props) {
   const router = useRouter()
-  const { date, sets, activeModifiers, setType } = useCurrentRecord()
+  const { date, activeModifiers, exercise } = useCurrentRecord()
   // use splitWeight if parent record is using it, even if this history record doesn't have the
   // right modifiers for it to be active
   const showSplitWeight = displayFields.visibleFields.some((field) =>
@@ -48,26 +52,22 @@ export default function HistoryCard({ displayFields, shouldSync }: Props) {
       {/* Note -- cannot override pb normally. See: https://stackoverflow.com/questions/54236623/cant-remove-padding-bottom-from-card-content-in-material-ui */}
       <CardContent sx={{ px: 1 }}>
         <Stack spacing={2}>
-          {!shouldSync && (
-            <ComboBoxField
-              label="Modifiers"
-              options={activeModifiers}
-              initialValue={activeModifiers}
-              variant="standard"
-              helperText=""
-              readOnly
-            />
-          )}
-          {!shouldSync && (
-            <SetTypeSelect
-              units={displayFields.units}
-              setType={setType}
-              sets={sets}
-              handleSubmit={doNothing}
-              readOnly
-              showTotal
-            />
-          )}
+          <TextField
+            label="Exercise"
+            variant="standard"
+            value={exercise?.name}
+            InputProps={{ readOnly: true }}
+          />
+          <ComboBoxField
+            label="Modifiers"
+            options={activeModifiers}
+            initialValue={activeModifiers}
+            variant="standard"
+            helperText=""
+            readOnly
+          />
+
+          <SetTypeSelect readOnly showTotal />
           <RenderSets
             displayFields={displayFields}
             showSplitWeight={showSplitWeight}
