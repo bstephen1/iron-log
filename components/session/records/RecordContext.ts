@@ -11,6 +11,7 @@ export const defaultRecordContext: RecordContext = {
   record: new Record('2000-01-01'),
 }
 
-export const RecordContext = createContext<RecordContext>(defaultRecordContext)
+// todo: just ignore the default requirement like this?
+export const RecordContext = createContext<RecordContext>(undefined!)
 
 export const useRecordContext = () => useContext(RecordContext)

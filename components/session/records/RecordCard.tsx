@@ -1,5 +1,3 @@
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
-import NotesIcon from '@mui/icons-material/Notes'
 import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
@@ -10,7 +8,6 @@ import {
   Typography,
 } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
-import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
 import dayjs from 'dayjs'
@@ -18,7 +15,6 @@ import { DATE_FORMAT } from 'lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
-  useExercises,
   useRecord,
 } from 'lib/frontend/restService'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
@@ -28,18 +24,19 @@ import Note from 'models/Note'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
 import Record, { SetType } from 'models/Record'
-import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
 import DeleteRecordButton from './actions/DeleteRecordButton'
+import ExerciseNotesButton from './actions/ExerciseNotesButton'
 import MoreActionsButton from './actions/MoreActionsButton'
+import RecordNotesButton from './actions/ReccordNotesButton'
 import SwapRecordButton from './actions/SwapRecordButton'
 import { RecordContext } from './RecordContext'
+import RecordExerciseSelector from './RecordExerciseSelector'
 import RecordHeaderButton from './RecordHeaderButton'
-import RecordNotesDialogButton from './RecordNotesDialogButton'
 import RecordUnitsButton from './RecordUnitsButton'
 import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
@@ -101,15 +98,12 @@ export default function RecordCard(props: Props) {
 function LoadedRecordCard({
   swiperIndex,
   setMostRecentlyUpdatedExercise,
-  updateSessionNotes,
-  sessionNotes = [],
   isQuickRender,
 }: Props) {
   const {
     exercise,
     activeModifiers,
     sets,
-    notes,
     setType,
     _id,
     record,
@@ -118,14 +112,9 @@ function LoadedRecordCard({
   } = useCurrentRecord()
 
   const noSwipingClassName = useNoSwipingSmScreen()
-  const { exercises, mutate: mutateExercises } = useExercises({
-    status: Status.active,
-  })
   const router = useRouter()
   const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
 
-  // todo: width resets to 0 on date change due to component rerender, making this always flash to true
-  const shouldCondense = titleWidth < 400
   const [shouldSyncFilter, setShouldSyncFilter] = useState(true)
   const [historyFilter, setHistoryFilter] = useState<RecordQuery>({
     // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
@@ -152,22 +141,6 @@ function LoadedRecordCard({
     })
   }
 
-  const handleRecordNotesChange = async (notes: Note[]) => {
-    let sessionNotes = []
-    let recordNotes = []
-    for (const note of notes) {
-      // for record notes, each note should only have a single tag
-      if (note.tags.includes('Session')) {
-        sessionNotes.push(note)
-      } else {
-        recordNotes.push(note)
-      }
-    }
-
-    handleFieldChange({ notes: recordNotes })
-    updateSessionNotes(sessionNotes)
-  }
-
   const handleExerciseFieldsChange = async (changes: Partial<Exercise>) => {
     if (!exercise) return
 
@@ -189,28 +162,6 @@ function LoadedRecordCard({
     })
   }
 
-  const handleExerciseChange = async (newExercise: Exercise | null) => {
-    // if an exercise changes, discard any modifiers that are not valid for the new exercise
-    const remainingModifiers = activeModifiers.filter((modifier) =>
-      newExercise?.modifiers.some((exercise) => exercise === modifier)
-    )
-
-    mutateRecord(
-      updateRecordFields(_id, {
-        exercise: newExercise,
-        activeModifiers: remainingModifiers,
-      }),
-      {
-        optimisticData: {
-          ...record,
-          exercise: newExercise,
-          activeModifiers: remainingModifiers,
-        },
-        revalidate: false,
-      }
-    )
-  }
-
   const UnitsButton = () => (
     <RecordUnitsButton
       displayFields={displayFields}
@@ -223,25 +174,11 @@ function LoadedRecordCard({
   )
 
   const actionButtons = [
-    <RecordNotesDialogButton
-      key="record notes"
-      notes={[...sessionNotes, ...notes]}
-      Icon={<NotesIcon />}
-      title="Record Notes"
-      sets={sets}
-      handleSubmit={(notes) => handleRecordNotesChange(notes)}
+    <RecordNotesButton key="record notes" />,
+    <ExerciseNotesButton
+      key="exercise notes"
+      handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
     />,
-    !!exercise && (
-      <RecordNotesDialogButton
-        key="exercise notes"
-        notes={exercise.notes}
-        options={exercise.modifiers}
-        Icon={<FitnessCenterIcon />}
-        title="Exercise Notes"
-        handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
-        multiple
-      />
-    ),
     <HistoryFilterHeaderButton
       key="filter"
       {...{
@@ -292,6 +229,7 @@ function LoadedRecordCard({
   useEffect(() => {
     setVisibleActions(maxVisibleActions > 0 ? maxVisibleActions : 0)
   }, [maxVisibleActions])
+  // todo: width resets to 0 on date change due to component rerender, making this always flash to true
 
   // todo: if there would only be a single item in the menu, don't render as a menu
 
@@ -323,19 +261,7 @@ function LoadedRecordCard({
           sx={{ cursor: { sm: 'default' }, px: 1 }}
         >
           <Stack spacing={2}>
-            <ExerciseSelector
-              variant="standard"
-              category={record.category}
-              handleCategoryChange={(category) =>
-                handleFieldChange({ category })
-              }
-              {...{
-                exercise,
-                exercises,
-                handleChange: handleExerciseChange,
-                mutate: mutateExercises,
-              }}
-            />
+            <RecordExerciseSelector />
             <ComboBoxField
               label="Modifiers"
               options={exercise?.modifiers}

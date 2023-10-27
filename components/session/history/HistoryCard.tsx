@@ -1,11 +1,10 @@
-import NotesIcon from '@mui/icons-material/Notes'
 import { Box, Card, CardContent, CardHeader, Stack } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import StyledDivider from 'components/StyledDivider'
 import { doNothing } from 'lib/util'
 import { DisplayFields } from 'models/DisplayFields'
 import { useRouter } from 'next/router'
-import RecordNotesDialogButton from '../records/RecordNotesDialogButton'
+import RecordNotesButton from '../records/actions/ReccordNotesButton'
 import RenderSets from '../records/sets/RenderSets'
 import SetTypeSelect from '../records/SetTypeSelect'
 import useCurrentRecord from '../records/useCurrentRecord'
@@ -20,7 +19,7 @@ interface Props {
 }
 export default function HistoryCard({ displayFields, shouldSync }: Props) {
   const router = useRouter()
-  const { date, notes, sets, activeModifiers, setType } = useCurrentRecord()
+  const { date, sets, activeModifiers, setType } = useCurrentRecord()
   // use splitWeight if parent record is using it, even if this history record doesn't have the
   // right modifiers for it to be active
   const showSplitWeight = displayFields.visibleFields.some((field) =>
@@ -42,14 +41,7 @@ export default function HistoryCard({ displayFields, shouldSync }: Props) {
           </Box>
         }
         titleTypographyProps={{ variant: 'h6' }}
-        action={
-          <RecordNotesDialogButton
-            notes={notes}
-            Icon={<NotesIcon />}
-            title="Record Notes"
-            sets={sets}
-          />
-        }
+        action={<RecordNotesButton readOnly />}
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
 

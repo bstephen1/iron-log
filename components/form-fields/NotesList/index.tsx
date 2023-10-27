@@ -1,4 +1,4 @@
-import { Divider, Stack } from '@mui/material'
+import { Divider, Stack, Typography } from '@mui/material'
 import Note from 'models/Note'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'
@@ -13,6 +13,7 @@ interface Props {
   handleSubmit?: (notes: Note[]) => void
   notes: Note[]
   multiple?: boolean
+  readOnly?: boolean
 }
 export default function NotesList(props: Props) {
   const {
@@ -24,9 +25,8 @@ export default function NotesList(props: Props) {
     initialTags,
     handleSubmit,
     multiple,
+    readOnly,
   } = props
-
-  const readOnly = !handleSubmit
 
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
@@ -78,6 +78,9 @@ export default function NotesList(props: Props) {
             }}
           />
         ))}
+        {readOnly && !notes.length && (
+          <Typography>This record has no notes</Typography>
+        )}
       </Stack>
     </>
   )
