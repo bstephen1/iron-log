@@ -32,7 +32,6 @@ import { Status } from 'models/Status'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
-import { useSwiper } from 'swiper/react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
 import DeleteRecordButton from './actions/DeleteRecordButton'
@@ -118,7 +117,6 @@ function LoadedRecordCard({
     mutate: mutateRecord,
   } = useCurrentRecord()
 
-  const swiper = useSwiper()
   const noSwipingClassName = useNoSwipingSmScreen()
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,

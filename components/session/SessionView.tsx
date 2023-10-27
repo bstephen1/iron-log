@@ -140,7 +140,7 @@ export default function SessionView({ date }: Props) {
               navNextClassName,
               navPrevClassName,
               paginationClassName,
-              sx: { pb: 2, pt: 3 },
+              sx: { pb: 1, pt: 3 },
               slot: 'container-start',
             }}
           />
