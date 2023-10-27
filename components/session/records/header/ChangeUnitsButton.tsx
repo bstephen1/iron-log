@@ -13,21 +13,17 @@ import {
 import { DisplayFields } from 'models/DisplayFields'
 import { UNITS, Units } from 'models/Set'
 import { useState } from 'react'
-import TooltipIconButton from '../../TooltipIconButton'
+import TooltipIconButton from '../../../TooltipIconButton'
+import useCurrentRecord from '../useCurrentRecord'
 
 interface Props {
-  displayFields: DisplayFields
   handleSubmit: (fields: DisplayFields) => void
-  handleClose: () => void
 }
-export default function RecordUnitsButton({
-  displayFields,
-  handleClose,
-  ...props
-}: Props) {
+export default function ChangeUnitsButton(props: Props) {
   const [open, setOpen] = useState(false)
+  const { displayFields } = useCurrentRecord()
   const { units } = displayFields
-  // sure love that you have to specify that yes, Object.keys(obj) is in fact a list of keyof obj
+  // typescript doesn't recognize that Object.keys(obj) is in fact a list of keyof obj
   const dimensions = Object.keys(units) as Array<keyof typeof units>
 
   const handleSubmit = (changes: Partial<Units>) =>
@@ -47,7 +43,6 @@ export default function RecordUnitsButton({
         fullWidth
         onClose={() => {
           setOpen(false)
-          handleClose()
         }}
       >
         <DialogTitle>Change Units</DialogTitle>

@@ -1,4 +1,3 @@
-import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
   Card,
@@ -18,26 +17,24 @@ import {
   useRecord,
 } from 'lib/frontend/restService'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
-import { doNothing } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
 import Record, { SetType } from 'models/Record'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
-import TooltipIconButton from '../../TooltipIconButton'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryFilterHeaderButton from '../history/HistoryFilterHeaderButton'
+import ChangeUnitsButton from './header/ChangeUnitsButton'
 import DeleteRecordButton from './header/DeleteRecordButton'
 import ExerciseNotesButton from './header/ExerciseNotesButton'
+import ManageExerciseButton from './header/ManageExerciseButton'
 import MoreActionsButton from './header/MoreActionsButton'
 import RecordNotesButton from './header/ReccordNotesButton'
 import SwapRecordButton from './header/SwapRecordButton'
 import { RecordContext } from './RecordContext'
 import RecordExerciseSelector from './RecordExerciseSelector'
-import RecordUnitsButton from './RecordUnitsButton'
 import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
 import useCurrentRecord from './useCurrentRecord'
@@ -112,7 +109,6 @@ function LoadedRecordCard({
   } = useCurrentRecord()
 
   const noSwipingClassName = useNoSwipingSmScreen()
-  const router = useRouter()
   const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
 
   const [shouldSyncFilter, setShouldSyncFilter] = useState(true)
@@ -162,17 +158,6 @@ function LoadedRecordCard({
     })
   }
 
-  const UnitsButton = () => (
-    <RecordUnitsButton
-      displayFields={displayFields}
-      handleSubmit={(displayFields) =>
-        handleExerciseFieldsChange({ displayFields })
-      }
-      handleClose={doNothing}
-      // handleClose={() => setMoreButtonsAnchorEl(null)}
-    />
-  )
-
   const actionButtons = [
     <RecordNotesButton key="record notes" />,
     <ExerciseNotesButton
@@ -204,17 +189,13 @@ function LoadedRecordCard({
         },
       }}
     />,
-    <UnitsButton key="units" />,
-    //  todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  }
-    !!exercise && (
-      <TooltipIconButton
-        key="manage"
-        title="Manage Exercise"
-        onClick={() => router.push(`/manage?exercise=${exercise.name}`)}
-      >
-        <SettingsIcon />
-      </TooltipIconButton>
-    ),
+    <ChangeUnitsButton
+      key="units"
+      handleSubmit={(displayFields) =>
+        handleExerciseFieldsChange({ displayFields })
+      }
+    />,
+    <ManageExerciseButton key="manage" />,
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
     <SwapRecordButton key="right" direction="right" index={swiperIndex} />,
     <DeleteRecordButton key="delete" />,

@@ -30,10 +30,11 @@ export default function MoreActionsButton({
         anchorEl={moreButtonsAnchorEl}
         open={!!moreButtonsAnchorEl}
         onClose={closeMenu}
+        // prevents nested modals from being deleted when outer modal closes
+        keepMounted
       >
         {actionButtons.slice(visibleActions).map((Action, i) => (
           // close onClick here in case Action opens another dialog
-          //  todo: can't actually put closeMenu here. Removes Action from DOM so it disappears
           <MenuItem key={i} onClick={closeMenu}>
             {Action}
           </MenuItem>
