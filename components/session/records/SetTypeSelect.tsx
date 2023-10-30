@@ -63,7 +63,7 @@ export default function SetTypeSelect({
 
   return (
     // columnSpacing adds unwanted padding to far left/right areas
-    <Grid container>
+    <Grid container sx={{ width: '100%' }}>
       <Grid xs={12}>
         {/* todo: probably needs better aria labels */}
         <InputLabel shrink={true} sx={{ width: '100%' }}>

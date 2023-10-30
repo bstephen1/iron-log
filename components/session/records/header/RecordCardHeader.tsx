@@ -1,8 +1,6 @@
 import { Box, CardHeader } from '@mui/material'
-import HistoryFilterHeaderButton from 'components/session/history/HistoryFilterHeaderButton'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
 import ChangeUnitsButton from './ChangeUnitsButton'
@@ -19,14 +17,10 @@ const minTitleWidth = 120
 interface Props {
   swiperIndex: number
   handleExerciseFieldsChange: (changes: Partial<Exercise>) => Promise<void>
-  historyFilter: RecordQuery
-  updateFilter: (changes: Partial<RecordQuery>) => void
 }
 export default function RecordCardHeader({
   swiperIndex,
   handleExerciseFieldsChange,
-  historyFilter,
-  updateFilter,
 }: Props) {
   const noSwipingClassName = useNoSwipingSmScreen()
   // Note: visibleActions is defined after actionButtons
@@ -43,11 +37,6 @@ export default function RecordCardHeader({
     <ExerciseNotesButton
       key="exercise notes"
       handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
-    />,
-    <HistoryFilterHeaderButton
-      key="filter"
-      filter={historyFilter}
-      updateFilter={updateFilter}
     />,
     <ChangeUnitsButton
       key="units"

@@ -1,17 +1,12 @@
-import { Box, Card, CardContent, Stack, Typography } from '@mui/material'
+import { Card, CardContent, Stack, Typography } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
-import dayjs from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
 import { updateExerciseFields, useRecord } from 'lib/frontend/restService'
-import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
-import { ArrayMatchType } from 'models/query-filters/MongoQuery'
-import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
-import { useState } from 'react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
+import HistoryTitle from '../history/HistoryTitle'
 import RecordCardHeader from './header/RecordCardHeader'
 import { RecordContext } from './RecordContext'
 import RecordExerciseSelector from './RecordExerciseSelector'
@@ -80,30 +75,11 @@ function LoadedRecordCard({
   const {
     exercise,
     activeModifiers,
-    setType,
-    _id,
     record,
     displayFields,
     mutate: mutateRecord,
     updateFields,
   } = useCurrentRecord()
-
-  const noSwipingClassName = useNoSwipingSmScreen()
-
-  const [historyFilter, setHistoryFilter] = useState<RecordQuery>({
-    // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
-    modifier: record.activeModifiers,
-    // don't want to include the current record in its own history
-    end: dayjs(record.date).add(-1, 'day').format(DATE_FORMAT),
-    exercise: record.exercise?.name,
-    limit: 10,
-    modifierMatchType: ArrayMatchType.Equivalent,
-    setMatchType: SetMatchType.SetType,
-    ...setType,
-  })
-
-  const updateFilter = (changes: Partial<RecordQuery>) =>
-    setHistoryFilter((prevState) => ({ ...prevState, ...changes }))
 
   const handleExerciseFieldsChange = async (changes: Partial<Exercise>) => {
     if (!exercise) return
@@ -122,8 +98,6 @@ function LoadedRecordCard({
       <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
         <RecordCardHeader
           {...{
-            historyFilter,
-            updateFilter,
             handleExerciseFieldsChange,
             swiperIndex,
           }}
@@ -131,8 +105,7 @@ function LoadedRecordCard({
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
         <CardContent
           // swiping causes weird behavior on desktop when combined with data input fields
-          className={noSwipingClassName}
-          sx={{ cursor: { sm: 'default' }, px: 1 }}
+          sx={{ px: 1 }}
         >
           <Stack spacing={2}>
             <RecordExerciseSelector />
@@ -151,16 +124,10 @@ function LoadedRecordCard({
               handleExerciseFieldsChange={handleExerciseFieldsChange}
               displayFields={displayFields}
             />
+            <HistoryTitle />
+            <HistoryCardsSwiper isQuickRender={isQuickRender} />
           </Stack>
         </CardContent>
-        <Box pt={3}>
-          <HistoryCardsSwiper
-            isQuickRender={isQuickRender}
-            filter={historyFilter}
-            paginationId={_id}
-            displayFields={displayFields}
-          />
-        </Box>
       </Card>
     </>
   )
