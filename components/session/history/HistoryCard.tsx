@@ -9,6 +9,7 @@ import {
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import StyledDivider from 'components/StyledDivider'
 import { DisplayFields } from 'models/DisplayFields'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import RecordNotesButton from '../records/header/ReccordNotesButton'
 import RenderSets from '../records/sets/RenderSets'
@@ -34,15 +35,13 @@ export default function HistoryCard({ displayFields }: Props) {
     <Card elevation={0}>
       <CardHeader
         title={
-          <Box
+          <Link
             // todo: Could add the record number so swiper can directly link to the record.
             // May not be worth the effort tho.
-            onClick={() => router.push(date)}
-            sx={{ cursor: 'pointer' }}
-            width="fit-content"
+            href={date}
           >
             {date}
-          </Box>
+          </Link>
         }
         titleTypographyProps={{ variant: 'h6' }}
         action={<RecordNotesButton readOnly />}
