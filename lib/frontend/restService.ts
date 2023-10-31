@@ -35,7 +35,15 @@ import {
 // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
 
 /** Parse a Query object into a rest param string. Query objects should be spread into this function. */
-export const paramify = (query: ParsedUrlQueryInput) => '?' + stringify(query)
+export const paramify = (query: ParsedUrlQueryInput) => {
+  const parsedQuery: ParsedUrlQueryInput = {}
+  // Any empty arrays must be converted into empty strings instead.
+  // stringify() just drops empty arrays.
+  for (const [key, value] of Object.entries(query)) {
+    parsedQuery[key] = Array.isArray(value) && !value.length ? '' : value
+  }
+  return '?' + stringify(parsedQuery)
+}
 
 /** Formats an object to a json string, converting any undefined values to null instead.
  *  Undefined is not considered a valid json value, so it gets ignored.

@@ -287,6 +287,16 @@ describe('build query', () => {
       })
     })
 
+    it('builds empty modifier array from empty string', () => {
+      const apiQuery: ApiReq<RecordQuery> = {
+        modifier: '',
+      }
+      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+        filter: { activeModifiers: [] },
+        userId,
+      })
+    })
+
     it('builds modifiers from array modifier', () => {
       const apiQuery: ApiReq<RecordQuery> = {
         modifier: ['modifier'],

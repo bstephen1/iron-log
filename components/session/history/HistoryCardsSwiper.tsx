@@ -28,7 +28,6 @@ export default function HistoryCardsSwiper({ isQuickRender }: Props) {
     useCurrentRecord()
 
   const filter: RecordQuery = {
-    // todo: can't filter on no modifiers. Api gets "modifier=&" which is just dropped.
     modifier: activeModifiers,
     // don't want to include the current record in its own history
     end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
