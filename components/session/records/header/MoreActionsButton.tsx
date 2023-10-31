@@ -1,7 +1,10 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { Menu, MenuItem } from '@mui/material'
+import { Menu, MenuItemProps } from '@mui/material'
 import { ReactNode, useState } from 'react'
-import TooltipIconButton from '../../../TooltipIconButton'
+import TooltipIconButton, {
+  IsMenuContext,
+  MenuItemContext,
+} from '../../../TooltipIconButton'
 
 interface Props {
   actionButtons: ReactNode[]
@@ -21,27 +24,38 @@ export default function MoreActionsButton({
     <>
       <TooltipIconButton
         title="More..."
-        onClick={(e) => setMoreButtonsAnchorEl(e.currentTarget)}
+        onClickButton={(e) => setMoreButtonsAnchorEl(e.currentTarget)}
       >
         <MoreVertIcon />
       </TooltipIconButton>
-      <Menu
-        id="more options menu"
-        anchorEl={moreButtonsAnchorEl}
-        open={!!moreButtonsAnchorEl}
-        onClose={closeMenu}
-        // prevents nested modals from being deleted when outer modal closes
-        keepMounted
-      >
-        {actionButtons.slice(visibleActions).map((Action, i) => (
-          // close onClick here in case Action opens another dialog
-          <MenuItem key={i} onClick={closeMenu}>
-            {Action}
-          </MenuItem>
-        ))}
-      </Menu>
+      <IsMenuContext.Provider value={true}>
+        <Menu
+          id="more options menu"
+          anchorEl={moreButtonsAnchorEl}
+          open={!!moreButtonsAnchorEl}
+          onClose={closeMenu}
+          // Close menu when nested dialogs open.
+          // Clicking a disabled button still counts as a blur event, so have to guard against that.
+          onBlur={(e) => !e.target.ariaDisabled && closeMenu()}
+          // prevents nested dialogs from being deleted when outer dialog closes
+          keepMounted
+        >
+          {actionButtons.slice(visibleActions).map((Action, i) => (
+            <MenuPropsInjector key={i}>{Action}</MenuPropsInjector>
+          ))}
+        </Menu>
+      </IsMenuContext.Provider>
     </>
   ) : (
     <></>
   )
 }
+
+/** Menu injects hidden props into MenuItems to handle keyboard selection.
+ *  We have to intercept those props and pass them along to the MenuItem.
+ */
+const MenuPropsInjector = (props: Partial<MenuItemProps>) => (
+  <MenuItemContext.Provider value={props}>
+    {props.children}
+  </MenuItemContext.Provider>
+)
