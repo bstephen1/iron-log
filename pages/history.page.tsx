@@ -5,7 +5,6 @@ import {
   InputAdornment,
   Switch,
   TextField,
-  useMediaQuery,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import dayjs from 'dayjs'
@@ -13,8 +12,9 @@ import dayjs from 'dayjs'
 import StyledDivider from 'components/StyledDivider'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
 import { useBodyweightHistory, useExercises } from 'lib/frontend/restService'
-import Bodyweight from 'models/Bodyweight'
+import useDesktopCheck from 'lib/frontend/useDesktopCheck'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
+import Bodyweight from 'models/Bodyweight'
 import { useQueryState } from 'next-usequerystate'
 import { useEffect, useMemo, useState } from 'react'
 import { useMeasure } from 'react-use'
@@ -44,7 +44,7 @@ export default function HistoryPage() {
   const [showSmoothedBw, setShowSmoothedBw] = useState(false)
 
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
-  const isDesktop = useMediaQuery('(pointer: fine)')
+  const isDesktop = useDesktopCheck()
 
   const unofficialBWs = useMemo(
     () => bodyweightData?.filter((bw) => bw.type === 'unofficial'),
