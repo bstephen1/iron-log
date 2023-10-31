@@ -69,9 +69,13 @@ export default function HistoryCardsSwiper({ isQuickRender }: Props) {
   // assumes filter has end date set to the current record's date (so will exclude it)
   if (!records.length) {
     return (
-      <Typography textAlign="center" py={2}>
-        No history found for this exercise!
-      </Typography>
+      <>
+        <Typography textAlign="center" pb={2}>
+          No history found for this exercise!
+          <br />
+          History is determined by exercise name + modifiers + set type.
+        </Typography>
+      </>
     )
   }
 
