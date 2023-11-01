@@ -1,9 +1,7 @@
 import { Stack, useTheme } from '@mui/material'
 import LoadingSpinner from 'components/loading/LoadingSpinner'
 import NavigationBar from 'components/slider/NavigationBar'
-import { updateSessionLog } from 'lib/frontend/restService'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Note from 'models/Note'
 import { useEffect, useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
 import 'swiper/css'
@@ -23,7 +21,7 @@ export default function SessionSwiper() {
   // be notified and mutate themselves to retrieve the new exercise data.
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
-  const { sessionLog, date, mutate: mutateSession } = useCurrentSessionLog()
+  const { sessionLog, date } = useCurrentSessionLog()
   // quick render reduces load time for initial render by only rendering the visible RecordCards.
   const [isQuickRender, setIsQuickRender] = useState(true)
   const swiperElRef = useRef<SwiperRef>(null)
@@ -38,16 +36,6 @@ export default function SessionSwiper() {
   useEffect(() => {
     setIsQuickRender(false)
   }, [])
-
-  const handleNotesChange = async (notes: Note[]) => {
-    if (!sessionLog) return
-
-    const newSessionLog = { ...sessionLog, notes }
-    mutateSession(updateSessionLog(newSessionLog), {
-      optimisticData: newSessionLog,
-      revalidate: false,
-    })
-  }
 
   // todo: add blank space or something under the swiper. On the longest record
   // if you swap between history it scrolls up when a small history is selected, but won't scroll back down
@@ -128,8 +116,6 @@ export default function SessionSwiper() {
                 isQuickRender={isQuickRender}
                 id={id}
                 swiperIndex={i}
-                updateSessionNotes={handleNotesChange}
-                sessionNotes={sessionLog.notes}
                 setMostRecentlyUpdatedExercise={setMostRecentlyUpdatedExercise}
                 mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
               />

@@ -2,6 +2,7 @@ import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
 import { updateSessionLog } from 'lib/frontend/restService'
+import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import TooltipIconButton from '../../../TooltipIconButton'
 
@@ -9,7 +10,7 @@ interface Props {
   direction: 'left' | 'right'
   index: number
 }
-export default function SwapRecordButton({ direction, index }: Props) {
+export default memo(function SwapRecordButton({ direction, index }: Props) {
   // not extracting everything so it's easier to see what comes from swiper
   const swiper = useSwiper()
   const { sessionLog, mutate } = useCurrentSessionLog()
@@ -55,4 +56,4 @@ export default function SwapRecordButton({ direction, index }: Props) {
       )}
     </TooltipIconButton>
   )
-}
+})

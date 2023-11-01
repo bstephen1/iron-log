@@ -4,7 +4,6 @@ import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
 import { updateExerciseFields, useRecord } from 'lib/frontend/restService'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Note from 'models/Note'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
 import RecordCardHeader from './header/RecordCardHeader'
@@ -28,8 +27,6 @@ interface Props {
   setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
   /** This allows records within a session that are using the same exercise to see updates to notes/displayFields */
   mostRecentlyUpdatedExercise: Exercise | null
-  updateSessionNotes: (notes: Note[]) => Promise<void>
-  sessionNotes: Note[]
   swiperIndex: number
 }
 export default function RecordCard(props: Props) {
@@ -51,6 +48,7 @@ export default function RecordCard(props: Props) {
   } else {
     // Use the newly updated exercise so multiple cards with the same exercise will ripple their updates.
     // Note this doesn't mutate the underlying cache, but the cache is set up to mutate when the exercise is updated.
+    // bug: need to actually mutate the records. This will revert updates if a different exercise is updated.
     const exercise =
       mostRecentlyUpdatedExercise?._id === record.exercise?._id
         ? mostRecentlyUpdatedExercise

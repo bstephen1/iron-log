@@ -1,7 +1,4 @@
-import {
-  updateRecordFields,
-  useGuaranteedRecord,
-} from 'lib/frontend/restService'
+import { updateRecordFields, useRecord } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
 import Record from 'models/Record'
@@ -11,8 +8,8 @@ import { useRecordContext } from './RecordContext'
  *  Record fields are spread out directly for convenient access.
  */
 export default function useCurrentRecord() {
-  const context = useRecordContext()
-  const { record, mutate } = useGuaranteedRecord(context.record)
+  const { record } = useRecordContext()
+  const { mutate } = useRecord(record._id)
   const displayFields = useDisplayFields(record)
   const extraWeight = useExtraWeight(record)
 

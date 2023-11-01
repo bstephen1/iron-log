@@ -1,12 +1,14 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
 import { deleteSessionRecord } from 'lib/frontend/restService'
+import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import TooltipIconButton from '../../../TooltipIconButton'
-import useCurrentRecord from '../useCurrentRecord'
 
-export default function DeleteRecordButton() {
-  const { _id } = useCurrentRecord()
+interface Props {
+  _id: string
+}
+export default memo(function DeleteRecordButton({ _id }: Props) {
   const swiper = useSwiper()
   const { sessionLog, mutate } = useCurrentSessionLog()
 
@@ -31,4 +33,4 @@ export default function DeleteRecordButton() {
       <DeleteIcon />
     </TooltipIconButton>
   )
-}
+})

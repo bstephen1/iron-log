@@ -3,6 +3,7 @@ import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
+import useCurrentRecord from '../useCurrentRecord'
 import ChangeUnitsButton from './ChangeUnitsButton'
 import DeleteRecordButton from './DeleteRecordButton'
 import ExerciseNotesButton from './ExerciseNotesButton'
@@ -22,6 +23,7 @@ export default function RecordCardHeader({
   swiperIndex,
   handleExerciseFieldsChange,
 }: Props) {
+  const { _id } = useCurrentRecord()
   const noSwipingClassName = useNoSwipingSmScreen()
   // Note: visibleActions is defined after actionButtons
   const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
@@ -47,7 +49,7 @@ export default function RecordCardHeader({
     <ManageExerciseButton key="manage" />,
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
     <SwapRecordButton key="right" direction="right" index={swiperIndex} />,
-    <DeleteRecordButton key="delete" />,
+    <DeleteRecordButton key="delete" _id={_id} />,
   ]
 
   const [visibleActions, setVisibleActions] = useState(actionButtons.length)
