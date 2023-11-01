@@ -36,11 +36,13 @@ interface Props {
   showTotal?: boolean
   /** label for empty option  */
   emptyOption?: string
+  noSwipingClassName?: string
 }
 export default function SetTypeSelect({
   readOnly,
   showTotal,
   emptyOption,
+  noSwipingClassName,
 }: Props) {
   const {
     updateFields,
@@ -72,6 +74,7 @@ export default function SetTypeSelect({
       </Grid>
       <Grid xs={!!operator ? 4 : 12} pr={!!operator ? 2 : 0}>
         <SelectFieldAutosave<typeof operator>
+          className={noSwipingClassName}
           label=""
           fullWidth
           initialValue={operator ?? ''}
@@ -122,6 +125,7 @@ export default function SetTypeSelect({
           </Grid>
           <Grid xs={3} display="flex" alignItems="flex-end">
             <SelectFieldAutosave<keyof Set, VisibleField>
+              className={noSwipingClassName}
               label=""
               fullWidth
               initialValue={field ?? ''}

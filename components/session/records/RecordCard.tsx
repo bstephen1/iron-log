@@ -2,6 +2,7 @@ import { Card, CardContent, Stack, Typography } from '@mui/material'
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
+import { noSwipingRecord } from 'lib/frontend/constants'
 import { updateExerciseFields, useRecord } from 'lib/frontend/restService'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
@@ -117,8 +118,9 @@ function LoadedRecordCard({
                 updateFields({ activeModifiers: value })
               }
             />
-            <SetTypeSelect showTotal />
+            <SetTypeSelect showTotal noSwipingClassName={noSwipingRecord} />
             <RenderSets
+              noSwipingClassName={noSwipingRecord}
               handleExerciseFieldsChange={handleExerciseFieldsChange}
               displayFields={displayFields}
             />

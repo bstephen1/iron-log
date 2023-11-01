@@ -15,11 +15,13 @@ interface Props {
   displayFields: DisplayFields
   /** Override internal showSplitWeight calculation. */
   showSplitWeight?: boolean
+  noSwipingClassName?: string
 }
 export default function RenderSets({
   handleExerciseFieldsChange,
   displayFields,
   showSplitWeight,
+  noSwipingClassName,
 }: Props) {
   const { sets } = useCurrentRecord()
   const readOnly = !handleExerciseFieldsChange
@@ -27,6 +29,7 @@ export default function RenderSets({
   return (
     <Box>
       <SetHeader
+        className={noSwipingClassName}
         displayFields={displayFields}
         handleSubmit={(displayFields) =>
           handleExerciseFieldsChange?.({ displayFields })

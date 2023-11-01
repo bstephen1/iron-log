@@ -1,6 +1,7 @@
 import { Stack, useTheme } from '@mui/material'
 import LoadingSpinner from 'components/loading/LoadingSpinner'
 import NavigationBar from 'components/slider/NavigationBar'
+import { noSwipingRecord } from 'lib/frontend/constants'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { useEffect, useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper'
@@ -52,7 +53,7 @@ export default function SessionSwiper() {
       // child components that will only re-render themselves.
       // Note that the useSwiperSlide hook uses state internally, so it will cause
       // this same lag.
-      noSwipingClass="swiper-no-swiping-record"
+      noSwipingClass={noSwipingRecord}
       modules={[Navigation, Pagination, Keyboard]}
       // breakpoints catch everything >= the given value
       breakpoints={{
@@ -123,7 +124,7 @@ export default function SessionSwiper() {
           ))}
           <SwiperSlide
             // if no records, disable swiping. The swiping prevents you from being able to close date picker
-            className={sessionHasRecords ? '' : 'swiper-no-swiping-record'}
+            className={sessionHasRecords ? '' : noSwipingRecord}
           >
             <Stack spacing={2} sx={{ p: 0.5 }}>
               <AddRecordCard />
