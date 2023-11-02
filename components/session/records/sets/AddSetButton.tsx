@@ -1,12 +1,16 @@
 import AddIcon from '@mui/icons-material/Add'
 import { Box, Fab, Tooltip } from '@mui/material'
-import { updateRecordFields } from 'lib/frontend/restService'
+import { updateRecordFields, useRecord } from 'lib/frontend/restService'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import { Set } from 'models/Set'
-import useCurrentRecord from '../useCurrentRecord'
 
-export default function AddSetButton() {
-  const { record, displayFields, sets, mutate, _id } = useCurrentRecord()
+interface Props {
+  sets: Set[]
+  disabled?: boolean
+  _id: string
+}
+export default function AddSetButton({ sets, disabled, _id }: Props) {
+  const { mutate } = useRecord(_id)
   const className = useNoSwipingSmScreen()
 
   const addSet = async () => {
@@ -28,7 +32,8 @@ export default function AddSetButton() {
     }
 
     mutate(updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }), {
-      optimisticData: { ...record, sets: sets.concat(newSet) },
+      optimisticData: (cur) =>
+        cur ? { ...cur, sets: sets.concat(newSet) } : null,
       revalidate: false,
     })
   }
@@ -46,7 +51,7 @@ export default function AddSetButton() {
           <Fab
             color="primary"
             size="medium"
-            disabled={!displayFields?.visibleFields.length}
+            disabled={disabled}
             onClick={addSet}
             className={className}
           >

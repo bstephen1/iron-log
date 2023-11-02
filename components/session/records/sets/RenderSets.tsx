@@ -7,23 +7,27 @@ import AddSetButton from './AddSetButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
-interface Props extends Pick<Record, 'sets'> {
+interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
   mutateExerciseFields?: (changes: Partial<Exercise>) => Promise<void>
   /** displayFields must be given as a prop because history records use the parent's fields
    *  so they can reflect changes to the parent's display fields.
    */
   displayFields: DisplayFields
-  /** Override internal showSplitWeight calculation. */
   showSplitWeight?: boolean
+  showUnilateral?: boolean
   noSwipingClassName?: string
+  extraWeight: number
 }
 export default memo(function RenderSets({
   mutateExerciseFields,
   displayFields,
   showSplitWeight,
+  showUnilateral,
   noSwipingClassName,
   sets,
+  extraWeight,
+  _id,
 }: Props) {
   const readOnly = !mutateExerciseFields
 
@@ -31,23 +35,29 @@ export default memo(function RenderSets({
     <Box>
       <SetHeader
         className={noSwipingClassName}
-        displayFields={displayFields}
-        mutateExerciseFields={mutateExerciseFields}
-        readOnly={readOnly}
-        showSplitWeight={showSplitWeight}
+        {...{
+          displayFields,
+          mutateExerciseFields,
+          readOnly,
+          showSplitWeight,
+          showUnilateral,
+        }}
       />
       <Box>
         {sets.map((set, i) => (
           <SetInput
             key={i}
             index={i}
-            set={set}
-            displayFields={displayFields}
-            readOnly={readOnly}
+            {...{ set, displayFields, readOnly, _id, extraWeight }}
           />
         ))}
       </Box>
-      {!readOnly && <AddSetButton />}
+      {!readOnly && (
+        <AddSetButton
+          disabled={!displayFields.visibleFields.length}
+          {...{ sets, _id }}
+        />
+      )}
     </Box>
   )
 })

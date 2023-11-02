@@ -7,20 +7,21 @@ import {
   updateRecordFields,
   useRecord,
 } from 'lib/frontend/restService'
+import useDisplayFields from 'lib/frontend/useDisplayFields'
+import useExtraWeight from 'lib/frontend/useExtraWeight'
 import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record, { SetType } from 'models/Record'
 import { Set } from 'models/Set'
 import { useCallback } from 'react'
+import { KeyedMutator } from 'swr'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
 import RecordCardHeader from './header/RecordCardHeader'
-import { RecordContext } from './RecordContext'
 import RecordExerciseSelector from './RecordExerciseSelector'
 import RecordModifierComboBox from './RecordModifierComboBox'
 import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
-import useCurrentRecord from './useCurrentRecord'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -48,7 +49,7 @@ interface Props {
 }
 export default function RecordCard(props: Props) {
   const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
-  const { record } = useRecord(id)
+  const { record, mutate } = useRecord(id)
 
   if (record === undefined || (props.isQuickRender && swiperIndex > 1)) {
     return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
@@ -70,16 +71,7 @@ export default function RecordCard(props: Props) {
       mostRecentlyUpdatedExercise?._id === record.exercise?._id
         ? mostRecentlyUpdatedExercise
         : record.exercise
-    return (
-      <RecordContext.Provider value={{ record }}>
-        <LoadedRecordCard
-          // key resets history filter when exercise changes or is renamed
-          key={exercise?.name}
-          record={record}
-          {...props}
-        />
-      </RecordContext.Provider>
-    )
+    return <LoadedRecordCard record={record} mutateRecord={mutate} {...props} />
   }
 }
 
@@ -88,12 +80,18 @@ function LoadedRecordCard({
   setMostRecentlyUpdatedExercise,
   isQuickRender,
   record,
+  mutateRecord,
 }: Props & {
   record: Record
+  mutateRecord: KeyedMutator<Record | null>
 }) {
-  const { displayFields, mutate: mutateRecord } = useCurrentRecord()
   const { exercise, activeModifiers, _id, sets, notes, category, setType } =
     record
+  const displayFields = useDisplayFields(record)
+  const extraWeight = useExtraWeight(record)
+
+  const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight
+  const showUnilateral = exercise?.attributes?.unilateral
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (changes) => {
@@ -159,10 +157,18 @@ function LoadedRecordCard({
             />
             <RenderSets
               noSwipingClassName={noSwipingRecord}
-              {...{ mutateExerciseFields, displayFields, sets }}
+              {...{
+                mutateExerciseFields,
+                displayFields,
+                sets,
+                showSplitWeight,
+                showUnilateral,
+                _id,
+                extraWeight,
+              }}
             />
             <HistoryTitle />
-            <HistoryCardsSwiper isQuickRender={isQuickRender} />
+            <HistoryCardsSwiper {...{ isQuickRender, record }} />
           </Stack>
         </CardContent>
       </Card>

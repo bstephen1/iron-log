@@ -12,20 +12,21 @@ import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import NavigationBar from 'components/slider/NavigationBar'
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
+import useDisplayFields from 'lib/frontend/useDisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
+import Record from 'models/Record'
 import 'swiper/css/pagination'
-import { RecordContext } from '../records/RecordContext'
-import useCurrentRecord from '../records/useCurrentRecord'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination
 
 interface Props {
   isQuickRender?: boolean
+  record: Record
 }
-export default function HistoryCardsSwiper({ isQuickRender }: Props) {
-  const { _id, displayFields, activeModifiers, date, exercise, setType } =
-    useCurrentRecord()
+export default function HistoryCardsSwiper({ isQuickRender, record }: Props) {
+  const { _id, activeModifiers, date, exercise, setType } = record
+  const displayFields = useDisplayFields(record)
 
   const filter: RecordQuery = {
     modifier: activeModifiers,
@@ -39,7 +40,7 @@ export default function HistoryCardsSwiper({ isQuickRender }: Props) {
   }
 
   // todo: then fetch more if the swiper gets close to the end. (Also for future dates?)
-  const { records, isLoading } = useRecords(
+  const { records: historyRecords, isLoading } = useRecords(
     {
       modifierMatchType: ArrayMatchType.Equivalent,
       // minimize load if filter does not set a limit
@@ -54,7 +55,7 @@ export default function HistoryCardsSwiper({ isQuickRender }: Props) {
   const navPrevClassName = `nav-prev-history-${_id}`
   const navNextClassName = `nav-next-history-${_id}`
 
-  if (isQuickRender || isLoading || !records) {
+  if (isQuickRender || isLoading || !historyRecords) {
     return (
       <RecordCardSkeleton
         noHeader
@@ -67,7 +68,7 @@ export default function HistoryCardsSwiper({ isQuickRender }: Props) {
   }
 
   // assumes filter has end date set to the current record's date (so will exclude it)
-  if (!records.length) {
+  if (!historyRecords.length) {
     return (
       <Typography textAlign="center" pb={2}>
         No history found for this exercise with the same modifiers and set type
@@ -107,21 +108,20 @@ export default function HistoryCardsSwiper({ isQuickRender }: Props) {
               slot: 'container-start',
             }}
           />
-          {records
-            ?.map((record) => (
+          {historyRecords
+            ?.map((historyRecord) => (
               <SwiperSlide
                 // have to recalculate autoHeight when matchesRecord changes
-                key={record._id}
+                key={historyRecord._id}
                 // disable parent swiping
-                className={records.length > 1 ? 'swiper-no-swiping-record' : ''}
+                className={
+                  historyRecords.length > 1 ? 'swiper-no-swiping-record' : ''
+                }
               >
-                <RecordContext.Provider value={{ record }}>
-                  <HistoryCard
-                    {...{
-                      displayFields,
-                    }}
-                  />
-                </RecordContext.Provider>
+                <HistoryCard
+                  record={historyRecord}
+                  displayFields={displayFields}
+                />
               </SwiperSlide>
               // need to reverse so newest is on the right, not left. Can't do it in useRecords because
               // mongo applies sort before the limit. Also, reverse should be after map because it mutates the array.

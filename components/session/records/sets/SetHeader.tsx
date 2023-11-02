@@ -18,42 +18,32 @@ import {
   printFieldWithUnits,
   VisibleField,
 } from 'models/DisplayFields'
-import { Fragment, useMemo } from 'react'
-import useCurrentRecord from '../useCurrentRecord'
+import { Fragment, memo } from 'react'
 
 interface Props extends Partial<SelectProps<string[]>> {
   mutateExerciseFields?: UpdateFields<Exercise>
   displayFields: DisplayFields
   showSplitWeight?: boolean
+  showUnilateral?: boolean
 }
-export default function SetHeader({
+export default memo(function SetHeader({
   mutateExerciseFields,
   displayFields,
-  showSplitWeight: showSplitWeightOverride,
+  showSplitWeight,
+  showUnilateral,
   ...selectProps
 }: Props) {
-  const { exercise, extraWeight } = useCurrentRecord()
-  // also check attributes incase bodyweight is set to true but no bodyweight exists
-  const showSplitWeight =
-    showSplitWeightOverride ??
-    (exercise?.attributes?.bodyweight || !!extraWeight)
-  const showUnilateral = exercise?.attributes?.unilateral
-
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
   const selectedNames =
     displayFields?.visibleFields.map((field) => field.name) || []
 
-  const options: VisibleField[] = useMemo(
-    () =>
-      ORDERED_DISPLAY_FIELDS.filter(
-        (field) =>
-          (field.enabled?.unilateral == undefined ||
-            field.enabled.unilateral === showUnilateral) &&
-          (field.enabled?.splitWeight == undefined ||
-            field.enabled.splitWeight === showSplitWeight)
-      ),
-    [showSplitWeight, showUnilateral]
+  const options: VisibleField[] = ORDERED_DISPLAY_FIELDS.filter(
+    (field) =>
+      (field.enabled?.unilateral == undefined ||
+        field.enabled.unilateral === showUnilateral) &&
+      (field.enabled?.splitWeight == undefined ||
+        field.enabled.splitWeight === showSplitWeight)
   )
 
   const handleChange = (rawSelectedNames: string | string[]) => {
@@ -161,4 +151,4 @@ export default function SetHeader({
       </Select>
     </FormControl>
   )
-}
+})
