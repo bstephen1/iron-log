@@ -4,7 +4,7 @@ import AsyncAutocomplete, {
 } from 'components/AsyncAutocomplete'
 import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 import { StatusOrder } from 'models/Status'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { KeyedMutator } from 'swr'
 
 /** A stub to track the input value so it can be added to the db as a new record.
@@ -57,8 +57,8 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
 }: AsyncSelectorProps<C>) {
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
-  // outside the component while keeping the generic. So, useMemo to cache the result
-  const filter = useMemo(() => createFilterOptions<C | SelectorStub>(), [])
+  // outside the component while keeping the generic.
+  const filter = createFilterOptions<C | SelectorStub>()
   // This is used to track the input value to allow a new C to be created based on the current input.
   // Originally it was a separate stub class with just the name but now it is a full object of the
   // given generic type so that it can preserve the _id field across name mutations.

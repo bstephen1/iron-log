@@ -46,14 +46,9 @@ export default function HistoryPage() {
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
   const isDesktop = useDesktopCheck()
 
-  const unofficialBWs = useMemo(
-    () => bodyweightData?.filter((bw) => bw.type === 'unofficial'),
-    [bodyweightData]
-  )
-  const officialBWs = useMemo(
-    () => bodyweightData?.filter((bw) => bw.type === 'official'),
-    [bodyweightData]
-  )
+  const unofficialBWs = bodyweightData?.filter((bw) => bw.type === 'unofficial')
+
+  const officialBWs = bodyweightData?.filter((bw) => bw.type === 'official')
 
   // to track width we want to use the size of the graph container, since that will be smaller than window width
   const [graphContainerRef, { width: graphContainerWidth }] = useMeasure()
