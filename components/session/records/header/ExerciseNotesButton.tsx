@@ -1,31 +1,38 @@
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import NotesList from 'components/form-fields/NotesList'
+import { UpdateFields } from 'lib/util'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Note from 'models/Note'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import TooltipIconButton from '../../../TooltipIconButton'
-import useCurrentRecord from '../useCurrentRecord'
 
 const title = 'Exercise Notes'
 
 export interface Props {
-  handleSubmit: (notes: Note[]) => void
+  mutateExerciseFields: UpdateFields<Exercise>
+  notes?: Note[]
+  /** used for note tags */
+  modifiers?: string[]
+  disabled?: boolean
 }
-/** Show notes from the record's selected exercise.
- *  If no exercise is selected, the button will be disabled.
- */
-export default function ExerciseNotesButton({ handleSubmit }: Props) {
-  const { exercise } = useCurrentRecord()
+/** Show notes from the record's selected exercise. */
+export default memo(function ExerciseNotesButton({
+  mutateExerciseFields,
+  notes = [],
+  modifiers = [],
+  disabled,
+}: Props) {
   const [open, setOpen] = useState(false)
-  const notes = exercise?.notes ?? []
-  const modifiers = exercise?.modifiers ?? []
+
+  const handleSubmit = (notes: Note[]) => mutateExerciseFields({ notes })
 
   return (
     <>
       <TooltipIconButton
         title={title}
         onClick={() => setOpen(true)}
-        disabled={!exercise}
+        disabled={disabled}
       >
         <Badge badgeContent={notes.length} color="primary">
           <FitnessCenterIcon />
@@ -46,4 +53,4 @@ export default function ExerciseNotesButton({ handleSubmit }: Props) {
       </Dialog>
     </>
   )
-}
+})

@@ -13,15 +13,14 @@ import TooltipIconButton from '../../../TooltipIconButton'
 const title = 'Record Notes'
 
 interface Props {
-  notes: Note[]
-  sets: Set[]
+  notes?: Note[]
+  sides?: Set['side'][]
   /** considered readOnly if not provided */
   mutateRecordFields?: UpdateFields<Record>
 }
 export default memo(function RecordNotesButton({
   notes = [],
-  // sets we really just need the sides
-  sets = [],
+  sides = [],
   mutateRecordFields,
 }: Props) {
   const readOnly = !mutateRecordFields
@@ -41,12 +40,12 @@ export default memo(function RecordNotesButton({
   // It can get weird if you purposefully try to enter weird combinations though.
   let l = 1,
     r = 1
-  for (const set of sets) {
+  for (const side of sides) {
     let setNumber = ''
-    if (set.side === 'L') {
+    if (side === 'L') {
       setNumber = `${l} (L)`
       l++
-    } else if (set.side === 'R') {
+    } else if (side === 'R') {
       setNumber = `${r} (R)`
       r++
     } else {

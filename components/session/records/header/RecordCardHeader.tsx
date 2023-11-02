@@ -46,12 +46,15 @@ export default function RecordCardHeader({
   const actionButtons = [
     <RecordNotesButton
       key="record notes"
-      {...{ notes, sets, mutateRecordFields }}
+      sides={sets.map((set) => set.side)}
+      {...{ notes, mutateRecordFields }}
     />,
     <ExerciseNotesButton
       key="exercise notes"
-      // todo: can't create another function
-      handleSubmit={(notes) => mutateExerciseFields({ notes })}
+      disabled={!exercise}
+      notes={exercise?.notes}
+      modifiers={exercise?.modifiers}
+      mutateExerciseFields={mutateExerciseFields}
     />,
     <ChangeUnitsButton
       key="units"
