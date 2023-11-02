@@ -4,13 +4,18 @@ import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record from 'models/Record'
 import { Status } from 'models/Status'
-import useCurrentRecord from './useCurrentRecord'
+import { memo } from 'react'
 
-interface Props {
+interface Props
+  extends Pick<Record, 'activeModifiers' | 'category' | 'exercise'> {
   mutateRecordFields: UpdateFields<Record>
 }
-export default function RecordExerciseSelector({ mutateRecordFields }: Props) {
-  const { activeModifiers, category, exercise } = useCurrentRecord()
+export default memo(function RecordExerciseSelector({
+  mutateRecordFields,
+  activeModifiers,
+  category,
+  exercise,
+}: Props) {
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -40,4 +45,4 @@ export default function RecordExerciseSelector({ mutateRecordFields }: Props) {
       }}
     />
   )
-}
+})

@@ -66,6 +66,7 @@ export default function RecordCard(props: Props) {
         <LoadedRecordCard
           // key resets history filter when exercise changes or is renamed
           key={exercise?.name}
+          record={record}
           {...props}
         />
       </RecordContext.Provider>
@@ -77,16 +78,12 @@ function LoadedRecordCard({
   swiperIndex,
   setMostRecentlyUpdatedExercise,
   isQuickRender,
-}: Props) {
-  const {
-    exercise,
-    activeModifiers,
-    displayFields,
-    mutate: mutateRecord,
-    _id,
-    sets,
-    notes,
-  } = useCurrentRecord()
+  record,
+}: Props & {
+  record: Record
+}) {
+  const { displayFields, mutate: mutateRecord } = useCurrentRecord()
+  const { exercise, activeModifiers, _id, sets, notes, category } = record
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (changes) => {
@@ -137,7 +134,9 @@ function LoadedRecordCard({
           sx={{ px: 1 }}
         >
           <Stack spacing={2}>
-            <RecordExerciseSelector {...{ mutateRecordFields }} />
+            <RecordExerciseSelector
+              {...{ mutateRecordFields, activeModifiers, exercise, category }}
+            />
             <ComboBoxField
               label="Modifiers"
               options={exercise?.modifiers}
