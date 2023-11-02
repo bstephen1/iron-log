@@ -8,7 +8,7 @@ import SetInput from './SetInput'
 
 interface Props {
   /** if omitted, sets are treated as readOnly */
-  handleExerciseFieldsChange?: (changes: Partial<Exercise>) => Promise<void>
+  mutateExerciseFields?: (changes: Partial<Exercise>) => Promise<void>
   /** displayFields must be given as a prop because history records use the parent's fields
    *  so they can reflect changes to the parent's display fields.
    */
@@ -18,13 +18,13 @@ interface Props {
   noSwipingClassName?: string
 }
 export default function RenderSets({
-  handleExerciseFieldsChange,
+  mutateExerciseFields,
   displayFields,
   showSplitWeight,
   noSwipingClassName,
 }: Props) {
   const { sets } = useCurrentRecord()
-  const readOnly = !handleExerciseFieldsChange
+  const readOnly = !mutateExerciseFields
 
   return (
     <Box>
@@ -32,7 +32,7 @@ export default function RenderSets({
         className={noSwipingClassName}
         displayFields={displayFields}
         handleSubmit={(displayFields) =>
-          handleExerciseFieldsChange?.({ displayFields })
+          mutateExerciseFields?.({ displayFields })
         }
         readOnly={readOnly}
         showSplitWeight={showSplitWeight}

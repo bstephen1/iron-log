@@ -1,23 +1,34 @@
 import NotesIcon from '@mui/icons-material/Notes'
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import NotesList from 'components/form-fields/NotesList'
-import { updateSessionLog, useSessionLog } from 'lib/frontend/restService'
+import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
+import { updateSessionLog } from 'lib/frontend/restService'
+import { UpdateFields } from 'lib/util'
 import Note from 'models/Note'
-import { useState } from 'react'
+import Record from 'models/Record'
+import { Set } from 'models/Set'
+import { memo, useState } from 'react'
 import TooltipIconButton from '../../../TooltipIconButton'
-import useCurrentRecord from '../useCurrentRecord'
 
 const title = 'Record Notes'
 
 interface Props {
-  readOnly?: boolean
+  notes: Note[]
+  sets: Set[]
+  /** considered readOnly if not provided */
+  mutateRecordFields?: UpdateFields<Record>
 }
-export default function RecordNotesButton({ readOnly }: Props) {
-  const { updateFields, record, sets, date } = useCurrentRecord()
-  const { sessionLog, mutate: mutateSession } = useSessionLog(date)
+export default memo(function RecordNotesButton({
+  notes = [],
+  // sets we really just need the sides
+  sets = [],
+  mutateRecordFields,
+}: Props) {
+  const readOnly = !mutateRecordFields
+  const { sessionLog, mutate: mutateSession } = useCurrentSessionLog()
   const [open, setOpen] = useState(false)
 
-  const notes = [...(sessionLog?.notes ?? []), ...record.notes]
+  const combinedNotes = [...(sessionLog?.notes ?? []), ...notes]
   let options = ['Session', 'Record']
   let initialTags = ['Record']
 
@@ -48,7 +59,7 @@ export default function RecordNotesButton({ readOnly }: Props) {
   }
 
   const handleSubmit = async (notes: Note[]) => {
-    if (!sessionLog) return
+    if (!sessionLog || readOnly) return
 
     let sessionNotes = []
     let recordNotes = []
@@ -61,7 +72,7 @@ export default function RecordNotesButton({ readOnly }: Props) {
       }
     }
 
-    updateFields({ notes: recordNotes })
+    mutateRecordFields({ notes: recordNotes })
     const newSessionLog = { ...sessionLog, notes: sessionNotes }
     mutateSession(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
@@ -72,7 +83,7 @@ export default function RecordNotesButton({ readOnly }: Props) {
   return (
     <>
       <TooltipIconButton title={title} onClick={() => setOpen(true)}>
-        <Badge badgeContent={notes.length} color="primary">
+        <Badge badgeContent={combinedNotes.length} color="primary">
           <NotesIcon />
         </Badge>
       </TooltipIconButton>
@@ -83,7 +94,7 @@ export default function RecordNotesButton({ readOnly }: Props) {
             {...{
               options,
               handleSubmit,
-              notes,
+              notes: combinedNotes,
               initialTags,
               readOnly,
             }}
@@ -92,4 +103,4 @@ export default function RecordNotesButton({ readOnly }: Props) {
       </Dialog>
     </>
   )
-}
+})

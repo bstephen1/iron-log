@@ -13,7 +13,7 @@ interface Props {
   displayFields: DisplayFields
 }
 export default function HistoryCard({ displayFields }: Props) {
-  const { date } = useCurrentRecord()
+  const { date, notes, sets } = useCurrentRecord()
   // use splitWeight if parent record is using it
   const showSplitWeight = displayFields.visibleFields.some((field) =>
     ['plateWeight', 'totalWeight'].includes(field.name)
@@ -32,7 +32,7 @@ export default function HistoryCard({ displayFields }: Props) {
           </Link>
         }
         titleTypographyProps={{ variant: 'h6' }}
-        action={<RecordNotesButton readOnly />}
+        action={<RecordNotesButton {...{ notes, sets }} />}
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
 

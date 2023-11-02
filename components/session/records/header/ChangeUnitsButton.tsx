@@ -10,26 +10,32 @@ import {
   RadioGroup,
   Stack,
 } from '@mui/material'
+import { UpdateFields } from 'lib/util'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import { UNITS, Units } from 'models/Set'
 import { useState } from 'react'
 import TooltipIconButton from '../../../TooltipIconButton'
-import useCurrentRecord from '../useCurrentRecord'
 
 interface Props {
-  handleSubmit: (fields: DisplayFields) => void
+  mutateExerciseFields: UpdateFields<Exercise>
+  displayFields: DisplayFields
 }
-export default function ChangeUnitsButton(props: Props) {
+export default function ChangeUnitsButton({
+  mutateExerciseFields,
+  displayFields,
+}: Props) {
   const [open, setOpen] = useState(false)
-  const { displayFields } = useCurrentRecord()
   const { units } = displayFields
   // typescript doesn't recognize that Object.keys(obj) is in fact a list of keyof obj
   const dimensions = Object.keys(units) as Array<keyof typeof units>
 
   const handleSubmit = (changes: Partial<Units>) =>
-    props.handleSubmit({
-      ...displayFields,
-      units: { ...displayFields.units, ...changes },
+    mutateExerciseFields({
+      displayFields: {
+        ...displayFields,
+        units: { ...displayFields.units, ...changes },
+      },
     })
 
   return (
@@ -53,7 +59,7 @@ export default function ChangeUnitsButton(props: Props) {
                 key={dimension}
                 dimension={dimension}
                 value={units[dimension]}
-                handleChange={handleSubmit}
+                handleUnitsChange={handleSubmit}
               />
             ))}
           </Stack>
@@ -66,12 +72,12 @@ export default function ChangeUnitsButton(props: Props) {
 interface UnitDimensionRadioGroupProps<Dimension extends keyof Units> {
   dimension: Dimension
   value: Units[Dimension]
-  handleChange: (change: Partial<Units>) => void
+  handleUnitsChange: (change: Partial<Units>) => void
 }
 function UnitDimensionRadioGroup<Dimension extends keyof Units>({
   dimension,
   value,
-  handleChange,
+  handleUnitsChange,
 }: UnitDimensionRadioGroupProps<Dimension>) {
   const unitSymbols = Object.keys(UNITS[dimension])
 
@@ -88,7 +94,7 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
         aria-labelledby={`${dimension}-label`}
         name={`${dimension}-radio-buttons-label`}
         value={value}
-        onChange={(_, value) => handleChange({ [dimension]: value })}
+        onChange={(_, value) => handleUnitsChange({ [dimension]: value })}
       >
         {unitSymbols.map((symbol) => (
           <FormControlLabel

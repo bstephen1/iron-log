@@ -11,12 +11,13 @@ import SessionLog from 'models/SessionLog'
 import { Status } from 'models/Status'
 import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
-import { mutate } from 'swr'
+import { useSWRConfig } from 'swr'
 import useCurrentSessionLog from './useCurrentSessionLog'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [category, setCategory] = useState<string | null>(null)
+  const { mutate } = useSWRConfig()
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })

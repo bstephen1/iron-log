@@ -8,12 +8,13 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
+import { UpdateFields } from 'lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
   VisibleField,
 } from 'models/DisplayFields'
-import { setOperators, SetType } from 'models/Record'
+import Record, { setOperators, SetType } from 'models/Record'
 import { Set, Units } from 'models/Set'
 import useCurrentRecord from './useCurrentRecord'
 
@@ -37,15 +38,16 @@ interface Props {
   /** label for empty option  */
   emptyOption?: string
   noSwipingClassName?: string
+  mutateRecordFields: UpdateFields<Record>
 }
 export default function SetTypeSelect({
   readOnly,
   showTotal,
   emptyOption,
   noSwipingClassName,
+  mutateRecordFields,
 }: Props) {
   const {
-    updateFields,
     sets,
     setType,
     displayFields: { units },
@@ -58,7 +60,7 @@ export default function SetTypeSelect({
   const updateSetType = async (changes: Partial<SetType>) => {
     const newSetType = { ...setType, ...changes }
 
-    updateFields({ setType: newSetType })
+    mutateRecordFields({ setType: newSetType })
   }
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before

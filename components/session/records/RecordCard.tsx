@@ -3,8 +3,15 @@ import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
 import { noSwipingRecord } from 'lib/frontend/constants'
-import { updateExerciseFields, useRecord } from 'lib/frontend/restService'
+import {
+  updateExerciseFields,
+  updateRecordFields,
+  useRecord,
+} from 'lib/frontend/restService'
+import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
+import Record from 'models/Record'
+import { useCallback } from 'react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
 import RecordCardHeader from './header/RecordCardHeader'
@@ -74,22 +81,39 @@ function LoadedRecordCard({
   const {
     exercise,
     activeModifiers,
-    record,
     displayFields,
     mutate: mutateRecord,
-    updateFields,
+    _id,
+    sets,
+    notes,
   } = useCurrentRecord()
 
-  const handleExerciseFieldsChange = async (changes: Partial<Exercise>) => {
-    if (!exercise) return
+  const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
+    async (changes) => {
+      mutateRecord(
+        (cur) => {
+          if (!cur?.exercise) return null
 
-    const newExercise = { ...exercise, ...changes }
-    // todo: is there a way to get swr to revalidate specific records?
-    // Need to revalidate any record with the same exercise._id
-    mutateRecord({ ...record, exercise: newExercise }, { revalidate: false })
-    setMostRecentlyUpdatedExercise(newExercise)
-    await updateExerciseFields(exercise, { ...changes })
-  }
+          const newExercise = { ...cur.exercise, ...changes }
+          setMostRecentlyUpdatedExercise(newExercise)
+          updateExerciseFields(cur.exercise, { ...changes })
+          return { ...cur, exercise: newExercise }
+        },
+        { revalidate: false }
+      )
+    },
+    [mutateRecord, setMostRecentlyUpdatedExercise]
+  )
+
+  const mutateRecordFields: UpdateFields<Record> = useCallback(
+    async (changes) => {
+      mutateRecord(updateRecordFields(_id, { ...changes }), {
+        optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
+        revalidate: false,
+      })
+    },
+    [mutateRecord, _id]
+  )
 
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
@@ -97,8 +121,14 @@ function LoadedRecordCard({
       <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
         <RecordCardHeader
           {...{
-            handleExerciseFieldsChange,
+            mutateExerciseFields,
             swiperIndex,
+            mutateRecordFields,
+            _id,
+            sets,
+            exercise,
+            notes,
+            displayFields,
           }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
@@ -107,7 +137,7 @@ function LoadedRecordCard({
           sx={{ px: 1 }}
         >
           <Stack spacing={2}>
-            <RecordExerciseSelector />
+            <RecordExerciseSelector {...{ mutateRecordFields }} />
             <ComboBoxField
               label="Modifiers"
               options={exercise?.modifiers}
@@ -115,13 +145,17 @@ function LoadedRecordCard({
               variant="standard"
               helperText=""
               handleSubmit={(value: string[]) =>
-                updateFields({ activeModifiers: value })
+                mutateRecordFields({ activeModifiers: value })
               }
             />
-            <SetTypeSelect showTotal noSwipingClassName={noSwipingRecord} />
+            <SetTypeSelect
+              showTotal
+              noSwipingClassName={noSwipingRecord}
+              {...{ mutateRecordFields }}
+            />
             <RenderSets
               noSwipingClassName={noSwipingRecord}
-              handleExerciseFieldsChange={handleExerciseFieldsChange}
+              mutateExerciseFields={mutateExerciseFields}
               displayFields={displayFields}
             />
             <HistoryTitle />

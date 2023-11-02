@@ -1,9 +1,11 @@
 import { Box, CardHeader } from '@mui/material'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
+import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
+import { DisplayFields } from 'models/DisplayFields'
+import Record from 'models/Record'
 import { useEffect, useState } from 'react'
 import { useMeasure } from 'react-use'
-import useCurrentRecord from '../useCurrentRecord'
 import ChangeUnitsButton from './ChangeUnitsButton'
 import DeleteRecordButton from './DeleteRecordButton'
 import ExerciseNotesButton from './ExerciseNotesButton'
@@ -15,15 +17,22 @@ import SwapRecordButton from './SwapRecordButton'
 const actionButtonWidth = 40
 const minTitleWidth = 120
 
-interface Props {
+interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
   swiperIndex: number
-  handleExerciseFieldsChange: (changes: Partial<Exercise>) => Promise<void>
+  mutateExerciseFields: UpdateFields<Exercise>
+  mutateRecordFields: UpdateFields<Record>
+  displayFields: DisplayFields
 }
 export default function RecordCardHeader({
   swiperIndex,
-  handleExerciseFieldsChange,
+  mutateExerciseFields,
+  mutateRecordFields,
+  notes,
+  sets,
+  _id,
+  exercise,
+  displayFields,
 }: Props) {
-  const { _id } = useCurrentRecord()
   const noSwipingClassName = useNoSwipingSmScreen()
   // Note: visibleActions is defined after actionButtons
   const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
@@ -35,18 +44,20 @@ export default function RecordCardHeader({
   // todo: width resets to 0 on date change due to component rerender, making this always flash to true
 
   const actionButtons = [
-    <RecordNotesButton key="record notes" />,
+    <RecordNotesButton
+      key="record notes"
+      {...{ notes, sets, mutateRecordFields }}
+    />,
     <ExerciseNotesButton
       key="exercise notes"
-      handleSubmit={(notes) => handleExerciseFieldsChange({ notes })}
+      // todo: can't create another function
+      handleSubmit={(notes) => mutateExerciseFields({ notes })}
     />,
     <ChangeUnitsButton
       key="units"
-      handleSubmit={(displayFields) =>
-        handleExerciseFieldsChange({ displayFields })
-      }
+      {...{ mutateExerciseFields, displayFields }}
     />,
-    <ManageExerciseButton key="manage" />,
+    <ManageExerciseButton key="manage" name={exercise?.name} />,
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
     <SwapRecordButton key="right" direction="right" index={swiperIndex} />,
     <DeleteRecordButton key="delete" _id={_id} />,

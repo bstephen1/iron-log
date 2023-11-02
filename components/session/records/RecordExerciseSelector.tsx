@@ -1,12 +1,16 @@
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from 'lib/frontend/restService'
+import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
+import Record from 'models/Record'
 import { Status } from 'models/Status'
 import useCurrentRecord from './useCurrentRecord'
 
-export default function RecordExerciseSelector() {
-  const { activeModifiers, category, exercise, updateFields } =
-    useCurrentRecord()
+interface Props {
+  mutateRecordFields: UpdateFields<Record>
+}
+export default function RecordExerciseSelector({ mutateRecordFields }: Props) {
+  const { activeModifiers, category, exercise } = useCurrentRecord()
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
   })
@@ -17,7 +21,7 @@ export default function RecordExerciseSelector() {
       newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
 
-    updateFields({
+    mutateRecordFields({
       exercise: newExercise,
       activeModifiers: remainingModifiers,
     })
@@ -27,7 +31,7 @@ export default function RecordExerciseSelector() {
     <ExerciseSelector
       variant="standard"
       category={category}
-      handleCategoryChange={(category) => updateFields({ category })}
+      handleCategoryChange={(category) => mutateRecordFields({ category })}
       {...{
         exercise,
         exercises,
