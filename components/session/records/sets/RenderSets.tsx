@@ -1,12 +1,13 @@
 import { Box } from '@mui/material'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
-import useCurrentRecord from '../useCurrentRecord'
+import Record from 'models/Record'
+import { memo } from 'react'
 import AddSetButton from './AddSetButton'
 import SetHeader from './SetHeader'
 import SetInput from './SetInput'
 
-interface Props {
+interface Props extends Pick<Record, 'sets'> {
   /** if omitted, sets are treated as readOnly */
   mutateExerciseFields?: (changes: Partial<Exercise>) => Promise<void>
   /** displayFields must be given as a prop because history records use the parent's fields
@@ -17,13 +18,13 @@ interface Props {
   showSplitWeight?: boolean
   noSwipingClassName?: string
 }
-export default function RenderSets({
+export default memo(function RenderSets({
   mutateExerciseFields,
   displayFields,
   showSplitWeight,
   noSwipingClassName,
+  sets,
 }: Props) {
-  const { sets } = useCurrentRecord()
   const readOnly = !mutateExerciseFields
 
   return (
@@ -31,9 +32,7 @@ export default function RenderSets({
       <SetHeader
         className={noSwipingClassName}
         displayFields={displayFields}
-        handleSubmit={(displayFields) =>
-          mutateExerciseFields?.({ displayFields })
-        }
+        mutateExerciseFields={mutateExerciseFields}
         readOnly={readOnly}
         showSplitWeight={showSplitWeight}
       />
@@ -51,4 +50,4 @@ export default function RenderSets({
       {!readOnly && <AddSetButton />}
     </Box>
   )
-}
+})

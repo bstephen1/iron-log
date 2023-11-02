@@ -16,7 +16,7 @@ import {
 } from 'models/DisplayFields'
 import Record, { setOperators, SetType } from 'models/Record'
 import { Set, Units } from 'models/Set'
-import useCurrentRecord from './useCurrentRecord'
+import { memo } from 'react'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
@@ -26,36 +26,31 @@ const timeField = ORDERED_DISPLAY_FIELDS.filter(
   (field) => field.source === 'time'
 )
 
-const calculateTotal = (sets: Set[], field: SetType['field']) =>
-  sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
-
 const getUnit = (field: SetType['field'], units: Units) =>
   units[field as keyof Units] ?? field
 
-interface Props {
+interface Props extends Pick<Record, 'setType'> {
   readOnly?: boolean
-  showTotal?: boolean
   /** label for empty option  */
   emptyOption?: string
   noSwipingClassName?: string
   mutateRecordFields: UpdateFields<Record>
+  units: Units
+  /** When nonzero, displays the given number as the total number of reps over all sets. */
+  totalReps?: number
 }
-export default function SetTypeSelect({
+export default memo(function SetTypeSelect({
   readOnly,
-  showTotal,
   emptyOption,
   noSwipingClassName,
   mutateRecordFields,
+  totalReps = 0,
+  setType,
+  units,
 }: Props) {
-  const {
-    sets,
-    setType,
-    displayFields: { units },
-  } = useCurrentRecord()
   const { field, value, operator, min, max } = setType
   const fieldOptions = operator === 'rest' ? timeField : normalFields
-  const total = calculateTotal(sets, field)
-  const remaining = (value ?? 0) - total
+  const remaining = (value ?? 0) - totalReps
 
   const updateSetType = async (changes: Partial<SetType>) => {
     const newSetType = { ...setType, ...changes }
@@ -151,11 +146,11 @@ export default function SetTypeSelect({
           </Grid>
         </>
       )}
-      {operator === 'total' && showTotal && (
+      {!!totalReps && (
         <>
           <Grid xs={6}>
             <Typography pt={1}>
-              total: {total} {getUnit(field, units)}
+              total: {totalReps} {getUnit(field, units)}
             </Typography>
           </Grid>
           <Grid xs={6} justifyContent="flex-end" display="flex">
@@ -167,4 +162,4 @@ export default function SetTypeSelect({
       )}
     </Grid>
   )
-}
+})

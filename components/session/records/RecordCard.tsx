@@ -1,5 +1,4 @@
 import { Card, CardContent, Stack, Typography } from '@mui/material'
-import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
 import { noSwipingRecord } from 'lib/frontend/constants'
@@ -10,13 +9,15 @@ import {
 } from 'lib/frontend/restService'
 import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Record from 'models/Record'
+import Record, { SetType } from 'models/Record'
+import { Set } from 'models/Set'
 import { useCallback } from 'react'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
 import RecordCardHeader from './header/RecordCardHeader'
 import { RecordContext } from './RecordContext'
 import RecordExerciseSelector from './RecordExerciseSelector'
+import RecordModifierComboBox from './RecordModifierComboBox'
 import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
 import useCurrentRecord from './useCurrentRecord'
@@ -29,6 +30,14 @@ import useCurrentRecord from './useCurrentRecord'
 // prod build retractively made every build fail to work.
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
 // See bug: https://github.com/orgs/vercel/discussions/1657
+
+/** Returns total reps over all sets when operator is "total", otherwise zero. */
+const calculateTotalReps = (sets: Set[], { field, operator }: SetType) => {
+  return operator === 'total'
+    ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
+    : 0
+}
+
 interface Props {
   id: string
   isQuickRender?: boolean
@@ -83,7 +92,8 @@ function LoadedRecordCard({
   record: Record
 }) {
   const { displayFields, mutate: mutateRecord } = useCurrentRecord()
-  const { exercise, activeModifiers, _id, sets, notes, category } = record
+  const { exercise, activeModifiers, _id, sets, notes, category, setType } =
+    record
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (changes) => {
@@ -137,25 +147,19 @@ function LoadedRecordCard({
             <RecordExerciseSelector
               {...{ mutateRecordFields, activeModifiers, exercise, category }}
             />
-            <ComboBoxField
-              label="Modifiers"
-              options={exercise?.modifiers}
-              initialValue={activeModifiers}
-              variant="standard"
-              helperText=""
-              handleSubmit={(value: string[]) =>
-                mutateRecordFields({ activeModifiers: value })
-              }
+            <RecordModifierComboBox
+              availableModifiers={exercise?.modifiers}
+              {...{ mutateRecordFields, activeModifiers }}
             />
             <SetTypeSelect
-              showTotal
               noSwipingClassName={noSwipingRecord}
-              {...{ mutateRecordFields }}
+              units={displayFields.units}
+              totalReps={calculateTotalReps(sets, setType)}
+              {...{ mutateRecordFields, setType }}
             />
             <RenderSets
               noSwipingClassName={noSwipingRecord}
-              mutateExerciseFields={mutateExerciseFields}
-              displayFields={displayFields}
+              {...{ mutateExerciseFields, displayFields, sets }}
             />
             <HistoryTitle />
             <HistoryCardsSwiper isQuickRender={isQuickRender} />
