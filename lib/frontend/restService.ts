@@ -149,6 +149,13 @@ export function useGuaranteedRecord(fallbackRecord: Record) {
   }
 }
 
+/** Note: whenever mutate() is used, any component using useRecord will rerender, even if they don't
+ *  use the record from this hook. This can be avoided by lifting the full record to a lightweight parent
+ *  component and only passing the fields actually needed as props. If the child needs access to mutate(),
+ *  it can either take the mutate from this hook as another prop, or use the global mutate from useSWRConfig().
+ *
+ *  Note that this applies to any other useSWR hook as well.
+ */
 export function useRecord(id: string, config?: SWRConfiguration) {
   const { data, error, isLoading, mutate } = useSWR<Record | null>(
     URI_RECORDS + id,

@@ -2,32 +2,37 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { Box, IconButton, Input, MenuItem, Select, Stack } from '@mui/material'
 import { blue, grey, lightGreen } from '@mui/material/colors'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
-import { noSwipingRecord } from 'lib/frontend/constants'
-import { updateRecordFields, useRecord } from 'lib/frontend/restService'
+import { noSwipingRecord, URI_RECORDS } from 'lib/frontend/constants'
+import { updateRecordFields } from 'lib/frontend/restService'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
 import { convertUnit, DB_UNITS, Set } from 'models/Set'
+import { memo } from 'react'
+import { useSWRConfig } from 'swr'
 
 const delimiterWidth = '15px'
 
-interface Props extends Pick<Record, '_id'> {
+interface Props extends Set {
   readOnly?: boolean
   index: number
-  set: Set
   displayFields: DisplayFields
   extraWeight: number
+  _id: Record['_id']
 }
 // todo: indicator for failing a rep
 // todo: swipe to delete for xs screen; remove X button on xs too (keep swipe delete throughout?)
-export default function SetInput({
+/** Render a set. Note the set to render must be spread into the props.
+ *  This destructures the set into primitive values to avoid unecessary rerenders.
+ */
+export default memo(function SetInput({
   readOnly = false,
   index,
-  set,
   displayFields,
   extraWeight,
   _id,
+  ...set
 }: Props) {
-  const { mutate } = useRecord(_id)
+  const { mutate } = useSWRConfig()
   const pyStack = 0.5
 
   // todo: make customizable ?
@@ -47,7 +52,8 @@ export default function SetInput({
   }
 
   const handleSetChange = async (changes: Partial<Set>) => {
-    mutate(
+    mutate<Record | null>(
+      URI_RECORDS + _id,
       (cur) =>
         cur
           ? updateRecordFields(_id, {
@@ -55,7 +61,7 @@ export default function SetInput({
             })
           : null,
       {
-        optimisticData: (cur) => {
+        optimisticData: (cur: Record) => {
           if (!cur) return null
           const newSets = [...cur.sets]
           newSets[index] = { ...newSets[index], ...changes }
@@ -67,15 +73,16 @@ export default function SetInput({
   }
 
   const handleDeleteSet = async () => {
-    mutate(
+    mutate<Record | null>(
+      URI_RECORDS + _id,
       (cur) =>
         cur
           ? updateRecordFields(_id, {
-              ['sets']: cur.sets.filter((_, j) => j !== index),
+              ['sets']: cur?.sets.filter((_, j) => j !== index),
             })
           : null,
       {
-        optimisticData: (cur) =>
+        optimisticData: (cur: Record) =>
           cur ? { ...cur, sets: cur.sets.filter((_, j) => j !== index) } : null,
         revalidate: false,
       }
@@ -194,4 +201,4 @@ export default function SetInput({
       )}
     </Stack>
   )
-}
+})

@@ -48,7 +48,7 @@ export default memo(function RenderSets({
           <SetInput
             key={i}
             index={i}
-            {...{ set, displayFields, readOnly, _id, extraWeight }}
+            {...{ ...set, displayFields, readOnly, _id, extraWeight }}
           />
         ))}
       </Box>

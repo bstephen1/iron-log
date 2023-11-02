@@ -1,8 +1,11 @@
 import AddIcon from '@mui/icons-material/Add'
 import { Box, Fab, Tooltip } from '@mui/material'
-import { updateRecordFields, useRecord } from 'lib/frontend/restService'
+import { URI_RECORDS } from 'lib/frontend/constants'
+import { updateRecordFields } from 'lib/frontend/restService'
 import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
+import Record from 'models/Record'
 import { Set } from 'models/Set'
+import { useSWRConfig } from 'swr'
 
 interface Props {
   sets: Set[]
@@ -10,7 +13,7 @@ interface Props {
   _id: string
 }
 export default function AddSetButton({ sets, disabled, _id }: Props) {
-  const { mutate } = useRecord(_id)
+  const { mutate } = useSWRConfig()
   const className = useNoSwipingSmScreen()
 
   const addSet = async () => {
@@ -31,11 +34,15 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
       newSet.side = 'L'
     }
 
-    mutate(updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }), {
-      optimisticData: (cur) =>
-        cur ? { ...cur, sets: sets.concat(newSet) } : null,
-      revalidate: false,
-    })
+    mutate<Record | null>(
+      URI_RECORDS + _id,
+      updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }),
+      {
+        optimisticData: (cur: Record) =>
+          cur ? { ...cur, sets: sets.concat(newSet) } : null,
+        revalidate: false,
+      }
+    )
   }
 
   return (
