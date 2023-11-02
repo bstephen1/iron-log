@@ -168,7 +168,16 @@ function LoadedRecordCard({
               }}
             />
             <HistoryTitle />
-            <HistoryCardsSwiper {...{ isQuickRender, record }} />
+            <HistoryCardsSwiper
+              exerciseName={exercise?.name}
+              {...{
+                isQuickRender,
+                activeModifiers,
+                _id,
+                setType,
+                displayFields,
+              }}
+            />
           </Stack>
         </CardContent>
       </Card>

@@ -12,27 +12,35 @@ import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import NavigationBar from 'components/slider/NavigationBar'
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
-import useDisplayFields from 'lib/frontend/useDisplayFields'
+import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import Record from 'models/Record'
+import { useDateContext } from 'pages/sessions/[date].page'
+import { memo } from 'react'
 import 'swiper/css/pagination'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination
 
-interface Props {
+interface Props extends Pick<Record, '_id' | 'activeModifiers' | 'setType'> {
   isQuickRender?: boolean
-  record: Record
+  displayFields: DisplayFields
+  exerciseName?: string
 }
-export default function HistoryCardsSwiper({ isQuickRender, record }: Props) {
-  const { _id, activeModifiers, date, exercise, setType } = record
-  const displayFields = useDisplayFields(record)
-
+export default memo(function HistoryCardsSwiper({
+  isQuickRender,
+  displayFields,
+  exerciseName,
+  _id,
+  activeModifiers,
+  setType,
+}: Props) {
+  const date = useDateContext()
   const filter: RecordQuery = {
     modifier: activeModifiers,
     // don't want to include the current record in its own history
     end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
-    exercise: exercise?.name,
+    exercise: exerciseName,
     limit: 10,
     modifierMatchType: ArrayMatchType.Equivalent,
     setMatchType: SetMatchType.SetType,
@@ -131,4 +139,4 @@ export default function HistoryCardsSwiper({ isQuickRender, record }: Props) {
       </Box>
     </Stack>
   )
-}
+})
