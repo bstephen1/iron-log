@@ -2,11 +2,11 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { Box, IconButton, Input, MenuItem, Select, Stack } from '@mui/material'
 import { blue, grey, lightGreen } from '@mui/material/colors'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
+import { noSwipingRecord } from 'lib/frontend/constants'
 import { updateRecordFields, useRecord } from 'lib/frontend/restService'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
 import { convertUnit, DB_UNITS, Set } from 'models/Set'
-import { useMemo } from 'react'
 
 const delimiterWidth = '15px'
 
@@ -31,7 +31,7 @@ export default function SetInput({
   const pyStack = 0.5
 
   // todo: make customizable ?
-  const background = useMemo(() => {
+  const background = () => {
     switch (set.side) {
       case 'L':
         return `${blue[50]}`
@@ -40,7 +40,7 @@ export default function SetInput({
       default:
         return `${grey[100]}`
     }
-  }, [set.side])
+  }
 
   if (!displayFields.visibleFields.length) {
     return <></>
@@ -113,6 +113,7 @@ export default function SetInput({
           )}
           {field.source === 'side' ? (
             <Select<Set['side']>
+              className={noSwipingRecord}
               variant="standard"
               displayEmpty
               fullWidth
