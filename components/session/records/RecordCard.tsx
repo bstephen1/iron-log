@@ -75,6 +75,20 @@ export default function RecordCard(props: Props) {
   }
 }
 
+/** Record card with loaded record data.
+ *
+ * Note: This is an expensive component to render. Children should be memoized
+ * so they only rerender when needed. With SWR, any time a given swr hook triggers
+ * mutate(), any component using that hook will trigger a rerender. This means
+ * children should NOT useRecord, or they will always rerender whenever any part of
+ * the record is mutated. Instead, they should be passed only the props they need.
+ * Context can also not be used because it works like swr -- any change to
+ * the record will trigger a rerender.
+ *
+ * Memoized components without primitive props can make use of the second arg
+ * for memo() to use the custom equality comparison function isEqual() from lodash.
+ * Otherwise they'll still be rerendered because the mutation creates a new object.
+ */
 function LoadedRecordCard({
   swiperIndex,
   setMostRecentlyUpdatedExercise,

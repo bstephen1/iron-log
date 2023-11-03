@@ -1,6 +1,7 @@
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from 'lib/frontend/restService'
 import { UpdateFields } from 'lib/util'
+import { isEqual } from 'lodash'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record from 'models/Record'
 import { Status } from 'models/Status'
@@ -45,4 +46,5 @@ export default memo(function RecordExerciseSelector({
       }}
     />
   )
-})
+},
+isEqual)

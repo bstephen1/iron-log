@@ -9,6 +9,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
 import { UpdateFields } from 'lib/util'
+import { isEqual } from 'lodash'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
@@ -162,4 +163,5 @@ export default memo(function SetTypeSelect({
       )}
     </Grid>
   )
-})
+},
+isEqual)

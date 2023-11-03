@@ -11,6 +11,7 @@ import {
   Stack,
 } from '@mui/material'
 import { UpdateFields } from 'lib/util'
+import { isEqual } from 'lodash'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import { UNITS, Units } from 'models/Set'
@@ -67,7 +68,8 @@ export default memo(function ChangeUnitsButton({
       </Dialog>
     </>
   )
-})
+},
+isEqual)
 
 interface UnitDimensionRadioGroupProps<Dimension extends keyof Units> {
   dimension: Dimension

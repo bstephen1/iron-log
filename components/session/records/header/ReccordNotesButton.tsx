@@ -4,6 +4,7 @@ import NotesList from 'components/form-fields/NotesList'
 import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
 import { updateSessionLog } from 'lib/frontend/restService'
 import { UpdateFields } from 'lib/util'
+import { isEqual } from 'lodash'
 import Note from 'models/Note'
 import Record from 'models/Record'
 import { Set } from 'models/Set'
@@ -102,4 +103,5 @@ export default memo(function RecordNotesButton({
       </Dialog>
     </>
   )
-})
+},
+isEqual)

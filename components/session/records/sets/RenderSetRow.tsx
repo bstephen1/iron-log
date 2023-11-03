@@ -10,6 +10,8 @@ import { useSWRConfig } from 'swr'
 import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './SetFieldInput'
 
+const pyStack = 0.5
+
 const background = (side: Set['side']) => {
   switch (side) {
     case 'L':
@@ -41,7 +43,6 @@ export default memo(function RenderSetRow({
   ...set
 }: Props) {
   const { mutate } = useSWRConfig()
-  const pyStack = 0.5
 
   const handleSetChange = useCallback(
     async (changes: Partial<Set>) => {
@@ -104,18 +105,7 @@ export default memo(function RenderSetRow({
         // insert a box for padding when clear icon is hidden
         <Box minWidth={'32px'} />
       ) : (
-        <DeleteSetButton
-          index={index}
-          _id={_id}
-          sx={{
-            my: -pyStack,
-            p: 1,
-            borderRadius: 0,
-            '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {
-              borderRadius: 0,
-            },
-          }}
-        />
+        <DeleteSetButton index={index} _id={_id} my={-pyStack} />
       )}
     </Stack>
   )

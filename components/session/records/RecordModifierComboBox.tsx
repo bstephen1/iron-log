@@ -1,5 +1,6 @@
 import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import { UpdateFields } from 'lib/util'
+import { isEqual } from 'lodash'
 import Record from 'models/Record'
 import { memo } from 'react'
 
@@ -24,4 +25,5 @@ export default memo(function RecordModifierComboBox({
       }
     />
   )
-})
+},
+isEqual)

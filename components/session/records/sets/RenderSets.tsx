@@ -2,7 +2,6 @@ import { Box } from '@mui/material'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
-import { memo } from 'react'
 import AddSetButton from './AddSetButton'
 import SetInput from './RenderSetRow'
 import SetHeader from './SetHeader'
@@ -19,7 +18,7 @@ interface Props extends Pick<Record, '_id' | 'sets'> {
   noSwipingClassName?: string
   extraWeight: number
 }
-export default memo(function RenderSets({
+export default function RenderSets({
   mutateExerciseFields,
   displayFields,
   showSplitWeight,
@@ -60,4 +59,4 @@ export default memo(function RenderSets({
       )}
     </Box>
   )
-})
+}

@@ -11,6 +11,7 @@ import {
   Stack,
 } from '@mui/material'
 import { UpdateFields } from 'lib/util'
+import { isEqual } from 'lodash'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import {
   DisplayFields,
@@ -151,4 +152,5 @@ export default memo(function SetHeader({
       </Select>
     </FormControl>
   )
-})
+},
+isEqual)

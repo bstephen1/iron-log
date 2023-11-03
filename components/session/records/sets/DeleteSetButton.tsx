@@ -9,12 +9,9 @@ import { useSWRConfig } from 'swr'
 interface Props extends IconButtonProps {
   _id: Record['_id']
   index: number
+  my?: number
 }
-export default memo(function DeleteSetButton({
-  _id,
-  index,
-  ...iconButtonProps
-}: Props) {
+export default memo(function DeleteSetButton({ _id, index, my }: Props) {
   const { mutate } = useSWRConfig()
 
   const handleDeleteSet = async () => {
@@ -35,7 +32,18 @@ export default memo(function DeleteSetButton({
   }
 
   return (
-    <IconButton size="small" onClick={handleDeleteSet} {...iconButtonProps}>
+    <IconButton
+      size="small"
+      onClick={handleDeleteSet}
+      sx={{
+        my,
+        p: 1,
+        borderRadius: 0,
+        '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {
+          borderRadius: 0,
+        },
+      }}
+    >
       <ClearIcon />
     </IconButton>
   )
