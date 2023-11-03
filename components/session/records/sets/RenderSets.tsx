@@ -4,8 +4,8 @@ import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
 import { memo } from 'react'
 import AddSetButton from './AddSetButton'
+import SetInput from './RenderSetRow'
 import SetHeader from './SetHeader'
-import SetInput from './SetInput'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
