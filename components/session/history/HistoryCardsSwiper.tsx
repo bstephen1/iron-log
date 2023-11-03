@@ -40,7 +40,7 @@ export default memo(function HistoryCardsSwiper({
     // don't want to include the current record in its own history
     end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
     exercise: exerciseName,
-    limit: 10,
+    limit: 5,
     modifierMatchType: ArrayMatchType.Equivalent,
     setMatchType: SetMatchType.SetType,
     ...setType,

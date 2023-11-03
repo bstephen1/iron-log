@@ -4,7 +4,6 @@ import useExtraWeight from 'lib/frontend/useExtraWeight'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
 import Link from 'next/link'
-import { useDateContext } from 'pages/sessions/[date].page'
 import RecordNotesButton from '../records/header/ReccordNotesButton'
 import RenderSets from '../records/sets/RenderSets'
 
@@ -16,9 +15,8 @@ interface Props {
   record: Record
 }
 export default function HistoryCard({ displayFields, record }: Props) {
-  const { sets, _id, notes } = record
+  const { sets, _id, notes, date } = record
   const extraWeight = useExtraWeight(record)
-  const date = useDateContext()
 
   // use splitWeight if parent record is using it
   const showSplitWeight = displayFields.visibleFields.some((field) =>
