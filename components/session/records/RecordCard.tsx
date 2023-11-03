@@ -13,7 +13,7 @@ import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record, { SetType } from 'models/Record'
 import { Set } from 'models/Set'
-import { useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { KeyedMutator } from 'swr'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
@@ -47,7 +47,7 @@ interface Props {
   mostRecentlyUpdatedExercise: Exercise | null
   swiperIndex: number
 }
-export default function RecordCard(props: Props) {
+export default memo(function RecordCard(props: Props) {
   const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
   const { record, mutate } = useRecord(id)
 
@@ -73,7 +73,7 @@ export default function RecordCard(props: Props) {
         : record.exercise
     return <LoadedRecordCard record={record} mutateRecord={mutate} {...props} />
   }
-}
+})
 
 /** Record card with loaded record data.
  *

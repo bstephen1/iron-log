@@ -1,4 +1,4 @@
-import { Stack, useTheme } from '@mui/material'
+import { Stack, useMediaQuery, useTheme } from '@mui/material'
 import LoadingSpinner from 'components/loading/LoadingSpinner'
 import NavigationBar from 'components/slider/NavigationBar'
 import { noSwipingRecord } from 'lib/frontend/constants'
@@ -23,8 +23,13 @@ export default function SessionSwiper() {
   const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
     useState<Exercise | null>(null)
   const { sessionLog, date } = useCurrentSessionLog()
-  // quick render reduces load time for initial render by only rendering the visible RecordCards.
-  const [isQuickRender, setIsQuickRender] = useState(true)
+  // reduce load time for initial render by only rendering the visible RecordCards
+  const [isFirstRender, setIsFirstRender] = useState(true)
+  // on large screens there are 3 visible slides, but on init the first one is centered
+  // so only 2 are actually visible
+  const initialVisibleSlides = useMediaQuery(theme.breakpoints.down('sm'))
+    ? 1
+    : 2
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
   const paginationClassName = 'pagination-record-cards'
@@ -35,7 +40,7 @@ export default function SessionSwiper() {
   const isLoading = sessionLog === undefined
 
   useEffect(() => {
-    setIsQuickRender(false)
+    setIsFirstRender(false)
   }, [])
 
   // todo: add blank space or something under the swiper. On the longest record
@@ -114,7 +119,7 @@ export default function SessionSwiper() {
           {sessionLog?.records.map((id, i) => (
             <SwiperSlide key={id}>
               <RecordCard
-                isQuickRender={isQuickRender}
+                isQuickRender={isFirstRender && i >= initialVisibleSlides}
                 id={id}
                 swiperIndex={i}
                 setMostRecentlyUpdatedExercise={setMostRecentlyUpdatedExercise}
