@@ -24,12 +24,10 @@ import 'swiper/css/pagination'
 // https://swr.vercel.app/docs/pagination
 
 interface Props extends Pick<Record, '_id' | 'activeModifiers' | 'setType'> {
-  isQuickRender?: boolean
   displayFields: DisplayFields
   exerciseName?: string
 }
 export default memo(function HistoryCardsSwiper({
-  isQuickRender,
   displayFields,
   exerciseName,
   _id,
@@ -64,7 +62,7 @@ export default memo(function HistoryCardsSwiper({
   const navPrevClassName = `nav-prev-history-${_id}`
   const navNextClassName = `nav-next-history-${_id}`
 
-  if (isQuickRender || isLoading || !historyRecords) {
+  if (isLoading || !historyRecords) {
     return (
       <RecordCardSkeleton
         noHeader

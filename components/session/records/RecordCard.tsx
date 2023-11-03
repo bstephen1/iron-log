@@ -51,7 +51,7 @@ export default function RecordCard(props: Props) {
   const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
   const { record, mutate } = useRecord(id)
 
-  if (record === undefined || (props.isQuickRender && swiperIndex > 1)) {
+  if (record === undefined || props.isQuickRender) {
     return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
   } else if (record === null) {
     return (
@@ -92,7 +92,6 @@ export default function RecordCard(props: Props) {
 function LoadedRecordCard({
   swiperIndex,
   setMostRecentlyUpdatedExercise,
-  isQuickRender,
   record,
   mutateRecord,
 }: Props & {
@@ -185,7 +184,6 @@ function LoadedRecordCard({
             <HistoryCardsSwiper
               exerciseName={exercise?.name}
               {...{
-                isQuickRender,
                 activeModifiers,
                 _id,
                 setType,
