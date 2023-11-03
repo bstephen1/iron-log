@@ -5,8 +5,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
+import { memo } from 'react'
 
-export default function HistoryTitle() {
+export default memo(function HistoryTitle() {
   const theme = useTheme()
 
   return (
@@ -33,4 +34,4 @@ export default function HistoryTitle() {
       </Divider>
     </Box>
   )
-}
+})

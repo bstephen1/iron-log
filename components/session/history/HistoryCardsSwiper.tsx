@@ -17,6 +17,7 @@ import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import Record from 'models/Record'
 import { useDateContext } from 'pages/sessions/[date].page'
 import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
 
 // todo: useSWRInfinite for infinite loading?
@@ -139,4 +140,5 @@ export default memo(function HistoryCardsSwiper({
       </Box>
     </Stack>
   )
-})
+},
+isEqual)
