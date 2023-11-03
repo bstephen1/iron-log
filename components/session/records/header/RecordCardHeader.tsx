@@ -89,7 +89,7 @@ export default function RecordCardHeader({
           sx={{ cursor: 'default', width: '100%' }}
         >
           {actionButtons.slice(0, visibleActions)}
-          <MoreActionsButton {...{ actionButtons, visibleActions }} />
+          <MoreActionsButton actions={actionButtons.slice(visibleActions)} />
         </Box>
       }
     />

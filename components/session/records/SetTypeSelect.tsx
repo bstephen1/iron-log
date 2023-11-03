@@ -9,7 +9,6 @@ import Grid from '@mui/material/Unstable_Grid2'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
 import { UpdateFields } from 'lib/util'
-import { isEqual } from 'lodash'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
@@ -18,6 +17,7 @@ import {
 import Record, { setOperators, SetType } from 'models/Record'
 import { Set, Units } from 'models/Set'
 import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight

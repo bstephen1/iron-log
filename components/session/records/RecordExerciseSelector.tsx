@@ -1,11 +1,11 @@
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from 'lib/frontend/restService'
 import { UpdateFields } from 'lib/util'
-import { isEqual } from 'lodash'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record from 'models/Record'
 import { Status } from 'models/Status'
 import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 interface Props
   extends Pick<Record, 'activeModifiers' | 'category' | 'exercise'> {

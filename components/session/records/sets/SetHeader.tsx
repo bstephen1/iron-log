@@ -11,7 +11,6 @@ import {
   Stack,
 } from '@mui/material'
 import { UpdateFields } from 'lib/util'
-import { isEqual } from 'lodash'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import {
   DisplayFields,
@@ -20,6 +19,7 @@ import {
   VisibleField,
 } from 'models/DisplayFields'
 import { Fragment, memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 interface Props extends Partial<SelectProps<string[]>> {
   mutateExerciseFields?: UpdateFields<Exercise>

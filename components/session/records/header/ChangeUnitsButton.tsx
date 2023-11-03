@@ -11,11 +11,11 @@ import {
   Stack,
 } from '@mui/material'
 import { UpdateFields } from 'lib/util'
-import { isEqual } from 'lodash'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import { UNITS, Units } from 'models/Set'
 import { memo, useState } from 'react'
+import isEqual from 'react-fast-compare'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
