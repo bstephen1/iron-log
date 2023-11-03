@@ -65,12 +65,16 @@ export default memo(function RecordCard(props: Props) {
     )
   } else {
     // Use the newly updated exercise so multiple cards with the same exercise will ripple their updates.
-    // Note this doesn't mutate the underlying cache, but the cache is set up to mutate when the exercise is updated.
-    // bug: need to actually mutate the records. This will revert updates if a different exercise is updated.
-    const exercise =
-      mostRecentlyUpdatedExercise?._id === record.exercise?._id
-        ? mostRecentlyUpdatedExercise
-        : record.exercise
+    if (
+      mostRecentlyUpdatedExercise?._id &&
+      mostRecentlyUpdatedExercise._id === record.exercise?._id &&
+      // have to JSONify mostRecentlyUpdatedExercise to remove javascript class stuff.
+      // record.exercise is pure json, which strips javascript class stuff.
+      JSON.stringify(mostRecentlyUpdatedExercise) !==
+        JSON.stringify(record.exercise)
+    ) {
+      mutate({ ...record, exercise: mostRecentlyUpdatedExercise })
+    }
     return <LoadedRecordCard record={record} mutateRecord={mutate} {...props} />
   }
 })
