@@ -2,7 +2,6 @@ import AddIcon from '@mui/icons-material/Add'
 import { Box, Fab, Tooltip } from '@mui/material'
 import { URI_RECORDS } from 'lib/frontend/constants'
 import { updateRecordFields } from 'lib/frontend/restService'
-import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import Record from 'models/Record'
 import { Set } from 'models/Set'
 import { useSWRConfig } from 'swr'
@@ -14,7 +13,6 @@ interface Props {
 }
 export default function AddSetButton({ sets, disabled, _id }: Props) {
   const { mutate } = useSWRConfig()
-  const className = useNoSwipingSmScreen()
 
   const addSet = async () => {
     const newSet = sets.at(-1)
@@ -60,7 +58,6 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
             size="medium"
             disabled={disabled}
             onClick={addSet}
-            className={className}
           >
             <AddIcon />
           </Fab>

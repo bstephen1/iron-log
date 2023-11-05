@@ -1,7 +1,6 @@
 import { Card, CardContent, Stack, Typography } from '@mui/material'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
-import { noSwipingRecord } from 'lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -167,13 +166,11 @@ function LoadedRecordCard({
               {...{ mutateRecordFields, activeModifiers }}
             />
             <SetTypeSelect
-              noSwipingClassName={noSwipingRecord}
               units={displayFields.units}
               totalReps={calculateTotalReps(sets, setType)}
               {...{ mutateRecordFields, setType }}
             />
             <RenderSets
-              noSwipingClassName={noSwipingRecord}
               {...{
                 mutateExerciseFields,
                 displayFields,

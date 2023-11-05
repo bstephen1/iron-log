@@ -8,6 +8,7 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
+import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
 import { UpdateFields } from 'lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
@@ -34,7 +35,6 @@ interface Props extends Pick<Record, 'setType'> {
   readOnly?: boolean
   /** label for empty option  */
   emptyOption?: string
-  noSwipingClassName?: string
   mutateRecordFields: UpdateFields<Record>
   units: Units
   /** When nonzero, displays the given number as the total number of reps over all sets. */
@@ -43,7 +43,6 @@ interface Props extends Pick<Record, 'setType'> {
 export default memo(function SetTypeSelect({
   readOnly,
   emptyOption,
-  noSwipingClassName,
   mutateRecordFields,
   totalReps = 0,
   setType,
@@ -52,6 +51,7 @@ export default memo(function SetTypeSelect({
   const { field, value, operator, min, max } = setType
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const remaining = (value ?? 0) - totalReps
+  const noSwipingDesktop = useNoSwipingDesktop()
 
   const updateSetType = async (changes: Partial<SetType>) => {
     const newSetType = { ...setType, ...changes }
@@ -72,7 +72,7 @@ export default memo(function SetTypeSelect({
       </Grid>
       <Grid xs={!!operator ? 4 : 12} pr={!!operator ? 2 : 0}>
         <SelectFieldAutosave<typeof operator>
-          className={noSwipingClassName}
+          className={noSwipingDesktop}
           label=""
           fullWidth
           initialValue={operator ?? ''}
@@ -123,7 +123,7 @@ export default memo(function SetTypeSelect({
           </Grid>
           <Grid xs={3} display="flex" alignItems="flex-end">
             <SelectFieldAutosave<keyof Set, VisibleField>
-              className={noSwipingClassName}
+              className={noSwipingDesktop}
               label=""
               fullWidth
               initialValue={field ?? ''}

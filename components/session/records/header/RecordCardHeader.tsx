@@ -1,5 +1,4 @@
 import { Box, CardHeader } from '@mui/material'
-import useNoSwipingSmScreen from 'lib/frontend/useNoSwipingSmScreen'
 import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
@@ -33,7 +32,6 @@ export default function RecordCardHeader({
   exercise,
   displayFields,
 }: Props) {
-  const noSwipingClassName = useNoSwipingSmScreen()
   // Note: visibleActions is defined after actionButtons
   const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
 
@@ -84,10 +82,7 @@ export default function RecordCardHeader({
       title={`Record ${swiperIndex + 1}`}
       titleTypographyProps={{ variant: 'h6' }}
       action={
-        <Box
-          className={noSwipingClassName}
-          sx={{ cursor: 'default', width: '100%' }}
-        >
+        <Box sx={{ cursor: 'default', width: '100%' }}>
           {actionButtons.slice(0, visibleActions)}
           <MoreActionsButton actions={actionButtons.slice(visibleActions)} />
         </Box>

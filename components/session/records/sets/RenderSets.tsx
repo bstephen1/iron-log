@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
@@ -15,7 +16,6 @@ interface Props extends Pick<Record, '_id' | 'sets'> {
   displayFields: DisplayFields
   showSplitWeight?: boolean
   showUnilateral?: boolean
-  noSwipingClassName?: string
   extraWeight: number
 }
 export default function RenderSets({
@@ -23,7 +23,6 @@ export default function RenderSets({
   displayFields,
   showSplitWeight,
   showUnilateral,
-  noSwipingClassName,
   sets,
   extraWeight,
   _id,
@@ -33,7 +32,7 @@ export default function RenderSets({
   return (
     <Box>
       <SetHeader
-        className={noSwipingClassName}
+        className={useNoSwipingDesktop()}
         {...{
           displayFields,
           mutateExerciseFields,

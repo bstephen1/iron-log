@@ -1,6 +1,6 @@
 import { Box, Input, MenuItem, Select, Stack } from '@mui/material'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
-import { noSwipingRecord } from 'lib/frontend/constants'
+import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
 import { UpdateFields } from 'lib/util'
 import { VisibleField } from 'models/DisplayFields'
 import { convertUnit, DB_UNITS, Set, Units } from 'models/Set'
@@ -30,6 +30,7 @@ export default memo(function SetFieldInput<S extends keyof Units>({
   source,
   name,
 }: Props<S>) {
+  const noSwipingClassName = useNoSwipingDesktop()
   return (
     <Stack
       direction="row"
@@ -48,7 +49,7 @@ export default memo(function SetFieldInput<S extends keyof Units>({
       )}
       {source === 'side' ? (
         <Select<Set['side']>
-          className={noSwipingRecord}
+          className={noSwipingClassName}
           variant="standard"
           displayEmpty
           fullWidth

@@ -1,6 +1,7 @@
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { Box, IconButton } from '@mui/material'
+import useDesktopCheck from 'lib/frontend/useDesktopCheck'
 import { useState } from 'react'
 import Swiper from 'swiper'
 import { useSwiper } from 'swiper/react'
@@ -19,6 +20,7 @@ export default function NavigationArrow({
 }: Props) {
   const isPrev = direction === 'prev'
   const swiper = useSwiper()
+  const isDesktop = useDesktopCheck()
   const [disabled, setDisabled] = useState(
     isPrev ? swiper.isBeginning : swiper.isEnd
   )
@@ -50,7 +52,7 @@ export default function NavigationArrow({
       alignItems="center"
     >
       <IconButton
-        sx={{ display: { xs: 'none', sm: 'block' } }}
+        sx={{ display: isDesktop ? 'block' : 'none' }}
         className={className}
         color="primary"
         disabled={disabled}

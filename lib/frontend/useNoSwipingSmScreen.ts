@@ -1,8 +1,12 @@
 import { useMediaQuery, useTheme } from '@mui/material'
 import { noSwipingRecord } from './constants'
+import useDesktopCheck from './useDesktopCheck'
 
-/** returns classname for no swiping if screen is small */
-export default function useNoSwipingSmScreen() {
-  const theme = useTheme()
-  return useMediaQuery(theme.breakpoints.up('sm')) ? noSwipingRecord : ''
+/** Returns classname for no swiping if desktop is detected.
+ *
+ *  Some elements do not work correctly if a cursor is present and swiping is enabled.
+ *  Eg, Selects will not open when clicked unless swiping is disabled.
+ */
+export default function useNoSwipingDesktop() {
+  return useDesktopCheck() ? noSwipingRecord : ''
 }
