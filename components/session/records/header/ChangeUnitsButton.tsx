@@ -10,44 +10,46 @@ import {
   RadioGroup,
   Stack,
 } from '@mui/material'
+import { UpdateFields } from 'lib/util'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import { UNITS, Units } from 'models/Set'
-import { useState } from 'react'
-import RecordHeaderButton from './RecordHeaderButton'
+import { memo, useState } from 'react'
+import isEqual from 'react-fast-compare'
+import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
+  mutateExerciseFields: UpdateFields<Exercise>
   displayFields: DisplayFields
-  handleSubmit: (fields: DisplayFields) => void
-  handleClose: () => void
 }
-export default function RecordUnitsButton({
+export default memo(function ChangeUnitsButton({
+  mutateExerciseFields,
   displayFields,
-  handleClose,
-  ...props
 }: Props) {
   const [open, setOpen] = useState(false)
   const { units } = displayFields
-  // sure love that you have to specify that yes, Object.keys(obj) is in fact a list of keyof obj
+  // typescript doesn't recognize that Object.keys(obj) is in fact a list of keyof obj
   const dimensions = Object.keys(units) as Array<keyof typeof units>
 
-  const handleSubmit = (changes: Partial<Units>) =>
-    props.handleSubmit({
-      ...displayFields,
-      units: { ...displayFields.units, ...changes },
+  const handleChange = (changes: Partial<Units>) =>
+    mutateExerciseFields({
+      displayFields: {
+        ...displayFields,
+        units: { ...displayFields.units, ...changes },
+      },
     })
 
   return (
     <>
-      <RecordHeaderButton title="Change Units" onClick={() => setOpen(true)}>
+      <TooltipIconButton title="Change Units" onClick={() => setOpen(true)}>
         {/* it's proven pretty difficult to find a good "change units" icon...  */}
         <DesignServicesIcon />
-      </RecordHeaderButton>
+      </TooltipIconButton>
       <Dialog
         open={open}
         fullWidth
         onClose={() => {
           setOpen(false)
-          handleClose()
         }}
       >
         <DialogTitle>Change Units</DialogTitle>
@@ -58,7 +60,7 @@ export default function RecordUnitsButton({
                 key={dimension}
                 dimension={dimension}
                 value={units[dimension]}
-                handleChange={handleSubmit}
+                handleChange={handleChange}
               />
             ))}
           </Stack>
@@ -66,7 +68,8 @@ export default function RecordUnitsButton({
       </Dialog>
     </>
   )
-}
+},
+isEqual)
 
 interface UnitDimensionRadioGroupProps<Dimension extends keyof Units> {
   dimension: Dimension

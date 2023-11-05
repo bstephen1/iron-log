@@ -1,6 +1,6 @@
-import { Box, Divider, Stack, Typography, useTheme } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
+import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
 import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import HistoryCard from './HistoryCard'
@@ -10,32 +10,44 @@ import 'swiper/css/pagination'
 
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import NavigationBar from 'components/slider/NavigationBar'
+import dayjs from 'dayjs'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
+import Record from 'models/Record'
+import { useDateContext } from 'pages/sessions/[date].page'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination
 
-interface Props {
-  isQuickRender?: boolean
-  paginationId: string
-  /** A record's displayFields are only up to date on fetch, so the current value must
-   * be passed in to ensure it is in sync */
+interface Props extends Pick<Record, '_id' | 'activeModifiers' | 'setType'> {
   displayFields: DisplayFields
-  /** filter to query for record history. If no filter is provided no records will be fetched. */
-  filter?: RecordQuery
-  shouldSync?: boolean
+  exerciseName?: string
 }
-export default function HistoryCardsSwiper({
-  isQuickRender,
-  paginationId,
+export default memo(function HistoryCardsSwiper({
   displayFields,
-  filter,
-  shouldSync,
+  exerciseName,
+  _id,
+  activeModifiers,
+  setType,
 }: Props) {
+  const date = useDateContext()
+  const filter: RecordQuery = {
+    modifier: activeModifiers,
+    // don't want to include the current record in its own history
+    end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
+    exercise: exerciseName,
+    limit: 5,
+    modifierMatchType: ArrayMatchType.Equivalent,
+    setMatchType: SetMatchType.SetType,
+    ...setType,
+  }
+
   // todo: then fetch more if the swiper gets close to the end. (Also for future dates?)
-  const { records, isLoading } = useRecords(
+  const { records: historyRecords, isLoading } = useRecords(
     {
       modifierMatchType: ArrayMatchType.Equivalent,
       // minimize load if filter does not set a limit
@@ -46,47 +58,28 @@ export default function HistoryCardsSwiper({
   )
 
   // each record's history needs a unique className
-  const paginationClassName = `pagination-history-${paginationId}`
-  const navPrevClassName = `nav-prev-history-${paginationId}`
-  const navNextClassName = `nav-next-history-${paginationId}`
+  const paginationClassName = `pagination-history-${_id}`
+  const navPrevClassName = `nav-prev-history-${_id}`
+  const navNextClassName = `nav-next-history-${_id}`
 
-  if (isQuickRender || isLoading || !records) {
+  if (isLoading || !historyRecords) {
     return (
-      <>
-        <HistoryTitle />
-        <RecordCardSkeleton
-          noHeader
-          noSetButton
-          titleTypographyProps={{ textAlign: 'center' }}
-          elevation={0}
-          sx={{ px: 0, m: 0 }}
-        />
-      </>
+      <RecordCardSkeleton
+        noHeader
+        noSetButton
+        titleTypographyProps={{ textAlign: 'center' }}
+        elevation={0}
+        sx={{ px: 0, m: 0 }}
+      />
     )
   }
 
   // assumes filter has end date set to the current record's date (so will exclude it)
-  if (!records.length) {
+  if (!historyRecords.length) {
     return (
-      <>
-        <HistoryTitle />
-        <RecordCardSkeleton
-          noHeader
-          titleTypographyProps={{ textAlign: 'center' }}
-          elevation={0}
-          sx={{ px: 0, m: 0 }}
-          Content={
-            <>
-              <Typography textAlign="center">
-                No history found for this exercise!
-              </Typography>
-              <Typography textAlign="center">
-                Try changing the filters.
-              </Typography>
-            </>
-          }
-        />
-      </>
+      <Typography textAlign="center" pb={2}>
+        No history found for this exercise with the same modifiers and set type
+      </Typography>
     )
   }
 
@@ -122,20 +115,19 @@ export default function HistoryCardsSwiper({
               slot: 'container-start',
             }}
           />
-          {records
-            ?.map((record) => (
+          {historyRecords
+            ?.map((historyRecord) => (
               <SwiperSlide
                 // have to recalculate autoHeight when matchesRecord changes
-                key={record._id + shouldSync}
-                className={records.length > 1 ? 'swiper-no-swiping-record' : ''}
+                key={historyRecord._id}
+                // disable parent swiping
+                className={
+                  historyRecords.length > 1 ? 'swiper-no-swiping-record' : ''
+                }
               >
                 <HistoryCard
-                  {...{
-                    record,
-                    displayFields,
-                    shouldSync,
-                    filterModifiers: filter?.modifier || [],
-                  }}
+                  record={historyRecord}
+                  displayFields={displayFields}
                 />
               </SwiperSlide>
               // need to reverse so newest is on the right, not left. Can't do it in useRecords because
@@ -146,29 +138,5 @@ export default function HistoryCardsSwiper({
       </Box>
     </Stack>
   )
-}
-
-function HistoryTitle() {
-  const theme = useTheme()
-
-  return (
-    <Box
-      width="100%"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Divider
-        sx={{
-          fontSize: 12,
-          width: '80%',
-          '&::before, &::after': {
-            borderColor: theme.palette.primary.main,
-          },
-        }}
-      >
-        <Typography variant="h6">History</Typography>
-      </Divider>
-    </Box>
-  )
-}
+},
+isEqual)

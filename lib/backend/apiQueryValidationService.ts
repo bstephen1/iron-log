@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 import { validDateStringRegex } from 'lib/frontend/constants'
 import { isValidId } from 'lib/util'
-import Bodyweight, { WeighInType, weighInTypes } from 'models/Bodyweight'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Modifier from 'models/AsyncSelectorOption/Modifier'
+import Bodyweight, { WeighInType, weighInTypes } from 'models/Bodyweight'
 import BodyweightQuery from 'models/query-filters/BodyweightQuery'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
@@ -112,7 +112,8 @@ export function buildRecordQuery(
   if (date) {
     filter.date = valiDate(date)
   }
-  if (modifier) {
+  // modifier can be an empty string
+  if (modifier != undefined) {
     filter.activeModifiers = validateStringArray(modifier, 'Modifier')
     if (modifierMatchType) {
       matchTypes.activeModifiers = validateMatchType(modifierMatchType)
@@ -269,7 +270,8 @@ function validateStringArray(
   /** name of param, for error messages */ name: string
 ) {
   if (typeof param === 'string') {
-    return [param]
+    // empty string represents empty array
+    return param ? [param] : []
   }
   if (Array.isArray(param)) {
     return param

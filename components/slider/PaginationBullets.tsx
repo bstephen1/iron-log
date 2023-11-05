@@ -1,4 +1,5 @@
-import { Box, useMediaQuery } from '@mui/material'
+import { Box } from '@mui/material'
+import useDesktopCheck from 'lib/frontend/useDesktopCheck'
 
 // swiper's default is 8
 const defaultSize = 10
@@ -15,7 +16,7 @@ export default function PaginationBullets({
   desktopSize = defaultSize,
   mobileSize = defaultSize,
 }: Props) {
-  const isDesktop = useMediaQuery('(pointer: fine)')
+  const isDesktop = useDesktopCheck()
 
   return (
     <Box

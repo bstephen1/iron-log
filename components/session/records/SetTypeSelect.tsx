@@ -8,13 +8,16 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
+import { UpdateFields } from 'lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
   VisibleField,
 } from 'models/DisplayFields'
-import { DEFAULT_SET_TYPE, setOperators, SetType } from 'models/Record'
+import Record, { setOperators, SetType } from 'models/Record'
 import { Set, Units } from 'models/Set'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
@@ -24,41 +27,43 @@ const timeField = ORDERED_DISPLAY_FIELDS.filter(
   (field) => field.source === 'time'
 )
 
-const calculateTotal = (sets: Set[], field: SetType['field']) =>
-  sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
-
 const getUnit = (field: SetType['field'], units: Units) =>
   units[field as keyof Units] ?? field
 
-interface Props {
-  units: Units
-  setType: SetType
-  handleSubmit: (changes: Partial<SetType>) => void
-  sets: Set[]
+interface Props extends Pick<Record, 'setType'> {
   readOnly?: boolean
-  showTotal?: boolean
   /** label for empty option  */
   emptyOption?: string
+  noSwipingClassName?: string
+  mutateRecordFields: UpdateFields<Record>
+  units: Units
+  /** When nonzero, displays the given number as the total number of reps over all sets. */
+  totalReps?: number
 }
-export default function SetTypeSelect({
-  units,
-  // todo: remove DEFAULT when all records properly have been init'd with a set type
-  setType: { field, value, operator, min, max } = DEFAULT_SET_TYPE,
-  handleSubmit,
-  sets,
+export default memo(function SetTypeSelect({
   readOnly,
-  showTotal,
   emptyOption,
+  noSwipingClassName,
+  mutateRecordFields,
+  totalReps = 0,
+  setType,
+  units,
 }: Props) {
+  const { field, value, operator, min, max } = setType
   const fieldOptions = operator === 'rest' ? timeField : normalFields
-  const total = calculateTotal(sets, field)
-  const remaining = (value ?? 0) - total
+  const remaining = (value ?? 0) - totalReps
+
+  const updateSetType = async (changes: Partial<SetType>) => {
+    const newSetType = { ...setType, ...changes }
+
+    mutateRecordFields({ setType: newSetType })
+  }
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
 
   return (
     // columnSpacing adds unwanted padding to far left/right areas
-    <Grid container>
+    <Grid container sx={{ width: '100%' }}>
       <Grid xs={12}>
         {/* todo: probably needs better aria labels */}
         <InputLabel shrink={true} sx={{ width: '100%' }}>
@@ -67,13 +72,14 @@ export default function SetTypeSelect({
       </Grid>
       <Grid xs={!!operator ? 4 : 12} pr={!!operator ? 2 : 0}>
         <SelectFieldAutosave<typeof operator>
+          className={noSwipingClassName}
           label=""
           fullWidth
           initialValue={operator ?? ''}
           options={[...setOperators]}
           handleSubmit={(operator) => {
             // "rest" only applies to time
-            handleSubmit({
+            updateSetType({
               operator,
               field: operator === 'rest' ? 'time' : field,
             })
@@ -92,7 +98,7 @@ export default function SetTypeSelect({
                 <NumericFieldAutosave
                   placeholder="min"
                   initialValue={min}
-                  handleSubmit={(min) => handleSubmit({ min })}
+                  handleSubmit={(min) => updateSetType({ min })}
                   variant="standard"
                   readOnly={readOnly}
                 />
@@ -100,7 +106,7 @@ export default function SetTypeSelect({
                 <NumericFieldAutosave
                   placeholder="max"
                   initialValue={max}
-                  handleSubmit={(max) => handleSubmit({ max })}
+                  handleSubmit={(max) => updateSetType({ max })}
                   variant="standard"
                   readOnly={readOnly}
                 />
@@ -109,7 +115,7 @@ export default function SetTypeSelect({
               <NumericFieldAutosave
                 placeholder="value"
                 initialValue={value}
-                handleSubmit={(value) => handleSubmit({ value })}
+                handleSubmit={(value) => updateSetType({ value })}
                 variant="standard"
                 readOnly={readOnly}
               />
@@ -117,11 +123,12 @@ export default function SetTypeSelect({
           </Grid>
           <Grid xs={3} display="flex" alignItems="flex-end">
             <SelectFieldAutosave<keyof Set, VisibleField>
+              className={noSwipingClassName}
               label=""
               fullWidth
               initialValue={field ?? ''}
               options={fieldOptions}
-              handleSubmit={(field) => handleSubmit({ field })}
+              handleSubmit={(field) => updateSetType({ field })}
               variant="standard"
               defaultHelperText=""
               readOnly={readOnly}
@@ -140,11 +147,11 @@ export default function SetTypeSelect({
           </Grid>
         </>
       )}
-      {operator === 'total' && showTotal && (
+      {!!totalReps && (
         <>
           <Grid xs={6}>
             <Typography pt={1}>
-              total: {total} {getUnit(field, units)}
+              total: {totalReps} {getUnit(field, units)}
             </Typography>
           </Grid>
           <Grid xs={6} justifyContent="flex-end" display="flex">
@@ -156,4 +163,5 @@ export default function SetTypeSelect({
       )}
     </Grid>
   )
-}
+},
+isEqual)

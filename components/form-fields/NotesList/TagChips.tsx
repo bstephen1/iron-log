@@ -1,11 +1,4 @@
-import {
-  Box,
-  Chip,
-  ChipProps,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import { Box, Chip, ChipProps, useMediaQuery, useTheme } from '@mui/material'
 
 interface Props {
   selected: string | string[]
@@ -25,38 +18,36 @@ export default function TagChips({ selected, multiple, readOnly }: Props) {
   )
 
   return (
-    <Tooltip title={readOnly ? '' : 'change ' + tagPluralOrSingle}>
-      <Box
-        sx={{
-          display: 'flex',
-          // flexWrap: 'wrap',
-          gap: 0.5,
-        }}
-      >
-        {
-          selected?.length ? (
-            selected
-              .slice(0, displayedTagsAmount + 1)
-              .map((value, i) =>
-                i < displayedTagsAmount ? (
-                  <StyledChip key={value} label={value} />
-                ) : (
-                  <StyledChip
-                    key={value}
-                    label={`+${selected.length - displayedTagsAmount}...`}
-                  />
-                )
+    <Box
+      sx={{
+        display: 'flex',
+        // flexWrap: 'wrap',
+        gap: 0.5,
+      }}
+    >
+      {
+        selected?.length ? (
+          selected
+            .slice(0, displayedTagsAmount + 1)
+            .map((value, i) =>
+              i < displayedTagsAmount ? (
+                <StyledChip key={value} label={value} />
+              ) : (
+                <StyledChip
+                  key={value}
+                  label={`+${selected.length - displayedTagsAmount}...`}
+                />
               )
-          ) : (
-            <StyledChip
-              label={'no ' + tagPluralOrSingle}
-              color="default"
-              sx={{ fontStyle: 'italic' }}
-            />
-          )
-          // : <Tag color="primary" />
-        }
-      </Box>
-    </Tooltip>
+            )
+        ) : (
+          <StyledChip
+            label={'no ' + tagPluralOrSingle}
+            color="default"
+            sx={{ fontStyle: 'italic' }}
+          />
+        )
+        // : <Tag color="primary" />
+      }
+    </Box>
   )
 }

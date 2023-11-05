@@ -1,9 +1,10 @@
 import dayjs, { Dayjs } from 'dayjs'
 import { arrayToIndex, fetchJson } from 'lib/util'
-import Bodyweight from 'models/Bodyweight'
+import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 import Category from 'models/AsyncSelectorOption/Category'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Modifier from 'models/AsyncSelectorOption/Modifier'
+import Bodyweight from 'models/Bodyweight'
 import BodyweightQuery from 'models/query-filters/BodyweightQuery'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
@@ -21,7 +22,6 @@ import {
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
-import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 
 // todo: res.json() breaks if json is null. Have to guard against that.
 
@@ -35,7 +35,15 @@ import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
 // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
 
 /** Parse a Query object into a rest param string. Query objects should be spread into this function. */
-export const paramify = (query: ParsedUrlQueryInput) => '?' + stringify(query)
+export const paramify = (query: ParsedUrlQueryInput) => {
+  const parsedQuery: ParsedUrlQueryInput = {}
+  // Any empty arrays must be converted into empty strings instead.
+  // stringify() just drops empty arrays.
+  for (const [key, value] of Object.entries(query)) {
+    parsedQuery[key] = Array.isArray(value) && !value.length ? '' : value
+  }
+  return '?' + stringify(parsedQuery)
+}
 
 /** Formats an object to a json string, converting any undefined values to null instead.
  *  Undefined is not considered a valid json value, so it gets ignored.
@@ -58,17 +66,17 @@ const toNames = (entities?: AsyncSelectorOption[]) =>
 //---------
 
 /** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
-export function useSessionLogWithInit(
+export function useGuaranteedSessionLog(
   date: string,
-  initialSessionLog: SessionLog | null
+  fallbackSession: SessionLog | null
 ) {
   const res = useSessionLog(date, {
-    fallbackData: initialSessionLog,
+    fallbackData: fallbackSession,
   })
 
   return {
     ...res,
-    sessionLog: res.sessionLog as SessionLog | null,
+    sessionLog: res.sessionLog ?? fallbackSession,
   }
 }
 
@@ -131,16 +139,23 @@ export async function deleteSessionRecord(
 // RECORD
 //--------
 
-/** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
-export function useRecordWithInit(initialRecord: Record) {
-  const res = useRecord(initialRecord._id, { fallbackData: initialRecord })
+/** An fallback value must be provided to this function, which ensures the record is never undefined */
+export function useGuaranteedRecord(fallbackRecord: Record) {
+  const res = useRecord(fallbackRecord._id, { fallbackData: fallbackRecord })
 
   return {
     ...res,
-    record: res.record as Record,
+    record: res.record ?? fallbackRecord,
   }
 }
 
+/** Note: whenever mutate() is used, any component using useRecord will rerender, even if they don't
+ *  use the record from this hook. This can be avoided by lifting the full record to a lightweight parent
+ *  component and only passing the fields actually needed as props. If the child needs access to mutate(),
+ *  it can either take the mutate from this hook as another prop, or use the global mutate from useSWRConfig().
+ *
+ *  Note that this applies to any other useSWR hook as well.
+ */
 export function useRecord(id: string, config?: SWRConfiguration) {
   const { data, error, isLoading, mutate } = useSWR<Record | null>(
     URI_RECORDS + id,

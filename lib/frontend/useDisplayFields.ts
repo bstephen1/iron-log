@@ -4,7 +4,7 @@ import {
 } from 'models/DisplayFields'
 import Record from 'models/Record'
 
-export default function useDisplayFields(record: Record) {
+export default function useDisplayFields(record?: Record | null) {
   return (
     record?.exercise?.displayFields ??
     (record?.exercise?.attributes?.bodyweight

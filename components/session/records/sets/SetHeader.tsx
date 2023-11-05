@@ -10,26 +10,28 @@ import {
   SelectProps,
   Stack,
 } from '@mui/material'
-import { doNothing } from 'lib/util'
+import { UpdateFields } from 'lib/util'
+import Exercise from 'models/AsyncSelectorOption/Exercise'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
   VisibleField,
 } from 'models/DisplayFields'
-import { Fragment, useMemo } from 'react'
+import { Fragment, memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 interface Props extends Partial<SelectProps<string[]>> {
+  mutateExerciseFields?: UpdateFields<Exercise>
   displayFields: DisplayFields
-  handleSubmit?: (displayFields: DisplayFields) => void
   showSplitWeight?: boolean
   showUnilateral?: boolean
 }
-export default function SetHeader({
+export default memo(function SetHeader({
+  mutateExerciseFields,
   displayFields,
-  handleSubmit = doNothing,
-  showSplitWeight = false,
-  showUnilateral = false,
+  showSplitWeight,
+  showUnilateral,
   ...selectProps
 }: Props) {
   // Note that other records may need to update when the current record updates.
@@ -37,19 +39,17 @@ export default function SetHeader({
   const selectedNames =
     displayFields?.visibleFields.map((field) => field.name) || []
 
-  const options: VisibleField[] = useMemo(
-    () =>
-      ORDERED_DISPLAY_FIELDS.filter(
-        (field) =>
-          (field.enabled?.unilateral == undefined ||
-            field.enabled.unilateral === showUnilateral) &&
-          (field.enabled?.splitWeight == undefined ||
-            field.enabled.splitWeight === showSplitWeight)
-      ),
-    [showSplitWeight, showUnilateral]
+  const options: VisibleField[] = ORDERED_DISPLAY_FIELDS.filter(
+    (field) =>
+      (field.enabled?.unilateral == undefined ||
+        field.enabled.unilateral === showUnilateral) &&
+      (field.enabled?.splitWeight == undefined ||
+        field.enabled.splitWeight === showSplitWeight)
   )
 
   const handleChange = (rawSelectedNames: string | string[]) => {
+    if (!mutateExerciseFields) return
+
     // According to MUI docs: "On autofill we get a stringified value",
     // which is the array stringified into a comma separated string.
     // Reassigning the value isn't updating the type so have to assign to a new var
@@ -68,7 +68,12 @@ export default function SetHeader({
     // Should only need to check the length because if there is a change the length must change.
     // todo: test for this
     if (newVisibleFields.length !== selectedNames.length) {
-      handleSubmit({ ...displayFields, visibleFields: newVisibleFields })
+      mutateExerciseFields({
+        displayFields: {
+          ...displayFields,
+          visibleFields: newVisibleFields,
+        },
+      })
     }
   }
 
@@ -147,4 +152,5 @@ export default function SetHeader({
       </Select>
     </FormControl>
   )
-}
+},
+isEqual)

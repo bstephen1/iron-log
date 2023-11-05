@@ -9,9 +9,14 @@ interface Props {
   direction: 'next' | 'prev'
   /** The classname must match the name given in the Swiper component to inherit functionality. */
   className: string
+  isHidden?: boolean
 }
 /** This component must be called from within a Swiper component. */
-export default function NavigationArrow({ direction, className }: Props) {
+export default function NavigationArrow({
+  direction,
+  className,
+  isHidden,
+}: Props) {
   const isPrev = direction === 'prev'
   const swiper = useSwiper()
   const [disabled, setDisabled] = useState(
@@ -39,7 +44,11 @@ export default function NavigationArrow({ direction, className }: Props) {
 
   // todo: nav button ripples are elongated
   return (
-    <Box display={isLocked ? 'none' : 'flex'} width="auto" alignItems="center">
+    <Box
+      display={isLocked || isHidden ? 'none' : 'flex'}
+      width="auto"
+      alignItems="center"
+    >
       <IconButton
         sx={{ display: { xs: 'none', sm: 'block' } }}
         className={className}
