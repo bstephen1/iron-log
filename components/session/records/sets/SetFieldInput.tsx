@@ -1,5 +1,6 @@
 import { Box, Input, MenuItem, Select, Stack } from '@mui/material'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
+import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
 import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
 import { UpdateFields } from 'lib/util'
 import { VisibleField } from 'models/DisplayFields'
@@ -48,30 +49,29 @@ export default memo(function SetFieldInput<S extends keyof Units>({
         </Box>
       )}
       {source === 'side' ? (
-        <Select<Set['side']>
+        <SelectFieldAutosave<Set['side']>
           className={noSwipingClassName}
           variant="standard"
-          displayEmpty
-          fullWidth
-          autoWidth
-          input={<Input disableUnderline sx={{ textAlign: 'center' }} />}
+          label=""
+          helperText=""
+          initialValue={value as Set['side']}
+          options={['L', 'R']}
+          emptyOption="Both"
+          InputProps={{ disableUnderline: true, sx: { textAlign: 'center' } }}
           inputProps={{ sx: { pr: '0px !important' } }} // disable baked in padding for IconComponent
-          IconComponent={() => null}
+          fullWidth
+          SelectProps={{
+            autoWidth: true,
+            IconComponent: () => null,
+            renderValue: (selected) => <Box>{selected}</Box>,
+          }}
           value={(value as Set['side']) ?? ''}
-          onChange={(e) =>
+          handleSubmit={(side) =>
             handleSetChange({
-              side: (e.target.value as Set['side']) || undefined,
+              side: side,
             })
           }
-          renderValue={(selected) => <Box>{selected}</Box>}
-        >
-          {/* values must match type from Set['side'], except empty string which is converted to undefined */}
-          <MenuItem value="">
-            <em>Both</em>
-          </MenuItem>
-          <MenuItem value="L">L</MenuItem>
-          <MenuItem value="R">R</MenuItem>
-        </Select>
+        />
       ) : (
         <NumericFieldAutosave
           initialValue={convertUnit(

@@ -63,7 +63,6 @@ export function ComboBoxField({
       // todo: change color?
       // ChipProps={{ color: 'primary', variant: 'outlined' }}
       onClose={handleClose}
-      disabled={initialValue == null}
       options={options}
       disableCloseOnSelect
       autoHighlight

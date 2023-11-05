@@ -20,9 +20,10 @@ interface Props<V, O> {
 /** Renders a TextField Select. By default renders the given options directly as MenuItems.
  *  Children must be manually provided if options is a list of objects, along with secondary generic param.
  */
-export default function SelectFieldAutosave<V extends string, O = V>(
-  props: Props<V, O> & Omit<TextFieldProps, 'SelectProps'>
-) {
+export default function SelectFieldAutosave<
+  V extends string | undefined,
+  O = V
+>(props: Props<V, O> & Omit<TextFieldProps, 'SelectProps'>) {
   const {
     label,
     defaultHelperText = ' ',
@@ -67,7 +68,6 @@ export default function SelectFieldAutosave<V extends string, O = V>(
     <TextField
       {...control(label)}
       select
-      disabled={initialValue == null}
       helperText={defaultHelperText}
       {...textFieldProps}
       InputProps={{
