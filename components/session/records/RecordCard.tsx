@@ -12,7 +12,7 @@ import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record, { SetType } from 'models/Record'
 import { Set } from 'models/Set'
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useEffect } from 'react'
 import { KeyedMutator } from 'swr'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
@@ -50,6 +50,22 @@ export default memo(function RecordCard(props: Props) {
   const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
   const { record, mutate } = useRecord(id)
 
+  // Use the newly updated exercise so multiple cards with the same exercise will ripple their updates.
+  // This is wrapped in useEffect to avoid "cannot update component while rendering another component" console error.
+  useEffect(() => {
+    if (!record || !mostRecentlyUpdatedExercise?._id) return
+
+    if (
+      mostRecentlyUpdatedExercise._id === record.exercise?._id &&
+      // Have to JSONify mostRecentlyUpdatedExercise to remove javascript class stuff since
+      // record.exercise is pure json and mostRecentlyUpdatedExercise is a javascript class.
+      JSON.stringify(mostRecentlyUpdatedExercise) !==
+        JSON.stringify(record.exercise)
+    ) {
+      mutate({ ...record, exercise: mostRecentlyUpdatedExercise })
+    }
+  }, [mostRecentlyUpdatedExercise, mutate, record])
+
   if (record === undefined || props.isQuickRender) {
     return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
   } else if (record === null) {
@@ -63,17 +79,6 @@ export default memo(function RecordCard(props: Props) {
       />
     )
   } else {
-    // Use the newly updated exercise so multiple cards with the same exercise will ripple their updates.
-    if (
-      mostRecentlyUpdatedExercise?._id &&
-      mostRecentlyUpdatedExercise._id === record.exercise?._id &&
-      // have to JSONify mostRecentlyUpdatedExercise to remove javascript class stuff.
-      // record.exercise is pure json, which strips javascript class stuff.
-      JSON.stringify(mostRecentlyUpdatedExercise) !==
-        JSON.stringify(record.exercise)
-    ) {
-      mutate({ ...record, exercise: mostRecentlyUpdatedExercise })
-    }
     return <LoadedRecordCard record={record} mutateRecord={mutate} {...props} />
   }
 })
