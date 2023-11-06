@@ -17,7 +17,6 @@ import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Bodyweight from 'models/Bodyweight'
 import { useQueryState } from 'next-usequerystate'
 import { useEffect, useMemo, useState } from 'react'
-import { useMeasure } from 'react-use'
 import {
   Brush,
   CartesianGrid,
@@ -29,6 +28,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import useResizeObserver from 'use-resize-observer'
 
 interface GraphBodyweight extends Bodyweight {
   epochDate: number
@@ -51,7 +51,8 @@ export default function HistoryPage() {
   const officialBWs = bodyweightData?.filter((bw) => bw.type === 'official')
 
   // to track width we want to use the size of the graph container, since that will be smaller than window width
-  const [graphContainerRef, { width: graphContainerWidth }] = useMeasure()
+  const { ref: graphContainerRef, width: graphContainerWidth = 0 } =
+    useResizeObserver()
 
   // Track the full window height so the graph can be fullscreen.
   // Have to init as 0 so nextjs doesn't error out in SSR trying to find the window.

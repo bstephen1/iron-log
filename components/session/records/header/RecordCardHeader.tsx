@@ -3,8 +3,9 @@ import { UpdateFields } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
-import { useEffect, useState } from 'react'
-import { useMeasure } from 'react-use'
+import { useEffect } from 'react'
+import useLocalStorageState from 'use-local-storage-state'
+import useResizeObserver from 'use-resize-observer'
 import ChangeUnitsButton from './ChangeUnitsButton'
 import DeleteRecordButton from './DeleteRecordButton'
 import ExerciseNotesButton from './ExerciseNotesButton'
@@ -12,9 +13,53 @@ import ManageExerciseButton from './ManageExerciseButton'
 import MoreActionsButton from './MoreActionsButton'
 import RecordNotesButton from './ReccordNotesButton'
 import SwapRecordButton from './SwapRecordButton'
-
 const actionButtonWidth = 40
 const minTitleWidth = 120
+
+const actionsToWidth = (actions: number) =>
+  actions * actionButtonWidth + minTitleWidth
+const widthToActions = (width: number) =>
+  Math.floor((width - minTitleWidth) / actionButtonWidth)
+
+/** determines how many actions can visibly fit in the record header */
+const useMaxVisibleActions = (totalActions: number) => {
+  const [cardHeaderActions, setCardHeaderActions] = useLocalStorageState(
+    'cardHeaderActions',
+    {
+      defaultValue: 0,
+    }
+  )
+
+  // Width inits as undefined on mount since the ref needs a frame to setup.
+  // By using local storage we can persist previous data between route changes,
+  // preventing the undefined state when using the date picker to change sessions.
+  const { ref, width = actionsToWidth(cardHeaderActions) } =
+    useResizeObserver<HTMLSpanElement>()
+
+  // max number of action buttons that will visibly fit in the header
+  const maxVisibleActions = widthToActions(width)
+
+  // limits actions to be no less than 0 and no more than total actions
+  const maxBoundedActions = Math.max(
+    Math.min(maxVisibleActions, totalActions),
+    0
+  )
+  // don't hide an action if it would be the only hidden action
+  const visibleActions =
+    maxBoundedActions === totalActions - 1 ? totalActions : maxBoundedActions
+
+  // Update local storage. Use visibleActions to limit setState calls.
+  useEffect(() => {
+    setCardHeaderActions(visibleActions)
+  }, [setCardHeaderActions, visibleActions])
+
+  return {
+    /** must assign this ref to the record header element */
+    ref,
+    /** Denotes an index in the actions array. Items before this index (exclusive) can be visible.  */
+    visibleActions,
+  }
+}
 
 interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
   swiperIndex: number
@@ -32,15 +77,6 @@ export default function RecordCardHeader({
   exercise,
   displayFields,
 }: Props) {
-  // Note: visibleActions is defined after actionButtons
-  const [titleRef, { width: titleWidth }] = useMeasure<HTMLSpanElement>()
-
-  const maxVisibleActions = Math.floor(
-    (titleWidth - minTitleWidth) / actionButtonWidth
-  )
-
-  // todo: width resets to 0 on date change due to component rerender, making this always flash to true
-
   const actionButtons = [
     <RecordNotesButton
       key="record notes"
@@ -64,21 +100,11 @@ export default function RecordCardHeader({
     <DeleteRecordButton key="delete" _id={_id} />,
   ]
 
-  const [visibleActions, setVisibleActions] = useState(actionButtons.length)
-
-  // depending on maxVisibleActions instead of directly on titleWidth possibly is more performant
-  useEffect(() => {
-    // don't hide if there would only be one hidden action
-    if (actionButtons.length - maxVisibleActions === 1) {
-      setVisibleActions(actionButtons.length)
-    } else {
-      setVisibleActions(maxVisibleActions > 0 ? maxVisibleActions : 0)
-    }
-  }, [actionButtons.length, maxVisibleActions])
+  const { ref, visibleActions } = useMaxVisibleActions(actionButtons.length)
 
   return (
     <CardHeader
-      ref={titleRef}
+      ref={ref}
       title={`Record ${swiperIndex + 1}`}
       titleTypographyProps={{ variant: 'h6' }}
       action={
