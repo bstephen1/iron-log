@@ -4,6 +4,7 @@ import useExtraWeight from 'lib/frontend/useExtraWeight'
 import { DisplayFields } from 'models/DisplayFields'
 import Record from 'models/Record'
 import Link from 'next/link'
+import { memo } from 'react'
 import RecordNotesButton from '../records/header/ReccordNotesButton'
 import RenderSets from '../records/sets/RenderSets'
 
@@ -13,8 +14,13 @@ interface Props {
    */
   displayFields: DisplayFields
   record: Record
+  isQuickRender?: boolean
 }
-export default function HistoryCard({ displayFields, record }: Props) {
+export default memo(function HistoryCard({
+  displayFields,
+  record,
+  isQuickRender,
+}: Props) {
   const { sets, _id, notes, date } = record
   const extraWeight = useExtraWeight(record)
 
@@ -23,7 +29,9 @@ export default function HistoryCard({ displayFields, record }: Props) {
     ['plateWeight', 'totalWeight'].includes(field.name)
   )
 
-  return (
+  return isQuickRender ? (
+    <></>
+  ) : (
     <Card elevation={0}>
       <CardHeader
         title={
@@ -48,4 +56,4 @@ export default function HistoryCard({ displayFields, record }: Props) {
       </CardContent>
     </Card>
   )
-}
+})

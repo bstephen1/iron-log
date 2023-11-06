@@ -16,7 +16,7 @@ import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import Record from 'models/Record'
 import { useDateContext } from 'pages/sessions/[date].page'
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
 
@@ -35,6 +35,7 @@ export default memo(function HistoryCardsSwiper({
   setType,
 }: Props) {
   const date = useDateContext()
+  const [isFirstRender, setIsFirstRender] = useState(true)
   const filter: RecordQuery = {
     modifier: activeModifiers,
     // don't want to include the current record in its own history
@@ -61,6 +62,10 @@ export default memo(function HistoryCardsSwiper({
   const paginationClassName = `pagination-history-${_id}`
   const navPrevClassName = `nav-prev-history-${_id}`
   const navNextClassName = `nav-next-history-${_id}`
+
+  useEffect(() => {
+    setIsFirstRender(false)
+  }, [])
 
   if (isLoading || !historyRecords) {
     return (
@@ -116,7 +121,7 @@ export default memo(function HistoryCardsSwiper({
             }}
           />
           {historyRecords
-            ?.map((historyRecord) => (
+            ?.map((historyRecord, i) => (
               <SwiperSlide
                 // have to recalculate autoHeight when matchesRecord changes
                 key={historyRecord._id}
@@ -128,6 +133,9 @@ export default memo(function HistoryCardsSwiper({
                 <HistoryCard
                   record={historyRecord}
                   displayFields={displayFields}
+                  // only render first slide initially
+                  // todo: potentially use virtual swiper instead. Note autoheight doesn't work.
+                  isQuickRender={isFirstRender && i ? true : false}
                 />
               </SwiperSlide>
               // need to reverse so newest is on the right, not left. Can't do it in useRecords because
