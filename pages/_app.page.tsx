@@ -4,7 +4,6 @@ import { swrFetcher } from 'lib/util'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import 'styles/globals.css'
-import 'styles/nprogress.css'
 import { SWRConfig } from 'swr'
 
 function IronLog({ Component, pageProps }: AppProps) {
