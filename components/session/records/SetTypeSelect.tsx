@@ -35,13 +35,13 @@ interface Props extends Pick<Record, 'setType'> {
   readOnly?: boolean
   /** label for empty option  */
   emptyOption?: string
-  mutateRecordFields: UpdateFields<Record>
+  /** considered readOnly if not provided */
+  mutateRecordFields?: UpdateFields<Record>
   units: Units
   /** When nonzero, displays the given number as the total number of reps over all sets. */
   totalReps?: number
 }
 export default memo(function SetTypeSelect({
-  readOnly,
   emptyOption,
   mutateRecordFields,
   totalReps = 0,
@@ -52,11 +52,12 @@ export default memo(function SetTypeSelect({
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const remaining = (value ?? 0) - totalReps
   const noSwipingDesktop = useNoSwipingDesktop()
+  const readOnly = !mutateRecordFields
 
   const updateSetType = async (changes: Partial<SetType>) => {
     const newSetType = { ...setType, ...changes }
 
-    mutateRecordFields({ setType: newSetType })
+    mutateRecordFields?.({ setType: newSetType })
   }
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before

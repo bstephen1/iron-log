@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
 import { DATE_FORMAT } from './frontend/constants'
+import { Set } from 'models/Set'
+import { SetType } from 'models/Record'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -62,3 +64,13 @@ export const fetchJson = async (...params: Parameters<typeof fetch>) => {
 export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1)
 
 export type UpdateFields<T> = (changes: Partial<T>) => Promise<void>
+
+/** Returns total reps over all sets when operator is "total", otherwise zero. */
+export const calculateTotalReps = (
+  sets: Set[],
+  { field, operator }: SetType
+) => {
+  return operator === 'total'
+    ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
+    : 0
+}

@@ -1,21 +1,17 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, CardProps, Stack, SxProps, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
-import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
+import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import HistoryCard from './HistoryCard'
+import HistoryCard, { HistoryAction, HistoryContent } from './HistoryCard'
 
 import 'swiper/css'
 import 'swiper/css/pagination'
 
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import NavigationBar from 'components/slider/NavigationBar'
-import dayjs from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
 import { DisplayFields } from 'models/DisplayFields'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
-import Record from 'models/Record'
-import { useDateContext } from 'pages/sessions/[date].page'
 import { memo, useEffect, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
@@ -23,45 +19,34 @@ import 'swiper/css/pagination'
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination
 
-interface Props extends Pick<Record, '_id' | 'activeModifiers' | 'setType'> {
-  displayFields: DisplayFields
-  exerciseName?: string
+interface Props {
+  /** displayFields to use for each history card. If omitted, cards will use their own displayFields. */
+  displayFields?: DisplayFields
+  query?: RecordQuery
+  /** actions to include in each history card */
+  actions?: HistoryAction[]
+  /** content to include in each history card */
+  content?: HistoryContent[]
+  cardProps?: CardProps
+  key?: string
 }
 export default memo(function HistoryCardsSwiper({
   displayFields,
-  exerciseName,
-  _id,
-  activeModifiers,
-  setType,
+  query,
+  actions,
+  content,
+  cardProps,
+  key,
 }: Props) {
-  const date = useDateContext()
   const [isFirstRender, setIsFirstRender] = useState(true)
-  const filter: RecordQuery = {
-    modifier: activeModifiers,
-    // don't want to include the current record in its own history
-    end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
-    exercise: exerciseName,
-    limit: 5,
-    modifierMatchType: ArrayMatchType.Equivalent,
-    setMatchType: SetMatchType.SetType,
-    ...setType,
-  }
 
-  // todo: then fetch more if the swiper gets close to the end. (Also for future dates?)
-  const { records: historyRecords, isLoading } = useRecords(
-    {
-      modifierMatchType: ArrayMatchType.Equivalent,
-      // minimize load if filter does not set a limit
-      limit: 1,
-      ...filter,
-    },
-    !!filter
-  )
+  // todo: fetch more if the swiper gets close to the end. (Also future dates in case you're in the past?)
+  const { records: historyRecords, isLoading } = useRecords(query, !!query)
 
   // each record's history needs a unique className
-  const paginationClassName = `pagination-history-${_id}`
-  const navPrevClassName = `nav-prev-history-${_id}`
-  const navNextClassName = `nav-next-history-${_id}`
+  const paginationClassName = `pagination-history${key ? '-' + key : ''}`
+  const navPrevClassName = `nav-prev-history-${key ? '-' + key : ''}`
+  const navNextClassName = `nav-next-history-${key ? '-' + key : ''}`
 
   useEffect(() => {
     setIsFirstRender(false)
@@ -79,7 +64,7 @@ export default memo(function HistoryCardsSwiper({
     )
   }
 
-  // assumes filter has end date set to the current record's date (so will exclude it)
+  // assumes query has end date set to the current record's date (so will exclude it)
   if (!historyRecords.length) {
     return (
       <Typography textAlign="center" pb={2}>
@@ -98,7 +83,7 @@ export default memo(function HistoryCardsSwiper({
           // This isn't documented, but the out of bounds behavior sets the active slide to
           // the closest valid index (first slide starting at 0). This makes it pretty easy
           // to default to the last index when length is unknown, but has a max possible value.
-          initialSlide={filter?.limit}
+          initialSlide={query?.limit}
           autoHeight
           pagination={{
             el: `.${paginationClassName}`,
@@ -132,10 +117,10 @@ export default memo(function HistoryCardsSwiper({
               >
                 <HistoryCard
                   record={historyRecord}
-                  displayFields={displayFields}
                   // only render first slide initially
                   // todo: potentially use virtual swiper instead. Note autoheight doesn't work.
                   isQuickRender={isFirstRender && i ? true : false}
+                  {...{ actions, content, displayFields, cardProps }}
                 />
               </SwiperSlide>
               // need to reverse so newest is on the right, not left. Can't do it in useRecords because
