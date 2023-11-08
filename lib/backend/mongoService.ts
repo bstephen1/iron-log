@@ -43,13 +43,22 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
   }
 
   for (const key in matchTypes) {
+    // The array needs special handling if it's empty. $all and $in always return no documents for empty arrays.
+    const array = filter[key]
+    const isEmpty = !array.length
     switch (matchTypes[key]) {
       case ArrayMatchType.All:
         // typescript complaining for some reason. May or may not be a better way to silence it.
         filter[key] = { $all: filter[key] } as any
+
+        // for empty arrays, matching all means match anything
+        isEmpty && delete filter[key]
         break
       case ArrayMatchType.Any:
         filter[key] = { $in: filter[key] } as any
+
+        // for empty arrays, matching any means match anything
+        isEmpty && delete filter[key]
         break
       case ArrayMatchType.Equivalent:
         // Note: for standard exact matches, order of array elements matters.
@@ -58,7 +67,6 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
         // The latter provides for some pretty clunky ux when editing Autocomplete chips, so
         // we are opting for the former unless performance notably degrades.
         // See: https://stackoverflow.com/questions/29774032/mongodb-find-exact-array-match-but-order-doesnt-matter
-        const array = filter[key]
         filter[key] = { $size: array.length } as any
         // if matching empty array, can't use $all. It always returns no documents when given an empty array.
         if (array.length) {
