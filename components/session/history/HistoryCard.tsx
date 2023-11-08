@@ -55,7 +55,7 @@ export default memo(function HistoryCard({
   )
 
   const actionComponents: { [key in HistoryAction]: JSX.Element } = {
-    recordNotes: <RecordNotesButton notes={notes} />,
+    recordNotes: <RecordNotesButton {...{ notes, date }} />,
     exerciseNotes: <ExerciseNotesButton notes={exercise?.notes} />,
     manage: <ManageExerciseButton name={exercise?.name} />,
   }

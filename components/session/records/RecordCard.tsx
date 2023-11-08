@@ -172,6 +172,7 @@ function LoadedRecordCard({
             exercise,
             notes,
             displayFields,
+            date,
           }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />

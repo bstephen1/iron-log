@@ -66,6 +66,7 @@ interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
   mutateExerciseFields: UpdateFields<Exercise>
   mutateRecordFields: UpdateFields<Record>
   displayFields: DisplayFields
+  date: string
 }
 export default function RecordCardHeader({
   swiperIndex,
@@ -76,12 +77,13 @@ export default function RecordCardHeader({
   _id,
   exercise,
   displayFields,
+  date,
 }: Props) {
   const actionButtons = [
     <RecordNotesButton
       key="record notes"
       sides={sets.map((set) => set.side)}
-      {...{ notes, mutateRecordFields }}
+      {...{ notes, mutateRecordFields, date }}
     />,
     <ExerciseNotesButton
       key="exercise notes"
