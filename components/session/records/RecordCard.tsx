@@ -114,7 +114,7 @@ function LoadedRecordCard({
     setType,
     date,
   } = record
-  const displayFields = useDisplayFields(record)
+  const displayFields = useDisplayFields(exercise)
   const extraWeight = useExtraWeight(record)
 
   const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight

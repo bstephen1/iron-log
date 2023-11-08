@@ -44,7 +44,7 @@ export default memo(function HistoryCard({
   ...props
 }: Props) {
   const { sets, _id, notes, date, exercise, activeModifiers, setType } = record
-  const recordDisplayFields = useDisplayFields(record)
+  const recordDisplayFields = useDisplayFields(exercise)
   const extraWeight = useExtraWeight(record)
 
   const displayFields = props.displayFields ?? recordDisplayFields

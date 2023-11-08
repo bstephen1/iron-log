@@ -31,7 +31,7 @@ const timeField = ORDERED_DISPLAY_FIELDS.filter(
 const getUnit = (field: SetType['field'], units: Units) =>
   units[field as keyof Units] ?? field
 
-interface Props extends Pick<Record, 'setType'> {
+interface Props {
   readOnly?: boolean
   /** label for empty option  */
   emptyOption?: string
@@ -40,6 +40,7 @@ interface Props extends Pick<Record, 'setType'> {
   units: Units
   /** When nonzero, displays the given number as the total number of reps over all sets. */
   totalReps?: number
+  setType: SetType
 }
 export default memo(function SetTypeSelect({
   emptyOption,
@@ -76,7 +77,7 @@ export default memo(function SetTypeSelect({
           className={noSwipingDesktop}
           label=""
           fullWidth
-          initialValue={operator ?? ''}
+          initialValue={operator}
           options={[...setOperators]}
           handleSubmit={(operator) => {
             // "rest" only applies to time
@@ -123,11 +124,11 @@ export default memo(function SetTypeSelect({
             )}
           </Grid>
           <Grid xs={3} display="flex" alignItems="flex-end">
-            <SelectFieldAutosave<keyof Set, VisibleField>
+            <SelectFieldAutosave<typeof field, VisibleField>
               className={noSwipingDesktop}
               label=""
               fullWidth
-              initialValue={field ?? ''}
+              initialValue={field}
               options={fieldOptions}
               handleSubmit={(field) => updateSetType({ field })}
               variant="standard"

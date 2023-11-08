@@ -70,7 +70,7 @@ export const calculateTotalReps = (
   sets: Set[],
   { field, operator }: SetType
 ) => {
-  return operator === 'total'
+  return operator === 'total' && field
     ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
     : 0
 }
