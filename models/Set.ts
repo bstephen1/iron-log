@@ -12,7 +12,7 @@ And for failure it can be anything > 10 (or < 0 for rir). I guess you can rate t
 /** An exercise set. */
 export type Set = {
   -readonly [field in keyof Omit<Units, 'side'>]?: number
-} & { side?: 'L' | 'R' }
+} & { side?: 'L' | 'R' | '' | null }
 
 /** Specifies the possible units for each field in a set */
 export type Units = {

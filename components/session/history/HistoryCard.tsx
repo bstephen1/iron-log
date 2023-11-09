@@ -81,7 +81,6 @@ export default memo(function HistoryCard({
     ),
     setType: (
       <SetTypeSelect
-        readOnly
         setType={setType}
         units={displayFields.units}
         totalReps={calculateTotalReps(sets, setType)}

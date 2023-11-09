@@ -12,8 +12,7 @@ import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
 import { UpdateFields, calculateTotalReps } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Record, { SetType } from 'models/Record'
-import { Set } from 'models/Set'
+import Record from 'models/Record'
 import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { SetMatchType } from 'models/query-filters/RecordQuery'
 import { memo, useCallback, useEffect } from 'react'
@@ -25,7 +24,6 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
-import { _id } from '@next-auth/mongodb-adapter'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -191,7 +189,7 @@ function LoadedRecordCard({
             <SetTypeSelect
               units={displayFields.units}
               totalReps={calculateTotalReps(sets, setType)}
-              {...{ mutateRecordFields, setType }}
+              {...{ handleChange: mutateRecordFields, setType }}
             />
             <RenderSets
               {...{

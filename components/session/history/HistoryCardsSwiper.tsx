@@ -68,7 +68,7 @@ export default memo(function HistoryCardsSwiper({
   if (!historyRecords.length) {
     return (
       <Typography textAlign="center" pb={2}>
-        No history found for this exercise with the same modifiers and set type
+        No history found for this exercise.
       </Typography>
     )
   }

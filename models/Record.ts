@@ -29,8 +29,8 @@ export default class Record {
  * Records with the same SetType are grouped together when pulling history so progress can be tracked.
  */
 export interface SetType {
-  field?: keyof Set
-  operator?: SetOperator
+  field: keyof Set
+  operator: SetOperator
   value?: number
   /** used for "between" operator */
   min?: number

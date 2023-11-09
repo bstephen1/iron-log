@@ -21,7 +21,7 @@ interface Props<V, O> {
  *  Children must be manually provided if options is a list of objects, along with secondary generic param.
  */
 export default function SelectFieldAutosave<
-  V extends string | undefined,
+  V extends string | undefined | null,
   O = V
 >(props: Props<V, O> & Omit<TextFieldProps, 'SelectProps'>) {
   const {
@@ -81,6 +81,11 @@ export default function SelectFieldAutosave<
         ...textFieldProps.SelectProps,
       }}
     >
+      {/* Note the empty value will store an empty string in db instead of undefined. 
+          The app should only be checking falsiness for a string, so an empty string 
+          should be equivalent to undefined. 
+          The empty value here cannot be undefined, because react considers that an uncontrolled component. 
+          Affected fields should add the empty string to their type. */}
       {emptyOption && (
         <MenuItem value="">
           <em>{emptyOption}</em>
