@@ -23,7 +23,7 @@ export default function CategorySelector({
       mutateOptions={mutate}
       value={category}
       label="Category"
-      placeholder="Select or Add New Category"
+      placeholder="Select or add new category"
       Constructor={Category}
       addNewItem={addCategory}
     />

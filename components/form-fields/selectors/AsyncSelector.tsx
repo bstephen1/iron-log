@@ -36,8 +36,10 @@ export interface AsyncSelectorProps<C extends AsyncSelectorOption>
   handleFilterChange?: (options: C[]) => void
   /** standard autocomplete onChange() callback */
   handleChange: (value: C | null) => void
-  /** locally mutate options when adding a new item.  */
-  mutateOptions: KeyedMutator<C[]>
+  /** locally mutate options when adding a new item.
+   *  If omitted, adding new items is disabled.
+   */
+  mutateOptions?: KeyedMutator<C[]>
   /** constructor for C  */
   Constructor: new (name: string) => C
   /**  function to add new C to db */
@@ -55,6 +57,7 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
   addNewItem,
   ...asyncAutocompleteProps
 }: AsyncSelectorProps<C>) {
+  const addNewDisabled = !mutateOptions
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic.
@@ -106,6 +109,8 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
       onChange={async (_, option) => {
         // add the new record to db if stub is selected
         if (option instanceof SelectorStub) {
+          if (addNewDisabled) return
+
           newOption.name = newOptionStub.name
           // stub should only ever be a single item at the last index, but filter to be sure.
           // Typescript doesn't recognize the type narrowing though...
@@ -140,6 +145,8 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
           // Typescript doesn't recognize the type guard above but we know any SelectorStubs have been filtered out here.
           handleFilterChange?.(filtered as C[])
         }
+
+        if (addNewDisabled) return filtered
 
         // append the "add new" option if input is not an existing option
         const isExisting = options.some(

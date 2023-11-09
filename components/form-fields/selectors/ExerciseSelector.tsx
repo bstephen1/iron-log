@@ -10,7 +10,8 @@ interface ExerciseSelectorProps {
   exercise: Exercise | null
   handleChange: (value: Exercise | null) => void
   exercises: Exercise[] | undefined
-  mutate: KeyedMutator<Exercise[]>
+  /** if provided, allows for creating new exercises from typed input */
+  mutate?: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
   /** If this is omitted the category filter will not be rendered */
   handleCategoryChange?: (category: string | null) => void
@@ -59,7 +60,7 @@ export default function ExerciseSelector({
       mutateOptions={mutate}
       options={exercises}
       label="Exercise"
-      placeholder="Select or Add New Exercise"
+      placeholder={`Select${!!mutate ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}
       handleFilterChange={handleFilterChange}
       adornmentOpen={!!categoryAnchorEl}

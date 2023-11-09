@@ -23,7 +23,7 @@ export default function ModifierSelector({
       mutateOptions={mutate}
       value={modifier}
       label="Modifier"
-      placeholder="Select or Add New Modifier"
+      placeholder="Select or add new modifier"
       Constructor={Modifier}
       addNewItem={addModifier}
     />

@@ -10,12 +10,14 @@ import isEqual from 'react-fast-compare'
 interface Props
   extends Pick<Record, 'activeModifiers' | 'category' | 'exercise'> {
   mutateRecordFields: UpdateFields<Record>
+  disableAddNew?: boolean
 }
 export default memo(function RecordExerciseSelector({
   mutateRecordFields,
   activeModifiers,
   category,
   exercise,
+  disableAddNew,
 }: Props) {
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
@@ -42,7 +44,7 @@ export default memo(function RecordExerciseSelector({
         exercise,
         exercises,
         handleChange,
-        mutate: mutateExercises,
+        mutate: disableAddNew ? undefined : mutateExercises,
       }}
     />
   )
