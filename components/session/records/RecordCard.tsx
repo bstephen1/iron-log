@@ -208,7 +208,7 @@ function LoadedRecordCard({
               actions={['recordNotes']}
               content={['sets']}
               {...{
-                key: _id,
+                _id,
                 displayFields,
               }}
             />

@@ -1,4 +1,4 @@
-import { Box, CardProps, Stack, SxProps, Typography } from '@mui/material'
+import { Box, CardProps, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { Navigation, Pagination } from 'swiper'
@@ -11,7 +11,6 @@ import 'swiper/css/pagination'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import NavigationBar from 'components/slider/NavigationBar'
 import { DisplayFields } from 'models/DisplayFields'
-import { ArrayMatchType } from 'models/query-filters/MongoQuery'
 import { memo, useEffect, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
@@ -28,7 +27,8 @@ interface Props {
   /** content to include in each history card */
   content?: HistoryContent[]
   cardProps?: CardProps
-  key?: string
+  /** record id, used for navigation classNames */
+  _id?: string
 }
 export default memo(function HistoryCardsSwiper({
   displayFields,
@@ -36,7 +36,7 @@ export default memo(function HistoryCardsSwiper({
   actions,
   content,
   cardProps,
-  key,
+  _id,
 }: Props) {
   const [isFirstRender, setIsFirstRender] = useState(true)
 
@@ -44,9 +44,9 @@ export default memo(function HistoryCardsSwiper({
   const { records: historyRecords, isLoading } = useRecords(query, !!query)
 
   // each record's history needs a unique className
-  const paginationClassName = `pagination-history${key ? '-' + key : ''}`
-  const navPrevClassName = `nav-prev-history-${key ? '-' + key : ''}`
-  const navNextClassName = `nav-next-history-${key ? '-' + key : ''}`
+  const paginationClassName = `pagination-history${_id ? '-' + _id : ''}`
+  const navPrevClassName = `nav-prev-history-${_id ? '-' + _id : ''}`
+  const navNextClassName = `nav-next-history-${_id ? '-' + _id : ''}`
 
   useEffect(() => {
     setIsFirstRender(false)

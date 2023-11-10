@@ -55,14 +55,17 @@ export default memo(function HistoryCard({
   )
 
   const actionComponents: { [key in HistoryAction]: JSX.Element } = {
-    recordNotes: <RecordNotesButton {...{ notes, date }} />,
-    exerciseNotes: <ExerciseNotesButton notes={exercise?.notes} />,
-    manage: <ManageExerciseButton name={exercise?.name} />,
+    recordNotes: <RecordNotesButton key="record notes" {...{ notes, date }} />,
+    exerciseNotes: (
+      <ExerciseNotesButton key="exercise notes" notes={exercise?.notes} />
+    ),
+    manage: <ManageExerciseButton key="manage" name={exercise?.name} />,
   }
 
   const contentComponents: { [key in HistoryContent]: JSX.Element } = {
     exercise: (
       <TextField
+        key="exercise"
         label="Exercise"
         variant="standard"
         value={exercise?.name}
@@ -71,6 +74,7 @@ export default memo(function HistoryCard({
     ),
     modifiers: (
       <ComboBoxField
+        key="modifiers"
         label="Modifiers"
         options={activeModifiers}
         initialValue={activeModifiers}
@@ -81,6 +85,7 @@ export default memo(function HistoryCard({
     ),
     setType: (
       <SetTypeSelect
+        key="setType"
         setType={setType}
         units={displayFields.units}
         totalReps={calculateTotalReps(sets, setType)}
@@ -88,6 +93,7 @@ export default memo(function HistoryCard({
     ),
     sets: (
       <RenderSets
+        key="sets"
         {...{ displayFields, showSplitWeight, sets, _id, extraWeight }}
       />
     ),
