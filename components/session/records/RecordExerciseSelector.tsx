@@ -1,4 +1,5 @@
 import { TextFieldProps } from '@mui/material'
+import { AsyncSelectorProps } from 'components/form-fields/selectors/AsyncSelector'
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from 'lib/frontend/restService'
 import { UpdateFields } from 'lib/util'
@@ -8,12 +9,12 @@ import { Status } from 'models/Status'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 
-interface Props
-  extends Pick<Record, 'activeModifiers' | 'category' | 'exercise'> {
+type Props = {
   mutateRecordFields: UpdateFields<Record>
   disableAddNew?: boolean
   variant?: TextFieldProps['variant']
-}
+} & Pick<Record, 'activeModifiers' | 'category' | 'exercise'> &
+  Partial<AsyncSelectorProps<Exercise>>
 export default memo(function RecordExerciseSelector({
   mutateRecordFields,
   activeModifiers,
@@ -21,6 +22,7 @@ export default memo(function RecordExerciseSelector({
   exercise,
   disableAddNew,
   variant,
+  ...asyncSelectorProps
 }: Props) {
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
@@ -49,6 +51,7 @@ export default memo(function RecordExerciseSelector({
         handleChange,
         mutate: disableAddNew ? undefined : mutateExercises,
       }}
+      {...asyncSelectorProps}
     />
   )
 },

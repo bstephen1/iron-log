@@ -76,6 +76,7 @@ export default memo(function SetTypeSelect({
   return (
     <TextField
       select
+      fullWidth
       variant="standard"
       className={noSwipingDesktop}
       label="Set Type"
