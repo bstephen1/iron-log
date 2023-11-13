@@ -2,7 +2,7 @@ import { Box, CardProps, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { Navigation, Pagination } from 'swiper'
-import { Swiper, SwiperSlide } from 'swiper/react'
+import { Swiper, SwiperProps, SwiperSlide } from 'swiper/react'
 import HistoryCard, { HistoryAction, HistoryContent } from './HistoryCard'
 
 import 'swiper/css'
@@ -27,6 +27,7 @@ interface Props {
   /** content to include in each history card */
   content?: HistoryContent[]
   cardProps?: CardProps
+  swiperProps?: SwiperProps
   /** record id, used for navigation classNames */
   _id?: string
 }
@@ -36,6 +37,7 @@ export default memo(function HistoryCardsSwiper({
   actions,
   content,
   cardProps,
+  swiperProps,
   _id,
 }: Props) {
   const [isFirstRender, setIsFirstRender] = useState(true)
@@ -82,8 +84,8 @@ export default memo(function HistoryCardsSwiper({
           grabCursor
           // This isn't documented, but the out of bounds behavior sets the active slide to
           // the closest valid index (first slide starting at 0). This makes it pretty easy
-          // to default to the last index when length is unknown, but has a max possible value.
-          initialSlide={query?.limit}
+          // to default to the last index.
+          initialSlide={historyRecords.length}
           autoHeight
           pagination={{
             el: `.${paginationClassName}`,
@@ -96,6 +98,7 @@ export default memo(function HistoryCardsSwiper({
             nextEl: `.${navNextClassName}`,
           }}
           modules={[Pagination, Navigation]}
+          {...swiperProps}
         >
           <NavigationBar
             {...{

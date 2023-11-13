@@ -1,3 +1,4 @@
+import { TextFieldProps } from '@mui/material'
 import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from 'lib/frontend/restService'
 import { UpdateFields } from 'lib/util'
@@ -11,6 +12,7 @@ interface Props
   extends Pick<Record, 'activeModifiers' | 'category' | 'exercise'> {
   mutateRecordFields: UpdateFields<Record>
   disableAddNew?: boolean
+  variant?: TextFieldProps['variant']
 }
 export default memo(function RecordExerciseSelector({
   mutateRecordFields,
@@ -18,6 +20,7 @@ export default memo(function RecordExerciseSelector({
   category,
   exercise,
   disableAddNew,
+  variant,
 }: Props) {
   const { exercises, mutate: mutateExercises } = useExercises({
     status: Status.active,
@@ -37,7 +40,7 @@ export default memo(function RecordExerciseSelector({
 
   return (
     <ExerciseSelector
-      variant="standard"
+      variant={variant ?? 'standard'}
       category={category}
       handleCategoryChange={(category) => mutateRecordFields({ category })}
       {...{

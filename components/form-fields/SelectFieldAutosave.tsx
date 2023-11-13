@@ -45,17 +45,18 @@ export default function SelectFieldAutosave<
     debounceMilliseconds: 0,
   })
 
-  /** Using standard variant causes input background to gray after selecting something.
+  /** Using standard variant causes input background to have a gray shadow after selecting something.
    *  This behavior is apparently completely undocumented and uneditable.
    *  This prevents that, keeping background transparent.
+   *
+   *  Note: changing variant in SelectProps has no visual effect; the visible variant is determined by the variant in TextFieldProps.
    */
   // Note: The behavior occurs when using TextField or Select with standard variant.
   // Select can use "input={<Input />}" instead of setting variant to avoid it.
   // That doesn't work here because TextField automatically passes the variant to the inner Select.
   // Instead we have to override the variant to trick the Select to thinking it's outlined,
   // which doesn't turn gray.
-  const fixStandardBackground: SelectProps =
-    textFieldProps.variant === 'standard' ? { variant: 'outlined' } : {}
+  const fixStandardBackground: SelectProps = { variant: 'outlined' }
 
   if (!children && typeof options[0] !== 'string') {
     console.error(

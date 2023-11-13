@@ -1,4 +1,4 @@
-import { TextField, TextFieldProps } from '@mui/material'
+import { Input, InputProps, TextField, TextFieldProps } from '@mui/material'
 import * as yup from 'yup'
 import useField from './useField'
 
@@ -10,6 +10,16 @@ export type InputFieldAutosaveProps = {
   handleSubmit: (value: string) => void
   yupValidator?: ReturnType<typeof yup.reach>
   readOnly?: boolean
+  /** Render an Input instead of a TextField. This will allow label / helper text to
+   *  be customized outside the component.
+   *
+   *  Note: when this option is enabled, any native textFieldProps are ignored.
+   *  Extra props should instead be declared inside InputProps.
+   *
+   *  Note: sx appears to not work. Use style instead.
+   */
+  renderAsInput?: boolean
+  id?: TextFieldProps['id']
 } & Partial<TextFieldProps>
 export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const {
@@ -19,6 +29,8 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     handleSubmit,
     yupValidator,
     readOnly,
+    renderAsInput,
+    id,
     ...textFieldProps
   } = props
 
@@ -28,16 +40,28 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     handleSubmit,
   })
 
-  return (
-    <TextField
+  const sharedProps: InputProps = {
+    autoComplete: 'off',
+    error: !!error,
+    fullWidth: true,
+  }
+
+  return renderAsInput ? (
+    <Input
+      id={id}
       {...control(label)}
-      autoComplete="off"
-      error={!!error}
-      fullWidth
+      readOnly={readOnly}
+      {...sharedProps}
+      {...textFieldProps.InputProps}
+    />
+  ) : (
+    <TextField
+      id={id}
+      {...control(label)}
       helperText={error || defaultHelperText}
-      {...textFieldProps}
       InputLabelProps={{ shrink: !isEmpty, ...textFieldProps.InputLabelProps }}
       InputProps={{ readOnly, ...textFieldProps.InputProps }}
+      {...textFieldProps}
     />
   )
 }

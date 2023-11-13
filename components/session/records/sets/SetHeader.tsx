@@ -111,22 +111,21 @@ export default memo(function SetHeader({
                 .filter((option) => selectedNames.includes(option.name))
                 .map((field) => {
                   return (
-                    <Fragment key={field.name}>
-                      <Box
-                        display="flex"
-                        flexGrow="1"
-                        // flexBasis makes it so flexGrow is based on the full element width, not just the extra space
-                        flexBasis="0"
-                        justifyContent="center"
-                        textOverflow="ellipsis"
-                        // todo: this will clip HH:MM:SS if using a lot of fields on a small screen
-                        overflow="clip"
-                      >
-                        {' '}
-                        {field.unitPrefix ?? ''}
-                        {displayFields.units[field.source]}
-                      </Box>
-                    </Fragment>
+                    <Box
+                      key={field.name}
+                      display="flex"
+                      flexGrow="1"
+                      // flexBasis makes it so flexGrow is based on the full element width, not just the extra space
+                      flexBasis="0"
+                      justifyContent="center"
+                      textOverflow="ellipsis"
+                      // todo: this will clip HH:MM:SS if using a lot of fields on a small screen
+                      overflow="clip"
+                    >
+                      {' '}
+                      {field.unitPrefix ?? ''}
+                      {displayFields.units[field.source]}
+                    </Box>
                   )
                 })
             )}
