@@ -94,7 +94,7 @@ export function buildRecordQuery(
     value,
     min,
     max,
-    setMatchType = MatchType.Exact,
+    setTypeMatchType = MatchType.Exact,
   }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
@@ -123,7 +123,7 @@ export function buildRecordQuery(
   const isRange = operator === 'between'
   const isValidSetType = !!operator && !!field && (isRange ? min || max : value)
 
-  if (setMatchType === MatchType.Exact && !isValidSetType) {
+  if (setTypeMatchType === MatchType.Exact && !isValidSetType) {
     return { ...query, filter, matchTypes }
   }
 

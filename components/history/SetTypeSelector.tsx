@@ -19,8 +19,10 @@ export default function SetTypeSelector({ units, query, updateQuery }: Props) {
       SelectProps={{
         startAdornment: (
           <MatchTypeSelector
-            matchType={query.setMatchType}
-            updateMatchType={(setMatchType) => updateQuery({ setMatchType })}
+            matchType={query.setTypeMatchType}
+            updateMatchType={(setTypeMatchType) =>
+              updateQuery({ setTypeMatchType })
+            }
             descriptions={{
               [MatchType.Exact]: 'Records with the same set type',
               [MatchType.Partial]: 'Records with any set matching the set type',

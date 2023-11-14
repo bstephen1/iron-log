@@ -124,7 +124,7 @@ function LoadedRecordCard({
     exercise: exercise?.name,
     limit: 5,
     modifierMatchType: MatchType.Exact,
-    setMatchType: MatchType.Exact,
+    setTypeMatchType: MatchType.Exact,
     ...setType,
   }
 

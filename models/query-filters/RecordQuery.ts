@@ -11,7 +11,7 @@ export type RecordHistoryQuery = SetType & {
   /** Specify how to match against the given modifiers array. Defaults to "Exact" */
   modifierMatchType: MatchType
   /** Specify how to match SetType fields. Defaults to "SetType". */
-  setMatchType: MatchType
+  setTypeMatchType: MatchType
 }
 
 /** Generalized record query used in the api */
@@ -26,6 +26,6 @@ export const DEFAULT_RECORD_HISTORY_QUERY: RecordHistoryQuery = {
   exercise: '',
   modifier: [],
   modifierMatchType: MatchType.Partial,
-  setMatchType: MatchType.Exact,
+  setTypeMatchType: MatchType.Exact,
   ...DEFAULT_SET_TYPE,
 }
