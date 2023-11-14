@@ -71,7 +71,7 @@ export default function CategoryFilter({
             <MenuItem
               key={newCategory}
               value={newCategory}
-              // for some reason e.target.value is NOT returning the value, even though it is visible in e.target
+              // mui does not provide a way to access the value of MenuItems.
               onClick={(_) => {
                 setCategory(newCategory)
                 handleClose()

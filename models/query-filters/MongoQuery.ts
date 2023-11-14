@@ -25,32 +25,9 @@ export type MatchTypes<T> = {
 
 /** Contains possible query types for arrays.  */
 export enum ArrayMatchType {
-  /** matches records with any one of the provided values */
-  Any = 'any',
-  /** matches records with all of the provided values (but may have more) */
-  All = 'all',
-  /** matches records that only contain the provided values (but may not have all of them).
-   * This option does not include records with a null or empty array
-   */
-  // Only = 'only',
-  /** matches records that only contain the provided values (but may not have all of them).
-   * This option includes records with a null or empty array
-   */
-  // OnlyWithNull = 'onlyWithNull',
-  /** matches records that contain exactly the provided values list, in any order. */
-  Equivalent = 'equivalent',
-  /** matches records that contain exactly the provided array in the same order.
+  /** matches records with at least all of the provided values (but may have more) */
+  Partial = 'partial',
+  /** matches records that contain exactly the provided values list, in any order.
    * This is treated as the default ArrayMatchType when one is not otherwise specified. */
   Exact = 'exact',
-}
-
-export const ArrayMatchTypeDescription = {
-  [ArrayMatchType.Any]: 'matches records with any one of the provided values',
-  [ArrayMatchType.All]:
-    'matches records with all of the provided values (but may have more)',
-  [ArrayMatchType.Equivalent]:
-    'matches records with exactly the provided values in any order',
-  [ArrayMatchType.Exact]:
-    'matches records with exactly the provided values in the same order',
-  none: '',
 }

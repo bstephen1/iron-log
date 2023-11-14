@@ -241,14 +241,15 @@ export function validateMatchType(param: ApiParam) {
   if (
     !(
       typeof param === 'string' &&
-      // todo: ignore case
-      Object.values(ArrayMatchType).includes(param as ArrayMatchType)
+      Object.values(ArrayMatchType).includes(
+        param.toLocaleLowerCase() as ArrayMatchType
+      )
     )
   ) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid match type.')
   }
 
-  return param as ArrayMatchType
+  return param.toLocaleLowerCase() as ArrayMatchType
 }
 
 //-------------------

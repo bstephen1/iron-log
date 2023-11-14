@@ -124,7 +124,7 @@ function LoadedRecordCard({
     end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
     exercise: exercise?.name,
     limit: 5,
-    modifierMatchType: ArrayMatchType.Equivalent,
+    modifierMatchType: ArrayMatchType.Exact,
     setMatchType: SetMatchType.SetType,
     ...setType,
   }
