@@ -5,13 +5,17 @@ import TooltipIconButton from 'components/TooltipIconButton'
 import { MatchType } from 'models/query-filters/MongoQuery'
 import { useState } from 'react'
 
+type MatchTypeDescriptions = { [matchType in MatchType]: string }
+
 interface Props {
   matchType: MatchType
   updateMatchType: (matchType: MatchType) => void
+  descriptions: MatchTypeDescriptions
 }
-export default function ModifierMatchTypeSelector({
+export default function MatchTypeSelector({
   matchType,
   updateMatchType,
+  descriptions,
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const open = !!anchorEl
@@ -65,7 +69,7 @@ export default function ModifierMatchTypeSelector({
           </ListItemIcon>
           <ListItemText
             primary="Exact match"
-            secondary="Records have only the listed modifiers"
+            secondary={descriptions.exact}
           ></ListItemText>
         </MenuItem>
         <MenuItem
@@ -78,7 +82,7 @@ export default function ModifierMatchTypeSelector({
           </ListItemIcon>
           <ListItemText
             primary="Partial match"
-            secondary="Records may have extra modifiers"
+            secondary={descriptions.partial}
           ></ListItemText>
         </MenuItem>
       </Menu>

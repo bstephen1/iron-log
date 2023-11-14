@@ -1,9 +1,7 @@
 import { Button, Divider, Stack } from '@mui/material'
 import RecordExerciseSelector from 'components/session/records/RecordExerciseSelector'
-import SetTypeSelect from 'components/session/records/SetTypeSelect'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { SetType } from 'models/Record'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
   RecordHistoryQuery,
@@ -11,6 +9,7 @@ import {
 import { Dispatch, SetStateAction, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import ModifierQueryField from './ModifierQueryField'
+import SetTypeSelector from './SetTypeSelector'
 
 interface Props {
   query?: RecordHistoryQuery
@@ -56,13 +55,12 @@ export default function QueryCard({ query, setQuery }: Props) {
             setUnsavedQuery((prev) => ({ ...prev, ...changes }))
           }
         />
-        <SetTypeSelect
-          variant="outlined"
-          handleChange={({ setType }) =>
-            setUnsavedQuery((prev) => ({ ...prev, ...setType }))
-          }
+        <SetTypeSelector
           units={displayFields.units}
-          setType={unsavedQuery}
+          query={unsavedQuery}
+          updateQuery={(changes) =>
+            setUnsavedQuery((prev) => ({ ...prev, ...changes }))
+          }
         />
         <Stack
           direction="row"

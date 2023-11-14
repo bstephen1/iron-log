@@ -2,7 +2,7 @@ import { ComboBoxField } from 'components/form-fields/ComboBoxField'
 import { MatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { ComponentProps } from 'react'
-import ModifierMatchTypeSelector from './ModifierMatchTypeSelector'
+import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
   matchType?: MatchType
@@ -27,11 +27,15 @@ export default function ModifierQueryField({
       handleSubmit={(modifiers) => updateQuery({ modifier: modifiers })}
       helperText=""
       startAdornment={
-        <ModifierMatchTypeSelector
+        <MatchTypeSelector
           matchType={matchType}
           updateMatchType={(matchType) =>
             updateQuery({ modifierMatchType: matchType })
           }
+          descriptions={{
+            [MatchType.Exact]: 'Records have only the listed modifiers',
+            [MatchType.Partial]: 'Records may have extra modifiers',
+          }}
         />
       }
       {...comboBoxFieldProps}

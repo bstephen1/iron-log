@@ -46,6 +46,7 @@ export default memo(function SetTypeSelect({
   totalReps = 0,
   units,
   setType,
+  SelectProps,
   ...textFieldProps
 }: Props) {
   const { field, value = 0, operator, min = 0, max = 0 } = setType
@@ -95,6 +96,7 @@ export default memo(function SetTypeSelect({
         ),
         // Fix standard background, preventing gray shadow. See SelectFieldAutosave.
         variant: 'outlined',
+        ...SelectProps,
       }}
       {...textFieldProps}
     >
