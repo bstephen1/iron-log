@@ -13,8 +13,7 @@ import useExtraWeight from 'lib/frontend/useExtraWeight'
 import { UpdateFields, calculateTotalReps } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Record from 'models/Record'
-import { ArrayMatchType } from 'models/query-filters/MongoQuery'
-import { SetMatchType } from 'models/query-filters/RecordQuery'
+import { MatchType } from 'models/query-filters/MongoQuery'
 import { memo, useCallback, useEffect } from 'react'
 import { KeyedMutator } from 'swr'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
@@ -124,8 +123,8 @@ function LoadedRecordCard({
     end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
     exercise: exercise?.name,
     limit: 5,
-    modifierMatchType: ArrayMatchType.Exact,
-    setMatchType: SetMatchType.SetType,
+    modifierMatchType: MatchType.Exact,
+    setMatchType: MatchType.Exact,
     ...setType,
   }
 

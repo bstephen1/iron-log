@@ -3,7 +3,7 @@ import { Status } from 'models/Status'
 import BodyweightQuery from 'models/query-filters/BodyweightQuery'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
-import { ArrayMatchType } from 'models/query-filters/MongoQuery'
+import { MatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
@@ -98,20 +98,16 @@ describe('validation', () => {
   describe('validateMatchType', () => {
     it('throws error when not a MatchType', () => {
       expect(() => validateMatchType(undefined)).toThrow(ApiError)
-      expect(() => validateMatchType([ArrayMatchType.Partial])).toThrow(
-        ApiError
-      )
+      expect(() => validateMatchType([MatchType.Partial])).toThrow(ApiError)
       expect(() => validateMatchType('invalid')).toThrow(ApiError)
     })
 
     it('returns ArrayMatchType when valid', () => {
-      expect(validateMatchType(ArrayMatchType.Partial)).toBe(
-        ArrayMatchType.Partial
-      )
+      expect(validateMatchType(MatchType.Partial)).toBe(MatchType.Partial)
     })
 
     it('ignores case', () => {
-      expect(validateMatchType('PaRtIaL')).toBe(ArrayMatchType.Partial)
+      expect(validateMatchType('PaRtIaL')).toBe(MatchType.Partial)
     })
   })
 })
@@ -229,7 +225,7 @@ describe('build query', () => {
         exercise: 'exercise',
         date: '2000-01-01',
         modifier: 'modifier',
-        modifierMatchType: ArrayMatchType.Partial,
+        modifierMatchType: MatchType.Partial,
         start: '2022-01-01',
         end: '2022-02-02',
         limit: '6',
@@ -326,7 +322,7 @@ describe('build query', () => {
 
     it('ignores matchType when modifier is empty', () => {
       expect(
-        buildRecordQuery({ modifierMatchType: ArrayMatchType.Partial }, userId)
+        buildRecordQuery({ modifierMatchType: MatchType.Partial }, userId)
       ).toMatchObject({ userId })
     })
 
@@ -464,7 +460,7 @@ describe('build query', () => {
         status: Status.active,
         name: 'name',
         category: 'category',
-        categoryMatchType: ArrayMatchType.Partial,
+        categoryMatchType: MatchType.Partial,
       }
       expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
         filter: {
@@ -473,7 +469,7 @@ describe('build query', () => {
           categories: [apiQuery.category],
         },
         matchTypes: {
-          categories: ArrayMatchType.Partial,
+          categories: MatchType.Partial,
         },
         userId,
       })
@@ -522,10 +518,7 @@ describe('build query', () => {
 
     it('ignores matchType when category is empty', () => {
       expect(
-        buildExerciseQuery(
-          { categoryMatchType: ArrayMatchType.Partial },
-          userId
-        )
+        buildExerciseQuery({ categoryMatchType: MatchType.Partial }, userId)
       ).toMatchObject({ userId })
     })
 

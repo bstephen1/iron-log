@@ -10,7 +10,6 @@ import {
   TextFieldProps,
   Typography,
 } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
 import { UpdateFields } from 'lib/util'
@@ -105,7 +104,6 @@ export default memo(function SetTypeSelect({
         <FormControl>
           <FormLabel id={`set-type-operator-radio-label`}>Operator</FormLabel>
           <RadioGroup
-            // row
             aria-labelledby={`set-type-operator-radio-label`}
             name={`set-type-operator-radio`}
             value={operator}

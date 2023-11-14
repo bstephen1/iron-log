@@ -1,127 +1,90 @@
-import { Checkbox, Divider, Stack } from '@mui/material'
-import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
+import { Button, Divider, Stack } from '@mui/material'
 import RecordExerciseSelector from 'components/session/records/RecordExerciseSelector'
 import SetTypeSelect from 'components/session/records/SetTypeSelect'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { DEFAULT_SET_TYPE } from 'models/Record'
-import { ArrayMatchType } from 'models/query-filters/MongoQuery'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
+import { SetType } from 'models/Record'
+import {
+  DEFAULT_RECORD_HISTORY_QUERY,
+  RecordHistoryQuery,
+} from 'models/query-filters/RecordQuery'
 import { Dispatch, SetStateAction, useState } from 'react'
+import isEqual from 'react-fast-compare'
 import ModifierQueryField from './ModifierQueryField'
 
-interface ActiveHistoryFields {
-  exercise: boolean
-  setType: boolean
-  modifiers: boolean
-  modifierMatchType: boolean
-  dateRange: boolean
-}
-
 interface Props {
-  query?: RecordQuery
-  setQuery: Dispatch<SetStateAction<RecordQuery | undefined>>
+  query?: RecordHistoryQuery
+  setQuery: Dispatch<SetStateAction<RecordHistoryQuery | undefined>>
 }
-export default function QueryCard({ query = {}, setQuery }: Props) {
+export default function QueryCard({ query, setQuery }: Props) {
+  const initialQuery = query ?? DEFAULT_RECORD_HISTORY_QUERY
+  // todo: this should use exercise from query
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const [setType, setSetType] = useState(DEFAULT_SET_TYPE)
-  const [modifiers, setModifiers] = useState<string[]>([])
-  const [activeFields, setActiveFields] = useState<ActiveHistoryFields>({
-    exercise: true,
-    setType: true,
-    modifiers: true,
-    modifierMatchType: true,
-    dateRange: false,
-  })
+  const [unsavedQuery, setUnsavedQuery] =
+    useState<RecordHistoryQuery>(initialQuery)
   const displayFields = useDisplayFields(exercise)
 
   return (
     <>
       {/* <FormDivider title="Filter" /> */}
       <Stack spacing={2}>
-        <Stack direction="row">
-          <Checkbox
-            aria-label="exercise-filter"
-            checked={activeFields.exercise}
-            onChange={(_, checked) => {
-              setActiveFields((prev) => ({ ...prev, exercise: checked }))
-              setQuery({ exercise: checked ? exercise?.name : undefined })
-            }}
-          />
-          <RecordExerciseSelector
-            disableAddNew
-            disabled={!activeFields.exercise}
-            mutateRecordFields={async ({ exercise, activeModifiers }) => {
-              setExercise(exercise ?? null)
-              setQuery((prev) => ({ ...prev, exercise: exercise?.name }))
-              if (activeModifiers) {
-                setQuery((prev) => ({
-                  ...prev,
-                  modifier: activeModifiers,
-                }))
-              }
-            }}
-            activeModifiers={query.modifier ?? []}
-            exercise={exercise}
-            category={null}
-            variant="outlined"
-          />
-        </Stack>
-        <Stack direction="row">
-          <Checkbox
-            aria-label="modifiers-filter"
-            checked={activeFields.modifiers}
-            onChange={(_, checked) => {
-              setActiveFields((prev) => ({ ...prev, modifiers: checked }))
-              setQuery({ modifier: checked ? modifiers : undefined })
-            }}
-          />
-          <ModifierQueryField
-            matchType={query.modifierMatchType}
-            disabled={!activeFields.modifiers}
-            options={exercise?.modifiers || []}
-            initialValue={query.modifier || []}
-            updateQuery={(changes) =>
-              setQuery((prev) => ({ ...prev, ...changes }))
+        <RecordExerciseSelector
+          disableAddNew
+          mutateRecordFields={async ({ exercise, activeModifiers }) => {
+            setExercise(exercise ?? null)
+            setUnsavedQuery((prev) => ({
+              ...prev,
+              exercise: exercise?.name ?? '',
+            }))
+            if (activeModifiers) {
+              setUnsavedQuery((prev) => ({
+                ...prev,
+                modifier: activeModifiers,
+              }))
             }
-          />
-        </Stack>
-        <Stack direction="row">
-          <Checkbox
-            aria-label="set-type-filter"
-            checked={activeFields.setType}
-            onChange={(_, checked) => {
-              setActiveFields((prev) => ({ ...prev, setType: checked }))
-              setQuery((prev) => (checked ? { ...prev, ...setType } : prev))
-            }}
-          />
-          <SetTypeSelect
-            disabled={!activeFields.setType}
-            variant="outlined"
-            handleChange={({ setType }) =>
-              setQuery((prev) => ({ ...prev, ...setType }))
-            }
-            units={displayFields.units}
-            setType={setType}
-          />
-        </Stack>
-        {/* don't even have the submit buttons? Just auto update? */}
-        {/* <Stack direction="row">
+          }}
+          activeModifiers={unsavedQuery.modifier ?? []}
+          exercise={exercise}
+          category={null}
+          variant="outlined"
+        />
+        <ModifierQueryField
+          matchType={unsavedQuery.modifierMatchType}
+          options={exercise?.modifiers || []}
+          initialValue={unsavedQuery.modifier || []}
+          updateQuery={(changes) =>
+            setUnsavedQuery((prev) => ({ ...prev, ...changes }))
+          }
+        />
+        <SetTypeSelect
+          variant="outlined"
+          handleChange={({ setType }) =>
+            setUnsavedQuery((prev) => ({ ...prev, ...setType }))
+          }
+          units={displayFields.units}
+          setType={unsavedQuery}
+        />
+        <Stack
+          direction="row"
+          spacing={2}
+          display="flex"
+          justifyContent="center"
+        >
           <Button
             variant="outlined"
-            disabled={isEqual(query, query)}
-            onClick={() => setQuery(query ?? {})}
+            disabled={isEqual(unsavedQuery, query)}
+            onClick={() => setUnsavedQuery(initialQuery)}
           >
             Reset
           </Button>
           <Button
             variant="contained"
-            disabled={isEqual(query, query)}
-            onClick={() => setQuery(query)}
+            disabled={isEqual(unsavedQuery, query)}
+            onClick={() => setQuery(unsavedQuery)}
           >
-            Submit
+            Update Filter
           </Button>
-        </Stack> */}
+        </Stack>
       </Stack>
     </>
   )

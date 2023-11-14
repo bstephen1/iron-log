@@ -2,14 +2,14 @@ import Category from 'models/AsyncSelectorOption/Category'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Modifier from 'models/AsyncSelectorOption/Modifier'
 import Bodyweight from 'models/Bodyweight'
+import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import {
-  ArrayMatchType,
+  MatchType,
   MatchTypes,
   MongoQuery,
 } from 'models/query-filters/MongoQuery'
-import Record from 'models/Record'
-import SessionLog from 'models/SessionLog'
 import { Filter, ModifyResult, ObjectId } from 'mongodb'
 import { getCollections, getDb } from './mongoConnect'
 
@@ -47,14 +47,14 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
     const array = filter[key]
     const isEmpty = !array.length
     switch (matchTypes[key]) {
-      case ArrayMatchType.Partial:
+      case MatchType.Partial:
         // typescript complaining for some reason. May or may not be a better way to silence it.
         filter[key] = { $all: array } as any
 
         // for empty arrays, matching any means match anything
         isEmpty && delete filter[key]
         break
-      case ArrayMatchType.Exact:
+      case MatchType.Exact:
       default:
         // Note: for standard exact matches, order of array elements matters.
         // It is possible, but potentially expensive to query for an exact match where order

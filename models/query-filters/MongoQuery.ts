@@ -20,14 +20,17 @@ export interface MongoQuery<T> {
  * declaring the ArrayMatchTypes for a MongoQuery
  */
 export type MatchTypes<T> = {
-  [key in keyof Partial<T>]: ArrayMatchType
+  [key in keyof Partial<T>]: MatchType
 }
 
-/** Contains possible query types for arrays.  */
-export enum ArrayMatchType {
-  /** matches records with at least all of the provided values (but may have more) */
+/** Contains possible query types for arrays and setTypes.  */
+export enum MatchType {
+  /** Matches records with at least all of the provided values (but may have more).
+   *  For set types, this matches records with any set that matches the set type.
+   */
   Partial = 'partial',
   /** matches records that contain exactly the provided values list, in any order.
-   * This is treated as the default ArrayMatchType when one is not otherwise specified. */
+   *  For set types, this matches records with the same set type.
+   * This is treated as the default MatchType when one is not otherwise specified. */
   Exact = 'exact',
 }

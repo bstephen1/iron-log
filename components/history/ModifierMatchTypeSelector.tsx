@@ -2,18 +2,16 @@ import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import { ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import TooltipIconButton from 'components/TooltipIconButton'
-import { ArrayMatchType } from 'models/query-filters/MongoQuery'
+import { MatchType } from 'models/query-filters/MongoQuery'
 import { useState } from 'react'
 
 interface Props {
-  matchType: ArrayMatchType
-  updateMatchType: (matchType: ArrayMatchType) => void
-  disabled?: boolean
+  matchType: MatchType
+  updateMatchType: (matchType: MatchType) => void
 }
-export default function MatchTypeSelector({
+export default function ModifierMatchTypeSelector({
   matchType,
   updateMatchType,
-  disabled,
 }: Props) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const open = !!anchorEl
@@ -29,7 +27,7 @@ export default function MatchTypeSelector({
 
   // somehow mui has no way to actually get the value you clicked on in a menu,
   // so we have to manually pass it in.
-  const handleClick = (matchType: ArrayMatchType) => {
+  const handleClick = (matchType: MatchType) => {
     updateMatchType(matchType)
     handleClose()
   }
@@ -37,12 +35,11 @@ export default function MatchTypeSelector({
   return (
     <>
       <TooltipIconButton
-        title={disabled ? '' : 'Select match type'}
+        title="Select match type"
         sx={{ p: '4px' }}
         onClickButton={handleOpen}
-        disabled={disabled}
       >
-        {matchType === ArrayMatchType.Exact ? (
+        {matchType === MatchType.Exact ? (
           <HourglassFullIcon />
         ) : (
           <HourglassBottomIcon />
@@ -59,9 +56,9 @@ export default function MatchTypeSelector({
         }}
       >
         <MenuItem
-          value={ArrayMatchType.Exact}
-          onClick={() => handleClick(ArrayMatchType.Exact)}
-          selected={matchType === ArrayMatchType.Exact}
+          value={MatchType.Exact}
+          onClick={() => handleClick(MatchType.Exact)}
+          selected={matchType === MatchType.Exact}
         >
           <ListItemIcon>
             <HourglassFullIcon />
@@ -72,9 +69,9 @@ export default function MatchTypeSelector({
           ></ListItemText>
         </MenuItem>
         <MenuItem
-          value={ArrayMatchType.Partial}
-          onClick={() => handleClick(ArrayMatchType.Partial)}
-          selected={matchType === ArrayMatchType.Partial}
+          value={MatchType.Partial}
+          onClick={() => handleClick(MatchType.Partial)}
+          selected={matchType === MatchType.Partial}
         >
           <ListItemIcon>
             <HourglassBottomIcon />
