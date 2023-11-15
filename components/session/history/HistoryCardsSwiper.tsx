@@ -1,7 +1,7 @@
 import { Box, CardProps, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
-import { Navigation, Pagination } from 'swiper'
+import { Navigation, Pagination, Virtual } from 'swiper'
 import { Swiper, SwiperProps, SwiperSlide } from 'swiper/react'
 import HistoryCard, { HistoryAction, HistoryContent } from './HistoryCard'
 
@@ -30,6 +30,11 @@ interface Props {
   swiperProps?: SwiperProps
   /** record id, used for navigation classNames */
   _id?: string
+  fractionPagination?: boolean
+  /** Render as virtual cards. Virtual cards are only added to DOM after
+   *  they first become active.
+   */
+  virtual?: boolean
 }
 export default memo(function HistoryCardsSwiper({
   displayFields,
@@ -37,6 +42,8 @@ export default memo(function HistoryCardsSwiper({
   actions,
   content,
   cardProps,
+  fractionPagination,
+  virtual,
   swiperProps,
   _id,
 }: Props) {
@@ -86,18 +93,21 @@ export default memo(function HistoryCardsSwiper({
           // the closest valid index (first slide starting at 0). This makes it pretty easy
           // to default to the last index.
           initialSlide={historyRecords.length}
-          autoHeight
+          autoHeight={!Virtual}
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
-            // dynamic bullets work now without crashing, but they sometimes start shrinking and disappear.
-            // Normal bullets are more reliable.
+            type: fractionPagination ? 'custom' : 'bullets',
+            // reverse order so last item (most recent) is number 1
+            renderCustom: (_, current, total) =>
+              total - current + 1 + '/' + total,
           }}
           navigation={{
             prevEl: `.${navPrevClassName}`,
             nextEl: `.${navNextClassName}`,
           }}
-          modules={[Pagination, Navigation]}
+          modules={[Pagination, Navigation, Virtual]}
+          virtual={virtual}
           {...swiperProps}
         >
           <NavigationBar
@@ -113,6 +123,7 @@ export default memo(function HistoryCardsSwiper({
               <SwiperSlide
                 // have to recalculate autoHeight when matchesRecord changes
                 key={historyRecord._id}
+                virtualIndex={virtual ? i : undefined}
                 // disable parent swiping
                 className={
                   historyRecords.length > 1 ? 'swiper-no-swiping-record' : ''

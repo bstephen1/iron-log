@@ -19,6 +19,8 @@ export default function QueryCard({ query, setQuery }: Props) {
   const initialQuery = query ?? DEFAULT_RECORD_HISTORY_QUERY
   // todo: this should use exercise from query
   const [exercise, setExercise] = useState<Exercise | null>(null)
+  // reset to this exercise if reset button is clicked
+  const [initialExercise, setInitialExercise] = useState(exercise)
   const [unsavedQuery, setUnsavedQuery] =
     useState<RecordHistoryQuery>(initialQuery)
   const displayFields = useDisplayFields(exercise)
@@ -30,7 +32,10 @@ export default function QueryCard({ query, setQuery }: Props) {
         <RecordExerciseSelector
           disableAddNew
           mutateRecordFields={async ({ exercise, activeModifiers }) => {
-            setExercise(exercise ?? null)
+            setExercise((prev) => {
+              setInitialExercise(prev)
+              return exercise ?? null
+            })
             setUnsavedQuery((prev) => ({
               ...prev,
               exercise: exercise?.name ?? '',
@@ -48,6 +53,7 @@ export default function QueryCard({ query, setQuery }: Props) {
           variant="outlined"
         />
         <ModifierQueryField
+          disabled={!exercise}
           matchType={unsavedQuery.modifierMatchType}
           options={exercise?.modifiers || []}
           initialValue={unsavedQuery.modifier || []}
@@ -56,6 +62,7 @@ export default function QueryCard({ query, setQuery }: Props) {
           }
         />
         <SetTypeQueryField
+          disabled={!exercise}
           units={displayFields.units}
           query={unsavedQuery}
           updateQuery={(changes) =>
@@ -71,13 +78,16 @@ export default function QueryCard({ query, setQuery }: Props) {
           <Button
             variant="outlined"
             disabled={isEqual(unsavedQuery, query)}
-            onClick={() => setUnsavedQuery(initialQuery)}
+            onClick={() => {
+              setUnsavedQuery(initialQuery)
+              setExercise(initialExercise)
+            }}
           >
             Reset
           </Button>
           <Button
             variant="contained"
-            disabled={isEqual(unsavedQuery, query)}
+            disabled={!exercise || isEqual(unsavedQuery, query)}
             onClick={() => setQuery(unsavedQuery)}
           >
             Update Filter

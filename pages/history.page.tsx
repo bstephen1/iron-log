@@ -1,33 +1,27 @@
 import {
   Box,
-  Button,
+  Divider,
   FormControlLabel,
   FormGroup,
   InputAdornment,
   Switch,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+  useTheme,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import dayjs from 'dayjs'
-
 import StyledDivider from 'components/StyledDivider'
-import { ComboBoxField } from 'components/form-fields/ComboBoxField'
-import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
+import QueryForm from 'components/history/QueryForm'
 import HistoryCardsSwiper from 'components/session/history/HistoryCardsSwiper'
-import RecordExerciseSelector from 'components/session/records/RecordExerciseSelector'
-import SetTypeSelect from 'components/session/records/SetTypeSelect'
+import dayjs from 'dayjs'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
-import { useBodyweightHistory, useRecords } from 'lib/frontend/restService'
+import { useBodyweightHistory } from 'lib/frontend/restService'
 import useDesktopCheck from 'lib/frontend/useDesktopCheck'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Bodyweight from 'models/Bodyweight'
-import {
-  ArrayMatchType,
-  ArrayMatchTypeDescription,
-} from 'models/query-filters/MongoQuery'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
+import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
 import { useEffect, useMemo, useState } from 'react'
-import isEqual from 'react-fast-compare'
 import {
   Brush,
   CartesianGrid,
@@ -40,24 +34,22 @@ import {
   YAxis,
 } from 'recharts'
 import useResizeObserver from 'use-resize-observer'
-import useDisplayFields from 'lib/frontend/useDisplayFields'
 
 interface GraphBodyweight extends Bodyweight {
   epochDate: number
 }
+
+type HistoryMode = 'graph' | 'card'
+
 export default function HistoryPage() {
-  const [exercise, setExercise] = useState<Exercise | null>(null)
+  const theme = useTheme()
   const { data: bodyweightData } = useBodyweightHistory()
   const [showBodyweight, setShowBodyweight] = useState(true)
   const [includeUnofficial, setIncludeUnofficial] = useState(false)
   const [clothingOffset, setClothingOffset] = useState(DEFAULT_CLOTHING_OFFSET)
   const [showSmoothedBw, setShowSmoothedBw] = useState(false)
-  const [query, setQuery] = useState<RecordQuery>()
-  const [formQuery, setFormQuery] = useState(query ?? {})
-  const displayFields = useDisplayFields(exercise)
-
-  // const displayFields =
-  const { records } = useRecords(query)
+  const [query, setQuery] = useState<RecordHistoryQuery>()
+  const [mode, setMode] = useState<HistoryMode>('card')
 
   const isDesktop = useDesktopCheck()
 
@@ -134,71 +126,18 @@ export default function HistoryPage() {
     return i + 1
   }
 
-  console.log(records)
-
   // todo: scroll snap?
   return (
     <Grid container spacing={2}>
-      <Grid xs={12}>
-        <RecordExerciseSelector
-          mutateRecordFields={async ({ exercise, activeModifiers }) => {
-            setExercise(exercise ?? null)
-            setFormQuery((prev) => ({ ...prev, exercise: exercise?.name }))
-            if (activeModifiers) {
-              setFormQuery((prev) => ({ ...prev, modifier: activeModifiers }))
-            }
-          }}
-          activeModifiers={formQuery.modifier ?? []}
-          exercise={exercise}
-          category={null}
-        />
+      <Grid xs={12} display="flex" justifyContent="center">
+        <Typography>History</Typography>
       </Grid>
       <Grid xs={12}>
-        <ComboBoxField
-          label="Modifiers"
-          emptyPlaceholder="None"
-          variant="standard"
-          options={exercise?.modifiers || []}
-          noOptionsText="Select an exercise to select from its available modifiers"
-          initialValue={formQuery.modifier || []}
-          handleSubmit={(modifiers) =>
-            setFormQuery((prev) => ({ ...prev, modifier: modifiers }))
-          }
-          helperText=""
-        />
+        <QueryForm {...{ query, setQuery }} />
+        {/* <QueryCard {...{ query, setQuery }} /> */}
       </Grid>
       <Grid xs={12}>
-        <SelectFieldAutosave
-          fullWidth
-          label="Modifier Match Type"
-          variant="standard"
-          options={Object.values(ArrayMatchType)}
-          handleSubmit={(modifierMatchType) =>
-            setFormQuery((prev) => ({ ...prev, modifierMatchType }))
-          }
-          initialValue={
-            formQuery.modifierMatchType ?? ArrayMatchType.Equivalent
-          }
-          helperText={ArrayMatchTypeDescription[
-            formQuery.modifierMatchType ?? 'none'
-          ].replaceAll('values', 'modifiers')}
-        />
-      </Grid>
-      <Grid xs={12}>
-        <SetTypeSelect
-          mutateRecordFields={async ({ setType }) =>
-            setFormQuery((prev) => ({ ...prev, ...setType }))
-          }
-          units={displayFields.units}
-          emptyOption="No filter"
-          setType={{
-            field: formQuery.field,
-            value: formQuery.value,
-            operator: formQuery.operator,
-            min: formQuery.min,
-            max: formQuery.max,
-          }}
-        />
+        <Divider sx={{ pb: 2 }}>Graph</Divider>
       </Grid>
       <Grid xs={8} alignItems="center" display="flex">
         <FormGroup row>
@@ -252,29 +191,57 @@ export default function HistoryPage() {
           }}
         />
       </Grid>
-      <Grid xs={12} display="flex" justifyContent="center">
-        <Button
-          variant="outlined"
-          sx={{ mr: 2 }}
-          disabled={isEqual(query, formQuery)}
-          onClick={() => setFormQuery(query ?? {})}
+      <Grid xs={12} height="100%" flex="1 1 auto">
+        {/* thinking there shouldn't be an option, just show both at once */}
+        <ToggleButtonGroup
+          color="primary"
+          value={mode}
+          exclusive
+          size="small"
+          onChange={(_, value) => setMode(value)}
+          aria-label="History mode"
         >
-          Reset
-        </Button>
-        <Button
-          variant="contained"
-          disabled={isEqual(query, formQuery)}
-          onClick={() => setQuery(formQuery)}
-        >
-          Submit
-        </Button>
+          <ToggleButton value="card">Cards</ToggleButton>
+          <ToggleButton value="graph">Graph</ToggleButton>
+        </ToggleButtonGroup>
       </Grid>
+
       <Grid xs={12}>
         <StyledDivider />
       </Grid>
 
+      <Grid xs={12} display={mode === 'card' ? 'block' : 'none'}>
+        <HistoryCardsSwiper
+          query={query}
+          actions={['recordNotes', 'exerciseNotes', 'manage']}
+          content={['exercise', 'modifiers', 'setType', 'sets']}
+          cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
+          swiperProps={{
+            breakpoints: {
+              [theme.breakpoints.values.sm]: {
+                slidesPerView: 1,
+              },
+              [theme.breakpoints.values.md]: {
+                slidesPerView: 2,
+                centeredSlides: false,
+                centerInsufficientSlides: true,
+              },
+              [theme.breakpoints.values.lg]: {
+                slidesPerView: 3,
+                centeredSlides: true,
+                centerInsufficientSlides: false,
+              },
+            },
+          }}
+        />
+      </Grid>
       <Grid xs={12} height="100%" flex="1 1 auto"></Grid>
-      <Grid container xs={12} justifyContent="center">
+      <Grid
+        container
+        xs={12}
+        justifyContent="center"
+        display={mode === 'graph' ? 'block' : 'none'}
+      >
         {/* apparently Grid can't accept a ref (even though it works...) so adding a Box to capture the container width */}
         <Box ref={graphContainerRef} width="100%" height="100%">
           {bodyweightData && (
@@ -346,14 +313,6 @@ export default function HistoryPage() {
             </ResponsiveContainer>
           )}
         </Box>
-      </Grid>
-      <Grid xs={12}>
-        <HistoryCardsSwiper
-          query={query}
-          actions={['recordNotes', 'exerciseNotes', 'manage']}
-          content={['exercise', 'modifiers', 'setType', 'sets']}
-          cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
-        />
       </Grid>
     </Grid>
   )

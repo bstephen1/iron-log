@@ -8,11 +8,13 @@ interface Props {
   units: Units
   query: RecordHistoryQuery
   updateQuery: (changes: Partial<RecordHistoryQuery>) => void
+  disabled?: boolean
 }
 export default function SetTypeQueryField({
   units,
   query,
   updateQuery,
+  disabled,
 }: Props) {
   return (
     <SetTypeSelect
@@ -20,7 +22,7 @@ export default function SetTypeQueryField({
       handleChange={({ setType }) => updateQuery(setType ?? {})}
       units={units}
       setType={query}
-      disabled={query.setTypeMatchType === MatchType.Any}
+      disabled={disabled || query.setTypeMatchType === MatchType.Any}
       SelectProps={{
         startAdornment: (
           <MatchTypeSelector
