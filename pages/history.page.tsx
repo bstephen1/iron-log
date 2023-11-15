@@ -6,8 +6,6 @@ import {
   InputAdornment,
   Switch,
   TextField,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -39,7 +37,33 @@ interface GraphBodyweight extends Bodyweight {
   epochDate: number
 }
 
-type HistoryMode = 'graph' | 'card'
+const convertEpochToDate = (value: number) =>
+  dayjs.unix(value).format('YYYY-MM-DD')
+
+/** Get the earliest index within the given dayRange.
+ *  There can be an arbitrary amount of data points within the range,
+ *  so we need to calculate where to start by looking at the dates.
+ */
+const getStartIndex = (data: GraphBodyweight[], dayRange = 60) => {
+  let i = data.length - 1
+
+  if (i < 0) return 0
+
+  let mostRecentDate = data[i].date
+  const startDate = dayjs(mostRecentDate)
+    .add(-dayRange, 'day')
+    .format(DATE_FORMAT)
+
+  while (mostRecentDate > startDate) {
+    // return if we reached the beginning of the array without hitting the limit
+    if (!i) return i
+
+    mostRecentDate = data[--i].date
+  }
+
+  // if we did hit the limit we've gone past it by one
+  return i + 1
+}
 
 export default function HistoryPage() {
   const theme = useTheme()
@@ -49,7 +73,6 @@ export default function HistoryPage() {
   const [clothingOffset, setClothingOffset] = useState(DEFAULT_CLOTHING_OFFSET)
   const [showSmoothedBw, setShowSmoothedBw] = useState(false)
   const [query, setQuery] = useState<RecordHistoryQuery>()
-  const [mode, setMode] = useState<HistoryMode>('card')
 
   const isDesktop = useDesktopCheck()
 
@@ -102,39 +125,16 @@ export default function HistoryPage() {
     clothingOffset,
   ])
 
-  const convertEpochToDate = (value: number) =>
-    dayjs.unix(value).format('YYYY-MM-DD')
-
-  const getStartIndex = (dayRange = 60) => {
-    let i = graphBodyweightData.length - 1
-
-    if (i < 0) return 0
-
-    let mostRecentDate = graphBodyweightData[i].date
-    const startDate = dayjs(mostRecentDate)
-      .add(-dayRange, 'day')
-      .format(DATE_FORMAT)
-
-    while (mostRecentDate > startDate) {
-      // return if we reached the beginning of the array without hitting the limit
-      if (!i) return i
-
-      mostRecentDate = graphBodyweightData[--i].date
-    }
-
-    // if we did hit the limit we've gone past it by one
-    return i + 1
-  }
-
   // todo: scroll snap?
   return (
     <Grid container spacing={2}>
       <Grid xs={12} display="flex" justifyContent="center">
-        <Typography>History</Typography>
+        <Typography variant="h5" mb={2}>
+          History
+        </Typography>
       </Grid>
       <Grid xs={12}>
         <QueryForm {...{ query, setQuery }} />
-        {/* <QueryCard {...{ query, setQuery }} /> */}
       </Grid>
       <Grid xs={12}>
         <Divider sx={{ pb: 2 }}>Graph</Divider>
@@ -191,26 +191,12 @@ export default function HistoryPage() {
           }}
         />
       </Grid>
-      <Grid xs={12} height="100%" flex="1 1 auto">
-        {/* thinking there shouldn't be an option, just show both at once */}
-        <ToggleButtonGroup
-          color="primary"
-          value={mode}
-          exclusive
-          size="small"
-          onChange={(_, value) => setMode(value)}
-          aria-label="History mode"
-        >
-          <ToggleButton value="card">Cards</ToggleButton>
-          <ToggleButton value="graph">Graph</ToggleButton>
-        </ToggleButtonGroup>
-      </Grid>
 
       <Grid xs={12}>
         <StyledDivider />
       </Grid>
 
-      <Grid xs={12} display={mode === 'card' ? 'block' : 'none'}>
+      <Grid xs={12}>
         <HistoryCardsSwiper
           query={query}
           actions={['recordNotes', 'exerciseNotes', 'manage']}
@@ -236,12 +222,7 @@ export default function HistoryPage() {
         />
       </Grid>
       <Grid xs={12} height="100%" flex="1 1 auto"></Grid>
-      <Grid
-        container
-        xs={12}
-        justifyContent="center"
-        display={mode === 'graph' ? 'block' : 'none'}
-      >
+      <Grid container xs={12} justifyContent="center">
         {/* apparently Grid can't accept a ref (even though it works...) so adding a Box to capture the container width */}
         <Box ref={graphContainerRef} width="100%" height="100%">
           {bodyweightData && (
@@ -307,7 +288,7 @@ export default function HistoryPage() {
                   // could only eyeball this trying to get it centered.
                   x={graphContainerWidth * 0.2}
                   // todo: startIndex ~30 days prior to highest date
-                  startIndex={getStartIndex()}
+                  startIndex={getStartIndex(graphBodyweightData)}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -317,7 +298,3 @@ export default function HistoryPage() {
     </Grid>
   )
 }
-
-// todo in graph:
-// brush for panning / zooming
-// date axis
