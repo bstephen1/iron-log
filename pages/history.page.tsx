@@ -15,7 +15,7 @@ import QueryForm from 'components/history/QueryForm'
 import HistoryCardsSwiper from 'components/session/history/HistoryCardsSwiper'
 import dayjs from 'dayjs'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
-import { useBodyweightHistory } from 'lib/frontend/restService'
+import { useBodyweightHistory, useRecords } from 'lib/frontend/restService'
 import useDesktopCheck from 'lib/frontend/useDesktopCheck'
 import Bodyweight from 'models/Bodyweight'
 import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
@@ -33,8 +33,9 @@ import {
 } from 'recharts'
 import useResizeObserver from 'use-resize-observer'
 
-interface GraphBodyweight extends Bodyweight {
+interface GraphData {
   epochDate: number
+  value: number
 }
 
 const convertEpochToDate = (value: number) =>
@@ -44,21 +45,19 @@ const convertEpochToDate = (value: number) =>
  *  There can be an arbitrary amount of data points within the range,
  *  so we need to calculate where to start by looking at the dates.
  */
-const getStartIndex = (data: GraphBodyweight[], dayRange = 60) => {
+const getStartIndex = (data: GraphData[], dayRange = 60) => {
   let i = data.length - 1
 
   if (i < 0) return 0
 
-  let mostRecentDate = data[i].date
-  const startDate = dayjs(mostRecentDate)
-    .add(-dayRange, 'day')
-    .format(DATE_FORMAT)
+  let mostRecentDate = data[i].epochDate
+  const startDate = dayjs(mostRecentDate).add(-dayRange, 'day').unix()
 
   while (mostRecentDate > startDate) {
     // return if we reached the beginning of the array without hitting the limit
     if (!i) return i
 
-    mostRecentDate = data[--i].date
+    mostRecentDate = data[--i].epochDate
   }
 
   // if we did hit the limit we've gone past it by one
@@ -71,8 +70,10 @@ export default function HistoryPage() {
   const [showBodyweight, setShowBodyweight] = useState(true)
   const [includeUnofficial, setIncludeUnofficial] = useState(false)
   const [clothingOffset, setClothingOffset] = useState(DEFAULT_CLOTHING_OFFSET)
-  const [showSmoothedBw, setShowSmoothedBw] = useState(false)
+  const [smoothLine, setSmoothLine] = useState(false)
+  const lineType = smoothLine ? 'basis' : 'monotone'
   const [query, setQuery] = useState<RecordHistoryQuery>()
+  const { records: historyRecords } = useRecords(query, !!query)
 
   const isDesktop = useDesktopCheck()
 
@@ -97,7 +98,21 @@ export default function HistoryPage() {
     return window.removeEventListener('resize', handleWindowResize)
   }, [])
 
-  const graphBodyweightData = useMemo((): GraphBodyweight[] => {
+  const recordGraphData = useMemo((): GraphData[] => {
+    if (!historyRecords) return []
+
+    return historyRecords
+      .map((record) => ({
+        epochDate: dayjs(record.date).unix(),
+        value: record.sets.reduce(
+          (max, set) => Math.max(set.weight ?? 0, max),
+          0
+        ),
+      }))
+      .sort((a, b) => a.epochDate - b.epochDate)
+  }, [historyRecords])
+
+  const bodyweightGraphData = useMemo((): GraphData[] => {
     if (!unofficialBWs || !officialBWs) return []
 
     const officialData = showBodyweight ? officialBWs : []
@@ -115,7 +130,7 @@ export default function HistoryPage() {
     const data = [...unofficialData, ...officialData]
 
     return data
-      .map((bw) => ({ ...bw, epochDate: dayjs(bw.date).unix() }))
+      .map((bw) => ({ value: bw.value, epochDate: dayjs(bw.date).unix() }))
       .sort((a, b) => a.epochDate - b.epochDate)
   }, [
     unofficialBWs,
@@ -164,8 +179,8 @@ export default function HistoryPage() {
             disabled={!showBodyweight}
             control={
               <Switch
-                checked={showSmoothedBw}
-                onChange={() => setShowSmoothedBw(!showSmoothedBw)}
+                checked={smoothLine}
+                onChange={() => setSmoothLine(!smoothLine)}
               />
             }
             label="Use smoothed line"
@@ -199,6 +214,7 @@ export default function HistoryPage() {
       <Grid xs={12}>
         <HistoryCardsSwiper
           query={query}
+          fractionPagination
           actions={['recordNotes', 'exerciseNotes', 'manage']}
           content={['exercise', 'modifiers', 'setType', 'sets']}
           cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
@@ -229,7 +245,6 @@ export default function HistoryPage() {
             // need to specify a height or the grid and container will both defer to each other and result in zero height
             <ResponsiveContainer height={windowHeight}>
               <LineChart
-                data={graphBodyweightData}
                 margin={{
                   top: 20,
                   right: 5,
@@ -252,22 +267,41 @@ export default function HistoryPage() {
                   height={80}
                 />
                 <YAxis
+                  yAxisId="bodyweight"
                   name="weight"
                   dataKey="value"
                   type="number"
                   unit=" kg"
+                  orientation="right"
+                  stroke="green"
                   domain={['auto', 'auto']}
-                ></YAxis>
+                />
+                <YAxis
+                  yAxisId="exercise"
+                  name="weight"
+                  dataKey="value"
+                  type="number"
+                  unit=" kg"
+                  orientation="left"
+                  stroke="blue"
+                  domain={['auto', 'auto']}
+                />
                 {/* line color is "stroke" */}
-                {showSmoothedBw ? (
-                  <Line
-                    name="bodyweight (smoothed)"
-                    dataKey="value"
-                    type="basis"
-                  />
-                ) : (
-                  <Line name="bodyweight" dataKey="value" type="monotone" />
-                )}
+                <Line
+                  yAxisId="bodyweight"
+                  name="bodyweight"
+                  dataKey="value"
+                  type={lineType}
+                  stroke="green"
+                  data={bodyweightGraphData}
+                />
+                <Line
+                  yAxisId="exercise"
+                  name={query?.exercise}
+                  dataKey="value"
+                  type={lineType}
+                  data={recordGraphData}
+                />
                 {/* todo: possible to show weigh-in type in tooltip? */}
                 <Tooltip
                   trigger={isDesktop ? 'hover' : 'click'}
@@ -287,8 +321,7 @@ export default function HistoryPage() {
                   width={graphContainerWidth * 0.6}
                   // could only eyeball this trying to get it centered.
                   x={graphContainerWidth * 0.2}
-                  // todo: startIndex ~30 days prior to highest date
-                  startIndex={getStartIndex(graphBodyweightData)}
+                  startIndex={getStartIndex(bodyweightGraphData)}
                 />
               </LineChart>
             </ResponsiveContainer>
