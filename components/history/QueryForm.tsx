@@ -27,7 +27,6 @@ export default function QueryCard({ query, setQuery }: Props) {
 
   return (
     <>
-      {/* <FormDivider title="Filter" /> */}
       <Stack spacing={2}>
         <RecordExerciseSelector
           disableAddNew
@@ -77,7 +76,8 @@ export default function QueryCard({ query, setQuery }: Props) {
         >
           <Button
             variant="outlined"
-            disabled={isEqual(unsavedQuery, query)}
+            // there is no query on init, so just disable reset
+            disabled={!query || isEqual(unsavedQuery, query)}
             onClick={() => {
               setUnsavedQuery(initialQuery)
               setExercise(initialExercise)
@@ -97,7 +97,3 @@ export default function QueryCard({ query, setQuery }: Props) {
     </>
   )
 }
-
-const FormDivider = ({ title }: { title: string }) => (
-  <Divider sx={{ pb: 2 }}>{title}</Divider>
-)

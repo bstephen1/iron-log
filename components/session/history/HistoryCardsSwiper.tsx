@@ -73,6 +73,10 @@ export default memo(function HistoryCardsSwiper({
     )
   }
 
+  if (!query) {
+    return <></>
+  }
+
   // assumes query has end date set to the current record's date (so will exclude it)
   if (!historyRecords.length) {
     return (
