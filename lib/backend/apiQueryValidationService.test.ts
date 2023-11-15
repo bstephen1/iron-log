@@ -326,6 +326,15 @@ describe('build query', () => {
       ).toMatchObject({ userId })
     })
 
+    it('ignores modifier when matchType is "any"', () => {
+      expect(
+        buildRecordQuery(
+          { modifierMatchType: MatchType.Any, modifier: 'my mod' },
+          userId
+        )
+      ).toMatchObject({ userId })
+    })
+
     describe('setType', () => {
       it('validates field', () => {
         expect(() =>

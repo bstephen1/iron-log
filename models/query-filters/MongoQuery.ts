@@ -17,20 +17,18 @@ export interface MongoQuery<T> {
 }
 
 /** An object that has keys corresponding to Partial\<T\> keys,
- * declaring the ArrayMatchTypes for a MongoQuery
+ * declaring the MatchTypes for a MongoQuery
  */
 export type MatchTypes<T> = {
   [key in keyof Partial<T>]: MatchType
 }
 
-/** Contains possible query types for arrays and setTypes.  */
+/** Contains possible api query types for non-primitive fields (eg, arrays, setType).
+ *  All non-primitive fields share the same match type values, but exact implementation may
+ *  differ between fields.
+ */
 export enum MatchType {
-  /** Matches records with at least all of the provided values (but may have more).
-   *  For set types, this matches records with any set that matches the set type.
-   */
   Partial = 'partial',
-  /** matches records that contain exactly the provided values list, in any order.
-   *  For set types, this matches records with the same set type.
-   * This is treated as the default MatchType when one is not otherwise specified. */
   Exact = 'exact',
+  Any = 'any',
 }

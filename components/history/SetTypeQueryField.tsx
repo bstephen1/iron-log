@@ -20,6 +20,7 @@ export default function SetTypeQueryField({
       handleChange={({ setType }) => updateQuery(setType ?? {})}
       units={units}
       setType={query}
+      disabled={query.setTypeMatchType === MatchType.Any}
       SelectProps={{
         startAdornment: (
           <MatchTypeSelector
@@ -27,9 +28,11 @@ export default function SetTypeQueryField({
             updateMatchType={(setTypeMatchType) =>
               updateQuery({ setTypeMatchType })
             }
+            options={[MatchType.Exact, MatchType.Any]}
             descriptions={{
               [MatchType.Exact]: 'Records with the same set type',
               [MatchType.Partial]: 'Records with any set matching the set type',
+              [MatchType.Any]: 'No filter',
             }}
           />
         ),

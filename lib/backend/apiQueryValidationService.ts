@@ -123,7 +123,7 @@ export function buildRecordQuery(
   const isRange = operator === 'between'
   const isValidSetType = !!operator && !!field && (isRange ? min || max : value)
 
-  if (setTypeMatchType === MatchType.Exact && !isValidSetType) {
+  if (setTypeMatchType === MatchType.Any || !isValidSetType) {
     return { ...query, filter, matchTypes }
   }
 

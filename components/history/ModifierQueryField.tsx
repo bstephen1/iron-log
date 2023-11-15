@@ -32,6 +32,7 @@ export default function ModifierQueryField({
           updateMatchType={(matchType) =>
             updateQuery({ modifierMatchType: matchType })
           }
+          options={[MatchType.Exact, MatchType.Partial]}
           descriptions={{
             [MatchType.Exact]: 'Records have only the listed modifiers',
             [MatchType.Partial]: 'Records may have extra modifiers',

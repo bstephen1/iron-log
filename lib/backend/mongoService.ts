@@ -43,6 +43,10 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
   }
 
   for (const key in matchTypes) {
+    // set type cannot be handled as an array
+    if (key === 'setType') {
+      continue
+    }
     // The array needs special handling if it's empty. $all and $in always return no documents for empty arrays.
     const array = filter[key]
     const isEmpty = !array.length
