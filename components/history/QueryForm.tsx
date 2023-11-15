@@ -9,7 +9,7 @@ import {
 import { Dispatch, SetStateAction, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import ModifierQueryField from './ModifierQueryField'
-import SetTypeSelector from './SetTypeSelector'
+import SetTypeQueryField from './SetTypeQueryField'
 
 interface Props {
   query?: RecordHistoryQuery
@@ -55,7 +55,7 @@ export default function QueryCard({ query, setQuery }: Props) {
             setUnsavedQuery((prev) => ({ ...prev, ...changes }))
           }
         />
-        <SetTypeSelector
+        <SetTypeQueryField
           units={displayFields.units}
           query={unsavedQuery}
           updateQuery={(changes) =>

@@ -9,7 +9,11 @@ interface Props {
   query: RecordHistoryQuery
   updateQuery: (changes: Partial<RecordHistoryQuery>) => void
 }
-export default function SetTypeSelector({ units, query, updateQuery }: Props) {
+export default function SetTypeQueryField({
+  units,
+  query,
+  updateQuery,
+}: Props) {
   return (
     <SetTypeSelect
       variant="outlined"
