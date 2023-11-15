@@ -40,12 +40,15 @@ type Props = {
   /** When nonzero, displays the given number as the total number of reps over all sets. */
   totalReps?: number
   setType: SetType
+  /** shows remaining field value needed to reach total when "total" operator is active */
+  showRemaining?: boolean
 } & Partial<TextFieldProps>
 export default memo(function SetTypeSelect({
   handleChange,
   totalReps = 0,
   units,
   setType,
+  showRemaining,
   SelectProps,
   ...textFieldProps
 }: Props) {
@@ -54,7 +57,7 @@ export default memo(function SetTypeSelect({
   const remaining = (value ?? 0) - totalReps
   const isOverTotal = remaining < 0
   const remainingText =
-    operator === 'total'
+    operator === 'total' && showRemaining
       ? ` (${Math.abs(remaining)} ${isOverTotal ? 'over' : 'remaining'})`
       : ''
   const noSwipingDesktop = useNoSwipingDesktop()

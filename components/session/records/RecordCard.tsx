@@ -188,6 +188,7 @@ function LoadedRecordCard({
             <SetTypeSelect
               units={displayFields.units}
               totalReps={calculateTotalReps(sets, setType)}
+              showRemaining
               {...{ handleChange: mutateRecordFields, setType }}
             />
             <RenderSets

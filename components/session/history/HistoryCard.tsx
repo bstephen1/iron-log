@@ -89,6 +89,7 @@ export default memo(function HistoryCard({
         setType={setType}
         units={displayFields.units}
         totalReps={calculateTotalReps(sets, setType)}
+        showRemaining
       />
     ),
     sets: (
