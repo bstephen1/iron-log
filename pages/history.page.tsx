@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   FormControlLabel,
   FormGroup,
   InputAdornment,
@@ -12,14 +11,16 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'
 import StyledDivider from 'components/StyledDivider'
 import QueryForm from 'components/history/QueryForm'
+import RecordDisplay from 'components/history/RecordDisplay'
+import RecordDisplaySelect from 'components/history/RecordDisplaySelect'
 import HistoryCardsSwiper from 'components/session/history/HistoryCardsSwiper'
 import dayjs from 'dayjs'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
 import { useBodyweightHistory, useRecords } from 'lib/frontend/restService'
 import useDesktopCheck from 'lib/frontend/useDesktopCheck'
-import Bodyweight from 'models/Bodyweight'
+import { Set } from 'models/Set'
 import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Brush,
   CartesianGrid,
@@ -35,7 +36,8 @@ import useResizeObserver from 'use-resize-observer'
 
 interface GraphData {
   epochDate: number
-  value: number
+  /** value can be either a raw number, or formatted string representing a number */
+  value: number | string
 }
 
 const convertEpochToDate = (value: number) =>
@@ -73,6 +75,11 @@ export default function HistoryPage() {
   const [smoothLine, setSmoothLine] = useState(false)
   const lineType = smoothLine ? 'basis' : 'monotone'
   const [query, setQuery] = useState<RecordHistoryQuery>()
+  const [recordDisplay, setRecordDisplay] = useState<RecordDisplay>({
+    field: 'weight',
+    operator: 'highest',
+  })
+  const { palette } = useTheme()
   const { records: historyRecords } = useRecords(query, !!query)
 
   const isDesktop = useDesktopCheck()
@@ -98,19 +105,47 @@ export default function HistoryPage() {
     return window.removeEventListener('resize', handleWindowResize)
   }, [])
 
+  const setReducer = useCallback(
+    (prev: number, set: Set, i: number) => {
+      let reducer
+      switch (recordDisplay.operator) {
+        case 'highest':
+          reducer = Math.max
+          break
+        case 'lowest':
+          reducer = Math.min
+          break
+        case 'average':
+          // calculates the running average, instead of dividing at the end
+          reducer = (avg: number, next: number, i: number) =>
+            (next + (i + 1) * avg) / (1 + 2)
+          break
+        case 'total':
+          // total weight should have weight x reps (or add a volume field?)
+          reducer = (a: number, b: number) => a + b
+          break
+      }
+      return reducer(prev, Number(set[recordDisplay.field]) || 0, i)
+    },
+    [recordDisplay.field, recordDisplay.operator]
+  )
+
   const recordGraphData = useMemo((): GraphData[] => {
     if (!historyRecords) return []
 
     return historyRecords
       .map((record) => ({
         epochDate: dayjs(record.date).unix(),
-        value: record.sets.reduce(
-          (max, set) => Math.max(set.weight ?? 0, max),
-          0
-        ),
+
+        value: record.sets
+          .reduce(
+            setReducer,
+            recordDisplay.operator === 'lowest' ? Infinity : 0
+          )
+          .toFixed(2),
       }))
       .sort((a, b) => a.epochDate - b.epochDate)
-  }, [historyRecords])
+  }, [recordDisplay.operator, historyRecords, setReducer])
 
   const bodyweightGraphData = useMemo((): GraphData[] => {
     if (!unofficialBWs || !officialBWs) return []
@@ -151,9 +186,38 @@ export default function HistoryPage() {
       <Grid xs={12}>
         <QueryForm {...{ query, setQuery }} />
       </Grid>
+
       <Grid xs={12}>
-        <Divider sx={{ pb: 2 }}>Graph</Divider>
+        <StyledDivider />
       </Grid>
+
+      <Grid xs={12}>
+        <HistoryCardsSwiper
+          query={query}
+          fractionPagination
+          actions={['recordNotes', 'exerciseNotes', 'manage']}
+          content={['exercise', 'modifiers', 'setType', 'sets']}
+          cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
+          swiperProps={{
+            breakpoints: {
+              [theme.breakpoints.values.sm]: {
+                slidesPerView: 1,
+              },
+              [theme.breakpoints.values.md]: {
+                slidesPerView: 2,
+                centeredSlides: false,
+                centerInsufficientSlides: true,
+              },
+              [theme.breakpoints.values.lg]: {
+                slidesPerView: 3,
+                centeredSlides: true,
+                centerInsufficientSlides: false,
+              },
+            },
+          }}
+        />
+      </Grid>
+
       <Grid xs={8} alignItems="center" display="flex">
         <FormGroup row>
           <FormControlLabel
@@ -189,7 +253,6 @@ export default function HistoryPage() {
       </Grid>
       <Grid xs={4}>
         <TextField
-          variant="standard"
           type="number"
           label="clothing offset"
           autoComplete="off"
@@ -208,35 +271,14 @@ export default function HistoryPage() {
       </Grid>
 
       <Grid xs={12}>
-        <StyledDivider />
-      </Grid>
-
-      <Grid xs={12}>
-        <HistoryCardsSwiper
-          query={query}
-          fractionPagination
-          actions={['recordNotes', 'exerciseNotes', 'manage']}
-          content={['exercise', 'modifiers', 'setType', 'sets']}
-          cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
-          swiperProps={{
-            breakpoints: {
-              [theme.breakpoints.values.sm]: {
-                slidesPerView: 1,
-              },
-              [theme.breakpoints.values.md]: {
-                slidesPerView: 2,
-                centeredSlides: false,
-                centerInsufficientSlides: true,
-              },
-              [theme.breakpoints.values.lg]: {
-                slidesPerView: 3,
-                centeredSlides: true,
-                centerInsufficientSlides: false,
-              },
-            },
-          }}
+        <RecordDisplaySelect
+          recordDisplay={recordDisplay}
+          updateRecordDisplay={(changes) =>
+            setRecordDisplay((prev) => ({ ...prev, ...changes }))
+          }
         />
       </Grid>
+
       <Grid xs={12} height="100%" flex="1 1 auto"></Grid>
       <Grid container xs={12} justifyContent="center">
         {/* apparently Grid can't accept a ref (even though it works...) so adding a Box to capture the container width */}
@@ -265,6 +307,10 @@ export default function HistoryPage() {
                   textAnchor="end"
                   tickMargin={10}
                   height={80}
+                  // Prevent tooltip from not showing correct values when multiple lines exist.
+                  // This is apparently an open bug, because it should only affect an XAxis with type="category"
+                  // See: https://github.com/recharts/recharts/issues/3044#issuecomment-1322056012
+                  allowDuplicatedCategory={false}
                 />
                 <YAxis
                   yAxisId="bodyweight"
@@ -276,17 +322,6 @@ export default function HistoryPage() {
                   stroke="green"
                   domain={['auto', 'auto']}
                 />
-                <YAxis
-                  yAxisId="exercise"
-                  name="weight"
-                  dataKey="value"
-                  type="number"
-                  unit=" kg"
-                  orientation="left"
-                  stroke="blue"
-                  domain={['auto', 'auto']}
-                />
-                {/* line color is "stroke" */}
                 <Line
                   yAxisId="bodyweight"
                   name="bodyweight"
@@ -295,10 +330,22 @@ export default function HistoryPage() {
                   stroke="green"
                   data={bodyweightGraphData}
                 />
+                <YAxis
+                  yAxisId="exercise"
+                  name="weight"
+                  dataKey="value"
+                  type="number"
+                  unit=" kg"
+                  orientation="left"
+                  // line color
+                  stroke={palette.primary.dark}
+                  domain={['auto', 'auto']}
+                />
                 <Line
                   yAxisId="exercise"
                   name={query?.exercise}
                   dataKey="value"
+                  stroke={palette.primary.dark}
                   type={lineType}
                   data={recordGraphData}
                 />
