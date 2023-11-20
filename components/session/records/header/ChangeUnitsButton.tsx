@@ -10,7 +10,7 @@ import {
   RadioGroup,
   Stack,
 } from '@mui/material'
-import { UpdateFields } from 'lib/util'
+import { UpdateFields, UpdateState } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from 'models/DisplayFields'
 import { UNITS, Units } from 'models/Set'
@@ -31,7 +31,7 @@ export default memo(function ChangeUnitsButton({
   // typescript doesn't recognize that Object.keys(obj) is in fact a list of keyof obj
   const dimensions = Object.keys(units) as Array<keyof typeof units>
 
-  const handleChange = (changes: Partial<Units>) =>
+  const handleChange: UpdateState<Units> = (changes) =>
     mutateExerciseFields({
       displayFields: {
         ...displayFields,

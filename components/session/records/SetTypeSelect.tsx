@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
-import { UpdateFields } from 'lib/util'
+import { UpdateFields, UpdateState } from 'lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
@@ -35,7 +35,7 @@ const getUnit = (field: SetType['field'], units: Units) =>
 
 type Props = {
   /** considered readOnly if not provided */
-  handleChange?: UpdateFields<Record> | ((changes: Partial<Record>) => void)
+  handleChange?: UpdateFields<Record> | UpdateState<Record>
   units: Units
   /** When nonzero, displays the given number as the total number of reps over all sets. */
   totalReps?: number
@@ -63,7 +63,7 @@ export default memo(function SetTypeSelect({
   const noSwipingDesktop = useNoSwipingDesktop()
   const readOnly = !handleChange
   const [open, setOpen] = useState(false)
-  const updateSetType = (changes: Partial<SetType>) => {
+  const updateSetType: UpdateState<SetType> = (changes) => {
     const newSetType = { ...setType, ...changes }
 
     handleChange?.({ setType: newSetType })

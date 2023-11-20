@@ -63,7 +63,10 @@ export const fetchJson = async (...params: Parameters<typeof fetch>) => {
  *  (eg, running ts script files from command line).   */
 export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1)
 
+/** Async partial update, intended for swr mutate(). For non-async type use UpdateState.  */
 export type UpdateFields<T> = (changes: Partial<T>) => Promise<void>
+/** Partial state update that spreads over previous state. For async type use UpdateFields.  */
+export type UpdateState<T> = (changes: Partial<T>) => void
 
 /** Returns total reps over all sets when operator is "total", otherwise zero. */
 export const calculateTotalReps = (

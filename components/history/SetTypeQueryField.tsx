@@ -3,11 +3,12 @@ import { Units } from 'models/Set'
 import { MatchType } from 'models/query-filters/MongoQuery'
 import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
 import MatchTypeSelector from './MatchTypeSelector'
+import { UpdateState } from 'lib/util'
 
 interface Props {
   units: Units
   query: RecordHistoryQuery
-  updateQuery: (changes: Partial<RecordHistoryQuery>) => void
+  updateQuery: UpdateState<RecordHistoryQuery>
   disabled?: boolean
 }
 export default function SetTypeQueryField({

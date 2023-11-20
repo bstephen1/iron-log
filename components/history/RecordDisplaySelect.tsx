@@ -16,13 +16,14 @@ import RecordDisplay, {
   RecordDisplayOperator,
   recordDisplayOperators,
 } from './RecordDisplay'
+import { UpdateState } from 'lib/util'
 
 const fieldOptions = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
 )
 
 type Props = {
-  updateRecordDisplay: (changes: Partial<RecordDisplay>) => void
+  updateRecordDisplay: UpdateState<RecordDisplay>
   recordDisplay: RecordDisplay
 } & Partial<TextFieldProps>
 

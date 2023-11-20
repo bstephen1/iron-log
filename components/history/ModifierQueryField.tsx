@@ -3,10 +3,11 @@ import { MatchType } from 'models/query-filters/MongoQuery'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { ComponentProps } from 'react'
 import MatchTypeSelector from './MatchTypeSelector'
+import { UpdateState } from 'lib/util'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
   matchType?: MatchType
-  updateQuery: (changes: Partial<RecordQuery>) => void
+  updateQuery: UpdateState<RecordQuery>
   initialValue?: string[]
   options?: string[]
 }
