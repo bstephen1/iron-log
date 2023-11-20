@@ -23,12 +23,12 @@ import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
 import { UpdateState } from 'lib/util'
 
 interface GraphData {
-  epochDate: number
+  unixDate: number
   /** value can be either a raw number, or formatted string representing a number */
   value: number | string
 }
 
-const convertEpochToDate = (value: number) =>
+const convertUnixToDate = (value: number) =>
   dayjs.unix(value).format('YYYY-MM-DD')
 
 /** Get the earliest index within the given dayRange.
@@ -40,14 +40,14 @@ const getStartIndex = (data: GraphData[], dayRange = 60) => {
 
   if (i < 0) return 0
 
-  let mostRecentDate = data[i].epochDate
+  let mostRecentDate = data[i].unixDate
   const startDate = dayjs(mostRecentDate).add(-dayRange, 'day').unix()
 
   while (mostRecentDate > startDate) {
     // return if we reached the beginning of the array without hitting the limit
     if (!i) return i
 
-    mostRecentDate = data[--i].epochDate
+    mostRecentDate = data[--i].unixDate
   }
 
   // if we did hit the limit we've gone past it by one
@@ -130,7 +130,7 @@ export default function HistoryGraph({ query }: Props) {
 
     return records
       .map((record) => ({
-        epochDate: dayjs(record.date).unix(),
+        unixDate: dayjs(record.date).unix(),
 
         value: record.sets
           .reduce(
@@ -139,7 +139,7 @@ export default function HistoryGraph({ query }: Props) {
           )
           .toFixed(2),
       }))
-      .sort((a, b) => a.epochDate - b.epochDate)
+      .sort((a, b) => a.unixDate - b.unixDate)
   }, [recordDisplay.operator, records, setReducer])
 
   const bodyweightGraphData = useMemo((): GraphData[] => {
@@ -160,8 +160,8 @@ export default function HistoryGraph({ query }: Props) {
     const data = [...unofficialData, ...officialData]
 
     return data
-      .map((bw) => ({ value: bw.value, epochDate: dayjs(bw.date).unix() }))
-      .sort((a, b) => a.epochDate - b.epochDate)
+      .map((bw) => ({ value: bw.value, unixDate: dayjs(bw.date).unix() }))
+      .sort((a, b) => a.unixDate - b.unixDate)
   }, [
     unofficialBWs,
     officialBWs,
@@ -202,7 +202,7 @@ export default function HistoryGraph({ query }: Props) {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
-                dataKey="epochDate"
+                dataKey="unixDate"
                 type="number"
                 tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
                 domain={['auto', 'auto']}
@@ -260,7 +260,7 @@ export default function HistoryGraph({ query }: Props) {
               {/* todo: possible to show weigh-in type in tooltip? */}
               <Tooltip
                 trigger={isDesktop ? 'hover' : 'click'}
-                labelFormatter={convertEpochToDate}
+                labelFormatter={convertUnixToDate}
                 formatter={(value, _, { payload }) =>
                   `${value} kg${
                     payload.type === 'unofficial' ? ' (unofficial)' : ''
@@ -270,8 +270,8 @@ export default function HistoryGraph({ query }: Props) {
               {/* todo: only show if multiple lines */}
               <Legend verticalAlign="top" height={30} />
               <Brush
-                dataKey="epochDate"
-                tickFormatter={convertEpochToDate}
+                dataKey="unixDate"
+                tickFormatter={convertUnixToDate}
                 // these doesn't accept percentages...
                 width={graphContainerWidth * 0.6}
                 // could only eyeball this trying to get it centered.
