@@ -20,7 +20,7 @@ export default function HistoryPage() {
 
       <StyledDivider />
       <HistoryCardsSwiper
-        query={query}
+        query={query?.exercise ? query : undefined}
         fractionPagination
         actions={['recordNotes', 'exerciseNotes', 'manage']}
         content={['exercise', 'modifiers', 'setType', 'sets']}

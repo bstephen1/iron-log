@@ -1,9 +1,13 @@
-import { Box, Slider, Stack, Typography, useTheme } from '@mui/material'
+import { Box, Stack, useTheme } from '@mui/material'
 import RecordDisplay from 'components/history/RecordDisplay'
+import { getUnit } from 'components/session/records/SetTypeSelect'
 import dayjs from 'dayjs'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
 import { useBodyweightHistory, useRecords } from 'lib/frontend/restService'
 import useDesktopCheck from 'lib/frontend/useDesktopCheck'
+import { UpdateState } from 'lib/util'
+import Bodyweight from 'models/Bodyweight'
+import { DEFAULT_DISPLAY_FIELDS } from 'models/DisplayFields'
 import { Set } from 'models/Set'
 import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -20,10 +24,6 @@ import {
 } from 'recharts'
 import useResizeObserver from 'use-resize-observer'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
-import { UpdateState } from 'lib/util'
-import { getUnit } from 'components/session/records/SetTypeSelect'
-import { DEFAULT_DISPLAY_FIELDS } from 'models/DisplayFields'
-import Bodyweight from 'models/Bodyweight'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {
@@ -63,6 +63,8 @@ interface Props {
   query?: RecordHistoryQuery
 }
 export default function HistoryGraph({ query }: Props) {
+  // BWs and records are sorted newest first. It looks more natural in the
+  // swiper to start on the right and move left vs oldest first.
   const { data: bodyweightData } = useBodyweightHistory()
   const [recordDisplay, setRecordDisplay] = useState<RecordDisplay>({
     field: 'weight',
@@ -76,7 +78,8 @@ export default function HistoryGraph({ query }: Props) {
     graphOptions
   const lineType = smoothLine ? 'basis' : 'monotone'
   const { palette } = useTheme()
-  const { records } = useRecords(query, !!query)
+  // only fetch if there is an exercise selected
+  const { records } = useRecords(query, !!query?.exercise)
 
   const updateRecordDisplay: UpdateState<RecordDisplay> = (changes) =>
     setRecordDisplay((prev) => ({ ...prev, ...changes }))
@@ -144,46 +147,53 @@ export default function HistoryGraph({ query }: Props) {
   const graphData = useMemo((): GraphData[] => {
     if (!records) return []
 
+    // when there's no exercise, just show BW data
+    if (!query?.exercise) {
+      return bodyweightGraphData
+        .map((bw) => ({
+          unixDate: dayjs(bw.date).unix(),
+          bodyweight: bw.value,
+        }))
+        .reverse() // data is sorted newest first, so we have to reverse it
+    }
+
     let latestBwIndex = 0
-    return (
-      records
-        .map((record) => {
-          const recordUnixDate = dayjs(record.date).unix()
-          // add most recent bw to data. Takes advantage of api data being
-          // presorted from newest to oldest date.
-          while (
-            bodyweightGraphData[latestBwIndex] &&
-            dayjs(bodyweightGraphData[latestBwIndex].date).unix() >
-              recordUnixDate
-          ) {
-            latestBwIndex++
-          }
+    return records
+      .map((record) => {
+        const recordUnixDate = dayjs(record.date).unix()
+        // add most recent bw to data. Takes advantage of api data being
+        // presorted from newest to oldest date.
+        while (
+          bodyweightGraphData[latestBwIndex] &&
+          dayjs(bodyweightGraphData[latestBwIndex].date).unix() > recordUnixDate
+        ) {
+          latestBwIndex++
+        }
 
-          const latestBw = bodyweightGraphData[latestBwIndex]
-          const bodyweight =
-            includeUnofficial && latestBw.type === 'official'
-              ? latestBw.value + clothingOffset
-              : latestBw.value
+        const latestBw = bodyweightGraphData[latestBwIndex]
+        const bodyweight =
+          includeUnofficial && latestBw.type === 'official'
+            ? latestBw.value + clothingOffset
+            : latestBw.value
 
-          const value = record.sets.reduce(
-            setReducer,
-            recordDisplay.operator === 'lowest' ? Infinity : 0
-          )
+        const value = record.sets.reduce(
+          setReducer,
+          recordDisplay.operator === 'lowest' ? Infinity : 0
+        )
 
-          return {
-            unixDate: recordUnixDate,
-            // Round to 2 decimal places, while preserving number type.
-            value: Math.round(value * 1e2) / 1e2,
-            bodyweight: bodyweight ?? 0,
-          }
-        })
-        // records are already sorted by date, but the x axis gets messed up unless they are sorted again
-        .sort((a, b) => a.unixDate - b.unixDate)
-    )
+        return {
+          unixDate: recordUnixDate,
+          // Round to 2 decimal places, while preserving number type.
+          value: Math.round(value * 1e2) / 1e2,
+          bodyweight: bodyweight ?? 0,
+        }
+      })
+      .reverse()
   }, [
     bodyweightGraphData,
     clothingOffset,
     includeUnofficial,
+    query?.exercise,
     recordDisplay.operator,
     records,
     setReducer,
@@ -232,10 +242,6 @@ export default function HistoryGraph({ query }: Props) {
                 textAnchor="end"
                 tickMargin={10}
                 height={80}
-                // Prevent tooltip from not showing correct values when multiple lines exist.
-                // This is apparently an open bug, because it should only affect an XAxis with type="category"
-                // See: https://github.com/recharts/recharts/issues/3044#issuecomment-1322056012
-                allowDuplicatedCategory={false}
               />
               {showBodyweight && (
                 <>
