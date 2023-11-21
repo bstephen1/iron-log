@@ -6,10 +6,11 @@ import Record from 'models/Record'
 import AddSetButton from './AddSetButton'
 import SetInput from './RenderSetRow'
 import SetHeader from './SetHeader'
+import { UpdateFields } from 'lib/util'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
-  mutateExerciseFields?: (changes: Partial<Exercise>) => Promise<void>
+  mutateExerciseFields?: UpdateFields<Exercise>
   /** displayFields must be given as a prop because history records use the parent's fields
    *  so they can reflect changes to the parent's display fields.
    */

@@ -11,7 +11,8 @@ import TooltipIconButton from '../../../TooltipIconButton'
 const title = 'Exercise Notes'
 
 export interface Props {
-  mutateExerciseFields: UpdateFields<Exercise>
+  /** considered readOnly if not provided */
+  mutateExerciseFields?: UpdateFields<Exercise>
   notes?: Note[]
   /** used for note tags */
   modifiers?: string[]
@@ -24,9 +25,10 @@ export default memo(function ExerciseNotesButton({
   modifiers = [],
   disabled,
 }: Props) {
+  const readOnly = !mutateExerciseFields
   const [open, setOpen] = useState(false)
 
-  const handleSubmit = (notes: Note[]) => mutateExerciseFields({ notes })
+  const handleSubmit = (notes: Note[]) => mutateExerciseFields?.({ notes })
 
   return (
     <>
@@ -48,6 +50,7 @@ export default memo(function ExerciseNotesButton({
               handleSubmit,
               notes,
               multiple: true,
+              readOnly,
             }}
           />
         </DialogContent>

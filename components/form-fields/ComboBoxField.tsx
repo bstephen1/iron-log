@@ -58,7 +58,6 @@ export function ComboBoxField({
       placeholder={value.length ? '' : emptyPlaceholder}
       onChange={(_, value) => handleChange(value)}
       fullWidth
-      // size="small"  // todo: use small sizes?
       multiple
       // todo: change color?
       // ChipProps={{ color: 'primary', variant: 'outlined' }}

@@ -139,16 +139,6 @@ export async function deleteSessionRecord(
 // RECORD
 //--------
 
-/** An fallback value must be provided to this function, which ensures the record is never undefined */
-export function useGuaranteedRecord(fallbackRecord: Record) {
-  const res = useRecord(fallbackRecord._id, { fallbackData: fallbackRecord })
-
-  return {
-    ...res,
-    record: res.record ?? fallbackRecord,
-  }
-}
-
 /** Note: whenever mutate() is used, any component using useRecord will rerender, even if they don't
  *  use the record from this hook. This can be avoided by lifting the full record to a lightweight parent
  *  component and only passing the fields actually needed as props. If the child needs access to mutate(),

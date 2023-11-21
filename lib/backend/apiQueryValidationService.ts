@@ -9,11 +9,11 @@ import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
 import ModifierQuery from 'models/query-filters/ModifierQuery'
 import {
-  ArrayMatchType,
+  MatchType,
   MatchTypes,
   MongoQuery,
 } from 'models/query-filters/MongoQuery'
-import { RecordQuery, SetMatchType } from 'models/query-filters/RecordQuery'
+import { RecordQuery } from 'models/query-filters/RecordQuery'
 import Record from 'models/Record'
 import { Status } from 'models/Status'
 import { Filter, ObjectId } from 'mongodb'
@@ -85,16 +85,18 @@ export function buildRecordQuery(
     date,
     modifier,
     modifierMatchType,
-    start,
-    end,
-    limit,
-    sort,
+    setTypeMatchType = MatchType.Exact,
+    // setType fields
     field,
     operator,
     value,
     min,
     max,
-    setMatchType = SetMatchType.SetType,
+    // dateRange fields
+    start,
+    end,
+    limit,
+    sort,
   }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
@@ -123,7 +125,7 @@ export function buildRecordQuery(
   const isRange = operator === 'between'
   const isValidSetType = !!operator && !!field && (isRange ? min || max : value)
 
-  if (setMatchType === SetMatchType.SetType && !isValidSetType) {
+  if (setTypeMatchType === MatchType.Any || !isValidSetType) {
     return { ...query, filter, matchTypes }
   }
 
@@ -241,14 +243,13 @@ export function validateMatchType(param: ApiParam) {
   if (
     !(
       typeof param === 'string' &&
-      // todo: ignore case
-      Object.values(ArrayMatchType).includes(param as ArrayMatchType)
+      Object.values(MatchType).includes(param.toLocaleLowerCase() as MatchType)
     )
   ) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid match type.')
   }
 
-  return param as ArrayMatchType
+  return param.toLocaleLowerCase() as MatchType
 }
 
 //-------------------

@@ -2,7 +2,7 @@ import NotesIcon from '@mui/icons-material/Notes'
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import NotesList from 'components/form-fields/NotesList'
 import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
-import { updateSessionLog } from 'lib/frontend/restService'
+import { updateSessionLog, useSessionLog } from 'lib/frontend/restService'
 import { UpdateFields } from 'lib/util'
 import Note from 'models/Note'
 import Record from 'models/Record'
@@ -18,14 +18,17 @@ interface Props {
   sides?: Set['side'][]
   /** considered readOnly if not provided */
   mutateRecordFields?: UpdateFields<Record>
+  /** Date of the record. Needed to retrieve session notes */
+  date: string
 }
 export default memo(function RecordNotesButton({
   notes = [],
   sides = [],
   mutateRecordFields,
+  date,
 }: Props) {
   const readOnly = !mutateRecordFields
-  const { sessionLog, mutate: mutateSession } = useCurrentSessionLog()
+  const { sessionLog, mutate: mutateSession } = useSessionLog(date)
   const [open, setOpen] = useState(false)
 
   const combinedNotes = [...(sessionLog?.notes ?? []), ...notes]

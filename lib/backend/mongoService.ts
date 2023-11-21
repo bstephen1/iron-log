@@ -2,14 +2,14 @@ import Category from 'models/AsyncSelectorOption/Category'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import Modifier from 'models/AsyncSelectorOption/Modifier'
 import Bodyweight from 'models/Bodyweight'
+import Record from 'models/Record'
+import SessionLog from 'models/SessionLog'
 import DateRangeQuery from 'models/query-filters/DateRangeQuery'
 import {
-  ArrayMatchType,
+  MatchType,
   MatchTypes,
   MongoQuery,
 } from 'models/query-filters/MongoQuery'
-import Record from 'models/Record'
-import SessionLog from 'models/SessionLog'
 import { Filter, ModifyResult, ObjectId } from 'mongodb'
 import { getCollections, getDb } from './mongoConnect'
 
@@ -43,31 +43,34 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
   }
 
   for (const key in matchTypes) {
+    // set type cannot be handled as an array
+    if (key === 'setType') {
+      continue
+    }
+    // The array needs special handling if it's empty. $all and $in always return no documents for empty arrays.
+    const array = filter[key]
+    const isEmpty = !array.length
     switch (matchTypes[key]) {
-      case ArrayMatchType.All:
+      case MatchType.Partial:
         // typescript complaining for some reason. May or may not be a better way to silence it.
-        filter[key] = { $all: filter[key] } as any
+        filter[key] = { $all: array } as any
+
+        // for empty arrays, matching any means match anything
+        isEmpty && delete filter[key]
         break
-      case ArrayMatchType.Any:
-        filter[key] = { $in: filter[key] } as any
-        break
-      case ArrayMatchType.Equivalent:
+      case MatchType.Exact:
+      default:
         // Note: for standard exact matches, order of array elements matters.
         // It is possible, but potentially expensive to query for an exact match where order
         // doesn't matter (ie, the "equivalent" matchType). Alternatively, arrays should be sorted on insertion.
         // The latter provides for some pretty clunky ux when editing Autocomplete chips, so
         // we are opting for the former unless performance notably degrades.
         // See: https://stackoverflow.com/questions/29774032/mongodb-find-exact-array-match-but-order-doesnt-matter
-        const array = filter[key]
-        filter[key] = { $size: array.length } as any
+        filter[key] = { $size: array.length, $all: array } as any
         // if matching empty array, can't use $all. It always returns no documents when given an empty array.
         if (array.length) {
           filter[key]['$all'] = array
         }
-        break
-      case ArrayMatchType.Exact:
-      default:
-        // do nothing
         break
     }
   }

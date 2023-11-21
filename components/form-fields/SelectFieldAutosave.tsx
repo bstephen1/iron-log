@@ -21,7 +21,7 @@ interface Props<V, O> {
  *  Children must be manually provided if options is a list of objects, along with secondary generic param.
  */
 export default function SelectFieldAutosave<
-  V extends string | undefined,
+  V extends string | undefined | null,
   O = V
 >(props: Props<V, O> & Omit<TextFieldProps, 'SelectProps'>) {
   const {
@@ -45,17 +45,18 @@ export default function SelectFieldAutosave<
     debounceMilliseconds: 0,
   })
 
-  /** Using standard variant causes input background to gray after selecting something.
+  /** Using standard variant causes input background to have a gray shadow after selecting something.
    *  This behavior is apparently completely undocumented and uneditable.
    *  This prevents that, keeping background transparent.
+   *
+   *  Note: changing variant in SelectProps has no visual effect; the visible variant is determined by the variant in TextFieldProps.
    */
   // Note: The behavior occurs when using TextField or Select with standard variant.
   // Select can use "input={<Input />}" instead of setting variant to avoid it.
   // That doesn't work here because TextField automatically passes the variant to the inner Select.
   // Instead we have to override the variant to trick the Select to thinking it's outlined,
   // which doesn't turn gray.
-  const fixStandardBackground: SelectProps =
-    textFieldProps.variant === 'standard' ? { variant: 'outlined' } : {}
+  const fixStandardBackground: SelectProps = { variant: 'outlined' }
 
   if (!children && typeof options[0] !== 'string') {
     console.error(
@@ -81,6 +82,11 @@ export default function SelectFieldAutosave<
         ...textFieldProps.SelectProps,
       }}
     >
+      {/* Note the empty value will store an empty string in db instead of undefined. 
+          The app should only be checking falsiness for a string, so an empty string 
+          should be equivalent to undefined. 
+          The empty value here cannot be undefined, because react considers that an uncontrolled component. 
+          Affected fields should add the empty string to their type. */}
       {emptyOption && (
         <MenuItem value="">
           <em>{emptyOption}</em>

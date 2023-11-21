@@ -9,6 +9,7 @@ import { memo, useCallback } from 'react'
 import { useSWRConfig } from 'swr'
 import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './SetFieldInput'
+import { UpdateFields } from 'lib/util'
 
 const pyStack = 0.5
 
@@ -44,8 +45,8 @@ export default memo(function RenderSetRow({
 }: Props) {
   const { mutate } = useSWRConfig()
 
-  const handleSetChange = useCallback(
-    async (changes: Partial<Set>) => {
+  const handleSetChange: UpdateFields<Set> = useCallback(
+    async (changes) => {
       mutate<Record | null>(
         URI_RECORDS + _id,
         (cur) =>

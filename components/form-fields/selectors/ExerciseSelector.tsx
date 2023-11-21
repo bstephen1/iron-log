@@ -4,18 +4,19 @@ import { addExercise, useCategories } from 'lib/frontend/restService'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
-import AsyncSelector from './AsyncSelector'
+import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
 
-interface ExerciseSelectorProps {
+type ExerciseSelectorProps = {
   exercise: Exercise | null
   handleChange: (value: Exercise | null) => void
   exercises: Exercise[] | undefined
-  mutate: KeyedMutator<Exercise[]>
+  /** if provided, allows for creating new exercises from typed input */
+  mutate?: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
   /** If this is omitted the category filter will not be rendered */
   handleCategoryChange?: (category: string | null) => void
   category?: string | null
-}
+} & Partial<AsyncSelectorProps<Exercise>>
 export default function ExerciseSelector({
   exercise,
   exercises,
@@ -59,7 +60,7 @@ export default function ExerciseSelector({
       mutateOptions={mutate}
       options={exercises}
       label="Exercise"
-      placeholder="Select or Add New Exercise"
+      placeholder={`Select${!!mutate ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}
       handleFilterChange={handleFilterChange}
       adornmentOpen={!!categoryAnchorEl}

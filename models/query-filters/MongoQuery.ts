@@ -17,40 +17,18 @@ export interface MongoQuery<T> {
 }
 
 /** An object that has keys corresponding to Partial\<T\> keys,
- * declaring the ArrayMatchTypes for a MongoQuery
+ * declaring the MatchTypes for a MongoQuery
  */
 export type MatchTypes<T> = {
-  [key in keyof Partial<T>]: ArrayMatchType
+  [key in keyof Partial<T>]: MatchType
 }
 
-/** Contains possible query types for arrays.  */
-export enum ArrayMatchType {
-  /** matches records with any one of the provided values */
-  Any = 'any',
-  /** matches records with all of the provided values (but may have more) */
-  All = 'all',
-  /** matches records that only contain the provided values (but may not have all of them).
-   * This option does not include records with a null or empty array
-   */
-  // Only = 'only',
-  /** matches records that only contain the provided values (but may not have all of them).
-   * This option includes records with a null or empty array
-   */
-  // OnlyWithNull = 'onlyWithNull',
-  /** matches records that contain exactly the provided values list, in any order. */
-  Equivalent = 'equivalent',
-  /** matches records that contain exactly the provided array in the same order.
-   * This is treated as the default ArrayMatchType when one is not otherwise specified. */
+/** Contains possible api query types for non-primitive fields (eg, arrays, setType).
+ *  All non-primitive fields share the same match type values, but exact implementation may
+ *  differ between fields.
+ */
+export enum MatchType {
+  Partial = 'partial',
   Exact = 'exact',
-}
-
-export const ArrayMatchTypeDescription = {
-  [ArrayMatchType.Any]: 'matches records with any one of the provided values',
-  [ArrayMatchType.All]:
-    'matches records with all of the provided values (but may have more)',
-  [ArrayMatchType.Equivalent]:
-    'matches records with exactly the provided values in any order',
-  [ArrayMatchType.Exact]:
-    'matches records with exactly the provided values in the same order',
-  none: '',
+  Any = 'any',
 }

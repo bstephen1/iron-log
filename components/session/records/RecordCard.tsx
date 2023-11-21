@@ -1,6 +1,8 @@
 import { Card, CardContent, Stack, Typography } from '@mui/material'
-import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import StyledDivider from 'components/StyledDivider'
+import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
+import dayjs from 'dayjs'
+import { DATE_FORMAT } from 'lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -8,19 +10,19 @@ import {
 } from 'lib/frontend/restService'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
 import useExtraWeight from 'lib/frontend/useExtraWeight'
-import { UpdateFields } from 'lib/util'
+import { UpdateFields, calculateTotalReps } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Record, { SetType } from 'models/Record'
-import { Set } from 'models/Set'
+import Record from 'models/Record'
+import { MatchType } from 'models/query-filters/MongoQuery'
 import { memo, useCallback, useEffect } from 'react'
 import { KeyedMutator } from 'swr'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
-import RecordCardHeader from './header/RecordCardHeader'
 import RecordExerciseSelector from './RecordExerciseSelector'
 import RecordModifierComboBox from './RecordModifierComboBox'
-import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
+import RecordCardHeader from './header/RecordCardHeader'
+import RenderSets from './sets/RenderSets'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -30,13 +32,6 @@ import SetTypeSelect from './SetTypeSelect'
 // prod build retractively made every build fail to work.
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
 // See bug: https://github.com/orgs/vercel/discussions/1657
-
-/** Returns total reps over all sets when operator is "total", otherwise zero. */
-const calculateTotalReps = (sets: Set[], { field, operator }: SetType) => {
-  return operator === 'total'
-    ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
-    : 0
-}
 
 interface Props {
   id: string
@@ -106,13 +101,32 @@ function LoadedRecordCard({
   record: Record
   mutateRecord: KeyedMutator<Record | null>
 }) {
-  const { exercise, activeModifiers, _id, sets, notes, category, setType } =
-    record
-  const displayFields = useDisplayFields(record)
+  const {
+    exercise,
+    activeModifiers,
+    _id,
+    sets,
+    notes,
+    category,
+    setType,
+    date,
+  } = record
+  const displayFields = useDisplayFields(exercise)
   const extraWeight = useExtraWeight(record)
 
   const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes?.unilateral
+
+  const historyQuery = {
+    modifier: activeModifiers,
+    // don't want to include the current record in its own history
+    end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
+    exercise: exercise?.name,
+    limit: 5,
+    modifierMatchType: MatchType.Exact,
+    setTypeMatchType: MatchType.Exact,
+    ...setType,
+  }
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (changes) => {
@@ -155,6 +169,7 @@ function LoadedRecordCard({
             exercise,
             notes,
             displayFields,
+            date,
           }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
@@ -173,7 +188,8 @@ function LoadedRecordCard({
             <SetTypeSelect
               units={displayFields.units}
               totalReps={calculateTotalReps(sets, setType)}
-              {...{ mutateRecordFields, setType }}
+              showRemaining
+              {...{ handleChange: mutateRecordFields, setType }}
             />
             <RenderSets
               {...{
@@ -188,11 +204,11 @@ function LoadedRecordCard({
             />
             <HistoryTitle />
             <HistoryCardsSwiper
-              exerciseName={exercise?.name}
+              query={historyQuery}
+              actions={['recordNotes']}
+              content={['sets']}
               {...{
-                activeModifiers,
                 _id,
-                setType,
                 displayFields,
               }}
             />

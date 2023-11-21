@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
 import { DATE_FORMAT } from './frontend/constants'
+import { Set, Units } from 'models/Set'
+import { SetType } from 'models/Record'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -61,4 +63,21 @@ export const fetchJson = async (...params: Parameters<typeof fetch>) => {
  *  (eg, running ts script files from command line).   */
 export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1)
 
+/** Async partial update, intended for swr mutate(). For non-async type use UpdateState.  */
 export type UpdateFields<T> = (changes: Partial<T>) => Promise<void>
+/** Partial state update that spreads over previous state. For async type use UpdateFields.  */
+export type UpdateState<T> = (changes: Partial<T>) => void
+
+/** Returns total reps over all sets when operator is "total", otherwise zero. */
+export const calculateTotalReps = (
+  sets: Set[],
+  { field, operator }: SetType
+) => {
+  return operator === 'total' && field
+    ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
+    : 0
+}
+
+/** returns units for a field, with correct typing */
+export const getUnit = (field: SetType['field'], units: Units) =>
+  units[field as keyof Units] ?? field

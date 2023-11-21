@@ -28,6 +28,7 @@ export default function PaginationBullets({
         '--swiper-pagination-bullet-size': `${
           isDesktop ? desktopSize : mobileSize
         }px`,
+        pb: isDesktop ? 0 : 1,
       }}
     />
   )
