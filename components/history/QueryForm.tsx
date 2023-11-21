@@ -1,6 +1,8 @@
-import { Button, Divider, Stack } from '@mui/material'
+import { Button, Stack } from '@mui/material'
+import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from 'components/session/records/RecordExerciseSelector'
 import useDisplayFields from 'lib/frontend/useDisplayFields'
+import { UpdateState } from 'lib/util'
 import Exercise from 'models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
@@ -9,6 +11,7 @@ import {
 import { Dispatch, SetStateAction, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import ModifierQueryField from './ModifierQueryField'
+import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'
 
 interface Props {
@@ -25,6 +28,9 @@ export default function QueryCard({ query, setQuery }: Props) {
     useState<RecordHistoryQuery>(initialQuery)
   const displayFields = useDisplayFields(exercise)
 
+  const updateUnsavedQuery: UpdateState<RecordHistoryQuery> = (changes) =>
+    setUnsavedQuery((prev) => ({ ...prev, ...changes }))
+
   return (
     <>
       <Stack spacing={2}>
@@ -35,15 +41,13 @@ export default function QueryCard({ query, setQuery }: Props) {
               setInitialExercise(prev)
               return exercise ?? null
             })
-            setUnsavedQuery((prev) => ({
-              ...prev,
+            updateUnsavedQuery({
               exercise: exercise?.name ?? '',
-            }))
+            })
             if (activeModifiers) {
-              setUnsavedQuery((prev) => ({
-                ...prev,
+              updateUnsavedQuery({
                 modifier: activeModifiers,
-              }))
+              })
             }
           }}
           activeModifiers={unsavedQuery.modifier ?? []}
@@ -56,17 +60,25 @@ export default function QueryCard({ query, setQuery }: Props) {
           matchType={unsavedQuery.modifierMatchType}
           options={exercise?.modifiers || []}
           initialValue={unsavedQuery.modifier || []}
-          updateQuery={(changes) =>
-            setUnsavedQuery((prev) => ({ ...prev, ...changes }))
-          }
+          updateQuery={updateUnsavedQuery}
         />
         <SetTypeQueryField
           disabled={!exercise}
           units={displayFields.units}
           query={unsavedQuery}
-          updateQuery={(changes) =>
-            setUnsavedQuery((prev) => ({ ...prev, ...changes }))
-          }
+          updateQuery={updateUnsavedQuery}
+        />
+        <NumericFieldAutosave
+          label="Record limit"
+          initialValue={unsavedQuery.limit}
+          placeholder="None"
+          InputLabelProps={{ shrink: true }}
+          handleSubmit={(limit) => updateUnsavedQuery({ limit })}
+          variant="outlined"
+        />
+        <QueryDateRangePicker
+          query={unsavedQuery}
+          updateQuery={updateUnsavedQuery}
         />
         <Stack
           direction="row"
@@ -87,7 +99,7 @@ export default function QueryCard({ query, setQuery }: Props) {
           </Button>
           <Button
             variant="contained"
-            disabled={!exercise || isEqual(unsavedQuery, query)}
+            disabled={isEqual(unsavedQuery, query)}
             onClick={() => setQuery(unsavedQuery)}
           >
             Update Filter

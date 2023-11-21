@@ -43,7 +43,7 @@ export default function RecordDisplaySelect({
     <TextField
       select
       fullWidth
-      label="Record Display"
+      label="Record display"
       value={menuValue}
       InputLabelProps={{ shrink: true }}
       SelectProps={{

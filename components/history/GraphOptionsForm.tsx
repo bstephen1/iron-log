@@ -74,7 +74,7 @@ export default function GraphOptionsForm({
       <Grid xs={4}>
         <TextField
           type="number"
-          label="clothing offset"
+          label="Clothing offset"
           autoComplete="off"
           value={clothingOffset}
           disabled={!showBodyweight || !includeUnofficial}
