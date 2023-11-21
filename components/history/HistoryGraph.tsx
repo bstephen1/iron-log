@@ -1,4 +1,4 @@
-import { Box, Stack, useTheme } from '@mui/material'
+import { Box, Slider, Stack, Typography, useTheme } from '@mui/material'
 import RecordDisplay from 'components/history/RecordDisplay'
 import dayjs from 'dayjs'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
@@ -21,12 +21,18 @@ import {
 import useResizeObserver from 'use-resize-observer'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
 import { UpdateState } from 'lib/util'
+import { getUnit } from 'components/session/records/SetTypeSelect'
+import { DEFAULT_DISPLAY_FIELDS } from 'models/DisplayFields'
+import Bodyweight from 'models/Bodyweight'
 
+// Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {
   unixDate: number
-  /** value can be either a raw number, or formatted string representing a number */
-  value: number | string
+  value?: number
+  bodyweight?: number
 }
+
+const emptyBwArray: Bodyweight[] = []
 
 const convertUnixToDate = (value: number) =>
   dayjs.unix(value).format('YYYY-MM-DD')
@@ -79,8 +85,18 @@ export default function HistoryGraph({ query }: Props) {
 
   const isDesktop = useDesktopCheck()
 
-  const unofficialBWs = bodyweightData?.filter((bw) => bw.type === 'unofficial')
-  const officialBWs = bodyweightData?.filter((bw) => bw.type === 'official')
+  const officialBWs = useMemo(
+    () => bodyweightData?.filter((bw) => bw.type === 'official'),
+    [bodyweightData]
+  )
+  /** Bodyweight will only be official weigh-ins by default,
+   *  but if "includeUnofficial" is set it includes all weigh-ins, and adds clothing
+   * offset to official weigh-ins to simulate an unofficial gym weight.
+   */
+  const bodyweightGraphData = useMemo(
+    () => (includeUnofficial ? bodyweightData : officialBWs) ?? emptyBwArray,
+    [bodyweightData, includeUnofficial, officialBWs]
+  )
 
   // to track width we want to use the size of the graph container, since that will be smaller than window width
   const { ref: graphContainerRef, width: graphContainerWidth = 0 } =
@@ -125,49 +141,52 @@ export default function HistoryGraph({ query }: Props) {
     [recordDisplay.field, recordDisplay.operator]
   )
 
-  const recordGraphData = useMemo((): GraphData[] => {
+  const graphData = useMemo((): GraphData[] => {
     if (!records) return []
 
-    return records
-      .map((record) => ({
-        unixDate: dayjs(record.date).unix(),
+    let latestBwIndex = 0
+    return (
+      records
+        .map((record) => {
+          const recordUnixDate = dayjs(record.date).unix()
+          // add most recent bw to data. Takes advantage of api data being
+          // presorted from newest to oldest date.
+          while (
+            bodyweightGraphData[latestBwIndex] &&
+            dayjs(bodyweightGraphData[latestBwIndex].date).unix() >
+              recordUnixDate
+          ) {
+            latestBwIndex++
+          }
 
-        value: record.sets
-          .reduce(
+          const latestBw = bodyweightGraphData[latestBwIndex]
+          const bodyweight =
+            includeUnofficial && latestBw.type === 'official'
+              ? latestBw.value + clothingOffset
+              : latestBw.value
+
+          const value = record.sets.reduce(
             setReducer,
             recordDisplay.operator === 'lowest' ? Infinity : 0
           )
-          .toFixed(2),
-      }))
-      .sort((a, b) => a.unixDate - b.unixDate)
-  }, [recordDisplay.operator, records, setReducer])
 
-  const bodyweightGraphData = useMemo((): GraphData[] => {
-    if (!unofficialBWs || !officialBWs) return []
-
-    const officialData = showBodyweight ? officialBWs : []
-
-    const unofficialData = includeUnofficial
-      ? unofficialBWs
-          .map((bw) => ({ ...bw, value: bw.value - clothingOffset }))
-          // ignore unofficial weigh-ins if an official weigh-in for that day exists
-          .filter(
-            (bw) =>
-              !officialData.some((officialBw) => officialBw.date === bw.date)
-          )
-      : []
-
-    const data = [...unofficialData, ...officialData]
-
-    return data
-      .map((bw) => ({ value: bw.value, unixDate: dayjs(bw.date).unix() }))
-      .sort((a, b) => a.unixDate - b.unixDate)
+          return {
+            unixDate: recordUnixDate,
+            // Round to 2 decimal places, while preserving number type.
+            value: Math.round(value * 1e2) / 1e2,
+            bodyweight: bodyweight ?? 0,
+          }
+        })
+        // records are already sorted by date, but the x axis gets messed up unless they are sorted again
+        .sort((a, b) => a.unixDate - b.unixDate)
+    )
   }, [
-    unofficialBWs,
-    officialBWs,
-    showBodyweight,
-    includeUnofficial,
+    bodyweightGraphData,
     clothingOffset,
+    includeUnofficial,
+    recordDisplay.operator,
+    records,
+    setReducer,
   ])
 
   return (
@@ -198,7 +217,9 @@ export default function HistoryGraph({ query }: Props) {
                 left: 15,
                 bottom: 10,
               }}
+              // todo: scroll to card
               onClick={(s) => console.log(s)}
+              data={graphData}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -216,46 +237,54 @@ export default function HistoryGraph({ query }: Props) {
                 // See: https://github.com/recharts/recharts/issues/3044#issuecomment-1322056012
                 allowDuplicatedCategory={false}
               />
-              <YAxis
-                yAxisId="bodyweight"
-                name="weight"
-                dataKey="value"
-                type="number"
-                unit=" kg"
-                orientation="right"
-                stroke="green"
-                domain={['auto', 'auto']}
-              />
               {showBodyweight && (
-                <Line
-                  yAxisId="bodyweight"
-                  name="bodyweight"
-                  dataKey="value"
-                  type={lineType}
-                  stroke="green"
-                  data={bodyweightGraphData}
-                />
+                <>
+                  <YAxis
+                    yAxisId="bodyweight"
+                    name="bodyweight"
+                    dataKey="bodyweight"
+                    type="number"
+                    unit=" kg"
+                    orientation={query?.exercise ? 'right' : 'left'}
+                    stroke="green"
+                    domain={['auto', 'auto']}
+                  />
+                  <Line
+                    yAxisId="bodyweight"
+                    name="bodyweight"
+                    dataKey="bodyweight"
+                    type={lineType}
+                    stroke="green"
+                  />
+                </>
               )}
-              <YAxis
-                yAxisId="exercise"
-                name="weight"
-                dataKey="value"
-                type="number"
-                unit=" kg"
-                orientation="left"
-                // line color
-                stroke={palette.primary.dark}
-                domain={['auto', 'auto']}
-              />
               {query?.exercise && (
-                <Line
-                  yAxisId="exercise"
-                  name={query.exercise}
-                  dataKey="value"
-                  stroke={palette.primary.dark}
-                  type={lineType}
-                  data={recordGraphData}
-                />
+                <>
+                  <YAxis
+                    yAxisId="exercise"
+                    name={recordDisplay.field}
+                    dataKey="value"
+                    type="number"
+                    // note the whitespace!
+                    unit={` ${getUnit(
+                      recordDisplay.field,
+                      // todo: units
+                      DEFAULT_DISPLAY_FIELDS.units
+                    )}`}
+                    orientation="left"
+                    // line color
+                    stroke={palette.primary.dark}
+                    domain={['auto', 'auto']}
+                  />
+
+                  <Line
+                    yAxisId="exercise"
+                    name={query.exercise}
+                    dataKey="value"
+                    stroke={palette.primary.dark}
+                    type={lineType}
+                  />
+                </>
               )}
               {/* todo: possible to show weigh-in type in tooltip? */}
               <Tooltip
@@ -276,7 +305,7 @@ export default function HistoryGraph({ query }: Props) {
                 width={graphContainerWidth * 0.6}
                 // could only eyeball this trying to get it centered.
                 x={graphContainerWidth * 0.2}
-                startIndex={getStartIndex(bodyweightGraphData)}
+                startIndex={getStartIndex(graphData)}
               />
             </LineChart>
           </ResponsiveContainer>
