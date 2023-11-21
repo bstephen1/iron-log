@@ -21,6 +21,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart'
 import useResizeObserver from 'use-resize-observer'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
 
@@ -60,8 +61,9 @@ const getStartIndex = (data: GraphData[], dayRange = 60) => {
 }
 interface Props {
   query?: RecordHistoryQuery
+  swipeToRecord: (i: number) => void
 }
-export default function HistoryGraph({ query }: Props) {
+export default function HistoryGraph({ query, swipeToRecord }: Props) {
   // BWs and records are sorted newest first. It looks more natural in the
   // swiper to start on the right and move left vs oldest first.
   const { data: bodyweightData } = useBodyweightHistory(query)
@@ -117,6 +119,18 @@ export default function HistoryGraph({ query }: Props) {
     // supposedly removing eventListener on return prevents memory leaks
     return window.removeEventListener('resize', handleWindowResize)
   }, [])
+
+  const handleGraphClick = (e: CategoricalChartState) => {
+    if (!records || !e || !e.activePayload) return
+
+    const date = dayjs
+      .unix(e.activePayload[0].payload.unixDate)
+      .format(DATE_FORMAT)
+    const index = records.findIndex((record) => record.date === date)
+
+    // have to reverse the index since swiper is also reversed
+    swipeToRecord(records.length - 1 - index)
+  }
 
   const setReducer = useCallback(
     (prev: number, set: Set, i: number) => {
@@ -227,7 +241,7 @@ export default function HistoryGraph({ query }: Props) {
                 bottom: 10,
               }}
               // todo: scroll to card
-              onClick={(s) => console.log(s)}
+              onClick={handleGraphClick}
               data={graphData}
             >
               <CartesianGrid strokeDasharray="3 3" />

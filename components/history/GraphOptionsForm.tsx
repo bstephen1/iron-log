@@ -29,12 +29,16 @@ export default function GraphOptionsForm({
   recordDisplay,
   updateRecordDisplay,
 }: Props) {
-  const { showBodyweight, includeUnofficial, smoothLine, clothingOffset } =
-    graphOptions
+  const {
+    showBodyweight = false,
+    includeUnofficial = false,
+    smoothLine = false,
+    clothingOffset,
+  } = graphOptions
 
   return (
     <Grid container spacing={2}>
-      <Grid xs={8} alignItems="center" display="flex">
+      <Grid xs={12} md={9} alignItems="center" display="flex">
         <FormGroup row>
           <FormControlLabel
             control={
@@ -57,7 +61,7 @@ export default function GraphOptionsForm({
                 }
               />
             }
-            label="Include unofficial weigh-ins"
+            label="Use unofficial weigh-ins"
           />
           <FormControlLabel
             disabled={!showBodyweight}
@@ -71,11 +75,12 @@ export default function GraphOptionsForm({
           />
         </FormGroup>
       </Grid>
-      <Grid xs={4}>
+      <Grid xs={12} md={3}>
         <TextField
           type="number"
           label="Clothing offset"
           autoComplete="off"
+          fullWidth
           value={clothingOffset}
           disabled={!showBodyweight || !includeUnofficial}
           onChange={(e) =>

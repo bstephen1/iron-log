@@ -2,7 +2,7 @@ import { Box, CardProps, Stack, Typography } from '@mui/material'
 import { useRecords } from 'lib/frontend/restService'
 import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { Navigation, Pagination, Virtual } from 'swiper'
-import { Swiper, SwiperProps, SwiperSlide } from 'swiper/react'
+import { Swiper, SwiperProps, SwiperRef, SwiperSlide } from 'swiper/react'
 import HistoryCard, { HistoryAction, HistoryContent } from './HistoryCard'
 
 import 'swiper/css'
@@ -11,7 +11,7 @@ import 'swiper/css/pagination'
 import RecordCardSkeleton from 'components/loading/RecordCardSkeleton'
 import NavigationBar from 'components/slider/NavigationBar'
 import { DisplayFields } from 'models/DisplayFields'
-import { memo, useEffect, useState } from 'react'
+import { Ref, memo, useEffect, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
 
@@ -35,6 +35,7 @@ interface Props {
    *  they first become active.
    */
   virtual?: boolean
+  swiperRef?: Ref<SwiperRef>
 }
 export default memo(function HistoryCardsSwiper({
   displayFields,
@@ -45,6 +46,7 @@ export default memo(function HistoryCardsSwiper({
   fractionPagination,
   virtual,
   swiperProps,
+  swiperRef,
   _id,
 }: Props) {
   const [isFirstRender, setIsFirstRender] = useState(true)
@@ -91,6 +93,7 @@ export default memo(function HistoryCardsSwiper({
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
       <Box width="100%">
         <Swiper
+          ref={swiperRef}
           spaceBetween={20}
           grabCursor
           // This isn't documented, but the out of bounds behavior sets the active slide to

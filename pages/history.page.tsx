@@ -4,11 +4,19 @@ import HistoryGraph from 'components/history/HistoryGraph'
 import QueryForm from 'components/history/QueryForm'
 import HistoryCardsSwiper from 'components/session/history/HistoryCardsSwiper'
 import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { SwiperRef } from 'swiper/react'
 
 export default function HistoryPage() {
   const theme = useTheme()
   const [query, setQuery] = useState<RecordHistoryQuery>()
+  const swiperRef = useRef<SwiperRef>(null)
+  const swiper = swiperRef.current?.swiper
+
+  const swipeToRecord = (index: number) => {
+    if (!swiper) return
+    swiper.slideTo(index)
+  }
 
   // todo: scroll snap?
   return (
@@ -20,6 +28,7 @@ export default function HistoryPage() {
 
       <StyledDivider />
       <HistoryCardsSwiper
+        swiperRef={swiperRef}
         query={query?.exercise ? query : undefined}
         fractionPagination
         actions={['recordNotes', 'exerciseNotes', 'manage']}
@@ -43,7 +52,7 @@ export default function HistoryPage() {
           },
         }}
       />
-      <HistoryGraph query={query} />
+      <HistoryGraph query={query} swipeToRecord={swipeToRecord} />
     </Stack>
   )
 }
