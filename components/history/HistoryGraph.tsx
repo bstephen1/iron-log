@@ -65,7 +65,7 @@ interface Props {
 export default function HistoryGraph({ query }: Props) {
   // BWs and records are sorted newest first. It looks more natural in the
   // swiper to start on the right and move left vs oldest first.
-  const { data: bodyweightData } = useBodyweightHistory()
+  const { data: bodyweightData } = useBodyweightHistory(query)
   const [recordDisplay, setRecordDisplay] = useState<RecordDisplay>({
     field: 'weight',
     operator: 'highest',

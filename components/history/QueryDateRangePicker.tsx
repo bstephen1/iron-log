@@ -1,6 +1,7 @@
+import { DatePickerProps } from '@mui/lab'
 import { MenuItem, Stack, TextField } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { DATE_FORMAT } from 'lib/frontend/constants'
 import { UpdateState } from 'lib/util'
 import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
@@ -56,25 +57,47 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
       </TextField>
       {isCustom && (
         <Stack direction="row" spacing={2}>
-          <DatePicker
+          <QueryDatePicker
             label="Start date"
-            // this works as just "start", but onChange still gives a dayjs anyway
-            value={dayjs(start)}
-            onChange={(newDay) =>
-              updateQuery({ start: newDay?.format(DATE_FORMAT) ?? undefined })
-            }
-            renderInput={(params) => <TextField {...params} fullWidth />}
+            date={start}
+            upDate={(start) => updateQuery({ start })}
           />
-          <DatePicker
+          <QueryDatePicker
             label="End date"
-            value={dayjs(end)}
-            onChange={(newDay) =>
-              updateQuery({ start: newDay?.format(DATE_FORMAT) ?? undefined })
-            }
-            renderInput={(params) => <TextField {...params} fullWidth />}
+            date={end}
+            upDate={(end) => updateQuery({ end })}
           />
         </Stack>
       )}
     </>
+  )
+}
+
+interface QueryDatePickerProps extends DatePickerProps<string> {
+  date?: string
+  upDate: (date?: string) => void
+}
+function QueryDatePicker({
+  date,
+  upDate,
+  ...datePickerProps
+}: QueryDatePickerProps) {
+  return (
+    <DatePicker
+      {...datePickerProps}
+      // This type determines onChange type, but even as a string onChange
+      // is still a Dayjs. String is better though for handling null.
+      // dayjs(null) puts the picker in an error state.
+      value={date ?? null}
+      onChange={(newDay: Dayjs | null) => {
+        // Only update the query when the value is valid, or null.
+        // Otherwise it immediately updates the query to undefined which triggers
+        // a rerender and resets DatePicker to dayjs(undefined), which returns the current date.
+        if (!newDay || newDay.isValid()) {
+          upDate(newDay ? newDay.format(DATE_FORMAT) : undefined)
+        }
+      }}
+      renderInput={(params) => <TextField {...params} fullWidth />}
+    />
   )
 }

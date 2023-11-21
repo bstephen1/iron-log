@@ -20,6 +20,7 @@ export type InputFieldAutosaveProps = {
    */
   renderAsInput?: boolean
   id?: TextFieldProps['id']
+  debounceMilliseconds?: number
 } & Partial<TextFieldProps>
 export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const {
@@ -31,6 +32,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     readOnly,
     renderAsInput,
     id,
+    debounceMilliseconds,
     ...textFieldProps
   } = props
 
@@ -38,6 +40,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     initialValue,
     yupValidator,
     handleSubmit,
+    debounceMilliseconds,
   })
 
   const sharedProps: InputProps = {

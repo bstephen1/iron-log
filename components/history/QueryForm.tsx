@@ -75,6 +75,7 @@ export default function QueryCard({ query, setQuery }: Props) {
           InputLabelProps={{ shrink: true }}
           handleSubmit={(limit) => updateUnsavedQuery({ limit })}
           variant="outlined"
+          debounceMilliseconds={0}
         />
         <QueryDateRangePicker
           query={unsavedQuery}

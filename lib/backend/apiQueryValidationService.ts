@@ -85,16 +85,18 @@ export function buildRecordQuery(
     date,
     modifier,
     modifierMatchType,
-    start,
-    end,
-    limit,
-    sort,
+    setTypeMatchType = MatchType.Exact,
+    // setType fields
     field,
     operator,
     value,
     min,
     max,
-    setTypeMatchType = MatchType.Exact,
+    // dateRange fields
+    start,
+    end,
+    limit,
+    sort,
   }: ApiReq<RecordQuery>,
   userId: ObjectId
 ): MongoQuery<Record> {
