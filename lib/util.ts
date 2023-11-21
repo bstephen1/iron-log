@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
 import { DATE_FORMAT } from './frontend/constants'
-import { Set } from 'models/Set'
+import { Set, Units } from 'models/Set'
 import { SetType } from 'models/Record'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
@@ -77,3 +77,7 @@ export const calculateTotalReps = (
     ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
     : 0
 }
+
+/** returns units for a field, with correct typing */
+export const getUnit = (field: SetType['field'], units: Units) =>
+  units[field as keyof Units] ?? field

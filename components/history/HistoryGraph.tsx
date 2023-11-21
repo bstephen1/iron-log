@@ -1,11 +1,10 @@
 import { Box, Stack, useTheme } from '@mui/material'
 import RecordDisplay from 'components/history/RecordDisplay'
-import { getUnit } from 'components/session/records/SetTypeSelect'
 import dayjs from 'dayjs'
 import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
 import { useBodyweightHistory, useRecords } from 'lib/frontend/restService'
 import useDesktopCheck from 'lib/frontend/useDesktopCheck'
-import { UpdateState } from 'lib/util'
+import { UpdateState, getUnit } from 'lib/util'
 import Bodyweight from 'models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from 'models/DisplayFields'
 import { Set } from 'models/Set'
@@ -274,7 +273,7 @@ export default function HistoryGraph({ query }: Props) {
                     // note the whitespace!
                     unit={` ${getUnit(
                       recordDisplay.field,
-                      // todo: units
+                      // todo: get units from exercise
                       DEFAULT_DISPLAY_FIELDS.units
                     )}`}
                     orientation="left"

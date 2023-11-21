@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
-import { UpdateFields, UpdateState } from 'lib/util'
+import { UpdateFields, UpdateState, getUnit } from 'lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
@@ -29,9 +29,6 @@ const normalFields = ORDERED_DISPLAY_FIELDS.filter(
 const timeField = ORDERED_DISPLAY_FIELDS.filter(
   (field) => field.source === 'time'
 )
-
-const getUnit = (field: SetType['field'], units: Units) =>
-  units[field as keyof Units] ?? field
 
 type Props = {
   /** considered readOnly if not provided */
@@ -82,7 +79,7 @@ export default memo(function SetTypeSelect({
       fullWidth
       variant="standard"
       className={noSwipingDesktop}
-      label="Set Type"
+      label="Set type"
       value={menuValue}
       InputLabelProps={{ shrink: true }}
       SelectProps={{
