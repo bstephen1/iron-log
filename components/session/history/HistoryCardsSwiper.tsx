@@ -100,7 +100,7 @@ export default memo(function HistoryCardsSwiper({
           // the closest valid index (first slide starting at 0). This makes it pretty easy
           // to default to the last index.
           initialSlide={historyRecords.length}
-          autoHeight={!Virtual}
+          autoHeight={!virtual}
           pagination={{
             el: `.${paginationClassName}`,
             clickable: true,
