@@ -123,7 +123,7 @@ export async function fetchSession(
  */
 export async function fetchSessions({
   userId,
-  limit,
+  limit = 0,
   start = '0',
   end = '9',
   sort = 'newestFirst',
@@ -134,7 +134,7 @@ export async function fetchSessions({
       { projection: { userId: 0 } }
     )
     .sort({ date: convertSort(sort) })
-    .limit(limit ?? 50)
+    .limit(limit)
     .toArray()
 }
 
@@ -193,7 +193,7 @@ export async function addRecord(
 // todo: pagination
 export async function fetchRecords({
   filter = {},
-  limit,
+  limit = 0,
   start = '0',
   end = '9',
   userId,
@@ -233,7 +233,7 @@ export async function fetchRecords({
       { $project: { userId: 0, 'exercise.userId': 0 } },
     ])
     .sort({ date: convertSort(sort) })
-    .limit(limit ?? 50)
+    .limit(limit)
     // find() returns a cursor, so it has to be converted to an array
     .toArray()
 }
@@ -500,7 +500,7 @@ export async function addBodyweight(
  */
 export async function fetchBodyweightHistory({
   userId,
-  limit,
+  limit = 0,
   start = '0',
   end = '9',
   filter,
@@ -512,7 +512,7 @@ export async function fetchBodyweightHistory({
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ date: convertSort(sort) })
-    .limit(limit ?? 50)
+    .limit(limit)
     .toArray()
 }
 
