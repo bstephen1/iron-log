@@ -1,10 +1,10 @@
-import { fetchSessions } from 'lib/backend/mongoService'
+import { vi } from 'vitest'
+import { fetchSessions } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import SessionLog from 'models/SessionLog'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import SessionLog from '../../../models/SessionLog'
 import handler from './index.api'
 
 it('fetches sessions', async () => {

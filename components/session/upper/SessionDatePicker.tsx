@@ -6,11 +6,11 @@ import {
   PickersDayProps,
 } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
-import { DATE_FORMAT, URI_SESSIONS } from 'lib/frontend/constants'
-import { paramify, useSessionLogs } from 'lib/frontend/restService'
-import { swrFetcher } from 'lib/util'
 import { useState } from 'react'
 import { preload } from 'swr'
+import { DATE_FORMAT, URI_SESSIONS } from '../../../lib/frontend/constants'
+import { paramify, useSessionLogs } from '../../../lib/frontend/restService'
+import { swrFetcher } from '../../../lib/util'
 
 // The query gets data for the current month +/- 1 month so that
 // data for daysOutsideCurrentMonth is still visible on the current month

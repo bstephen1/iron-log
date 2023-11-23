@@ -1,10 +1,13 @@
-import ExerciseForm from 'components/ExerciseForm'
-import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
-import ManageWelcomeCard from 'components/ManageWelcomeCard'
-import { updateExerciseFields, useExercises } from 'lib/frontend/restService'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { useQueryState } from 'next-usequerystate'
 import { useState } from 'react'
+import ExerciseForm from '../../components/ExerciseForm'
+import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
+import ManageWelcomeCard from '../../components/ManageWelcomeCard'
+import {
+  updateExerciseFields,
+  useExercises,
+} from '../../lib/frontend/restService'
+import Exercise from '../../models/AsyncSelectorOption/Exercise'
 
 // todo: delete exercise. Delete only for unused exercises?
 // todo: ui element showing "changes saved". Snackbar?

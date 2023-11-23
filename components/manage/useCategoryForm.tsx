@@ -1,13 +1,13 @@
-import CategoryForm from 'components/CategoryForm'
-import CategorySelector from 'components/form-fields/selectors/CategorySelector'
-import ManageWelcomeCard from 'components/ManageWelcomeCard'
+import { useQueryState } from 'next-usequerystate'
+import CategoryForm from '../../components/CategoryForm'
+import CategorySelector from '../../components/form-fields/selectors/CategorySelector'
+import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import {
   updateCategoryFields,
   useCategories,
   useExercises,
-} from 'lib/frontend/restService'
-import Category from 'models/AsyncSelectorOption/Category'
-import { useQueryState } from 'next-usequerystate'
+} from '../../lib/frontend/restService'
+import Category from '../../models/AsyncSelectorOption/Category'
 
 export default function useCategoryForm() {
   const [urlCategory, setUrlCategory] = useQueryState('category')

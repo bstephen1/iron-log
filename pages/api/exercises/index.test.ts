@@ -1,10 +1,10 @@
-import { fetchExercises } from 'lib/backend/mongoService'
+import { vi } from 'vitest'
+import { fetchExercises } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import handler from './index.api'
 
 it('fetches exercises', async () => {

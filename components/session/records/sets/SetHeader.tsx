@@ -10,16 +10,16 @@ import {
   SelectProps,
   Stack,
 } from '@mui/material'
-import { UpdateFields } from 'lib/util'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
+import { UpdateFields } from '../../../../lib/util'
+import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
   VisibleField,
-} from 'models/DisplayFields'
-import { Fragment, memo } from 'react'
-import isEqual from 'react-fast-compare'
+} from '../../../../models/DisplayFields'
 
 interface Props extends Partial<SelectProps<string[]>> {
   mutateExerciseFields?: UpdateFields<Exercise>

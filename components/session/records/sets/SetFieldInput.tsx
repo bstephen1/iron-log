@@ -1,11 +1,11 @@
-import { Box, Input, MenuItem, Select, Stack } from '@mui/material'
-import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
-import SelectFieldAutosave from 'components/form-fields/SelectFieldAutosave'
-import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
-import { UpdateFields } from 'lib/util'
-import { VisibleField } from 'models/DisplayFields'
-import { convertUnit, DB_UNITS, Set, Units } from 'models/Set'
+import { Box, Stack } from '@mui/material'
 import { memo } from 'react'
+import NumericFieldAutosave from '../../../../components/form-fields/NumericFieldAutosave'
+import SelectFieldAutosave from '../../../../components/form-fields/SelectFieldAutosave'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingSmScreen'
+import { UpdateFields } from '../../../../lib/util'
+import { VisibleField } from '../../../../models/DisplayFields'
+import { convertUnit, DB_UNITS, Set, Units } from '../../../../models/Set'
 
 const delimiterWidth = '15px'
 

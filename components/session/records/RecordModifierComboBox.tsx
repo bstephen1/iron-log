@@ -1,8 +1,8 @@
-import { ComboBoxField } from 'components/form-fields/ComboBoxField'
-import { UpdateFields } from 'lib/util'
-import Record from 'models/Record'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
+import { ComboBoxField } from '../../../components/form-fields/ComboBoxField'
+import { UpdateFields } from '../../../lib/util'
+import Record from '../../../models/Record'
 
 interface Props extends Pick<Record, 'activeModifiers'> {
   mutateRecordFields: UpdateFields<Record>

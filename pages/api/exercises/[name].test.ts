@@ -1,16 +1,16 @@
+import { vi } from 'vitest'
 import {
   addExercise,
   fetchExercise,
   updateExercise,
   updateExerciseFields,
-} from 'lib/backend/mongoService'
+} from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import handler from './[name].api'
 
 const data = new Exercise('hi')

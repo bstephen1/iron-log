@@ -1,9 +1,9 @@
 import { TextFieldProps } from '@mui/material'
-import CategoryFilter from 'components/CategoryFilter'
-import { addExercise, useCategories } from 'lib/frontend/restService'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { useState } from 'react'
 import { KeyedMutator } from 'swr'
+import CategoryFilter from '../../../components/CategoryFilter'
+import { addExercise, useCategories } from '../../../lib/frontend/restService'
+import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
 
 type ExerciseSelectorProps = {

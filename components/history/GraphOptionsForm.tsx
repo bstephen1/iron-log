@@ -6,9 +6,9 @@ import {
   TextField,
 } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import RecordDisplay from 'components/history/RecordDisplay'
-import RecordDisplaySelect from 'components/history/RecordDisplaySelect'
-import { UpdateState } from 'lib/util'
+import RecordDisplay from '../../components/history/RecordDisplay'
+import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
+import { UpdateState } from '../../lib/util'
 
 export interface GraphOptions {
   showBodyweight?: boolean

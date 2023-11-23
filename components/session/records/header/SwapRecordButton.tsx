@@ -1,10 +1,10 @@
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
-import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
-import { updateSessionLog } from 'lib/frontend/restService'
 import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import TooltipIconButton from '../../../TooltipIconButton'
+import useCurrentSessionLog from '../../../../components/session/useCurrentSessionLog'
+import { updateSessionLog } from '../../../../lib/frontend/restService'
 
 interface Props {
   direction: 'left' | 'right'

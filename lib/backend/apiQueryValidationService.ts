@@ -1,23 +1,23 @@
 import { StatusCodes } from 'http-status-codes'
-import { validDateStringRegex } from 'lib/frontend/constants'
-import { isValidId } from 'lib/util'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Modifier from 'models/AsyncSelectorOption/Modifier'
-import Bodyweight, { WeighInType, weighInTypes } from 'models/Bodyweight'
-import BodyweightQuery from 'models/query-filters/BodyweightQuery'
-import DateRangeQuery from 'models/query-filters/DateRangeQuery'
-import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
-import ModifierQuery from 'models/query-filters/ModifierQuery'
+import { Filter, ObjectId } from 'mongodb'
+import { ApiError } from 'next/dist/server/api-utils'
+import { validDateStringRegex } from '../../lib/frontend/constants'
+import { isValidId } from '../../lib/util'
+import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import Modifier from '../../models/AsyncSelectorOption/Modifier'
+import Bodyweight, { WeighInType, weighInTypes } from '../../models/Bodyweight'
+import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
+import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import {
   MatchType,
   MatchTypes,
   MongoQuery,
-} from 'models/query-filters/MongoQuery'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
-import Record from 'models/Record'
-import { Status } from 'models/Status'
-import { Filter, ObjectId } from 'mongodb'
-import { ApiError } from 'next/dist/server/api-utils'
+} from '../../models/query-filters/MongoQuery'
+import { RecordQuery } from '../../models/query-filters/RecordQuery'
+import Record from '../../models/Record'
+import { Status } from '../../models/Status'
 
 type ApiParam = string | string[] | undefined
 // only exported for the test file

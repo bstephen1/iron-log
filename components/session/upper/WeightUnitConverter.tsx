@@ -1,7 +1,7 @@
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import { InputAdornment, Stack, TextField, TextFieldProps } from '@mui/material'
-import { convertUnit } from 'models/Set'
 import { useState } from 'react'
+import { convertUnit } from '../../../models/Set'
 
 export default function WeightUnitConverter() {
   // the Textfield's value is a string, but it's based off kg here which is a number

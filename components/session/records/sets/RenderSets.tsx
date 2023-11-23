@@ -1,12 +1,12 @@
 import { Box } from '@mui/material'
-import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { DisplayFields } from 'models/DisplayFields'
-import Record from 'models/Record'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingSmScreen'
+import { UpdateFields } from '../../../../lib/util'
+import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
+import { DisplayFields } from '../../../../models/DisplayFields'
+import Record from '../../../../models/Record'
 import AddSetButton from './AddSetButton'
 import SetInput from './RenderSetRow'
 import SetHeader from './SetHeader'
-import { UpdateFields } from 'lib/util'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */

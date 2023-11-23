@@ -1,8 +1,8 @@
-import { DEFAULT_SET_TYPE, SetType } from 'models/Record'
+import dayjs from 'dayjs'
+import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { DEFAULT_SET_TYPE, SetType } from '../../models/Record'
 import DateRangeQuery from './DateRangeQuery'
 import { MatchType } from './MongoQuery'
-import dayjs from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
 
 /** Query to retrieve history for a given exercise in the frontend */
 export type RecordHistoryQuery = SetType &

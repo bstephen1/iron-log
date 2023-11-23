@@ -1,8 +1,8 @@
-import { render, screen } from 'lib/testUtils'
-import { AsyncSelectorOption } from 'models/AsyncSelectorOption'
-import { Status } from 'models/Status'
 import { ComponentProps } from 'react'
 import { vi } from 'vitest'
+import { render, screen } from '../../../lib/testUtils'
+import { AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
+import { Status } from '../../../models/Status'
 import AsyncSelector from './AsyncSelector'
 
 const mockConstructor = vi.fn()

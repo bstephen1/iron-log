@@ -10,13 +10,13 @@ import {
   TextFieldProps,
   Typography,
 } from '@mui/material'
-import { ORDERED_DISPLAY_FIELDS } from 'models/DisplayFields'
 import { useState } from 'react'
+import { UpdateState } from '../../lib/util'
+import { ORDERED_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import RecordDisplay, {
   RecordDisplayOperator,
   recordDisplayOperators,
 } from './RecordDisplay'
-import { UpdateState } from 'lib/util'
 
 const fieldOptions = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight

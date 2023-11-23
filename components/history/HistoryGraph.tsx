@@ -1,14 +1,5 @@
 import { Box, Stack, useTheme } from '@mui/material'
-import RecordDisplay from 'components/history/RecordDisplay'
 import dayjs from 'dayjs'
-import { DATE_FORMAT, DEFAULT_CLOTHING_OFFSET } from 'lib/frontend/constants'
-import { useBodyweightHistory, useRecords } from 'lib/frontend/restService'
-import useDesktopCheck from 'lib/frontend/useDesktopCheck'
-import { UpdateState, getUnit } from 'lib/util'
-import Bodyweight from 'models/Bodyweight'
-import { DEFAULT_DISPLAY_FIELDS } from 'models/DisplayFields'
-import { Set } from 'models/Set'
-import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Brush,
@@ -23,6 +14,21 @@ import {
 } from 'recharts'
 import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart'
 import useResizeObserver from 'use-resize-observer'
+import RecordDisplay from '../../components/history/RecordDisplay'
+import {
+  DATE_FORMAT,
+  DEFAULT_CLOTHING_OFFSET,
+} from '../../lib/frontend/constants'
+import {
+  useBodyweightHistory,
+  useRecords,
+} from '../../lib/frontend/restService'
+import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
+import { getUnit, UpdateState } from '../../lib/util'
+import Bodyweight from '../../models/Bodyweight'
+import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
+import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
+import { Set } from '../../models/Set'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.

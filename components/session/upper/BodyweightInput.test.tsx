@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
-import { URI_BODYWEIGHT } from 'lib/frontend/constants'
-import { render, screen, useServerOnce } from 'lib/testUtils'
-import Bodyweight from 'models/Bodyweight'
+import { URI_BODYWEIGHT } from '../../../lib/frontend/constants'
+import { render, screen, useServerOnce } from '../../../lib/testUtils'
+import Bodyweight from '../../../models/Bodyweight'
 import BodyweightInput from './BodyweightInput'
 
 const date2020 = dayjs('2020-01-01')

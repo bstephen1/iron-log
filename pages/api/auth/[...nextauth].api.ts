@@ -1,10 +1,10 @@
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
-import { createMongoConnection } from 'lib/backend/mongoConnect'
 import type { NextAuthOptions, Session } from 'next-auth'
 import NextAuth, { SessionStrategy } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
+import { createMongoConnection } from '../../../lib/backend/mongoConnect'
 
 const devProviders =
   process.env.NODE_ENV !== 'production'

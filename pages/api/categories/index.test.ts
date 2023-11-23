@@ -1,10 +1,10 @@
-import { fetchCategories } from 'lib/backend/mongoService'
+import { vi } from 'vitest'
+import { fetchCategories } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Category from 'models/AsyncSelectorOption/Category'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import Category from '../../../models/AsyncSelectorOption/Category'
 import handler from './index.api'
 
 it('fetches categories', async () => {

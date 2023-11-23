@@ -14,9 +14,9 @@ import {
   ListItemText,
 } from '@mui/material'
 import dayjs from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
 import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
+import { DATE_FORMAT } from '../lib/frontend/constants'
 
 const today = dayjs().format(DATE_FORMAT)
 

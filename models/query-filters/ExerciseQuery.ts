@@ -1,4 +1,4 @@
-import { Status } from 'models/Status'
+import { Status } from '../../models/Status'
 import { MatchType } from './MongoQuery'
 
 export interface ExerciseQuery {

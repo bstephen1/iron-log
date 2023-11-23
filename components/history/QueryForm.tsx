@@ -1,15 +1,15 @@
 import { Button, Stack } from '@mui/material'
-import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
-import RecordExerciseSelector from 'components/session/records/RecordExerciseSelector'
-import useDisplayFields from 'lib/frontend/useDisplayFields'
-import { UpdateState } from 'lib/util'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
+import { Dispatch, SetStateAction, useState } from 'react'
+import isEqual from 'react-fast-compare'
+import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
+import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
+import useDisplayFields from '../../lib/frontend/useDisplayFields'
+import { UpdateState } from '../../lib/util'
+import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
   RecordHistoryQuery,
-} from 'models/query-filters/RecordQuery'
-import { Dispatch, SetStateAction, useState } from 'react'
-import isEqual from 'react-fast-compare'
+} from '../../models/query-filters/RecordQuery'
 import ModifierQueryField from './ModifierQueryField'
 import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'

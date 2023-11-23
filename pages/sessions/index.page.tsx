@@ -1,10 +1,10 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import LoadingSpinner from 'components/loading/LoadingSpinner'
 import dayjs from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
+import LoadingSpinner from '../../components/loading/LoadingSpinner'
+import { DATE_FORMAT } from '../../lib/frontend/constants'
 
 export default function Page() {
   const router = useRouter()

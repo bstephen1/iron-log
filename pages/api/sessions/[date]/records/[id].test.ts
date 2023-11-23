@@ -1,13 +1,16 @@
-import { deleteSessionRecord, fetchRecord } from 'lib/backend/mongoService'
+import { vi } from 'vitest'
+import {
+  deleteSessionRecord,
+  fetchRecord,
+} from '../../../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import { generateId } from 'lib/util'
-import Record from 'models/Record'
-import SessionLog from 'models/SessionLog'
-import { vi } from 'vitest'
+} from '../../../../../lib/testUtils'
+import { generateId } from '../../../../../lib/util'
+import Record from '../../../../../models/Record'
+import SessionLog from '../../../../../models/SessionLog'
 import handler from './[id].api'
 
 const date = '2000-01-01'

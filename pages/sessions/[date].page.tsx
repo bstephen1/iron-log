@@ -1,16 +1,16 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import SessionSwiper from 'components/session/SessionSwiper'
-import RestTimer from 'components/session/upper/RestTimer'
-import TitleBar from 'components/session/upper/TitleBar'
-import WeightUnitConverter from 'components/session/upper/WeightUnitConverter'
 import dayjs from 'dayjs'
-import { valiDate } from 'lib/backend/apiQueryValidationService'
 import { GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { createContext, useContext } from 'react'
 import 'swiper/css'
 import 'swiper/css/pagination'
+import SessionSwiper from '../../components/session/SessionSwiper'
+import RestTimer from '../../components/session/upper/RestTimer'
+import TitleBar from '../../components/session/upper/TitleBar'
+import WeightUnitConverter from '../../components/session/upper/WeightUnitConverter'
+import { valiDate } from '../../lib/backend/apiQueryValidationService'
 
 export function getServerSideProps({ query }: GetServerSidePropsContext) {
   try {

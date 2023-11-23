@@ -1,13 +1,13 @@
-import { generateId } from 'lib/util'
-import { Status } from 'models/Status'
-import BodyweightQuery from 'models/query-filters/BodyweightQuery'
-import DateRangeQuery from 'models/query-filters/DateRangeQuery'
-import { ExerciseQuery } from 'models/query-filters/ExerciseQuery'
-import { MatchType } from 'models/query-filters/MongoQuery'
-import { RecordQuery } from 'models/query-filters/RecordQuery'
 import { ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
 import { v1 as invalidUuid } from 'uuid'
+import { generateId } from '../../lib/util'
+import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
+import { MatchType } from '../../models/query-filters/MongoQuery'
+import { RecordQuery } from '../../models/query-filters/RecordQuery'
+import { Status } from '../../models/Status'
 import {
   ApiReq,
   buildBodyweightQuery,

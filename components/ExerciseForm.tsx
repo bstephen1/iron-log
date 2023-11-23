@@ -1,13 +1,13 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+import * as yup from 'yup'
 import {
   useCategories,
   useExercises,
   useModifiers,
-} from 'lib/frontend/restService'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { Status } from 'models/Status'
-import * as yup from 'yup'
+} from '../lib/frontend/restService'
+import Exercise from '../models/AsyncSelectorOption/Exercise'
+import { Status } from '../models/Status'
 import AttributeCheckboxes from './form-fields/AttributeCheckboxes'
 import { ComboBoxField } from './form-fields/ComboBoxField'
 import InputField from './form-fields/InputField'

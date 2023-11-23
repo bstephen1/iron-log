@@ -1,15 +1,15 @@
+import { vi } from 'vitest'
 import {
   addCategory,
   fetchCategory,
   updateCategoryFields,
-} from 'lib/backend/mongoService'
+} from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Category from 'models/AsyncSelectorOption/Category'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import Category from '../../../models/AsyncSelectorOption/Category'
 import handler from './[name].api'
 
 const data = new Category('hi')

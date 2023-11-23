@@ -1,15 +1,15 @@
 import { Box, Stack } from '@mui/material'
 import { blue, grey, lightGreen } from '@mui/material/colors'
-import { URI_RECORDS } from 'lib/frontend/constants'
-import { updateRecordFields } from 'lib/frontend/restService'
-import { DisplayFields } from 'models/DisplayFields'
-import Record from 'models/Record'
-import { Set } from 'models/Set'
 import { memo, useCallback } from 'react'
 import { useSWRConfig } from 'swr'
+import { URI_RECORDS } from '../../../../lib/frontend/constants'
+import { updateRecordFields } from '../../../../lib/frontend/restService'
+import { UpdateFields } from '../../../../lib/util'
+import { DisplayFields } from '../../../../models/DisplayFields'
+import Record from '../../../../models/Record'
+import { Set } from '../../../../models/Set'
 import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './SetFieldInput'
-import { UpdateFields } from 'lib/util'
 
 const pyStack = 0.5
 

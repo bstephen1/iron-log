@@ -1,15 +1,16 @@
+import { vi } from 'vitest'
 import {
-  addSession,
   fetchSession,
+  addSession,
   updateSession,
-} from 'lib/backend/mongoService'
+} from '../../../../lib/backend/mongoService'
 import {
+  expectApiRespondsWithData,
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
-  expectApiRespondsWithData,
-} from 'lib/testUtils'
-import SessionLog from 'models/SessionLog'
-import { vi } from 'vitest'
+} from '../../../../lib/testUtils'
+import SessionLog from '../../../../models/SessionLog'
+
 import handler from './index.api'
 
 const date = '2000-01-01'

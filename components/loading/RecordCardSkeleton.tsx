@@ -7,7 +7,7 @@ import {
   SxProps,
   TypographyProps,
 } from '@mui/material'
-import StyledDivider from 'components/StyledDivider'
+import StyledDivider from '../../components/StyledDivider'
 
 interface Props {
   title?: string

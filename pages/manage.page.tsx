@@ -1,9 +1,9 @@
 import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import useCategoryForm from 'components/manage/useCategoryForm'
-import useExerciseForm from 'components/manage/useExerciseForm'
-import useModifierForm from 'components/manage/useModifierForm'
-import StyledDivider from 'components/StyledDivider'
+import useCategoryForm from '../components/manage/useCategoryForm'
+import useExerciseForm from '../components/manage/useExerciseForm'
+import useModifierForm from '../components/manage/useModifierForm'
+import StyledDivider from '../components/StyledDivider'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useEffect, useState } from 'react'
 

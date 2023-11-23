@@ -10,13 +10,13 @@ import {
   RadioGroup,
   Stack,
 } from '@mui/material'
-import { UpdateFields, UpdateState } from 'lib/util'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import { DisplayFields } from 'models/DisplayFields'
-import { UNITS, Units } from 'models/Set'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import TooltipIconButton from '../../../TooltipIconButton'
+import { UpdateFields, UpdateState } from '../../../../lib/util'
+import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
+import { DisplayFields } from '../../../../models/DisplayFields'
+import { UNITS, Units } from '../../../../models/Set'
 
 interface Props {
   mutateExerciseFields: UpdateFields<Exercise>

@@ -1,16 +1,16 @@
-import Category from 'models/AsyncSelectorOption/Category'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Modifier from 'models/AsyncSelectorOption/Modifier'
-import Bodyweight from 'models/Bodyweight'
-import Record from 'models/Record'
-import SessionLog from 'models/SessionLog'
-import DateRangeQuery from 'models/query-filters/DateRangeQuery'
+import { Filter, ModifyResult, ObjectId } from 'mongodb'
+import Category from '../../models/AsyncSelectorOption/Category'
+import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import Modifier from '../../models/AsyncSelectorOption/Modifier'
+import Bodyweight from '../../models/Bodyweight'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import {
   MatchType,
   MatchTypes,
   MongoQuery,
-} from 'models/query-filters/MongoQuery'
-import { Filter, ModifyResult, ObjectId } from 'mongodb'
+} from '../../models/query-filters/MongoQuery'
+import Record from '../../models/Record'
+import SessionLog from '../../models/SessionLog'
 import { getCollections, getDb } from './mongoConnect'
 
 const db = await getDb()

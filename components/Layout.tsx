@@ -3,7 +3,7 @@ import { Container, createTheme } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { ReactNode, useState } from 'react'
-import { bluePalette } from 'styles/themePalettes'
+import { bluePalette } from '../styles/themePalettes'
 import Footer from './Footer'
 import Navbar from './Navbar'
 

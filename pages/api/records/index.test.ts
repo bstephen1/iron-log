@@ -1,10 +1,10 @@
-import { fetchRecords } from 'lib/backend/mongoService'
+import { vi } from 'vitest'
+import { fetchRecords } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Record from 'models/Record'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import Record from '../../../models/Record'
 import handler from './index.api'
 
 it('fetches records', async () => {

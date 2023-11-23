@@ -1,4 +1,4 @@
-import { capitalize } from 'lib/util'
+import { capitalize } from '../lib/util'
 import { DB_UNITS, Set, Units } from './Set'
 
 /** signifies which Set fields are visible, and which units they are using.  */

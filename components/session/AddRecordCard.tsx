@@ -1,17 +1,17 @@
 import { Button, Paper, Stack } from '@mui/material'
-import ExerciseSelector from 'components/form-fields/selectors/ExerciseSelector'
+import { useState } from 'react'
+import { useSwiper } from 'swiper/react'
+import { useSWRConfig } from 'swr'
+import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import {
   addRecord,
   updateSessionLog,
   useExercises,
-} from 'lib/frontend/restService'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Record from 'models/Record'
-import SessionLog from 'models/SessionLog'
-import { Status } from 'models/Status'
-import { useState } from 'react'
-import { useSwiper } from 'swiper/react'
-import { useSWRConfig } from 'swr'
+} from '../../lib/frontend/restService'
+import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import Record from '../../models/Record'
+import SessionLog from '../../models/SessionLog'
+import { Status } from '../../models/Status'
 import useCurrentSessionLog from './useCurrentSessionLog'
 
 export default function AddRecordCard() {

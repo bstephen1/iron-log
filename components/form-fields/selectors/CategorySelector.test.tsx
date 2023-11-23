@@ -1,5 +1,5 @@
-import { render, screen } from 'lib/testUtils'
 import { vi } from 'vitest'
+import { render, screen } from '../../../lib/testUtils'
 import CategorySelector from './CategorySelector'
 
 it('renders with expected text', async () => {

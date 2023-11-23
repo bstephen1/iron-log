@@ -1,7 +1,7 @@
 import SettingsIcon from '@mui/icons-material/Settings'
-import TooltipIconButton from 'components/TooltipIconButton'
 import { useRouter } from 'next/router'
 import { memo } from 'react'
+import TooltipIconButton from '../../../../components/TooltipIconButton'
 
 interface Props {
   name?: string

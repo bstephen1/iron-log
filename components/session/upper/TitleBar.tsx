@@ -1,8 +1,8 @@
 import { TextField } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { Dayjs } from 'dayjs'
-import { DATE_FORMAT } from 'lib/frontend/constants'
 import { useRouter } from 'next/router'
+import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import BodyweightInput from './BodyweightInput'
 import SessionDatePicker from './SessionDatePicker'
 

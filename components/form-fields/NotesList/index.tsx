@@ -1,5 +1,5 @@
 import { Divider, Stack, Typography } from '@mui/material'
-import Note from 'models/Note'
+import Note from '../../../models/Note'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'
 

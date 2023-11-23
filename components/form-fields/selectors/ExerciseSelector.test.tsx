@@ -1,9 +1,9 @@
-import { URI_CATEGORIES } from 'lib/frontend/constants'
-import { render, screen, useServerOnce } from 'lib/testUtils'
-import Category from 'models/AsyncSelectorOption/Category'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
 import { ComponentProps } from 'react'
 import { vi } from 'vitest'
+import { URI_CATEGORIES } from '../../../lib/frontend/constants'
+import { render, screen, useServerOnce } from '../../../lib/testUtils'
+import Category from '../../../models/AsyncSelectorOption/Category'
+import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import ExerciseSelector from './ExerciseSelector'
 
 const mockHandleChange = vi.fn()

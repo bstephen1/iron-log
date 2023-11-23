@@ -1,10 +1,10 @@
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
-import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import HourglassDisabledIcon from '@mui/icons-material/HourglassDisabled'
+import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import { ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
-import TooltipIconButton from 'components/TooltipIconButton'
-import { MatchType } from 'models/query-filters/MongoQuery'
 import { useState } from 'react'
+import TooltipIconButton from '../../components/TooltipIconButton'
+import { MatchType } from '../../models/query-filters/MongoQuery'
 
 type MatchTypeDescriptions = { [matchType in MatchType]: string }
 

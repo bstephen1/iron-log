@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import useDesktopCheck from 'lib/frontend/useDesktopCheck'
+import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 
 // swiper's default is 8
 const defaultSize = 10

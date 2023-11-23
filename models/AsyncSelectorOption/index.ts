@@ -1,4 +1,4 @@
-import { generateId } from 'lib/util'
+import { generateId } from '../../lib/util'
 import { Status } from '../Status'
 
 /** Objects used in AsyncSelector must extend this class. */

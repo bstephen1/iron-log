@@ -1,9 +1,9 @@
 import DeleteIcon from '@mui/icons-material/Delete'
-import useCurrentSessionLog from 'components/session/useCurrentSessionLog'
-import { deleteSessionRecord } from 'lib/frontend/restService'
 import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import TooltipIconButton from '../../../TooltipIconButton'
+import useCurrentSessionLog from '../../../../components/session/useCurrentSessionLog'
+import { deleteSessionRecord } from '../../../../lib/frontend/restService'
 
 interface Props {
   _id: string

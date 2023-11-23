@@ -1,17 +1,17 @@
+import { vi } from 'vitest'
 import {
   addRecord,
   fetchRecord,
   updateRecord,
   updateRecordFields,
-} from 'lib/backend/mongoService'
+} from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import { generateId } from 'lib/util'
-import Record from 'models/Record'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import { generateId } from '../../../lib/util'
+import Record from '../../../models/Record'
 import handler from './[id].api'
 
 const data = new Record('2000-01-01')

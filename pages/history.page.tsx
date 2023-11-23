@@ -1,11 +1,11 @@
 import { Stack, Typography, useTheme } from '@mui/material'
-import StyledDivider from 'components/StyledDivider'
-import HistoryGraph from 'components/history/HistoryGraph'
-import QueryForm from 'components/history/QueryForm'
-import HistoryCardsSwiper from 'components/session/history/HistoryCardsSwiper'
-import { RecordHistoryQuery } from 'models/query-filters/RecordQuery'
 import { useRef, useState } from 'react'
 import { SwiperRef } from 'swiper/react'
+import HistoryGraph from '../components/history/HistoryGraph'
+import QueryForm from '../components/history/QueryForm'
+import HistoryCardsSwiper from '../components/session/history/HistoryCardsSwiper'
+import StyledDivider from '../components/StyledDivider'
+import { RecordHistoryQuery } from '../models/query-filters/RecordQuery'
 
 export default function HistoryPage() {
   const theme = useTheme()

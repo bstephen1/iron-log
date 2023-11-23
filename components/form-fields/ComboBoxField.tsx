@@ -3,8 +3,8 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import { Checkbox, TextFieldProps } from '@mui/material'
 import AsyncAutocomplete, {
   AsyncAutocompleteProps,
-} from 'components/AsyncAutocomplete'
-import { doNothing } from 'lib/util'
+} from '../../components/AsyncAutocomplete'
+import { doNothing } from '../../lib/util'
 import useField from './useField'
 
 interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {

@@ -1,13 +1,13 @@
-import ModifierSelector from 'components/form-fields/selectors/ModifierSelector'
-import ManageWelcomeCard from 'components/ManageWelcomeCard'
-import ModifierForm from 'components/ModifierForm'
+import { useQueryState } from 'next-usequerystate'
+import ModifierSelector from '../../components/form-fields/selectors/ModifierSelector'
+import ManageWelcomeCard from '../../components/ManageWelcomeCard'
+import ModifierForm from '../../components/ModifierForm'
 import {
   updateModifierFields,
   useExercises,
   useModifiers,
-} from 'lib/frontend/restService'
-import Modifier from 'models/AsyncSelectorOption/Modifier'
-import { useQueryState } from 'next-usequerystate'
+} from '../../lib/frontend/restService'
+import Modifier from '../../models/AsyncSelectorOption/Modifier'
 
 export default function useModifierForm() {
   const [urlModifier, setUrlModifier] = useQueryState('modifier')

@@ -1,4 +1,4 @@
-import useDesktopCheck from 'lib/frontend/useDesktopCheck'
+import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 
 /** Gets swiper pagination size for desktop and mobile. Spread return value into the
  * sx of the pagination container

@@ -1,11 +1,11 @@
-import { fetchModifiers } from 'lib/backend/mongoService'
+import { vi } from 'vitest'
+import { fetchModifiers } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Modifier from 'models/AsyncSelectorOption/Modifier'
-import { Status } from 'models/Status'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import Modifier from '../../../models/AsyncSelectorOption/Modifier'
+import { Status } from '../../../models/Status'
 import handler from './index.api'
 
 it('fetches modifiers', async () => {

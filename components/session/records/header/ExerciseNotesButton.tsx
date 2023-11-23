@@ -1,12 +1,12 @@
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
-import NotesList from 'components/form-fields/NotesList'
-import { UpdateFields } from 'lib/util'
-import Exercise from 'models/AsyncSelectorOption/Exercise'
-import Note from 'models/Note'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import TooltipIconButton from '../../../TooltipIconButton'
+import NotesList from '../../../../components/form-fields/NotesList'
+import { UpdateFields } from '../../../../lib/util'
+import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
+import Note from '../../../../models/Note'
 
 const title = 'Exercise Notes'
 

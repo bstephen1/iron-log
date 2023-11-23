@@ -1,10 +1,11 @@
-import { fetchRecords } from 'lib/backend/mongoService'
-import {
-  expectApiErrorsOnInvalidMethod,
-  expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Record from 'models/Record'
 import { vi } from 'vitest'
+import { fetchRecords } from '../../../../../lib/backend/mongoService'
+import {
+  expectApiRespondsWithData,
+  expectApiErrorsOnInvalidMethod,
+} from '../../../../../lib/testUtils'
+import Record from '../../../../../models/Record'
+
 import handler from './index.api'
 
 const date = '2000-01-01'

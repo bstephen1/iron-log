@@ -1,14 +1,14 @@
+import { vi } from 'vitest'
 import {
   addBodyweight,
   fetchBodyweightHistory,
   updateBodyweight,
-} from 'lib/backend/mongoService'
+} from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
-} from 'lib/testUtils'
-import Bodyweight from 'models/Bodyweight'
-import { vi } from 'vitest'
+} from '../../../lib/testUtils'
+import Bodyweight from '../../../models/Bodyweight'
 import handler from './index.api'
 
 const data = new Bodyweight(50, 'official')

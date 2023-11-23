@@ -10,17 +10,17 @@ import {
   TextFieldProps,
   Typography,
 } from '@mui/material'
-import NumericFieldAutosave from 'components/form-fields/NumericFieldAutosave'
-import useNoSwipingDesktop from 'lib/frontend/useNoSwipingSmScreen'
-import { UpdateFields, UpdateState, getUnit } from 'lib/util'
+import { memo, useState } from 'react'
+import isEqual from 'react-fast-compare'
+import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
+import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingSmScreen'
+import { getUnit, UpdateFields, UpdateState } from '../../../lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
-} from 'models/DisplayFields'
-import Record, { SetType, setOperators } from 'models/Record'
-import { Units } from 'models/Set'
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
+} from '../../../models/DisplayFields'
+import Record, { setOperators, SetType } from '../../../models/Record'
+import { Units } from '../../../models/Set'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight

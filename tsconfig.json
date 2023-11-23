@@ -17,7 +17,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "types": ["vite/client", "vitest/globals"],
-    "baseUrl": ".",
     "incremental": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
