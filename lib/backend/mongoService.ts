@@ -123,7 +123,7 @@ export async function fetchSession(
  */
 export async function fetchSessions({
   userId,
-  limit = 0,
+  limit,
   start = '0',
   end = '9',
   sort = 'newestFirst',
@@ -134,7 +134,7 @@ export async function fetchSessions({
       { projection: { userId: 0 } }
     )
     .sort({ date: convertSort(sort) })
-    .limit(limit)
+    .limit(limit || Number.MAX_SAFE_INTEGER)
     .toArray()
 }
 
@@ -193,7 +193,7 @@ export async function addRecord(
 // todo: pagination
 export async function fetchRecords({
   filter = {},
-  limit = 0,
+  limit,
   start = '0',
   end = '9',
   userId,
@@ -233,7 +233,9 @@ export async function fetchRecords({
       { $project: { userId: 0, 'exercise.userId': 0 } },
     ])
     .sort({ date: convertSort(sort) })
-    .limit(limit)
+    // Mongo docs say passing limit of 0 is equivalent to no limit,
+    // but that actually results in an error saying limit must be a positive 64 bit int.
+    .limit(limit || Number.MAX_SAFE_INTEGER)
     // find() returns a cursor, so it has to be converted to an array
     .toArray()
 }
@@ -500,7 +502,7 @@ export async function addBodyweight(
  */
 export async function fetchBodyweightHistory({
   userId,
-  limit = 0,
+  limit,
   start = '0',
   end = '9',
   filter,
@@ -512,7 +514,7 @@ export async function fetchBodyweightHistory({
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ date: convertSort(sort) })
-    .limit(limit)
+    .limit(limit || Number.MAX_SAFE_INTEGER)
     .toArray()
 }
 

@@ -1,5 +1,6 @@
 import { Input, InputProps, TextField, TextFieldProps } from '@mui/material'
 import * as yup from 'yup'
+import { doNothing } from '../../lib/util'
 import useField from './useField'
 
 // have to use type union instead of interface extension because TextFieldProps is an intersection type
@@ -21,6 +22,7 @@ export type InputFieldAutosaveProps = {
   renderAsInput?: boolean
   id?: TextFieldProps['id']
   debounceMilliseconds?: number
+  disableAutoSelect?: boolean
 } & Partial<TextFieldProps>
 export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const {
@@ -33,6 +35,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     renderAsInput,
     id,
     debounceMilliseconds,
+    disableAutoSelect,
     ...textFieldProps
   } = props
 
@@ -54,6 +57,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       id={id}
       {...control(label)}
       readOnly={readOnly}
+      onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
       {...sharedProps}
       {...textFieldProps.InputProps}
     />
@@ -61,6 +65,8 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     <TextField
       id={id}
       {...control(label)}
+      // autoselect on focus highlights input for easy overwriting
+      onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
       helperText={error || defaultHelperText}
       InputLabelProps={{ shrink: !isEmpty, ...textFieldProps.InputLabelProps }}
       InputProps={{ readOnly, ...textFieldProps.InputProps }}

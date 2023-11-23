@@ -284,6 +284,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   dataKey="bodyweight"
                   type={lineType}
                   stroke="green"
+                  dot={false}
                 />
               </>
             )}
@@ -312,6 +313,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   dataKey="value"
                   stroke={palette.primary.dark}
                   type={lineType}
+                  dot={false}
                 />
               </>
             )}
