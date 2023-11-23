@@ -1,4 +1,4 @@
-import { Stack, Typography, useTheme } from '@mui/material'
+import { Box, Stack, Typography, useTheme } from '@mui/material'
 import { useRef, useState } from 'react'
 import { SwiperRef } from 'swiper/react'
 import HistoryGraph from '../components/history/HistoryGraph'
@@ -26,7 +26,9 @@ export default function HistoryPage() {
       </Typography>
       <QueryForm {...{ query, setQuery }} />
 
-      <StyledDivider />
+      <Box py={2}>
+        <StyledDivider />
+      </Box>
       <HistoryCardsSwiper
         swiperRef={swiperRef}
         query={query?.exercise ? query : undefined}

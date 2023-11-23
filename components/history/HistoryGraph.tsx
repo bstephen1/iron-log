@@ -189,11 +189,14 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
           latestBwIndex++
         }
 
-        const latestBw = bodyweightGraphData[latestBwIndex]
+        const latestBw =
+          latestBwIndex < bodyweightGraphData.length
+            ? bodyweightGraphData[latestBwIndex]
+            : undefined
         const bodyweight =
-          includeUnofficial && latestBw.type === 'official'
+          includeUnofficial && latestBw?.type === 'official'
             ? latestBw.value + clothingOffset
-            : latestBw.value
+            : latestBw?.value
 
         const value = record.sets.reduce(
           setReducer,
@@ -218,7 +221,9 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     setReducer,
   ])
 
-  return (
+  return !graphData.length ? (
+    <></>
+  ) : (
     <Stack spacing={2}>
       <GraphOptionsForm
         {...{
@@ -236,105 +241,103 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
         height="100%"
         justifyContent="center"
       >
-        {bodyweightData && (
-          // need to specify a height or the grid and container will both defer to each other and result in zero height
-          <ResponsiveContainer height={windowHeight}>
-            <LineChart
-              margin={{
-                top: 20,
-                right: 5,
-                left: 15,
-                bottom: 10,
-              }}
-              // todo: scroll to card
-              onClick={handleGraphClick}
-              data={graphData}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="unixDate"
-                type="number"
-                tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
-                domain={['auto', 'auto']}
-                angle={-25}
-                scale="time"
-                textAnchor="end"
-                tickMargin={10}
-                height={80}
-              />
-              {showBodyweight && (
-                <>
-                  <YAxis
-                    yAxisId="bodyweight"
-                    name="bodyweight"
-                    dataKey="bodyweight"
-                    type="number"
-                    unit=" kg"
-                    orientation={query?.exercise ? 'right' : 'left'}
-                    stroke="green"
-                    domain={['auto', 'auto']}
-                  />
-                  <Line
-                    yAxisId="bodyweight"
-                    name="bodyweight"
-                    dataKey="bodyweight"
-                    type={lineType}
-                    stroke="green"
-                  />
-                </>
-              )}
-              {query?.exercise && (
-                <>
-                  <YAxis
-                    yAxisId="exercise"
-                    name={recordDisplay.field}
-                    dataKey="value"
-                    type="number"
-                    // note the whitespace!
-                    unit={` ${getUnit(
-                      recordDisplay.field,
-                      // todo: get units from exercise
-                      DEFAULT_DISPLAY_FIELDS.units
-                    )}`}
-                    orientation="left"
-                    // line color
-                    stroke={palette.primary.dark}
-                    domain={['auto', 'auto']}
-                  />
+        {/* need to specify a height or the grid and container will both defer to each other and result in zero height */}
+        <ResponsiveContainer height={windowHeight}>
+          <LineChart
+            margin={{
+              top: 20,
+              right: 5,
+              left: 15,
+              bottom: 10,
+            }}
+            // todo: scroll to card
+            onClick={handleGraphClick}
+            data={graphData}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="unixDate"
+              type="number"
+              tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
+              domain={['auto', 'auto']}
+              angle={-25}
+              scale="time"
+              textAnchor="end"
+              tickMargin={10}
+              height={80}
+            />
+            {showBodyweight && (
+              <>
+                <YAxis
+                  yAxisId="bodyweight"
+                  name="bodyweight"
+                  dataKey="bodyweight"
+                  type="number"
+                  unit=" kg"
+                  orientation={query?.exercise ? 'right' : 'left'}
+                  stroke="green"
+                  domain={['auto', 'auto']}
+                />
+                <Line
+                  yAxisId="bodyweight"
+                  name="bodyweight"
+                  dataKey="bodyweight"
+                  type={lineType}
+                  stroke="green"
+                />
+              </>
+            )}
+            {query?.exercise && (
+              <>
+                <YAxis
+                  yAxisId="exercise"
+                  name={recordDisplay.field}
+                  dataKey="value"
+                  type="number"
+                  // note the whitespace!
+                  unit={` ${getUnit(
+                    recordDisplay.field,
+                    // todo: get units from exercise
+                    DEFAULT_DISPLAY_FIELDS.units
+                  )}`}
+                  orientation="left"
+                  // line color
+                  stroke={palette.primary.dark}
+                  domain={['auto', 'auto']}
+                />
 
-                  <Line
-                    yAxisId="exercise"
-                    name={query.exercise}
-                    dataKey="value"
-                    stroke={palette.primary.dark}
-                    type={lineType}
-                  />
-                </>
-              )}
-              {/* todo: possible to show weigh-in type in tooltip? */}
-              <Tooltip
-                trigger={isDesktop ? 'hover' : 'click'}
-                labelFormatter={convertUnixToDate}
-                formatter={(value, _, { payload }) =>
-                  `${value} kg${
-                    payload.type === 'unofficial' ? ' (unofficial)' : ''
-                  }`
-                }
-              />
-              {/* todo: only show if multiple lines */}
-              <Legend verticalAlign="top" height={30} />
-              <Brush
-                dataKey="unixDate"
-                tickFormatter={convertUnixToDate}
-                // these doesn't accept percentages...
-                width={graphContainerWidth * 0.6}
-                // could only eyeball this trying to get it centered.
-                x={graphContainerWidth * 0.2}
-                startIndex={getStartIndex(graphData)}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
+                <Line
+                  yAxisId="exercise"
+                  name={query.exercise}
+                  dataKey="value"
+                  stroke={palette.primary.dark}
+                  type={lineType}
+                />
+              </>
+            )}
+            {/* todo: possible to show weigh-in type in tooltip? */}
+            <Tooltip
+              trigger={isDesktop ? 'hover' : 'click'}
+              labelFormatter={convertUnixToDate}
+              formatter={(value, _, { payload }) =>
+                `${value} kg${
+                  payload.type === 'unofficial' ? ' (unofficial)' : ''
+                }`
+              }
+            />
+            {/* todo: only show if multiple lines */}
+            <Legend verticalAlign="top" height={30} />
+            <Brush
+              dataKey="unixDate"
+              tickFormatter={convertUnixToDate}
+              // these doesn't accept percentages...
+              width={graphContainerWidth * 0.6}
+              // could only eyeball this trying to get it centered.
+              x={graphContainerWidth * 0.2}
+              startIndex={getStartIndex(graphData)}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </Box>
     </Stack>
   )
