@@ -347,10 +347,12 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
             <Tooltip
               trigger={isDesktop ? 'hover' : 'click'}
               labelFormatter={convertUnixToDate}
-              formatter={(value, _, { payload }) =>
-                `${value} kg${
-                  payload.type === 'unofficial' ? ' (unofficial)' : ''
-                }`
+              formatter={(value, name) =>
+                `${value} ${getUnit(
+                  name === 'bodyweight' ? 'weight' : recordDisplay.field,
+                  // todo: add unit to RecordDisplay so it is selectzble
+                  DEFAULT_DISPLAY_FIELDS.units
+                )}`
               }
             />
             {/* todo: only show if multiple lines */}
