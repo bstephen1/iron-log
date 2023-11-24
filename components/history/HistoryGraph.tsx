@@ -73,6 +73,15 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
   // BWs and records are sorted newest first. It looks more natural in the
   // swiper to start on the right and move left vs oldest first.
   const { data: bodyweightData } = useBodyweightHistory(query)
+  const { data: earliestRecordOfficialBw } = useBodyweightHistory({
+    end: query?.start,
+    limit: 1,
+    type: 'official',
+  })
+  const { data: earliestRecordAnyBw } = useBodyweightHistory({
+    end: query?.start,
+    limit: 1,
+  })
   const [recordDisplay, setRecordDisplay] = useState<RecordDisplay>({
     field: 'weight',
     operator: 'highest',
@@ -103,10 +112,27 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
    *  but if "includeUnofficial" is set it includes all weigh-ins, and adds clothing
    * offset to official weigh-ins to simulate an unofficial gym weight.
    */
-  const bodyweightGraphData = useMemo(
-    () => (includeUnofficial ? bodyweightData : officialBWs) ?? emptyBwArray,
-    [bodyweightData, includeUnofficial, officialBWs]
-  )
+  const bodyweightGraphData = useMemo(() => {
+    const baseData =
+      (includeUnofficial ? bodyweightData : officialBWs) ?? emptyBwArray
+    const earliestRecordBw =
+      (includeUnofficial ? earliestRecordAnyBw : earliestRecordOfficialBw) ??
+      emptyBwArray
+    // When querying records with a set start date, there needs to be one extra bw
+    // record from before the start date to associate with the first record.
+    // Note: BWs are sorted newest to oldest, so it goes at the end.
+    return query?.exercise && query?.start
+      ? [...baseData, ...earliestRecordBw]
+      : baseData
+  }, [
+    bodyweightData,
+    earliestRecordAnyBw,
+    earliestRecordOfficialBw,
+    includeUnofficial,
+    officialBWs,
+    query?.exercise,
+    query?.start,
+  ])
 
   // to track width we want to use the size of the graph container, since that will be smaller than window width
   const { ref: graphContainerRef, width: graphContainerWidth = 0 } =
