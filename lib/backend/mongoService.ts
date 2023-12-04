@@ -66,9 +66,9 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
         // The latter provides for some pretty clunky ux when editing Autocomplete chips, so
         // we are opting for the former unless performance notably degrades.
         // See: https://stackoverflow.com/questions/29774032/mongodb-find-exact-array-match-but-order-doesnt-matter
-        filter[key] = { $size: array.length, $all: array } as any
-        // if matching empty array, can't use $all. It always returns no documents when given an empty array.
-        if (array.length) {
+        filter[key] = { $size: array.length } as any
+        // If matching empty array, can't use $all. It always returns no documents when given an empty array.
+        if (!isEmpty) {
           filter[key]['$all'] = array
         }
         break
