@@ -5,7 +5,10 @@ import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
 import { delay, http, HttpResponse } from 'msw'
 import { NextApiHandler } from 'next'
-import { NtarhParameters, testApiHandler } from 'next-test-api-route-handler'
+import {
+  NtarhInitPagesRouter,
+  testApiHandler,
+} from 'next-test-api-route-handler'
 import { ApiError } from 'next/dist/server/api-utils'
 import { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
@@ -94,7 +97,8 @@ export function useServerOnce(
   )
 }
 
-interface TestApiResponseProps<T = any> extends Partial<NtarhParameters<T>> {
+interface TestApiResponseProps<T = any>
+  extends Partial<NtarhInitPagesRouter<T>> {
   data?: T
   handler: NextApiHandler<T>
   method?: string
@@ -107,11 +111,11 @@ export async function expectApiRespondsWithData<T>({
 }: TestApiResponseProps) {
   const hasBody = method === 'PUT' || method === 'PATCH' || method === 'POST'
   const body = hasBody ? JSON.stringify(data) : undefined
-  const headers = hasBody ? { 'content-type': 'application/json' } : {}
+  const headers = hasBody ? { 'content-type': 'application/json' } : undefined
 
   await testApiHandler<T>({
     ...testApiHandlerProps,
-    handler,
+    pagesHandler: handler,
     test: async ({ fetch }) => {
       const res = await fetch({ method, body, headers })
 
@@ -128,7 +132,7 @@ export async function expectApiErrorsOnInvalidMethod({
 }: TestApiResponseProps) {
   await testApiHandler<ApiError>({
     ...testApiHandlerProps,
-    handler,
+    pagesHandler: handler,
     test: async ({ fetch }) => {
       // must be a supported nextjs method: https://github.com/vercel/next.js/blob/canary/packages/next/src/server/web/http.ts
       // default method is one that is never used in the app
@@ -146,7 +150,7 @@ export async function expectApiErrorsOnMissingParams({
 }: TestApiResponseProps) {
   await testApiHandler<ApiError>({
     ...testApiHandlerProps,
-    handler,
+    pagesHandler: handler,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
 
