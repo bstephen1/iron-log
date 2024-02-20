@@ -37,7 +37,16 @@ configure({
 
 // msw server
 beforeAll(() => {
-  server.listen()
+  server.listen({
+    onUnhandledRequest(req, print) {
+      // testApiHandler for api routes prompts an msw interception of the form "http://localhost:61913/"
+      // where the port number is a random 5 digit number.
+      // This suppresses the "unhandled msw interception" warning
+      if (req.url.match(/http:\/\/localhost:[0-9]{5}\//)) return
+
+      print.warning()
+    },
+  })
   // @testing-library/react explicitly hardcodes "jest.advanceTimersByTime" when using fake timers,
   // causing any test using vi.useFakeTimers() to hang indefinitely when using user.click().
   // This workaround reassigns advanceTimersByTime to vitest's version.
