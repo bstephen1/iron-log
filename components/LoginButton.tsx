@@ -44,7 +44,7 @@ export default function LoginButton() {
         color="secondary"
         onClick={status === 'unauthenticated' ? handleSignin : handleSignout}
       >
-        Sign {status === 'unauthenticated' ? 'in' : 'out'}
+        <span>Sign {status === 'unauthenticated' ? 'in' : 'out'}</span>
       </LoadingButton>
     </Box>
   )

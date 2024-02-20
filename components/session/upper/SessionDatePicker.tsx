@@ -1,9 +1,8 @@
-import { Badge, TextField, TextFieldProps } from '@mui/material'
+import { Badge, TextFieldProps } from '@mui/material'
 import {
-  CalendarPickerSkeleton,
   DatePicker,
+  DayCalendarSkeleton,
   PickersDay,
-  PickersDayProps,
 } from '@mui/x-date-pickers'
 import { Dayjs } from 'dayjs'
 import { useState } from 'react'
@@ -88,17 +87,15 @@ function SessionDatePickerInner({
       label={label}
       value={pickerValue}
       onChange={handleChange}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          {...textFieldProps}
-          InputLabelProps={{
-            ...params.InputLabelProps,
+      slotProps={{
+        textField: {
+          ...textFieldProps,
+          InputLabelProps: {
             ...textFieldProps?.InputLabelProps,
             shrink: true,
-          }}
-        />
-      )}
+          },
+        },
+      }}
       // onChange only changes when a new date is actually selected.
       // onMonthChange changes when the visible month in the calendar changes.
       onMonthChange={(newMonth) => {
@@ -106,26 +103,28 @@ function SessionDatePickerInner({
         setVisibleMonth(newMonth)
       }}
       loading={isLoading}
-      renderLoading={() => <CalendarPickerSkeleton />}
+      renderLoading={() => <DayCalendarSkeleton />}
       // apparently this needs PickersDayProps' type defined to infer types for the other args
-      renderDay={(dayjs, _, DayComponentProps: PickersDayProps<Dayjs>) => {
-        const day = dayjs.format(DATE_FORMAT)
-        const isBadgeVisible = sessionLogsIndex[day]?.records.length
-        // todo: can populate this with more info, like session type (after that's implemented)
-        return (
-          <Badge
-            key={day}
-            overlap="circular"
-            variant="dot"
-            color="secondary"
-            aria-label={`${day}, ${
-              isBadgeVisible ? 'Session data exists' : 'No session'
-            }`}
-            invisible={!isBadgeVisible}
-          >
-            <PickersDay {...DayComponentProps} />
-          </Badge>
-        )
+      slots={{
+        day: (DayComponentProps) => {
+          const day = DayComponentProps.day.format(DATE_FORMAT)
+          const isBadgeVisible = sessionLogsIndex[day]?.records.length
+          // todo: can populate this with more info, like session type (after that's implemented)
+          return (
+            <Badge
+              key={day}
+              overlap="circular"
+              variant="dot"
+              color="secondary"
+              aria-label={`${day}, ${
+                isBadgeVisible ? 'Session data exists' : 'No session'
+              }`}
+              invisible={!isBadgeVisible}
+            >
+              <PickersDay {...DayComponentProps} />
+            </Badge>
+          )
+        },
       }}
     />
   )

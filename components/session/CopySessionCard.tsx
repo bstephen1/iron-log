@@ -127,7 +127,8 @@ export default function CopySessionCard() {
             variant="contained"
             onClick={handleCopy}
           >
-            Copy session
+            {/* add html tag to LoadingButtons to prevent possible crash: https://mui.com/material-ui/react-button/#loading-button */}
+            <span>Copy session</span>
           </LoadingButton>
         )}
       </Stack>
