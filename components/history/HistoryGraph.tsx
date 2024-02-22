@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { CategoricalChartState } from 'recharts/types/chart/generateCategoricalChart'
+import { CategoricalChartFunc } from 'recharts/types/chart/generateCategoricalChart'
 import useResizeObserver from 'use-resize-observer'
 import RecordDisplay from '../../components/history/RecordDisplay'
 import {
@@ -152,7 +152,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     return window.removeEventListener('resize', handleWindowResize)
   }, [])
 
-  const handleGraphClick = (e: CategoricalChartState) => {
+  const handleGraphClick: CategoricalChartFunc = (e) => {
     if (!records || !e || !e.activePayload) return
 
     const date = dayjs
