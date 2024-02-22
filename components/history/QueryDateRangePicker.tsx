@@ -43,7 +43,6 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
         select
         value={quickMonthRange}
         onChange={(e) => handleQuickMonthChange(e.target.value)}
-        // should also shrink input
         SelectProps={{
           displayEmpty: true,
         }}

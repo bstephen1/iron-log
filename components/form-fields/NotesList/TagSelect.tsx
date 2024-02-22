@@ -10,6 +10,7 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import TagChips from './TagChips'
+import { fixSelectBackground } from '../../../lib/frontend/constants'
 
 interface Props extends Partial<SelectProps<string | string[]>> {
   options: string[]
@@ -47,6 +48,7 @@ export default function TagSelect({
         <TagChips {...{ selected, multiple, readOnly: selectProps.readOnly }} />
       )}
       sx={{ pr: 2 }}
+      {...fixSelectBackground}
       {...selectProps}
     >
       {options.map((option) => (

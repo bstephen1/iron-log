@@ -2,6 +2,7 @@ import { MenuItem, SelectProps, TextField, TextFieldProps } from '@mui/material'
 import { ReactNode } from 'react'
 import * as yup from 'yup'
 import useField from './useField'
+import { fixSelectBackground } from '../../lib/frontend/constants'
 
 interface Props<V, O> {
   label: string
@@ -45,19 +46,6 @@ export default function SelectFieldAutosave<
     debounceMilliseconds: 0,
   })
 
-  /** Using standard variant causes input background to have a gray shadow after selecting something.
-   *  This behavior is apparently completely undocumented and uneditable.
-   *  This prevents that, keeping background transparent.
-   *
-   *  Note: changing variant in SelectProps has no visual effect; the visible variant is determined by the variant in TextFieldProps.
-   */
-  // Note: The behavior occurs when using TextField or Select with standard variant.
-  // Select can use "input={<Input />}" instead of setting variant to avoid it.
-  // That doesn't work here because TextField automatically passes the variant to the inner Select.
-  // Instead we have to override the variant to trick the Select to thinking it's outlined,
-  // which doesn't turn gray.
-  const fixStandardBackground: SelectProps = { variant: 'outlined' }
-
   if (!children && typeof options[0] !== 'string') {
     console.error(
       'SelectFieldAutosave was not rendered because it was given non-string options but no children. This component only auto-renders menus for options of type string[]. '
@@ -78,7 +66,7 @@ export default function SelectFieldAutosave<
       // @ts-ignore TextField fails to pass the generic param to SelectProps, so it incorrectly assumes the default, unknown
       SelectProps={{
         displayEmpty: !!emptyOption,
-        ...fixStandardBackground,
+        ...fixSelectBackground,
         ...textFieldProps.SelectProps,
       }}
     >

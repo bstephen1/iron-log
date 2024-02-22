@@ -56,7 +56,7 @@ export default memo(function RenderSetRow({
               })
             : null,
         {
-          optimisticData: (cur: Record) => {
+          optimisticData: (cur) => {
             if (!cur) return null
             const newSets = [...cur.sets]
             newSets[index] = { ...newSets[index], ...changes }

@@ -17,6 +17,7 @@ import RecordDisplay, {
   RecordDisplayOperator,
   recordDisplayOperators,
 } from './RecordDisplay'
+import { fixSelectBackground } from '../../lib/frontend/constants'
 
 const fieldOptions = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
@@ -53,8 +54,7 @@ export default function RecordDisplaySelect({
         displayEmpty: true,
         autoWidth: true,
         renderValue: () => <Typography>{menuValue}</Typography>,
-        // Fix standard background, preventing gray shadow. See SelectFieldAutosave.
-        variant: 'outlined',
+        ...fixSelectBackground,
         ...SelectProps,
       }}
       {...textFieldProps}
