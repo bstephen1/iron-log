@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb'
-import { connectToLocalDb } from '../lib/backend/mongoConnect'
 import Category from '../models/AsyncSelectorOption/Category'
 import {
   DisplayFields,
@@ -14,6 +13,15 @@ import SessionLog from '../models/SessionLog'
 import { DB_UNITS } from '../models/Set'
 import { Status } from '../models/Status'
 import './polyfills'
+import { devUserId } from '../lib/frontend/constants'
+import path from 'path'
+import dotenv from 'dotenv'
+
+const envPath = path.resolve(__dirname, '..', '.env.development')
+dotenv.config({ path: envPath })
+
+// must wait to import until dotenv is done pulling in env vars
+const { db, collections, client } = await import('../lib/backend/mongoConnect')
 
 const getDisplayFields = (names: VisibleField['name'][]): DisplayFields => ({
   visibleFields: ORDERED_DISPLAY_FIELDS.filter((field) =>
@@ -22,13 +30,10 @@ const getDisplayFields = (names: VisibleField['name'][]): DisplayFields => ({
   units: DB_UNITS,
 })
 
-// must match corresponding dev id from [...nextauth].api.ts
-const devUserId = new ObjectId('1234567890AB')
+const devUserObjectId = new ObjectId(devUserId)
 
 const withId = <T>(items: T[]) =>
-  items.map((item) => ({ ...item, userId: devUserId }))
-
-const { db, collections, client } = await connectToLocalDb()
+  items.map((item) => ({ ...item, userId: devUserObjectId }))
 
 const categories = [
   new Category('quads'),

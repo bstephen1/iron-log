@@ -39,5 +39,12 @@ export async function getUserId(
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'You must be logged in.')
   }
 
+  if (session.user.id.length !== 24) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      'user id must be a 24 character string, given "' + session.user.id + '"'
+    )
+  }
+
   return new ObjectId(session.user.id)
 }

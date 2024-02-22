@@ -3,6 +3,7 @@ import { configure } from '@testing-library/react'
 import { server } from './msw-mocks/server'
 import { vi } from 'vitest'
 import 'whatwg-fetch'
+import { devUserId } from './lib/frontend/constants'
 
 // set env variables with import.meta.env
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
@@ -15,16 +16,18 @@ import.meta.env.DEBUG_PRINT_LIMIT = '50000'
 
 // vi.mock will import the actual module and automock all exports.
 // If a factory is provided, it replaces the actual module with the factory.
+
+// mongoConnect must be completely replaced since it looks for env vars at the top level
 vi.mock('./lib/backend/mongoConnect', () => ({
-  getDb: () => ({
-    collections: vi.fn(),
-  }),
-  getCollections: () => vi.fn(),
+  clientPromise: vi.fn(),
+  db: vi.fn(),
+  collections: vi.fn(),
+  client: vi.fn(),
 }))
 vi.mock('./lib/backend/mongoService')
 vi.mock('./pages/api/auth/[...nextauth].api', () => ({ authOptions: vi.fn() }))
 vi.mock('next-auth', () => ({
-  getServerSession: () => ({ user: { id: '1234567890AB' } }),
+  getServerSession: () => ({ user: { id: devUserId } }),
 }))
 
 // configure testing-library options

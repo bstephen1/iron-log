@@ -1,10 +1,12 @@
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
+import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import type { NextAuthOptions, Session } from 'next-auth'
 import NextAuth, { SessionStrategy } from 'next-auth'
+import { Adapter } from 'next-auth/adapters'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
-import { createMongoConnection } from '../../../lib/backend/mongoConnect'
+import { clientPromise } from '../../../lib/backend/mongoConnect'
+import { devUserId } from '../../../lib/frontend/constants'
 
 const devProviders =
   process.env.NODE_ENV !== 'production'
@@ -16,8 +18,7 @@ const devProviders =
           name: 'Dev User',
           credentials: {},
           async authorize() {
-            // ObjectId from '1234567890AB'
-            const user = { id: '313233343536373839304142' }
+            const user = { id: devUserId }
 
             // Any object returned will be saved in `user` property of the JWT
             return user
@@ -43,7 +44,11 @@ export const authOptions: NextAuthOptions = {
   // The official adapter uses an auto generated mongo ObjectId for the id.
   // We could define a custom adapter to use our own generateId() function but that adds a maintenance and complexity cost.
   // So for now we're going with the stock adapter and seeing if that causes issues.
-  adapter: MongoDBAdapter(createMongoConnection()),
+  // todo: currently some typescript issues with nextauth rebranding to auth.js.
+  // MongoDBAdapter has transitioned from next-auth pkg to @auth, but NextAuthOptions is still in next-auth and
+  // expects different typing for the adapter. The next-auth adapter is no longer maintained, and is unusable with
+  // mongo v6. For now we can just force the type.
+  adapter: MongoDBAdapter(clientPromise) as Adapter,
   // By default the client receives only minimal information. Callbacks allow us to add needed properties to the client model.
   // (We want the id)
   callbacks: {

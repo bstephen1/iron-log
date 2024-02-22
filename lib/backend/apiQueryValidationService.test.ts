@@ -21,6 +21,7 @@ import {
   validateSort,
   validateStatus,
 } from './apiQueryValidationService'
+import { devUserId } from '../frontend/constants'
 
 describe('validation', () => {
   describe('validateId', () => {
@@ -113,7 +114,7 @@ describe('validation', () => {
 })
 
 describe('build query', () => {
-  const userId = new ObjectId('123456789ABC')
+  const userId = new ObjectId(devUserId)
 
   describe('buildDateRangeQuery', () => {
     it('builds full query', () => {

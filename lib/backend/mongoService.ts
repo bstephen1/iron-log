@@ -1,19 +1,17 @@
-import { Filter, ModifyResult, ObjectId } from 'mongodb'
+import { Filter, ObjectId } from 'mongodb'
 import Category from '../../models/AsyncSelectorOption/Category'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import Bodyweight from '../../models/Bodyweight'
+import Record from '../../models/Record'
+import SessionLog from '../../models/SessionLog'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import {
   MatchType,
   MatchTypes,
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
-import { getCollections, getDb } from './mongoConnect'
-
-const db = await getDb()
+import { collections } from './mongoConnect'
 const {
   sessions,
   exercises,
@@ -21,7 +19,7 @@ const {
   categories,
   records,
   bodyweightHistory,
-} = getCollections(db)
+} = collections
 
 interface UpdateFieldsProps<T extends { _id: string }> {
   id: T['_id']
@@ -76,25 +74,6 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
   }
 }
 
-// todo: would like to extract update functions to a generic function, but it's
-// tough to assign the collection to use. Could probably pass as an arg but the typing
-// is tough
-// async function updateDocument<T extends { _id: string }>(collection: Collection<WithUserId<T>>, userId: ObjectId, document: T) {
-//   // Note: per nodejs mongo adapter docs, ModifyResult<> is deprecated and at some point
-//   // will be removed, leaving findOneAndXXX calls returning just the document itself.
-//   // See: https://mongodb.github.io/node-mongodb-native/5.1/interfaces/ModifyResult.html
-//   const res = await collection.findOneAndReplace(
-//     { userId, _id: document._id },
-//     { ...document, userId },
-//     {
-//       upsert: true,
-//       projection: { userId: 0 },
-//       returnDocument: 'after',
-//     }
-//   )
-//   return res.value
-// }
-
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
 // This is to make the api less tightly coupled to mongo, in case the db changes down the line.
 // Here ObjectId is used instead because this is the service that interfaces with mongo.
@@ -142,10 +121,7 @@ export async function updateSession(
   userId: ObjectId,
   sessionLog: SessionLog
 ): Promise<SessionLog | null> {
-  // Note: per nodejs mongo adapter docs, ModifyResult<> is deprecated and at some point
-  // will be removed, leaving findOneAndXXX calls returning just the document itself.
-  // See: https://mongodb.github.io/node-mongodb-native/5.1/interfaces/ModifyResult.html
-  const res: ModifyResult<SessionLog> = await sessions.findOneAndReplace(
+  return await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },
     { ...sessionLog, userId },
     {
@@ -154,7 +130,6 @@ export async function updateSession(
       returnDocument: 'after',
     }
   )
-  return res.value
 }
 
 // todo: make this a transaction?
@@ -164,16 +139,15 @@ export async function deleteSessionRecord(
   recordId: string
 ): Promise<SessionLog | null> {
   await deleteRecord(userId, recordId)
-  // $pull is equivalent to removing an element from an array
-  const res: ModifyResult<SessionLog> = await sessions.findOneAndUpdate(
+  return await sessions.findOneAndUpdate(
     { userId, date },
+    // $pull is equivalent to removing an element from an array
     { $pull: { records: recordId } },
     {
       projection: { userId: 0 },
       returnDocument: 'after',
     }
   )
-  return res.value
 }
 
 // todo: fetch sessions in date range
@@ -212,7 +186,7 @@ export async function fetchRecords({
   const { 'exercise.name': name, ...otherFilters } = filter
 
   return await records
-    .aggregate([
+    .aggregate<Record>([
       // date range will be overwritten if a specific date is given in the filter
       {
         $match: { date: { $gte: start, $lte: end }, ...otherFilters, userId },
@@ -245,9 +219,8 @@ export async function fetchRecord(
   userId: ObjectId,
   _id: Record['_id']
 ): Promise<Record | null> {
-  // every interaction with the db collections will have to manually drop the WithUserId<> wrapper
   return await records
-    .aggregate([
+    .aggregate<Record>([
       { $match: { userId, _id } },
       {
         $lookup: {
@@ -338,7 +311,7 @@ export async function updateExercise(
   userId: ObjectId,
   exercise: Exercise
 ): Promise<Exercise | null> {
-  const res: ModifyResult<Exercise> = await exercises.findOneAndReplace(
+  return await exercises.findOneAndReplace(
     { userId, _id: exercise._id },
     { ...exercise, userId },
     {
@@ -347,14 +320,13 @@ export async function updateExercise(
       projection: { userId: 0 },
     }
   )
-  return res.value
 }
 
 export async function updateExerciseFields(
   userId: ObjectId,
   { id, updates }: UpdateFieldsProps<Exercise>
 ): Promise<Exercise | null> {
-  const res: ModifyResult<Exercise> = await exercises.findOneAndUpdate(
+  return await exercises.findOneAndUpdate(
     { userId, _id: id },
     { $set: updates },
     {
@@ -362,7 +334,6 @@ export async function updateExerciseFields(
       projection: { userId: 0 },
     }
   )
-  return res.value
 }
 
 //----------
@@ -422,12 +393,14 @@ export async function updateModifierFields(
       { $set: { 'activeModifiers.$': updates.name } }
     )
   }
-  const res: ModifyResult<Modifier> = await modifiers.findOneAndUpdate(
+  return await modifiers.findOneAndUpdate(
     { userId, _id: id },
     { $set: updates },
-    { projection: { userId: 0 }, returnDocument: 'after' }
+    {
+      projection: { userId: 0 },
+      returnDocument: 'after',
+    }
   )
-  return res.value
 }
 
 //----------
@@ -477,12 +450,14 @@ export async function updateCategoryFields(
       { $set: { category: updates.name } }
     )
   }
-  const res: ModifyResult<Category> = await categories.findOneAndUpdate(
+  return await categories.findOneAndUpdate(
     { userId, _id: id },
     { $set: updates },
-    { projection: { userId: 0 }, returnDocument: 'after' }
+    {
+      projection: { userId: 0 },
+      returnDocument: 'after',
+    }
   )
-  return res.value
 }
 
 //------------
@@ -527,24 +502,22 @@ export async function updateBodyweight(
   userId: ObjectId,
   newBodyweight: Bodyweight
 ): Promise<Bodyweight | null> {
-  const res: ModifyResult<Bodyweight> =
-    await bodyweightHistory.findOneAndUpdate(
-      { userId, date: newBodyweight.date, type: newBodyweight.type },
-      // Can't just update the doc because the new one will have a new _id.
-      // setOnInsert only activates if upserting. The upsert inserts a new doc built from
-      // the find query plus the update fields (so all fields have to be manually spelled out).
-      // There might be a way to replace the whole doc, but would have to move the _id to setOnInsert.
-      {
-        $set: { value: newBodyweight.value },
-        $setOnInsert: { _id: newBodyweight._id },
-      },
-      {
-        upsert: true,
-        projection: { userId: 0 },
-        returnDocument: 'after',
-      }
-    )
-  return res.value
+  return await bodyweightHistory.findOneAndUpdate(
+    { userId, date: newBodyweight.date, type: newBodyweight.type },
+    // Can't just update the doc because the new one will have a new _id.
+    // setOnInsert only activates if upserting. The upsert inserts a new doc built from
+    // the find query plus the update fields (so all fields have to be manually spelled out).
+    // There might be a way to replace the whole doc, but would have to move the _id to setOnInsert.
+    {
+      $set: { value: newBodyweight.value },
+      $setOnInsert: { _id: newBodyweight._id },
+    },
+    {
+      upsert: true,
+      projection: { userId: 0 },
+      returnDocument: 'after',
+    }
+  )
 }
 
 // todo: use id, not date. Not currently in use.

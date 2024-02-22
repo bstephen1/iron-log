@@ -12,62 +12,54 @@ type WithUserId<T> = { userId: ObjectId } & T
 
 // pkFactory overwrites the default mongo _id generation
 const options = { w: 'majority' as W, pkFactory: { createPk: generateId } }
+let client: MongoClient
+/** Connection to mongo using MONGODB_URI env var */
+let clientPromise: Promise<MongoClient>
+let db: Db
 
-let clientPromise: Promise<MongoClient> | undefined
+// This is based on the vercel nextjs example: https://github.com/vercel/next.js/blob/canary/examples/with-mongodb/lib/mongodb.ts
+// which is also recommended in the next-auth docs: https://authjs.dev/reference/adapter/mongodb
 
-/** return db collections with proper typing */
-export const getCollections = (db: Db) => ({
+if (!process.env.MONGODB_URI) {
+  throw new Error('MONGODB_URI is undefined! Define in .env')
+}
+
+const uri = process.env.MONGODB_URI
+
+if (process.env.NODE_ENV === 'development') {
+  // In development mode, use a global variable so that the value
+  // is preserved across module reloads caused by HMR (Hot Module Replacement).
+  let globalWithMongo = global as typeof globalThis & {
+    _mongoClientPromise?: Promise<MongoClient>
+  }
+
+  if (!globalWithMongo._mongoClientPromise) {
+    client = new MongoClient(uri, options)
+    globalWithMongo._mongoClientPromise = client.connect()
+  }
+  clientPromise = globalWithMongo._mongoClientPromise
+} else {
+  // In production mode, it's best to not use a global variable.
+  client = new MongoClient(uri, options)
+  clientPromise = client.connect()
+}
+
+if (!process.env.MONGODB_NAME) {
+  throw new Error('MONGODB_NAME is undefined! Define in .env')
+}
+
+db = (await clientPromise).db(process.env.MONGODB_NAME)
+
+/** db collections with proper typing */
+const collections = {
   sessions: db.collection<WithUserId<SessionLog>>('sessions'),
   exercises: db.collection<WithUserId<Exercise>>('exercises'),
   modifiers: db.collection<WithUserId<Modifier>>('modifiers'),
   categories: db.collection<WithUserId<Category>>('categories'),
   records: db.collection<WithUserId<Record>>('records'),
   bodyweightHistory: db.collection<WithUserId<Bodyweight>>('bodyweightHistory'),
-})
-
-/** Connect to the local db. For use in scripts that don't have access to env vars.
- *  Uri and db name use the same values from env.development.
- *
- * Note: to terminate the script, client.close() must be called.
- * Also db operations are async and should be awaited.
- */
-export const connectToLocalDb = async () => {
-  const client = await new MongoClient(
-    'mongodb://localhost:27017/test',
-    options
-  ).connect()
-
-  const db = client.db('test')
-  const collections = getCollections(db)
-
-  return { client, db, collections }
 }
 
-/** create a connection to mongo using MONGODB_URI env vars */
-export const createMongoConnection = () => {
-  if (!process.env.MONGODB_URI) {
-    throw new Error('MONGODB_URI is undefined! Define in .env')
-  }
-
-  const uri = process.env.MONGODB_URI
-
-  console.log('connecting to ' + uri)
-
-  const client = new MongoClient(uri, options)
-  clientPromise = client.connect()
-
-  return clientPromise
-}
-
-/** gets the db specified at the MONGODB_NAME env var*/
-export const getDb = async () => {
-  if (!process.env.MONGODB_NAME) {
-    throw new Error('MONGODB_NAME is undefined! Define in .env')
-  } else if (!clientPromise) {
-    throw new Error(
-      'Tried to call getDb() before createMongoConnection() could set up a connection to mongo.'
-    )
-  }
-
-  return (await clientPromise).db(process.env.MONGODB_NAME)
-}
+// Export a module-scoped MongoClient promise. By doing this in a
+// separate module, the client can be shared across functions.
+export { clientPromise, db, collections, client }
