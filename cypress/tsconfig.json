@@ -9,6 +9,9 @@
     "strict": true,
     // this is important; ignores some jest/cypress conflicts in node_modules types
     "skipLibCheck": true,
+    // have to include this since package.json has "type: module"
+    // see: https://github.com/cypress-io/cypress/issues/23552#issuecomment-1606338593
+    "module": "ES2015",
     "target": "es5",
     "lib": ["es5", "dom"],
     // if adding testing library, add as a type. https://testing-library.com/docs/cypress-testing-library/intro/

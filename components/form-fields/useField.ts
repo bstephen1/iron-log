@@ -80,7 +80,16 @@ export default function useField<T = string>({
       console.log(
         `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )
-    if (!yupValidator || value === initialValue) {
+
+    // updating yup to v1 changed reach() to return Schema | Reference
+    // yup has no documentation about what a reference is. Reference makes typescript
+    // complain because it has no validate() property. Quick fix is to just guard it here.
+    // See (unanswered): https://stackoverflow.com/questions/75704105/yup-1-x-how-to-validate-against-the-schema-of-a-specific-field
+    if (
+      !yupValidator ||
+      value === initialValue ||
+      !yup.isSchema(yupValidator)
+    ) {
       return true
     }
 

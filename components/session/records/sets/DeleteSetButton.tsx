@@ -24,7 +24,7 @@ export default memo(function DeleteSetButton({ _id, index, my }: Props) {
             })
           : null,
       {
-        optimisticData: (cur: Record) =>
+        optimisticData: (cur) =>
           cur ? { ...cur, sets: cur.sets.filter((_, j) => j !== index) } : null,
         revalidate: false,
       }

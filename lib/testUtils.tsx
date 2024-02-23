@@ -3,14 +3,17 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { render, RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
-import { rest } from 'msw'
-import { server } from '../msw-mocks/server'
+import { delay, http, HttpResponse } from 'msw'
 import { NextApiHandler } from 'next'
-import { NtarhParameters, testApiHandler } from 'next-test-api-route-handler'
+import {
+  NtarhInitPagesRouter,
+  testApiHandler,
+} from 'next-test-api-route-handler'
 import { ApiError } from 'next/dist/server/api-utils'
 import { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 import { vi } from 'vitest'
+import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
 
 // This file overwrites @testing-library's render and wraps it with components that
@@ -81,19 +84,21 @@ export function useServerOnce(
   json?: any,
   options?: ServerOptions
 ) {
-  const { status, delay } = options ?? {}
+  const { status } = options ?? {}
   server.use(
-    rest.all(url, (_, res, ctx) =>
-      res.once(
-        ctx.status(status ?? StatusCodes.OK),
-        ctx.json(json ?? {}),
-        ctx.delay(delay ?? 0)
-      )
+    http.all(
+      url,
+      async () => {
+        await delay(options?.delay ?? 0)
+        return HttpResponse.json(json, { status: status ?? StatusCodes.OK })
+      },
+      { once: true }
     )
   )
 }
 
-interface TestApiResponseProps<T = any> extends Partial<NtarhParameters<T>> {
+interface TestApiResponseProps<T = any>
+  extends Partial<NtarhInitPagesRouter<T>> {
   data?: T
   handler: NextApiHandler<T>
   method?: string
@@ -106,11 +111,11 @@ export async function expectApiRespondsWithData<T>({
 }: TestApiResponseProps) {
   const hasBody = method === 'PUT' || method === 'PATCH' || method === 'POST'
   const body = hasBody ? JSON.stringify(data) : undefined
-  const headers = hasBody ? { 'content-type': 'application/json' } : {}
+  const headers = hasBody ? { 'content-type': 'application/json' } : undefined
 
   await testApiHandler<T>({
     ...testApiHandlerProps,
-    handler,
+    pagesHandler: handler,
     test: async ({ fetch }) => {
       const res = await fetch({ method, body, headers })
 
@@ -127,9 +132,11 @@ export async function expectApiErrorsOnInvalidMethod({
 }: TestApiResponseProps) {
   await testApiHandler<ApiError>({
     ...testApiHandlerProps,
-    handler,
+    pagesHandler: handler,
     test: async ({ fetch }) => {
-      const res = await fetch({ method: method ?? 'TRACE' })
+      // must be a supported nextjs method: https://github.com/vercel/next.js/blob/canary/packages/next/src/server/web/http.ts
+      // default method is one that is never used in the app
+      const res = await fetch({ method: method ?? 'OPTIONS' })
 
       expect(res.status).toBe(methodNotAllowed.statusCode)
       expect(await res.json()).toBe(methodNotAllowed.message)
@@ -143,7 +150,7 @@ export async function expectApiErrorsOnMissingParams({
 }: TestApiResponseProps) {
   await testApiHandler<ApiError>({
     ...testApiHandlerProps,
-    handler,
+    pagesHandler: handler,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
 

@@ -5,8 +5,8 @@ import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
 import Record from '../../../../models/Record'
 import AddSetButton from './AddSetButton'
-import SetInput from './RenderSetRow'
 import SetHeader from './SetHeader'
+import RenderSetRow from './RenderSetRow'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
@@ -44,7 +44,7 @@ export default function RenderSets({
       />
       <Box>
         {sets.map((set, i) => (
-          <SetInput
+          <RenderSetRow
             key={i}
             index={i}
             {...{ ...set, displayFields, readOnly, _id, extraWeight }}

@@ -1,7 +1,7 @@
 import { DatePickerProps } from '@mui/lab'
 import { MenuItem, Stack, TextField } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import { UpdateState } from '../../lib/util'
@@ -43,7 +43,6 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
         select
         value={quickMonthRange}
         onChange={(e) => handleQuickMonthChange(e.target.value)}
-        // should also shrink input
         SelectProps={{
           displayEmpty: true,
         }}
@@ -85,11 +84,9 @@ function QueryDatePicker({
   return (
     <DatePicker
       {...datePickerProps}
-      // This type determines onChange type, but even as a string onChange
-      // is still a Dayjs. String is better though for handling null.
-      // dayjs(null) puts the picker in an error state.
-      value={date ?? null}
-      onChange={(newDay: Dayjs | null) => {
+      showDaysOutsideCurrentMonth
+      value={dayjs(date)}
+      onChange={(newDay) => {
         // Only update the query when the value is valid, or null.
         // Otherwise it immediately updates the query to undefined which triggers
         // a rerender and resets DatePicker to dayjs(undefined), which returns the current date.
@@ -97,7 +94,7 @@ function QueryDatePicker({
           upDate(newDay ? newDay.format(DATE_FORMAT) : undefined)
         }
       }}
-      renderInput={(params) => <TextField {...params} fullWidth />}
+      slotProps={{ textField: { fullWidth: true } }}
     />
   )
 }

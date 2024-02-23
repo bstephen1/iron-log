@@ -36,7 +36,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
       URI_RECORDS + _id,
       updateRecordFields(_id, { [`sets.${sets.length}`]: newSet }),
       {
-        optimisticData: (cur: Record) =>
+        optimisticData: (cur) =>
           cur ? { ...cur, sets: sets.concat(newSet) } : null,
         revalidate: false,
       }

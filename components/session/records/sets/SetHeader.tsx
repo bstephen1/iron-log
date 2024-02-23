@@ -20,6 +20,7 @@ import {
   printFieldWithUnits,
   VisibleField,
 } from '../../../../models/DisplayFields'
+import { fixSelectBackground } from '../../../../lib/frontend/constants'
 
 interface Props extends Partial<SelectProps<string[]>> {
   mutateExerciseFields?: UpdateFields<Exercise>
@@ -89,6 +90,7 @@ export default memo(function SetHeader({
         displayEmpty
         value={selectedNames}
         label="Set Fields"
+        notched={undefined}
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
         renderValue={() => (
@@ -131,6 +133,7 @@ export default memo(function SetHeader({
             )}
           </Stack>
         )}
+        {...fixSelectBackground}
         {...selectProps}
       >
         <MenuItem disabled value="">

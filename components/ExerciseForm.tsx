@@ -79,6 +79,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Equipment weight"
           initialValue={exercise.weight}
           handleSubmit={(weight) => handleUpdate({ weight })}
+          fullWidth
           variant="outlined"
           defaultHelperText=" "
           // todo: might want to make this selectable between lbs/kg

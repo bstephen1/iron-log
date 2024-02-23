@@ -53,6 +53,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
           label="Equipment weight"
           initialValue={modifier.weight}
           handleSubmit={(weight) => handleUpdate({ weight })}
+          fullWidth
           variant="outlined"
           defaultHelperText=" "
           // todo: might want to make this selectable between lbs/kg
