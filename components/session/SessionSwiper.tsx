@@ -1,6 +1,6 @@
 import { Stack, useMediaQuery, useTheme } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
-import { Keyboard, Navigation, Pagination } from 'swiper'
+import { Keyboard, Navigation, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'

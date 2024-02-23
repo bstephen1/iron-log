@@ -1,5 +1,5 @@
 import { Box, CardProps, Stack, Typography } from '@mui/material'
-import { Navigation, Pagination, Virtual } from 'swiper'
+import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import { Swiper, SwiperProps, SwiperRef, SwiperSlide } from 'swiper/react'
 import { useRecords } from '../../../lib/frontend/restService'
 import { RecordQuery } from '../../../models/query-filters/RecordQuery'
@@ -152,5 +152,4 @@ export default memo(function HistoryCardsSwiper({
       </Box>
     </Stack>
   )
-},
-isEqual)
+}, isEqual)
