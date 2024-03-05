@@ -72,6 +72,8 @@ export default function BodyweightInput({
       }
       handleSubmit={handleSubmit}
       yupValidator={yup.reach(validationSchema, 'value')}
+      // allow user to update bw with same value if latest date isn't the current date
+      showSubmit={data?.[0]?.date !== day.format(DATE_FORMAT) || undefined}
       InputProps={{
         readOnly: loading,
         'aria-label': 'bodyweight input',

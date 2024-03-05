@@ -12,6 +12,10 @@ interface Props {
   defaultHelperText?: string
   handleSubmit: (value: string) => void
   yupValidator: ReturnType<typeof reach>
+  /** Overrides internal behavior of when to show submit button.
+   *  Has no effect if undefined.
+   */
+  showSubmit?: boolean
 }
 export default function InputField(props: Props & TextFieldProps) {
   const {
@@ -20,6 +24,7 @@ export default function InputField(props: Props & TextFieldProps) {
     defaultHelperText = ' ',
     handleSubmit,
     yupValidator,
+    showSubmit,
     ...textFieldProps
   } = props
 
@@ -54,19 +59,19 @@ export default function InputField(props: Props & TextFieldProps) {
         ...textFieldProps.InputProps,
         endAdornment: (
           <>
+            <TransitionIconButton isVisible={isDirty} onClick={onReset}>
+              <Tooltip title="reset">
+                <ReplayIcon />
+              </Tooltip>
+            </TransitionIconButton>
             <TransitionIconButton
-              isVisible={isDirty}
+              isVisible={showSubmit ?? isDirty}
               disabled={!!error}
               onClick={() => submit()}
               data-testid="submit button"
             >
               <Tooltip title="submit">
                 <CheckIcon />
-              </Tooltip>
-            </TransitionIconButton>
-            <TransitionIconButton isVisible={isDirty} onClick={onReset}>
-              <Tooltip title="reset">
-                <ReplayIcon />
               </Tooltip>
             </TransitionIconButton>
             {textFieldProps.InputProps?.endAdornment}

@@ -5,7 +5,8 @@ import Bodyweight from '../../../models/Bodyweight'
 import BodyweightInput from './BodyweightInput'
 
 const date2020 = dayjs('2020-01-01')
-const officialBw = new Bodyweight(45, 'official', dayjs('2000-01-01'))
+const date2000 = dayjs('2000-01-01')
+const officialBw2000 = new Bodyweight(45, 'official', date2000)
 
 it('renders with no data', async () => {
   useServerOnce(URI_BODYWEIGHT, [])
@@ -68,7 +69,7 @@ it('does not render data if unexpected weigh-in type is received', async () => {
 
 describe('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
-    useServerOnce(URI_BODYWEIGHT, [officialBw])
+    useServerOnce(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -82,11 +83,31 @@ describe('input', () => {
     await user.type(input, '{Backspace}{Backspace}')
 
     expect(await screen.findByLabelText('reset')).not.toBeVisible()
+    // submit is still visible since latest bw data is not for current date
+    expect(screen.getByLabelText('submit')).toBeVisible()
+  })
+
+  it('does not show submit button when latest bodyweight is unchanged and matches current date', async () => {
+    useServerOnce(URI_BODYWEIGHT, [officialBw2000])
+    const { user } = render(<BodyweightInput day={date2000} />)
+    const input = screen.getByLabelText('bodyweight input')
+    await screen.findByText(/official/i)
+
+    await user.type(input, '30')
+
+    expect(await screen.findByLabelText('reset')).toBeVisible()
+    expect(screen.getByLabelText('submit')).toBeVisible()
+    expect(screen.getByDisplayValue('3045')).toBeVisible()
+
+    await user.type(input, '{Backspace}{Backspace}')
+
+    expect(await screen.findByLabelText('reset')).not.toBeVisible()
+    // submit is not visible since latest bw data is already on current date
     expect(screen.getByLabelText('submit')).not.toBeVisible()
   })
 
   it('validates against changing an existing value to be empty', async () => {
-    useServerOnce(URI_BODYWEIGHT, [officialBw])
+    useServerOnce(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -101,7 +122,7 @@ describe('input', () => {
   })
 
   it('resets to existing value when button is clicked', async () => {
-    useServerOnce(URI_BODYWEIGHT, [officialBw])
+    useServerOnce(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -110,11 +131,12 @@ describe('input', () => {
     await user.click(screen.getByLabelText('reset'))
 
     expect(await screen.findByLabelText('reset')).not.toBeVisible()
-    expect(screen.getByLabelText('submit')).not.toBeVisible()
+    // still visible since latest bw is not current date
+    expect(screen.getByLabelText('submit')).toBeVisible()
   })
 
   it('submits and revalidates when button is clicked', async () => {
-    useServerOnce(URI_BODYWEIGHT, [officialBw])
+    useServerOnce(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
@@ -123,9 +145,9 @@ describe('input', () => {
     const newWeight = 15
     useServerOnce(
       URI_BODYWEIGHT,
-      new Bodyweight(newWeight, 'official', dayjs('2000-01-01')),
+      new Bodyweight(newWeight, 'official', date2020),
       // slight delay is necessary for the optimistic data to be detected
-      { delay: 10 }
+      { delay: 10 },
     )
 
     await user.type(input, '3')
