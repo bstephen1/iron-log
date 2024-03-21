@@ -17,6 +17,7 @@ export const DEFAULT_CLOTHING_OFFSET = 1
 export const noSwipingRecord = 'swiper-no-swiping-record'
 
 export const devUserId = '123456789012345678901234'
+export const guestUserName = 'guest'
 
 /** This is a visual fix for Selects and Textfields set as "select" that should be spread into SelectProps.
  *

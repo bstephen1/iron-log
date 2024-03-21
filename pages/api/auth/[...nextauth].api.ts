@@ -12,7 +12,6 @@ const devProviders =
   process.env.NODE_ENV !== 'production'
     ? [
         // This provider logs on as the test user for dev mode.
-        // todo: could also use this pattern to setup a (readonly?) "guest" account for new users to look around
         CredentialsProvider({
           id: 'dev',
           name: 'Dev User',
@@ -27,6 +26,19 @@ const devProviders =
       ]
     : []
 
+// Allows users to sample the app without signing up.
+// Seeded with dev data. This account is readonly.
+const guestProvider = CredentialsProvider({
+  id: 'guest',
+  name: 'Guest User',
+  credentials: {},
+  async authorize() {
+    // session is only getting passed "name", "email", and "image" fields.
+    // May be related to session() callback below
+    return { id: devUserId, name: 'guest' }
+  },
+})
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
@@ -34,6 +46,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.NEXTAUTH_GITHUB_SECRET || '',
       id: 'github',
     }),
+    guestProvider,
     ...devProviders,
   ],
   // using a database adapter changes the strategy to "database", which causes an infinite redirect loop.
