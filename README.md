@@ -7,15 +7,15 @@ Visit at https://iron-log.vercel.app/
 ## Features
 
 - log sets with whatever dimensions are needed (weight, distance, time, reps, effort)
-- use a set type to describe and track an exercise record
-- history graphs for exercise records, which can be overlayed with bodyweight history
-- user-defined exercise modifiers and categories
+- use a set type to track history for each exercise
+- view history graphs for exercise records
+- define custom exercise modifiers and categories
 - save equipment weight per-exercise and per-modifier
-- bodyweight exercises can track added weight and total weight
-- unilateral exercises can track each side separately
-- bodyweight tracking with official and unofficial weigh-ins
+- track bodyweight exercises with added weight and total weight (including bodyweight)
+- track unilateral exercises side separately or combined, for each set
+- track bodyweight with official and unofficial weigh-ins
 - store notes for any exercise, modifier, session, or set
-- per-exercise overrides for global default units
+- save units per-exercise if they do not match global default units
 - rest / session timer
 
 ## Installation
