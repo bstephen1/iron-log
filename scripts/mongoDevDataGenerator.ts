@@ -250,14 +250,20 @@ const bodyweights = [
   new Bodyweight(60, 'official', dayjs('2022-09-14')),
 ]
 
-const sessions = [
-  new SessionLog(
-    '2022-09-26',
-    records
-      .filter((record) => record.date === '2022-09-26')
-      .map((record) => record._id),
-  ),
-]
+/** maps over all records and creates the appropriate session logs */
+const createSessionLogs = () => {
+  const sessionMap = records.reduce<{ [date: string]: string[] }>(
+    (map, record) => ({
+      ...map,
+      [record.date]: [...(map[record.date] ?? []), record._id],
+    }),
+    {},
+  )
+
+  return Object.entries(sessionMap).map(
+    ([date, records]) => new SessionLog(date, records),
+  )
+}
 
 //  START OPERATIONS
 
@@ -267,7 +273,7 @@ await collections.modifiers.insertMany(withId(Object.values(modifiers)))
 await collections.categories.insertMany(withId(Object.values(categories)))
 await collections.exercises.insertMany(withId(Object.values(exercises)))
 await collections.bodyweightHistory.insertMany(withId(bodyweights))
-await collections.sessions.insertMany(withId(sessions))
+await collections.sessions.insertMany(withId(createSessionLogs()))
 await collections.records.insertMany(withId(records))
 
 await client.close()
