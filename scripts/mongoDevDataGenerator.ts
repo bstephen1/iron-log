@@ -74,7 +74,7 @@ const modifiers = {
 
 const exercises = {
   squats: new Exercise('high bar squats', {
-    notes: [new Note('knees up'), new Note('chest up')],
+    notes: [new Note('knees out'), new Note('chest up')],
     categories: [categories.squat.name, categories.quads.name],
     modifiers: [modifiers.band.name, modifiers.belt.name],
   }),
