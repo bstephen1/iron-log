@@ -10,12 +10,14 @@ import Modifier from '../models/AsyncSelectorOption/Modifier'
 import Note from '../models/Note'
 import Record from '../models/Record'
 import SessionLog from '../models/SessionLog'
-import { DB_UNITS } from '../models/Set'
+import { DB_UNITS, Units } from '../models/Set'
 import { Status } from '../models/Status'
 import './polyfills'
 import { devUserId } from '../lib/frontend/constants'
 import path from 'path'
 import dotenv from 'dotenv'
+import Bodyweight from '../models/Bodyweight'
+import dayjs from 'dayjs'
 
 const envPath = path.resolve(__dirname, '..', '.env.development')
 dotenv.config({ path: envPath })
@@ -23,11 +25,14 @@ dotenv.config({ path: envPath })
 // must wait to import until dotenv is done pulling in env vars
 const { db, collections, client } = await import('../lib/backend/mongoConnect')
 
-const getDisplayFields = (names: VisibleField['name'][]): DisplayFields => ({
+const getDisplayFields = (
+  names: VisibleField['name'][],
+  units?: Partial<Units>,
+): DisplayFields => ({
   visibleFields: ORDERED_DISPLAY_FIELDS.filter((field) =>
-    names.includes(field.name)
+    names.includes(field.name),
   ),
-  units: DB_UNITS,
+  units: { ...DB_UNITS, ...units },
 })
 
 const devUserObjectId = new ObjectId(devUserId)
@@ -35,139 +40,240 @@ const devUserObjectId = new ObjectId(devUserId)
 const withId = <T>(items: T[]) =>
   items.map((item) => ({ ...item, userId: devUserObjectId }))
 
-const categories = [
-  new Category('quads'),
-  new Category('squat'),
-  new Category('side delts'),
-  new Category('biceps'),
-  new Category('hamstrings'),
-  new Category('bench press'),
-  new Category('chest'),
-  new Category('triceps'),
-  new Category('cardio'),
-  new Category('strongman'),
-]
+const categories = {
+  quads: new Category('quads'),
+  squat: new Category('squat'),
+  sideDelts: new Category('side delts'),
+  biceps: new Category('biceps'),
+  hamstrings: new Category('hamstrings'),
+  bench: new Category('bench press'),
+  chest: new Category('chest'),
+  triceps: new Category('triceps'),
+  cardio: new Category('cardio'),
+  strongman: new Category('strongman'),
+  lats: new Category('lats'),
+}
 
-const modifiers = [
-  new Modifier('belt', Status.active),
-  new Modifier('band', Status.archived),
-  new Modifier('pause', Status.active),
-  new Modifier('flared', Status.active),
-  new Modifier('tucked', Status.active),
-  new Modifier('wide', Status.active),
-  new Modifier('narrow', Status.active),
-  new Modifier('wraps', Status.active),
-  new Modifier('middle', Status.active),
-  new Modifier('barbell', Status.active),
-  new Modifier('unilateral left', Status.active),
-  new Modifier('unilateral right', Status.active),
-  new Modifier('AMRAP', Status.active),
-  new Modifier('myo', Status.active),
-  new Modifier('bodyweight', Status.active),
-]
+const modifiers = {
+  barbell: new Modifier('barbell'),
+  dumbbell: new Modifier('dumbbell'),
+  belt: new Modifier('belt'),
+  band: new Modifier('band', Status.archived),
+  pause: new Modifier('pause'),
+  flared: new Modifier('flared elbows'),
+  tucked: new Modifier('tucked elbows'),
+  wide: new Modifier('wide grip'),
+  narrow: new Modifier('narrow grip'),
+  middle: new Modifier('middle grip'),
+  wraps: new Modifier('wraps'),
+  amrap: new Modifier('AMRAP'),
+  myo: new Modifier('myo'),
+  pin: new Modifier('lifting pin', Status.active, 1.5),
+  dipBelt: new Modifier('dip belt', Status.active, 1.5),
+}
 
-const exercises = [
-  new Exercise('high bar squats', {
-    notes: [new Note('knees up'), new Note('chest up')],
-    categories: ['squat'],
-    modifiers: ['belt', 'band'],
+const exercises = {
+  squats: new Exercise('high bar squats', {
+    notes: [new Note('knees out'), new Note('chest up')],
+    categories: [categories.squat.name, categories.quads.name],
+    modifiers: [modifiers.band.name, modifiers.belt.name],
   }),
-  new Exercise('curls', {
-    notes: [new Note('twist in', ['barbell'])],
-    categories: ['biceps'],
-    displayFields: getDisplayFields(['weight', 'reps']),
-    modifiers: ['bodyweight', 'unilateral left', 'unilateral right', 'barbell'],
+  curls: new Exercise('curls', {
+    notes: [new Note('twist in', [modifiers.barbell.name])],
+    categories: [categories.biceps.name],
+    displayFields: getDisplayFields(['side', 'weight', 'reps']),
+    modifiers: [modifiers.barbell.name, modifiers.dumbbell.name],
+    attributes: { unilateral: true },
   }),
-  new Exercise('multi grip bench press', {
+  multiGripBench: new Exercise('multi grip bench press', {
     notes: [
-      new Note('great triceps', ['tucked, middle']),
-      new Note('great chest', ['flared', 'narrow']),
+      new Note('great for triceps', [
+        modifiers.tucked.name,
+        modifiers.wide.name,
+      ]),
+      new Note('great for chest', [
+        modifiers.flared.name,
+        modifiers.narrow.name,
+      ]),
     ],
-    categories: ['bench press', 'chest', 'triceps'],
+    categories: [
+      categories.bench.name,
+      categories.chest.name,
+      categories.triceps.name,
+    ],
     modifiers: [
-      'flared',
-      'tucked',
-      'wide',
-      'narrow',
-      'middle',
-      'belt',
-      'wraps',
+      modifiers.flared.name,
+      modifiers.tucked.name,
+      modifiers.wide.name,
+      modifiers.narrow.name,
+      modifiers.middle.name,
+      modifiers.belt.name,
+      modifiers.wraps.name,
     ],
   }),
-  new Exercise('zercher squat', {
+  zercherSquat: new Exercise('zercher squat', {
     status: Status.archived,
-    notes: [new Note('pain')],
-    categories: ['squat'],
+    notes: [new Note('too painful')],
+    categories: [categories.squat.name],
   }),
-  new Exercise('running', {
-    categories: ['cardio'],
-    displayFields: getDisplayFields(['distance', 'time', 'effort']),
+  sprints: new Exercise('sprints', {
+    categories: [categories.cardio.name],
+    displayFields: getDisplayFields(['distance', 'time']),
   }),
-  new Exercise('yoke', {
-    categories: ['strongman'],
+  running: new Exercise('running', {
+    categories: [categories.cardio.name],
+    displayFields: getDisplayFields(['distance', 'time'], {
+      distance: 'km',
+      time: 'min',
+    }),
+  }),
+  yoke: new Exercise('yoke', {
+    categories: [categories.strongman.name],
     displayFields: getDisplayFields(['weight', 'distance', 'time', 'effort']),
   }),
-]
-
-const getExercise = (name: string) =>
-  exercises.find((exercise) => exercise.name === name)
+  uprightRow: new Exercise('upright row', {
+    categories: [categories.sideDelts.name],
+    modifiers: [modifiers.barbell.name, modifiers.pin.name],
+    displayFields: getDisplayFields(['weight', 'reps']),
+  }),
+  chinUps: new Exercise('chinups', {
+    categories: [categories.biceps.name, categories.lats.name],
+    modifiers: [modifiers.dipBelt.name],
+    attributes: { bodyweight: true },
+    displayFields: getDisplayFields(['plateWeight', 'totalWeight', 'reps']),
+  }),
+}
 
 const records = [
-  new Record('2022-09-26', {
-    exercise: getExercise('high bar squats'),
+  new Record('2022-09-20', {
+    exercise: exercises.squats,
     activeModifiers: ['belt'],
-    notes: [new Note('good lifts', ['Record'])],
+    notes: [new Note('Very tired today', ['Session'])],
+    setType: { operator: 'exactly', value: 6, field: 'reps' },
     sets: [
-      { reps: 5, effort: 8, weight: 100 },
-      { reps: 5, effort: 9, weight: 110 },
-      { reps: 5, effort: 10, weight: 120 },
+      { reps: 6, effort: 8, weight: 100 },
+      { reps: 6, effort: 9, weight: 100 },
+      { reps: 6, effort: 9, weight: 100 },
+    ],
+  }),
+  new Record('2022-09-22', {
+    exercise: exercises.squats,
+    activeModifiers: ['belt'],
+    setType: { operator: 'exactly', value: 6, field: 'reps' },
+    sets: [
+      { reps: 6, effort: 8, weight: 100 },
+      { reps: 6, effort: 8, weight: 100 },
+      { reps: 6, effort: 9, weight: 110 },
+    ],
+  }),
+  new Record('2022-09-24', {
+    exercise: exercises.squats,
+    activeModifiers: ['belt'],
+    setType: { operator: 'exactly', value: 6, field: 'reps' },
+    sets: [
+      { reps: 6, effort: 8, weight: 100 },
+      { reps: 6, effort: 9, weight: 110 },
+      { reps: 6, effort: 10, weight: 110 },
     ],
   }),
   new Record('2022-09-26', {
-    exercise: getExercise('curls'),
-    activeModifiers: ['bodyweight'],
-    notes: [new Note('good lifts', ['Record'])],
+    exercise: exercises.squats,
+    activeModifiers: ['belt'],
+    notes: [
+      new Note('felt great', ['Set 1']),
+      new Note('felt heavy', ['Set 3']),
+    ],
+    setType: { operator: 'exactly', value: 6, field: 'reps' },
+    sets: [
+      { reps: 6, effort: 7, weight: 100 },
+      { reps: 6, effort: 8.5, weight: 110 },
+      { reps: 6, effort: 10, weight: 120 },
+    ],
+  }),
+  new Record('2022-09-26', {
+    exercise: exercises.curls,
+    activeModifiers: [modifiers.dumbbell.name],
+    notes: [new Note('felt great', ['Record'])],
+    setType: { operator: 'between', min: 10, max: 15, field: 'reps' },
     sets: [
       { reps: 15, weight: 25 },
-      { reps: 12, weight: 30 },
+      { reps: 12, weight: 30, side: 'L' },
+      { reps: 10, weight: 30, side: 'R' },
       { reps: 10, weight: 30 },
     ],
   }),
   new Record('2022-09-26', {
-    exercise: getExercise('running'),
+    exercise: exercises.sprints,
+    setType: { operator: 'exactly', value: 50, field: 'distance' },
     sets: [
-      { distance: 50, time: 10, effort: 10 },
-      { distance: 50, time: 9.83, effort: 10 },
-      { distance: 50, time: 8.33, effort: 10 },
+      { distance: 50, time: 10 },
+      { distance: 50, time: 9.83 },
+      { distance: 50, time: 8.33 },
     ],
   }),
   new Record('2022-09-26', {
-    exercise: getExercise('running'),
-    sets: [{ distance: 5000, time: 900, effort: 9 }],
+    exercise: exercises.running,
+    setType: { operator: 'exactly', value: 5, field: 'distance' },
+    sets: [{ distance: 5000, time: 900 }],
   }),
   new Record('2022-09-26', {
-    exercise: getExercise('yoke'),
+    exercise: exercises.yoke,
+    setType: { operator: 'exactly', value: 50, field: 'distance' },
     sets: [{ weight: 500, distance: 50, time: 8.5, effort: 9 }],
+  }),
+  new Record('2022-09-26', {
+    exercise: exercises.uprightRow,
+    setType: { operator: 'at most', value: 20, field: 'reps' },
+    sets: [
+      { weight: 20, reps: 20 },
+      { weight: 20, reps: 18 },
+      { weight: 20, reps: 17 },
+    ],
+  }),
+  new Record('2022-09-26', {
+    exercise: exercises.chinUps,
+    setType: { operator: 'exactly', value: 6, field: 'reps' },
+    sets: [
+      { weight: 15, reps: 6 },
+      { weight: 15, reps: 6 },
+      { weight: 15, reps: 6 },
+    ],
   }),
 ]
 
-const sessions = [
-  new SessionLog(
-    '2022-09-26',
-    records
-      .filter((record) => record.date === '2022-09-26')
-      .map((record) => record._id)
-  ),
+const bodyweights = [
+  new Bodyweight(70, 'official', dayjs('2022-09-26')),
+  new Bodyweight(73, 'unofficial', dayjs('2022-09-26')),
+  new Bodyweight(68, 'official', dayjs('2022-09-24')),
+  new Bodyweight(67, 'official', dayjs('2022-09-23')),
+  new Bodyweight(65, 'official', dayjs('2022-09-20')),
+  new Bodyweight(60, 'official', dayjs('2022-09-14')),
 ]
+
+/** maps over all records and creates the appropriate session logs */
+const createSessionLogs = () => {
+  const sessionMap = records.reduce<{ [date: string]: string[] }>(
+    (map, record) => ({
+      ...map,
+      [record.date]: [...(map[record.date] ?? []), record._id],
+    }),
+    {},
+  )
+
+  return Object.entries(sessionMap).map(
+    ([date, records]) => new SessionLog(date, records),
+  )
+}
 
 //  START OPERATIONS
 
 await db.dropDatabase()
 
-await collections.modifiers.insertMany(withId(modifiers))
-await collections.categories.insertMany(withId(categories))
-await collections.exercises.insertMany(withId(exercises))
-await collections.sessions.insertMany(withId(sessions))
+await collections.modifiers.insertMany(withId(Object.values(modifiers)))
+await collections.categories.insertMany(withId(Object.values(categories)))
+await collections.exercises.insertMany(withId(Object.values(exercises)))
+await collections.bodyweightHistory.insertMany(withId(bodyweights))
+await collections.sessions.insertMany(withId(createSessionLogs()))
 await collections.records.insertMany(withId(records))
 
 await client.close()
