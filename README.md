@@ -31,8 +31,15 @@ download and run a local instance of mongodb
 mongod
 ```
 
-start the app
+install packages and start the app
 
 ```
+npm install
 npm run dev
+```
+
+When run locally, a local dev user is available to sign in with, bypassing the normal OAuth sign in. Sample data can be generated for the dev user:
+
+```
+npm run db:dev
 ```
