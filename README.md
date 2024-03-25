@@ -1,4 +1,4 @@
-<h1> Iron Log </h1>
+# Iron Log
 
 A gym log app that aims to be flexible enough to be used in place of a physical notebook. Create and track your own collection of exercises tailored for your unique training goals.
 
@@ -8,6 +8,8 @@ Visit at https://iron-log.vercel.app/
 
 
 ## Features
+
+See the [wiki](https://github.com/bstephen1/iron-log/wiki) for detailed information and user guides.
 
 - log sets with whatever dimensions are needed (weight, distance, time, reps, effort)
 - use a set type to track history for each exercise
