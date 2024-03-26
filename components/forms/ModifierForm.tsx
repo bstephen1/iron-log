@@ -6,6 +6,7 @@ import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import InputField from '../form-fields/InputField'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 import UsageComboBox from '../form-fields/UsageComboBox'
+import StatusSelect from '../form-fields/StatusSelect'
 
 interface Props {
   modifier: Modifier
@@ -39,7 +40,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
 
   return (
     <Grid container spacing={1} xs={12}>
-      <Grid xs={12} sm={6}>
+      <Grid xs={12}>
         <InputField
           label="Name"
           initialValue={modifier.name}
@@ -47,6 +48,12 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
           fullWidth
           handleSubmit={(name) => handleUpdate({ name })}
           yupValidator={yup.reach(validationSchema, 'name')}
+        />
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <StatusSelect
+          initialValue={modifier.status}
+          handleSubmit={(status) => handleUpdate({ status })}
         />
       </Grid>
       <Grid xs={12} sm={6}>

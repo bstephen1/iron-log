@@ -7,13 +7,12 @@ import {
   useModifiers,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import { Status } from '../../models/Status'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import InputField from '../form-fields/InputField'
 import NotesList from '../form-fields/NotesList'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
-import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
+import StatusSelect from '../form-fields/StatusSelect'
 
 interface Props {
   exercise: Exercise
@@ -46,7 +45,6 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       // todo: ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
       // @ts-ignore
       .unique('This exercise already exists!', exerciseNames),
-    status: yup.string().required('Must have a status'),
   })
 
   return (
@@ -64,13 +62,8 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         />
       </Grid>
       <Grid xs={12} sm={6}>
-        <SelectFieldAutosave
-          label="Status"
-          options={Object.values(Status)}
+        <StatusSelect
           initialValue={exercise.status}
-          required
-          fullWidth
-          yupValidator={yup.reach(validationSchema, 'status')}
           handleSubmit={(status) => handleUpdate({ status })}
         />
       </Grid>

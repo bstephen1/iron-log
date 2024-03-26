@@ -8,8 +8,6 @@ export default class Modifier extends AsyncSelectorOption {
     public name: string,
     public status = Status.active,
     public weight?: number | null,
-    // todo: remove field
-    public canDelete = true
   ) {
     super(name, status)
   }

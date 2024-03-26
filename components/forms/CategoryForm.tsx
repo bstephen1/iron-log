@@ -3,6 +3,7 @@ import * as yup from 'yup'
 import { useCategories } from '../../lib/frontend/restService'
 import Category from '../../models/AsyncSelectorOption/Category'
 import InputField from '../form-fields/InputField'
+import StatusSelect from '../form-fields/StatusSelect'
 import UsageComboBox from '../form-fields/UsageComboBox'
 
 interface Props {
@@ -37,7 +38,7 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
 
   return (
     <Grid container spacing={1} xs={12}>
-      <Grid xs={12}>
+      <Grid xs={12} sm={6}>
         <InputField
           label="Name"
           initialValue={category.name}
@@ -45,6 +46,12 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
           handleSubmit={(value) => handleUpdate({ name: value })}
           yupValidator={yup.reach(validationSchema, 'name')}
           fullWidth
+        />
+      </Grid>
+      <Grid xs={12} sm={6}>
+        <StatusSelect
+          initialValue={category.status}
+          handleSubmit={(status) => handleUpdate({ status })}
         />
       </Grid>
       <Grid xs={12}>
