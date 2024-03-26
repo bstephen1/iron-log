@@ -1,10 +1,10 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import * as yup from 'yup'
-import { useModifiers } from '../lib/frontend/restService'
-import Modifier from '../models/AsyncSelectorOption/Modifier'
-import InputField from './form-fields/InputField'
-import NumericFieldAutosave from './form-fields/NumericFieldAutosave'
+import { useModifiers } from '../../lib/frontend/restService'
+import Modifier from '../../models/AsyncSelectorOption/Modifier'
+import InputField from '../form-fields/InputField'
+import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 
 interface Props {
   modifier: Modifier
@@ -22,7 +22,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
       return this.test('unique', message, function (value) {
         return !!value && list.length !== new Set(list.concat(value)).size
       })
-    }
+    },
   )
 
   // todo: can we enumerate the Exercise fields instead of hardcoding?

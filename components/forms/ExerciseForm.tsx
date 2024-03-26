@@ -5,15 +5,15 @@ import {
   useCategories,
   useExercises,
   useModifiers,
-} from '../lib/frontend/restService'
-import Exercise from '../models/AsyncSelectorOption/Exercise'
-import { Status } from '../models/Status'
-import AttributeCheckboxes from './form-fields/AttributeCheckboxes'
-import { ComboBoxField } from './form-fields/ComboBoxField'
-import InputField from './form-fields/InputField'
-import NotesList from './form-fields/NotesList'
-import NumericFieldAutosave from './form-fields/NumericFieldAutosave'
-import SelectFieldAutosave from './form-fields/SelectFieldAutosave'
+} from '../../lib/frontend/restService'
+import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import { Status } from '../../models/Status'
+import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
+import { ComboBoxField } from '../form-fields/ComboBoxField'
+import InputField from '../form-fields/InputField'
+import NotesList from '../form-fields/NotesList'
+import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
+import SelectFieldAutosave from '../form-fields/SelectFieldAutosave'
 
 interface Props {
   exercise: Exercise
@@ -35,7 +35,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       return this.test('unique', message, function (value) {
         return !!value && list.length !== new Set(list.concat(value)).size
       })
-    }
+    },
   )
 
   // todo: can we enumerate the Exercise fields instead of hardcoding?

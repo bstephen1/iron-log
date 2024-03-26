@@ -1,9 +1,9 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import * as yup from 'yup'
-import { useCategories } from '../lib/frontend/restService'
-import Category from '../models/AsyncSelectorOption/Category'
-import InputField from './form-fields/InputField'
+import { useCategories } from '../../lib/frontend/restService'
+import Category from '../../models/AsyncSelectorOption/Category'
+import InputField from '../form-fields/InputField'
 
 interface Props {
   category: Category
@@ -21,7 +21,7 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
       return this.test('unique', message, function (value) {
         return !!value && list.length !== new Set(list.concat(value)).size
       })
-    }
+    },
   )
 
   // todo: can we enumerate the Exercise fields instead of hardcoding?
