@@ -25,9 +25,9 @@ export default function ExerciseSelector({
   category = null,
   ...asyncSelectorProps
 }: ExerciseSelectorProps) {
-  const { categoryNames } = useCategories()
+  const { activeStatusCategories } = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
-    null
+    null,
   )
 
   // todo: when switching category, input should null out if it's not in the new category.
@@ -74,7 +74,7 @@ export default function ExerciseSelector({
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
-              categories: categoryNames,
+              categories: activeStatusCategories,
               category,
               setCategory: handleCategoryChange,
               anchorEl: categoryAnchorEl,

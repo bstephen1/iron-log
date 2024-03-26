@@ -19,8 +19,8 @@ interface Props {
   handleUpdate: (updates: Partial<Exercise>) => void
 }
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
-  const { modifierNames } = useModifiers()
-  const { categoryNames } = useCategories()
+  const { activeStatusModifiers } = useModifiers()
+  const { activeStatusCategories } = useCategories()
   const { exerciseNames } = useExercises()
 
   // todo: validate (drop empty notes)
@@ -85,7 +85,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         <ComboBoxField
           label="Categories"
           initialValue={exercise.categories}
-          options={categoryNames}
+          options={activeStatusCategories}
           textFieldProps={{ helperText: ' ' }}
           handleSubmit={(categories) => handleUpdate({ categories })}
         />
@@ -94,7 +94,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         <ComboBoxField
           label="Modifiers"
           initialValue={exercise.modifiers}
-          options={modifierNames}
+          options={activeStatusModifiers}
           textFieldProps={{ helperText: ' ' }}
           handleSubmit={(modifiers) => handleUpdate({ modifiers })}
         />
