@@ -16,12 +16,14 @@ import * as yup from 'yup'
  */
 
 interface Props<T = string> {
-  // the validator should be for a single field. Run reach() to specify the field to use.
+  /** the validator should be for a single field. Run reach() to specify the field to use. */
   yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
-  handleSubmit: (value: T) => void
-  // required so we can determine the type. Cannot be undefined.
+  /** handleSubmit should be provided unless manually handling submit (eg, combobox) */
+  handleSubmit?: (value: T) => void
+  /** required so we can determine the type. Cannot be undefined. */
   initialValue: T
+  /** submit onBlur and on debounce. Defaults to true. */
   autoSubmit?: boolean
 }
 export default function useField<T = string>({
@@ -78,7 +80,7 @@ export default function useField<T = string>({
   const validate = async (value: T): Promise<boolean> => {
     process.env.NEXT_PUBLIC_BROWSER_LOG_LEVEL === 'verbose' &&
       console.log(
-        `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
+        `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`,
       )
 
     // updating yup to v1 changed reach() to return Schema | Reference
@@ -106,6 +108,8 @@ export default function useField<T = string>({
   }
 
   const submit = async (newValue = value) => {
+    if (!handleSubmit) return
+
     if (await validate(newValue)) {
       handleSubmit(newValue)
     }

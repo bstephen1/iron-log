@@ -1,9 +1,9 @@
-import { Stack } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import * as yup from 'yup'
 import { useCategories } from '../../lib/frontend/restService'
 import Category from '../../models/AsyncSelectorOption/Category'
 import InputField from '../form-fields/InputField'
+import UsageComboBox from '../form-fields/UsageComboBox'
 
 interface Props {
   category: Category
@@ -36,28 +36,19 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
   })
 
   return (
-    <Grid container spacing={2} xs={12}>
-      <Grid xs={12} sm={6}>
-        <Stack>
-          {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
-            Export the schema and have the hook pull it in?  */}
-          <InputField
-            label="Name"
-            initialValue={category.name}
-            required
-            handleSubmit={(value) => handleUpdate({ name: value })}
-            yupValidator={yup.reach(validationSchema, 'name')}
-          />
-        </Stack>
-      </Grid>
-      <Grid xs={12} sm={6}>
-        {/* <ComboBoxField
-          label="Exercises"
-          initialValue={exercise}
-          options={exerciseNames}
+    <Grid container spacing={1} xs={12}>
+      <Grid xs={12}>
+        <InputField
+          label="Name"
+          initialValue={category.name}
+          required
+          handleSubmit={(value) => handleUpdate({ name: value })}
+          yupValidator={yup.reach(validationSchema, 'name')}
           fullWidth
-          handleSubmit={(value: string[]) => handleUpdate('categories', value)}
-        /> */}
+        />
+      </Grid>
+      <Grid xs={12}>
+        <UsageComboBox field="categories" name={category.name} />
       </Grid>
     </Grid>
   )

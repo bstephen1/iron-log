@@ -5,6 +5,7 @@ import { useModifiers } from '../../lib/frontend/restService'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import InputField from '../form-fields/InputField'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
+import UsageComboBox from '../form-fields/UsageComboBox'
 
 interface Props {
   modifier: Modifier
@@ -62,14 +63,8 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
           }}
         />
       </Grid>
-      <Grid xs={12} sm={6}>
-        {/* <ComboBoxField
-          label="Exercises"
-          initialValue={exercise}
-          options={exerciseNames}
-          fullWidth
-          handleSubmit={(value: string[]) => handleUpdate('categories', value)}
-        /> */}
+      <Grid xs={12}>
+        <UsageComboBox field="modifiers" name={modifier.name} />
       </Grid>
     </Grid>
   )
