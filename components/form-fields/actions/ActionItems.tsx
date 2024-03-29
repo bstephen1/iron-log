@@ -21,7 +21,12 @@ export default function ActionItems({
   return (
     <>
       <FormDivider title="Actions" />
-
+      {type === 'exercise' && (
+        <ActionItem
+          description="View the most recent dates when this exercise has been used."
+          button={<UsageButton name={name} />}
+        />
+      )}
       <ActionItem
         description={`Delete this ${type}. The ${type} must be unused in any ${type === 'exercise' ? 'exercise records' : 'exercises'}.`}
         button={
