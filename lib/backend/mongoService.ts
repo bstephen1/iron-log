@@ -338,6 +338,24 @@ export async function updateExerciseFields(
   )
 }
 
+export async function deleteExercise(userId: ObjectId, name: string) {
+  const exercise = await exercises.find({ userId, name }).next()
+  // cannot use the name because the full exercise is not guaranteed to be up to date
+  const usedRecords = await records
+    .find({ userId, 'exercise._id': exercise?._id })
+    .toArray()
+
+  if (usedRecords.length) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      `Cannot delete exercise: used in one or more records: ${usedRecords.map((record) => record.date + ', ')}`,
+    )
+  }
+
+  await exercises.deleteOne({ userId, name })
+  return name
+}
+
 //----------
 // MODIFIER
 //----------

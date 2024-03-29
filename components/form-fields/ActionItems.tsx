@@ -8,7 +8,7 @@ interface Props {
   /** type of the option */
   type: 'exercise' | 'category' | 'modifier'
   handleDelete: () => void
-  deleteDisabled?: boolean
+  deleteDisabled?: boolean | number
 }
 /** render all common action items  */
 export default function ActionItems({
@@ -26,10 +26,10 @@ export default function ActionItems({
             type={type}
             name={name}
             handleDelete={handleDelete}
-            buttonProps={{ disabled: deleteDisabled }}
+            buttonProps={{ disabled: !!deleteDisabled }}
           />
         }
-        description={`Delete this ${type}. The ${type} must be unused in any exercises.`}
+        description={`Delete this ${type}. The ${type} must be unused in any ${type === 'exercise' ? 'exercise records' : 'exercises'}.`}
       />
     </>
   )

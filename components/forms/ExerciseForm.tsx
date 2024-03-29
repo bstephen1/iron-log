@@ -2,9 +2,11 @@ import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import * as yup from 'yup'
 import {
+  deleteExercise,
   useCategories,
   useExercises,
   useModifiers,
+  useRecords,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
@@ -13,6 +15,8 @@ import InputField from '../form-fields/InputField'
 import NotesList from '../form-fields/NotesList'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 import StatusSelect from '../form-fields/StatusSelect'
+import ActionItems from '../form-fields/ActionItems'
+import { useQueryState } from 'next-usequerystate'
 
 interface Props {
   exercise: Exercise
@@ -21,9 +25,20 @@ interface Props {
 export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { activeStatusModifiers } = useModifiers()
   const { activeStatusCategories } = useCategories()
-  const { exerciseNames } = useExercises()
+  const { records } = useRecords({ exercise: exercise.name })
+  const { exerciseNames, mutate: mutateExercises, exercises } = useExercises()
+  const [_, setUrlExercise] = useQueryState('exercise')
 
   // todo: validate (drop empty notes)
+
+  const handleDelete = async () => {
+    await deleteExercise(exercise.name)
+    setUrlExercise(null, {
+      scroll: false,
+      shallow: true,
+    })
+    mutateExercises(exercises?.filter((e) => e.name !== exercise.name))
+  }
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
@@ -112,6 +127,14 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           options={exercise.modifiers}
           handleSubmit={(notes) => handleUpdate({ notes })}
           multiple
+        />
+      </Grid>
+      <Grid xs={12}>
+        <ActionItems
+          name={exercise.name}
+          type="exercise"
+          handleDelete={handleDelete}
+          deleteDisabled={records?.length}
         />
       </Grid>
     </Grid>

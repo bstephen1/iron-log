@@ -244,6 +244,13 @@ export async function updateExerciseFields(
   })
 }
 
+export async function deleteExercise(name: string): Promise<string> {
+  return fetchJson(URI_EXERCISES + name, {
+    method: 'DELETE',
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
 //----------
 // MODIFIER
 //----------
