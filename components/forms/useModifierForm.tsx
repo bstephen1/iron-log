@@ -1,13 +1,13 @@
 import { useQueryState } from 'next-usequerystate'
-import ManageWelcomeCard from '../../components/ManageWelcomeCard'
-import ModifierSelector from '../../components/form-fields/selectors/ModifierSelector'
 import {
   updateModifierFields,
   useExercises,
   useModifiers,
 } from '../../lib/frontend/restService'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
-import ModifierForm from '../forms/ModifierForm'
+import ManageWelcomeCard from '../ManageWelcomeCard'
+import ModifierSelector from '../form-fields/selectors/ModifierSelector'
+import ModifierForm from './ModifierForm'
 
 export default function useModifierForm() {
   const [urlModifier, setUrlModifier] = useQueryState('modifier')

@@ -1,11 +1,11 @@
 import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import useCategoryForm from '../components/manage/useCategoryForm'
-import useExerciseForm from '../components/manage/useExerciseForm'
-import useModifierForm from '../components/manage/useModifierForm'
-import StyledDivider from '../components/StyledDivider'
 import { queryTypes, useQueryState } from 'next-usequerystate'
 import { useEffect, useState } from 'react'
+import StyledDivider from '../components/StyledDivider'
+import useCategoryForm from '../components/forms/useCategoryForm'
+import useExerciseForm from '../components/forms/useExerciseForm'
+import useModifierForm from '../components/forms/useModifierForm'
 
 type TabValue = 'exercises' | 'modifiers' | 'categories'
 const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']
@@ -14,7 +14,7 @@ let Selector: JSX.Element, Form: JSX.Element
 export default function ManagePage() {
   const [urlTab, setUrlTab] = useQueryState(
     'tab',
-    queryTypes.stringEnum<TabValue>(tabs).withDefault('exercises')
+    queryTypes.stringEnum<TabValue>(tabs).withDefault('exercises'),
   )
   const [isFirstRender, setIsFirstRender] = useState(true)
 

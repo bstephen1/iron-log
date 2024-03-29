@@ -1,13 +1,13 @@
 import { useQueryState } from 'next-usequerystate'
 import { useState } from 'react'
-import ManageWelcomeCard from '../../components/ManageWelcomeCard'
-import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import {
   updateExerciseFields,
   useExercises,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import ExerciseForm from '../forms/ExerciseForm'
+import ManageWelcomeCard from '../ManageWelcomeCard'
+import ExerciseSelector from '../form-fields/selectors/ExerciseSelector'
+import ExerciseForm from './ExerciseForm'
 
 // todo: ui element showing "changes saved". Snackbar?
 export default function useExerciseForm() {
