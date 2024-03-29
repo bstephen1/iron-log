@@ -1,13 +1,13 @@
 import { useQueryState } from 'next-usequerystate'
-import ModifierSelector from '../../components/form-fields/selectors/ModifierSelector'
-import ManageWelcomeCard from '../../components/ManageWelcomeCard'
-import ModifierForm from '../../components/ModifierForm'
 import {
   updateModifierFields,
   useExercises,
   useModifiers,
 } from '../../lib/frontend/restService'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
+import ManageWelcomeCard from '../ManageWelcomeCard'
+import ModifierSelector from '../form-fields/selectors/ModifierSelector'
+import ModifierForm from './ModifierForm'
 
 export default function useModifierForm() {
   const [urlModifier, setUrlModifier] = useQueryState('modifier')
@@ -28,14 +28,14 @@ export default function useModifierForm() {
         const updatedModifier = await updateModifierFields(modifier, updates)
         updates.name && mutateExercises()
         return modifiers?.map((modifier) =>
-          modifier._id === updatedModifier._id ? updatedModifier : modifier
+          modifier._id === updatedModifier._id ? updatedModifier : modifier,
         )
       },
       {
         optimisticData: updates.name
           ? [...(modifiers ?? []), newModifier]
           : undefined,
-      }
+      },
     )
   }
 

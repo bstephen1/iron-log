@@ -1,6 +1,7 @@
 import { Checkbox, Divider, FormControlLabel, FormGroup } from '@mui/material'
 import { capitalize } from '../../lib/util'
 import Attributes from '../../models/Attributes'
+import FormDivider from '../forms/FormDivider'
 
 interface Props {
   attributes?: Attributes
@@ -28,9 +29,7 @@ export default function AttributeCheckboxes({
 
   return (
     <>
-      <Divider textAlign="center" sx={{ pb: 2 }}>
-        Attributes
-      </Divider>
+      <FormDivider title="Attributes" />
       <FormGroup row>
         <AttributeCheckbox field="bodyweight" />
         <AttributeCheckbox field="unilateral" />

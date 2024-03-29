@@ -7,6 +7,7 @@ import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHand
 import { validateName } from '../../../lib/backend/apiQueryValidationService'
 import {
   addModifier,
+  deleteModifier,
   fetchModifier,
   updateModifierFields,
 } from '../../../lib/backend/mongoService'
@@ -21,6 +22,8 @@ async function handler(req: NextApiRequest, userId: UserId) {
       return await addModifier(userId, req.body)
     case 'PATCH':
       return await updateModifierFields(userId, req.body)
+    case 'DELETE':
+      return await deleteModifier(userId, name)
     default:
       throw methodNotAllowed
   }

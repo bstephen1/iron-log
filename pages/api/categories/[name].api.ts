@@ -7,6 +7,7 @@ import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHand
 import { validateName } from '../../../lib/backend/apiQueryValidationService'
 import {
   addCategory,
+  deleteCategory,
   fetchCategory,
   updateCategoryFields,
 } from '../../../lib/backend/mongoService'
@@ -21,6 +22,8 @@ async function handler(req: NextApiRequest, userId: UserId) {
       return await addCategory(userId, req.body)
     case 'PATCH':
       return await updateCategoryFields(userId, req.body)
+    case 'DELETE':
+      return await deleteCategory(userId, name)
     default:
       throw methodNotAllowed
   }

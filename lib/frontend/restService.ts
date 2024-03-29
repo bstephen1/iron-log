@@ -7,12 +7,13 @@ import Category from '../../models/AsyncSelectorOption/Category'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import Bodyweight from '../../models/Bodyweight'
+import Record from '../../models/Record'
+import SessionLog from '../../models/SessionLog'
+import { Status } from '../../models/Status'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
 import {
   DATE_FORMAT,
   URI_BODYWEIGHT,
@@ -55,35 +56,23 @@ export const paramify = (query: ParsedUrlQueryInput) => {
  */
 const toJson = (obj: Object) =>
   JSON.stringify(obj, (_, value) =>
-    typeof value === 'undefined' ? null : value
+    typeof value === 'undefined' ? null : value,
   )
 
 const toNames = (entities?: AsyncSelectorOption[]) =>
   entities?.map((entity) => entity.name) ?? []
 
+const filterActive = (entities?: AsyncSelectorOption[]) =>
+  entities?.filter((entity) => entity.status === Status.active) ?? []
+
 //---------
 // SESSION
 //---------
 
-/** An initial value must be provided to this function, which ensures the return will never be undefined due to fetch time */
-export function useGuaranteedSessionLog(
-  date: string,
-  fallbackSession: SessionLog | null
-) {
-  const res = useSessionLog(date, {
-    fallbackData: fallbackSession,
-  })
-
-  return {
-    ...res,
-    sessionLog: res.sessionLog ?? fallbackSession,
-  }
-}
-
 export function useSessionLog(day: Dayjs | string, config?: SWRConfiguration) {
   const { data, error, isLoading, mutate } = useSWR<SessionLog | null>(
     URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)),
-    config
+    config,
   )
 
   return {
@@ -96,7 +85,7 @@ export function useSessionLog(day: Dayjs | string, config?: SWRConfiguration) {
 
 export function useSessionLogs(query: DateRangeQuery) {
   const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
-    URI_SESSIONS + paramify({ ...query })
+    URI_SESSIONS + paramify({ ...query }),
   )
 
   return {
@@ -117,7 +106,7 @@ export async function addSessionLog(session: SessionLog): Promise<SessionLog> {
 }
 
 export async function updateSessionLog(
-  newSesson: SessionLog
+  newSesson: SessionLog,
 ): Promise<SessionLog> {
   return fetchJson(URI_SESSIONS + newSesson.date, {
     method: 'PUT',
@@ -128,7 +117,7 @@ export async function updateSessionLog(
 
 export async function deleteSessionRecord(
   date: string,
-  recordId: string
+  recordId: string,
 ): Promise<SessionLog> {
   return fetchJson(`${URI_SESSIONS}${date}/records/${recordId}`, {
     method: 'DELETE',
@@ -149,7 +138,7 @@ export async function deleteSessionRecord(
 export function useRecord(id: string, config?: SWRConfiguration) {
   const { data, error, isLoading, mutate } = useSWR<Record | null>(
     URI_RECORDS + id,
-    config
+    config,
   )
 
   return {
@@ -163,7 +152,7 @@ export function useRecord(id: string, config?: SWRConfiguration) {
 
 export function useRecords(query?: RecordQuery, shouldFetch = true) {
   const { data, isLoading, error, mutate } = useSWR<Record[]>(
-    shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
+    shouldFetch ? URI_RECORDS + paramify({ ...query }) : null,
   )
 
   return {
@@ -186,7 +175,7 @@ export async function addRecord(newRecord: Record): Promise<Record> {
 
 export async function updateRecordFields(
   id: Record['_id'],
-  updates: Partial<Record>
+  updates: Partial<Record>,
 ): Promise<Record> {
   return fetchJson(URI_RECORDS + id, {
     method: 'PATCH',
@@ -201,12 +190,13 @@ export async function updateRecordFields(
 
 export function useExercises(query?: ExerciseQuery) {
   const { data, error, mutate } = useSWR<Exercise[]>(
-    URI_EXERCISES + paramify({ ...query })
+    URI_EXERCISES + paramify({ ...query }),
   )
 
   return {
     exercises: data,
     exerciseNames: toNames(data),
+    activeStatusExercises: toNames(filterActive(data)),
     isError: !!error,
     mutate,
   }
@@ -216,7 +206,7 @@ export function useExercise(id: string | null, config?: SWRConfiguration) {
   // passing null to useSWR disables fetching
   const { data, error, mutate } = useSWR<Exercise>(
     id ? URI_EXERCISES + id : null,
-    config
+    config,
   )
 
   return {
@@ -244,12 +234,19 @@ export async function updateExercise(newExercise: Exercise): Promise<Exercise> {
 
 export async function updateExerciseFields(
   exercise: Exercise,
-  updates: Partial<Exercise>
+  updates: Partial<Exercise>,
 ): Promise<Exercise> {
   const id = exercise._id
   return fetchJson(URI_EXERCISES + exercise.name, {
     method: 'PATCH',
     body: toJson({ id, updates }),
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
+export async function deleteExercise(name: string): Promise<string> {
+  return fetchJson(URI_EXERCISES + name, {
+    method: 'DELETE',
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -265,6 +262,7 @@ export function useModifiers() {
     modifiers: data,
     modifiersIndex: arrayToIndex<Modifier>('name', data),
     modifierNames: toNames(data),
+    activeStatusModifiers: toNames(filterActive(data)),
     isError: !!error,
     mutate,
   }
@@ -281,12 +279,19 @@ export async function addModifier(newModifier: Modifier): Promise<Modifier> {
 // todo: add a modifiers/id/<id> URI? Weird to use name in uri then send id to backend
 export async function updateModifierFields(
   modifier: Modifier,
-  updates: Partial<Modifier>
+  updates: Partial<Modifier>,
 ): Promise<Modifier> {
   const id = modifier._id
   return fetchJson(URI_MODIFIERS + modifier.name, {
     method: 'PATCH',
     body: toJson({ id, updates }),
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
+export async function deleteModifier(name: string): Promise<string> {
+  return fetchJson(URI_MODIFIERS + name, {
+    method: 'DELETE',
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -301,6 +306,7 @@ export function useCategories() {
   return {
     categories: data,
     categoryNames: toNames(data),
+    activeStatusCategories: toNames(filterActive(data)),
     isError: !!error,
     mutate,
   }
@@ -317,12 +323,19 @@ export async function addCategory(newCategory: Category): Promise<Category> {
 // todo: add a categories/id/<id> URI? Weird to use name in uri then send id to backend
 export async function updateCategoryFields(
   category: Category,
-  updates: Partial<Category>
+  updates: Partial<Category>,
 ): Promise<Category> {
   const id = category._id
   return fetchJson(URI_CATEGORIES + category.name, {
     method: 'PATCH',
     body: toJson({ id, updates }),
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
+export async function deleteCategory(name: string): Promise<string> {
+  return fetchJson(URI_CATEGORIES + name, {
+    method: 'DELETE',
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -333,7 +346,7 @@ export async function updateCategoryFields(
 
 export function useBodyweightHistory(
   query?: BodyweightQuery,
-  shouldFetch = true
+  shouldFetch = true,
 ) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
@@ -344,7 +357,7 @@ export function useBodyweightHistory(
   const end = query?.end ? addDay(query.end) : undefined
 
   const { data, error, mutate } = useSWR<Bodyweight[]>(
-    shouldFetch ? URI_BODYWEIGHT + paramify({ start, end, ...query }) : null
+    shouldFetch ? URI_BODYWEIGHT + paramify({ start, end, ...query }) : null,
   )
 
   return {
@@ -355,7 +368,7 @@ export function useBodyweightHistory(
 }
 
 export async function addBodyweight(
-  newBodyweight: Bodyweight
+  newBodyweight: Bodyweight,
 ): Promise<Bodyweight> {
   return fetchJson(URI_BODYWEIGHT, {
     method: 'POST',
@@ -365,7 +378,7 @@ export async function addBodyweight(
 }
 
 export async function updateBodyweight(
-  newBodyweight: Bodyweight
+  newBodyweight: Bodyweight,
 ): Promise<Bodyweight> {
   return fetchJson(URI_BODYWEIGHT, {
     method: 'PUT',

@@ -1,13 +1,13 @@
 import { useQueryState } from 'next-usequerystate'
-import CategoryForm from '../../components/CategoryForm'
-import CategorySelector from '../../components/form-fields/selectors/CategorySelector'
-import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import {
   updateCategoryFields,
   useCategories,
   useExercises,
 } from '../../lib/frontend/restService'
 import Category from '../../models/AsyncSelectorOption/Category'
+import ManageWelcomeCard from '../ManageWelcomeCard'
+import CategorySelector from '../form-fields/selectors/CategorySelector'
+import CategoryForm from './CategoryForm'
 
 export default function useCategoryForm() {
   const [urlCategory, setUrlCategory] = useQueryState('category')
@@ -30,7 +30,7 @@ export default function useCategoryForm() {
         updates.name && mutateExercises()
         // still need to return the new categories, so have to build them
         return categories?.map((category) =>
-          category._id === updatedCategory._id ? updatedCategory : category
+          category._id === updatedCategory._id ? updatedCategory : category,
         )
       },
       {
@@ -41,7 +41,7 @@ export default function useCategoryForm() {
         optimisticData: updates.name
           ? [...(categories ?? []), newCategory]
           : undefined,
-      }
+      },
     )
   }
 

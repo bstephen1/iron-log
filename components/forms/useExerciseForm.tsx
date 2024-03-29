@@ -1,15 +1,14 @@
 import { useQueryState } from 'next-usequerystate'
 import { useState } from 'react'
-import ExerciseForm from '../../components/ExerciseForm'
-import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import {
   updateExerciseFields,
   useExercises,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import ManageWelcomeCard from '../ManageWelcomeCard'
+import ExerciseSelector from '../form-fields/selectors/ExerciseSelector'
+import ExerciseForm from './ExerciseForm'
 
-// todo: delete exercise. Delete only for unused exercises?
 // todo: ui element showing "changes saved". Snackbar?
 export default function useExerciseForm() {
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
@@ -34,14 +33,14 @@ export default function useExerciseForm() {
       async () => {
         const updatedExercise = await updateExerciseFields(exercise, updates)
         return exercises?.map((exercise) =>
-          exercise._id === updatedExercise._id ? updatedExercise : exercise
+          exercise._id === updatedExercise._id ? updatedExercise : exercise,
         )
       },
       {
         optimisticData: updates.name
           ? [...(exercises ?? []), newExercise]
           : undefined,
-      }
+      },
     )
   }
 

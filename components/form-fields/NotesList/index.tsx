@@ -2,6 +2,7 @@ import { Divider, Stack, Typography } from '@mui/material'
 import Note from '../../../models/Note'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'
+import FormDivider from '../../forms/FormDivider'
 
 interface Props {
   label?: string
@@ -39,21 +40,15 @@ export default function NotesList(props: Props) {
       notes
         .slice(0, i)
         .concat(newNote)
-        .concat(notes.slice(i + 1))
+        .concat(notes.slice(i + 1)),
     )
   }
 
   return (
     <>
-      {/* todo: center text? outline? divider style in the middle? */}
-      {/* todo: style divider line w/ theme color? (see dad) */}
-      {label && (
-        <Divider textAlign="center" sx={{ pb: 2 }}>
-          {label}
-        </Divider>
-      )}
+      {label && <FormDivider title={label} />}
       {/* todo: drag n drop? */}
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ py: 1 }}>
         {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
         {!readOnly && (
           <AddNote

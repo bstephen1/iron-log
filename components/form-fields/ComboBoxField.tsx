@@ -1,6 +1,10 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import { Checkbox, TextFieldProps } from '@mui/material'
+import {
+  AutocompleteChangeReason,
+  Checkbox,
+  TextFieldProps,
+} from '@mui/material'
 import AsyncAutocomplete, {
   AsyncAutocompleteProps,
 } from '../../components/AsyncAutocomplete'
@@ -14,7 +18,20 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
    *  If normal placeholder is provided it will overwrite this.
    */
   emptyPlaceholder?: string
-  handleSubmit?: (value: string[]) => void
+  /** Called on any change to the value array. Provides the entire new value array. */
+  handleSubmit?: (newValueArray: string[]) => void
+  /** Called on any change to the value array. Provides only the changed value,
+   *  and the reason for the change (whether the value was added or removed). */
+  handleChange?: (
+    changedValue: string | undefined,
+    reason: AutocompleteChangeReason,
+  ) => void
+  /** Behavior to follow when adding new items to the value array.
+   *
+   *  @append append new item to end of array (default)
+   *  @filter filter through the options array to preserve order
+   */
+  changeBehavior?: 'append' | 'filter'
   textFieldProps?: Partial<TextFieldProps>
   /** Helper text defaults to a single whitespace to provide padding.
    *  To disable, set to an empty string.
@@ -23,45 +40,54 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
 }
 // todo: closes when any value changes (since that triggers onSubmit and rerenders it)
 export function ComboBoxField({
-  options,
+  options = [],
   initialValue,
   emptyPlaceholder = '',
   handleSubmit = doNothing,
+  handleChange = doNothing,
+  changeBehavior = 'append',
   textFieldProps,
   helperText = ' ',
   ...asyncAutocompleteProps
 }: ComboBoxFieldProps) {
-  const { control, value, setValue, isDirty } = useField<string[]>({
-    handleSubmit,
+  const { control, value, setValue } = useField<string[]>({
     initialValue,
+    autoSubmit: false,
   })
 
-  const handleClose = () => {
-    isDirty && handleSubmit(value)
-  }
+  const onChange = (
+    newValue: string[] | string | null,
+    reason: AutocompleteChangeReason,
+  ) => {
+    const formattedNewValue =
+      typeof newValue === 'string' ? newValue.split(',') : newValue ?? []
+    let change
+    if (reason === 'selectOption') {
+      change = formattedNewValue[formattedNewValue?.length - 1]
+    } else if (reason === 'removeOption') {
+      change = value.find((item) => !formattedNewValue.includes(item))
+    }
 
-  const handleChange = (value: string[] | string | null) => {
-    const newValue = typeof value === 'string' ? value.split(',') : value
-
-    setValue(newValue ?? [])
-    handleSubmit(newValue ?? [])
+    setValue(
+      changeBehavior === 'filter'
+        ? options.filter((option) => formattedNewValue.includes(option))
+        : formattedNewValue,
+    )
+    handleChange(change, reason)
+    handleSubmit(formattedNewValue)
   }
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.
-  // May have to modify it if debounceSubmit is desired, but that may not be necessary for this.
-  // Originally this was only submitting onClose or onBlur, but changed to onChange because then it
-  // wasn't updating if you clicked delete on the chips. But that means now it might send extra requests
-  // if multiple values are being changed.
+  // It submits updates whenever the selected value array changes.
   return (
     <AsyncAutocomplete
       {...control()}
       placeholder={value.length ? '' : emptyPlaceholder}
-      onChange={(_, value) => handleChange(value)}
+      onChange={(_, value, reason) => onChange(value, reason)}
       fullWidth
       multiple
       // todo: change color?
       // ChipProps={{ color: 'primary', variant: 'outlined' }}
-      onClose={handleClose}
       options={options}
       disableCloseOnSelect
       autoHighlight

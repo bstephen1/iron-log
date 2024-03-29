@@ -7,6 +7,7 @@ import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHand
 import { validateName } from '../../../lib/backend/apiQueryValidationService'
 import {
   addExercise,
+  deleteExercise,
   fetchExercise,
   updateExercise,
   updateExerciseFields,
@@ -24,6 +25,8 @@ async function handler(req: NextApiRequest, userId: UserId) {
       return await updateExercise(userId, req.body)
     case 'PATCH':
       return await updateExerciseFields(userId, req.body)
+    case 'DELETE':
+      return await deleteExercise(userId, name)
     default:
       throw methodNotAllowed
   }
