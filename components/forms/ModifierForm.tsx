@@ -1,19 +1,41 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import * as yup from 'yup'
-import { useModifiers } from '../../lib/frontend/restService'
+import {
+  deleteModifier,
+  useExercises,
+  useModifiers,
+} from '../../lib/frontend/restService'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import InputField from '../form-fields/InputField'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
-import UsageComboBox from '../form-fields/UsageComboBox'
 import StatusSelect from '../form-fields/StatusSelect'
+import UsageComboBox from '../form-fields/UsageComboBox'
+import ActionItems from '../form-fields/ActionItems'
+import { getUsage } from '../../lib/util'
+import { useQueryState } from 'next-usequerystate'
 
 interface Props {
   modifier: Modifier
   handleUpdate: (updates: Partial<Modifier>) => void
 }
-export default function ModifierForm({ modifier, handleUpdate }: Props) {
-  const { modifierNames } = useModifiers()
+export default function ModifierForm({
+  modifier: { name, status, weight },
+  handleUpdate,
+}: Props) {
+  const { modifierNames, modifiers, mutate: mutateModifiers } = useModifiers()
+  const { exercises } = useExercises()
+  const usage = getUsage(exercises, 'modifiers', name)
+  const [_, setUrlModifier] = useQueryState('modifier')
+
+  const handleDelete = async () => {
+    await deleteModifier(name)
+    setUrlModifier(null, {
+      scroll: false,
+      shallow: true,
+    })
+    mutateModifiers(modifiers?.filter((modifier) => modifier.name !== name))
+  }
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
@@ -43,7 +65,7 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
       <Grid xs={12}>
         <InputField
           label="Name"
-          initialValue={modifier.name}
+          initialValue={name}
           required
           fullWidth
           handleSubmit={(name) => handleUpdate({ name })}
@@ -52,14 +74,14 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
       </Grid>
       <Grid xs={12} sm={6}>
         <StatusSelect
-          initialValue={modifier.status}
+          initialValue={status}
           handleSubmit={(status) => handleUpdate({ status })}
         />
       </Grid>
       <Grid xs={12} sm={6}>
         <NumericFieldAutosave
           label="Equipment weight"
-          initialValue={modifier.weight}
+          initialValue={weight}
           handleSubmit={(weight) => handleUpdate({ weight })}
           fullWidth
           variant="outlined"
@@ -71,7 +93,15 @@ export default function ModifierForm({ modifier, handleUpdate }: Props) {
         />
       </Grid>
       <Grid xs={12}>
-        <UsageComboBox field="modifiers" name={modifier.name} />
+        <UsageComboBox field="modifiers" name={name} usage={usage} />
+      </Grid>
+      <Grid xs={12}>
+        <ActionItems
+          name={name}
+          type="modifier"
+          handleDelete={handleDelete}
+          deleteDisabled={!!usage.length}
+        />
       </Grid>
     </Grid>
   )

@@ -21,11 +21,14 @@ export default function CategoryForm({
   category: { name, status },
   handleUpdate,
 }: Props) {
-  const { categoryNames } = useCategories()
+  const {
+    categoryNames,
+    categories,
+    mutate: mutateCategories,
+  } = useCategories()
   const { exercises } = useExercises()
   const usage = getUsage(exercises, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')
-  const { categories, mutate: mutateCategories } = useCategories()
 
   const handleDelete = async () => {
     await deleteCategory(name)

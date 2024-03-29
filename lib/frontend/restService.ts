@@ -282,6 +282,13 @@ export async function updateModifierFields(
   })
 }
 
+export async function deleteModifier(name: string): Promise<string> {
+  return fetchJson(URI_MODIFIERS + name, {
+    method: 'DELETE',
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
 //----------
 // CATEGORY
 //----------

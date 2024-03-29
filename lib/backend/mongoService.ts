@@ -405,6 +405,23 @@ export async function updateModifierFields(
   )
 }
 
+export async function deleteModifier(userId: ObjectId, name: string) {
+  const userExercises = await exercises.find({ userId }).toArray()
+  const usedExercise = userExercises.find((exercise) =>
+    exercise.modifiers.includes(name),
+  )
+
+  if (usedExercise) {
+    throw new ApiError(
+      StatusCodes.BAD_REQUEST,
+      `Cannot delete modifier: used in exercise "${usedExercise.name}"`,
+    )
+  }
+
+  await modifiers.deleteOne({ userId, name })
+  return name
+}
+
 //----------
 // CATEGORY
 //----------

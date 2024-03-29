@@ -11,12 +11,12 @@ interface Props {
   /** name of currently selected category / modifier */
   name: string
   /** list of exercises this field is used in */
-  usage?: Exercise[]
+  usage: Exercise[]
 }
 /** updates category / modifier usage in exercises.
  *  Ie, with a given category, add / remove it to exercises.
  */
-export default function UsageComboBox({ field, name, usage = [] }: Props) {
+export default function UsageComboBox({ field, name, usage }: Props) {
   const { exercises, exerciseNames, mutate: mutateExercises } = useExercises()
   const usageNames = usage.map((exercise) => exercise.name)
 

@@ -29,7 +29,7 @@ export default function ActionItems({
             buttonProps={{ disabled: deleteDisabled }}
           />
         }
-        description={`Delete this ${type}. The ${type} must be unused.`}
+        description={`Delete this ${type}. The ${type} must be unused in any exercises.`}
       />
     </>
   )
