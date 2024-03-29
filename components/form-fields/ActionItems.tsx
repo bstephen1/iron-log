@@ -1,6 +1,6 @@
+import { Paper, Typography } from '@mui/material'
 import FormDivider from '../forms/FormDivider'
 import DeleteButton from '../manage/DeleteButton'
-import ActionItem from './ActionItem'
 
 interface Props {
   /** name of currently selected option */
@@ -32,5 +32,28 @@ export default function ActionItems({
         description={`Delete this ${type}. The ${type} must be unused in any exercises.`}
       />
     </>
+  )
+}
+
+interface ActionItemProps {
+  button: JSX.Element
+  description: string
+}
+function ActionItem({ button, description }: ActionItemProps) {
+  return (
+    <Paper
+      variant="outlined"
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        p: 1,
+        my: 2,
+      }}
+    >
+      <Typography display="flex" alignItems="center">
+        {description}
+      </Typography>
+      {button}
+    </Paper>
   )
 }
