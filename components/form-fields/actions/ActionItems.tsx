@@ -1,8 +1,8 @@
-import { Button, Paper, Typography } from '@mui/material'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import { Box, Button, Paper, Typography } from '@mui/material'
 import FormDivider from '../../forms/FormDivider'
 import DeleteButton from './DeleteButton'
 import UsageButton from './UsageButton'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 
 interface Props {
   /** name of currently selected option */
@@ -75,7 +75,10 @@ function ActionItem({ button, description }: ActionItemProps) {
       <Typography display="flex" alignItems="center">
         {description}
       </Typography>
-      {button}
+      {/* weirdly, this only needs display flex to become centered */}
+      <Box px={2} display="flex">
+        {button}
+      </Box>
     </Paper>
   )
 }
