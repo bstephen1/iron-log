@@ -4,6 +4,7 @@ import { useQueryState } from 'next-usequerystate'
 import * as yup from 'yup'
 import {
   deleteExercise,
+  updateExercise,
   useCategories,
   useExercises,
   useModifiers,
@@ -38,6 +39,19 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       shallow: true,
     })
     mutateExercises(exercises?.filter((e) => e.name !== exercise.name))
+  }
+
+  const handleDuplicate = async () => {
+    if (!exercises) return
+
+    const newName = exercise.name + ' (copy)'
+    const newExercise = new Exercise(newName, exercise)
+    await updateExercise(newExercise)
+    setUrlExercise(newName, {
+      scroll: true,
+      shallow: true,
+    })
+    mutateExercises([...exercises, newExercise])
   }
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
@@ -134,6 +148,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           name={exercise.name}
           type="exercise"
           handleDelete={handleDelete}
+          handleDuplicate={handleDuplicate}
           deleteDisabled={records?.length}
         />
       </Grid>
