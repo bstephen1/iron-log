@@ -1,17 +1,17 @@
 import Grid from '@mui/material/Unstable_Grid2'
+import { useQueryState } from 'next-usequerystate'
 import * as yup from 'yup'
 import {
   deleteCategory,
   useCategories,
   useExercises,
 } from '../../lib/frontend/restService'
+import { getUsage } from '../../lib/util'
 import Category from '../../models/AsyncSelectorOption/Category'
 import InputField from '../form-fields/InputField'
 import StatusSelect from '../form-fields/StatusSelect'
 import UsageComboBox from '../form-fields/UsageComboBox'
-import ActionItems from '../form-fields/ActionItems'
-import { getUsage } from '../../lib/util'
-import { useQueryState } from 'next-usequerystate'
+import ActionItems from '../form-fields/actions/ActionItems'
 
 interface Props {
   category: Category

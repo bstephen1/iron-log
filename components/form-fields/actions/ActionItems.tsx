@@ -1,6 +1,7 @@
 import { Paper, Typography } from '@mui/material'
-import FormDivider from '../forms/FormDivider'
-import DeleteButton from '../manage/DeleteButton'
+import FormDivider from '../../forms/FormDivider'
+import DeleteButton from './DeleteButton'
+import UsageButton from './UsageButton'
 
 interface Props {
   /** name of currently selected option */
@@ -20,7 +21,9 @@ export default function ActionItems({
   return (
     <>
       <FormDivider title="Actions" />
+
       <ActionItem
+        description={`Delete this ${type}. The ${type} must be unused in any ${type === 'exercise' ? 'exercise records' : 'exercises'}.`}
         button={
           <DeleteButton
             type={type}
@@ -29,7 +32,6 @@ export default function ActionItems({
             buttonProps={{ disabled: !!deleteDisabled }}
           />
         }
-        description={`Delete this ${type}. The ${type} must be unused in any ${type === 'exercise' ? 'exercise records' : 'exercises'}.`}
       />
     </>
   )

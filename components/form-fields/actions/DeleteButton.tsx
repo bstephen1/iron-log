@@ -1,4 +1,4 @@
-import { Delete } from '@mui/icons-material'
+import DeleteIcon from '@mui/icons-material/Delete'
 import {
   Button,
   ButtonProps,
@@ -31,7 +31,7 @@ export default function DeleteButton({
       <Button
         color="error"
         onClick={() => setOpen(true)}
-        startIcon={<Delete />}
+        startIcon={<DeleteIcon />}
         {...buttonProps}
       >
         Delete

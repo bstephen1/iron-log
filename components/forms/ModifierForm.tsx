@@ -1,19 +1,19 @@
 import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
+import { useQueryState } from 'next-usequerystate'
 import * as yup from 'yup'
 import {
   deleteModifier,
   useExercises,
   useModifiers,
 } from '../../lib/frontend/restService'
+import { getUsage } from '../../lib/util'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import InputField from '../form-fields/InputField'
 import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 import StatusSelect from '../form-fields/StatusSelect'
 import UsageComboBox from '../form-fields/UsageComboBox'
-import ActionItems from '../form-fields/ActionItems'
-import { getUsage } from '../../lib/util'
-import { useQueryState } from 'next-usequerystate'
+import ActionItems from '../form-fields/actions/ActionItems'
 
 interface Props {
   modifier: Modifier
