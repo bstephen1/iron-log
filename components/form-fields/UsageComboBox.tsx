@@ -3,22 +3,22 @@ import {
   updateExerciseFields,
   useExercises,
 } from '../../lib/frontend/restService'
+import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import { ComboBoxField } from './ComboBoxField'
 
 interface Props {
   field: 'categories' | 'modifiers'
   /** name of currently selected category / modifier */
   name: string
+  /** list of exercises this field is used in */
+  usage?: Exercise[]
 }
 /** updates category / modifier usage in exercises.
  *  Ie, with a given category, add / remove it to exercises.
  */
-export default function UsageComboBox({ field, name }: Props) {
+export default function UsageComboBox({ field, name, usage = [] }: Props) {
   const { exercises, exerciseNames, mutate: mutateExercises } = useExercises()
-  const usage =
-    exercises
-      ?.filter((exercise) => exercise[field].includes(name))
-      .map((exercise) => exercise.name) ?? []
+  const usageNames = usage.map((exercise) => exercise.name)
 
   const handleUpdateExercise = async (
     exerciseName: string | undefined,
@@ -43,7 +43,7 @@ export default function UsageComboBox({ field, name }: Props) {
   return (
     <ComboBoxField
       label="Exercises"
-      initialValue={usage}
+      initialValue={usageNames}
       options={exerciseNames}
       fullWidth
       handleChange={handleUpdateExercise}

@@ -1,17 +1,40 @@
 import Grid from '@mui/material/Unstable_Grid2'
 import * as yup from 'yup'
-import { useCategories } from '../../lib/frontend/restService'
+import {
+  deleteCategory,
+  useCategories,
+  useExercises,
+} from '../../lib/frontend/restService'
 import Category from '../../models/AsyncSelectorOption/Category'
 import InputField from '../form-fields/InputField'
 import StatusSelect from '../form-fields/StatusSelect'
 import UsageComboBox from '../form-fields/UsageComboBox'
+import ActionItems from '../form-fields/ActionItems'
+import { getUsage } from '../../lib/util'
+import { useQueryState } from 'next-usequerystate'
 
 interface Props {
   category: Category
-  handleUpdate: (updates: Partial<Category>) => void
+  handleUpdate: (updates: Partial<Category>) => Promise<void>
 }
-export default function CategoryForm({ category, handleUpdate }: Props) {
+export default function CategoryForm({
+  category: { name, status },
+  handleUpdate,
+}: Props) {
   const { categoryNames } = useCategories()
+  const { exercises } = useExercises()
+  const usage = getUsage(exercises, 'categories', name)
+  const [_, setUrlCategory] = useQueryState('category')
+  const { categories, mutate: mutateCategories } = useCategories()
+
+  const handleDelete = async () => {
+    await deleteCategory(name)
+    setUrlCategory(null, {
+      scroll: false,
+      shallow: true,
+    })
+    mutateCategories(categories?.filter((category) => category.name !== name))
+  }
 
   // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
   // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
@@ -41,7 +64,7 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
       <Grid xs={12} sm={6}>
         <InputField
           label="Name"
-          initialValue={category.name}
+          initialValue={name}
           required
           handleSubmit={(value) => handleUpdate({ name: value })}
           yupValidator={yup.reach(validationSchema, 'name')}
@@ -50,12 +73,20 @@ export default function CategoryForm({ category, handleUpdate }: Props) {
       </Grid>
       <Grid xs={12} sm={6}>
         <StatusSelect
-          initialValue={category.status}
+          initialValue={status}
           handleSubmit={(status) => handleUpdate({ status })}
         />
       </Grid>
       <Grid xs={12}>
-        <UsageComboBox field="categories" name={category.name} />
+        <UsageComboBox field="categories" name={name} usage={usage} />
+      </Grid>
+      <Grid xs={12}>
+        <ActionItems
+          name={name}
+          type="category"
+          handleDelete={handleDelete}
+          deleteDisabled={!!usage.length}
+        />
       </Grid>
     </Grid>
   )
