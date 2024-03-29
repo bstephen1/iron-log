@@ -15,6 +15,7 @@ import { SWRConfig } from 'swr'
 import { vi } from 'vitest'
 import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
+import { SessionProvider } from 'next-auth/react'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.
@@ -32,9 +33,11 @@ const FrontendLayout = ({ children }: { children: ReactNode }) => (
       provider: () => new Map(),
     }}
   >
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      {children}
-    </LocalizationProvider>
+    <SessionProvider session={{ user: { id: '' }, expires: '' }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {children}
+      </LocalizationProvider>
+    </SessionProvider>
   </SWRConfig>
 )
 
@@ -55,14 +58,14 @@ const customRender = (
      *  It cannot be enabled globally because then any test NOT using fake timers will fail.
      */
     useFakeTimers?: boolean
-  }
+  },
 ) => ({
   user: userEvent.setup(
     options?.useFakeTimers
       ? {
           advanceTimers: vi.advanceTimersByTime,
         }
-      : undefined
+      : undefined,
   ),
   ...render(ui, { wrapper: FrontendLayout, ...options }),
 })
@@ -82,7 +85,7 @@ interface ServerOptions {
 export function useServerOnce(
   url: string,
   json?: any,
-  options?: ServerOptions
+  options?: ServerOptions,
 ) {
   const { status } = options ?? {}
   server.use(
@@ -92,8 +95,8 @@ export function useServerOnce(
         await delay(options?.delay ?? 0)
         return HttpResponse.json(json, { status: status ?? StatusCodes.OK })
       },
-      { once: true }
-    )
+      { once: true },
+    ),
   )
 }
 
