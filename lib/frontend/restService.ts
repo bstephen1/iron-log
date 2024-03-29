@@ -319,6 +319,13 @@ export async function updateCategoryFields(
   })
 }
 
+export async function deleteCategory(name: string): Promise<string> {
+  return fetchJson(URI_CATEGORIES + name, {
+    method: 'DELETE',
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
 //------------
 // BODYWEIGHT
 //------------

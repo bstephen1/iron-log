@@ -9,7 +9,6 @@ import {
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import ExerciseForm from '../forms/ExerciseForm'
 
-// todo: delete exercise. Delete only for unused exercises?
 // todo: ui element showing "changes saved". Snackbar?
 export default function useExerciseForm() {
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
