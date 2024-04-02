@@ -23,7 +23,6 @@ export default function ModifierQueryField({
       label="Modifiers"
       emptyPlaceholder="None"
       options={options || []}
-      noOptionsText="Select an exercise to select from its available modifiers"
       initialValue={initialValue || []}
       handleSubmit={(modifiers) => updateQuery({ modifier: modifiers })}
       helperText=""

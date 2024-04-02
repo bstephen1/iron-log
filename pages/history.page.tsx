@@ -26,7 +26,7 @@ export default function HistoryPage() {
       </Typography>
       <QueryForm {...{ query, setQuery }} />
 
-      <Box py={2}>
+      <Box pt={2}>
         <StyledDivider />
       </Box>
       <HistoryCardsSwiper
