@@ -4,7 +4,10 @@ A gym log app that aims to be flexible enough to be used in place of a physical 
 
 Visit at https://iron-log.vercel.app/
 
-![quickoverview](https://github.com/bstephen1/iron-log/assets/17125707/31e167b3-b481-4e62-9aea-9aa40aa8f1ea)
+<br />
+<img width="320" alt="iron log middle" src="https://github.com/bstephen1/iron-log/assets/17125707/31033086-cda2-4107-b88d-d0422cefa07d">
+<br />
+
 
 
 ## Features
