@@ -18,6 +18,7 @@ export const noSwipingRecord = 'swiper-no-swiping-record'
 
 export const devUserId = '123456789012345678901234'
 export const guestUserName = 'guest'
+export const sampleLogDate = '2022-09-26'
 
 /** This is a visual fix for Selects and Textfields set as "select" that should be spread into SelectProps.
  *

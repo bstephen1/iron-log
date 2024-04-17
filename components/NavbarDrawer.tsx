@@ -16,13 +16,21 @@ import {
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import { ComponentProps, useState } from 'react'
-import { DATE_FORMAT } from '../lib/frontend/constants'
+import {
+  DATE_FORMAT,
+  guestUserName,
+  sampleLogDate,
+} from '../lib/frontend/constants'
+import { useSession } from 'next-auth/react'
 
 const today = dayjs().format(DATE_FORMAT)
 
 export default function NavbarDrawer() {
   const [open, setOpen] = useState(false)
   const toggleOpen = () => setOpen(!open)
+  const { data } = useSession()
+  const user = data?.user?.name
+  const sessionDate = user === guestUserName ? sampleLogDate : today
 
   return (
     <>
@@ -35,7 +43,7 @@ export default function NavbarDrawer() {
         <List onClick={() => setOpen(false)}>
           <NavbarLink href="/" text="Home" Icon={HomeIcon} />
           <NavbarLink
-            href={`/sessions/${today}`}
+            href={`/sessions/${sessionDate}`}
             text="Today"
             Icon={TodayIcon}
           />
