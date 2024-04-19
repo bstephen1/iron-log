@@ -18,16 +18,6 @@ export default function NumericFieldAutosave({
   handleSubmit: handleNumberSubmit,
   ...inputFieldAutosaveProps
 }: Props) {
-  const convertValueToNumber = (value: string) => {
-    value = value.trim()
-    // have to explicitly handle an empty string because isNaN treats it as zero
-    if (!value) {
-      return undefined
-    }
-    // for some reason isNaN is requiring a number even though it casts to a number
-    return isNaN(Number(value)) ? undefined : Number(value)
-  }
-
   return (
     <InputFieldAutosave
       // String(undefined) causes a warning
@@ -41,4 +31,14 @@ export default function NumericFieldAutosave({
       {...inputFieldAutosaveProps}
     />
   )
+}
+
+const convertValueToNumber = (value: string) => {
+  value = value.trim()
+  // have to explicitly handle an empty string because isNaN treats it as zero
+  if (!value) {
+    return undefined
+  }
+  // for some reason isNaN is requiring a number even though it casts to a number
+  return isNaN(Number(value)) ? undefined : Number(value)
 }

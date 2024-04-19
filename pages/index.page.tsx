@@ -3,7 +3,11 @@ import dayjs from 'dayjs'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import { DATE_FORMAT, guestUserName } from '../lib/frontend/constants'
+import {
+  DATE_FORMAT,
+  guestUserName,
+  sampleLogDate,
+} from '../lib/frontend/constants'
 import { useSession } from 'next-auth/react'
 
 const Home: NextPage = () => {
@@ -38,7 +42,7 @@ const Home: NextPage = () => {
 
             <Box display="flex" justifyContent="center">
               <Button>
-                <Link href={`/sessions/2022-09-26/`}>Sample log</Link>
+                <Link href={`/sessions/${sampleLogDate}/`}>Sample log</Link>
               </Button>
             </Box>
           </>
