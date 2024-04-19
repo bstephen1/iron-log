@@ -9,6 +9,8 @@ And for failure it can be anything > 10 (or < 0 for rir). I guess you can rate t
 
 */
 
+import { TIME_FORMAT } from '../lib/frontend/constants'
+
 /** An exercise set. */
 export type Set = {
   -readonly [field in keyof Omit<Units, 'side'>]?: number
@@ -47,7 +49,7 @@ export const DB_UNITS: Units = {
 export const UNITS = {
   weight: { kg: 1, lbs: 0.45359237 },
   distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471, cm: 0.01, in: 0.0254 },
-  time: { sec: 1, min: 60, hr: 3600, 'HH:MM:SS': 1 },
+  time: { sec: 1, min: 60, hr: 3600, [TIME_FORMAT]: 1 },
   /** reps have no units */
   reps: { reps: 1 },
   /** side has no units */
@@ -69,7 +71,7 @@ export function convertUnit<Dimension extends keyof Units>(
    *  use is for weight (plate weight + extra weight = total weight) */
   extraValue = 0,
   /** number of decimals to round to */
-  roundedDecimals?: number
+  roundedDecimals?: number,
 ) {
   // we want to show extraValue if it exists and value is undefined
   if (!value && !extraValue) return value
@@ -90,7 +92,7 @@ function convertUnitHelper<Dimension extends keyof Units>(
   value: number | undefined,
   dimension: Dimension,
   source: Units[Dimension],
-  dest: Units[Dimension]
+  dest: Units[Dimension],
 ) {
   // This would work if value === 0 too, but have to watch out for "effort" dimension.
   if (value === undefined) return undefined

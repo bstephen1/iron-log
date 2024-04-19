@@ -5,9 +5,9 @@ import { Set } from '../../../../models/Set'
 import InputFieldAutosave, {
   InputFieldAutosaveProps,
 } from '../../../form-fields/InputFieldAutosave'
+import { TIME_FORMAT } from '../../../../lib/frontend/constants'
 
 dayjs.extend(duration)
-const TIME_FORMAT = 'HH:mm:ss'
 
 type Props = {
   handleSetChange: UpdateFields<Set>

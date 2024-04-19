@@ -6,8 +6,10 @@ import { DB_UNITS, Set, Units, convertUnit } from '../../../../models/Set'
 import NumericFieldAutosave from '../../../form-fields/NumericFieldAutosave'
 import SetFieldSide from './SetFieldSide'
 import SetFieldTimeMask from './SetFieldTimeMask'
+import { TIME_FORMAT } from '../../../../lib/frontend/constants'
 
 const delimiterWidth = '15px'
+type ComponentType = 'side' | 'time' | 'default'
 
 interface Props<S extends keyof Units>
   extends Pick<VisibleField, 'delimiter' | 'name'> {
@@ -26,8 +28,8 @@ export default memo(function RenderSetField<S extends keyof Units>(
 ) {
   const { index, unit, delimiter, source } = props
 
-  const componentType =
-    source === 'side' ? 'side' : unit === 'HH:MM:SS' ? 'time' : 'default'
+  const componentType: ComponentType =
+    source === 'side' ? 'side' : unit === TIME_FORMAT ? 'time' : 'default'
 
   return (
     <Stack
@@ -69,7 +71,7 @@ const sharedProps: Pick<TextFieldProps, 'inputProps' | 'InputProps' | 'sx'> = {
 function SetFieldComponent<S extends keyof Units>({
   componentType,
   ...props
-}: Props<S> & { componentType: string }) {
+}: Props<S> & { componentType: ComponentType }) {
   const { value, handleSetChange } = props
 
   switch (componentType) {
@@ -89,7 +91,7 @@ function SetFieldComponent<S extends keyof Units>({
           {...sharedProps}
         />
       )
-    default:
+    case 'default':
       return <SetFieldNumeric {...props} {...sharedProps} />
   }
 }
