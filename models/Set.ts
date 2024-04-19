@@ -49,6 +49,10 @@ export const DB_UNITS: Units = {
 export const UNITS = {
   weight: { kg: 1, lbs: 0.45359237 },
   distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471, cm: 0.01, in: 0.0254 },
+  /** Considered having a separate HH:mm:ss and mm:ss but then the latter
+   *  would be overflow limited, so you wouldn't always be able to freely swap units.
+   *  May revisit if real usage with HH is cumbersome.
+   */
   time: { sec: 1, min: 60, hr: 3600, [TIME_FORMAT]: 1 },
   /** reps have no units */
   reps: { reps: 1 },
