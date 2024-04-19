@@ -9,16 +9,6 @@ import SetFieldTimeMask from './SetFieldTimeMask'
 
 const delimiterWidth = '15px'
 
-// pick only the props actually used so fields that use
-// generics don't conflict with component types
-const sharedProps: Pick<TextFieldProps, 'inputProps' | 'InputProps' | 'sx'> = {
-  inputProps: { sx: { textAlign: 'center' } },
-  InputProps: {
-    disableUnderline: true,
-  },
-  sx: { flexGrow: 1, flexBasis: 0 },
-}
-
 interface Props<S extends keyof Units>
   extends Pick<VisibleField, 'delimiter' | 'name'> {
   index: number
@@ -34,33 +24,10 @@ interface Props<S extends keyof Units>
 export default memo(function RenderSetField<S extends keyof Units>(
   props: Props<S>,
 ) {
-  const { index, handleSetChange, value, unit, delimiter, source } = props
+  const { index, unit, delimiter, source } = props
 
   const componentType =
     source === 'side' ? 'side' : unit === 'HH:MM:SS' ? 'time' : 'default'
-
-  const SetFieldComponent = () => {
-    switch (componentType) {
-      case 'side':
-        return (
-          <SetFieldSide
-            value={value as Set['side']}
-            handleSetChange={handleSetChange}
-            {...sharedProps}
-          />
-        )
-      case 'time':
-        return (
-          <SetFieldTimeMask
-            handleSetChange={handleSetChange}
-            rawInitialValue={value as number}
-            {...sharedProps}
-          />
-        )
-      default:
-        return <SetFieldNumeric {...props} {...sharedProps} />
-    }
-  }
 
   return (
     <Stack
@@ -78,12 +45,54 @@ export default memo(function RenderSetField<S extends keyof Units>(
           {delimiter ?? '/'}
         </Box>
       )}
-      <SetFieldComponent />
+      <SetFieldComponent {...{ ...props, componentType }} />
       {/* pad the right side to be equal to the left side */}
       {index > 0 && <Box minWidth={delimiterWidth}></Box>}
     </Stack>
   )
 })
+
+// pick only the props actually used so fields that use
+// generics don't conflict with component types
+const sharedProps: Pick<TextFieldProps, 'inputProps' | 'InputProps' | 'sx'> = {
+  inputProps: { sx: { textAlign: 'center' } },
+  InputProps: {
+    disableUnderline: true,
+  },
+  sx: { flexGrow: 1, flexBasis: 0 },
+}
+
+/** Choose which component to use for the set field.
+ *  This is extracted out of the main component to prevent unecessary rerenders.
+ *  Otherwise, on submit the input will rerender and lose focus.
+ */
+function SetFieldComponent<S extends keyof Units>({
+  componentType,
+  ...props
+}: Props<S> & { componentType: string }) {
+  const { value, handleSetChange } = props
+
+  switch (componentType) {
+    case 'side':
+      return (
+        <SetFieldSide
+          value={value as Set['side']}
+          handleSetChange={handleSetChange}
+          {...sharedProps}
+        />
+      )
+    case 'time':
+      return (
+        <SetFieldTimeMask
+          handleSetChange={handleSetChange}
+          rawInitialValue={value as number}
+          {...sharedProps}
+        />
+      )
+    default:
+      return <SetFieldNumeric {...props} {...sharedProps} />
+  }
+}
 
 /** This should only be used on S where the value is a number.
  *  We can't indicate that with ts without a lot of effort

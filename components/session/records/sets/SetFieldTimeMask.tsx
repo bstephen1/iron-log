@@ -1,7 +1,5 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { forwardRef } from 'react'
-import { IMaskInput } from 'react-imask'
 import { UpdateFields } from '../../../../lib/util'
 import { Set } from '../../../../models/Set'
 import InputFieldAutosave, {
@@ -9,9 +7,6 @@ import InputFieldAutosave, {
 } from '../../../form-fields/InputFieldAutosave'
 
 dayjs.extend(duration)
-
-const convertSecToTime = (sec: number) => {}
-
 const TIME_FORMAT = 'HH:mm:ss'
 
 type Props = {
@@ -23,58 +18,28 @@ export default function SetFieldTimeMask({
   handleSetChange,
   ...inputFieldProps
 }: Props) {
-  console.log(rawInitialValue)
-
-  const initialDuration = dayjs.duration(rawInitialValue ?? 0, 'seconds')
-  console.log(initialDuration.format(TIME_FORMAT))
-
-  // have to go from mask to duration...
-  console.log(dayjs.duration('12:10:10').format(TIME_FORMAT))
   return (
     <InputFieldAutosave
+      // because we format using dayjs, we don't have to worry about default value
+      // for the mask, or if the string is less than the full length
+      // (eg "000" showing up as "00:0")
       initialValue={dayjs
         .duration(rawInitialValue ?? 0, 'seconds')
         .format(TIME_FORMAT)}
-      // handleSubmit={(maskedTime) => handleSetChange({ time:  })}
+      handleSubmit={(maskedValue) => {
+        const [hours, minutes, seconds] = maskedValue.split(':')
+        const duration = dayjs.duration({
+          hours: Number(hours),
+          minutes: Number(minutes),
+          seconds: Number(seconds),
+        })
+        handleSetChange({ time: duration.asSeconds() })
+      }}
       variant="standard"
       disableAutoSelect
       defaultHelperText=""
+      maskOptions={{ mask: '00:00:00', overwrite: true }}
       {...inputFieldProps}
-      InputProps={{
-        inputComponent: CustomMask as any,
-        // inputProps: {
-        //   test: 'hi',
-        // },
-        ...inputFieldProps.InputProps,
-      }}
     />
   )
 }
-
-interface CustomMaskProps {
-  onChange: (event: { target: { name: string; value: string } }) => void
-  name: string
-  test: string
-}
-const CustomMask = forwardRef<HTMLInputElement, CustomMaskProps>(
-  function CustomMask(props, ref) {
-    const { onChange, test, ...other } = props
-    console.log(test)
-    return (
-      <IMaskInput
-        {...other}
-        mask="00:00:00"
-        inputRef={ref}
-        placeholderChar="0"
-        onAccept={(value: string) => {
-          // console.log('accept', value.replaceAll('_', '0'))
-          return onChange({
-            target: { name: props.name, value },
-          })
-        }}
-        overwrite
-        lazy={false}
-      />
-    )
-  },
-)
