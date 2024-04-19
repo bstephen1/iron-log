@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
 import Exercise from '../models/AsyncSelectorOption/Exercise'
 import { SetType } from '../models/Record'
-import { Set, Units } from '../models/Set'
+import { DB_UNITS, Set, Units } from '../models/Set'
 import { DATE_FORMAT } from './frontend/constants'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
@@ -90,3 +90,12 @@ export const getUsage = (
   field: 'categories' | 'modifiers',
   name: string,
 ) => exercises?.filter((exercise) => exercise[field].includes(name)) ?? []
+
+export function stringifySetType(
+  { operator, min, max, value, field }: SetType,
+  units?: Units,
+) {
+  return `${operator} ${
+    operator === 'between' ? min + ' and ' + max : value
+  } ${getUnit(field, units ?? DB_UNITS)}`
+}

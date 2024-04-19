@@ -13,22 +13,22 @@ import {
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
+import { fixSelectBackground } from '../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingSmScreen'
-import { UpdateFields, UpdateState, getUnit } from '../../../lib/util'
+import { UpdateFields, UpdateState, stringifySetType } from '../../../lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
 } from '../../../models/DisplayFields'
 import Record, { SetType, setOperators } from '../../../models/Record'
 import { Units } from '../../../models/Set'
-import { fixSelectBackground } from '../../../lib/frontend/constants'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
-  (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
+  (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight,
 )
 
 const timeField = ORDERED_DISPLAY_FIELDS.filter(
-  (field) => field.source === 'time'
+  (field) => field.source === 'time',
 )
 
 type Props = {
@@ -67,9 +67,7 @@ export default memo(function SetTypeSelect({
     handleChange?.({ setType: newSetType })
   }
 
-  const menuValue = `${operator} ${
-    operator === 'between' ? min + ' and ' + max : value
-  } ${getUnit(field, units)}`
+  const menuValue = stringifySetType(setType, units)
 
   const handleClose = () => setOpen(false)
 
@@ -187,5 +185,4 @@ export default memo(function SetTypeSelect({
       </Stack>
     </TextField>
   )
-},
-isEqual)
+}, isEqual)

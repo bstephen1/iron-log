@@ -7,11 +7,15 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Stack,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
 } from '@mui/material'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRecords } from '../../../lib/frontend/restService'
+import { stringifySetType } from '../../../lib/util'
 
 const maxRecords = 10
 
@@ -46,14 +50,24 @@ export default function UsageButton({ name, buttonProps }: Props) {
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Usage for {name}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={0.5}>
-            {records?.slice(0, maxRecords).map(({ date }) => (
-              <Link key={date} href={`/sessions/${date}`}>
-                {date}
-              </Link>
-            ))}
-          </Stack>
+        <DialogContent sx={{ py: 0 }}>
+          <List disablePadding>
+            {records
+              ?.slice(0, maxRecords)
+              .map(({ date, setType, sets, exercise }) => (
+                // Note: this is Nextjs Link, not mui
+                <Link key={date} href={`/sessions/${date}`}>
+                  <ListItem disablePadding>
+                    <ListItemButton sx={{ p: 0 }}>
+                      <ListItemText
+                        primary={date}
+                        secondary={`${sets.length} set${sets.length === 1 ? '' : 's'} of ${stringifySetType(setType, exercise?.displayFields?.units)}`}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+              ))}
+          </List>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>
