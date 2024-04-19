@@ -68,8 +68,7 @@ export default memo(function ChangeUnitsButton({
       </Dialog>
     </>
   )
-},
-isEqual)
+}, isEqual)
 
 interface UnitDimensionRadioGroupProps<Dimension extends keyof Units> {
   dimension: Dimension
@@ -104,8 +103,6 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
             value={symbol}
             control={<Radio />}
             label={symbol}
-            // todo: support HH:MM:SS
-            disabled={symbol === 'HH:MM:SS'}
           />
         ))}
       </RadioGroup>

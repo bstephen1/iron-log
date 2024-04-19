@@ -69,8 +69,11 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
       helperText={error || defaultHelperText}
       InputLabelProps={{ shrink: !isEmpty, ...textFieldProps.InputLabelProps }}
-      InputProps={{ readOnly, ...textFieldProps.InputProps }}
       {...textFieldProps}
+      InputProps={{
+        readOnly,
+        ...textFieldProps.InputProps,
+      }}
     />
   )
 }

@@ -9,7 +9,7 @@ import { DisplayFields } from '../../../../models/DisplayFields'
 import Record from '../../../../models/Record'
 import { Set } from '../../../../models/Set'
 import DeleteSetButton from './DeleteSetButton'
-import SetFieldInput from './SetFieldInput'
+import SetFieldInput from './RenderSetField'
 
 const pyStack = 0.5
 
@@ -63,10 +63,10 @@ export default memo(function RenderSetRow({
             return { ...cur, sets: newSets }
           },
           revalidate: false,
-        }
+        },
       )
     },
-    [_id, index, mutate]
+    [_id, index, mutate],
   )
 
   if (!displayFields.visibleFields.length) {
