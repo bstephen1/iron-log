@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
+import { fixSelectBackground } from '../../../../lib/frontend/constants'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import {
@@ -20,7 +21,6 @@ import {
   printFieldWithUnits,
   VisibleField,
 } from '../../../../models/DisplayFields'
-import { fixSelectBackground } from '../../../../lib/frontend/constants'
 
 interface Props extends Partial<SelectProps<string[]>> {
   mutateExerciseFields?: UpdateFields<Exercise>
@@ -45,7 +45,7 @@ export default memo(function SetHeader({
       (field.enabled?.unilateral == undefined ||
         field.enabled.unilateral === showUnilateral) &&
       (field.enabled?.splitWeight == undefined ||
-        field.enabled.splitWeight === showSplitWeight)
+        field.enabled.splitWeight === showSplitWeight),
   )
 
   const handleChange = (rawSelectedNames: string | string[]) => {
@@ -62,7 +62,7 @@ export default memo(function SetHeader({
     // We want to ensure the order is consistent,
     // so don't use the raw value since that will append new values to the end.
     const newVisibleFields = options.filter((optionField) =>
-      newSelectedNames.some((name) => name === optionField.name)
+      newSelectedNames.some((name) => name === optionField.name),
     )
 
     // Make sure we aren't submitting if there aren't actually any changes.
@@ -99,7 +99,7 @@ export default memo(function SetHeader({
             alignItems="center"
             // border is from TextField underline
             sx={{
-              pl: 1,
+              px: 1,
             }}
           >
             {!selectedNames.length ? (
@@ -124,7 +124,6 @@ export default memo(function SetHeader({
                       // todo: this will clip HH:MM:SS if using a lot of fields on a small screen
                       overflow="clip"
                     >
-                      {' '}
                       {field.unitPrefix ?? ''}
                       {displayFields.units[field.source]}
                     </Box>
@@ -154,5 +153,4 @@ export default memo(function SetHeader({
       </Select>
     </FormControl>
   )
-},
-isEqual)
+}, isEqual)
