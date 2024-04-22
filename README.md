@@ -13,7 +13,7 @@ Visit at https://iron-log.vercel.app/
 ## Features
 
 
-See the [wiki](https://github.com/bstephen1/iron-log/wiki) for detailed information and user guides.
+See the [wiki](https://github.com/bstephen1/iron-log/wiki) for detailed information and screenshots.
 
 - log sets with any combination of fields (weight, distance, time, reps, effort)
 - use a set type to track history for each exercise
