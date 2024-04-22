@@ -60,7 +60,7 @@ export default function InputField(props: Props & TextFieldProps) {
         endAdornment: (
           <>
             <TransitionIconButton isVisible={isDirty} onClick={onReset}>
-              <Tooltip title="reset">
+              <Tooltip title="Reset">
                 <ReplayIcon />
               </Tooltip>
             </TransitionIconButton>
@@ -70,7 +70,7 @@ export default function InputField(props: Props & TextFieldProps) {
               onClick={() => submit()}
               data-testid="submit button"
             >
-              <Tooltip title="submit">
+              <Tooltip title="Submit">
                 <CheckIcon />
               </Tooltip>
             </TransitionIconButton>

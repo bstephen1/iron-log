@@ -26,7 +26,7 @@ export default memo(function DeleteRecordButton({ _id }: Props) {
 
   return (
     <TooltipIconButton
-      title="Delete Record"
+      title="Delete record"
       color="error"
       onClick={() => deleteRecord(_id)}
     >

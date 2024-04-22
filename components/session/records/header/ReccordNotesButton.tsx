@@ -13,7 +13,7 @@ import Note from '../../../../models/Note'
 import Record from '../../../../models/Record'
 import { Set } from '../../../../models/Set'
 
-const title = 'Record Notes'
+const title = 'Record notes'
 
 interface Props {
   notes?: Note[]
@@ -108,5 +108,4 @@ export default memo(function RecordNotesButton({
       </Dialog>
     </>
   )
-},
-isEqual)
+}, isEqual)

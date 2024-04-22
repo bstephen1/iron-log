@@ -41,7 +41,7 @@ export default memo(function ChangeUnitsButton({
 
   return (
     <>
-      <TooltipIconButton title="Change Units" onClick={() => setOpen(true)}>
+      <TooltipIconButton title="Change units" onClick={() => setOpen(true)}>
         {/* it's proven pretty difficult to find a good "change units" icon...  */}
         <DesignServicesIcon />
       </TooltipIconButton>

@@ -43,7 +43,7 @@ export default function CategoryFilter({
 
   return (
     <Box sx={sx}>
-      <Tooltip title="Select Category">
+      <Tooltip title="Select category">
         {!!category ? (
           <Chip
             label={category}

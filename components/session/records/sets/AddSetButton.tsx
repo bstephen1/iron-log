@@ -39,7 +39,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
         optimisticData: (cur) =>
           cur ? { ...cur, sets: sets.concat(newSet) } : null,
         revalidate: false,
-      }
+      },
     )
   }
 
@@ -51,7 +51,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
         p: 2,
       }}
     >
-      <Tooltip title="Add Set" placement="right">
+      <Tooltip title="Add set" placement="right">
         <span>
           <Fab
             color="primary"

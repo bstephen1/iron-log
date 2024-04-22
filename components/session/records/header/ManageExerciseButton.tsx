@@ -13,7 +13,7 @@ export default memo(function ManageExerciseButton({ name }: Props) {
   return (
     <TooltipIconButton
       key="manage"
-      title="Manage Exercise"
+      title="Manage exercise"
       disabled={!name}
       onClick={() => router.push(`/manage?exercise=${name}`)}
     >

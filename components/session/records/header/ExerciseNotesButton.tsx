@@ -8,7 +8,7 @@ import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import Note from '../../../../models/Note'
 
-const title = 'Exercise Notes'
+const title = 'Exercise notes'
 
 export interface Props {
   /** considered readOnly if not provided */
@@ -57,5 +57,4 @@ export default memo(function ExerciseNotesButton({
       </Dialog>
     </>
   )
-},
-isEqual)
+}, isEqual)
