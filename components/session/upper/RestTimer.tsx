@@ -154,7 +154,7 @@ export default function RestTimer() {
         </Grow>
       </Tooltip>
     ),
-    []
+    [],
   )
 
   return (
@@ -165,7 +165,7 @@ export default function RestTimer() {
           // extra box so button isn't full width
           <Box display="flex" justifyContent="center" pb={2}>
             <Button onClick={() => dispatch({ type: 'start' })}>
-              Start Rest Timer
+              Start rest timer
             </Button>
           </Box>
         ) : (
@@ -175,7 +175,7 @@ export default function RestTimer() {
                 textAlign="center"
                 display={isFinished ? 'none' : 'block'}
               >
-                Rest Time
+                Rest time
               </Typography>
             </Grow>
             <Grow in={enabled && isFinished}>
@@ -183,7 +183,7 @@ export default function RestTimer() {
                 textAlign="center"
                 display={isFinished ? 'block' : 'none'}
               >
-                Total Session Time
+                Total session time
               </Typography>
             </Grow>
 

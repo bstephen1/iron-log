@@ -52,7 +52,7 @@ export default memo(function ChangeUnitsButton({
           setOpen(false)
         }}
       >
-        <DialogTitle>Change Units</DialogTitle>
+        <DialogTitle>Change units</DialogTitle>
         <DialogContent>
           <Stack spacing={1}>
             {dimensions.map((dimension) => (
