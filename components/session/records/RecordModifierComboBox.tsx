@@ -16,7 +16,7 @@ export default memo(function RecordModifierComboBox({
   return (
     <ComboBoxField
       label="Modifiers"
-      options={availableModifiers}
+      options={availableModifiers?.sort()}
       initialValue={activeModifiers}
       variant="standard"
       helperText=""
@@ -25,5 +25,4 @@ export default memo(function RecordModifierComboBox({
       }
     />
   )
-},
-isEqual)
+}, isEqual)
