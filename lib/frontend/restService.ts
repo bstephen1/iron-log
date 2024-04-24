@@ -62,6 +62,9 @@ const toJson = (obj: Object) =>
 const toNames = (entities?: AsyncSelectorOption[]) =>
   entities?.map((entity) => entity.name) ?? []
 
+const nameSort = <T extends { name: string }>(data?: T[]) =>
+  data?.sort((a, b) => a.name.localeCompare(b.name))
+
 const filterActive = (entities?: AsyncSelectorOption[]) =>
   entities?.filter((entity) => entity.status === Status.active) ?? []
 
@@ -192,11 +195,12 @@ export function useExercises(query?: ExerciseQuery) {
   const { data, error, mutate } = useSWR<Exercise[]>(
     URI_EXERCISES + paramify({ ...query }),
   )
+  const sortedData = nameSort(data)
 
   return {
-    exercises: data,
-    exerciseNames: toNames(data),
-    activeStatusExercises: toNames(filterActive(data)),
+    exercises: sortedData,
+    exerciseNames: toNames(sortedData),
+    activeStatusExercises: toNames(filterActive(sortedData)),
     isError: !!error,
     mutate,
   }
@@ -257,12 +261,13 @@ export async function deleteExercise(name: string): Promise<string> {
 
 export function useModifiers() {
   const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS)
+  const sortedData = nameSort(data)
 
   return {
-    modifiers: data,
+    modifiers: sortedData,
     modifiersIndex: arrayToIndex<Modifier>('name', data),
-    modifierNames: toNames(data),
-    activeStatusModifiers: toNames(filterActive(data)),
+    modifierNames: toNames(sortedData),
+    activeStatusModifiers: toNames(filterActive(sortedData)),
     isError: !!error,
     mutate,
   }
@@ -302,11 +307,12 @@ export async function deleteModifier(name: string): Promise<string> {
 
 export function useCategories() {
   const { data, error, mutate } = useSWR<Category[]>(URI_CATEGORIES)
+  const sortedData = nameSort(data)
 
   return {
-    categories: data,
-    categoryNames: toNames(data),
-    activeStatusCategories: toNames(filterActive(data)),
+    categories: sortedData,
+    categoryNames: toNames(sortedData),
+    activeStatusCategories: toNames(filterActive(sortedData)),
     isError: !!error,
     mutate,
   }
