@@ -31,6 +31,8 @@ const timeField = ORDERED_DISPLAY_FIELDS.filter(
   (field) => field.source === 'time',
 )
 
+const valueInputStyle = { margin: 0, maxWidth: '80px' }
+
 type Props = {
   /** considered readOnly if not provided */
   handleChange?: UpdateFields<Record> | UpdateState<Record>
@@ -121,6 +123,7 @@ export default memo(function SetTypeSelect({
                 value={setOperator}
                 control={<Radio />}
                 label={setOperator}
+                sx={{ mr: 0 }}
               />
             ))}
           </RadioGroup>
@@ -134,7 +137,7 @@ export default memo(function SetTypeSelect({
                 id="set-type-min"
                 initialValue={min}
                 handleSubmit={(min) => updateSetType({ min })}
-                InputProps={{ style: { margin: 0 } }}
+                InputProps={{ style: valueInputStyle }}
               />
             </FormControl>
             <FormControl>
@@ -144,7 +147,7 @@ export default memo(function SetTypeSelect({
                 id="set-type-max"
                 initialValue={max}
                 handleSubmit={(max) => updateSetType({ max })}
-                InputProps={{ style: { margin: 0 } }}
+                InputProps={{ style: valueInputStyle }}
               />
             </FormControl>
           </Stack>
@@ -156,7 +159,9 @@ export default memo(function SetTypeSelect({
               id="set-type-value"
               initialValue={value}
               handleSubmit={(value) => updateSetType({ value })}
-              InputProps={{ style: { margin: 0 } }}
+              InputProps={{
+                style: valueInputStyle,
+              }}
             />
           </FormControl>
         )}

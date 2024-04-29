@@ -92,7 +92,7 @@ export const getUsage = (
 ) => exercises?.filter((exercise) => exercise[field].includes(name)) ?? []
 
 export function stringifySetType(
-  { operator, min, max, value, field }: SetType,
+  { operator, min = 0, max = 0, value = 0, field }: SetType,
   units?: Units,
 ) {
   return `${operator} ${
