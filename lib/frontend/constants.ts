@@ -1,4 +1,4 @@
-import { SelectProps } from '@mui/material'
+import { OutlinedSelectProps } from '@mui/material'
 
 export const DATE_FORMAT = 'YYYY-MM-DD'
 export const validDateStringRegex = /^\d{4}-\d{2}-\d{2}$/
@@ -37,10 +37,13 @@ export const sampleLogDate = '2022-09-26'
  *  error for assigning a boolean to an expected undefined value.
  *  See: https://github.com/mui/material-ui/pull/40865
  *
- *  Note: for typing, we are just picking the relevant fields so as not to mess up the actual
- *  Select's typing.
+ *  Note: for ts type, we are just picking the relevant fields so as not to mess up the actual
+ *  Select's typing. An update to package.json changed the typing information so we must use OutlinedSelectProps.
  */
-export const fixSelectBackground: Pick<SelectProps, 'variant' | 'notched'> = {
+export const fixSelectBackground: Pick<
+  OutlinedSelectProps,
+  'variant' | 'notched'
+> = {
   variant: 'outlined',
   notched: undefined,
 }
