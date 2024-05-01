@@ -47,7 +47,7 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
     new Bodyweight(weight, 'unofficial', dayjs(date)),
   ])
 
-  await user.click(screen.getByLabelText('options'))
+  await user.click(screen.getByLabelText('Options'))
   await user.click(screen.getByText('unofficial weigh-ins'))
 
   expect(await screen.findByText(/using latest unofficial/i)).toBeVisible()
@@ -76,15 +76,15 @@ describe('input', () => {
 
     await user.type(input, '30')
 
-    expect(await screen.findByLabelText('reset')).toBeVisible()
-    expect(screen.getByLabelText('submit')).toBeVisible()
+    expect(await screen.findByLabelText('Reset')).toBeVisible()
+    expect(screen.getByLabelText('Submit')).toBeVisible()
     expect(screen.getByDisplayValue('3045')).toBeVisible()
 
     await user.type(input, '{Backspace}{Backspace}')
 
-    expect(await screen.findByLabelText('reset')).not.toBeVisible()
+    expect(await screen.findByLabelText('Reset')).not.toBeVisible()
     // submit is still visible since latest bw data is not for current date
-    expect(screen.getByLabelText('submit')).toBeVisible()
+    expect(screen.getByLabelText('Submit')).toBeVisible()
   })
 
   it('does not show submit button when latest bodyweight is unchanged and matches current date', async () => {
@@ -95,15 +95,15 @@ describe('input', () => {
 
     await user.type(input, '30')
 
-    expect(await screen.findByLabelText('reset')).toBeVisible()
-    expect(screen.getByLabelText('submit')).toBeVisible()
+    expect(await screen.findByLabelText('Reset')).toBeVisible()
+    expect(screen.getByLabelText('Submit')).toBeVisible()
     expect(screen.getByDisplayValue('3045')).toBeVisible()
 
     await user.type(input, '{Backspace}{Backspace}')
 
-    expect(await screen.findByLabelText('reset')).not.toBeVisible()
+    expect(await screen.findByLabelText('Reset')).not.toBeVisible()
     // submit is not visible since latest bw data is already on current date
-    expect(screen.getByLabelText('submit')).not.toBeVisible()
+    expect(screen.getByLabelText('Submit')).not.toBeVisible()
   })
 
   it('validates against changing an existing value to be empty', async () => {
@@ -128,11 +128,11 @@ describe('input', () => {
     await screen.findByText(/official/i)
 
     await user.type(input, '30')
-    await user.click(screen.getByLabelText('reset'))
+    await user.click(screen.getByLabelText('Reset'))
 
-    expect(await screen.findByLabelText('reset')).not.toBeVisible()
+    expect(await screen.findByLabelText('Reset')).not.toBeVisible()
     // still visible since latest bw is not current date
-    expect(screen.getByLabelText('submit')).toBeVisible()
+    expect(screen.getByLabelText('Submit')).toBeVisible()
   })
 
   it('submits and revalidates when button is clicked', async () => {
@@ -151,13 +151,13 @@ describe('input', () => {
     )
 
     await user.type(input, '3')
-    await user.click(screen.getByLabelText('submit'))
+    await user.click(screen.getByLabelText('Submit'))
 
     // value should remain as what was inputted while revalidating
     expect(await screen.findByDisplayValue(345)).toBeVisible()
     // after revalidation should update to the server response
     expect(await screen.findByDisplayValue(newWeight)).toBeVisible()
-    expect(screen.getByLabelText('reset')).not.toBeVisible()
-    expect(screen.getByLabelText('submit')).not.toBeVisible()
+    expect(screen.getByLabelText('Reset')).not.toBeVisible()
+    expect(screen.getByLabelText('Submit')).not.toBeVisible()
   })
 })
