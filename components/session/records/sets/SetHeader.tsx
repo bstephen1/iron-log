@@ -22,12 +22,12 @@ import {
   VisibleField,
 } from '../../../../models/DisplayFields'
 
-interface Props extends Partial<SelectProps<string[]>> {
+type Props = {
   mutateExerciseFields?: UpdateFields<Exercise>
   displayFields: DisplayFields
   showSplitWeight?: boolean
   showUnilateral?: boolean
-}
+} & Partial<SelectProps<string[]>>
 export default memo(function SetHeader({
   mutateExerciseFields,
   displayFields,
@@ -90,7 +90,6 @@ export default memo(function SetHeader({
         displayEmpty
         value={selectedNames}
         label="Set Fields"
-        notched={undefined}
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
         renderValue={() => (

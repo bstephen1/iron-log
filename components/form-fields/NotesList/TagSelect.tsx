@@ -12,12 +12,12 @@ import { useState } from 'react'
 import TagChips from './TagChips'
 import { fixSelectBackground } from '../../../lib/frontend/constants'
 
-interface Props extends Partial<SelectProps<string | string[]>> {
+type Props = {
   options: string[]
   tags: string[] // single mode uses a singleton array
   multiple?: boolean
   handleUpdate: (tags: string[]) => void
-}
+} & Partial<SelectProps<string | string[]>>
 // this should be used as a start adornment in an input to render tags for that input
 export default function TagSelect({
   options,
