@@ -4,6 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import TimelineIcon from '@mui/icons-material/Timeline'
 import TodayIcon from '@mui/icons-material/Today'
+import ArticleIcon from '@mui/icons-material/Article'
 import {
   Drawer,
   IconButton,
@@ -50,6 +51,11 @@ export default function NavbarDrawer() {
           <NavbarLink href="/manage" text="Manage" Icon={BuildIcon} />
           <NavbarLink href="/history" text="History" Icon={TimelineIcon} />
           <NavbarLink href="/settings" text="Settings" Icon={SettingsIcon} />
+          <NavbarLink
+            href="https://github.com/bstephen1/iron-log/wiki"
+            text="User guides"
+            Icon={ArticleIcon}
+          />
         </List>
       </Drawer>
     </>
