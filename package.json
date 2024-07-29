@@ -11,6 +11,7 @@
     "prepare": "husky install",
     "cy": "npx cypress open --config-file cypress/cypress.config.ts",
     "test": "vitest --ui --open=false",
+    "test:once": "vitest run",
     "db:dev": "npx vite-node scripts/mongoDevDataGenerator.ts"
   },
   "dependencies": {
