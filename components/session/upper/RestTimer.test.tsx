@@ -1,22 +1,23 @@
 import dayjs, { ManipulateType } from 'dayjs'
-import { act } from 'react-dom/test-utils'
 import { beforeEach, vi } from 'vitest'
-import { render, screen } from '../../../lib/testUtils'
+import { act, render, screen } from '../../../lib/testUtils'
 import RestTimer from './RestTimer'
 
 const initialTime = dayjs('2020-01-01T10:00:00')
 
-beforeEach(() => {
+beforeAll(() => {
   vi.useFakeTimers()
+})
+
+beforeEach(() => {
   vi.setSystemTime(initialTime.toDate())
 })
 
-afterEach(() => {
-  vi.runOnlyPendingTimers()
+afterAll(() => {
   vi.useRealTimers()
 })
 
-const RenderAndStartTimer = async () => {
+const renderAndStartTimer = async () => {
   const { user } = render(<RestTimer />, { useFakeTimers: true })
 
   await user.click(screen.getByText(/start/i))
@@ -26,7 +27,7 @@ const RenderAndStartTimer = async () => {
 
 /** Update system time and rerender component. Takes same args as dayjs().add() */
 const addSystemTime = (value: number, unit?: ManipulateType) => {
-  // must be wrapped in act() to to properly update state
+  // must be wrapped in act() to properly update state
   act(() => {
     const cur = vi.getMockedSystemTime()
     vi.setSystemTime(dayjs(cur).add(value, unit).toDate())
@@ -38,7 +39,7 @@ const addSystemTime = (value: number, unit?: ManipulateType) => {
 }
 
 it('resets timer', async () => {
-  const { user } = await RenderAndStartTimer()
+  const { user } = await renderAndStartTimer()
 
   expect(screen.getByText('00:00:00')).toBeVisible()
 
@@ -52,7 +53,7 @@ it('resets timer', async () => {
 })
 
 it('pauses and resumes timer', async () => {
-  const { user } = await RenderAndStartTimer()
+  const { user } = await renderAndStartTimer()
 
   addSystemTime(1, 'hour')
   await user.click(screen.getByLabelText(/pause/i))
@@ -67,7 +68,7 @@ it('pauses and resumes timer', async () => {
 })
 
 it('stops timer', async () => {
-  const { user } = await RenderAndStartTimer()
+  const { user } = await renderAndStartTimer()
 
   await user.click(screen.getByLabelText(/turn off/i))
 
@@ -76,7 +77,7 @@ it('stops timer', async () => {
 })
 
 it('shows total time after finishing session', async () => {
-  const { user } = await RenderAndStartTimer()
+  const { user } = await renderAndStartTimer()
 
   const reset = screen.getByLabelText(/reset/i)
 
@@ -94,7 +95,7 @@ it('shows total time after finishing session', async () => {
 })
 
 it('maintains total time when resetting after finishing session', async () => {
-  const { user } = await RenderAndStartTimer()
+  const { user } = await renderAndStartTimer()
 
   const reset = screen.getByLabelText(/reset/i)
   const finish = screen.getByLabelText(/finish/i)
@@ -110,7 +111,7 @@ it('maintains total time when resetting after finishing session', async () => {
 })
 
 it('unpauses timer when resetting', async () => {
-  const { user } = await RenderAndStartTimer()
+  const { user } = await renderAndStartTimer()
 
   await user.click(screen.getByLabelText(/pause/i))
   addSystemTime(1, 'hour')
