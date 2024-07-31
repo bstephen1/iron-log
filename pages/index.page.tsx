@@ -1,14 +1,16 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import type { NextPage } from 'next'
+import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Link from 'next/link'
 import {
   DATE_FORMAT,
   guestUserName,
   sampleLogDate,
+  standardLinkStyle,
+  userGuideLink,
 } from '../lib/frontend/constants'
-import { useSession } from 'next-auth/react'
 
 const Home: NextPage = () => {
   const { data } = useSession()
@@ -22,32 +24,35 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Stack>
-        <Typography textAlign="center" variant="h6" sx={{ pb: 3 }}>
+      <Stack justifyContent="center" alignItems="center" spacing={1}>
+        <Typography variant="h6" sx={{ pb: 3 }}>
           Welcome
         </Typography>
         {user !== guestUserName ? (
-          <Box display="flex" justifyContent="center">
-            <Button>
-              <Link href={`/sessions/${dayjs().format(DATE_FORMAT)}/`}>
-                Today's log
-              </Link>
-            </Button>
-          </Box>
+          <Button>
+            <Link href={`/sessions/${dayjs().format(DATE_FORMAT)}/`}>
+              Today's log
+            </Link>
+          </Button>
         ) : (
           <>
-            <Typography textAlign="center" sx={{ pb: 1 }}>
-              You are logged in as a guest.
-            </Typography>
+            <Typography>You are logged in as a guest.</Typography>
 
-            <Box display="flex" justifyContent="center">
-              <Button>
-                <Link href={`/sessions/${sampleLogDate}/`}>Sample log</Link>
-              </Button>
-            </Box>
+            <Button>
+              <Link href={`/sessions/${sampleLogDate}/`}>Sample log</Link>
+            </Button>
           </>
         )}
       </Stack>
+      <Typography
+        textAlign="center"
+        sx={{ width: '100%', position: 'absolute', bottom: 25, left: 0 }}
+      >
+        Need help? Check out the{' '}
+        <a href={userGuideLink} style={standardLinkStyle}>
+          user guide
+        </a>
+      </Typography>
     </>
   )
 }

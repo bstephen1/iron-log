@@ -1,4 +1,5 @@
 import { OutlinedSelectProps } from '@mui/material'
+import { CSSProperties } from '@mui/material/styles/createMixins'
 
 export const DATE_FORMAT = 'YYYY-MM-DD'
 export const validDateStringRegex = /^\d{4}-\d{2}-\d{2}$/
@@ -20,6 +21,15 @@ export const noSwipingRecord = 'swiper-no-swiping-record'
 export const devUserId = '123456789012345678901234'
 export const guestUserName = 'guest'
 export const sampleLogDate = '2022-09-26'
+
+export const userGuideLink = 'https://github.com/bstephen1/iron-log/wiki'
+/** globals.css overrides <a> style so internal links are not treating as standard
+ *  href links. This style overrides the global to show links in the standard default style.
+ */
+export const standardLinkStyle: CSSProperties = {
+  color: '-webkit-link',
+  textDecoration: 'underline',
+}
 
 /** This is a visual fix for Selects and Textfields set as "select" that should be spread into SelectProps.
  *
