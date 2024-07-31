@@ -21,6 +21,7 @@ import {
   DATE_FORMAT,
   guestUserName,
   sampleLogDate,
+  userGuideLink,
 } from '../lib/frontend/constants'
 import { useSession } from 'next-auth/react'
 
@@ -52,8 +53,8 @@ export default function NavbarDrawer() {
           <NavbarLink href="/history" text="History" Icon={TimelineIcon} />
           <NavbarLink href="/settings" text="Settings" Icon={SettingsIcon} />
           <NavbarLink
-            href="https://github.com/bstephen1/iron-log/wiki"
-            text="User guides"
+            href={userGuideLink}
+            text="User guide"
             Icon={ArticleIcon}
           />
         </List>
