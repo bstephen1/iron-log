@@ -14,7 +14,7 @@ const devProviders =
         // This provider logs on as the test user for dev mode.
         CredentialsProvider({
           id: 'dev',
-          name: 'Dev User',
+          name: 'dev user',
           credentials: {},
           async authorize() {
             const user = { id: devUserId }
@@ -30,7 +30,7 @@ const devProviders =
 // Seeded with dev data. This account is readonly.
 const guestProvider = CredentialsProvider({
   id: 'guest',
-  name: 'Guest User',
+  name: 'guest user',
   credentials: {},
   async authorize() {
     // session is only getting passed "name", "email", and "image" fields.
@@ -49,6 +49,10 @@ export const authOptions: NextAuthOptions = {
     guestProvider,
     ...devProviders,
   ],
+  theme: {
+    // todo: add logo
+    // logo: '',
+  },
   // using a database adapter changes the strategy to "database", which causes an infinite redirect loop.
   // See: https://github.com/nextauthjs/next-auth/issues/5392
   // Per the docs, jwt stores user session data in the client instead of in the database.
