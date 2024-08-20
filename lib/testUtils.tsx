@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
 import { delay, http, HttpResponse } from 'msw'
 import { NextApiHandler } from 'next'
+import { SessionProvider } from 'next-auth/react'
 import {
   NtarhInitPagesRouter,
   testApiHandler,
@@ -15,7 +16,6 @@ import { SWRConfig } from 'swr'
 import { vi } from 'vitest'
 import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
-import { SessionProvider } from 'next-auth/react'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.
@@ -77,19 +77,20 @@ interface ServerOptions {
   /** Add a delay to simulate server response time. Only use this if needed so test times are minimized. */
   delay?: number
   status?: number
+  /** specifies the http method the server will use. Defaults to "all". */
+  method?: keyof typeof http
 }
 /** Specify an endpoint and json data to return from the mock server.
- *  This function will intercept the next request at the given endpoint
- *  over any http method.
+ *  This function will intercept the next request at the given endpoint.
  */
 export function useServerOnce(
   url: string,
   json?: any,
   options?: ServerOptions,
 ) {
-  const { status } = options ?? {}
+  const { status, method = 'all' } = options ?? {}
   server.use(
-    http.all(
+    http[method](
       url,
       async () => {
         await delay(options?.delay ?? 0)
