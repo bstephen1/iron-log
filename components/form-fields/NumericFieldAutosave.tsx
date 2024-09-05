@@ -23,11 +23,15 @@ export default function NumericFieldAutosave({
       // String(undefined) causes a warning
       initialValue={String(initialValue ?? '')}
       handleSubmit={(str) => handleNumberSubmit(convertValueToNumber(str))}
-      type="number"
       variant="standard"
-      // prevent scrolling from incrementing the number. See: https://github.com/mui/material-ui/issues/7960
-      onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
       defaultHelperText=""
+      // Keep any TextFieldProps as InputProps in case renderAsInput is set to true.
+      // This avoids props from silently being ignored.
+      InputProps={{
+        type: 'number',
+        // prevent scrolling from incrementing the number. See: https://github.com/mui/material-ui/issues/7960
+        onWheel: (e) => e.target instanceof HTMLElement && e.target.blur(),
+      }}
       {...inputFieldAutosaveProps}
     />
   )
