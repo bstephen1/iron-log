@@ -133,6 +133,7 @@ export default memo(function SetTypeSelect({
             <FormControl>
               <FormLabel htmlFor="set-type-min">Min</FormLabel>
               <NumericFieldAutosave
+                // renderAsInput is needed so FormLabel is correctly attached to the input
                 renderAsInput
                 id="set-type-min"
                 initialValue={min}
