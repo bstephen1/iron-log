@@ -89,10 +89,7 @@ export default function MatchTypeSelector({
               selected={matchType === value}
             >
               <ListItemIcon>{Icon}</ListItemIcon>
-              <ListItemText
-                primary={name}
-                secondary={description}
-              ></ListItemText>
+              <ListItemText primary={name} secondary={description} />
             </MenuItem>
           )
         })}

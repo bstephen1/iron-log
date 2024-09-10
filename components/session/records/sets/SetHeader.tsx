@@ -134,7 +134,7 @@ export default memo(function SetHeader({
         {...fixSelectBackground}
         {...selectProps}
       >
-        <MenuItem disabled value="">
+        <MenuItem disabled>
           <em>Select fields to display</em>
         </MenuItem>
         {options.map((field) => (
