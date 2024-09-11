@@ -158,6 +158,54 @@ export async function deleteSessionRecord(
 // RECORD
 //--------
 
+interface RecordPipeline {
+  // Unwind returns a record for every item in the array (we only have one or zero items).
+  /** $lookup the exercise based on the exercise _id to ensure we have the current data.
+   * This returns an array so we need to unwind it. */
+  lookupExercise: Document
+  /** $unwind the exercise array returned by $lookup. This produces a new document for every
+   *  element in the array. Eeach record can only have zero or one exercise.
+   *  We must enable preserveNullAndEmptyArrays or records without an exercise would just
+   *  be returned as "null".
+   */
+  unwindExercise: Document
+  /** $set activeModifiers to only contain elements that exist in exercise.modifiers.
+   *  This addresses if the user removes a modifier from an exercise --
+   *  the modifier should no longer appear in records. We maintain the data though,
+   *  in case the user re-adds the modifier in the future. This stage should be invoked
+   *  after $unwinding the exercise.
+   */
+  setActiveModifiers: Document
+  /** $project to exclude userId in the record and exercise */
+  excludeUserIds: Document
+}
+/** Shared aggregation stages for record fetches. */
+const recordPipeline: RecordPipeline = {
+  lookupExercise: {
+    $lookup: {
+      from: 'exercises',
+      localField: 'exercise._id',
+      foreignField: '_id',
+      as: 'exercise',
+    },
+  },
+  unwindExercise: {
+    $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true },
+  },
+  setActiveModifiers: {
+    $set: {
+      activeModifiers: {
+        $filter: {
+          input: '$activeModifiers',
+          as: 'modifier',
+          cond: { $in: ['$$modifier', '$exercise.modifiers'] },
+        },
+      },
+    },
+  },
+  excludeUserIds: { $project: { userId: 0, 'exercise.userId': 0 } },
+}
+
 export async function addRecord(
   userId: ObjectId,
   record: Record,
@@ -193,31 +241,13 @@ export async function fetchRecords({
       {
         $match: { date: { $gte: start, $lte: end }, ...otherFilters, userId },
       },
-      {
-        $lookup: {
-          from: 'exercises',
-          localField: 'exercise._id',
-          foreignField: '_id',
-          as: 'exercise',
-        },
-      },
+      recordPipeline.lookupExercise,
       {
         $match: name ? { 'exercise.name': name } : {},
       },
-      // if preserveNull is false the whole record becomes null if exercise is null
-      { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
-      {
-        $set: {
-          activeModifiers: {
-            $filter: {
-              input: '$activeModifiers',
-              as: 'modifier',
-              cond: { $in: ['$$modifier', '$exercise.modifiers'] },
-            },
-          },
-        },
-      },
-      { $project: { userId: 0, 'exercise.userId': 0 } },
+      recordPipeline.unwindExercise,
+      recordPipeline.setActiveModifiers,
+      recordPipeline.excludeUserIds,
     ])
     .sort({ date: convertSort(sort) })
     // Mongo docs say passing limit of 0 is equivalent to no limit,
@@ -235,40 +265,13 @@ export async function fetchRecord(
   return await records
     .aggregate<Record>([
       { $match: { userId, _id } },
-      // Find the exercise. This returns an array so we need to unwind it.
-      // Unwind returns a record for every item in the array (we only have one or zero items).
-      {
-        $lookup: {
-          from: 'exercises',
-          localField: 'exercise._id',
-          foreignField: '_id',
-          as: 'exercise',
-        },
-      },
-      // if preserveNull is false the whole record becomes null if exercise is null
-      { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
-      // Filter activeModifiers to only contain elements that exist in exercise.modifiers.
-      // This addresses if the user removes a modifier from an exercise --
-      // the modifier should no longer appear in records. We maintain the data though,
-      // in case the user re-adds the modifier in the future.
-      {
-        $set: {
-          activeModifiers: {
-            $filter: {
-              input: '$activeModifiers',
-              as: 'modifier',
-              cond: { $in: ['$$modifier', '$exercise.modifiers'] },
-            },
-          },
-        },
-      },
-      // $project is the equivalent of "projection" for aggregate pipelines
-      {
-        $project: {
-          userId: 0,
-          'exercise.userId': 0,
-        },
-      },
+
+      recordPipeline.lookupExercise,
+
+      recordPipeline.unwindExercise,
+
+      recordPipeline.setActiveModifiers,
+      recordPipeline.excludeUserIds,
     ])
     // return just the first (there's only the one)
     .next()
