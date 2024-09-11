@@ -1,4 +1,6 @@
-import { Filter, ObjectId } from 'mongodb'
+import { StatusCodes } from 'http-status-codes'
+import { Document, Filter, ObjectId } from 'mongodb'
+import { ApiError } from 'next/dist/server/api-utils'
 import Category from '../../models/AsyncSelectorOption/Category'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
@@ -12,8 +14,6 @@ import {
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
 import { collections } from './mongoConnect'
-import { ApiError } from 'next/dist/server/api-utils'
-import { StatusCodes } from 'http-status-codes'
 const {
   sessions,
   exercises,
@@ -206,6 +206,17 @@ export async function fetchRecords({
       },
       // if preserveNull is false the whole record becomes null if exercise is null
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
+      {
+        $set: {
+          activeModifiers: {
+            $filter: {
+              input: '$activeModifiers',
+              as: 'modifier',
+              cond: { $in: ['$$modifier', '$exercise.modifiers'] },
+            },
+          },
+        },
+      },
       { $project: { userId: 0, 'exercise.userId': 0 } },
     ])
     .sort({ date: convertSort(sort) })
@@ -224,6 +235,8 @@ export async function fetchRecord(
   return await records
     .aggregate<Record>([
       { $match: { userId, _id } },
+      // Find the exercise. This returns an array so we need to unwind it.
+      // Unwind returns a record for every item in the array (we only have one or zero items).
       {
         $lookup: {
           from: 'exercises',
@@ -234,8 +247,28 @@ export async function fetchRecord(
       },
       // if preserveNull is false the whole record becomes null if exercise is null
       { $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true } },
+      // Filter activeModifiers to only contain elements that exist in exercise.modifiers.
+      // This addresses if the user removes a modifier from an exercise --
+      // the modifier should no longer appear in records. We maintain the data though,
+      // in case the user re-adds the modifier in the future.
+      {
+        $set: {
+          activeModifiers: {
+            $filter: {
+              input: '$activeModifiers',
+              as: 'modifier',
+              cond: { $in: ['$$modifier', '$exercise.modifiers'] },
+            },
+          },
+        },
+      },
       // $project is the equivalent of "projection" for aggregate pipelines
-      { $project: { userId: 0, 'exercise.userId': 0 } },
+      {
+        $project: {
+          userId: 0,
+          'exercise.userId': 0,
+        },
+      },
     ])
     // return just the first (there's only the one)
     .next()
