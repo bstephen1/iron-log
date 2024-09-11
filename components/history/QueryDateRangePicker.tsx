@@ -16,7 +16,7 @@ interface Props {
 }
 export default function QueryDateRangePicker({ query, updateQuery }: Props) {
   const { start, end } = query
-  const [quickMonthRange, setQuickMonthRange] = useState('3')
+  const [quickMonthRange, setQuickMonthRange] = useState('-1')
   const isCustom = !quickMonthRange
 
   const handleQuickMonthChange = (monthsString: string) => {
