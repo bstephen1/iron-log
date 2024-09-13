@@ -2,10 +2,8 @@ import { Card, CardContent, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { memo, useCallback, useEffect } from 'react'
 import { KeyedMutator } from 'swr'
-import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import StyledDivider from '../../../components/StyledDivider'
-import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
-import HistoryTitle from '../history/HistoryTitle'
+import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
@@ -14,15 +12,18 @@ import {
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
-import { calculateTotalReps, UpdateFields } from '../../../lib/util'
+import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingSmScreen'
+import { UpdateFields, calculateTotalReps } from '../../../lib/util'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
-import { MatchType } from '../../../models/query-filters/MongoQuery'
 import Record from '../../../models/Record'
-import RecordCardHeader from './header/RecordCardHeader'
+import { MatchType } from '../../../models/query-filters/MongoQuery'
+import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
+import HistoryTitle from '../history/HistoryTitle'
 import RecordExerciseSelector from './RecordExerciseSelector'
 import RecordModifierComboBox from './RecordModifierComboBox'
-import RenderSets from './sets/RenderSets'
 import SetTypeSelect from './SetTypeSelect'
+import RecordCardHeader from './header/RecordCardHeader'
+import RenderSets from './sets/RenderSets'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -113,6 +114,7 @@ function LoadedRecordCard({
   } = record
   const displayFields = useDisplayFields(exercise)
   const extraWeight = useExtraWeight(record)
+  const noSwipingClassName = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes?.unilateral
@@ -139,10 +141,10 @@ function LoadedRecordCard({
           updateExerciseFields(cur.exercise, { ...changes })
           return { ...cur, exercise: newExercise }
         },
-        { revalidate: false }
+        { revalidate: false },
       )
     },
-    [mutateRecord, setMostRecentlyUpdatedExercise]
+    [mutateRecord, setMostRecentlyUpdatedExercise],
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
@@ -152,7 +154,7 @@ function LoadedRecordCard({
         revalidate: false,
       })
     },
-    [mutateRecord, _id]
+    [mutateRecord, _id],
   )
 
   // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
@@ -173,15 +175,16 @@ function LoadedRecordCard({
           }}
         />
         <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
-        <CardContent
-          // swiping causes weird behavior on desktop when combined with data input fields
-          sx={{ px: 1 }}
-        >
+        <CardContent sx={{ px: 1 }}>
           <Stack spacing={2}>
             <RecordExerciseSelector
+              // swiping causes weird behavior on desktop when combined with data input fields
+              // (eg, can't close autocompletes)
+              className={noSwipingClassName}
               {...{ mutateRecordFields, activeModifiers, exercise, category }}
             />
             <RecordModifierComboBox
+              className={noSwipingClassName}
               availableModifiers={exercise?.modifiers}
               {...{ mutateRecordFields, activeModifiers }}
             />

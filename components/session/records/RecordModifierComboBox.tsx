@@ -3,15 +3,18 @@ import isEqual from 'react-fast-compare'
 import { ComboBoxField } from '../../../components/form-fields/ComboBoxField'
 import { UpdateFields } from '../../../lib/util'
 import Record from '../../../models/Record'
+import { ComponentProps } from 'react'
 
-interface Props extends Pick<Record, 'activeModifiers'> {
+interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
   mutateRecordFields: UpdateFields<Record>
   availableModifiers?: string[]
+  activeModifiers: string[]
 }
 export default memo(function RecordModifierComboBox({
   mutateRecordFields,
   activeModifiers,
   availableModifiers,
+  ...comboBoxFieldProps
 }: Props) {
   return (
     <ComboBoxField
@@ -23,6 +26,7 @@ export default memo(function RecordModifierComboBox({
       handleSubmit={(value: string[]) =>
         mutateRecordFields({ activeModifiers: value })
       }
+      {...comboBoxFieldProps}
     />
   )
 }, isEqual)
