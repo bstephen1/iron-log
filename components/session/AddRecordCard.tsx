@@ -12,7 +12,6 @@ import {
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
-import { Status } from '../../models/Status'
 import useCurrentSessionLog from './useCurrentSessionLog'
 
 export default function AddRecordCard() {

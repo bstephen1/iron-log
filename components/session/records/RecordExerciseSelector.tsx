@@ -7,7 +7,6 @@ import { useExercises } from '../../../lib/frontend/restService'
 import { UpdateFields } from '../../../lib/util'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import Record from '../../../models/Record'
-import { Status } from '../../../models/Status'
 
 type Props = {
   mutateRecordFields: UpdateFields<Record>
