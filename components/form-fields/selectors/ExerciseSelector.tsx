@@ -25,7 +25,7 @@ export default function ExerciseSelector({
   category = null,
   ...asyncSelectorProps
 }: ExerciseSelectorProps) {
-  const { activeStatusCategories } = useCategories()
+  const { categoryNames } = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null,
   )
@@ -66,6 +66,7 @@ export default function ExerciseSelector({
       adornmentOpen={!!categoryAnchorEl}
       Constructor={Exercise}
       addNewItem={addExercise}
+      groupBy={(option) => option.status}
       // inputRef={inputRef}
       // todo: anchor to the bottom of the input?
       startAdornment={
@@ -74,7 +75,7 @@ export default function ExerciseSelector({
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
-              categories: activeStatusCategories,
+              categories: categoryNames,
               category,
               setCategory: handleCategoryChange,
               anchorEl: categoryAnchorEl,

@@ -12,7 +12,10 @@ import { StatusOrder } from '../../../models/Status'
  */
 class SelectorStub {
   readonly status: AddNewStatus.new
-  constructor(public readonly _id: string, public name: string = '') {
+  constructor(
+    public readonly _id: string,
+    public name: string = '',
+  ) {
     this.status = AddNewStatus.new
   }
 }
@@ -20,7 +23,7 @@ class SelectorStub {
 // can combine this with Status with a union type per below, but that wasn't needed
 // type SelectorStatus = Status | AddNewStatus
 enum AddNewStatus {
-  new = 'Add New',
+  new = 'New',
 }
 
 const SelectorStatusOrder = {
@@ -69,10 +72,10 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
   // allow for manually providing an _id so we use a temp stub class which does.
   const [newOption, setNewOption] = useState(new Constructor(''))
   const [newOptionStub, setNewOptionStub] = useState(
-    new SelectorStub(newOption._id)
+    new SelectorStub(newOption._id),
   )
   const [inputValue, setInputValue] = useState(
-    asyncAutocompleteProps.value?.name ?? ''
+    asyncAutocompleteProps.value?.name ?? '',
   )
 
   const resetNewOption = () => {
@@ -96,16 +99,25 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
       clearOnBlur
       handleHomeEndKeys
       autoHighlight
+      // options are sorted by status to ensure "add new" is on the bottom.
+      // Some classes extending AsyncSelectorOption may not want to sort by status
+      // (eg, Modifier/Category don't use status and are permanently set to "active" )
+      // so the "groupBy" option is left to the implementing component.
+      // Without specifying groupBy, options will not have a visible status title.
       options={
         // have to spread options since it is readonly and sort() mutates the array
         [...options].sort(
           (a, b) =>
-            SelectorStatusOrder[a.status] - SelectorStatusOrder[b.status]
+            SelectorStatusOrder[a.status] - SelectorStatusOrder[b.status],
         )
       }
       isOptionEqualToValue={(option, value) => option._id === value._id}
-      getOptionLabel={(option) => option.name}
-      groupBy={(option) => option.status}
+      getOptionLabel={(option) =>
+        option.status === AddNewStatus.new
+          ? `Add "${option.name}"`
+          : option.name
+      }
+      // groupBy={(option) => option.status}
       onChange={async (_, option) => {
         // add the new record to db if stub is selected
         if (option instanceof SelectorStub) {
@@ -115,7 +127,7 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
           // stub should only ever be a single item at the last index, but filter to be sure.
           // Typescript doesn't recognize the type narrowing though...
           const stubless = options.filter(
-            (cur) => !(cur instanceof SelectorStub)
+            (cur) => !(cur instanceof SelectorStub),
           ) as C[]
 
           // todo: should be able to use a function to modify the return to concat the new option
@@ -139,7 +151,7 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
           filtered = filtered.filter(
             (option) =>
               !(option instanceof SelectorStub) &&
-              filterCustom(option, inputValue)
+              filterCustom(option, inputValue),
           )
           // invoke this before we append SelectorStub to ensure filtered is type C[].
           // Typescript doesn't recognize the type guard above but we know any SelectorStubs have been filtered out here.
@@ -150,7 +162,7 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
 
         // append the "add new" option if input is not an existing option
         const isExisting = options.some(
-          (option) => inputValue.toLowerCase() === option.name.toLowerCase()
+          (option) => inputValue.toLowerCase() === option.name.toLowerCase(),
         )
         if (inputValue && !isExisting) {
           newOptionStub.name = inputValue

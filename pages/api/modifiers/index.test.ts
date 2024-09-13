@@ -9,7 +9,7 @@ import { Status } from '../../../models/Status'
 import handler from './index.api'
 
 it('fetches modifiers', async () => {
-  const data = [new Modifier('hi', Status.active, 5)]
+  const data = [new Modifier('hi', 5)]
   vi.mocked(fetchModifiers).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })
