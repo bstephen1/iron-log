@@ -24,14 +24,12 @@ export default memo(function RecordExerciseSelector({
   variant,
   ...asyncSelectorProps
 }: Props) {
-  const { exercises, mutate: mutateExercises } = useExercises({
-    status: Status.active,
-  })
+  const { exercises, mutate: mutateExercises } = useExercises()
 
   const handleChange = async (newExercise: Exercise | null) => {
     // if an exercise changes, discard any modifiers that are not valid for the new exercise
     const remainingModifiers = activeModifiers.filter((modifier) =>
-      newExercise?.modifiers.some((exercise) => exercise === modifier)
+      newExercise?.modifiers.some((exercise) => exercise === modifier),
     )
 
     mutateRecordFields({
@@ -54,5 +52,4 @@ export default memo(function RecordExerciseSelector({
       {...asyncSelectorProps}
     />
   )
-},
-isEqual)
+}, isEqual)
