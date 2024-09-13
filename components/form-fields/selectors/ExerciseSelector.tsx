@@ -30,8 +30,6 @@ export default function ExerciseSelector({
     null,
   )
 
-  // todo: when switching category, input should null out if it's not in the new category.
-  // Used to do that before pulling category state out to parent.
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
     if (
@@ -47,8 +45,6 @@ export default function ExerciseSelector({
     }
   }
 
-  // todo: null out category if selecting something that's not in the category?
-  // todo: on clicking category chip in form, setCategory to that value?
   const filterCategories = (exercise: Exercise) => {
     return !category || exercise.categories.some((name) => name === category)
   }
@@ -67,8 +63,6 @@ export default function ExerciseSelector({
       Constructor={Exercise}
       addNewItem={addExercise}
       groupBy={(option) => option.status}
-      // inputRef={inputRef}
-      // todo: anchor to the bottom of the input?
       startAdornment={
         handleCategoryChange && (
           <CategoryFilter

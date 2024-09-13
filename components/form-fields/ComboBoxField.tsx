@@ -38,7 +38,6 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
    */
   helperText?: string
 }
-// todo: closes when any value changes (since that triggers onSubmit and rerenders it)
 export function ComboBoxField({
   options = [],
   initialValue,
@@ -60,7 +59,7 @@ export function ComboBoxField({
     reason: AutocompleteChangeReason,
   ) => {
     const formattedNewValue =
-      typeof newValue === 'string' ? newValue.split(',') : newValue ?? []
+      typeof newValue === 'string' ? newValue.split(',') : (newValue ?? [])
     let change
     if (reason === 'selectOption') {
       change = formattedNewValue[formattedNewValue?.length - 1]
