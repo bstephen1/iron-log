@@ -5,34 +5,16 @@ import AsyncAutocomplete, {
   AsyncAutocompleteProps,
 } from '../../../components/AsyncAutocomplete'
 import { AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
-import { StatusOrder } from '../../../models/Status'
+import { Status } from '../../../models/Status'
 
-/** A stub to track the input value so it can be added to the db as a new record.
- * The stub uses a proprietary "Add New" status only available in SelectorBase.
+/** The Option type is a wrapper for the generic C which adds inputValue.
+ *  inputValue is populated for the new option to store the actual name value
+ *  instead of the visible `Add "xxx"` string.
  */
-class SelectorStub {
-  readonly status: AddNewStatus.new
-  constructor(
-    public readonly _id: string,
-    public name: string = '',
-  ) {
-    this.status = AddNewStatus.new
-  }
-}
-
-// can combine this with Status with a union type per below, but that wasn't needed
-// type SelectorStatus = Status | AddNewStatus
-enum AddNewStatus {
-  new = 'New',
-}
-
-const SelectorStatusOrder = {
-  ...StatusOrder,
-  [AddNewStatus.new]: Infinity,
-}
+type Option<C> = C & { inputValue?: string }
 
 export interface AsyncSelectorProps<C extends AsyncSelectorOption>
-  extends AsyncAutocompleteProps<C | SelectorStub, false> {
+  extends AsyncAutocompleteProps<Option<C>, false> {
   filterCustom?: (value: C, inputValue?: string) => boolean
   /** This function can be used to reset the input value to null
    * based on the current options in the dropdown */
@@ -64,25 +46,10 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic.
-  const filter = createFilterOptions<C | SelectorStub>()
-  // This is used to track the input value to allow a new C to be created based on the current input.
-  // Originally it was a separate stub class with just the name but now it is a full object of the
-  // given generic type so that it can preserve the _id field across name mutations.
-  // The key is that newOption and newOptionStub must share their _id. The normal constructors don't
-  // allow for manually providing an _id so we use a temp stub class which does.
-  const [newOption, setNewOption] = useState(new Constructor(''))
-  const [newOptionStub, setNewOptionStub] = useState(
-    new SelectorStub(newOption._id),
-  )
+  const filter = createFilterOptions<Option<C>>()
   const [inputValue, setInputValue] = useState(
     asyncAutocompleteProps.value?.name ?? '',
   )
-
-  const resetNewOption = () => {
-    const newObj = new Constructor('')
-    setNewOption(newObj)
-    setNewOptionStub(new SelectorStub(newObj._id))
-  }
 
   return (
     <AsyncAutocomplete
@@ -92,55 +59,39 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
       // https://stackoverflow.com/a/65679069
       // https://github.com/mui/material-ui/issues/20939
       inputValue={inputValue}
-      onInputChange={(_, value) => setInputValue(value)}
+      onInputChange={(_, value) => {
+        setInputValue(value)
+      }}
       openOnFocus
       fullWidth
       selectOnFocus
+      // onBlur we reset to the value that is selected
       clearOnBlur
       handleHomeEndKeys
       autoHighlight
-      // options are sorted by status to ensure "add new" is on the bottom.
-      // Some classes extending AsyncSelectorOption may not want to sort by status
-      // (eg, Modifier/Category don't use status and are permanently set to "active" )
-      // so the "groupBy" option is left to the implementing component.
-      // Without specifying groupBy, options will not have a visible status title.
-      options={
-        // have to spread options since it is readonly and sort() mutates the array
-        [...options].sort(
-          (a, b) =>
-            SelectorStatusOrder[a.status] - SelectorStatusOrder[b.status],
-        )
-      }
+      options={options}
       isOptionEqualToValue={(option, value) => option._id === value._id}
-      getOptionLabel={(option) =>
-        option.status === AddNewStatus.new
-          ? `Add "${option.name}"`
-          : option.name
-      }
-      // groupBy={(option) => option.status}
-      onChange={async (_, option) => {
-        // add the new record to db if stub is selected
-        if (option instanceof SelectorStub) {
-          if (addNewDisabled) return
+      getOptionLabel={(option) => option.name}
+      onChange={async (_, newValue) => {
+        // if the value is a new record, add it to the db
+        if (newValue?.inputValue) {
+          // The new option's name is the visible label `Add "xxx"`.
+          // We want to set the name to be the raw inputValue.
+          const newOption = new Constructor(newValue.inputValue)
+          setInputValue(inputValue)
 
-          newOption.name = newOptionStub.name
-          // stub should only ever be a single item at the last index, but filter to be sure.
-          // Typescript doesn't recognize the type narrowing though...
-          const stubless = options.filter(
-            (cur) => !(cur instanceof SelectorStub),
-          ) as C[]
-
-          // todo: should be able to use a function to modify the return to concat the new option
-          // Note addNewItem only returns the single new option, so we can't
-          // combine it into mutateOptions, which needs the full options array
-          mutateOptions(stubless.concat(newOption), { revalidate: false })
-          await addNewItem(newOption)
-          mutateOptions()
+          // mutateOptions will always be defined here since otherwise inputValue will not be set in filterOptions
+          mutateOptions?.(
+            async (options = []) => {
+              const newItem = await addNewItem(newOption)
+              return options.concat(newItem)
+            },
+            { optimisticData: options.concat(newOption) },
+          )
 
           handleChange(newOption)
-          resetNewOption()
         } else {
-          handleChange(option)
+          handleChange(newValue)
         }
       }}
       filterOptions={(options, params) => {
@@ -148,14 +99,10 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
         let filtered = filter(options, params)
 
         if (filterCustom) {
-          filtered = filtered.filter(
-            (option) =>
-              !(option instanceof SelectorStub) &&
-              filterCustom(option, inputValue),
+          filtered = filtered.filter((option) =>
+            filterCustom(option, inputValue),
           )
-          // invoke this before we append SelectorStub to ensure filtered is type C[].
-          // Typescript doesn't recognize the type guard above but we know any SelectorStubs have been filtered out here.
-          handleFilterChange?.(filtered as C[])
+          handleFilterChange?.(filtered)
         }
 
         if (addNewDisabled) return filtered
@@ -165,8 +112,23 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
           (option) => inputValue.toLowerCase() === option.name.toLowerCase(),
         )
         if (inputValue && !isExisting) {
-          newOptionStub.name = inputValue
-          filtered.push(newOptionStub)
+          // We create a new object every time the input changes.
+          // We could possibly use a ref instead, but that can result in duplicate _ids.
+          const newOption = {
+            ...new Constructor(`Add "${inputValue}"`),
+            inputValue,
+          }
+
+          // Insert the newOption as the last active status item.
+          // This puts "add new" above any archived items.
+          const lastActive = filtered.findLastIndex(
+            (item) => item.status === Status.active,
+          )
+          filtered = [
+            ...filtered.slice(0, lastActive + 1),
+            newOption,
+            ...filtered.slice(lastActive + 1),
+          ]
         }
 
         return filtered

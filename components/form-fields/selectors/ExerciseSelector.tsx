@@ -5,6 +5,7 @@ import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
+import { StatusOrder } from '../../../models/Status'
 
 type ExerciseSelectorProps = {
   exercise: Exercise | null
@@ -54,7 +55,6 @@ export default function ExerciseSelector({
       {...asyncSelectorProps}
       value={exercise || null} // need to reduce undefined | null to just null to avoid switching to uncontrolled
       mutateOptions={mutate}
-      options={exercises}
       label="Exercise"
       placeholder={`Select${!!mutate ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}
@@ -62,6 +62,9 @@ export default function ExerciseSelector({
       adornmentOpen={!!categoryAnchorEl}
       Constructor={Exercise}
       addNewItem={addExercise}
+      options={exercises?.sort(
+        (a, b) => StatusOrder[a.status] - StatusOrder[b.status],
+      )}
       groupBy={(option) => option.status}
       startAdornment={
         handleCategoryChange && (
