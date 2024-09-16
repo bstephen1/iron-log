@@ -23,14 +23,13 @@ export type RecordQuery = Partial<RecordHistoryQuery> & {
   date?: string
 }
 
-/** Default query is for the past 3 months */
+/** Default query for record history */
 export const DEFAULT_RECORD_HISTORY_QUERY: RecordHistoryQuery = {
   exercise: '',
   modifier: [],
   modifierMatchType: MatchType.Partial,
-  setTypeMatchType: MatchType.Partial,
+  setTypeMatchType: MatchType.Any,
   end: dayjs().format(DATE_FORMAT),
-  start: dayjs().add(-3, 'month').format(DATE_FORMAT),
   limit: 100,
   ...DEFAULT_SET_TYPE,
 }
