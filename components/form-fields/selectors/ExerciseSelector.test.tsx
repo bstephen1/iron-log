@@ -5,6 +5,7 @@ import { render, screen, useServerOnce } from '../../../lib/testUtils'
 import Category from '../../../models/AsyncSelectorOption/Category'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import ExerciseSelector from './ExerciseSelector'
+import { Status } from '../../../models/Status'
 
 const mockHandleChange = vi.fn()
 const mockMutate = vi.fn()
@@ -20,7 +21,7 @@ const autocompletePlaceholder = /add new exercise/i
 const categoryLabel = /select category/i
 
 const TestSelector = (
-  props: Partial<ComponentProps<typeof ExerciseSelector>>
+  props: Partial<ComponentProps<typeof ExerciseSelector>>,
 ) => (
   <ExerciseSelector
     exercise={null}
@@ -71,7 +72,7 @@ it('filters exercises based on category filter', async () => {
     <TestSelector
       exercises={[matchingExercise, unmatchedExercise]}
       category={testCategoryName}
-    />
+    />,
   )
 
   // open autocomplete
@@ -89,7 +90,7 @@ it('unselects exercise if it is not valid for selected category', async () => {
       exercises={[unmatchedExercise]}
       category={testCategoryName}
       exercise={unmatchedExercise}
-    />
+    />,
   )
 
   // A category is already selected. We just need to trigger a category change
@@ -100,4 +101,26 @@ it('unselects exercise if it is not valid for selected category', async () => {
   // autocomplete has reset
   expect(screen.getByPlaceholderText(autocompletePlaceholder)).toBeVisible()
   expect(mockHandleChange).toHaveBeenCalledWith(null)
+})
+
+it('sorts exercises by status', async () => {
+  const unsortedExercises: Exercise[] = [
+    new Exercise('option 1'),
+    new Exercise('option 2', { status: Status.archived }),
+    new Exercise('option 3'),
+    new Exercise('option 4', { status: Status.archived }),
+  ]
+  const { user } = render(<TestSelector exercises={unsortedExercises} />)
+
+  // open autocomplete
+  await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
+  // Type a new option. This must be a shared string among all
+  // unsortedExercises because the selector filters the options based on the input
+  await user.paste('option')
+
+  // There should only be one group for each status.
+  // If left unsorted, only adjacent items with the same status would group together.
+  // The new option should be appended to the end of the active exercises.
+  expect(screen.getByText(Status.active)).toBeVisible()
+  expect(screen.getByText(Status.archived)).toBeVisible()
 })
