@@ -5,6 +5,7 @@ import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
+import { StatusOrder } from '../../../models/Status'
 
 type ExerciseSelectorProps = {
   exercise: Exercise | null
@@ -25,13 +26,11 @@ export default function ExerciseSelector({
   category = null,
   ...asyncSelectorProps
 }: ExerciseSelectorProps) {
-  const { activeStatusCategories } = useCategories()
+  const { categoryNames } = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null,
   )
 
-  // todo: when switching category, input should null out if it's not in the new category.
-  // Used to do that before pulling category state out to parent.
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
     if (
@@ -47,8 +46,6 @@ export default function ExerciseSelector({
     }
   }
 
-  // todo: null out category if selecting something that's not in the category?
-  // todo: on clicking category chip in form, setCategory to that value?
   const filterCategories = (exercise: Exercise) => {
     return !category || exercise.categories.some((name) => name === category)
   }
@@ -58,7 +55,6 @@ export default function ExerciseSelector({
       {...asyncSelectorProps}
       value={exercise || null} // need to reduce undefined | null to just null to avoid switching to uncontrolled
       mutateOptions={mutate}
-      options={exercises}
       label="Exercise"
       placeholder={`Select${!!mutate ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}
@@ -66,15 +62,17 @@ export default function ExerciseSelector({
       adornmentOpen={!!categoryAnchorEl}
       Constructor={Exercise}
       addNewItem={addExercise}
-      // inputRef={inputRef}
-      // todo: anchor to the bottom of the input?
+      options={exercises?.sort(
+        (a, b) => StatusOrder[a.status] - StatusOrder[b.status],
+      )}
+      groupBy={(option) => option.status}
       startAdornment={
         handleCategoryChange && (
           <CategoryFilter
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
-              categories: activeStatusCategories,
+              categories: categoryNames,
               category,
               setCategory: handleCategoryChange,
               anchorEl: categoryAnchorEl,

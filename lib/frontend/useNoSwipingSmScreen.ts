@@ -1,4 +1,3 @@
-import { useMediaQuery, useTheme } from '@mui/material'
 import { noSwipingRecord } from './constants'
 import useDesktopCheck from './useDesktopCheck'
 

@@ -4,7 +4,7 @@
  */
 export enum Status {
   active = 'Active',
-  /** Archived records only appear in the manage screen. */
+  /** Archived items appear below active items */
   archived = 'Archived',
 }
 

@@ -57,12 +57,11 @@ export default function ModifierForm({
       // todo: ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
       // @ts-ignore
       .unique('This modifier already exists!', modifierNames),
-    status: yup.string().required('Must have a status'),
   })
 
   return (
     <Grid container spacing={1} xs={12}>
-      <Grid xs={12}>
+      <Grid xs={12} sm={6}>
         <InputField
           label="Name"
           initialValue={name}
@@ -70,12 +69,6 @@ export default function ModifierForm({
           fullWidth
           handleSubmit={(name) => handleUpdate({ name })}
           yupValidator={yup.reach(validationSchema, 'name')}
-        />
-      </Grid>
-      <Grid xs={12} sm={6}>
-        <StatusSelect
-          initialValue={status}
-          handleSubmit={(status) => handleUpdate({ status })}
         />
       </Grid>
       <Grid xs={12} sm={6}>

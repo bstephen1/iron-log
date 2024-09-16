@@ -65,9 +65,6 @@ const toNames = (entities?: AsyncSelectorOption[]) =>
 const nameSort = <T extends { name: string }>(data?: T[]) =>
   data?.sort((a, b) => a.name.localeCompare(b.name))
 
-const filterActive = (entities?: AsyncSelectorOption[]) =>
-  entities?.filter((entity) => entity.status === Status.active) ?? []
-
 //---------
 // SESSION
 //---------
@@ -200,7 +197,6 @@ export function useExercises(query?: ExerciseQuery) {
   return {
     exercises: sortedData,
     exerciseNames: toNames(sortedData),
-    activeStatusExercises: toNames(filterActive(sortedData)),
     isError: !!error,
     mutate,
   }
@@ -267,7 +263,6 @@ export function useModifiers() {
     modifiers: sortedData,
     modifiersIndex: arrayToIndex<Modifier>('name', data),
     modifierNames: toNames(sortedData),
-    activeStatusModifiers: toNames(filterActive(sortedData)),
     isError: !!error,
     mutate,
   }
@@ -312,7 +307,6 @@ export function useCategories() {
   return {
     categories: sortedData,
     categoryNames: toNames(sortedData),
-    activeStatusCategories: toNames(filterActive(sortedData)),
     isError: !!error,
     mutate,
   }

@@ -2,10 +2,8 @@ import { AsyncSelectorOption } from '.'
 import Attributes from '../Attributes'
 import { DisplayFields } from '../DisplayFields'
 import Note from '../Note'
-import { Status } from '../Status'
 
 export default class Exercise extends AsyncSelectorOption {
-  public status: Status = Status.active
   attributes: Attributes
   notes: Note[]
   // Originally this was a map with keys for each subset of modifier groupings
@@ -28,9 +26,9 @@ export default class Exercise extends AsyncSelectorOption {
       weight,
       categories,
       modifiers,
-    }: Partial<Omit<Exercise, 'name'>> = {}
+    }: Partial<Omit<Exercise, 'name'>> = {},
   ) {
-    super(name, status ?? Status.active)
+    super(name, status)
     this.attributes = attributes ?? {}
     this.notes = notes ?? []
     this.displayFields = displayFields

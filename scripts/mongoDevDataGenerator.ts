@@ -58,7 +58,7 @@ const modifiers = {
   barbell: new Modifier('barbell'),
   dumbbell: new Modifier('dumbbell'),
   belt: new Modifier('belt'),
-  band: new Modifier('band', Status.archived),
+  band: new Modifier('band'),
   pause: new Modifier('pause'),
   flared: new Modifier('flared elbows'),
   tucked: new Modifier('tucked elbows'),
@@ -68,8 +68,8 @@ const modifiers = {
   wraps: new Modifier('wraps'),
   amrap: new Modifier('AMRAP'),
   myo: new Modifier('myo'),
-  pin: new Modifier('lifting pin', Status.active, 1.5),
-  dipBelt: new Modifier('dip belt', Status.active, 1.5),
+  pin: new Modifier('lifting pin', 1.5),
+  dipBelt: new Modifier('dip belt', 1.5),
 }
 
 const exercises = {
