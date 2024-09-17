@@ -233,7 +233,7 @@ export async function fetchRecords({
   // We put as much as possible in pre-lookup to reduce the amount of exercise lookup
   // (instead of looking up the exercise for every record first before starting to filter),
   // and only put the filters that depend on current exercise data into post-lookup.
-  const { 'exercise.name': name, ...otherFilters } = filter
+  const { 'exercise.name': name, activeModifiers, ...otherFilters } = filter
 
   return await records
     .aggregate<Record>([
@@ -247,6 +247,8 @@ export async function fetchRecords({
       },
       recordPipeline.unwindExercise,
       recordPipeline.setActiveModifiers,
+      // have to match modifiers after we set the corrected activeModifiers
+      { $match: activeModifiers ? { activeModifiers } : {} },
       recordPipeline.excludeUserIds,
     ])
     .sort({ date: convertSort(sort) })
