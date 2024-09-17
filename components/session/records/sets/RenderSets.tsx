@@ -5,8 +5,8 @@ import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
 import Record from '../../../../models/Record'
 import AddSetButton from './AddSetButton'
-import SetHeader from './SetHeader'
 import RenderSetRow from './RenderSetRow'
+import SetHeader from './SetHeader'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
@@ -17,6 +17,11 @@ interface Props extends Pick<Record, '_id' | 'sets'> {
   displayFields: DisplayFields
   showSplitWeight?: boolean
   showUnilateral?: boolean
+  /** Exercise weight is ignored if the record is computed to be a bodyweight exercise
+   *  (no weight provided). This allows for adding weight with eg a dip belt without
+   *  needing to add a modifier and mess up history tracking.
+   */
+  exerciseWeight?: number
   extraWeight: number
 }
 export default function RenderSets({
@@ -25,6 +30,7 @@ export default function RenderSets({
   showSplitWeight,
   showUnilateral,
   sets,
+  exerciseWeight = 0,
   extraWeight,
   _id,
 }: Props) {
@@ -47,7 +53,15 @@ export default function RenderSets({
           <RenderSetRow
             key={i}
             index={i}
-            {...{ ...set, displayFields, readOnly, _id, extraWeight }}
+            {...{
+              ...set,
+              displayFields,
+              readOnly,
+              _id,
+              // exerciseWeight represents eg a dip belt.
+              // When there is no extra plate weight, you wouldn't be using the belt.
+              extraWeight: extraWeight - (set.weight ? 0 : exerciseWeight),
+            }}
           />
         ))}
       </Box>

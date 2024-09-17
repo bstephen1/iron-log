@@ -20,7 +20,7 @@ interface Props {
   handleUpdate: (updates: Partial<Modifier>) => void
 }
 export default function ModifierForm({
-  modifier: { name, status, weight },
+  modifier: { name, weight },
   handleUpdate,
 }: Props) {
   const { modifierNames, modifiers, mutate: mutateModifiers } = useModifiers()

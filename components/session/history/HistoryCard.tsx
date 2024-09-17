@@ -45,13 +45,13 @@ export default memo(function HistoryCard({
 }: Props) {
   const { sets, _id, notes, date, exercise, activeModifiers, setType } = record
   const recordDisplayFields = useDisplayFields(exercise)
-  const extraWeight = useExtraWeight(record)
+  const { extraWeight, exerciseWeight } = useExtraWeight(record)
 
   const displayFields = props.displayFields ?? recordDisplayFields
 
   // use splitWeight if parent record is using it
   const showSplitWeight = displayFields.visibleFields.some((field) =>
-    ['plateWeight', 'totalWeight'].includes(field.name)
+    ['plateWeight', 'totalWeight'].includes(field.name),
   )
 
   const actionComponents: { [key in HistoryAction]: JSX.Element } = {
@@ -95,7 +95,14 @@ export default memo(function HistoryCard({
     sets: (
       <RenderSets
         key="sets"
-        {...{ displayFields, showSplitWeight, sets, _id, extraWeight }}
+        {...{
+          displayFields,
+          showSplitWeight,
+          sets,
+          _id,
+          extraWeight,
+          exerciseWeight,
+        }}
       />
     ),
   }
