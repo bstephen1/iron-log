@@ -10,7 +10,8 @@ import { StatusOrder } from '../../../models/Status'
 type ExerciseSelectorProps = {
   exercise: Exercise | null
   handleChange: (value: Exercise | null) => void
-  exercises: Exercise[] | undefined
+  /** used for autocomplete options, which are considered readonly */
+  exercises?: readonly Exercise[]
   /** if provided, allows for creating new exercises from typed input */
   mutate?: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
@@ -20,7 +21,7 @@ type ExerciseSelectorProps = {
 } & Partial<AsyncSelectorProps<Exercise>>
 export default function ExerciseSelector({
   exercise,
-  exercises,
+  exercises = [],
   mutate,
   handleCategoryChange,
   category = null,
@@ -62,7 +63,8 @@ export default function ExerciseSelector({
       adornmentOpen={!!categoryAnchorEl}
       Constructor={Exercise}
       addNewItem={addExercise}
-      options={exercises?.sort(
+      // we have to spread because autocomplete considers the options to be readonly, and sort() mutates the array
+      options={[...exercises].sort(
         (a, b) => StatusOrder[a.status] - StatusOrder[b.status],
       )}
       groupBy={(option) => option.status}
