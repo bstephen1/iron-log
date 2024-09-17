@@ -9,7 +9,6 @@ import {
 import { getUsage } from '../../lib/util'
 import Category from '../../models/AsyncSelectorOption/Category'
 import InputField from '../form-fields/InputField'
-import StatusSelect from '../form-fields/StatusSelect'
 import UsageComboBox from '../form-fields/UsageComboBox'
 import ActionItems from '../form-fields/actions/ActionItems'
 
@@ -18,7 +17,7 @@ interface Props {
   handleUpdate: (updates: Partial<Category>) => Promise<void>
 }
 export default function CategoryForm({
-  category: { name, status },
+  category: { name },
   handleUpdate,
 }: Props) {
   const {

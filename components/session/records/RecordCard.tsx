@@ -113,7 +113,7 @@ function LoadedRecordCard({
     date,
   } = record
   const displayFields = useDisplayFields(exercise)
-  const extraWeight = useExtraWeight(record)
+  const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingClassName = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight
@@ -203,6 +203,7 @@ function LoadedRecordCard({
                 showUnilateral,
                 _id,
                 extraWeight,
+                exerciseWeight,
               }}
             />
             <HistoryTitle />
