@@ -44,9 +44,7 @@ export default function TagSelect({
       input={<Input disableUnderline />}
       inputProps={{ sx: { pr: '0px !important' } }} // disable baked in padding for IconComponent
       IconComponent={() => null}
-      renderValue={(selected) => (
-        <TagChips {...{ selected, multiple, readOnly: selectProps.readOnly }} />
-      )}
+      renderValue={(selected) => <TagChips {...{ selected, multiple }} />}
       sx={{ pr: 2 }}
       {...fixSelectBackground}
       {...selectProps}
