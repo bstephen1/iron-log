@@ -49,7 +49,6 @@ export default function NotesList(props: Props) {
       {label && <FormDivider title={label} />}
       {/* todo: drag n drop? */}
       <Stack spacing={2} sx={{ py: 1 }}>
-        {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
         {!readOnly && (
           <AddNote
             placeholder={addItemPlaceholder}

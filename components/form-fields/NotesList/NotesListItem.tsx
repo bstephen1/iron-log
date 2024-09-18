@@ -54,8 +54,6 @@ export default function NotesListItem(props: Props) {
       placeholder={placeholder}
       autoComplete="off"
       readOnly={readOnly}
-      // removing this for multiline notes
-      // onKeyDown={(e) => e.code === 'Enter' && inputRef.current?.blur()}
       inputRef={inputRef}
       inputProps={{
         'aria-label': 'edit',
@@ -77,8 +75,6 @@ export default function NotesListItem(props: Props) {
               onClick={() => onDelete(index)}
               aria-label="delete item"
             >
-              {/* todo: should this be a different icon so clear button => clear, not delete? */}
-              {/* NotInterestedIcon ? */}
               <ClearIcon />
             </TransitionIconButton>
           )}
