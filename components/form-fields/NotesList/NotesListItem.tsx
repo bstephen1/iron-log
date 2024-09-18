@@ -63,7 +63,7 @@ export default function NotesListItem(props: Props) {
           handleUpdate={(newTags) =>
             handleUpdate(index, { ...note, tags: newTags })
           }
-          tags={note.tags}
+          selectedTags={note.tags}
           {...{ options, multiple, readOnly }}
         />
       }

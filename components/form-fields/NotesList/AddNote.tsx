@@ -54,7 +54,10 @@ export default function AddNote({
       // onKeyDown={(e) => e.code === 'Enter' && submit()}
       inputRef={inputRef}
       startAdornment={
-        <TagSelect handleUpdate={setTags} {...{ tags, options, multiple }} />
+        <TagSelect
+          handleUpdate={setTags}
+          {...{ selectedTags: tags, options, multiple }}
+        />
       }
       endAdornment={
         <>
