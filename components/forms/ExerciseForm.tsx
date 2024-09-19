@@ -34,10 +34,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
 
   const handleDelete = async () => {
     await deleteExercise(exercise.name)
-    setUrlExercise(null, {
-      scroll: true,
-      shallow: true,
-    })
+    setUrlExercise(null)
     mutateExercises(exercises?.filter((e) => e.name !== exercise.name))
   }
 

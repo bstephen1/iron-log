@@ -21,8 +21,11 @@ export default function useCategoryForm() {
     if (!category) return
 
     const newCategory = { ...category, ...updates }
-    // only has an effect if name has changed
-    setUrlCategory(newCategory.name, { scroll: false, shallow: true })
+
+    // setQueryState will rerender the entire page if setting to the same value
+    if (updates.name) {
+      setUrlCategory(newCategory.name)
+    }
 
     mutateCategories(
       async () => {
@@ -51,10 +54,7 @@ export default function useCategoryForm() {
         {...{
           category,
           handleChange: (category) => {
-            setUrlCategory(category?.name ?? null, {
-              scroll: false,
-              shallow: true,
-            })
+            setUrlCategory(category?.name ?? null)
           },
           categories,
           mutate: mutateCategories,

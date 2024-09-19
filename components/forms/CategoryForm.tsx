@@ -31,10 +31,7 @@ export default function CategoryForm({
 
   const handleDelete = async () => {
     await deleteCategory(name)
-    setUrlCategory(null, {
-      scroll: true,
-      shallow: true,
-    })
+    setUrlCategory(null)
     mutateCategories(categories?.filter((category) => category.name !== name))
   }
 

@@ -30,10 +30,7 @@ export default function ModifierForm({
 
   const handleDelete = async () => {
     await deleteModifier(name)
-    setUrlModifier(null, {
-      scroll: true,
-      shallow: true,
-    })
+    setUrlModifier(null)
     mutateModifiers(modifiers?.filter((modifier) => modifier.name !== name))
   }
 

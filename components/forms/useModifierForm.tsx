@@ -21,7 +21,11 @@ export default function useModifierForm() {
     if (!modifier) return
 
     const newModifier = { ...modifier, ...updates }
-    setUrlModifier(newModifier.name, { scroll: false, shallow: true })
+
+    // setQueryState will rerender the entire page if setting to the same value
+    if (updates.name) {
+      setUrlModifier(newModifier.name)
+    }
 
     mutateModifiers(
       async () => {
@@ -45,10 +49,7 @@ export default function useModifierForm() {
         {...{
           modifier,
           handleChange: (modifier) => {
-            setUrlModifier(modifier?.name ?? null, {
-              scroll: false,
-              shallow: true,
-            })
+            setUrlModifier(modifier?.name ?? null)
           },
           modifiers,
           mutate: mutateModifiers,

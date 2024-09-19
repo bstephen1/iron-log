@@ -27,7 +27,11 @@ export default function useExerciseForm() {
     if (!exercise) return
 
     const newExercise = { ...exercise, ...updates }
-    setUrlExercise(newExercise.name, { scroll: false, shallow: true })
+
+    // setQueryState will rerender the entire page if setting to the same value
+    if (updates.name) {
+      setUrlExercise(newExercise.name)
+    }
 
     mutateExercises(
       async () => {
@@ -50,10 +54,7 @@ export default function useExerciseForm() {
         {...{
           exercise,
           handleChange: (exercise) => {
-            setUrlExercise(exercise?.name ?? null, {
-              scroll: false,
-              shallow: true,
-            })
+            setUrlExercise(exercise?.name ?? null)
           },
           exercises,
           mutate: mutateExercises,
