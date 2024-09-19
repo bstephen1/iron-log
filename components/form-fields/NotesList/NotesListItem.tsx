@@ -50,12 +50,11 @@ export default function NotesListItem(props: Props) {
       {...control()}
       multiline
       size="small"
+      fullWidth
       onBlur={(e) => (isEmpty ? onDelete(index) : handleSubmit(e.target.value))}
       placeholder={placeholder}
       autoComplete="off"
       readOnly={readOnly}
-      // removing this for multiline notes
-      // onKeyDown={(e) => e.code === 'Enter' && inputRef.current?.blur()}
       inputRef={inputRef}
       inputProps={{
         'aria-label': 'edit',
@@ -65,7 +64,7 @@ export default function NotesListItem(props: Props) {
           handleUpdate={(newTags) =>
             handleUpdate(index, { ...note, tags: newTags })
           }
-          tags={note.tags}
+          selectedTags={note.tags}
           {...{ options, multiple, readOnly }}
         />
       }
@@ -77,13 +76,12 @@ export default function NotesListItem(props: Props) {
               onClick={() => onDelete(index)}
               aria-label="delete item"
             >
-              {/* todo: should this be a different icon so clear button => clear, not delete? */}
-              {/* NotInterestedIcon ? */}
               <ClearIcon />
             </TransitionIconButton>
           )}
         </>
       }
+      sx={{ my: 1 }}
     />
   )
 }

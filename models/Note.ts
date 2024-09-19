@@ -1,3 +1,11 @@
+import { generateId } from '../lib/util'
+
 export default class Note {
-  constructor(public value = '', public tags: string[] = []) {}
+  readonly _id: string
+  constructor(
+    public value = '',
+    public tags: string[] = [],
+  ) {
+    this._id = generateId()
+  }
 }

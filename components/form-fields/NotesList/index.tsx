@@ -1,8 +1,9 @@
-import { Divider, Stack, Typography } from '@mui/material'
+import { Collapse, Typography } from '@mui/material'
+import { TransitionGroup } from 'react-transition-group'
 import Note from '../../../models/Note'
+import FormDivider from '../../forms/FormDivider'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'
-import FormDivider from '../../forms/FormDivider'
 
 interface Props {
   label?: string
@@ -48,35 +49,34 @@ export default function NotesList(props: Props) {
     <>
       {label && <FormDivider title={label} />}
       {/* todo: drag n drop? */}
-      <Stack spacing={2} sx={{ py: 1 }}>
-        {/* these started out multiline but that was creating weird padding. Revisit if multiline is actually needed */}
-        {!readOnly && (
-          <AddNote
-            placeholder={addItemPlaceholder}
-            disabled={props.notes == null}
-            {...{ handleAdd, options, multiple, initialTags }}
-          />
-        )}
-        {/* todo: transitionGroup (see https://mui.com/material-ui/transitions/#transitiongroup) */}
+      {!readOnly && (
+        <AddNote
+          placeholder={addItemPlaceholder}
+          disabled={props.notes == null}
+          {...{ handleAdd, options, multiple, initialTags }}
+        />
+      )}
+      <TransitionGroup>
         {notes?.map((note, index) => (
-          <NotesListItem
-            key={index} // apparently eslint doesn't see this if it's in the spread object
-            placeholder={listItemPlaceholder}
-            {...{
-              handleDelete,
-              handleUpdate,
-              options,
-              note,
-              index,
-              multiple,
-              readOnly,
-            }}
-          />
+          <Collapse key={note._id}>
+            <NotesListItem
+              placeholder={listItemPlaceholder}
+              {...{
+                handleDelete,
+                handleUpdate,
+                options,
+                note,
+                index,
+                multiple,
+                readOnly,
+              }}
+            />
+          </Collapse>
         ))}
-        {readOnly && !notes.length && (
-          <Typography>This record has no notes</Typography>
-        )}
-      </Stack>
+      </TransitionGroup>
+      {readOnly && !notes.length && (
+        <Typography>This record has no notes</Typography>
+      )}
     </>
   )
 }

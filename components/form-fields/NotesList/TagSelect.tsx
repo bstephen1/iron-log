@@ -9,19 +9,19 @@ import {
   SelectProps,
 } from '@mui/material'
 import { useState } from 'react'
-import TagChips from './TagChips'
 import { fixSelectBackground } from '../../../lib/frontend/constants'
+import TagChips from './TagChips'
 
 type Props = {
   options: string[]
-  tags: string[] // single mode uses a singleton array
+  selectedTags: string[] // single mode uses a singleton array
   multiple?: boolean
   handleUpdate: (tags: string[]) => void
 } & Partial<SelectProps<string | string[]>>
 // this should be used as a start adornment in an input to render tags for that input
 export default function TagSelect({
   options,
-  tags,
+  selectedTags,
   handleUpdate,
   multiple,
   ...selectProps
@@ -39,14 +39,12 @@ export default function TagSelect({
       displayEmpty
       onClose={() => setOpen(false)}
       onOpen={() => options.length && setOpen(true)}
-      value={multiple ? tags : tags[0]}
+      value={multiple ? selectedTags : selectedTags[0]}
       onChange={(e) => handleChange(e.target.value)}
       input={<Input disableUnderline />}
       inputProps={{ sx: { pr: '0px !important' } }} // disable baked in padding for IconComponent
       IconComponent={() => null}
-      renderValue={(selected) => (
-        <TagChips {...{ selected, multiple, readOnly: selectProps.readOnly }} />
-      )}
+      renderValue={(selected) => <TagChips {...{ selected, multiple }} />}
       sx={{ pr: 2 }}
       {...fixSelectBackground}
       {...selectProps}
@@ -58,7 +56,7 @@ export default function TagSelect({
               icon={<CheckBoxOutlineBlankIcon />}
               checkedIcon={<CheckBoxIcon />}
               style={{ marginRight: 8 }}
-              checked={tags.some((x) => x === option)} // todo: add a "selected" boolean map?
+              checked={selectedTags.includes(option)}
             />
           )}
           <ListItemText primary={option} />

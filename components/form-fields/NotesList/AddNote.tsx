@@ -48,13 +48,17 @@ export default function AddNote({
       {...control()}
       multiline
       size="small"
+      fullWidth
       placeholder={placeholder}
       disabled={disabled}
       // removing this for multiline notes
       // onKeyDown={(e) => e.code === 'Enter' && submit()}
       inputRef={inputRef}
       startAdornment={
-        <TagSelect handleUpdate={setTags} {...{ tags, options, multiple }} />
+        <TagSelect
+          handleUpdate={setTags}
+          {...{ selectedTags: tags, options, multiple }}
+        />
       }
       endAdornment={
         <>
@@ -74,6 +78,7 @@ export default function AddNote({
           </TransitionIconButton>
         </>
       }
+      sx={{ my: 1 }}
     />
   )
 }
