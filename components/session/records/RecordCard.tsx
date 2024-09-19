@@ -1,6 +1,6 @@
 import { Card, CardContent, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
-import { memo, useCallback, useEffect } from 'react'
+import { memo, useCallback } from 'react'
 import { KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
@@ -8,6 +8,7 @@ import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
+  useExercise,
   useRecord,
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
@@ -37,32 +38,20 @@ import RenderSets from './sets/RenderSets'
 interface Props {
   id: string
   isQuickRender?: boolean
-  setMostRecentlyUpdatedExercise: (exercise: Exercise) => void
-  /** This allows records within a session that are using the same exercise to see updates to notes/displayFields */
-  mostRecentlyUpdatedExercise: Exercise | null
   swiperIndex: number
 }
 export default memo(function RecordCard(props: Props) {
-  const { id, swiperIndex, mostRecentlyUpdatedExercise } = props
-  const { record, mutate } = useRecord(id)
+  const { id, swiperIndex } = props
+  const { record, mutate: mutateRecord } = useRecord(id)
+  // Instead of using record.exercise, we make a separate rest call to get the exercise.
+  // This ensures the exercise is up to date if the user has multiple records with the
+  // same exercise. record.exercise is only updated upon fetching the record,
+  // so if one record updated an exercise any other records would still be using the outdated exercise.
+  const { exercise, mutate: mutateExercise } = useExercise(
+    record?.exercise?._id ?? null,
+  )
 
-  // Use the newly updated exercise so multiple cards with the same exercise will ripple their updates.
-  // This is wrapped in useEffect to avoid "cannot update component while rendering another component" console error.
-  useEffect(() => {
-    if (!record || !mostRecentlyUpdatedExercise?._id) return
-
-    if (
-      mostRecentlyUpdatedExercise._id === record.exercise?._id &&
-      // Have to JSONify mostRecentlyUpdatedExercise to remove javascript class stuff since
-      // record.exercise is pure json and mostRecentlyUpdatedExercise is a javascript class.
-      JSON.stringify(mostRecentlyUpdatedExercise) !==
-        JSON.stringify(record.exercise)
-    ) {
-      mutate({ ...record, exercise: mostRecentlyUpdatedExercise })
-    }
-  }, [mostRecentlyUpdatedExercise, mutate, record])
-
-  if (record === undefined || props.isQuickRender) {
+  if (record === undefined || exercise === undefined || props.isQuickRender) {
     return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
   } else if (record === null) {
     return (
@@ -75,7 +64,11 @@ export default memo(function RecordCard(props: Props) {
       />
     )
   } else {
-    return <LoadedRecordCard record={record} mutateRecord={mutate} {...props} />
+    return (
+      <LoadedRecordCard
+        {...{ record, exercise, mutateRecord, mutateExercise, ...props }}
+      />
+    )
   }
 })
 
@@ -95,23 +88,17 @@ export default memo(function RecordCard(props: Props) {
  */
 function LoadedRecordCard({
   swiperIndex,
-  setMostRecentlyUpdatedExercise,
   record,
+  exercise,
   mutateRecord,
+  mutateExercise,
 }: Props & {
   record: Record
+  exercise: Exercise | null
   mutateRecord: KeyedMutator<Record | null>
+  mutateExercise: KeyedMutator<Exercise | null>
 }) {
-  const {
-    exercise,
-    activeModifiers,
-    _id,
-    sets,
-    notes,
-    category,
-    setType,
-    date,
-  } = record
+  const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingClassName = useNoSwipingDesktop()
@@ -132,32 +119,30 @@ function LoadedRecordCard({
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (changes) => {
-      mutateRecord(
-        (cur) => {
-          if (!cur?.exercise) return null
-
-          const newExercise = { ...cur.exercise, ...changes }
-          setMostRecentlyUpdatedExercise(newExercise)
-          updateExerciseFields(cur.exercise, { ...changes })
-          return { ...cur, exercise: newExercise }
+      mutateExercise(
+        (cur) => (cur ? updateExerciseFields(cur, { ...changes }) : null),
+        {
+          optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
+          revalidate: false,
         },
-        { revalidate: false },
       )
     },
-    [mutateRecord, setMostRecentlyUpdatedExercise],
+    [],
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
     async (changes) => {
-      mutateRecord(updateRecordFields(_id, { ...changes }), {
-        optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
-        revalidate: false,
-      })
+      mutateRecord(
+        (cur) => (cur ? updateRecordFields(cur._id, { ...changes }) : null),
+        {
+          optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
+          revalidate: false,
+        },
+      )
     },
-    [mutateRecord, _id],
+    [mutateRecord],
   )
 
-  // todo: add Category to Record so it persists (if exercise is filtered; mainly for programming)
   return (
     <>
       <Card elevation={3} sx={{ px: 1, m: 0.5 }}>

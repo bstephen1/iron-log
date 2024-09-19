@@ -9,7 +9,6 @@ import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import Bodyweight from '../../models/Bodyweight'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
-import { Status } from '../../models/Status'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
@@ -204,7 +203,7 @@ export function useExercises(query?: ExerciseQuery) {
 
 export function useExercise(id: string | null, config?: SWRConfiguration) {
   // passing null to useSWR disables fetching
-  const { data, error, mutate } = useSWR<Exercise>(
+  const { data, error, mutate } = useSWR<Exercise | null>(
     id ? URI_EXERCISES + id : null,
     config,
   )

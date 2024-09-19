@@ -18,10 +18,6 @@ import useCurrentSessionLog from './useCurrentSessionLog'
 
 export default function SessionSwiper() {
   const theme = useTheme()
-  // This is used to alert when a record changes an exercise, so other records can
-  // be notified and mutate themselves to retrieve the new exercise data.
-  const [mostRecentlyUpdatedExercise, setMostRecentlyUpdatedExercise] =
-    useState<Exercise | null>(null)
   const { sessionLog, date } = useCurrentSessionLog()
   // reduce load time for initial render by only rendering the visible RecordCards
   const [isFirstRender, setIsFirstRender] = useState(true)
@@ -122,8 +118,6 @@ export default function SessionSwiper() {
                 isQuickRender={isFirstRender && i >= initialVisibleSlides}
                 id={id}
                 swiperIndex={i}
-                setMostRecentlyUpdatedExercise={setMostRecentlyUpdatedExercise}
-                mostRecentlyUpdatedExercise={mostRecentlyUpdatedExercise}
               />
             </SwiperSlide>
           ))}
