@@ -48,6 +48,7 @@ export default function AddNote({
       {...control()}
       multiline
       size="small"
+      fullWidth
       placeholder={placeholder}
       disabled={disabled}
       // removing this for multiline notes
@@ -77,6 +78,7 @@ export default function AddNote({
           </TransitionIconButton>
         </>
       }
+      sx={{ my: 1 }}
     />
   )
 }

@@ -50,6 +50,7 @@ export default function NotesListItem(props: Props) {
       {...control()}
       multiline
       size="small"
+      fullWidth
       onBlur={(e) => (isEmpty ? onDelete(index) : handleSubmit(e.target.value))}
       placeholder={placeholder}
       autoComplete="off"
@@ -80,6 +81,7 @@ export default function NotesListItem(props: Props) {
           )}
         </>
       }
+      sx={{ my: 1 }}
     />
   )
 }
