@@ -81,7 +81,10 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Categories"
           initialValue={categories}
           options={categoryNames}
-          handleSubmit={(categories) => updateFields({ categories })}
+          handleSubmit={useCallback(
+            (categories: string[]) => updateFields({ categories }),
+            [updateFields],
+          )}
         />
       </Grid>
       <Grid xs={12}>
@@ -89,7 +92,10 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Modifiers"
           initialValue={modifiers}
           options={modifierNames}
-          handleSubmit={(modifiers) => updateFields({ modifiers })}
+          handleSubmit={useCallback(
+            (modifiers: string[]) => updateFields({ modifiers }),
+            [updateFields],
+          )}
         />
       </Grid>
       <Grid xs={12}>
