@@ -1,4 +1,3 @@
-import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { useQueryState } from 'next-usequerystate'
 import * as yup from 'yup'
@@ -9,9 +8,8 @@ import {
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import Modifier from '../../models/AsyncSelectorOption/Modifier'
+import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import InputField from '../form-fields/InputField'
-import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
-import StatusSelect from '../form-fields/StatusSelect'
 import UsageComboBox from '../form-fields/UsageComboBox'
 import ActionItems from '../form-fields/actions/ActionItems'
 
@@ -69,17 +67,9 @@ export default function ModifierForm({
         />
       </Grid>
       <Grid xs={12} sm={6}>
-        <NumericFieldAutosave
-          label="Equipment weight"
+        <EquipmentWeightField
           initialValue={weight}
-          handleSubmit={(weight) => handleUpdate({ weight })}
-          fullWidth
-          variant="outlined"
-          defaultHelperText=" "
-          // todo: might want to make this selectable between lbs/kg
-          InputProps={{
-            endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-          }}
+          handleUpdate={handleUpdate}
         />
       </Grid>
       <Grid xs={12}>

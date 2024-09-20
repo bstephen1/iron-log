@@ -1,5 +1,5 @@
 import { useQueryState } from 'next-usequerystate'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   updateExerciseFields,
   useExercises,
@@ -23,30 +23,50 @@ export default function useExerciseForm() {
       ? null
       : unfilteredExercise
 
-  const handleUpdate = async (updates: Partial<Exercise>) => {
-    if (!exercise) return
+  // We need to avoid using "exercise" or this function will always trigger child rerenders,
+  // so we isolate using it within the mutate callbacks.
+  const handleUpdate = useCallback(
+    async (id: string, updates: Partial<Exercise>) => {
+      // setQueryState will rerender the entire page if setting to the same value
+      if (updates.name) {
+        setUrlExercise(updates.name)
+      }
 
-    const newExercise = { ...exercise, ...updates }
+      mutateExercises(
+        async (cur) => {
+          const oldExercise = cur?.find((e) => e._id === id)
+          if (!oldExercise) {
+            return cur
+          }
 
-    // setQueryState will rerender the entire page if setting to the same value
-    if (updates.name) {
-      setUrlExercise(newExercise.name)
-    }
+          const updatedExercise = await updateExerciseFields(
+            oldExercise,
+            updates,
+          )
+          return cur?.map((e) =>
+            e._id === updatedExercise._id ? updatedExercise : e,
+          )
+        },
+        // todo: is there a way to simplify the duplicate code?
+        // The optimisticData should theoretically be useful if updateExerciseFields() is slow
+        {
+          optimisticData: (cur) => {
+            if (!cur) return []
 
-    mutateExercises(
-      async () => {
-        const updatedExercise = await updateExerciseFields(exercise, updates)
-        return exercises?.map((exercise) =>
-          exercise._id === updatedExercise._id ? updatedExercise : exercise,
-        )
-      },
-      {
-        optimisticData: updates.name
-          ? [...(exercises ?? []), newExercise]
-          : undefined,
-      },
-    )
-  }
+            const oldExercise = cur.find((e) => e._id === id)
+            if (!oldExercise) {
+              return cur
+            }
+
+            return cur.map((e) =>
+              e._id === oldExercise._id ? { ...oldExercise, updates } : e,
+            )
+          },
+        },
+      )
+    },
+    [setUrlExercise, mutateExercises],
+  )
 
   return {
     Selector: (

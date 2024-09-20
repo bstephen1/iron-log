@@ -1,6 +1,6 @@
-import { InputAdornment } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { useQueryState } from 'next-usequerystate'
+import { useCallback } from 'react'
 import * as yup from 'yup'
 import {
   deleteExercise,
@@ -13,29 +13,38 @@ import {
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
+import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import InputField from '../form-fields/InputField'
 import NotesList from '../form-fields/NotesList'
-import NumericFieldAutosave from '../form-fields/NumericFieldAutosave'
 import StatusSelect from '../form-fields/StatusSelect'
 import ActionItems from '../form-fields/actions/ActionItems'
+import { buildYupSchema } from './yupSchemas'
 
-interface Props {
+export default function ExerciseForm({
+  exercise,
+  handleUpdate,
+}: {
   exercise: Exercise
-  handleUpdate: (updates: Partial<Exercise>) => void
-}
-export default function ExerciseForm({ exercise, handleUpdate }: Props) {
+  handleUpdate: (id: string, updates: Partial<Exercise>) => void
+}) {
   const { modifierNames } = useModifiers()
   const { categoryNames } = useCategories()
   const { records } = useRecords({ exercise: exercise.name })
   const { exerciseNames, mutate: mutateExercises, exercises } = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
 
+  const updateFields = useCallback(
+    (updates: Partial<Exercise>) => handleUpdate(exercise._id, updates),
+    [exercise._id, handleUpdate],
+  )
   // todo: validate (drop empty notes)
+
+  const validationSchema = buildYupSchema('name', 'exercise', exerciseNames)
 
   const handleDelete = async () => {
     await deleteExercise(exercise.name)
     setUrlExercise(null)
-    mutateExercises(exercises?.filter((e) => e.name !== exercise.name))
+    mutateExercises((cur) => cur?.filter((e) => e.name !== exercise.name))
   }
 
   const handleDuplicate = async () => {
@@ -44,34 +53,9 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
     const newName = exercise.name + ' (copy)'
     const newExercise = new Exercise(newName, exercise)
     await updateExercise(newExercise)
-    setUrlExercise(newName, {
-      scroll: true,
-      shallow: true,
-    })
+    setUrlExercise(newName)
     mutateExercises([...exercises, newExercise])
   }
-
-  // This method requires using anonymous functions rather than arrow functions (using "function" keyword)
-  // because arrow functions preserve the context of "this", but Yup needs the nested "this" from addMethod.
-  yup.addMethod(
-    yup.string,
-    'unique',
-    function (message: string, list: string[]) {
-      return this.test('unique', message, function (value) {
-        return !!value && list.length !== new Set(list.concat(value)).size
-      })
-    },
-  )
-
-  // todo: can we enumerate the Exercise fields instead of hardcoding?
-  const validationSchema = yup.object({
-    name: yup
-      .string()
-      .required('Must have a name')
-      // todo: ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
-      // @ts-ignore
-      .unique('This exercise already exists!', exerciseNames),
-  })
 
   return (
     <Grid container spacing={1} xs={12}>
@@ -83,28 +67,20 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           initialValue={exercise.name}
           required
           fullWidth
-          handleSubmit={(name) => handleUpdate({ name })}
+          handleSubmit={(name) => updateFields({ name })}
           yupValidator={yup.reach(validationSchema, 'name')}
         />
       </Grid>
       <Grid xs={12} sm={6}>
         <StatusSelect
           initialValue={exercise.status}
-          handleSubmit={(status) => handleUpdate({ status })}
+          handleSubmit={(status) => updateFields({ status })}
         />
       </Grid>
       <Grid xs={12} sm={6}>
-        <NumericFieldAutosave
-          label="Equipment weight"
+        <EquipmentWeightField
           initialValue={exercise.weight}
-          handleSubmit={(weight) => handleUpdate({ weight })}
-          fullWidth
-          variant="outlined"
-          defaultHelperText=" "
-          // todo: might want to make this selectable between lbs/kg
-          InputProps={{
-            endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-          }}
+          handleUpdate={updateFields}
         />
       </Grid>
       <Grid xs={12}>
@@ -113,7 +89,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           initialValue={exercise.categories}
           options={categoryNames}
           textFieldProps={{ helperText: ' ' }}
-          handleSubmit={(categories) => handleUpdate({ categories })}
+          handleSubmit={(categories) => updateFields({ categories })}
         />
       </Grid>
       <Grid xs={12}>
@@ -122,13 +98,13 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           initialValue={exercise.modifiers}
           options={modifierNames}
           textFieldProps={{ helperText: ' ' }}
-          handleSubmit={(modifiers) => handleUpdate({ modifiers })}
+          handleSubmit={(modifiers) => updateFields({ modifiers })}
         />
       </Grid>
       <Grid xs={12}>
         <AttributeCheckboxes
           attributes={exercise.attributes}
-          handleSubmit={(attributes) => handleUpdate({ attributes })}
+          handleSubmit={(attributes) => updateFields({ attributes })}
         />
       </Grid>
       <Grid xs={12}>
@@ -136,7 +112,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Notes"
           notes={exercise.notes}
           options={exercise.modifiers}
-          handleSubmit={(notes) => handleUpdate({ notes })}
+          handleSubmit={(notes) => updateFields({ notes })}
           multiple
         />
       </Grid>
