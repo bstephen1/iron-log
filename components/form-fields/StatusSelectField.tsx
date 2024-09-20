@@ -7,7 +7,7 @@ interface Props {
   initialValue: Status
   handleUpdate: (updates: { status: Status }) => void
 }
-export default memo(function StatusSelect({
+export default memo(function StatusSelectField({
   initialValue,
   handleUpdate,
 }: Props) {

@@ -10,13 +10,13 @@ import {
   useRecords,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import ActionItems from '../form-fields/actions/ActionItems'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
-import StatusSelect from '../form-fields/StatusSelect'
-import ActionItems from '../form-fields/actions/ActionItems'
+import StatusSelectField from '../form-fields/StatusSelectField'
 
 interface Props {
   exercise: Exercise
@@ -71,7 +71,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         />
       </Grid>
       <Grid xs={12} sm={6}>
-        <StatusSelect initialValue={status} handleUpdate={updateFields} />
+        <StatusSelectField initialValue={status} handleUpdate={updateFields} />
       </Grid>
       <Grid xs={12} sm={6}>
         <EquipmentWeightField
