@@ -1,7 +1,6 @@
 import Grid from '@mui/material/Unstable_Grid2'
 import { useQueryState } from 'next-usequerystate'
 import { useCallback } from 'react'
-import * as yup from 'yup'
 import {
   deleteExercise,
   updateExercise,
@@ -14,43 +13,48 @@ import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import { ComboBoxField } from '../form-fields/ComboBoxField'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
-import InputField from '../form-fields/InputField'
+import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelect from '../form-fields/StatusSelect'
 import ActionItems from '../form-fields/actions/ActionItems'
-import { buildYupSchema } from './yupSchemas'
 
-export default function ExerciseForm({
-  exercise,
-  handleUpdate,
-}: {
+interface Props {
   exercise: Exercise
   handleUpdate: (id: string, updates: Partial<Exercise>) => void
-}) {
+}
+export default function ExerciseForm({ exercise, handleUpdate }: Props) {
+  const {
+    _id,
+    name,
+    status,
+    modifiers,
+    notes,
+    attributes,
+    categories,
+    weight,
+  } = exercise
   const { modifierNames } = useModifiers()
   const { categoryNames } = useCategories()
-  const { records } = useRecords({ exercise: exercise.name })
+  const { records } = useRecords({ exercise: name })
   const { exerciseNames, mutate: mutateExercises, exercises } = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
 
   const updateFields = useCallback(
-    (updates: Partial<Exercise>) => handleUpdate(exercise._id, updates),
-    [exercise._id, handleUpdate],
+    (updates: Partial<Exercise>) => handleUpdate(_id, updates),
+    [_id, handleUpdate],
   )
   // todo: validate (drop empty notes)
 
-  const validationSchema = buildYupSchema('name', 'exercise', exerciseNames)
-
   const handleDelete = async () => {
-    await deleteExercise(exercise.name)
+    await deleteExercise(name)
     setUrlExercise(null)
-    mutateExercises((cur) => cur?.filter((e) => e.name !== exercise.name))
+    mutateExercises((cur) => cur?.filter((e) => e.name !== name))
   }
 
   const handleDuplicate = async () => {
     if (!exercises) return
 
-    const newName = exercise.name + ' (copy)'
+    const newName = name + ' (copy)'
     const newExercise = new Exercise(newName, exercise)
     await updateExercise(newExercise)
     setUrlExercise(newName)
@@ -60,33 +64,25 @@ export default function ExerciseForm({
   return (
     <Grid container spacing={1} xs={12}>
       <Grid xs={12}>
-        {/* todo: would be great to consolidate this somehow. Maybe have a "name" for the inputFields.
-            Export the schema and have the hook pull it in?  */}
-        <InputField
-          label="Name"
-          initialValue={exercise.name}
-          required
-          fullWidth
-          handleSubmit={(name) => updateFields({ name })}
-          yupValidator={yup.reach(validationSchema, 'name')}
+        <NameField
+          initialValue={name}
+          handleUpdate={updateFields}
+          options={exerciseNames}
         />
       </Grid>
       <Grid xs={12} sm={6}>
-        <StatusSelect
-          initialValue={exercise.status}
-          handleSubmit={(status) => updateFields({ status })}
-        />
+        <StatusSelect initialValue={status} handleUpdate={updateFields} />
       </Grid>
       <Grid xs={12} sm={6}>
         <EquipmentWeightField
-          initialValue={exercise.weight}
+          initialValue={weight}
           handleUpdate={updateFields}
         />
       </Grid>
       <Grid xs={12}>
         <ComboBoxField
           label="Categories"
-          initialValue={exercise.categories}
+          initialValue={categories}
           options={categoryNames}
           textFieldProps={{ helperText: ' ' }}
           handleSubmit={(categories) => updateFields({ categories })}
@@ -95,7 +91,7 @@ export default function ExerciseForm({
       <Grid xs={12}>
         <ComboBoxField
           label="Modifiers"
-          initialValue={exercise.modifiers}
+          initialValue={modifiers}
           options={modifierNames}
           textFieldProps={{ helperText: ' ' }}
           handleSubmit={(modifiers) => updateFields({ modifiers })}
@@ -103,22 +99,22 @@ export default function ExerciseForm({
       </Grid>
       <Grid xs={12}>
         <AttributeCheckboxes
-          attributes={exercise.attributes}
+          attributes={attributes}
           handleSubmit={(attributes) => updateFields({ attributes })}
         />
       </Grid>
       <Grid xs={12}>
         <NotesList
           label="Notes"
-          notes={exercise.notes}
-          options={exercise.modifiers}
+          notes={notes}
+          options={modifiers}
           handleSubmit={(notes) => updateFields({ notes })}
           multiple
         />
       </Grid>
       <Grid xs={12}>
         <ActionItems
-          name={exercise.name}
+          name={name}
           type="exercise"
           handleDelete={handleDelete}
           handleDuplicate={handleDuplicate}
