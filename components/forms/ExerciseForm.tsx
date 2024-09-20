@@ -17,6 +17,7 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
+import Note from '../../models/Note'
 
 interface Props {
   exercise: Exercise
@@ -109,7 +110,10 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Notes"
           notes={notes}
           options={modifiers}
-          handleSubmit={(notes) => updateFields({ notes })}
+          handleSubmit={useCallback(
+            (notes: Note[]) => updateFields({ notes }),
+            [updateFields],
+          )}
           multiple
         />
       </Grid>
@@ -119,7 +123,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           type="exercise"
           handleDelete={handleDelete}
           handleDuplicate={handleDuplicate}
-          deleteDisabled={records?.length}
+          deleteDisabled={!!records?.length}
         />
       </Grid>
     </Grid>

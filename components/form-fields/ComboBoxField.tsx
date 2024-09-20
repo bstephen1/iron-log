@@ -40,7 +40,7 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
    */
   helperText?: string
 }
-/** Combobox is setup for memoization. For memoization to work any functions passed in
+/** This component is setup for memoization. For memoization to work any functions passed in
  *  must be wrapped in useCallback(). Eg, handleSubmit().
  */
 export default memo(function ComboBoxField({
