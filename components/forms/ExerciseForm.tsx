@@ -12,7 +12,7 @@ import {
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import ActionItems from '../form-fields/actions/ActionItems'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
-import { ComboBoxField } from '../form-fields/ComboBoxField'
+import ComboBoxField from '../form-fields/ComboBoxField'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
@@ -84,7 +84,6 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Categories"
           initialValue={categories}
           options={categoryNames}
-          textFieldProps={{ helperText: ' ' }}
           handleSubmit={(categories) => updateFields({ categories })}
         />
       </Grid>
@@ -93,7 +92,6 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           label="Modifiers"
           initialValue={modifiers}
           options={modifierNames}
-          textFieldProps={{ helperText: ' ' }}
           handleSubmit={(modifiers) => updateFields({ modifiers })}
         />
       </Grid>

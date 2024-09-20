@@ -38,7 +38,7 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
    */
   helperText?: string
 }
-export function ComboBoxField({
+export default function ComboBoxField({
   options = [],
   initialValue,
   emptyPlaceholder = '',

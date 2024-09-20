@@ -4,7 +4,7 @@ import {
   useExercises,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import { ComboBoxField } from './ComboBoxField'
+import ComboBoxField from './ComboBoxField'
 
 interface Props {
   field: 'categories' | 'modifiers'

@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react'
-import { ComboBoxField } from '../../components/form-fields/ComboBoxField'
+import ComboBoxField from '../../components/form-fields/ComboBoxField'
 import { UpdateState } from '../../lib/util'
 import { MatchType } from '../../models/query-filters/MongoQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
