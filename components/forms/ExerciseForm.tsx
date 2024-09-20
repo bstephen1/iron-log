@@ -65,19 +65,16 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
     <Grid container spacing={1} xs={12}>
       <Grid xs={12}>
         <NameField
-          initialValue={name}
+          name={name}
           handleUpdate={updateFields}
           options={exerciseNames}
         />
       </Grid>
       <Grid xs={12} sm={6}>
-        <StatusSelectField initialValue={status} handleUpdate={updateFields} />
+        <StatusSelectField status={status} handleUpdate={updateFields} />
       </Grid>
       <Grid xs={12} sm={6}>
-        <EquipmentWeightField
-          initialValue={weight}
-          handleUpdate={updateFields}
-        />
+        <EquipmentWeightField weight={weight} handleUpdate={updateFields} />
       </Grid>
       <Grid xs={12}>
         <ComboBoxField

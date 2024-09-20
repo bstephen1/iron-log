@@ -1,23 +1,23 @@
+import { InputAdornment, InputProps } from '@mui/material'
 import { memo, useCallback } from 'react'
 import NumericFieldAutosave from './NumericFieldAutosave'
-import { InputAdornment, InputProps } from '@mui/material'
 
 const inputProps: InputProps = {
   endAdornment: <InputAdornment position="end">kg</InputAdornment>,
 }
 
 interface Props {
-  initialValue?: number | null
+  weight?: number | null
   handleUpdate: (updates: { weight?: number | null }) => void
 }
 export default memo(function EquipmentWeightField({
-  initialValue,
+  weight,
   handleUpdate,
 }: Props) {
   return (
     <NumericFieldAutosave
       label="Equipment weight"
-      initialValue={initialValue}
+      initialValue={weight}
       handleSubmit={useCallback(
         (weight) => handleUpdate({ weight }),
         [handleUpdate],

@@ -67,10 +67,7 @@ export default function ModifierForm({
         />
       </Grid>
       <Grid xs={12} sm={6}>
-        <EquipmentWeightField
-          initialValue={weight}
-          handleUpdate={handleUpdate}
-        />
+        <EquipmentWeightField weight={weight} handleUpdate={handleUpdate} />
       </Grid>
       <Grid xs={12}>
         <UsageComboBox field="modifiers" name={name} usage={usage} />

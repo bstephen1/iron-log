@@ -1,21 +1,21 @@
+import { memo, useCallback } from 'react'
 import * as yup from 'yup'
 import { Status } from '../../models/Status'
 import SelectFieldAutosave from './SelectFieldAutosave'
-import { memo, useCallback } from 'react'
 
 interface Props {
-  initialValue: Status
+  status: Status
   handleUpdate: (updates: { status: Status }) => void
 }
 export default memo(function StatusSelectField({
-  initialValue,
+  status,
   handleUpdate,
 }: Props) {
   return (
     <SelectFieldAutosave
       label="Status"
       options={Object.values(Status)}
-      initialValue={initialValue}
+      initialValue={status}
       required
       fullWidth
       yupValidator={yup.string().required('Must have a status')}

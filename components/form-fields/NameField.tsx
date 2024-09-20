@@ -13,19 +13,15 @@ yup.addMethod(yup.string, 'unique', function (message: string, list: string[]) {
 })
 
 interface Props {
-  initialValue?: string
+  name?: string
   handleUpdate: (updates: { name?: string }) => void
   options: string[]
 }
-export default memo(function NameField({
-  initialValue,
-  handleUpdate,
-  options,
-}: Props) {
+export default memo(function NameField({ name, handleUpdate, options }: Props) {
   return (
     <InputField
       label="Name"
-      initialValue={initialValue}
+      initialValue={name}
       required
       fullWidth
       handleSubmit={useCallback(
