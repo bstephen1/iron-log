@@ -11,45 +11,10 @@ import {
   standardLinkStyle,
   userGuideLink,
 } from '../lib/frontend/constants'
-import {
-  updateExerciseFields,
-  updateRecordFields,
-  updateSessionLog,
-  useExercises,
-  useRecords,
-  useSessionLogs,
-} from '../lib/frontend/restService'
-import { generateId } from '../lib/util'
-import Note from '../models/Note'
-import { useState } from 'react'
 
 const Home: NextPage = () => {
   const { data } = useSession()
   const user = data?.user?.name
-
-  // todo: remove
-  const [done, setDone] = useState(false)
-  const { exercises } = useExercises()
-  const { records } = useRecords()
-  const { sessionLogs } = useSessionLogs({})
-  const getNewNotes = (obj: { notes: Note[] }) =>
-    obj.notes.map((n) => ({ ...n, _id: generateId() }))
-  const addIds = () => {
-    try {
-      exercises?.forEach(
-        async (e) => await updateExerciseFields(e, { notes: getNewNotes(e) }),
-      )
-      records?.forEach(
-        async (r) => await updateRecordFields(r._id, { notes: getNewNotes(r) }),
-      )
-      sessionLogs?.forEach(
-        async (s) => await updateSessionLog({ ...s, notes: getNewNotes(s) }),
-      )
-      setDone(true)
-    } catch (e) {
-      console.error(e)
-    }
-  }
 
   return (
     <>
@@ -79,8 +44,6 @@ const Home: NextPage = () => {
           </>
         )}
       </Stack>
-      {/* todo: remove */}
-      {!done && <Button onClick={addIds}>add id to notes</Button>}
       <Typography
         textAlign="center"
         sx={{ width: '100%', position: 'absolute', bottom: 25, left: 0 }}
