@@ -46,21 +46,29 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   )
   // todo: validate (drop empty notes)
 
-  const handleDelete = async () => {
-    await deleteExercise(name)
-    setUrlExercise(null)
-    mutateExercises((cur) => cur?.filter((e) => e.name !== name))
-  }
+  const handleDelete = useCallback(
+    async (name: string) => {
+      await deleteExercise(name)
+      setUrlExercise(null)
+      mutateExercises((cur) => cur?.filter((e) => e.name !== name))
+    },
+    [mutateExercises, setUrlExercise],
+  )
 
-  const handleDuplicate = async () => {
-    if (!exercises) return
+  const handleDuplicate = useCallback(
+    async (name: string) => {
+      const newName = name + ' (copy)'
+      mutateExercises(async (cur) => {
+        const exercise = cur?.find((e) => e.name === name) ?? {}
+        const newExercise = new Exercise(newName, exercise)
+        await updateExercise(newExercise)
+        setUrlExercise(newName)
 
-    const newName = name + ' (copy)'
-    const newExercise = new Exercise(newName, exercise)
-    await updateExercise(newExercise)
-    setUrlExercise(newName)
-    mutateExercises([...exercises, newExercise])
-  }
+        return [...(cur ?? []), newExercise]
+      })
+    },
+    [mutateExercises, setUrlExercise],
+  )
 
   return (
     <Grid container spacing={1} xs={12}>
@@ -102,7 +110,10 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       <Grid xs={12}>
         <AttributeCheckboxes
           attributes={attributes}
-          handleSubmit={(attributes) => updateFields({ attributes })}
+          handleSubmit={useCallback(
+            (attributes) => updateFields({ attributes }),
+            [updateFields],
+          )}
         />
       </Grid>
       <Grid xs={12}>

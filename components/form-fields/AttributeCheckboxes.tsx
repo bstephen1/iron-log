@@ -2,17 +2,17 @@ import { Checkbox, FormControlLabel, FormGroup } from '@mui/material'
 import { capitalize } from '../../lib/util'
 import Attributes from '../../models/Attributes'
 import FormDivider from '../forms/FormDivider'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 interface Props {
   attributes?: Attributes
   handleSubmit: (attributes: Attributes) => void
 }
-export default function AttributeCheckboxes({
+export default memo(function AttributeCheckboxes({
   attributes = {},
   handleSubmit,
 }: Props) {
-  // todo: if you click both really fast the checkboxes don't have time to update
-
   const AttributeCheckbox = ({ field }: { field: keyof Attributes }) => (
     <FormControlLabel
       control={
@@ -36,4 +36,4 @@ export default function AttributeCheckboxes({
       </FormGroup>
     </>
   )
-}
+}, isEqual)
