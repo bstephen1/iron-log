@@ -59,7 +59,7 @@ export default function useExerciseForm() {
             }
 
             return cur.map((e) =>
-              e._id === oldExercise._id ? { ...oldExercise, updates } : e,
+              e._id === oldExercise._id ? { ...oldExercise, ...updates } : e,
             )
           },
         },

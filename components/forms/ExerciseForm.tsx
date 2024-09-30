@@ -37,7 +37,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { modifierNames } = useModifiers()
   const { categoryNames } = useCategories()
   const { records } = useRecords({ exercise: name })
-  const { exerciseNames, mutate: mutateExercises, exercises } = useExercises()
+  const { exerciseNames, mutate: mutateExercises } = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
 
   const updateFields = useCallback(

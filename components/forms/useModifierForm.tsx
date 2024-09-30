@@ -8,6 +8,7 @@ import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import ModifierSelector from '../form-fields/selectors/ModifierSelector'
 import ModifierForm from './ModifierForm'
+import { useCallback } from 'react'
 
 export default function useModifierForm() {
   const [urlModifier, setUrlModifier] = useQueryState('modifier')
@@ -17,31 +18,47 @@ export default function useModifierForm() {
   const modifier =
     modifiers?.find((modifier) => modifier.name === urlModifier) ?? null
 
-  const handleUpdate = async (updates: Partial<Modifier>) => {
-    if (!modifier) return
+  const handleUpdate = useCallback(
+    async (id: string, updates: Partial<Modifier>) => {
+      // setQueryState will rerender the entire page if setting to the same value
+      if (updates.name) {
+        setUrlModifier(updates.name)
+      }
 
-    const newModifier = { ...modifier, ...updates }
+      mutateModifiers(
+        async (cur) => {
+          const oldModifier = cur?.find((m) => m._id === id)
+          if (!oldModifier) {
+            return cur
+          }
 
-    // setQueryState will rerender the entire page if setting to the same value
-    if (updates.name) {
-      setUrlModifier(newModifier.name)
-    }
+          const updatedModifier = await updateModifierFields(
+            oldModifier,
+            updates,
+          )
+          updates.name && mutateExercises()
+          return cur?.map((modifier) =>
+            modifier._id === updatedModifier._id ? updatedModifier : modifier,
+          )
+        },
+        {
+          optimisticData: (cur) => {
+            if (!cur) return []
 
-    mutateModifiers(
-      async () => {
-        const updatedModifier = await updateModifierFields(modifier, updates)
-        updates.name && mutateExercises()
-        return modifiers?.map((modifier) =>
-          modifier._id === updatedModifier._id ? updatedModifier : modifier,
-        )
-      },
-      {
-        optimisticData: updates.name
-          ? [...(modifiers ?? []), newModifier]
-          : undefined,
-      },
-    )
-  }
+            const oldModifier = cur.find((m) => m._id === id)
+            if (!oldModifier) {
+              return cur
+            }
+
+            return cur.map((m) =>
+              m._id === oldModifier._id ? { ...oldModifier, ...updates } : m,
+            )
+          },
+        },
+      )
+    },
+    [mutateExercises, mutateModifiers, setUrlModifier],
+  )
 
   return {
     Selector: (
