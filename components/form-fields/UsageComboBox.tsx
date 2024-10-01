@@ -4,7 +4,9 @@ import {
   useExercises,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import { ComboBoxField } from './ComboBoxField'
+import ComboBoxField from './ComboBoxField'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 interface Props {
   field: 'categories' | 'modifiers'
@@ -16,7 +18,7 @@ interface Props {
 /** updates category / modifier usage in exercises.
  *  Ie, with a given category, add / remove it to exercises.
  */
-export default function UsageComboBox({ field, name, usage }: Props) {
+export default memo(function UsageComboBox({ field, name, usage }: Props) {
   const { exercises, exerciseNames, mutate: mutateExercises } = useExercises()
   const usageNames = usage.map((exercise) => exercise.name)
 
@@ -51,4 +53,4 @@ export default function UsageComboBox({ field, name, usage }: Props) {
       changeBehavior="filter"
     />
   )
-}
+}, isEqual)

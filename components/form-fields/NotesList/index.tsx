@@ -4,6 +4,8 @@ import Note from '../../../models/Note'
 import FormDivider from '../../forms/FormDivider'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 interface Props {
   label?: string
@@ -17,7 +19,10 @@ interface Props {
   multiple?: boolean
   readOnly?: boolean
 }
-export default function NotesList(props: Props) {
+/** This component is setup for memoization. For memoization to work any functions passed in
+ *  must be wrapped in useCallback(). Eg, handleSubmit().
+ */
+export default memo(function NotesList(props: Props) {
   const {
     label,
     notes,
@@ -79,4 +84,4 @@ export default function NotesList(props: Props) {
       )}
     </>
   )
-}
+}, isEqual)

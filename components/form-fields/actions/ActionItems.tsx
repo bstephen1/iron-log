@@ -3,18 +3,19 @@ import { Box, Button, Paper, Typography } from '@mui/material'
 import FormDivider from '../../forms/FormDivider'
 import DeleteButton from './DeleteButton'
 import UsageButton from './UsageButton'
+import { memo } from 'react'
 
 interface Props {
   /** name of currently selected option */
   name: string
   /** type of the option */
   type: 'exercise' | 'category' | 'modifier'
-  handleDelete?: () => void
-  handleDuplicate?: () => void
-  deleteDisabled?: boolean | number
+  handleDelete?: (name: string) => void
+  handleDuplicate?: (name: string) => void
+  deleteDisabled?: boolean
 }
 /** render all common action items  */
-export default function ActionItems({
+export default memo(function ActionItems({
   name,
   type,
   handleDelete,
@@ -28,7 +29,10 @@ export default function ActionItems({
         <ActionItem
           description={`Create a new ${type} which is a duplicate of this ${type}.`}
           button={
-            <Button onClick={handleDuplicate} startIcon={<ContentCopyIcon />}>
+            <Button
+              onClick={() => handleDuplicate(name)}
+              startIcon={<ContentCopyIcon />}
+            >
               Duplicate
             </Button>
           }
@@ -47,7 +51,7 @@ export default function ActionItems({
             <DeleteButton
               type={type}
               name={name}
-              handleDelete={handleDelete}
+              handleDelete={() => handleDelete(name)}
               buttonProps={{ disabled: !!deleteDisabled }}
             />
           }
@@ -55,7 +59,7 @@ export default function ActionItems({
       )}
     </>
   )
-}
+})
 
 interface ActionItemProps {
   button: JSX.Element

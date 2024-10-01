@@ -10,6 +10,8 @@ import AsyncAutocomplete, {
 } from '../../components/AsyncAutocomplete'
 import { doNothing } from '../../lib/util'
 import useField from './useField'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 
 interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
   options?: string[]
@@ -38,7 +40,10 @@ interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
    */
   helperText?: string
 }
-export function ComboBoxField({
+/** This component is setup for memoization. For memoization to work any functions passed in
+ *  must be wrapped in useCallback(). Eg, handleSubmit().
+ */
+export default memo(function ComboBoxField({
   options = [],
   initialValue,
   emptyPlaceholder = '',
@@ -107,4 +112,4 @@ export function ComboBoxField({
       {...asyncAutocompleteProps}
     />
   )
-}
+}, isEqual)

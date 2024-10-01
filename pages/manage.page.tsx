@@ -1,21 +1,28 @@
 import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
-import { parseAsStringEnum, useQueryState } from 'next-usequerystate'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import StyledDivider from '../components/StyledDivider'
 import useCategoryForm from '../components/forms/useCategoryForm'
 import useExerciseForm from '../components/forms/useExerciseForm'
 import useModifierForm from '../components/forms/useModifierForm'
+import { useQueryTab, TabValue, tabValues } from '../models/TabValue'
 
-type TabValue = 'exercises' | 'modifiers' | 'categories'
-const tabs: TabValue[] = ['exercises', 'modifiers', 'categories']
 let Selector: JSX.Element, Form: JSX.Element
 
-export default function ManagePage() {
-  const [urlTab, setUrlTab] = useQueryState(
-    'tab',
-    parseAsStringEnum<TabValue>(tabs).withDefault('exercises'),
+const RenderTabs = memo(function RenderTabs() {
+  const [urlTab, setUrlTab] = useQueryTab()
+
+  return (
+    <Tabs value={urlTab} onChange={(_, value) => setUrlTab(value)} centered>
+      {tabValues.map((tab: TabValue) => (
+        <Tab key={tab} label={tab} value={tab} />
+      ))}
+    </Tabs>
   )
+})
+
+export default function ManagePage() {
+  const [urlTab] = useQueryTab()
   const [isFirstRender, setIsFirstRender] = useState(true)
 
   const { Form: CategoryForm, Selector: CategorySelector } = useCategoryForm()
@@ -49,11 +56,7 @@ export default function ManagePage() {
   return !isFirstRender ? (
     <Grid container spacing={2}>
       <Grid xs={12}>
-        <Tabs value={urlTab} onChange={(_, value) => setUrlTab(value)} centered>
-          {tabs.map((tab: TabValue) => (
-            <Tab key={tab} label={tab} value={tab} />
-          ))}
-        </Tabs>
+        <RenderTabs />
       </Grid>
       <Grid xs={12}>{Selector}</Grid>
       <Grid xs={12}>
