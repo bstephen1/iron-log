@@ -7,6 +7,7 @@ import Record from '../../../../models/Record'
 import AddSetButton from './AddSetButton'
 import RenderSetRow from './RenderSetRow'
 import SetHeader from './SetHeader'
+import { noSwipingRecord } from '../../../../lib/frontend/constants'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
@@ -39,7 +40,7 @@ export default function RenderSets({
   return (
     <Box>
       <SetHeader
-        className={useNoSwipingDesktop()}
+        className={noSwipingRecord}
         {...{
           displayFields,
           mutateExerciseFields,

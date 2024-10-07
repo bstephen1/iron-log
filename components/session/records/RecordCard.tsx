@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react'
 import { KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
+import { DATE_FORMAT, noSwipingRecord } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -101,7 +101,7 @@ function LoadedRecordCard({
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
-  const noSwipingClassName = useNoSwipingDesktop()
+  const noSwipingDesktop = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes?.unilateral
@@ -165,15 +165,16 @@ function LoadedRecordCard({
             <RecordExerciseSelector
               // swiping causes weird behavior on desktop when combined with data input fields
               // (eg, can't close autocompletes)
-              className={noSwipingClassName}
+              className={noSwipingDesktop}
               {...{ mutateRecordFields, activeModifiers, exercise, category }}
             />
             <RecordModifierComboBox
-              className={noSwipingClassName}
+              className={noSwipingDesktop}
               availableModifiers={exercise?.modifiers}
               {...{ mutateRecordFields, activeModifiers }}
             />
             <SetTypeSelect
+              className={noSwipingRecord}
               units={displayFields.units}
               totalReps={calculateTotalReps(sets, setType)}
               showRemaining

@@ -9,10 +9,14 @@ import {
   Select,
   SelectProps,
   Stack,
+  Typography,
 } from '@mui/material'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
-import { fixSelectBackground } from '../../../../lib/frontend/constants'
+import {
+  fixSelectBackground,
+  noSwipingRecord,
+} from '../../../../lib/frontend/constants'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import {
@@ -21,6 +25,7 @@ import {
   printFieldWithUnits,
   VisibleField,
 } from '../../../../models/DisplayFields'
+import { ArrowDropDownIcon } from '@mui/x-date-pickers'
 
 type Props = {
   mutateExerciseFields?: UpdateFields<Exercise>
@@ -102,9 +107,9 @@ export default memo(function SetHeader({
             }}
           >
             {!selectedNames.length ? (
-              <MenuItem disabled sx={{ p: 0 }}>
-                <em>Select a display field to add sets.</em>
-              </MenuItem>
+              <Typography sx={{ opacity: 0.5 }}>
+                <em>No display fields selected</em>
+              </Typography>
             ) : (
               // there shouldn't be selectedNames that are outside the options, but it seems
               // to happen occasionally, probably from async updates
