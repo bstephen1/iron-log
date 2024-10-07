@@ -13,7 +13,7 @@ import {
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
-import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingSmScreen'
+import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields, calculateTotalReps } from '../../../lib/util'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import Record from '../../../models/Record'

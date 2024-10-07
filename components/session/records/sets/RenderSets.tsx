@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingSmScreen'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'

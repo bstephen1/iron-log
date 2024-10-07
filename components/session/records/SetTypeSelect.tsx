@@ -14,7 +14,7 @@ import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import { fixSelectBackground } from '../../../lib/frontend/constants'
-import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingSmScreen'
+import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields, UpdateState, stringifySetType } from '../../../lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
