@@ -174,7 +174,6 @@ function LoadedRecordCard({
               {...{ mutateRecordFields, activeModifiers }}
             />
             <SetTypeSelect
-              className={noSwipingRecord}
               units={displayFields.units}
               totalReps={calculateTotalReps(sets, setType)}
               showRemaining

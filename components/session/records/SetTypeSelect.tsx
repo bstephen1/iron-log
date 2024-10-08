@@ -1,3 +1,4 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import {
   FormControl,
   FormControlLabel,
@@ -32,6 +33,7 @@ const timeField = ORDERED_DISPLAY_FIELDS.filter(
 )
 
 const valueInputStyle = { margin: 0, maxWidth: '80px' }
+const standardVariantSx = { '& .MuiInput-input': { pr: '0px !important' } }
 
 type Props = {
   /** considered readOnly if not provided */
@@ -53,6 +55,7 @@ export default memo(function SetTypeSelect({
   ...textFieldProps
 }: Props) {
   const { field, value = 0, operator, min = 0, max = 0 } = setType
+  const variant = textFieldProps.variant ?? 'standard'
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const remaining = (value ?? 0) - totalReps
   const isOverTotal = remaining < 0
@@ -72,26 +75,48 @@ export default memo(function SetTypeSelect({
   const menuValue = stringifySetType(setType, units)
 
   const handleClose = () => setOpen(false)
+  const handleOpen = () => setOpen(true)
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
   return (
     <TextField
       select
       fullWidth
-      variant="standard"
+      variant={variant}
       className={noSwipingDesktop}
       label="Set type"
       value={menuValue}
       InputLabelProps={{ shrink: true }}
+      // forcibly remove the input's padding. Select assumes the dropdown arrow
+      // will be under the padding, but this leaves the arrow off center with autocomplete arrows.
+      sx={variant === 'standard' ? standardVariantSx : undefined}
       SelectProps={{
         open,
         readOnly,
-        onOpen: () => setOpen(true),
+        // Rendering the icon as a separate component allows us to ignore the props it normally is passed.
+        // These props make the icon off center with autocompletes when using standard variant.
+        IconComponent:
+          variant === 'standard'
+            ? () => (
+                <ArrowDropDownIcon
+                  role="button"
+                  // the manual onClick is needed if there's a swiper parent
+                  onClick={handleOpen}
+                  // match sx of normal icon
+                  sx={{ opacity: 0.54, cursor: 'pointer' }}
+                />
+              )
+            : undefined,
+        // if this component has a swiper parent, this will not trigger bc swiper intercepts clicks
+        // looking for drags on the swiper
+        onOpen: handleOpen,
         onClose: handleClose,
         displayEmpty: true,
         autoWidth: true,
         renderValue: () => (
-          <Typography>
+          // The props are needed for when there's a swiper parent, but have no effect otherwise.
+          // Swiper has special handling for buttons where it allows them to be clicked without intercepting them.
+          <Typography onClick={handleOpen} sx={{ role: 'button' }}>
             {menuValue} <em>{remainingText}</em>
           </Typography>
         ),

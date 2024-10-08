@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
@@ -7,7 +6,6 @@ import Record from '../../../../models/Record'
 import AddSetButton from './AddSetButton'
 import RenderSetRow from './RenderSetRow'
 import SetHeader from './SetHeader'
-import { noSwipingRecord } from '../../../../lib/frontend/constants'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
@@ -40,7 +38,6 @@ export default function RenderSets({
   return (
     <Box>
       <SetHeader
-        className={noSwipingRecord}
         {...{
           displayFields,
           mutateExerciseFields,
