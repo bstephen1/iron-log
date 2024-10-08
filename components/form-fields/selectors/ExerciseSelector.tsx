@@ -7,9 +7,11 @@ import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
 import { StatusOrder } from '../../../models/Status'
 
-type ExerciseSelectorProps = {
-  exercise: Exercise | null
-  handleChange: (value: Exercise | null) => void
+type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
+  exercise: DisableClearable extends true ? Exercise : Exercise | null
+  handleChange: (
+    value: DisableClearable extends true ? Exercise : Exercise | null,
+  ) => void
   /** used for autocomplete options, which are considered readonly */
   exercises?: readonly Exercise[]
   /** if provided, allows for creating new exercises from typed input */
@@ -18,15 +20,17 @@ type ExerciseSelectorProps = {
   /** If this is omitted the category filter will not be rendered */
   handleCategoryChange?: (category: string | null) => void
   category?: string | null
-} & Partial<AsyncSelectorProps<Exercise>>
-export default function ExerciseSelector({
+} & Partial<AsyncSelectorProps<Exercise, DisableClearable>>
+export default function ExerciseSelector<
+  DisableClearable extends boolean | undefined,
+>({
   exercise,
   exercises = [],
   mutate,
   handleCategoryChange,
   category = null,
   ...asyncSelectorProps
-}: ExerciseSelectorProps) {
+}: ExerciseSelectorProps<DisableClearable>) {
   const { categoryNames } = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null,
@@ -54,7 +58,7 @@ export default function ExerciseSelector({
   return (
     <AsyncSelector
       {...asyncSelectorProps}
-      value={exercise || null} // need to reduce undefined | null to just null to avoid switching to uncontrolled
+      value={exercise}
       mutateOptions={mutate}
       label="Exercise"
       placeholder={`Select${!!mutate ? ' or add new' : ''} exercise`}

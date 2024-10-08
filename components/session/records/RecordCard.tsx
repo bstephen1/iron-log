@@ -127,7 +127,7 @@ function LoadedRecordCard({
         },
       )
     },
-    [],
+    [mutateExercise],
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
@@ -166,6 +166,8 @@ function LoadedRecordCard({
               // swiping causes weird behavior on desktop when combined with data input fields
               // (eg, can't close autocompletes)
               className={noSwipingDesktop}
+              // we can't clear it bc the recordCard presumes there is an exercise
+              disableClearable
               {...{ mutateRecordFields, activeModifiers, exercise, category }}
             />
             <RecordModifierComboBox

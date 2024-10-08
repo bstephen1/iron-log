@@ -17,13 +17,16 @@ import { noSwipingRecord } from '../lib/frontend/constants'
 // Autocomplete infers its type from the generics, so if they aren't right
 // all the other props will have the wrong type too.
 // Anything that extends this also needs to add the same generic signature.
-// For our case, we don't currently want DisableClearable or FreeSolo, so we
+// For our case, we don't currently want FreeSolo, so we
 // can set them as false to avoid some of the tedium.
 // Note also that multiple, freeSolo etc can't be called as props for the base
 // autocomplete, they must be called in the parent component.
 // See: https://github.com/mui/material-ui/issues/25502
-export interface AsyncAutocompleteProps<T, Multiple extends boolean | undefined>
-  extends Partial<AutocompleteProps<T, Multiple, false, false>> {
+export interface AsyncAutocompleteProps<
+  T,
+  Multiple extends boolean | undefined,
+  DisableClearable extends boolean | undefined,
+> extends Partial<AutocompleteProps<T, Multiple, DisableClearable, false>> {
   label?: string
   startAdornment?: JSX.Element
   placeholder?: string
@@ -38,12 +41,11 @@ export interface AsyncAutocompleteProps<T, Multiple extends boolean | undefined>
   options?: T[]
   /** freeSolo is disabled. To enable it must be added as a generic. */
   freeSolo?: false
-  /** disableClearable is disabled. To enable it must be added as a generic. */
-  disableClearable?: false
 }
 export default function AsyncAutocomplete<
   T,
   Multiple extends boolean | undefined,
+  DisableClearable extends boolean | undefined,
 >({
   label,
   startAdornment,
@@ -55,7 +57,7 @@ export default function AsyncAutocomplete<
   loadingText = 'Loading...',
   options,
   ...autocompleteProps
-}: AsyncAutocompleteProps<T, Multiple>) {
+}: AsyncAutocompleteProps<T, Multiple, DisableClearable>) {
   const [open, setOpen] = useState(false)
   const loading = (alwaysShowLoading || open) && !options
 

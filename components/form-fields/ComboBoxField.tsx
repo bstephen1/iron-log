@@ -13,7 +13,8 @@ import useField from './useField'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 
-interface ComboBoxFieldProps extends AsyncAutocompleteProps<string, true> {
+interface ComboBoxFieldProps
+  extends AsyncAutocompleteProps<string, true, false> {
   options?: string[]
   initialValue: string[]
   /** Placeholder that will only show if there are no values selected.
