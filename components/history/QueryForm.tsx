@@ -32,81 +32,74 @@ export default function QueryCard({ query, setQuery }: Props) {
     setUnsavedQuery((prev) => ({ ...prev, ...changes }))
 
   return (
-    <>
-      <Stack spacing={2}>
-        <RecordExerciseSelector
-          disableAddNew
-          mutateRecordFields={async ({ exercise, activeModifiers }) => {
-            setExercise((prev) => {
-              setInitialExercise(prev)
-              return exercise ?? null
-            })
+    <Stack spacing={2}>
+      <RecordExerciseSelector
+        disableAddNew
+        mutateRecordFields={async ({ exercise, activeModifiers }) => {
+          setExercise(exercise ?? null)
+          updateUnsavedQuery({
+            exercise: exercise?.name ?? '',
+          })
+          if (activeModifiers) {
             updateUnsavedQuery({
-              exercise: exercise?.name ?? '',
+              modifier: activeModifiers,
             })
-            if (activeModifiers) {
-              updateUnsavedQuery({
-                modifier: activeModifiers,
-              })
-            }
+          }
+        }}
+        activeModifiers={unsavedQuery.modifier ?? []}
+        exercise={exercise}
+        category={null}
+        variant="outlined"
+      />
+      <ModifierQueryField
+        disabled={!exercise}
+        matchType={unsavedQuery.modifierMatchType}
+        options={exercise?.modifiers || []}
+        initialValue={unsavedQuery.modifier || []}
+        updateQuery={updateUnsavedQuery}
+      />
+      <SetTypeQueryField
+        disabled={!exercise}
+        units={displayFields.units}
+        query={unsavedQuery}
+        updateQuery={updateUnsavedQuery}
+      />
+      <NumericFieldAutosave
+        label="Record limit"
+        initialValue={unsavedQuery.limit}
+        placeholder="None"
+        InputLabelProps={{ shrink: true }}
+        handleSubmit={(limit) => updateUnsavedQuery({ limit })}
+        variant="outlined"
+        debounceMilliseconds={0}
+      />
+      <QueryDateRangePicker
+        query={unsavedQuery}
+        updateQuery={updateUnsavedQuery}
+      />
+      <Stack direction="row" spacing={2} display="flex" justifyContent="center">
+        <Button
+          variant="outlined"
+          // there is no query on init, so just disable reset
+          disabled={!query || isEqual(unsavedQuery, query)}
+          onClick={() => {
+            setUnsavedQuery(initialQuery)
+            setExercise(initialExercise)
           }}
-          activeModifiers={unsavedQuery.modifier ?? []}
-          exercise={exercise}
-          category={null}
-          variant="outlined"
-        />
-        <ModifierQueryField
-          disabled={!exercise}
-          matchType={unsavedQuery.modifierMatchType}
-          options={exercise?.modifiers || []}
-          initialValue={unsavedQuery.modifier || []}
-          updateQuery={updateUnsavedQuery}
-        />
-        <SetTypeQueryField
-          disabled={!exercise}
-          units={displayFields.units}
-          query={unsavedQuery}
-          updateQuery={updateUnsavedQuery}
-        />
-        <NumericFieldAutosave
-          label="Record limit"
-          initialValue={unsavedQuery.limit}
-          placeholder="None"
-          InputLabelProps={{ shrink: true }}
-          handleSubmit={(limit) => updateUnsavedQuery({ limit })}
-          variant="outlined"
-          debounceMilliseconds={0}
-        />
-        <QueryDateRangePicker
-          query={unsavedQuery}
-          updateQuery={updateUnsavedQuery}
-        />
-        <Stack
-          direction="row"
-          spacing={2}
-          display="flex"
-          justifyContent="center"
         >
-          <Button
-            variant="outlined"
-            // there is no query on init, so just disable reset
-            disabled={!query || isEqual(unsavedQuery, query)}
-            onClick={() => {
-              setUnsavedQuery(initialQuery)
-              setExercise(initialExercise)
-            }}
-          >
-            Reset
-          </Button>
-          <Button
-            variant="contained"
-            disabled={isEqual(unsavedQuery, query)}
-            onClick={() => setQuery(unsavedQuery)}
-          >
-            Update Filter
-          </Button>
-        </Stack>
+          Reset
+        </Button>
+        <Button
+          variant="contained"
+          disabled={isEqual(unsavedQuery, query)}
+          onClick={() => {
+            setInitialExercise(exercise)
+            setQuery(unsavedQuery)
+          }}
+        >
+          Update Filter
+        </Button>
       </Stack>
-    </>
+    </Stack>
   )
 }
