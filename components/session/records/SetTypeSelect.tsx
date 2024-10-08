@@ -75,7 +75,7 @@ export default memo(function SetTypeSelect({
   const menuValue = stringifySetType(setType, units)
 
   const handleClose = () => setOpen(false)
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => !readOnly && setOpen(true)
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
   return (
@@ -114,8 +114,7 @@ export default memo(function SetTypeSelect({
         displayEmpty: true,
         autoWidth: true,
         renderValue: () => (
-          // The props are needed for when there's a swiper parent, but have no effect otherwise.
-          // Swiper has special handling for buttons where it allows them to be clicked without intercepting them.
+          // The props are needed for when there's a swiper parent, but are otherwise harmless.
           <Typography onClick={handleOpen} sx={{ role: 'button' }}>
             {menuValue} <em>{remainingText}</em>
           </Typography>

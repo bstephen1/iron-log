@@ -1,3 +1,4 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import {
   Box,
   Checkbox,
@@ -11,9 +12,10 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import { fixSelectBackground } from '../../../../lib/frontend/constants'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import {
@@ -22,7 +24,6 @@ import {
   printFieldWithUnits,
   VisibleField,
 } from '../../../../models/DisplayFields'
-import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 
 type Props = {
   mutateExerciseFields?: UpdateFields<Exercise>
@@ -37,6 +38,10 @@ export default memo(function SetHeader({
   showUnilateral,
   ...selectProps
 }: Props) {
+  const [open, setOpen] = useState(false)
+  const handleClose = () => setOpen(false)
+  const handleOpen = () => setOpen(true)
+
   const noSwipingDesktop = useNoSwipingDesktop()
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
@@ -92,10 +97,25 @@ export default memo(function SetHeader({
         multiple
         fullWidth
         displayEmpty
+        open={open}
+        onClose={handleClose}
         value={selectedNames}
         label="Set Fields"
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
+        // forcibly remove padding for the icon arrow, which is off center from autocompletes
+        // and creates a dead zone where you can't open the select since we're manually triggering handleOpen
+        sx={{ '& .MuiInput-input': { pr: '0px !important' } }}
+        // Rendering the icon manually allows us to drop the props normally passed in,
+        // which have inconsistent styling from autocompletes.
+        IconComponent={() => (
+          <ArrowDropDownIcon
+            role="button"
+            onClick={handleOpen}
+            // match sx of normal icon
+            sx={{ opacity: 0.54, cursor: 'pointer' }}
+          />
+        )}
         renderValue={() => (
           <Stack
             direction="row"
@@ -103,7 +123,10 @@ export default memo(function SetHeader({
             // border is from TextField underline
             sx={{
               px: 1,
+              role: 'button',
             }}
+            // need to manually trigger open when there is a swiper parent
+            onClick={handleOpen}
           >
             {!selectedNames.length ? (
               <Typography sx={{ opacity: 0.5 }}>
