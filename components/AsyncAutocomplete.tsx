@@ -1,3 +1,5 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import ClearIcon from '@mui/icons-material/Clear'
 import {
   Autocomplete,
   AutocompleteProps,
@@ -7,6 +9,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import { useState } from 'react'
+import { noSwipingRecord } from '../lib/frontend/constants'
 
 // Extending Autocomplete is a lesson in frustration.
 // Long story short, it needs to have a generic signature that exactly matches
@@ -40,7 +43,7 @@ export interface AsyncAutocompleteProps<T, Multiple extends boolean | undefined>
 }
 export default function AsyncAutocomplete<
   T,
-  Multiple extends boolean | undefined
+  Multiple extends boolean | undefined,
 >({
   label,
   startAdornment,
@@ -72,6 +75,10 @@ export default function AsyncAutocomplete<
       options={options ?? []}
       loading={loading}
       open={open}
+      // we have to disable swiping on the icons or swiper causes the focus to immediately blur
+      // when you click on them, which causes them to not work
+      popupIcon={<ArrowDropDownIcon className={noSwipingRecord} />}
+      clearIcon={<ClearIcon fontSize="small" className={noSwipingRecord} />}
       // functions need to be careful to append to what the caller provides, not overwrite
       onOpen={(e) => {
         handleOpen()
