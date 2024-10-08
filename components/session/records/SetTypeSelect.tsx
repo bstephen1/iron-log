@@ -82,11 +82,20 @@ export default memo(function SetTypeSelect({
     <TextField
       select
       fullWidth
+      // When there is a swiper parent, swiper will intercept the clicks and prevent opening.
+      // Instead, we must manually handle opening on click. Note the presentation backdrop
+      // counts as TextField so we must ensure to only open if we aren't already open.
+      onClick={() => !open && handleOpen()}
       variant={variant}
       className={noSwipingDesktop}
       label="Set type"
       value={menuValue}
-      InputLabelProps={{ shrink: true }}
+      InputLabelProps={{
+        shrink: true,
+        // make the label span the whole input instead of just the text width.
+        // A quirk of mui styling means the width must be 133%, not 100%.
+        sx: { width: '133%', cursor: 'pointer' },
+      }}
       // forcibly remove the input's padding. Select assumes the dropdown arrow
       // will be under the padding, but this leaves the arrow off center with autocomplete arrows.
       sx={variant === 'standard' ? standardVariantSx : undefined}
@@ -99,9 +108,6 @@ export default memo(function SetTypeSelect({
           variant === 'standard'
             ? () => (
                 <ArrowDropDownIcon
-                  role="button"
-                  // the manual onClick is needed if there's a swiper parent
-                  onClick={handleOpen}
                   // match sx of normal icon
                   sx={{ opacity: 0.54, cursor: 'pointer' }}
                 />
@@ -114,8 +120,7 @@ export default memo(function SetTypeSelect({
         displayEmpty: true,
         autoWidth: true,
         renderValue: () => (
-          // The props are needed for when there's a swiper parent, but are otherwise harmless.
-          <Typography onClick={handleOpen} sx={{ role: 'button' }}>
+          <Typography>
             {menuValue} <em>{remainingText}</em>
           </Typography>
         ),

@@ -87,31 +87,34 @@ export default memo(function SetHeader({
   }
 
   return (
-    <FormControl fullWidth>
-      <InputLabel variant="standard" shrink={true}>
+    <FormControl fullWidth onClick={() => !open && handleOpen()}>
+      <InputLabel
+        variant="standard"
+        shrink={true}
+        id="set-header-label"
+        sx={{ width: '133%', cursor: 'pointer' }}
+      >
         Sets
       </InputLabel>
       {/* Select's generic type must match Props  */}
       <Select<string[]>
         className={noSwipingDesktop}
+        id="set-header"
+        labelId="set-header-label"
         multiple
         fullWidth
         displayEmpty
         open={open}
         onClose={handleClose}
         value={selectedNames}
-        label="Set Fields"
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
         // forcibly remove padding for the icon arrow, which is off center from autocompletes
-        // and creates a dead zone where you can't open the select since we're manually triggering handleOpen
         sx={{ '& .MuiInput-input': { pr: '0px !important' } }}
         // Rendering the icon manually allows us to drop the props normally passed in,
         // which have inconsistent styling from autocompletes.
         IconComponent={() => (
           <ArrowDropDownIcon
-            role="button"
-            onClick={handleOpen}
             // match sx of normal icon
             sx={{ opacity: 0.54, cursor: 'pointer' }}
           />
@@ -125,8 +128,6 @@ export default memo(function SetHeader({
               px: 1,
               role: 'button',
             }}
-            // need to manually trigger open when there is a swiper parent
-            onClick={handleOpen}
           >
             {!selectedNames.length ? (
               <Typography sx={{ opacity: 0.5 }}>
