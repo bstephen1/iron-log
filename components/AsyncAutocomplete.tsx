@@ -9,10 +9,7 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import { useState } from 'react'
-import {
-  fullWidthInputLabelSx,
-  noSwipingRecord,
-} from '../lib/frontend/constants'
+import { noSwipingRecord } from '../lib/frontend/constants'
 
 // Extending Autocomplete is a lesson in frustration.
 // Long story short, it needs to have a generic signature that exactly matches
@@ -77,10 +74,6 @@ export default function AsyncAutocomplete<
     setOpen(false)
   }
 
-  const toggleOpen = () => {
-    !autocompleteProps.disabled && setOpen((prev) => !prev)
-  }
-
   return (
     <Autocomplete
       {...autocompleteProps}
@@ -92,7 +85,6 @@ export default function AsyncAutocomplete<
       // when you click on them, which causes them to not work
       popupIcon={<ArrowDropDownIcon className={noSwipingRecord} />}
       clearIcon={<ClearIcon fontSize="small" className={noSwipingRecord} />}
-      // functions need to be careful to append to what the caller provides, not overwrite
       onOpen={handleOpen}
       onClose={handleClose}
       renderInput={(params: AutocompleteRenderInputParams) => (
@@ -102,14 +94,6 @@ export default function AsyncAutocomplete<
           placeholder={placeholder}
           label={label}
           variant={variant}
-          InputLabelProps={
-            variant === 'standard'
-              ? {
-                  onClick: toggleOpen,
-                  sx: fullWidthInputLabelSx,
-                }
-              : {}
-          }
           InputProps={{
             ...params.InputProps,
             ...textFieldProps?.InputProps,

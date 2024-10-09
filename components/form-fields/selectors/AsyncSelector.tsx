@@ -67,7 +67,6 @@ export default function AsyncSelector<
       onInputChange={(_, value) => {
         setInputValue(value)
       }}
-      openOnFocus
       fullWidth
       selectOnFocus
       // onBlur we reset to the value that is selected
