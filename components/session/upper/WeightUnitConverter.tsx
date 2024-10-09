@@ -37,11 +37,14 @@ function ConverterField({
   return (
     <TextField
       {...textFieldProps}
-      inputMode="decimal"
       autoComplete="off"
       onFocus={(e) => e.target.select()}
       variant="standard"
       sx={{ width: 100, px: 2 }}
+      inputProps={{
+        inputMode: 'decimal',
+        ...textFieldProps.inputProps,
+      }}
       InputProps={{
         endAdornment: <InputAdornment position="end">{unit}</InputAdornment>,
       }}

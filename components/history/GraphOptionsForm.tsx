@@ -77,7 +77,6 @@ export default function GraphOptionsForm({
       </Grid>
       <Grid xs={12} md={3}>
         <TextField
-          inputMode="decimal"
           label="Clothing offset"
           autoComplete="off"
           fullWidth
@@ -90,6 +89,7 @@ export default function GraphOptionsForm({
                 : Number(e.target.value),
             })
           }
+          inputProps={{ inputMode: 'decimal' }}
           InputProps={{
             endAdornment: <InputAdornment position="end">kg</InputAdornment>,
           }}

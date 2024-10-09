@@ -61,7 +61,6 @@ export default function BodyweightInput({
   return (
     <InputField
       {...textFieldProps}
-      inputMode="decimal"
       label="Bodyweight"
       initialValue={
         !data?.length || data[0].type !== bodyweightType
@@ -72,6 +71,10 @@ export default function BodyweightInput({
       yupValidator={yup.reach(validationSchema, 'value')}
       // allow user to update bw with same value if latest date isn't the current date
       showSubmit={data?.[0]?.date !== day.format(DATE_FORMAT) || undefined}
+      inputProps={{
+        inputMode: 'decimal',
+        ...textFieldProps.inputProps,
+      }}
       InputProps={{
         readOnly: loading,
         'aria-label': 'bodyweight input',
