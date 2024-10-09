@@ -14,7 +14,10 @@ import {
 } from '@mui/material'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import { fixSelectBackground } from '../../../../lib/frontend/constants'
+import {
+  fixSelectBackground,
+  fullWidthInputLabelSx,
+} from '../../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
@@ -87,12 +90,15 @@ export default memo(function SetHeader({
   }
 
   return (
-    <FormControl fullWidth onClick={() => !open && handleOpen()}>
+    <FormControl
+      fullWidth
+      onClick={() => !open && !selectProps.disabled && handleOpen()}
+    >
       <InputLabel
         variant="standard"
         shrink={true}
         id="set-header-label"
-        sx={{ width: '133%', cursor: 'pointer' }}
+        sx={fullWidthInputLabelSx}
       >
         Sets
       </InputLabel>

@@ -14,7 +14,10 @@ import {
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
-import { fixSelectBackground } from '../../../lib/frontend/constants'
+import {
+  fixSelectBackground,
+  fullWidthInputLabelSx,
+} from '../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields, UpdateState, stringifySetType } from '../../../lib/util'
 import {
@@ -85,16 +88,19 @@ export default memo(function SetTypeSelect({
       // When there is a swiper parent, swiper will intercept the clicks and prevent opening.
       // Instead, we must manually handle opening on click. Note the presentation backdrop
       // counts as TextField so we must ensure to only open if we aren't already open.
-      onClick={() => !open && handleOpen()}
+      onClick={() =>
+        variant === 'standard' &&
+        !open &&
+        !textFieldProps.disabled &&
+        handleOpen()
+      }
       variant={variant}
       className={noSwipingDesktop}
       label="Set type"
       value={menuValue}
       InputLabelProps={{
         shrink: true,
-        // make the label span the whole input instead of just the text width.
-        // A quirk of mui styling means the width must be 133%, not 100%.
-        sx: { width: '133%', cursor: 'pointer' },
+        sx: variant === 'standard' ? fullWidthInputLabelSx : undefined,
       }}
       // forcibly remove the input's padding. Select assumes the dropdown arrow
       // will be under the padding, but this leaves the arrow off center with autocomplete arrows.

@@ -9,7 +9,10 @@ import {
   TextFieldProps,
 } from '@mui/material'
 import { useState } from 'react'
-import { noSwipingRecord } from '../lib/frontend/constants'
+import {
+  fullWidthInputLabelSx,
+  noSwipingRecord,
+} from '../lib/frontend/constants'
 
 // Extending Autocomplete is a lesson in frustration.
 // Long story short, it needs to have a generic signature that exactly matches
@@ -41,6 +44,10 @@ export interface AsyncAutocompleteProps<
   options?: T[]
   /** freeSolo is disabled. To enable it must be added as a generic. */
   freeSolo?: false
+  /** onOpen is overwritten internally */
+  onOpen?: undefined
+  /** onClose is internally overwritten */
+  onClose?: undefined
 }
 export default function AsyncAutocomplete<
   T,
@@ -70,6 +77,10 @@ export default function AsyncAutocomplete<
     setOpen(false)
   }
 
+  const toggleOpen = () => {
+    !autocompleteProps.disabled && setOpen((prev) => !prev)
+  }
+
   return (
     <Autocomplete
       {...autocompleteProps}
@@ -82,14 +93,8 @@ export default function AsyncAutocomplete<
       popupIcon={<ArrowDropDownIcon className={noSwipingRecord} />}
       clearIcon={<ClearIcon fontSize="small" className={noSwipingRecord} />}
       // functions need to be careful to append to what the caller provides, not overwrite
-      onOpen={(e) => {
-        handleOpen()
-        autocompleteProps.onOpen?.(e)
-      }}
-      onClose={(e, reason) => {
-        handleClose()
-        autocompleteProps.onClose?.(e, reason)
-      }}
+      onOpen={handleOpen}
+      onClose={handleClose}
       renderInput={(params: AutocompleteRenderInputParams) => (
         <TextField
           {...params}
@@ -97,6 +102,14 @@ export default function AsyncAutocomplete<
           placeholder={placeholder}
           label={label}
           variant={variant}
+          InputLabelProps={
+            variant === 'standard'
+              ? {
+                  onClick: toggleOpen,
+                  sx: fullWidthInputLabelSx,
+                }
+              : {}
+          }
           InputProps={{
             ...params.InputProps,
             ...textFieldProps?.InputProps,

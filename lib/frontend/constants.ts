@@ -1,4 +1,4 @@
-import { OutlinedSelectProps } from '@mui/material'
+import { OutlinedSelectProps, SxProps } from '@mui/material'
 import { CSSProperties } from '@mui/material/styles/createMixins'
 
 export const DATE_FORMAT = 'YYYY-MM-DD'
@@ -56,6 +56,18 @@ export const fixSelectBackground: Pick<
 > = {
   variant: 'outlined',
   notched: undefined,
+}
+
+// make the label span the whole input instead of just the text width.
+// A quirk of mui styling means the width must be 133%, not 100%.
+/**
+ * Styles input labels for autocomplete fields to span the whole width of the
+ * input, instead of just the text length. This helps make clicking to open the
+ * autocomplete more consistent with standard variants, especially when nested within a swiper.
+ */
+export const fullWidthInputLabelSx: SxProps = {
+  width: '133%',
+  cursor: 'pointer',
 }
 
 //------
