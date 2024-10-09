@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useSWRConfig } from 'swr'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import { noSwipingRecord } from '../../lib/frontend/constants'
 import {
   addRecord,
   updateSessionLog,
@@ -52,7 +51,6 @@ export default function AddRecordCard() {
     <Paper elevation={3} sx={{ p: 2 }}>
       <Stack spacing={2} alignItems="center">
         <ExerciseSelector
-          className={noSwipingRecord}
           variant="standard"
           {...{
             exercise,

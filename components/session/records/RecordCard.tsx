@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react'
 import { KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
-import { DATE_FORMAT, noSwipingRecord } from '../../../lib/frontend/constants'
+import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,

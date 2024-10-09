@@ -1,13 +1,12 @@
 import { Stack, useMediaQuery, useTheme } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
-import { Keyboard, Navigation, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
+import { Keyboard, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react'
 import LoadingSpinner from '../../components/loading/LoadingSpinner'
 import NavigationBar from '../../components/slider/NavigationBar'
 import { noSwipingRecord } from '../../lib/frontend/constants'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
@@ -50,6 +49,25 @@ export default function SessionSwiper() {
       // which had been preventing Select dropdowns from being able to open.
       // To fix, we tell swiper to not trigger preventDefault().
       touchStartPreventDefault={false}
+      // Because swiper normally tries to preventDefault for clicks, it allows you to specify
+      // certain elements that it will allow to pass through and be focusable.
+      // However, swiper still manually handles focusing/blurring these elements, which causes
+      // issues with autocompletes (swiper calls onBlur too often and causes dropdowns to immediately close and
+      // open again whenever you click on them).
+      // We've already set touchStartPreventDefault to false to stop swiper intercepting clicks, but swiper still
+      // uses custom logic assuming that prop is set to true. So here we overwrite focusableElements to a nonsense list
+      // to ensure no real elements are affected.
+      // See (search for "blur"): https://github.com/nolimits4web/swiper/blob/master/src/core/events/onTouchStart.mjs
+      focusableElements="none"
+      // Now we can set activeElement blurring how we actually want it: blur once the swiper starts moving.
+      // This closes any open dropdowns only if the user starts moving the swiper.
+      // Swiper's default behavior is to blur immediately on click, which causes dropdowns to immediately close and
+      // reopen as described above.
+      onTouchMove={() => {
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur()
+        }
+      }}
       // Note: it is CRITICAL to not use state to track slide changes in the
       // component that contains a Swiper. A state change during a slide transition
       // will cause the entire component to re-render, and if that component contains
@@ -125,10 +143,7 @@ export default function SessionSwiper() {
               />
             </SwiperSlide>
           ))}
-          <SwiperSlide
-            // if no records, disable swiping. The swiping prevents you from being able to close date picker
-            className={sessionHasRecords ? '' : noSwipingRecord}
-          >
+          <SwiperSlide>
             <Stack spacing={2} sx={{ p: 0.5 }}>
               <AddRecordCard />
               {!sessionHasRecords && <CopySessionCard key={date} />}
