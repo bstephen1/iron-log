@@ -44,7 +44,7 @@ export default memo(function SetHeader({
   const [open, setOpen] = useState(false)
   const handleClose = () => setOpen(false)
   const handleOpen = () => {
-    !open && !selectProps.disabled && setOpen(true)
+    !open && !selectProps.disabled && !selectProps.readOnly && setOpen(true)
   }
 
   const noSwipingDesktop = useNoSwipingDesktop()
@@ -91,10 +91,10 @@ export default memo(function SetHeader({
     }
   }
 
+  // todo: this Select doesn't focus when you click on it. SetTypeSelect also doesn't when you click on the renderValue portion (it does with the label)
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth variant="standard">
       <InputLabel
-        variant="standard"
         shrink={true}
         id="set-header-label"
         sx={fullWidthSelectLabelSx}
