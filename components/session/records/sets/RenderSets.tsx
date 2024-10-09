@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingSmScreen'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
@@ -39,7 +38,6 @@ export default function RenderSets({
   return (
     <Box>
       <SetHeader
-        className={useNoSwipingDesktop()}
         {...{
           displayFields,
           mutateExerciseFields,

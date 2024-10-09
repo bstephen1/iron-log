@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react'
 import { KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
+import { DATE_FORMAT, noSwipingRecord } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -13,7 +13,7 @@ import {
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
-import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingSmScreen'
+import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields, calculateTotalReps } from '../../../lib/util'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import Record from '../../../models/Record'
@@ -101,7 +101,7 @@ function LoadedRecordCard({
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
-  const noSwipingClassName = useNoSwipingDesktop()
+  const noSwipingDesktop = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes?.unilateral
@@ -127,7 +127,7 @@ function LoadedRecordCard({
         },
       )
     },
-    [],
+    [mutateExercise],
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
@@ -165,11 +165,13 @@ function LoadedRecordCard({
             <RecordExerciseSelector
               // swiping causes weird behavior on desktop when combined with data input fields
               // (eg, can't close autocompletes)
-              className={noSwipingClassName}
+              className={noSwipingDesktop}
+              // we can't clear it bc the recordCard presumes there is an exercise
+              disableClearable
               {...{ mutateRecordFields, activeModifiers, exercise, category }}
             />
             <RecordModifierComboBox
-              className={noSwipingClassName}
+              className={noSwipingDesktop}
               availableModifiers={exercise?.modifiers}
               {...{ mutateRecordFields, activeModifiers }}
             />

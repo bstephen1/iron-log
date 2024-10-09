@@ -8,13 +8,16 @@ import { UpdateFields } from '../../../lib/util'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import Record from '../../../models/Record'
 
-type Props = {
+type Props<DisableClearable extends boolean | undefined> = {
+  exercise: DisableClearable extends true ? Exercise : Exercise | null
   mutateRecordFields: UpdateFields<Record>
   disableAddNew?: boolean
   variant?: TextFieldProps['variant']
-} & Pick<Record, 'activeModifiers' | 'category' | 'exercise'> &
-  Partial<AsyncSelectorProps<Exercise>>
-export default memo(function RecordExerciseSelector({
+} & Pick<Record, 'activeModifiers' | 'category'> &
+  Partial<AsyncSelectorProps<Exercise, DisableClearable>>
+export default memo(function RecordExerciseSelector<
+  DisableClearable extends boolean | undefined,
+>({
   mutateRecordFields,
   activeModifiers,
   category,
@@ -22,7 +25,7 @@ export default memo(function RecordExerciseSelector({
   disableAddNew,
   variant,
   ...asyncSelectorProps
-}: Props) {
+}: Props<DisableClearable>) {
   const { exercises, mutate: mutateExercises } = useExercises()
 
   const handleChange = async (newExercise: Exercise | null) => {
@@ -38,7 +41,7 @@ export default memo(function RecordExerciseSelector({
   }
 
   return (
-    <ExerciseSelector
+    <ExerciseSelector<DisableClearable>
       variant={variant ?? 'standard'}
       category={category}
       handleCategoryChange={(category) => mutateRecordFields({ category })}

@@ -1,3 +1,4 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import {
   FormControl,
   FormControlLabel,
@@ -13,8 +14,11 @@ import {
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
-import { fixSelectBackground } from '../../../lib/frontend/constants'
-import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingSmScreen'
+import {
+  fixSelectBackground,
+  fullWidthSelectLabelSx,
+} from '../../../lib/frontend/constants'
+import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields, UpdateState, stringifySetType } from '../../../lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
@@ -32,6 +36,7 @@ const timeField = ORDERED_DISPLAY_FIELDS.filter(
 )
 
 const valueInputStyle = { margin: 0, maxWidth: '80px' }
+const standardVariantSx = { '& .MuiInput-input': { pr: '0px !important' } }
 
 type Props = {
   /** considered readOnly if not provided */
@@ -53,6 +58,7 @@ export default memo(function SetTypeSelect({
   ...textFieldProps
 }: Props) {
   const { field, value = 0, operator, min = 0, max = 0 } = setType
+  const variant = textFieldProps.variant ?? 'standard'
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const remaining = (value ?? 0) - totalReps
   const isOverTotal = remaining < 0
@@ -72,21 +78,51 @@ export default memo(function SetTypeSelect({
   const menuValue = stringifySetType(setType, units)
 
   const handleClose = () => setOpen(false)
+  const handleOpen = () => !readOnly && !open && setOpen(true)
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
   return (
     <TextField
       select
       fullWidth
-      variant="standard"
+      // When there is a swiper parent, swiper will intercept the clicks and prevent opening.
+      // Instead, we must manually handle opening on click. Note the presentation backdrop
+      // counts as TextField so we must ensure to only open if we aren't already open.
+      // onClick={() =>
+      //   variant === 'standard' &&
+      //   !open &&
+      //   !textFieldProps.disabled &&
+      //   handleOpen()
+      // }
+      variant={variant}
       className={noSwipingDesktop}
       label="Set type"
       value={menuValue}
-      InputLabelProps={{ shrink: true }}
+      InputLabelProps={{
+        shrink: true,
+        sx: variant === 'standard' ? fullWidthSelectLabelSx : undefined,
+      }}
+      // forcibly remove the input's padding. Select assumes the dropdown arrow
+      // will be under the padding, but this leaves the arrow off center with autocomplete arrows.
+      sx={variant === 'standard' ? standardVariantSx : undefined}
       SelectProps={{
         open,
         readOnly,
-        onOpen: () => setOpen(true),
+        // Rendering the icon as a separate component allows us to ignore the props it normally is passed.
+        // These props make the icon off center with autocompletes when using standard variant.
+        IconComponent:
+          variant === 'standard'
+            ? () => (
+                <ArrowDropDownIcon
+                  // match sx of normal icon
+                  sx={{ opacity: 0.54, cursor: 'pointer' }}
+                />
+              )
+            : undefined,
+        // if this component has a swiper parent, clicking will not trigger onOpen bc
+        // swiper intercepts clicks looking for drags on the swiper
+        onClick: handleOpen,
+        onOpen: handleOpen,
         onClose: handleClose,
         displayEmpty: true,
         autoWidth: true,

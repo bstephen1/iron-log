@@ -22,7 +22,7 @@ export default function WeightUnitConverter() {
           setKg(
             e.target.value
               ? convertUnit(+e.target.value, 'weight', 'lbs', 'kg')
-              : undefined
+              : undefined,
           )
         }
       />
@@ -37,8 +37,7 @@ function ConverterField({
   return (
     <TextField
       {...textFieldProps}
-      type="number"
-      onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
+      inputMode="decimal"
       autoComplete="off"
       onFocus={(e) => e.target.select()}
       variant="standard"

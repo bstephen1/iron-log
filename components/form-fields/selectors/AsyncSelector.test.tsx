@@ -3,7 +3,7 @@ import { vi } from 'vitest'
 import { render, screen } from '../../../lib/testUtils'
 import { AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
 import { Status } from '../../../models/Status'
-import AsyncSelector from './AsyncSelector'
+import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
 
 const mockMutate = vi.fn()
 const mockHandleChange = vi.fn()
@@ -18,7 +18,7 @@ class MockAsyncSelectorOption extends AsyncSelectorOption {
 }
 
 const TestSelector = (
-  props: Partial<ComponentProps<typeof AsyncSelector<AsyncSelectorOption>>>,
+  props: Partial<AsyncSelectorProps<AsyncSelectorOption, false>>,
 ) => (
   <AsyncSelector
     handleChange={mockHandleChange}

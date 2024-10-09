@@ -1,9 +1,9 @@
 import { Box } from '@mui/material'
-import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingSmScreen'
+import { ComponentProps } from 'react'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
 import { Set } from '../../../../models/Set'
 import SelectFieldAutosave from '../../../form-fields/SelectFieldAutosave'
-import { ComponentProps } from 'react'
 
 interface Props
   extends Partial<ComponentProps<typeof SelectFieldAutosave<Set['side']>>> {

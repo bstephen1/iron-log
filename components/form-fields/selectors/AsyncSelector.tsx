@@ -13,8 +13,10 @@ import { Status } from '../../../models/Status'
  */
 type Option<C> = C & { inputValue?: string }
 
-export interface AsyncSelectorProps<C extends AsyncSelectorOption>
-  extends AsyncAutocompleteProps<Option<C>, false> {
+export interface AsyncSelectorProps<
+  C extends AsyncSelectorOption,
+  DisableClearable extends boolean | undefined,
+> extends AsyncAutocompleteProps<Option<C>, false, DisableClearable> {
   filterCustom?: (value: C, inputValue?: string) => boolean
   /** This function can be used to reset the input value to null
    * based on the current options in the dropdown */
@@ -32,7 +34,10 @@ export interface AsyncSelectorProps<C extends AsyncSelectorOption>
   /** This component does not support multiple selections. */
   multiple?: false
 }
-export default function AsyncSelector<C extends AsyncSelectorOption>({
+export default function AsyncSelector<
+  C extends AsyncSelectorOption,
+  DisableClearable extends boolean | undefined,
+>({
   filterCustom,
   handleFilterChange,
   handleChange,
@@ -41,7 +46,7 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
   Constructor,
   addNewItem,
   ...asyncAutocompleteProps
-}: AsyncSelectorProps<C>) {
+}: AsyncSelectorProps<C, DisableClearable>) {
   const addNewDisabled = !mutateOptions
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
@@ -62,7 +67,6 @@ export default function AsyncSelector<C extends AsyncSelectorOption>({
       onInputChange={(_, value) => {
         setInputValue(value)
       }}
-      openOnFocus
       fullWidth
       selectOnFocus
       // onBlur we reset to the value that is selected

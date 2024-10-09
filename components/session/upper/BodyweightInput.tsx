@@ -61,10 +61,8 @@ export default function BodyweightInput({
   return (
     <InputField
       {...textFieldProps}
-      type="number"
+      inputMode="decimal"
       label="Bodyweight"
-      // disable scroll wheel changing the number
-      onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
       initialValue={
         !data?.length || data[0].type !== bodyweightType
           ? ''
