@@ -46,6 +46,10 @@ export default function SessionSwiper() {
     // Note: after making code changes to the swiper component the page needs to be reloaded
     <Swiper
       ref={swiperElRef}
+      // Swiper prevents clicks from passing through to certain elements by default,
+      // which had been preventing Select dropdowns from being able to open.
+      // To fix, we tell swiper to not trigger preventDefault().
+      touchStartPreventDefault={false}
       // Note: it is CRITICAL to not use state to track slide changes in the
       // component that contains a Swiper. A state change during a slide transition
       // will cause the entire component to re-render, and if that component contains
