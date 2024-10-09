@@ -16,7 +16,7 @@ import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import {
   fixSelectBackground,
-  fullWidthInputLabelSx,
+  fullWidthSelectLabelSx,
 } from '../../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
@@ -43,7 +43,9 @@ export default memo(function SetHeader({
 }: Props) {
   const [open, setOpen] = useState(false)
   const handleClose = () => setOpen(false)
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => {
+    !open && !selectProps.disabled && setOpen(true)
+  }
 
   const noSwipingDesktop = useNoSwipingDesktop()
   // Note that other records may need to update when the current record updates.
@@ -90,15 +92,12 @@ export default memo(function SetHeader({
   }
 
   return (
-    <FormControl
-      fullWidth
-      onClick={() => !open && !selectProps.disabled && handleOpen()}
-    >
+    <FormControl fullWidth>
       <InputLabel
         variant="standard"
         shrink={true}
         id="set-header-label"
-        sx={fullWidthInputLabelSx}
+        sx={fullWidthSelectLabelSx}
       >
         Sets
       </InputLabel>
@@ -111,6 +110,9 @@ export default memo(function SetHeader({
         fullWidth
         displayEmpty
         open={open}
+        // swiper intercepts clicks, so we must manually trigger handleOpen on click
+        onClick={handleOpen}
+        onOpen={handleOpen}
         onClose={handleClose}
         value={selectedNames}
         onChange={(e) => handleChange(e.target.value)}

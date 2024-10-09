@@ -16,7 +16,7 @@ import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import {
   fixSelectBackground,
-  fullWidthInputLabelSx,
+  fullWidthSelectLabelSx,
 } from '../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields, UpdateState, stringifySetType } from '../../../lib/util'
@@ -78,7 +78,7 @@ export default memo(function SetTypeSelect({
   const menuValue = stringifySetType(setType, units)
 
   const handleClose = () => setOpen(false)
-  const handleOpen = () => !readOnly && setOpen(true)
+  const handleOpen = () => !readOnly && !open && setOpen(true)
 
   // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
   return (
@@ -88,19 +88,19 @@ export default memo(function SetTypeSelect({
       // When there is a swiper parent, swiper will intercept the clicks and prevent opening.
       // Instead, we must manually handle opening on click. Note the presentation backdrop
       // counts as TextField so we must ensure to only open if we aren't already open.
-      onClick={() =>
-        variant === 'standard' &&
-        !open &&
-        !textFieldProps.disabled &&
-        handleOpen()
-      }
+      // onClick={() =>
+      //   variant === 'standard' &&
+      //   !open &&
+      //   !textFieldProps.disabled &&
+      //   handleOpen()
+      // }
       variant={variant}
       className={noSwipingDesktop}
       label="Set type"
       value={menuValue}
       InputLabelProps={{
         shrink: true,
-        sx: variant === 'standard' ? fullWidthInputLabelSx : undefined,
+        sx: variant === 'standard' ? fullWidthSelectLabelSx : undefined,
       }}
       // forcibly remove the input's padding. Select assumes the dropdown arrow
       // will be under the padding, but this leaves the arrow off center with autocomplete arrows.
@@ -119,8 +119,9 @@ export default memo(function SetTypeSelect({
                 />
               )
             : undefined,
-        // if this component has a swiper parent, this will not trigger bc swiper intercepts clicks
-        // looking for drags on the swiper
+        // if this component has a swiper parent, clicking will not trigger onOpen bc
+        // swiper intercepts clicks looking for drags on the swiper
+        onClick: handleOpen,
         onOpen: handleOpen,
         onClose: handleClose,
         displayEmpty: true,
