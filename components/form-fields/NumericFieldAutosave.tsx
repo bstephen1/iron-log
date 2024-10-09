@@ -29,9 +29,7 @@ export default function NumericFieldAutosave({
       // Use InputProps instead of top level TextFieldProps in case renderAsInput is set to true.
       // This avoids props from silently being ignored.
       InputProps={{
-        // prevent scrolling from incrementing the number. See: https://github.com/mui/material-ui/issues/7960
-        onWheel: (e) => e.target instanceof HTMLElement && e.target.blur(),
-        type: 'number',
+        inputMode: 'decimal',
         ...inputFieldAutosaveProps.InputProps,
       }}
     />

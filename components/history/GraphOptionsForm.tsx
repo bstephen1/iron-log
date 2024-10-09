@@ -77,7 +77,7 @@ export default function GraphOptionsForm({
       </Grid>
       <Grid xs={12} md={3}>
         <TextField
-          type="number"
+          inputMode="decimal"
           label="Clothing offset"
           autoComplete="off"
           fullWidth
@@ -90,7 +90,6 @@ export default function GraphOptionsForm({
                 : Number(e.target.value),
             })
           }
-          onWheel={(e) => e.target instanceof HTMLElement && e.target.blur()}
           InputProps={{
             endAdornment: <InputAdornment position="end">kg</InputAdornment>,
           }}
