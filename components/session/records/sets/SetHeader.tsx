@@ -99,14 +99,11 @@ export default memo(function SetHeader({
         value={selectedNames}
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
-        // forcibly remove padding for the icon arrow, which is off center from autocompletes
-        sx={{ '& .MuiInput-input': { pr: '0px !important' } }}
-        // Rendering the icon manually allows us to drop the props normally passed in,
-        // which have inconsistent styling from autocompletes.
-        IconComponent={() => (
+        IconComponent={(props) => (
           <ArrowDropDownIcon
-            // match sx of normal icon
-            sx={{ opacity: 0.54, cursor: 'pointer' }}
+            {...props}
+            // override absolute positioning that shifts it off center
+            sx={{ right: '0 !important' }}
           />
         )}
         renderValue={() => (

@@ -90,14 +90,13 @@ export default memo(function SetTypeSelect({
       sx={variant === 'standard' ? standardVariantSx : undefined}
       SelectProps={{
         readOnly,
-        // Rendering the icon as a separate component allows us to ignore the props it normally is passed.
-        // These props make the icon off center with autocompletes when using standard variant.
         IconComponent:
           variant === 'standard'
-            ? () => (
+            ? (props) => (
                 <ArrowDropDownIcon
-                  // match sx of normal icon
-                  sx={{ opacity: 0.54, cursor: 'pointer' }}
+                  {...props}
+                  // override absolute positioning that shifts it off center
+                  sx={{ right: '0 !important' }}
                 />
               )
             : undefined,
