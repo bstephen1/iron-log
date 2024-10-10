@@ -5,13 +5,13 @@ import {
   Checkbox,
   TextFieldProps,
 } from '@mui/material'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 import AsyncAutocomplete, {
   AsyncAutocompleteProps,
 } from '../../components/AsyncAutocomplete'
 import { doNothing } from '../../lib/util'
 import useField from './useField'
-import { memo } from 'react'
-import isEqual from 'react-fast-compare'
 
 interface ComboBoxFieldProps
   extends AsyncAutocompleteProps<string, true, false> {
@@ -96,17 +96,21 @@ export default memo(function ComboBoxField({
       options={options}
       disableCloseOnSelect
       autoHighlight
-      renderOption={(props, modifierName, { selected }) => (
-        <li {...props}>
-          <Checkbox
-            icon={<CheckBoxOutlineBlankIcon />}
-            checkedIcon={<CheckBoxIcon />}
-            style={{ marginRight: 8 }}
-            checked={selected}
-          />
-          {modifierName}
-        </li>
-      )}
+      renderOption={({ key, ...props }, modifierName, { selected }) => {
+        return (
+          // props include a key which we need to extract to avoid a console warning for
+          // using spread with a key. Note the key must come BEFORE the spread or that will cause a different warning.
+          <li key={key} {...props}>
+            <Checkbox
+              icon={<CheckBoxOutlineBlankIcon />}
+              checkedIcon={<CheckBoxIcon />}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {modifierName}
+          </li>
+        )
+      }}
       textFieldProps={{
         helperText,
       }}
