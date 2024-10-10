@@ -37,12 +37,17 @@ function ConverterField({
   return (
     <TextField
       {...textFieldProps}
+      // Decimal input will not work without type=number because it is converting the
+      // input to a number on every keystroke, so it will drop any trailing decimals.
+      // type=number will also add automatic validation, eg you can't input letters.
       type="number"
       autoComplete="off"
       onFocus={(e) => e.target.select()}
       variant="standard"
       sx={{ width: 100, px: 2 }}
       inputProps={{
+        // we need to add inputMode=decimal so ios devices will show a proper
+        // decimal keyboard instead of the normal keyboard with a number row
         inputMode: 'decimal',
         ...textFieldProps.inputProps,
       }}

@@ -62,6 +62,7 @@ export default function BodyweightInput({
     <InputField
       {...textFieldProps}
       label="Bodyweight"
+      type="number"
       initialValue={
         !data?.length || data[0].type !== bodyweightType
           ? ''

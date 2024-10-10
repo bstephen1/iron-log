@@ -20,6 +20,7 @@ export default function NumericFieldAutosave({
 }: Props) {
   return (
     <InputFieldAutosave
+      type="number"
       // String(undefined) causes a warning
       initialValue={String(initialValue ?? '')}
       handleSubmit={(str) => handleNumberSubmit(convertValueToNumber(str))}
