@@ -5,7 +5,7 @@ import {
   Switch,
   TextField,
 } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import RecordDisplay from '../../components/history/RecordDisplay'
 import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
 import { UpdateState } from '../../lib/util'
@@ -38,7 +38,14 @@ export default function GraphOptionsForm({
 
   return (
     <Grid container spacing={2}>
-      <Grid xs={12} md={9} alignItems="center" display="flex">
+      <Grid
+        alignItems="center"
+        display="flex"
+        size={{
+          xs: 12,
+          md: 9,
+        }}
+      >
         <FormGroup row>
           <FormControlLabel
             control={
@@ -75,7 +82,12 @@ export default function GraphOptionsForm({
           />
         </FormGroup>
       </Grid>
-      <Grid xs={12} md={3}>
+      <Grid
+        size={{
+          xs: 12,
+          md: 3,
+        }}
+      >
         <TextField
           label="Clothing offset"
           type="number"
@@ -96,8 +108,7 @@ export default function GraphOptionsForm({
           }}
         />
       </Grid>
-
-      <Grid xs={12}>
+      <Grid size={12}>
         <RecordDisplaySelect
           recordDisplay={recordDisplay}
           updateRecordDisplay={updateRecordDisplay}

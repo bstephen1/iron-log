@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { useQueryState } from 'next-usequerystate'
 import { useCallback } from 'react'
 import {
@@ -43,21 +43,31 @@ export default function ModifierForm({
   )
 
   return (
-    <Grid container spacing={1} xs={12}>
-      <Grid xs={12} sm={6}>
+    <Grid container spacing={1} size={12}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 6,
+        }}
+      >
         <NameField
           name={name}
           handleUpdate={updateFields}
           options={modifierNames}
         />
       </Grid>
-      <Grid xs={12} sm={6}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 6,
+        }}
+      >
         <EquipmentWeightField weight={weight} handleUpdate={updateFields} />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <UsageComboBox field="modifiers" name={name} usage={usage} />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <ActionItems
           name={name}
           type="modifier"

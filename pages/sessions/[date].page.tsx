@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import dayjs from 'dayjs'
 import { GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
@@ -41,15 +41,22 @@ export default function SessionPage({ date }: Props) {
         <Stack spacing={2}>
           <TitleBar day={dayjs(date)} />
           <Grid container>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <RestTimer />
             </Grid>
             <Grid
-              xs={12}
-              md={6}
               display="flex"
               alignItems="center"
               justifyContent="center"
+              size={{
+                xs: 12,
+                md: 6,
+              }}
             >
               <WeightUnitConverter />
             </Grid>

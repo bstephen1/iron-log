@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { useQueryState } from 'next-usequerystate'
 import { useCallback } from 'react'
 import {
@@ -10,6 +10,7 @@ import {
   useRecords,
 } from '../../lib/frontend/restService'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import Note from '../../models/Note'
 import ActionItems from '../form-fields/actions/ActionItems'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import ComboBoxField from '../form-fields/ComboBoxField'
@@ -17,7 +18,6 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
-import Note from '../../models/Note'
 
 interface Props {
   exercise: Exercise
@@ -71,21 +71,31 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   )
 
   return (
-    <Grid container spacing={1} xs={12}>
-      <Grid xs={12}>
+    <Grid container spacing={1} size={12}>
+      <Grid size={12}>
         <NameField
           name={name}
           handleUpdate={updateFields}
           options={exerciseNames}
         />
       </Grid>
-      <Grid xs={12} sm={6}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 6,
+        }}
+      >
         <StatusSelectField status={status} handleUpdate={updateFields} />
       </Grid>
-      <Grid xs={12} sm={6}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 6,
+        }}
+      >
         <EquipmentWeightField weight={weight} handleUpdate={updateFields} />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <ComboBoxField
           label="Categories"
           initialValue={categories}
@@ -96,7 +106,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           )}
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <ComboBoxField
           label="Modifiers"
           initialValue={modifiers}
@@ -107,7 +117,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           )}
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <AttributeCheckboxes
           attributes={attributes}
           handleSubmit={useCallback(
@@ -116,7 +126,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           )}
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <NotesList
           label="Notes"
           notes={notes}
@@ -128,7 +138,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           multiple
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <ActionItems
           name={name}
           type="exercise"

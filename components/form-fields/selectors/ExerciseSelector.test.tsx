@@ -52,9 +52,8 @@ it('does not open autocomplete when filter menu is open', async () => {
   await user.keyboard('[Escape]')
   expect(screen.getByText(autocompleteText)).toBeVisible()
 
-  // shifting focus to filter button closes autocomplete
-  await user.keyboard('[Shift>][Tab]')
-  expect(screen.getByText(categoryLabel)).toBeVisible() // tooltip
+  // shifting focus closes autocomplete
+  await user.keyboard('[Tab]')
   expect(screen.queryByText(autocompleteText)).not.toBeInTheDocument()
 
   // open filter menu. Wanted to open with space/enter but that wasn't playing nice

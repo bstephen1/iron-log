@@ -1,15 +1,15 @@
 import { FormControlLabel, FormGroup, Switch, Typography } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import useLocalStorageState from 'use-local-storage-state'
 
 export default function SettingsPage() {
   const [sessionRedirect, setSessionRedirect] = useLocalStorageState(
     'sessionRedirect',
-    { defaultValue: true }
+    { defaultValue: true },
   )
   return (
     <Grid container spacing={2}>
-      <Grid xs={12} alignItems="center" display="flex">
+      <Grid alignItems="center" display="flex" size={12}>
         <FormGroup row>
           <FormControlLabel
             control={

@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { useQueryState } from 'next-usequerystate'
 import { useCallback } from 'react'
 import {
@@ -46,18 +46,18 @@ export default function CategoryForm({
   )
 
   return (
-    <Grid container spacing={1} xs={12}>
-      <Grid xs={12}>
+    <Grid container spacing={1} size={12}>
+      <Grid size={12}>
         <NameField
           name={name}
           handleUpdate={updateFields}
           options={categoryNames}
         />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <UsageComboBox field="categories" name={name} usage={usage} />
       </Grid>
-      <Grid xs={12}>
+      <Grid size={12}>
         <ActionItems
           name={name}
           type="category"

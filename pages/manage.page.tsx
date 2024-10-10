@@ -1,11 +1,11 @@
 import { Tab, Tabs } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid2'
 import { memo, useEffect, useState } from 'react'
 import StyledDivider from '../components/StyledDivider'
 import useCategoryForm from '../components/forms/useCategoryForm'
 import useExerciseForm from '../components/forms/useExerciseForm'
 import useModifierForm from '../components/forms/useModifierForm'
-import { useQueryTab, TabValue, tabValues } from '../models/TabValue'
+import { TabValue, tabValues, useQueryTab } from '../models/TabValue'
 
 let Selector: JSX.Element, Form: JSX.Element
 
@@ -55,14 +55,14 @@ export default function ManagePage() {
   // since router is not available server side.
   return !isFirstRender ? (
     <Grid container spacing={2}>
-      <Grid xs={12}>
+      <Grid size={12}>
         <RenderTabs />
       </Grid>
-      <Grid xs={12}>{Selector}</Grid>
-      <Grid xs={12}>
+      <Grid size={12}>{Selector}</Grid>
+      <Grid size={12}>
         <StyledDivider />
       </Grid>
-      <Grid container xs={12} justifyContent="center">
+      <Grid container justifyContent="center" size={12}>
         {Form}
       </Grid>
     </Grid>
