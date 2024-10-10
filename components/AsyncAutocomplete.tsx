@@ -74,6 +74,7 @@ export default function AsyncAutocomplete<
   return (
     <Autocomplete
       {...autocompleteProps}
+      openOnFocus
       loadingText={loadingText}
       options={options ?? []}
       loading={loading}
