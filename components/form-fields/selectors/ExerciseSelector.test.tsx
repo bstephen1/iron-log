@@ -48,7 +48,7 @@ it('does not open autocomplete when filter menu is open', async () => {
   expect(screen.getByText(testCategoryName)).toBeVisible()
   expect(screen.queryByText(autocompleteText)).not.toBeInTheDocument()
 
-  // closing menu focuses and opens autocomplete
+  // closing menu focuses and opens autocomplete (note: this presumes "openOnFocus" is enabled)
   await user.keyboard('[Escape]')
   expect(screen.getByText(autocompleteText)).toBeVisible()
 

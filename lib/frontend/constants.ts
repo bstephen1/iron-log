@@ -58,17 +58,6 @@ export const fixSelectBackground: Pick<
   notched: undefined,
 }
 
-/**
- * Styles input labels for Selects to span the whole width of the component,
- * instead of just the text length. This helps make standard variants more consistent
- * with autocompletes, where clicking this aread will focus the component.
- */
-export const fullWidthSelectLabelSx: SxProps = {
-  // A quirk of mui styling means the width must be 133%, not 100%.
-  width: '133%',
-  cursor: 'pointer',
-}
-
 //------
 // URIS
 //------

@@ -14,10 +14,7 @@ import {
 } from '@mui/material'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import {
-  fixSelectBackground,
-  fullWidthSelectLabelSx,
-} from '../../../../lib/frontend/constants'
+import { fixSelectBackground } from '../../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
@@ -41,12 +38,6 @@ export default memo(function SetHeader({
   showUnilateral,
   ...selectProps
 }: Props) {
-  const [open, setOpen] = useState(false)
-  const handleClose = () => setOpen(false)
-  const handleOpen = () => {
-    !open && !selectProps.disabled && !selectProps.readOnly && setOpen(true)
-  }
-
   const noSwipingDesktop = useNoSwipingDesktop()
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
@@ -94,11 +85,7 @@ export default memo(function SetHeader({
   // todo: this Select doesn't focus when you click on it. SetTypeSelect also doesn't when you click on the renderValue portion (it does with the label)
   return (
     <FormControl fullWidth variant="standard">
-      <InputLabel
-        shrink={true}
-        id="set-header-label"
-        sx={fullWidthSelectLabelSx}
-      >
+      <InputLabel shrink={true} id="set-header-label">
         Sets
       </InputLabel>
       {/* Select's generic type must match Props  */}
@@ -109,22 +96,14 @@ export default memo(function SetHeader({
         multiple
         fullWidth
         displayEmpty
-        open={open}
-        // swiper intercepts clicks, so we must manually trigger handleOpen on click
-        onClick={handleOpen}
-        onOpen={handleOpen}
-        onClose={handleClose}
         value={selectedNames}
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
-        // forcibly remove padding for the icon arrow, which is off center from autocompletes
-        sx={{ '& .MuiInput-input': { pr: '0px !important' } }}
-        // Rendering the icon manually allows us to drop the props normally passed in,
-        // which have inconsistent styling from autocompletes.
-        IconComponent={() => (
+        IconComponent={(props) => (
           <ArrowDropDownIcon
-            // match sx of normal icon
-            sx={{ opacity: 0.54, cursor: 'pointer' }}
+            {...props}
+            // override absolute positioning that shifts it off center
+            sx={{ right: '0 !important' }}
           />
         )}
         renderValue={() => (

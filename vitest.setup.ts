@@ -9,9 +9,9 @@ import { devUserId } from './lib/frontend/constants'
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
 // note: node only supports string vars. See: https://vitest.dev/api/vi.html#vi-stubenv
 
-// increase limit for printing dom on failed expect(). Default is 7000 and usually cuts off too soon.
+// Limit for printing dom on failed expect(). Default is 7000.
 // typing is from vite/client in tsconfig
-import.meta.env.DEBUG_PRINT_LIMIT = '50000'
+import.meta.env.DEBUG_PRINT_LIMIT = '0'
 // import.meta.env.COLORS = false
 
 // vi.mock will import the actual module and automock all exports.

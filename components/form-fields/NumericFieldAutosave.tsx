@@ -20,6 +20,7 @@ export default function NumericFieldAutosave({
 }: Props) {
   return (
     <InputFieldAutosave
+      type="number"
       // String(undefined) causes a warning
       initialValue={String(initialValue ?? '')}
       handleSubmit={(str) => handleNumberSubmit(convertValueToNumber(str))}
@@ -28,9 +29,9 @@ export default function NumericFieldAutosave({
       {...inputFieldAutosaveProps}
       // Use InputProps instead of top level TextFieldProps in case renderAsInput is set to true.
       // This avoids props from silently being ignored.
-      InputProps={{
+      inputProps={{
         inputMode: 'decimal',
-        ...inputFieldAutosaveProps.InputProps,
+        ...inputFieldAutosaveProps.inputProps,
       }}
     />
   )
