@@ -37,6 +37,7 @@ function ConverterField({
   return (
     <TextField
       {...textFieldProps}
+      type="number"
       autoComplete="off"
       onFocus={(e) => e.target.select()}
       variant="standard"
