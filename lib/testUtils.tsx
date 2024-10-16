@@ -87,16 +87,25 @@ interface ServerOptions {
 /** Specify an endpoint and json data to return from the mock server.
  *  This function will intercept requests at the given endpoint over any http method.
  */
-export function useServer(path: Path, json?: any, options?: ServerOptions) {
+export function useServer(
+  path: Path,
+  /** If json is omitted, the request body will be returned.
+   *  This can be used to test that the correct body is being passed to the endpoint.
+   */
+  json?: any,
+  options?: ServerOptions,
+) {
   const { status, method = 'all', once, simulateError } = options ?? {}
   server.use(
     http[method](
       path,
-      async () => {
+      async ({ request }) => {
         await delay(options?.delay ?? 0)
         return simulateError
           ? HttpResponse.error()
-          : HttpResponse.json(json, { status: status ?? StatusCodes.OK })
+          : HttpResponse.json(json ?? (await request.json()), {
+              status: status ?? StatusCodes.OK,
+            })
       },
       { once },
     ),
