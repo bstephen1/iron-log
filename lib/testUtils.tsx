@@ -3,7 +3,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { render, RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
-import { delay, http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse, Path } from 'msw'
 import { NextApiHandler } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import {
@@ -79,24 +79,26 @@ interface ServerOptions {
   status?: number
   /** specifies the http method the server will use. Defaults to "all". */
   method?: keyof typeof http
+  /** if true, the handler will only be active for the next request */
+  once?: boolean
+  /** if true, rejects the promise to simulate a network error */
+  simulateError?: boolean
 }
 /** Specify an endpoint and json data to return from the mock server.
- *  This function will intercept the next request at the given endpoint.
+ *  This function will intercept requests at the given endpoint over any http method.
  */
-export function useServerOnce(
-  url: string,
-  json?: any,
-  options?: ServerOptions,
-) {
-  const { status, method = 'all' } = options ?? {}
+export function useServer(path: Path, json?: any, options?: ServerOptions) {
+  const { status, method = 'all', once, simulateError } = options ?? {}
   server.use(
     http[method](
-      url,
+      path,
       async () => {
         await delay(options?.delay ?? 0)
-        return HttpResponse.json(json, { status: status ?? StatusCodes.OK })
+        return simulateError
+          ? HttpResponse.error()
+          : HttpResponse.json(json, { status: status ?? StatusCodes.OK })
       },
-      { once: true },
+      { once },
     ),
   )
 }

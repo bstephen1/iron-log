@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { vi } from 'vitest'
-import { render, screen, useServerOnce } from '../../../lib/testUtils'
+import { render, screen, useServer } from '../../../lib/testUtils'
 import SessionLog from '../../../models/SessionLog'
 import SessionDatePicker from './SessionDatePicker'
 
@@ -11,7 +11,7 @@ it('triggers date change when the new value is a valid date', async () => {
     <SessionDatePicker
       day={dayjs('2020-01-01')}
       handleDayChange={mockHandleDateChange}
-    />
+    />,
   )
 
   const input = screen.getByDisplayValue('01/01/2020')
@@ -27,7 +27,7 @@ it('triggers date change when the new value is a valid date', async () => {
 })
 
 it('shows existing session data with badges', async () => {
-  useServerOnce('/api/sessions/*', [
+  useServer('/api/sessions/*', [
     new SessionLog('2020-01-05', ['dummyRecordID']),
     new SessionLog('2020-01-10'),
   ])
@@ -35,7 +35,7 @@ it('shows existing session data with badges', async () => {
     <SessionDatePicker
       day={dayjs('2020-01-01')}
       handleDayChange={mockHandleDateChange}
-    />
+    />,
   )
 
   await user.click(screen.getByLabelText(/choose date/i))
@@ -48,7 +48,7 @@ it('shows existing session data with badges', async () => {
 })
 
 it('handles changing month', async () => {
-  useServerOnce('/api/sessions/*', [
+  useServer('/api/sessions/*', [
     new SessionLog('2020-01-05', ['dummyRecordID']),
     new SessionLog('2020-01-10'),
   ])
@@ -58,7 +58,7 @@ it('handles changing month', async () => {
       handleDayChange={mockHandleDateChange}
       // don't really need to test this, just define it for the coverage
       textFieldProps={{}}
-    />
+    />,
   )
 
   await user.click(screen.getByLabelText(/choose date/i))

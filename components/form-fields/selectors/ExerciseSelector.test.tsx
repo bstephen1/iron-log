@@ -1,11 +1,11 @@
 import { ComponentProps } from 'react'
 import { vi } from 'vitest'
 import { URI_CATEGORIES } from '../../../lib/frontend/constants'
-import { render, screen, useServerOnce } from '../../../lib/testUtils'
+import { render, screen, useServer } from '../../../lib/testUtils'
 import Category from '../../../models/AsyncSelectorOption/Category'
 import Exercise from '../../../models/AsyncSelectorOption/Exercise'
-import ExerciseSelector from './ExerciseSelector'
 import { Status } from '../../../models/Status'
+import ExerciseSelector from './ExerciseSelector'
 
 const mockHandleChange = vi.fn()
 const mockMutate = vi.fn()
@@ -35,7 +35,7 @@ const TestSelector = (
 )
 
 it('does not open autocomplete when filter menu is open', async () => {
-  useServerOnce(URI_CATEGORIES, [testCategory])
+  useServer(URI_CATEGORIES, [testCategory])
   const { user } = render(<TestSelector />)
   const autocompleteText = /no options/i
 
@@ -66,7 +66,7 @@ it('does not open autocomplete when filter menu is open', async () => {
 })
 
 it('filters exercises based on category filter', async () => {
-  useServerOnce(URI_CATEGORIES, [testCategory])
+  useServer(URI_CATEGORIES, [testCategory])
   const { user } = render(
     <TestSelector
       exercises={[matchingExercise, unmatchedExercise]}
@@ -83,7 +83,7 @@ it('filters exercises based on category filter', async () => {
 
 it('unselects exercise if it is not valid for selected category', async () => {
   const otherCategoryName = 'other'
-  useServerOnce(URI_CATEGORIES, [testCategory, new Category(otherCategoryName)])
+  useServer(URI_CATEGORIES, [testCategory, new Category(otherCategoryName)])
   const { user } = render(
     <TestSelector
       exercises={[unmatchedExercise]}
