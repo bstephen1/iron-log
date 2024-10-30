@@ -80,6 +80,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       onChange={handleChange}
       readOnly={readOnly}
       onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
+      inputProps={textFieldProps.inputProps}
       {...sharedProps}
       {...textFieldProps.InputProps}
     />
