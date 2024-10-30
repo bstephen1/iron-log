@@ -1,0 +1,11 @@
+# add commit hashes to this file to ignore them in git blame history
+
+# useful for eg mass reformatting changes
+
+# git blame must be setup to load this file by running the following once:
+
+# git config blame.ignoreRevsFile .gitBlameIgnore
+
+# set prettier trailingComma to es5
+
+0525c4e2e1342a2ba35cbe7942252148a043cef0
