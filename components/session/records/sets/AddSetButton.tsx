@@ -39,7 +39,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
         optimisticData: (cur) =>
           cur ? { ...cur, sets: sets.concat(newSet) } : null,
         revalidate: false,
-      },
+      }
     )
   }
 

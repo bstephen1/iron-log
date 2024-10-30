@@ -28,7 +28,7 @@ export default function ModifierForm({
 
   const updateFields = useCallback(
     (updates: Partial<Modifier>) => handleUpdate(_id, updates),
-    [_id, handleUpdate],
+    [_id, handleUpdate]
   )
 
   const handleDelete = useCallback(
@@ -36,10 +36,10 @@ export default function ModifierForm({
       await deleteModifier(name)
       setUrlModifier(null)
       mutateModifiers((cur) =>
-        cur?.filter((modifier) => modifier.name !== name),
+        cur?.filter((modifier) => modifier.name !== name)
       )
     },
-    [mutateModifiers, setUrlModifier],
+    [mutateModifiers, setUrlModifier]
   )
 
   return (

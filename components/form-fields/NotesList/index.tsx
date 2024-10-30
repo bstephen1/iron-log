@@ -46,7 +46,7 @@ export default memo(function NotesList(props: Props) {
       notes
         .slice(0, i)
         .concat(newNote)
-        .concat(notes.slice(i + 1)),
+        .concat(notes.slice(i + 1))
     )
   }
 

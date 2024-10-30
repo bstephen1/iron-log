@@ -24,10 +24,10 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
 
   const handleUpdateExercise = async (
     exerciseName: string | undefined,
-    reason: AutocompleteChangeReason,
+    reason: AutocompleteChangeReason
   ) => {
     const newExercise = exercises?.find(
-      (exercise) => exercise.name === exerciseName,
+      (exercise) => exercise.name === exerciseName
     )
     if (!newExercise) return
 

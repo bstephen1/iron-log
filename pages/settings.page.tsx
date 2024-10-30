@@ -5,7 +5,7 @@ import useLocalStorageState from 'use-local-storage-state'
 export default function SettingsPage() {
   const [sessionRedirect, setSessionRedirect] = useLocalStorageState(
     'sessionRedirect',
-    { defaultValue: true },
+    { defaultValue: true }
   )
   return (
     <Grid container spacing={2}>

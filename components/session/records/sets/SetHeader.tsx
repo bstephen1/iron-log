@@ -49,7 +49,7 @@ export default memo(function SetHeader({
       (field.enabled?.unilateral == undefined ||
         field.enabled.unilateral === showUnilateral) &&
       (field.enabled?.splitWeight == undefined ||
-        field.enabled.splitWeight === showSplitWeight),
+        field.enabled.splitWeight === showSplitWeight)
   )
 
   const handleChange = (rawSelectedNames: string | string[]) => {
@@ -66,7 +66,7 @@ export default memo(function SetHeader({
     // We want to ensure the order is consistent,
     // so don't use the raw value since that will append new values to the end.
     const newVisibleFields = options.filter((optionField) =>
-      newSelectedNames.some((name) => name === optionField.name),
+      newSelectedNames.some((name) => name === optionField.name)
     )
 
     // Make sure we aren't submitting if there aren't actually any changes.

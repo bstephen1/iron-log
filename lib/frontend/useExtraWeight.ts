@@ -8,7 +8,7 @@ export default function useExtraWeight(record: Record) {
       limit: 2,
       end: record?.date,
     },
-    record?.exercise?.attributes?.bodyweight,
+    record?.exercise?.attributes?.bodyweight
   )
 
   const { activeModifiers, exercise } = record
@@ -40,7 +40,7 @@ export default function useExtraWeight(record: Record) {
 
   const modifierWeight = activeModifiers.reduce(
     (total, name) => (total += modifiersIndex[name]?.weight ?? 0),
-    0,
+    0
   )
 
   return {

@@ -22,7 +22,7 @@ export default memo(function StatusSelectField({
       handleSubmit={useCallback(
         // unsure why we need to specify type Status here. Will otherwise assume it's "never"
         (status: Status) => handleUpdate({ status }),
-        [handleUpdate],
+        [handleUpdate]
       )}
     />
   )

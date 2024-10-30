@@ -7,6 +7,6 @@ export const tabValues = ['exercises', 'modifiers', 'categories'] as const
 export function useQueryTab() {
   return useQueryState(
     'tab',
-    parseAsStringEnum<TabValue>([...tabValues]).withDefault('exercises'),
+    parseAsStringEnum<TabValue>([...tabValues]).withDefault('exercises')
   )
 }

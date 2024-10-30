@@ -4,7 +4,7 @@ export default class Note {
   readonly _id: string
   constructor(
     public value = '',
-    public tags: string[] = [],
+    public tags: string[] = []
   ) {
     this._id = generateId()
   }

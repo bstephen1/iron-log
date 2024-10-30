@@ -42,7 +42,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
 
   const updateFields = useCallback(
     (updates: Partial<Exercise>) => handleUpdate(_id, updates),
-    [_id, handleUpdate],
+    [_id, handleUpdate]
   )
   // todo: validate (drop empty notes)
 
@@ -52,7 +52,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       setUrlExercise(null)
       mutateExercises((cur) => cur?.filter((e) => e.name !== name))
     },
-    [mutateExercises, setUrlExercise],
+    [mutateExercises, setUrlExercise]
   )
 
   const handleDuplicate = useCallback(
@@ -67,7 +67,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         return [...(cur ?? []), newExercise]
       })
     },
-    [mutateExercises, setUrlExercise],
+    [mutateExercises, setUrlExercise]
   )
 
   return (
@@ -102,7 +102,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           options={categoryNames}
           handleSubmit={useCallback(
             (categories: string[]) => updateFields({ categories }),
-            [updateFields],
+            [updateFields]
           )}
         />
       </Grid>
@@ -113,7 +113,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           options={modifierNames}
           handleSubmit={useCallback(
             (modifiers: string[]) => updateFields({ modifiers }),
-            [updateFields],
+            [updateFields]
           )}
         />
       </Grid>
@@ -122,7 +122,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           attributes={attributes}
           handleSubmit={useCallback(
             (attributes) => updateFields({ attributes }),
-            [updateFields],
+            [updateFields]
           )}
         />
       </Grid>
@@ -133,7 +133,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
           options={modifiers}
           handleSubmit={useCallback(
             (notes: Note[]) => updateFields({ notes }),
-            [updateFields],
+            [updateFields]
           )}
           multiple
         />

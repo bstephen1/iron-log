@@ -26,7 +26,7 @@ export default memo(function NameField({ name, handleUpdate, options }: Props) {
       fullWidth
       handleSubmit={useCallback(
         (name) => handleUpdate({ name }),
-        [handleUpdate],
+        [handleUpdate]
       )}
       yupValidator={yup
         .string()

@@ -27,7 +27,7 @@ interface ComboBoxFieldProps
    *  and the reason for the change (whether the value was added or removed). */
   handleChange?: (
     changedValue: string | undefined,
-    reason: AutocompleteChangeReason,
+    reason: AutocompleteChangeReason
   ) => void
   /** Behavior to follow when adding new items to the value array.
    *
@@ -62,7 +62,7 @@ export default memo(function ComboBoxField({
 
   const onChange = (
     newValue: string[] | string | null,
-    reason: AutocompleteChangeReason,
+    reason: AutocompleteChangeReason
   ) => {
     const formattedNewValue =
       typeof newValue === 'string' ? newValue.split(',') : (newValue ?? [])
@@ -76,7 +76,7 @@ export default memo(function ComboBoxField({
     setValue(
       changeBehavior === 'filter'
         ? options.filter((option) => formattedNewValue.includes(option))
-        : formattedNewValue,
+        : formattedNewValue
     )
     handleChange(change, reason)
     handleSubmit(formattedNewValue)

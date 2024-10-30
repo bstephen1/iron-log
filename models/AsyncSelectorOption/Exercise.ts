@@ -26,7 +26,7 @@ export default class Exercise extends AsyncSelectorOption {
       weight,
       categories,
       modifiers,
-    }: Partial<Omit<Exercise, 'name'>> = {},
+    }: Partial<Omit<Exercise, 'name'>> = {}
   ) {
     super(name, status)
     this.attributes = attributes ?? {}

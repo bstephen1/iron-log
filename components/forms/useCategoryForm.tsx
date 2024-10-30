@@ -34,12 +34,12 @@ export default function useCategoryForm() {
 
           const updatedCategory = await updateCategoryFields(
             oldCategory,
-            updates,
+            updates
           )
           updates.name && mutateExercises()
           // still need to return the new categories, so have to build them
           return cur?.map((category) =>
-            category._id === updatedCategory._id ? updatedCategory : category,
+            category._id === updatedCategory._id ? updatedCategory : category
           )
         },
         {
@@ -52,13 +52,13 @@ export default function useCategoryForm() {
             }
 
             return cur.map((c) =>
-              c._id === oldCategory._id ? { ...oldCategory, ...updates } : c,
+              c._id === oldCategory._id ? { ...oldCategory, ...updates } : c
             )
           },
-        },
+        }
       )
     },
-    [mutateCategories, mutateExercises, setUrlCategory],
+    [mutateCategories, mutateExercises, setUrlCategory]
   )
 
   return {

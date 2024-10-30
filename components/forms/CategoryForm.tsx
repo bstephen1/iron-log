@@ -31,7 +31,7 @@ export default function CategoryForm({
 
   const updateFields = useCallback(
     (updates: Partial<Category>) => handleUpdate(_id, updates),
-    [_id, handleUpdate],
+    [_id, handleUpdate]
   )
 
   const handleDelete = useCallback(
@@ -39,10 +39,10 @@ export default function CategoryForm({
       await deleteCategory(name)
       setUrlCategory(null)
       mutateCategories((cur) =>
-        cur?.filter((category) => category.name !== name),
+        cur?.filter((category) => category.name !== name)
       )
     },
-    [mutateCategories, setUrlCategory],
+    [mutateCategories, setUrlCategory]
   )
 
   return (

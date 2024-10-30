@@ -18,7 +18,7 @@ it(`navigates to today's session from home page`, () => {
     // check date picker input
     cy.get('input[placeholder="MM/DD/YYYY"]').should(
       'have.value',
-      `${month}/${day}/${year}`,
+      `${month}/${day}/${year}`
     )
   })
 })

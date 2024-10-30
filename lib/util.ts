@@ -38,7 +38,7 @@ export const arrayToIndex = <T extends Object>(index: keyof T, arr?: T[]) => {
 export const dayjsStringAdd = (
   date: string,
   value: number,
-  unit?: dayjs.ManipulateType | undefined,
+  unit?: dayjs.ManipulateType | undefined
 ) => dayjs(date).add(value, unit).format(DATE_FORMAT)
 
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
@@ -72,7 +72,7 @@ export type UpdateState<T> = (changes: Partial<T>) => void
 /** Returns total reps over all sets when operator is "total", otherwise zero. */
 export const calculateTotalReps = (
   sets: Set[],
-  { field, operator }: SetType,
+  { field, operator }: SetType
 ) => {
   return operator === 'total' && field
     ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
@@ -88,12 +88,12 @@ export const getUsage = (
   exercises: Exercise[] | undefined | null,
   // would rather not hardcode these but unable to pull the keys from Exercise using keyof
   field: 'categories' | 'modifiers',
-  name: string,
+  name: string
 ) => exercises?.filter((exercise) => exercise[field].includes(name)) ?? []
 
 export function stringifySetType(
   { operator, min = 0, max = 0, value = 0, field }: SetType,
-  units?: Units,
+  units?: Units
 ) {
   return `${operator} ${
     operator === 'between' ? min + ' and ' + max : value

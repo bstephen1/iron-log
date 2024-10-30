@@ -75,7 +75,7 @@ export function convertUnit<Dimension extends keyof Units>(
    *  use is for weight (plate weight + extra weight = total weight) */
   extraValue = 0,
   /** number of decimals to round to */
-  roundedDecimals?: number,
+  roundedDecimals?: number
 ) {
   // we want to show extraValue if it exists and value is undefined
   if (!value && !extraValue) return value
@@ -84,7 +84,7 @@ export function convertUnit<Dimension extends keyof Units>(
 
   // only convert if it exists
   const convertedExtraValue = extraValue
-    ? convertUnitHelper(extraValue, dimension, DB_UNITS[dimension], dest) ?? 0
+    ? (convertUnitHelper(extraValue, dimension, DB_UNITS[dimension], dest) ?? 0)
     : 0
 
   const sum = convertedValue + convertedExtraValue
@@ -96,7 +96,7 @@ function convertUnitHelper<Dimension extends keyof Units>(
   value: number | undefined,
   dimension: Dimension,
   source: Units[Dimension],
-  dest: Units[Dimension],
+  dest: Units[Dimension]
 ) {
   // This would work if value === 0 too, but have to watch out for "effort" dimension.
   if (value === undefined) return undefined

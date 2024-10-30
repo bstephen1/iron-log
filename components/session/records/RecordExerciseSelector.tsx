@@ -31,7 +31,7 @@ export default memo(function RecordExerciseSelector<
   const handleChange = async (newExercise: Exercise | null) => {
     // if an exercise changes, discard any modifiers that are not valid for the new exercise
     const remainingModifiers = activeModifiers.filter((modifier) =>
-      newExercise?.modifiers.some((exercise) => exercise === modifier),
+      newExercise?.modifiers.some((exercise) => exercise === modifier)
     )
 
     mutateRecordFields({

@@ -20,7 +20,7 @@ export default memo(function EquipmentWeightField({
       initialValue={weight}
       handleSubmit={useCallback(
         (weight) => handleUpdate({ weight }),
-        [handleUpdate],
+        [handleUpdate]
       )}
       fullWidth
       variant="outlined"

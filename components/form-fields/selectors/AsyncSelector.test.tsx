@@ -18,7 +18,7 @@ class MockAsyncSelectorOption extends AsyncSelectorOption {
 }
 
 const TestSelector = (
-  props: Partial<AsyncSelectorProps<AsyncSelectorOption, false>>,
+  props: Partial<AsyncSelectorProps<AsyncSelectorOption, false>>
 ) => (
   <AsyncSelector
     handleChange={mockHandleChange}
@@ -68,7 +68,7 @@ it('does not show "add new" option when mutateOptions is not provided', async ()
 
 it('handles changing to an existing option', async () => {
   const { user } = render(
-    <TestSelector options={[{ _id: '1', name: '1', status: Status.active }]} />,
+    <TestSelector options={[{ _id: '1', name: '1', status: Status.active }]} />
   )
 
   // change to first option
@@ -89,7 +89,7 @@ it('handles a custom filter', async () => {
       ]}
       filterCustom={(v) => v._id === '1'}
       handleFilterChange={mockHandleFilterChange}
-    />,
+    />
   )
 
   // open dropdown

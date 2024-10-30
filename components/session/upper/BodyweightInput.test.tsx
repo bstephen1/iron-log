@@ -141,7 +141,7 @@ describe('input', () => {
       URI_BODYWEIGHT,
       new Bodyweight(newWeight, 'official', date2020),
       // slight delay is necessary for the optimistic data to be detected
-      { delay: 100 },
+      { delay: 100 }
     )
 
     await user.type(input, '3')

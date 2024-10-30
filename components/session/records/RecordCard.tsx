@@ -48,7 +48,7 @@ export default memo(function RecordCard(props: Props) {
   // same exercise. record.exercise is only updated upon fetching the record,
   // so if one record updated an exercise any other records would still be using the outdated exercise.
   const { exercise, mutate: mutateExercise } = useExercise(
-    record?.exercise?._id ?? null,
+    record?.exercise?._id ?? null
   )
 
   if (record === undefined || exercise === undefined || props.isQuickRender) {
@@ -124,10 +124,10 @@ function LoadedRecordCard({
         {
           optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
           revalidate: false,
-        },
+        }
       )
     },
-    [mutateExercise],
+    [mutateExercise]
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
@@ -137,10 +137,10 @@ function LoadedRecordCard({
         {
           optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
           revalidate: false,
-        },
+        }
       )
     },
-    [mutateRecord],
+    [mutateRecord]
   )
 
   return (

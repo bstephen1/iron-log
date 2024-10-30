@@ -21,7 +21,7 @@ const autocompletePlaceholder = /add new exercise/i
 const categoryLabel = /select category/i
 
 const TestSelector = (
-  props: Partial<ComponentProps<typeof ExerciseSelector>>,
+  props: Partial<ComponentProps<typeof ExerciseSelector>>
 ) => (
   <ExerciseSelector
     exercise={null}
@@ -71,7 +71,7 @@ it('filters exercises based on category filter', async () => {
     <TestSelector
       exercises={[matchingExercise, unmatchedExercise]}
       category={testCategoryName}
-    />,
+    />
   )
 
   // open autocomplete
@@ -89,7 +89,7 @@ it('unselects exercise if it is not valid for selected category', async () => {
       exercises={[unmatchedExercise]}
       category={testCategoryName}
       exercise={unmatchedExercise}
-    />,
+    />
   )
 
   // A category is already selected. We just need to trigger a category change

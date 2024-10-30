@@ -41,10 +41,10 @@ export default function useExerciseForm() {
 
           const updatedExercise = await updateExerciseFields(
             oldExercise,
-            updates,
+            updates
           )
           return cur?.map((e) =>
-            e._id === updatedExercise._id ? updatedExercise : e,
+            e._id === updatedExercise._id ? updatedExercise : e
           )
         },
         // todo: is there a way to simplify the duplicate code?
@@ -59,13 +59,13 @@ export default function useExerciseForm() {
             }
 
             return cur.map((e) =>
-              e._id === oldExercise._id ? { ...oldExercise, ...updates } : e,
+              e._id === oldExercise._id ? { ...oldExercise, ...updates } : e
             )
           },
-        },
+        }
       )
     },
-    [setUrlExercise, mutateExercises],
+    [setUrlExercise, mutateExercises]
   )
 
   return {

@@ -8,10 +8,7 @@ Visit at https://iron-log.vercel.app/
 <img width="320" alt="iron log middle" src="https://github.com/bstephen1/iron-log/assets/17125707/31033086-cda2-4107-b88d-d0422cefa07d">
 <br />
 
-
-
 ## Features
-
 
 See the [wiki](https://github.com/bstephen1/iron-log/wiki) for detailed information and screenshots.
 

@@ -34,11 +34,11 @@ export default function useModifierForm() {
 
           const updatedModifier = await updateModifierFields(
             oldModifier,
-            updates,
+            updates
           )
           updates.name && mutateExercises()
           return cur?.map((modifier) =>
-            modifier._id === updatedModifier._id ? updatedModifier : modifier,
+            modifier._id === updatedModifier._id ? updatedModifier : modifier
           )
         },
         {
@@ -51,13 +51,13 @@ export default function useModifierForm() {
             }
 
             return cur.map((m) =>
-              m._id === oldModifier._id ? { ...oldModifier, ...updates } : m,
+              m._id === oldModifier._id ? { ...oldModifier, ...updates } : m
             )
           },
-        },
+        }
       )
     },
-    [mutateExercises, mutateModifiers, setUrlModifier],
+    [mutateExercises, mutateModifiers, setUrlModifier]
   )
 
   return {

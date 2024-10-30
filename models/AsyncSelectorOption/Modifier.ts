@@ -6,7 +6,7 @@ import { Status } from '../Status'
 export default class Modifier extends AsyncSelectorOption {
   constructor(
     public name: string,
-    public weight?: number | null,
+    public weight?: number | null
   ) {
     super(name, Status.active)
   }

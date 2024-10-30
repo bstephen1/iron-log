@@ -80,7 +80,7 @@ export default function useField<T = string>({
   const validate = async (value: T): Promise<boolean> => {
     process.env.NEXT_PUBLIC_BROWSER_LOG_LEVEL === 'verbose' &&
       console.log(
-        `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`,
+        `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )
 
     // updating yup to v1 changed reach() to return Schema | Reference

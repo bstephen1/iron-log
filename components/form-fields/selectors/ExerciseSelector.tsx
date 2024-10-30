@@ -10,7 +10,7 @@ import { StatusOrder } from '../../../models/Status'
 type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
   exercise: DisableClearable extends true ? Exercise : Exercise | null
   handleChange: (
-    value: DisableClearable extends true ? Exercise : Exercise | null,
+    value: DisableClearable extends true ? Exercise : Exercise | null
   ) => void
   /** used for autocomplete options, which are considered readonly */
   exercises?: readonly Exercise[]
@@ -33,7 +33,7 @@ export default function ExerciseSelector<
 }: ExerciseSelectorProps<DisableClearable>) {
   const { categoryNames } = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
-    null,
+    null
   )
 
   const handleFilterChange = (filtered: Exercise[]) => {
@@ -69,7 +69,7 @@ export default function ExerciseSelector<
       addNewItem={addExercise}
       // we have to spread because autocomplete considers the options to be readonly, and sort() mutates the array
       options={[...exercises].sort(
-        (a, b) => StatusOrder[a.status] - StatusOrder[b.status],
+        (a, b) => StatusOrder[a.status] - StatusOrder[b.status]
       )}
       groupBy={(option) => option.status}
       startAdornment={

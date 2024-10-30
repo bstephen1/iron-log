@@ -154,7 +154,7 @@ export default function RestTimer() {
         </Grow>
       </Tooltip>
     ),
-    [],
+    []
   )
 
   return (

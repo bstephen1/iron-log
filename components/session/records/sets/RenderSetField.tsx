@@ -24,7 +24,7 @@ interface Props<S extends keyof Units>
 }
 /** chooses which set field type to render, and renders delimiter */
 export default memo(function RenderSetField<S extends keyof Units>(
-  props: Props<S>,
+  props: Props<S>
 ) {
   const { index, unit, delimiter, source } = props
 
@@ -118,7 +118,7 @@ function SetFieldNumeric<S extends keyof Units>({
         // this isn't a super robust way to handle conversions, but it works ok
         // when there's only one field that ever needs a conversion.
         name === 'totalWeight' ? extraWeight : 0,
-        2,
+        2
       )}
       // todo: add validation that this is a number
       handleSubmit={(value) =>
@@ -128,7 +128,7 @@ function SetFieldNumeric<S extends keyof Units>({
             source,
             unit,
             DB_UNITS[source],
-            name === 'totalWeight' ? -extraWeight : 0,
+            name === 'totalWeight' ? -extraWeight : 0
           ),
         })
       }

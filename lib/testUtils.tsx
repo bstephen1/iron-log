@@ -58,14 +58,14 @@ const customRender = (
      *  It cannot be enabled globally because then any test NOT using fake timers will fail.
      */
     useFakeTimers?: boolean
-  },
+  }
 ) => ({
   user: userEvent.setup(
     options?.useFakeTimers
       ? {
           advanceTimers: vi.advanceTimersByTime,
         }
-      : undefined,
+      : undefined
   ),
   ...render(ui, { wrapper: FrontendLayout, ...options }),
 })
@@ -93,7 +93,7 @@ export function useServer(
    *  This can be used to test that the correct body is being passed to the endpoint.
    */
   json?: any,
-  options?: ServerOptions,
+  options?: ServerOptions
 ) {
   const { status, method = 'all', once, simulateError } = options ?? {}
   server.use(
@@ -107,8 +107,8 @@ export function useServer(
               status: status ?? StatusCodes.OK,
             })
       },
-      { once },
-    ),
+      { once }
+    )
   )
 }
 

@@ -11,7 +11,7 @@ it('triggers date change when the new value is a valid date', async () => {
     <SessionDatePicker
       day={dayjs('2020-01-01')}
       handleDayChange={mockHandleDateChange}
-    />,
+    />
   )
 
   const input = screen.getByDisplayValue('01/01/2020')
@@ -35,7 +35,7 @@ it('shows existing session data with badges', async () => {
     <SessionDatePicker
       day={dayjs('2020-01-01')}
       handleDayChange={mockHandleDateChange}
-    />,
+    />
   )
 
   await user.click(screen.getByLabelText(/choose date/i))
@@ -58,7 +58,7 @@ it('handles changing month', async () => {
       handleDayChange={mockHandleDateChange}
       // don't really need to test this, just define it for the coverage
       textFieldProps={{}}
-    />,
+    />
   )
 
   await user.click(screen.getByLabelText(/choose date/i))

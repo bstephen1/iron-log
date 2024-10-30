@@ -63,10 +63,10 @@ export default memo(function RenderSetRow({
             return { ...cur, sets: newSets }
           },
           revalidate: false,
-        },
+        }
       )
     },
-    [_id, index, mutate],
+    [_id, index, mutate]
   )
 
   if (!displayFields.visibleFields.length) {

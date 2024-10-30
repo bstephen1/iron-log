@@ -53,7 +53,7 @@ export default function AsyncSelector<
   // outside the component while keeping the generic.
   const filter = createFilterOptions<Option<C>>()
   const [inputValue, setInputValue] = useState(
-    asyncAutocompleteProps.value?.name ?? '',
+    asyncAutocompleteProps.value?.name ?? ''
   )
 
   return (
@@ -90,7 +90,7 @@ export default function AsyncSelector<
               const newItem = await addNewItem(newOption)
               return options.concat(newItem)
             },
-            { optimisticData: options.concat(newOption) },
+            { optimisticData: options.concat(newOption) }
           )
 
           handleChange(newOption)
@@ -104,7 +104,7 @@ export default function AsyncSelector<
 
         if (filterCustom) {
           filtered = filtered.filter((option) =>
-            filterCustom(option, inputValue),
+            filterCustom(option, inputValue)
           )
           handleFilterChange?.(filtered)
         }
@@ -113,7 +113,7 @@ export default function AsyncSelector<
 
         // append the "add new" option if input is not an existing option
         const isExisting = options.some(
-          (option) => inputValue.toLowerCase() === option.name.toLowerCase(),
+          (option) => inputValue.toLowerCase() === option.name.toLowerCase()
         )
         if (inputValue && !isExisting) {
           // We create a new object every time the input changes.
@@ -126,7 +126,7 @@ export default function AsyncSelector<
           // Insert the newOption as the last active status item.
           // This puts "add new" above any archived items.
           const lastActive = filtered.findLastIndex(
-            (item) => item.status === Status.active,
+            (item) => item.status === Status.active
           )
           filtered = [
             ...filtered.slice(0, lastActive + 1),

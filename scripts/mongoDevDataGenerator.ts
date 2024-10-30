@@ -27,10 +27,10 @@ const { db, collections, client } = await import('../lib/backend/mongoConnect')
 
 const getDisplayFields = (
   names: VisibleField['name'][],
-  units?: Partial<Units>,
+  units?: Partial<Units>
 ): DisplayFields => ({
   visibleFields: ORDERED_DISPLAY_FIELDS.filter((field) =>
-    names.includes(field.name),
+    names.includes(field.name)
   ),
   units: { ...DB_UNITS, ...units },
 })
@@ -257,11 +257,11 @@ const createSessionLogs = () => {
       ...map,
       [record.date]: [...(map[record.date] ?? []), record._id],
     }),
-    {},
+    {}
   )
 
   return Object.entries(sessionMap).map(
-    ([date, records]) => new SessionLog(date, records),
+    ([date, records]) => new SessionLog(date, records)
   )
 }
 

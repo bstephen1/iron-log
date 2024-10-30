@@ -69,7 +69,8 @@
   },
   "prettier": {
     "semi": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "trailingComma": "es5"
   },
   "lint-staged": {
     "*.{ts,tsx,js}": [
