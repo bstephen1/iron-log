@@ -46,7 +46,7 @@ interface Props {
    */
   handleDayChange: (day: Dayjs) => void
   label?: string
-  textFieldProps?: TextFieldProps
+  textFieldProps?: Omit<TextFieldProps, 'slotProps'>
 }
 export default function SessionDatePicker(props: Props) {
   return (
@@ -90,9 +90,10 @@ function SessionDatePickerInner({
       slotProps={{
         textField: {
           ...textFieldProps,
-          InputLabelProps: {
-            ...textFieldProps?.InputLabelProps,
-            shrink: true,
+          slotProps: {
+            inputLabel: {
+              shrink: true,
+            },
           },
         },
       }}

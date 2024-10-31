@@ -56,9 +56,6 @@ export default function NotesListItem(props: Props) {
       autoComplete="off"
       readOnly={readOnly}
       inputRef={inputRef}
-      inputProps={{
-        'aria-label': 'edit',
-      }}
       startAdornment={
         <TagSelect
           handleUpdate={(newTags) =>
@@ -82,6 +79,9 @@ export default function NotesListItem(props: Props) {
         </>
       }
       sx={{ my: 1 }}
+      slotProps={{
+        input: { 'aria-label': 'edit' },
+      }}
     />
   )
 }

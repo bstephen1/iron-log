@@ -25,7 +25,7 @@ interface Props {
 export default function BodyweightInput({
   day,
   ...textFieldProps
-}: Props & TextFieldProps) {
+}: Props & Omit<TextFieldProps, 'slotProps'>) {
   const [bodyweightType, setBodyweightType] = useState<WeighInType>('official')
   const { data, mutate } = useBodyweightHistory({
     limit: 1,
@@ -62,7 +62,6 @@ export default function BodyweightInput({
     <InputField
       {...textFieldProps}
       label="Bodyweight"
-      type="number"
       initialValue={
         !data?.length || data[0].type !== bodyweightType
           ? ''
@@ -75,7 +74,7 @@ export default function BodyweightInput({
       slotProps={{
         htmlInput: {
           inputMode: 'decimal',
-          ...textFieldProps.inputProps,
+          type: 'number',
         },
         input: {
           readOnly: loading,

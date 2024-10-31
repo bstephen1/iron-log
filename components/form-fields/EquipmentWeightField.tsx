@@ -26,7 +26,9 @@ export default memo(function EquipmentWeightField({
       variant="outlined"
       defaultHelperText=" "
       // todo: might want to make this selectable between lbs/kg
-      InputProps={inputProps}
+      slotProps={{
+        input: inputProps,
+      }}
     />
   )
 })

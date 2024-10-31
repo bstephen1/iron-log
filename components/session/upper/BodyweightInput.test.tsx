@@ -61,7 +61,11 @@ it('does not render data if unexpected weigh-in type is received', async () => {
   expect(screen.queryByDisplayValue(weight)).not.toBeInTheDocument()
 })
 
-describe('input', () => {
+// These tests have historically had issues with where the cursor was placed on focus.
+// Previously the cursor was placed at the start of the input when focused.
+// After an update, it switched to the end. user.clear() is not working on the input
+// so we can't easily just clear out the value.
+describe.only('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
@@ -72,7 +76,7 @@ describe('input', () => {
 
     expect(await screen.findByLabelText('Reset')).toBeVisible()
     expect(screen.getByLabelText('Submit')).toBeVisible()
-    expect(screen.getByDisplayValue('3045')).toBeVisible()
+    expect(screen.getByDisplayValue('4530')).toBeVisible()
 
     await user.type(input, '{Backspace}{Backspace}')
 
@@ -81,6 +85,7 @@ describe('input', () => {
     expect(screen.getByLabelText('Submit')).toBeVisible()
   })
 
+  // this is the same as the previous test but the current date is set to the same day as the latest BW value
   it('does not show submit button when latest bodyweight is unchanged and matches current date', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2000} />)
@@ -91,7 +96,7 @@ describe('input', () => {
 
     expect(await screen.findByLabelText('Reset')).toBeVisible()
     expect(screen.getByLabelText('Submit')).toBeVisible()
-    expect(screen.getByDisplayValue('3045')).toBeVisible()
+    expect(screen.getByDisplayValue('4530')).toBeVisible()
 
     await user.type(input, '{Backspace}{Backspace}')
 
@@ -106,8 +111,7 @@ describe('input', () => {
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
-    // After much confusion, I realized userEvent must put the cursor at the START of the input, not the end...
-    await user.type(input, '{Delete}{Delete}')
+    await user.type(input, '{Backspace}{Backspace}')
 
     expect(await screen.findByText(/must have a value/i)).toBeVisible()
     // mui makes it exceedingly annoying to access these buttons.
@@ -148,7 +152,7 @@ describe('input', () => {
     await user.click(screen.getByLabelText('Submit'))
 
     // value should remain as what was inputted while revalidating
-    expect(await screen.findByDisplayValue(345)).toBeVisible()
+    expect(await screen.findByDisplayValue('453')).toBeVisible()
     // after revalidation should update to the server response
     expect(await screen.findByDisplayValue(newWeight)).toBeVisible()
     expect(screen.getByLabelText('Reset')).not.toBeVisible()

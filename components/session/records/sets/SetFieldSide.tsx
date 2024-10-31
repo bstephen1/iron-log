@@ -5,11 +5,10 @@ import { UpdateFields } from '../../../../lib/util'
 import { Set } from '../../../../models/Set'
 import SelectFieldAutosave from '../../../form-fields/SelectFieldAutosave'
 
-interface Props
-  extends Partial<ComponentProps<typeof SelectFieldAutosave<Set['side']>>> {
+type Props = {
   value: Set['side']
   handleSetChange: UpdateFields<Set>
-}
+} & Partial<ComponentProps<typeof SelectFieldAutosave<Set['side']>>>
 export default function SetFieldSide({
   value,
   handleSetChange,
