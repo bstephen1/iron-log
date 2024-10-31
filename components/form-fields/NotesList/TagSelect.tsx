@@ -43,10 +43,12 @@ export default function TagSelect({
       value={multiple ? selectedTags : selectedTags[0]}
       onChange={(e) => handleChange(e.target.value)}
       input={<Input disableUnderline />}
-      inputProps={{ sx: { pr: '0px !important' } }} // disable baked in padding for IconComponent
       IconComponent={() => null}
       renderValue={(selected) => <TagChips {...{ selected, multiple }} />}
       sx={{ pr: 2 }}
+      slotProps={{
+        input: { sx: { pr: '0px !important' } },
+      }}
       {...selectProps}
     >
       {options.map((option) => (

@@ -24,21 +24,24 @@ export default function SetTypeQueryField({
       units={units}
       setType={query}
       disabled={disabled || query.setTypeMatchType === MatchType.Any}
-      SelectProps={{
-        startAdornment: (
-          <MatchTypeSelector
-            matchType={query.setTypeMatchType}
-            updateMatchType={(setTypeMatchType) =>
-              updateQuery({ setTypeMatchType })
-            }
-            options={[MatchType.Exact, MatchType.Any]}
-            descriptions={{
-              [MatchType.Exact]: 'Records with the same set type',
-              [MatchType.Partial]: 'Records with any set matching the set type',
-              [MatchType.Any]: 'No filter',
-            }}
-          />
-        ),
+      slotProps={{
+        select: {
+          startAdornment: (
+            <MatchTypeSelector
+              matchType={query.setTypeMatchType}
+              updateMatchType={(setTypeMatchType) =>
+                updateQuery({ setTypeMatchType })
+              }
+              options={[MatchType.Exact, MatchType.Any]}
+              descriptions={{
+                [MatchType.Exact]: 'Records with the same set type',
+                [MatchType.Partial]:
+                  'Records with any set matching the set type',
+                [MatchType.Any]: 'No filter',
+              }}
+            />
+          ),
+        },
       }}
     />
   )
