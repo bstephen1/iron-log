@@ -1,9 +1,14 @@
 import { Input, InputProps, TextField, TextFieldProps } from '@mui/material'
+import { ChangeEvent, InputHTMLAttributes } from 'react'
 import { useIMask } from 'react-imask'
 import * as yup from 'yup'
 import { doNothing } from '../../lib/util'
 import useField from './useField'
-import { ChangeEvent } from 'react'
+
+const numericInput: InputHTMLAttributes<HTMLInputElement> = {
+  inputMode: 'decimal',
+  type: 'number',
+}
 
 // have to use type union instead of interface extension because TextFieldProps is an intersection type
 export type InputFieldAutosaveProps = {
@@ -22,6 +27,11 @@ export type InputFieldAutosaveProps = {
    *  Note: sx appears to not work. Use style instead.
    */
   renderAsInput?: boolean
+  /** Sets up the input to use a numeric keyboard for mobile devices.
+   *  Use this prop instead of manually setting slotProps.
+   */
+  isNumeric?: boolean
+  alwaysShrinkLabel?: boolean
   id?: TextFieldProps['id']
   debounceMilliseconds?: number
   disableAutoSelect?: boolean
@@ -44,6 +54,8 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     debounceMilliseconds,
     disableAutoSelect,
     maskOptions,
+    isNumeric,
+    alwaysShrinkLabel,
     ...textFieldProps
   } = props
 
@@ -66,23 +78,30 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     },
   })
 
-  const sharedProps: InputProps = {
+  const sharedProps: Omit<InputProps, 'ref'> = {
     autoComplete: 'off',
     error: !!error,
     fullWidth: true,
     inputRef: maskOptions ? ref : undefined,
   }
 
+  const htmlInput = isNumeric ? numericInput : {}
+
   return renderAsInput ? (
     <Input
       id={id}
       {...control}
+      {...sharedProps}
       onChange={handleChange}
       readOnly={readOnly}
       onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
-      inputProps={textFieldProps.inputProps}
-      {...sharedProps}
-      {...textFieldProps.InputProps}
+      slotProps={{
+        // @ts-ignore spreading htmlInput is not an error
+        input: {
+          ...htmlInput,
+          ...textFieldProps.slotProps?.htmlInput,
+        },
+      }}
     />
   ) : (
     <TextField
@@ -92,12 +111,20 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       // autoselect on focus highlights input for easy overwriting
       onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
       helperText={error || defaultHelperText}
-      InputLabelProps={{ shrink: !isEmpty, ...textFieldProps.InputLabelProps }}
       {...textFieldProps}
-      InputProps={{
-        readOnly,
-        ...sharedProps,
-        ...textFieldProps.InputProps,
+      slotProps={{
+        ...textFieldProps.slotProps,
+        input: {
+          readOnly,
+          // slotProps is incompatible with InputProps 'ref' so that needs to be omitted from sharedProps
+          ...sharedProps,
+          ...textFieldProps.slotProps?.input,
+        },
+        // spreading textFieldProps.slotProps.inputLabel makes typescript freak out so we avoid it
+        inputLabel: {
+          shrink: !isEmpty || alwaysShrinkLabel,
+        },
+        htmlInput: { ...htmlInput, ...textFieldProps.slotProps?.htmlInput },
       }}
     />
   )

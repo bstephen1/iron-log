@@ -43,10 +43,12 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
         select
         value={quickMonthRange}
         onChange={(e) => handleQuickMonthChange(e.target.value)}
-        SelectProps={{
-          displayEmpty: true,
+        slotProps={{
+          select: {
+            displayEmpty: true,
+          },
+          inputLabel: { shrink: true },
         }}
-        InputLabelProps={{ shrink: true }}
       >
         <MenuItem value="3">Last 3 months</MenuItem>
         <MenuItem value="6">Last 6 months</MenuItem>

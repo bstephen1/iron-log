@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, InputBaseComponentProps, SelectProps } from '@mui/material'
 import { ComponentProps } from 'react'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
@@ -27,24 +27,31 @@ export default function SetFieldSide({
       initialValue={value}
       options={['L', 'R']}
       emptyOption="Both"
-      inputProps={{
-        sx: {
-          pr: '0px !important', // disable baked in padding for IconComponent
-          ...selectProps.inputProps?.sx,
-        },
-      }}
       fullWidth
-      SelectProps={{
-        autoWidth: true,
-        IconComponent: () => null,
-        renderValue: (selected) => <Box>{selected}</Box>,
-      }}
       value={value ?? ''}
       handleSubmit={(side) =>
         handleSetChange({
           side: side,
         })
       }
+      slotProps={{
+        ...selectProps.slotProps,
+        // @ts-ignore slotProps does not let you set the generic type of select
+        select: {
+          autoWidth: true,
+          IconComponent: () => null,
+          renderValue: (selected) => <Box>{selected}</Box>,
+          ...selectProps.slotProps?.select,
+        } as SelectProps<typeof value>,
+        htmlInput: {
+          sx: {
+            pr: '0px !important', // disable baked in padding for IconComponent
+            // mui does not provide proper typing to fields on slotProps
+            ...(selectProps.slotProps?.htmlInput as InputBaseComponentProps)
+              ?.sx,
+          },
+        },
+      }}
     />
   )
 }

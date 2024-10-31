@@ -1,6 +1,6 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
-import { TextField, TextFieldProps, Tooltip } from '@mui/material'
+import { InputProps, TextField, TextFieldProps, Tooltip } from '@mui/material'
 import { useRef } from 'react'
 import { reach } from 'yup'
 import TransitionIconButton from '../TransitionIconButton'
@@ -55,28 +55,31 @@ export default function InputField(props: Props & TextFieldProps) {
         }
       }}
       inputRef={inputRef}
-      InputProps={{
-        ...textFieldProps.InputProps,
-        endAdornment: (
-          <>
-            <TransitionIconButton isVisible={isDirty} onClick={onReset}>
-              <Tooltip title="Reset">
-                <ReplayIcon />
-              </Tooltip>
-            </TransitionIconButton>
-            <TransitionIconButton
-              isVisible={showSubmit ?? isDirty}
-              disabled={!!error}
-              onClick={() => submit()}
-              data-testid="submit button"
-            >
-              <Tooltip title="Submit">
-                <CheckIcon />
-              </Tooltip>
-            </TransitionIconButton>
-            {textFieldProps.InputProps?.endAdornment}
-          </>
-        ),
+      slotProps={{
+        input: {
+          ...textFieldProps.slotProps?.input,
+          endAdornment: (
+            <>
+              <TransitionIconButton isVisible={isDirty} onClick={onReset}>
+                <Tooltip title="Reset">
+                  <ReplayIcon />
+                </Tooltip>
+              </TransitionIconButton>
+              <TransitionIconButton
+                isVisible={showSubmit ?? isDirty}
+                disabled={!!error}
+                onClick={() => submit()}
+                data-testid="submit button"
+              >
+                <Tooltip title="Submit">
+                  <CheckIcon />
+                </Tooltip>
+              </TransitionIconButton>
+              {/* mui does not provide proper typing to fields on slotProps */}
+              {(textFieldProps.slotProps?.input as InputProps)?.endAdornment}
+            </>
+          ),
+        },
       }}
     />
   )

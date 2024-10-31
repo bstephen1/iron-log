@@ -1,8 +1,7 @@
-import { MenuItem, SelectProps, TextField, TextFieldProps } from '@mui/material'
+import { MenuItem, TextField, TextFieldProps } from '@mui/material'
 import { ReactNode } from 'react'
 import * as yup from 'yup'
 import useField from './useField'
-import { fixSelectBackground } from '../../lib/frontend/constants'
 
 interface Props<V, O> {
   label: string
@@ -12,8 +11,6 @@ interface Props<V, O> {
   handleSubmit: (value: V) => void
   yupValidator?: ReturnType<typeof yup.reach>
   children?: ReactNode
-  // manually add in generic type that TextField fails to pass on
-  SelectProps?: Partial<SelectProps<V>>
   readOnly?: boolean
   /** label for empty option  */
   emptyOption?: string
@@ -23,7 +20,7 @@ interface Props<V, O> {
  */
 export default function SelectFieldAutosave<
   V extends string | undefined | null,
-  O = V
+  O = V,
 >(props: Props<V, O> & Omit<TextFieldProps, 'SelectProps'>) {
   const {
     label,
@@ -59,15 +56,16 @@ export default function SelectFieldAutosave<
       select
       helperText={defaultHelperText}
       {...textFieldProps}
-      InputProps={{
-        readOnly,
-        ...textFieldProps.InputProps,
-      }}
-      // @ts-ignore TextField fails to pass the generic param to SelectProps, so it incorrectly assumes the default, unknown
-      SelectProps={{
-        displayEmpty: !!emptyOption,
-        ...fixSelectBackground,
-        ...textFieldProps.SelectProps,
+      slotProps={{
+        ...textFieldProps.slotProps,
+        input: {
+          readOnly,
+          ...textFieldProps.slotProps?.input,
+        },
+        select: {
+          displayEmpty: !!emptyOption,
+          ...textFieldProps.slotProps?.select,
+        },
       }}
     >
       {/* Note the empty value will store an empty string in db instead of undefined. 

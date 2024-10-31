@@ -68,10 +68,10 @@ export default function QueryCard({ query, setQuery }: Props) {
         label="Record limit"
         initialValue={unsavedQuery.limit}
         placeholder="None"
-        InputLabelProps={{ shrink: true }}
         handleSubmit={(limit) => updateUnsavedQuery({ limit })}
         variant="outlined"
         debounceMilliseconds={0}
+        alwaysShrinkLabel
       />
       <QueryDateRangePicker
         query={unsavedQuery}

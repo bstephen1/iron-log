@@ -25,14 +25,8 @@ export default function NumericFieldAutosave({
       handleSubmit={(str) => handleNumberSubmit(convertValueToNumber(str))}
       variant="standard"
       defaultHelperText=""
+      isNumeric
       {...inputFieldAutosaveProps}
-      // Use InputProps instead of top level TextFieldProps in case renderAsInput is set to true.
-      // This avoids props from silently being ignored.
-      inputProps={{
-        inputMode: 'decimal',
-        type: 'number',
-        ...inputFieldAutosaveProps.inputProps,
-      }}
     />
   )
 }

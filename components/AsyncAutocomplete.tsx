@@ -30,8 +30,10 @@ export interface AsyncAutocompleteProps<
   variant?: TextFieldProps['variant']
   /** if the input has an adornment with a dropdown, the dropdown can interfere with the autocomplete dropdown. This value can indicate whether the adornment dropdown is open.  */
   adornmentOpen?: boolean
-  /** a few textFieldProps are extracted for convenience, but others can be added here */
-  textFieldProps?: TextFieldProps
+  /** A few textFieldProps are extracted for convenience, but others can be added here.
+   *  Note: slotProps are not handled; they will be ignored.
+   */
+  textFieldProps?: Omit<TextFieldProps, 'slotProps'>
   alwaysShowLoading?: boolean
   loadingText?: string
   /** for normal Autocompletes options are required, but in async they may be undefined while loading */
@@ -88,23 +90,22 @@ export default function AsyncAutocomplete<
           placeholder={placeholder}
           label={label}
           variant={variant}
-          InputProps={{
-            ...params.InputProps,
-            ...textFieldProps?.InputProps,
-            startAdornment: (
-              <>
-                {startAdornment}
-                {params.InputProps.startAdornment}
-                {textFieldProps?.InputProps?.startAdornment}
-              </>
-            ),
-            endAdornment: (
-              <>
-                {loading && <CircularProgress color="inherit" size={20} />}
-                {params.InputProps.endAdornment}
-                {textFieldProps?.InputProps?.endAdornment}
-              </>
-            ),
+          slotProps={{
+            input: {
+              ...params.InputProps,
+              startAdornment: (
+                <>
+                  {startAdornment}
+                  {params.InputProps.startAdornment}
+                </>
+              ),
+              endAdornment: (
+                <>
+                  {loading && <CircularProgress color="inherit" size={20} />}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            },
           }}
         />
       )}

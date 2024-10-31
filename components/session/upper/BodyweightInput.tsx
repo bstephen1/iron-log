@@ -72,33 +72,35 @@ export default function BodyweightInput({
       yupValidator={yup.reach(validationSchema, 'value')}
       // allow user to update bw with same value if latest date isn't the current date
       showSubmit={data?.[0]?.date !== day.format(DATE_FORMAT) || undefined}
-      inputProps={{
-        inputMode: 'decimal',
-        ...textFieldProps.inputProps,
-      }}
-      InputProps={{
-        readOnly: loading,
-        'aria-label': 'bodyweight input',
-        // without the box the loading spinner has an uneven width
-        startAdornment: (
-          <>
-            {loading ? (
-              <Box sx={{ width: '20px' }}>
-                <CircularProgress color="inherit" size={20} />
-              </Box>
-            ) : (
-              <BodyweightInputToggle
-                type={bodyweightType}
-                handleTypeChange={setBodyweightType}
-              />
-            )}
-          </>
-        ),
-        endAdornment: (
-          <InputAdornment position="end">
-            {DEFAULT_DISPLAY_FIELDS.units.weight}
-          </InputAdornment>
-        ),
+      slotProps={{
+        htmlInput: {
+          inputMode: 'decimal',
+          ...textFieldProps.inputProps,
+        },
+        input: {
+          readOnly: loading,
+          'aria-label': 'bodyweight input',
+          // without the box the loading spinner has an uneven width
+          startAdornment: (
+            <>
+              {loading ? (
+                <Box sx={{ width: '20px' }}>
+                  <CircularProgress color="inherit" size={20} />
+                </Box>
+              ) : (
+                <BodyweightInputToggle
+                  type={bodyweightType}
+                  handleTypeChange={setBodyweightType}
+                />
+              )}
+            </>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              {DEFAULT_DISPLAY_FIELDS.units.weight}
+            </InputAdornment>
+          ),
+        },
       }}
       defaultHelperText={getHelperText()}
     />

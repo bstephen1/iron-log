@@ -76,9 +76,9 @@ export function convertUnit<Dimension extends keyof Units>(
   extraValue = 0,
   /** number of decimals to round to */
   roundedDecimals?: number
-) {
+): number | undefined {
   // we want to show extraValue if it exists and value is undefined
-  if (!value && !extraValue) return value
+  if (!value && !extraValue) return value // value could be 0 or undefined
 
   const convertedValue = convertUnitHelper(value, dimension, source, dest) ?? 0
 

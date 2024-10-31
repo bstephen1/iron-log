@@ -102,9 +102,11 @@ export default function GraphOptionsForm({
                 : Number(e.target.value),
             })
           }
-          inputProps={{ inputMode: 'decimal' }}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+            },
+            htmlInput: { inputMode: 'decimal' },
           }}
         />
       </Grid>

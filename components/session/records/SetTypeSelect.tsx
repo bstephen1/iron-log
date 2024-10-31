@@ -11,10 +11,9 @@ import {
   TextFieldProps,
   Typography,
 } from '@mui/material'
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
-import { fixSelectBackground } from '../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields, UpdateState, stringifySetType } from '../../../lib/util'
 import {
@@ -25,15 +24,14 @@ import Record, { SetType, setOperators } from '../../../models/Record'
 import { Units } from '../../../models/Set'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
-  (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight,
+  (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
 )
 
 const timeField = ORDERED_DISPLAY_FIELDS.filter(
-  (field) => field.source === 'time',
+  (field) => field.source === 'time'
 )
 
 const valueInputStyle = { margin: 0, maxWidth: '80px' }
-const standardVariantSx = { '& .MuiInput-input': { pr: '0px !important' } }
 
 type Props = {
   /** considered readOnly if not provided */
@@ -51,7 +49,6 @@ export default memo(function SetTypeSelect({
   units,
   setType,
   showRemaining,
-  SelectProps,
   ...textFieldProps
 }: Props) {
   const { field, value = 0, operator, min = 0, max = 0 } = setType
@@ -82,35 +79,33 @@ export default memo(function SetTypeSelect({
       className={noSwipingDesktop}
       label="Set type"
       value={menuValue}
-      InputLabelProps={{
-        shrink: true,
-      }}
-      // forcibly remove the input's padding. Select assumes the dropdown arrow
-      // will be under the padding, but this leaves the arrow off center with autocomplete arrows.
-      sx={variant === 'standard' ? standardVariantSx : undefined}
-      SelectProps={{
-        readOnly,
-        IconComponent:
-          variant === 'standard'
-            ? (props) => (
-                <ArrowDropDownIcon
-                  {...props}
-                  // override absolute positioning that shifts it off center
-                  sx={{ right: '0 !important' }}
-                />
-              )
-            : undefined,
-        displayEmpty: true,
-        autoWidth: true,
-        renderValue: () => (
-          <Typography>
-            {menuValue} <em>{remainingText}</em>
-          </Typography>
-        ),
-        ...fixSelectBackground,
-        ...SelectProps,
-      }}
       {...textFieldProps}
+      slotProps={{
+        select: {
+          readOnly,
+          IconComponent:
+            variant === 'standard'
+              ? (props) => (
+                  <ArrowDropDownIcon
+                    {...props}
+                    // override absolute positioning that shifts it off center
+                    sx={{ right: '0 !important' }}
+                  />
+                )
+              : undefined,
+          displayEmpty: true,
+          autoWidth: true,
+          renderValue: () => (
+            <Typography>
+              {menuValue} <em>{remainingText}</em>
+            </Typography>
+          ),
+          ...textFieldProps.slotProps?.select,
+        },
+        inputLabel: {
+          shrink: true,
+        },
+      }}
     >
       {/* allows menuValue to not be out of range */}
       <MenuItem value={menuValue} sx={{ display: 'none' }} />
@@ -150,7 +145,7 @@ export default memo(function SetTypeSelect({
                 id="set-type-min"
                 initialValue={min}
                 handleSubmit={(min) => updateSetType({ min })}
-                InputProps={{ style: valueInputStyle }}
+                slotProps={{ htmlInput: { style: valueInputStyle } }}
               />
             </FormControl>
             <FormControl>
@@ -160,7 +155,7 @@ export default memo(function SetTypeSelect({
                 id="set-type-max"
                 initialValue={max}
                 handleSubmit={(max) => updateSetType({ max })}
-                InputProps={{ style: valueInputStyle }}
+                slotProps={{ htmlInput: { style: valueInputStyle } }}
               />
             </FormControl>
           </Stack>
@@ -172,9 +167,7 @@ export default memo(function SetTypeSelect({
               id="set-type-value"
               initialValue={value}
               handleSubmit={(value) => updateSetType({ value })}
-              InputProps={{
-                style: valueInputStyle,
-              }}
+              slotProps={{ htmlInput: { style: valueInputStyle } }}
             />
           </FormControl>
         )}

@@ -9,7 +9,6 @@ import {
   SelectProps,
 } from '@mui/material'
 import { useState } from 'react'
-import { fixSelectBackground } from '../../../lib/frontend/constants'
 import TagChips from './TagChips'
 
 type Props = {
@@ -37,6 +36,8 @@ export default function TagSelect({
       multiple={multiple}
       autoWidth
       displayEmpty
+      // prevent error with "notched" by avoiding outlined variant. The variant is invisible so doesn't matter.
+      variant="standard"
       onClose={() => setOpen(false)}
       onOpen={() => options.length && setOpen(true)}
       value={multiple ? selectedTags : selectedTags[0]}
@@ -46,7 +47,6 @@ export default function TagSelect({
       IconComponent={() => null}
       renderValue={(selected) => <TagChips {...{ selected, multiple }} />}
       sx={{ pr: 2 }}
-      {...fixSelectBackground}
       {...selectProps}
     >
       {options.map((option) => (

@@ -12,9 +12,8 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import isEqual from 'react-fast-compare'
-import { fixSelectBackground } from '../../../../lib/frontend/constants'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
@@ -146,7 +145,6 @@ export default memo(function SetHeader({
             )}
           </Stack>
         )}
-        {...fixSelectBackground}
         {...selectProps}
       >
         <MenuItem disabled>

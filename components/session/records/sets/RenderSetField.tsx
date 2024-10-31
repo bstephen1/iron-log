@@ -56,10 +56,10 @@ export default memo(function RenderSetField<S extends keyof Units>(
 
 // pick only the props actually used so fields that use
 // generics don't conflict with component types
-const sharedProps: Pick<TextFieldProps, 'inputProps' | 'InputProps' | 'sx'> = {
-  inputProps: { sx: { textAlign: 'center' } },
-  InputProps: {
-    disableUnderline: true,
+const sharedProps: Pick<TextFieldProps, 'slotProps' | 'sx'> = {
+  slotProps: {
+    htmlInput: { sx: { textAlign: 'center' } },
+    input: { disableUnderline: true },
   },
   sx: { flexGrow: 1, flexBasis: 0 },
 }
@@ -133,9 +133,12 @@ function SetFieldNumeric<S extends keyof Units>({
         })
       }
       {...sharedProps}
-      InputProps={{
-        readOnly,
-        ...sharedProps.InputProps,
+      slotProps={{
+        ...sharedProps.slotProps,
+        input: {
+          readOnly,
+          ...sharedProps.slotProps?.input,
+        },
       }}
     />
   )

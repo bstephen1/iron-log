@@ -17,7 +17,6 @@ import RecordDisplay, {
   RecordDisplayOperator,
   recordDisplayOperators,
 } from './RecordDisplay'
-import { fixSelectBackground } from '../../lib/frontend/constants'
 
 const fieldOptions = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
@@ -30,7 +29,6 @@ type Props = {
 
 export default function RecordDisplaySelect({
   updateRecordDisplay,
-  SelectProps,
   recordDisplay,
   ...textFieldProps
 }: Props) {
@@ -46,18 +44,20 @@ export default function RecordDisplaySelect({
       fullWidth
       label="Record display"
       value={menuValue}
-      InputLabelProps={{ shrink: true }}
-      SelectProps={{
-        open,
-        onOpen: () => setOpen(true),
-        onClose: handleClose,
-        displayEmpty: true,
-        autoWidth: true,
-        renderValue: () => <Typography>{menuValue}</Typography>,
-        ...fixSelectBackground,
-        ...SelectProps,
-      }}
       {...textFieldProps}
+      slotProps={{
+        ...textFieldProps.slotProps,
+        select: {
+          open,
+          onOpen: () => setOpen(true),
+          onClose: handleClose,
+          displayEmpty: true,
+          autoWidth: true,
+          renderValue: () => <Typography>{menuValue}</Typography>,
+          ...textFieldProps.slotProps?.select,
+        },
+        inputLabel: { shrink: true },
+      }}
     >
       {/* allows menuValue to not be out of range */}
       <MenuItem value={menuValue} sx={{ display: 'none' }} />

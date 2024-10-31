@@ -51,7 +51,7 @@ export default memo(function HistoryCard({
 
   // use splitWeight if parent record is using it
   const showSplitWeight = displayFields.visibleFields.some((field) =>
-    ['plateWeight', 'totalWeight'].includes(field.name),
+    ['plateWeight', 'totalWeight'].includes(field.name)
   )
 
   const actionComponents: { [key in HistoryAction]: JSX.Element } = {
@@ -69,7 +69,9 @@ export default memo(function HistoryCard({
         label="Exercise"
         variant="standard"
         value={exercise?.name}
-        InputProps={{ readOnly: true }}
+        slotProps={{
+          input: { readOnly: true },
+        }}
       />
     ),
     modifiers: (
