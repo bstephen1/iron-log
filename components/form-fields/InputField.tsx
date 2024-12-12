@@ -56,6 +56,7 @@ export default function InputField(props: Props & TextFieldProps) {
       }}
       inputRef={inputRef}
       slotProps={{
+        ...textFieldProps.slotProps,
         input: {
           ...textFieldProps.slotProps?.input,
           endAdornment: (

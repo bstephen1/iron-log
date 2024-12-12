@@ -62,17 +62,17 @@ it('does not render data if unexpected weigh-in type is received', async () => {
 })
 
 // These tests have historically had issues with where the cursor was placed on focus.
-// Previously the cursor was placed at the start of the input when focused.
-// After an update, it switched to the end. user.clear() is not working on the input
-// so we can't easily just clear out the value.
-describe.only('input', () => {
+// It was not reliably starting at the start or end of the input.
+// user.clear() is not working on the input so we can't easily just clear out the value.
+// We can use the home/end keys to ensure it starts at a known location though.
+describe('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
-    await user.type(input, '30')
+    await user.type(input, '{End}30')
 
     expect(await screen.findByLabelText('Reset')).toBeVisible()
     expect(screen.getByLabelText('Submit')).toBeVisible()
@@ -92,7 +92,7 @@ describe.only('input', () => {
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
-    await user.type(input, '30')
+    await user.type(input, '{End}30')
 
     expect(await screen.findByLabelText('Reset')).toBeVisible()
     expect(screen.getByLabelText('Submit')).toBeVisible()
@@ -111,7 +111,7 @@ describe.only('input', () => {
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
-    await user.type(input, '{Backspace}{Backspace}')
+    await user.type(input, '{End}{Backspace}{Backspace}')
 
     expect(await screen.findByText(/must have a value/i)).toBeVisible()
     // mui makes it exceedingly annoying to access these buttons.
@@ -148,7 +148,7 @@ describe.only('input', () => {
       { delay: 100 }
     )
 
-    await user.type(input, '3')
+    await user.type(input, '{End}3')
     await user.click(screen.getByLabelText('Submit'))
 
     // value should remain as what was inputted while revalidating
