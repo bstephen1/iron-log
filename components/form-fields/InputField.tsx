@@ -29,7 +29,7 @@ export default function InputField(props: Props & TextFieldProps) {
   } = props
 
   const inputRef = useRef<HTMLInputElement>()
-  const { control, reset, submit, isDirty, error } = useField<string>({
+  const { control, reset, submit, isDirty, error } = useField({
     yupValidator,
     handleSubmit,
     initialValue,
@@ -77,7 +77,7 @@ export default function InputField(props: Props & TextFieldProps) {
                 </Tooltip>
               </TransitionIconButton>
               {/* mui does not provide proper typing to fields on slotProps */}
-              {(textFieldProps.slotProps?.input as InputProps)?.endAdornment}
+              {(textFieldProps.slotProps?.input as InputProps).endAdornment}
             </>
           ),
         },

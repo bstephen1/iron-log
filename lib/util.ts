@@ -74,14 +74,14 @@ export const calculateTotalReps = (
   sets: Set[],
   { field, operator }: SetType
 ) => {
-  return operator === 'total' && field
+  return operator === 'total'
     ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
     : 0
 }
 
 /** returns units for a field, with correct typing */
 export const getUnit = (field: SetType['field'], units: Units) =>
-  units[field as keyof Units] ?? field
+  units[field as keyof Units]
 
 /** returns the exercises the given category or modifier is used in */
 export const getUsage = (

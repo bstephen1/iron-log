@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material'
 import Link from 'next/link'
-import { memo } from 'react'
+import { memo, JSX } from 'react'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
 import StyledDivider from '../../../components/StyledDivider'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'

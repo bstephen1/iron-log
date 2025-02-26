@@ -8,6 +8,7 @@ import {
   TypographyProps,
 } from '@mui/material'
 import StyledDivider from '../../components/StyledDivider'
+import { JSX } from 'react'
 
 interface Props {
   title?: string

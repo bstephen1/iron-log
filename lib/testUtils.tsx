@@ -118,7 +118,7 @@ interface TestApiResponseProps<T = unknown>
   handler: NextApiHandler<T>
   method?: string
 }
-export async function expectApiRespondsWithData<T>({
+export async function expectApiRespondsWithData({
   data,
   handler,
   method = 'GET',
@@ -128,7 +128,7 @@ export async function expectApiRespondsWithData<T>({
   const body = hasBody ? JSON.stringify(data) : undefined
   const headers = hasBody ? { 'content-type': 'application/json' } : undefined
 
-  await testApiHandler<T>({
+  await testApiHandler({
     ...testApiHandlerProps,
     pagesHandler: handler,
     test: async ({ fetch }) => {

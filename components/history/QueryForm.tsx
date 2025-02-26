@@ -46,7 +46,7 @@ export default function QueryCard({ query, setQuery }: Props) {
             })
           }
         }}
-        activeModifiers={unsavedQuery.modifier ?? []}
+        activeModifiers={unsavedQuery.modifier}
         exercise={exercise}
         category={null}
         variant="outlined"
@@ -55,7 +55,7 @@ export default function QueryCard({ query, setQuery }: Props) {
         disabled={!exercise}
         matchType={unsavedQuery.modifierMatchType}
         options={exercise?.modifiers || []}
-        initialValue={unsavedQuery.modifier || []}
+        initialValue={unsavedQuery.modifier}
         updateQuery={updateUnsavedQuery}
       />
       <SetTypeQueryField

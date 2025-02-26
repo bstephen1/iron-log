@@ -10,7 +10,7 @@ import { useEffect } from 'react'
 const disableNumberSpin = () => {
   if (!(document.activeElement instanceof HTMLInputElement)) return
 
-  if (document.activeElement?.type === 'number') {
+  if (document.activeElement.type === 'number') {
     document.activeElement.blur()
   }
 }

@@ -6,9 +6,9 @@ export default function useExtraWeight(record: Record) {
   const { data: bodyweightData } = useBodyweightHistory(
     {
       limit: 2,
-      end: record?.date,
+      end: record.date,
     },
-    record?.exercise?.attributes?.bodyweight
+    record.exercise?.attributes.bodyweight
   )
 
   const { activeModifiers, exercise } = record

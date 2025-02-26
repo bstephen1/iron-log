@@ -30,8 +30,8 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
       let statusCode = StatusCodes.INTERNAL_SERVER_ERROR
       let message = 'An unexpected error occured.'
       if (e instanceof ApiError) {
-        statusCode = e.statusCode ?? statusCode
-        message = e.message ?? message
+        statusCode = e.statusCode
+        message = e.message
       }
 
       if (process.env.SERVER_LOG_LEVEL === 'verbose') {

@@ -1,6 +1,6 @@
 import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/material/Grid2'
-import { memo, useEffect, useState } from 'react'
+import { JSX, memo, useEffect, useState } from 'react'
 import StyledDivider from '../components/StyledDivider'
 import useCategoryForm from '../components/forms/useCategoryForm'
 import useExerciseForm from '../components/forms/useExerciseForm'

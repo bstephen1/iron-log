@@ -40,8 +40,7 @@ export default memo(function SetHeader({
   const noSwipingDesktop = useNoSwipingDesktop()
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
-  const selectedNames =
-    displayFields?.visibleFields.map((field) => field.name) || []
+  const selectedNames = displayFields.visibleFields.map((field) => field.name)
 
   const options: VisibleField[] = ORDERED_DISPLAY_FIELDS.filter(
     (field) =>

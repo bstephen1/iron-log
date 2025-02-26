@@ -28,8 +28,8 @@ export default function FullscreenButton() {
 
   const toggleFullscreen = async () =>
     isFullscreen
-      ? document?.exitFullscreen()
-      : await elem?.current?.requestFullscreen()
+      ? document.exitFullscreen()
+      : await elem.current?.requestFullscreen()
 
   return (
     <Box px={1}>

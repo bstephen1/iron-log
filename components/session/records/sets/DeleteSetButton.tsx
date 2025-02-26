@@ -20,7 +20,7 @@ export default memo(function DeleteSetButton({ _id, index, my }: Props) {
       (cur) =>
         cur
           ? updateRecordFields(_id, {
-              ['sets']: cur?.sets.filter((_, j) => j !== index),
+              ['sets']: cur.sets.filter((_, j) => j !== index),
             })
           : null,
       {

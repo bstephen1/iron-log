@@ -59,7 +59,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     ...textFieldProps
   } = props
 
-  const { error, isEmpty, ...field } = useField<string>({
+  const { error, isEmpty, ...field } = useField({
     initialValue,
     yupValidator,
     handleSubmit,

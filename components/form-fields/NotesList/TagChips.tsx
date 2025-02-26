@@ -14,7 +14,7 @@ export default function TagChips({ selected, multiple }: Props) {
 
   return (
     <Stack spacing={0.5}>
-      {selected?.length ? (
+      {selected.length ? (
         selected.map((value) => <StyledChip key={value} label={value} />)
       ) : (
         <StyledChip

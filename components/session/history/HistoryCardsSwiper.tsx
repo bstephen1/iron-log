@@ -126,7 +126,7 @@ export default memo(function HistoryCardsSwiper({
             }}
           />
           {historyRecords
-            ?.map((historyRecord, i) => (
+            .map((historyRecord, i) => (
               <SwiperSlide
                 // have to recalculate autoHeight when matchesRecord changes
                 key={historyRecord._id}

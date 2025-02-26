@@ -57,12 +57,11 @@ export default memo(function NotesList(props: Props) {
       {!readOnly && (
         <AddNote
           placeholder={addItemPlaceholder}
-          disabled={props.notes == null}
           {...{ handleAdd, options, multiple, initialTags }}
         />
       )}
       <TransitionGroup>
-        {notes?.map((note, index) => (
+        {notes.map((note, index) => (
           <Collapse key={note._id}>
             <NotesListItem
               placeholder={listItemPlaceholder}

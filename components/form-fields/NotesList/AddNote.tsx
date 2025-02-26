@@ -10,7 +10,7 @@ import TagSelect from './TagSelect'
 interface Props {
   placeholder?: string
   handleAdd: (value: Note) => void
-  disabled: boolean
+  disabled?: boolean
   options: string[]
   multiple?: boolean
   initialTags?: string[]

@@ -170,7 +170,7 @@ export default function RestTimer() {
           </Box>
         ) : (
           <>
-            <Grow in={enabled && !isFinished}>
+            <Grow in={!isFinished}>
               <Typography
                 textAlign="center"
                 display={isFinished ? 'none' : 'block'}
@@ -178,7 +178,7 @@ export default function RestTimer() {
                 Rest time
               </Typography>
             </Grow>
-            <Grow in={enabled && isFinished}>
+            <Grow in={isFinished}>
               <Typography
                 textAlign="center"
                 display={isFinished ? 'block' : 'none'}

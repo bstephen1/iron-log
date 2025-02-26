@@ -18,7 +18,7 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
   const isLeft = direction === 'left'
   const leftDisabled = !index
   // disable on the penultimate slide because the last is the "add record" button
-  const rightDisabled = index >= swiper.slides?.length - 2
+  const rightDisabled = index >= swiper.slides.length - 2
   const newIndex = isLeft ? index - 1 : index + 1
 
   const swapRecords = async (i: number, j: number) => {

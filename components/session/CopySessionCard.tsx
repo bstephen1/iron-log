@@ -53,8 +53,7 @@ export default function CopySessionCard() {
     // be selected on the fly
     waitForFetch()
 
-    // the type for these isn't showing null somehow, but sessionlog CAN be null
-    if (!recordsIndex || !prevSessionLog) {
+    if (!prevSessionLog) {
       setIsSessionEmpty(true)
       setIsLoading(false)
       return

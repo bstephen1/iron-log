@@ -68,7 +68,7 @@ export default memo(function ComboBoxField({
       typeof newValue === 'string' ? newValue.split(',') : (newValue ?? [])
     let change
     if (reason === 'selectOption') {
-      change = formattedNewValue[formattedNewValue?.length - 1]
+      change = formattedNewValue[formattedNewValue.length - 1]
     } else if (reason === 'removeOption') {
       change = value.find((item) => !formattedNewValue.includes(item))
     }
