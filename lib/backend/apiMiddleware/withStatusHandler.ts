@@ -26,7 +26,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
       // A 204 (no content) might semantically make sense, but it breaks json parsing and
       // the client has to then factor in a null body instead of an empty json object.
       res.status(StatusCodes.OK).json(payload)
-    } catch (e: any) {
+    } catch (e) {
       let statusCode = StatusCodes.INTERNAL_SERVER_ERROR
       let message = 'An unexpected error occured.'
       if (e instanceof ApiError) {

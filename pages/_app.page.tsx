@@ -8,10 +8,9 @@ import { swrFetcher } from '../lib/util'
 import { useEffect } from 'react'
 
 const disableNumberSpin = () => {
-  if (!(document.activeElement instanceof HTMLElement)) return
+  if (!(document.activeElement instanceof HTMLInputElement)) return
 
-  // ts does not recognize the valid property "type"
-  if ((document.activeElement as any)?.type === 'number') {
+  if (document.activeElement?.type === 'number') {
     document.activeElement.blur()
   }
 }

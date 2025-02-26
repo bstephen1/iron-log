@@ -24,6 +24,6 @@ describe('arrayToIndex', () => {
   it('throws error when given invalid index type', () => {
     const badObj = { a: [1, 2, 3] }
 
-    expect(() => arrayToIndex<any>('a', [badObj])).toThrow(Error)
+    expect(() => arrayToIndex('a', [badObj])).toThrow(Error)
   })
 })
