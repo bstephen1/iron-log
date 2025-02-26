@@ -35,7 +35,7 @@ export default function SetFieldSide({
       }
       slotProps={{
         ...selectProps.slotProps,
-        // @ts-ignore slotProps does not let you set the generic type of select
+        // @ts-expect-error slotProps does not let you set the generic type of select
         select: {
           autoWidth: true,
           IconComponent: () => null,

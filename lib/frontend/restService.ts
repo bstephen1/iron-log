@@ -53,7 +53,7 @@ export const paramify = (query: ParsedUrlQueryInput) => {
  *
  *  Any data fields that may be undefined should also expect "null" as a value.
  */
-const toJson = (obj: Object) =>
+const toJson = (obj: object) =>
   JSON.stringify(obj, (_, value) =>
     typeof value === 'undefined' ? null : value
   )

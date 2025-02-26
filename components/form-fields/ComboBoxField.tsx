@@ -113,6 +113,7 @@ export default memo(function ComboBoxField({
       }}
       textFieldProps={{
         helperText,
+        ...textFieldProps,
       }}
       {...asyncAutocompleteProps}
     />

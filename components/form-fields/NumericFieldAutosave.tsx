@@ -7,13 +7,11 @@ import InputFieldAutosave, {
 // We need to omit fields like initialValue or the type will be
 // (number | undefined) & (string | undefined) => undefined
 type Props = {
-  units?: string
   initialValue?: number | null
   handleSubmit: (value?: number) => void
 } & Omit<InputFieldAutosaveProps, 'initialValue' | 'handleSubmit'>
 /** A wrapper for InputFields that takes in a number and converts it to a string for the InputField. */
 export default function NumericFieldAutosave({
-  units,
   initialValue,
   handleSubmit: handleNumberSubmit,
   ...inputFieldAutosaveProps

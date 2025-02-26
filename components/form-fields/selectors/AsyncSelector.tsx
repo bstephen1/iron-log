@@ -30,7 +30,7 @@ export interface AsyncSelectorProps<
   /** constructor for C  */
   Constructor: new (name: string) => C
   /**  function to add new C to db */
-  addNewItem: (value: C) => Promise<any>
+  addNewItem: (value: C) => Promise<C>
   /** This component does not support multiple selections. */
   multiple?: false
 }

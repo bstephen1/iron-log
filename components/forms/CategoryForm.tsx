@@ -20,11 +20,7 @@ export default function CategoryForm({
   category: { name, _id },
   handleUpdate,
 }: Props) {
-  const {
-    categoryNames,
-    categories,
-    mutate: mutateCategories,
-  } = useCategories()
+  const { categoryNames, mutate: mutateCategories } = useCategories()
   const { exercises } = useExercises()
   const usage = getUsage(exercises, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')

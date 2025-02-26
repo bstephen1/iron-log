@@ -13,7 +13,6 @@ import {
 } from '../../lib/frontend/restService'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
-import { Set } from '../../models/Set'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
 
@@ -91,19 +90,6 @@ export default function CopySessionCard() {
       setIsSessionEmpty(true)
     }
     setIsLoading(false)
-  }
-
-  // Unused. Trying out copying sets as-is and seeing how that plays out in practice.
-  const createNewSets = (prevSets: Set[], modifiers: string[]) => {
-    // todo: avoid hardcoding
-    if (modifiers.includes('myo')) {
-      // for myo only copy the first set
-      const prevSet = prevSets[0]
-      return [{ weight: prevSet.weight, reps: prevSet.reps }]
-    }
-
-    // Copy everything but the effort.
-    return prevSets.map((set) => ({ ...set, effort: undefined }))
   }
 
   return (

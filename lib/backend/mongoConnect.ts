@@ -1,4 +1,4 @@
-import { Db, MongoClient, ObjectId, W } from 'mongodb'
+import { MongoClient, ObjectId, W } from 'mongodb'
 import { generateId } from '../../lib/util'
 import Category from '../../models/AsyncSelectorOption/Category'
 import Exercise from '../../models/AsyncSelectorOption/Exercise'
@@ -15,7 +15,6 @@ const options = { w: 'majority' as W, pkFactory: { createPk: generateId } }
 let client: MongoClient
 /** Connection to mongo using MONGODB_URI env var */
 let clientPromise: Promise<MongoClient>
-let db: Db
 
 // This is based on the vercel nextjs example: https://github.com/vercel/next.js/blob/canary/examples/with-mongodb/lib/mongodb.ts
 // which is also recommended in the next-auth docs: https://authjs.dev/reference/adapter/mongodb
@@ -29,7 +28,7 @@ const uri = process.env.MONGODB_URI
 if (process.env.NODE_ENV === 'development') {
   // In development mode, use a global variable so that the value
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  let globalWithMongo = global as typeof globalThis & {
+  const globalWithMongo = global as typeof globalThis & {
     _mongoClientPromise?: Promise<MongoClient>
   }
 
@@ -48,7 +47,7 @@ if (!process.env.MONGODB_NAME) {
   throw new Error('MONGODB_NAME is undefined! Define in .env')
 }
 
-db = (await clientPromise).db(process.env.MONGODB_NAME)
+const db = (await clientPromise).db(process.env.MONGODB_NAME)
 
 /** db collections with proper typing */
 const collections = {
@@ -62,4 +61,4 @@ const collections = {
 
 // Export a module-scoped MongoClient promise. By doing this in a
 // separate module, the client can be shared across functions.
-export { clientPromise, db, collections, client }
+export { client, clientPromise, collections, db }
