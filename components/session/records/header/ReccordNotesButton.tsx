@@ -34,8 +34,8 @@ export default memo(function RecordNotesButton({
   const [open, setOpen] = useState(false)
 
   const combinedNotes = [...(sessionLog?.notes ?? []), ...notes]
-  let options = ['Session', 'Record']
-  let initialTags = ['Record']
+  const options = ['Session', 'Record']
+  const initialTags = ['Record']
 
   // There's nothing actually defining tags for sets other than right here.
   // Since a user can arbitrarily set L/R/Both, behavior here can get pretty wonky.
@@ -66,8 +66,8 @@ export default memo(function RecordNotesButton({
   const handleSubmit = async (notes: Note[]) => {
     if (!sessionLog || readOnly) return
 
-    let sessionNotes = []
-    let recordNotes = []
+    const sessionNotes = []
+    const recordNotes = []
     for (const note of notes) {
       // for record notes, each note should only have a single tag
       if (note.tags.includes('Session')) {

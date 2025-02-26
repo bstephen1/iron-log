@@ -22,7 +22,7 @@ export const recordNotFound = new ApiError(
 
 /** userId format for backend use. The frontend will not see the userId.
  * For mongo this is an ObjectId. */
-export interface UserId extends ObjectId {}
+export type UserId = ObjectId
 
 /** Return the userId, formatted as a UserId. */
 export async function getUserId(

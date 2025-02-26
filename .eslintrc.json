@@ -1,5 +1,9 @@
 {
-  "extends": ["next/core-web-vitals", "prettier"],
+  "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
+  "parserOptions": {
+    // generates type information for (strict) rules that require typed linting
+    "projectService": true
+  },
   "rules": {
     "react/no-unescaped-entities": [
       "error",
@@ -12,6 +16,35 @@
       "always",
       { "exceptions": ["-", "*"], "markers": ["/"] }
     ],
-    "react/display-name": "off"
+    "react/display-name": "off",
+    // we disable this because vitest needs var to hoist mock variables above imports
+    "no-var": "off",
+    // duplicate of @typescript-eslint/no-unused-vars
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "caughtErrorsIgnorePattern": "^e",
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "@typescript-eslint/no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ],
+    // selected strict mode rules
+    "@typescript-eslint/no-unnecessary-type-arguments": "error",
+    "@typescript-eslint/no-unnecessary-type-parameters": "error",
+    "@typescript-eslint/no-unnecessary-template-expression": "error",
+    "@typescript-eslint/no-unnecessary-condition": "error",
+    "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-non-null-asserted-nullish-coalescing": "error",
+    "@typescript-eslint/no-deprecated": "error"
   }
 }

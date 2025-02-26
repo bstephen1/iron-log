@@ -10,7 +10,6 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import Modifier from '../../../models/AsyncSelectorOption/Modifier'
-import { Status } from '../../../models/Status'
 import handler from './[name].api'
 
 const data = new Modifier('hi', 5)

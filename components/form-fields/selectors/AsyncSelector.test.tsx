@@ -1,4 +1,3 @@
-import { ComponentProps } from 'react'
 import { vi } from 'vitest'
 import { render, screen } from '../../../lib/testUtils'
 import { AsyncSelectorOption } from '../../../models/AsyncSelectorOption'

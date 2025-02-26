@@ -16,11 +16,11 @@ const pyStack = 0.5
 const background = (side: Set['side']) => {
   switch (side) {
     case 'L':
-      return `${blue[50]}`
+      return blue[50]
     case 'R':
-      return `${lightGreen[50]}`
+      return lightGreen[50]
     default:
-      return `${grey[100]}`
+      return grey[100]
   }
 }
 

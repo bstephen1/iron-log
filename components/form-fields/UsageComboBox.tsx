@@ -31,7 +31,7 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
     )
     if (!newExercise) return
 
-    let updatedField = [...newExercise?.[field]]
+    let updatedField = [...newExercise[field]]
     if (reason === 'selectOption') {
       updatedField = [...updatedField, name]
     } else if (reason === 'removeOption') {

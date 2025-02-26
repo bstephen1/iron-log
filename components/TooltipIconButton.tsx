@@ -6,7 +6,7 @@ import {
   Tooltip,
   TooltipProps,
 } from '@mui/material'
-import { createContext, useContext } from 'react'
+import { createContext, useContext, JSX } from 'react'
 
 /** context for TooltipIconButtons. Allows parent to determine
  *  whether to render as a menu item on a predefined component.

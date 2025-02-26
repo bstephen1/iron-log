@@ -11,7 +11,7 @@ import { State } from 'swr'
 // This solution does appear to be working fine, and it doesn't seem like it should cause issues because
 // we are only writing to the cache during init, when the cache is empty.
 export default function useSWRCacheProvider() {
-  const cache = useRef<Map<string, State<any, any>>>(new Map())
+  const cache = useRef<Map<string, State>>(new Map())
 
   // triggers on client side, preventing hydration error
   useEffect(() => {

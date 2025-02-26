@@ -6,7 +6,7 @@ import {
   TextField,
   TextFieldProps,
 } from '@mui/material'
-import { useState } from 'react'
+import { useState, JSX } from 'react'
 
 // Extending Autocomplete is a lesson in frustration.
 // Long story short, it needs to have a generic signature that exactly matches

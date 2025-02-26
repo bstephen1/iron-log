@@ -54,7 +54,7 @@ export default memo(function SetTypeSelect({
   const { field, value = 0, operator, min = 0, max = 0 } = setType
   const variant = textFieldProps.variant ?? 'standard'
   const fieldOptions = operator === 'rest' ? timeField : normalFields
-  const remaining = (value ?? 0) - totalReps
+  const remaining = value - totalReps
   const isOverTotal = remaining < 0
   const remainingText =
     operator === 'total' && showRemaining

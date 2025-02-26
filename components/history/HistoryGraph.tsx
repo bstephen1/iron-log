@@ -121,7 +121,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     // When querying records with a set start date, there needs to be one extra bw
     // record from before the start date to associate with the first record.
     // Note: BWs are sorted newest to oldest, so it goes at the end.
-    return query?.exercise && query?.start
+    return query?.exercise && query.start
       ? [...baseData, ...earliestRecordBw]
       : baseData
   }, [
@@ -152,11 +152,11 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     return window.removeEventListener('resize', handleWindowResize)
   }, [])
 
-  const handleGraphClick: CategoricalChartFunc = (e) => {
-    if (!records || !e || !e.activePayload) return
+  const handleGraphClick: CategoricalChartFunc = (nextState) => {
+    if (!records || !nextState.activePayload) return
 
     const date = dayjs
-      .unix(e.activePayload[0].payload.unixDate)
+      .unix(nextState.activePayload[0].payload.unixDate)
       .format(DATE_FORMAT)
     const index = records.findIndex((record) => record.date === date)
 

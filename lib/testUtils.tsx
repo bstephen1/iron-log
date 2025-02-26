@@ -3,7 +3,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { render, RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
-import { delay, http, HttpResponse, Path } from 'msw'
+import { delay, http, HttpResponse, JsonBodyType, Path } from 'msw'
 import { NextApiHandler } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import {
@@ -92,7 +92,7 @@ export function useServer(
   /** If json is omitted, the request body will be returned.
    *  This can be used to test that the correct body is being passed to the endpoint.
    */
-  json?: any,
+  json?: JsonBodyType,
   options?: ServerOptions
 ) {
   const { status, method = 'all', once, simulateError } = options ?? {}
@@ -112,13 +112,13 @@ export function useServer(
   )
 }
 
-interface TestApiResponseProps<T = any>
+interface TestApiResponseProps<T = unknown>
   extends Partial<NtarhInitPagesRouter<T>> {
   data?: T
   handler: NextApiHandler<T>
   method?: string
 }
-export async function expectApiRespondsWithData<T>({
+export async function expectApiRespondsWithData({
   data,
   handler,
   method = 'GET',
@@ -128,7 +128,7 @@ export async function expectApiRespondsWithData<T>({
   const body = hasBody ? JSON.stringify(data) : undefined
   const headers = hasBody ? { 'content-type': 'application/json' } : undefined
 
-  await testApiHandler<T>({
+  await testApiHandler({
     ...testApiHandlerProps,
     pagesHandler: handler,
     test: async ({ fetch }) => {

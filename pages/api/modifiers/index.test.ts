@@ -5,7 +5,6 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import Modifier from '../../../models/AsyncSelectorOption/Modifier'
-import { Status } from '../../../models/Status'
 import handler from './index.api'
 
 it('fetches modifiers', async () => {

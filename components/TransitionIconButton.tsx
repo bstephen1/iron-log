@@ -1,4 +1,5 @@
 import { Grow, IconButton, IconButtonProps } from '@mui/material'
+import { JSX } from 'react'
 
 interface Props extends IconButtonProps {
   isVisible?: boolean

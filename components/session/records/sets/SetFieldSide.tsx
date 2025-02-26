@@ -35,7 +35,7 @@ export default function SetFieldSide({
       }
       slotProps={{
         ...selectProps.slotProps,
-        // @ts-ignore slotProps does not let you set the generic type of select
+        // @ts-expect-error slotProps does not let you set the generic type of select
         select: {
           autoWidth: true,
           IconComponent: () => null,
@@ -46,8 +46,7 @@ export default function SetFieldSide({
           sx: {
             pr: '0px !important', // disable baked in padding for IconComponent
             // mui does not provide proper typing to fields on slotProps
-            ...(selectProps.slotProps?.htmlInput as InputBaseComponentProps)
-              ?.sx,
+            ...(selectProps.slotProps?.htmlInput as InputBaseComponentProps).sx,
           },
         },
       }}

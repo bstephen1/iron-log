@@ -103,8 +103,8 @@ function LoadedRecordCard({
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
 
-  const showSplitWeight = exercise?.attributes?.bodyweight || !!extraWeight
-  const showUnilateral = exercise?.attributes?.unilateral
+  const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
+  const showUnilateral = exercise?.attributes.unilateral
 
   const historyQuery = {
     modifier: activeModifiers,

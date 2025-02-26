@@ -31,8 +31,7 @@ export default memo(function NameField({ name, handleUpdate, options }: Props) {
       yupValidator={yup
         .string()
         .required('Must have a name')
-        // todo: ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
-        // @ts-ignore
+        // @ts-expect-error  ts isn't recognizing that addMethod() added this. Possible solutions: https://github.com/jquense/yup/issues/312
         .unique('Already exists!', options)}
     />
   )

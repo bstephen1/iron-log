@@ -7,7 +7,7 @@ import {
 export default function useDisplayFields(exercise?: Exercise | null) {
   return (
     exercise?.displayFields ??
-    (exercise?.attributes?.bodyweight
+    (exercise?.attributes.bodyweight
       ? DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT
       : DEFAULT_DISPLAY_FIELDS)
   )

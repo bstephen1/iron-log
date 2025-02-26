@@ -59,7 +59,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     ...textFieldProps
   } = props
 
-  const { error, isEmpty, ...field } = useField<string>({
+  const { error, isEmpty, ...field } = useField({
     initialValue,
     yupValidator,
     handleSubmit,
@@ -96,7 +96,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       readOnly={readOnly}
       onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
       slotProps={{
-        // @ts-ignore spreading htmlInput is not an error
+        // @ts-expect-error spreading htmlInput is not an error
         input: {
           ...htmlInput,
           ...textFieldProps.slotProps?.htmlInput,

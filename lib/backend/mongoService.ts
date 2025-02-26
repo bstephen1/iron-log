@@ -52,8 +52,7 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
     const isEmpty = !array.length
     switch (matchTypes[key]) {
       case MatchType.Partial:
-        // typescript complaining for some reason. May or may not be a better way to silence it.
-        filter[key] = { $all: array } as any
+        filter[key] = { $all: array } as typeof array
 
         // for empty arrays, matching any means match anything
         isEmpty && delete filter[key]
@@ -66,7 +65,7 @@ function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
         // The latter provides for some pretty clunky ux when editing Autocomplete chips, so
         // we are opting for the former unless performance notably degrades.
         // See: https://stackoverflow.com/questions/29774032/mongodb-find-exact-array-match-but-order-doesnt-matter
-        filter[key] = { $size: array.length } as any
+        filter[key] = { $size: array.length } as typeof array
         // If matching empty array, can't use $all. It always returns no documents when given an empty array.
         if (!isEmpty) {
           filter[key]['$all'] = array
@@ -436,10 +435,9 @@ export async function updateModifierFields(
       { $set: { 'modifiers.$': updates.name } }
     )
     // nested $[] operator (cannot use simple $ operator more than once): https://jira.mongodb.org/browse/SERVER-831
-    // typescript isn't recognizing notes.$[].tags.$[tag] as a valid signature for $set even though it works and is the recommended way to do it
     await exercises.updateMany(
       { userId, 'notes.tags': oldModifier?.name },
-      { $set: { 'notes.$[].tags.$[tag]': updates.name } as any },
+      { $set: { 'notes.$[].tags.$[tag]': updates.name } },
       { arrayFilters: [{ tag: oldModifier?.name }] }
     )
     await records.updateMany(
