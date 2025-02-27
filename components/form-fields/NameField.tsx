@@ -28,6 +28,8 @@ export default memo(function NameField({ name, handleUpdate, options }: Props) {
         (name) => handleUpdate({ name }),
         [handleUpdate]
       )}
+      // yup messes up eslint
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       yupValidator={yup
         .string()
         .required('Must have a name')

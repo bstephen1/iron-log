@@ -28,7 +28,7 @@ export default function InputField(props: Props & TextFieldProps) {
     ...textFieldProps
   } = props
 
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(undefined)
   const { control, reset, submit, isDirty, error } = useField({
     yupValidator,
     handleSubmit,

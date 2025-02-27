@@ -33,7 +33,7 @@ export default function useField<T = string>({
   handleSubmit,
   ...props
 }: Props<T>) {
-  const timerRef = useRef<NodeJS.Timeout>()
+  const timerRef = useRef<NodeJS.Timeout>(undefined)
   const [error, setError] = useState('')
   // initialValue must be stored in state so we can determine if the prop has changed
   const [initialValue, setInitialValue] = useState(props.initialValue)
@@ -79,6 +79,7 @@ export default function useField<T = string>({
   /** validate value and return whether the value is valid (true) or not (false) */
   const validate = async (value: T): Promise<boolean> => {
     process.env.NEXT_PUBLIC_BROWSER_LOG_LEVEL === 'verbose' &&
+      typeof value === 'string' &&
       console.log(
         `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )

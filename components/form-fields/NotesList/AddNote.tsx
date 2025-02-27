@@ -24,7 +24,7 @@ export default function AddNote({
   multiple,
   initialTags = [],
 }: Props) {
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(undefined)
   const [tags, setTags] = useState<Note['tags']>(initialTags)
   const handleSubmit = (value: string) => {
     handleAdd(new Note(value.trim(), tags))

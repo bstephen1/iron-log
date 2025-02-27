@@ -22,6 +22,7 @@ import {
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
+import { ApiError } from 'next/dist/server/api-utils'
 
 // todo: res.json() breaks if json is null. Have to guard against that.
 
@@ -54,7 +55,7 @@ export const paramify = (query: ParsedUrlQueryInput) => {
  *  Any data fields that may be undefined should also expect "null" as a value.
  */
 const toJson = (obj: object) =>
-  JSON.stringify(obj, (_, value) =>
+  JSON.stringify(obj, (_, value: unknown) =>
     typeof value === 'undefined' ? null : value
   )
 
@@ -69,7 +70,10 @@ const nameSort = <T extends { name: string }>(data?: T[]) =>
 //---------
 
 export function useSessionLog(day: Dayjs | string, config?: SWRConfiguration) {
-  const { data, error, isLoading, mutate } = useSWR<SessionLog | null>(
+  const { data, error, isLoading, mutate } = useSWR<
+    SessionLog | null,
+    ApiError
+  >(
     URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)),
     config
   )
@@ -83,7 +87,7 @@ export function useSessionLog(day: Dayjs | string, config?: SWRConfiguration) {
 }
 
 export function useSessionLogs(query: DateRangeQuery) {
-  const { data, error, isLoading, mutate } = useSWR<SessionLog[]>(
+  const { data, error, isLoading, mutate } = useSWR<SessionLog[], ApiError>(
     URI_SESSIONS + paramify({ ...query })
   )
 
@@ -135,7 +139,7 @@ export async function deleteSessionRecord(
  *  Note that this applies to any other useSWR hook as well.
  */
 export function useRecord(id: string, config?: SWRConfiguration) {
-  const { data, error, isLoading, mutate } = useSWR<Record | null>(
+  const { data, error, isLoading, mutate } = useSWR<Record | null, ApiError>(
     URI_RECORDS + id,
     config
   )
@@ -150,7 +154,7 @@ export function useRecord(id: string, config?: SWRConfiguration) {
 }
 
 export function useRecords(query?: RecordQuery, shouldFetch = true) {
-  const { data, isLoading, error, mutate } = useSWR<Record[]>(
+  const { data, isLoading, error, mutate } = useSWR<Record[], ApiError>(
     shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
   )
 
@@ -188,7 +192,7 @@ export async function updateRecordFields(
 //----------
 
 export function useExercises(query?: ExerciseQuery) {
-  const { data, error, mutate } = useSWR<Exercise[]>(
+  const { data, error, mutate } = useSWR<Exercise[], ApiError>(
     URI_EXERCISES + paramify({ ...query })
   )
   const sortedData = nameSort(data)
@@ -203,7 +207,7 @@ export function useExercises(query?: ExerciseQuery) {
 
 export function useExercise(id: string | null, config?: SWRConfiguration) {
   // passing null to useSWR disables fetching
-  const { data, error, mutate } = useSWR<Exercise | null>(
+  const { data, error, mutate } = useSWR<Exercise | null, ApiError>(
     id ? URI_EXERCISES + id : null,
     config
   )
@@ -255,7 +259,7 @@ export async function deleteExercise(name: string): Promise<string> {
 //----------
 
 export function useModifiers() {
-  const { data, error, mutate } = useSWR<Modifier[]>(URI_MODIFIERS)
+  const { data, error, mutate } = useSWR<Modifier[], ApiError>(URI_MODIFIERS)
   const sortedData = nameSort(data)
 
   return {
@@ -300,7 +304,7 @@ export async function deleteModifier(name: string): Promise<string> {
 //----------
 
 export function useCategories() {
-  const { data, error, mutate } = useSWR<Category[]>(URI_CATEGORIES)
+  const { data, error, mutate } = useSWR<Category[], ApiError>(URI_CATEGORIES)
   const sortedData = nameSort(data)
 
   return {
@@ -355,7 +359,7 @@ export function useBodyweightHistory(
   const start = query?.start ? addDay(query.start) : undefined
   const end = query?.end ? addDay(query.end) : undefined
 
-  const { data, error, mutate } = useSWR<Bodyweight[]>(
+  const { data, error, mutate } = useSWR<Bodyweight[], ApiError>(
     shouldFetch ? URI_BODYWEIGHT + paramify({ start, end, ...query }) : null
   )
 

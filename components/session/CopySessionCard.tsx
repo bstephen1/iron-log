@@ -63,9 +63,9 @@ export default function CopySessionCard() {
       ? curSessionLog
       : new SessionLog(day.format(DATE_FORMAT))
 
-    // for-await-of construct must be used to ensure the await works properly.
+    // We want the records to be added in sequence so they remain in order
     // See: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
-    for await (const id of prevSessionLog.records) {
+    for (const id of prevSessionLog.records) {
       const prevRecord = recordsIndex[id]
       // const newSets = createNewSets(prevRecord.sets, prevRecord.activeModifiers)
       const newRecord = new Record(day.format(DATE_FORMAT), {

@@ -38,7 +38,7 @@ export default function UsageButton({ name, buttonProps }: Props) {
             badgeContent={records?.length}
             max={maxRecords}
             color="primary"
-            aria-label={`used in ${records?.length} record${records?.length !== 1 ? 's' : ''}`}
+            aria-label={`used in ${records?.length ?? 0} record${records?.length !== 1 ? 's' : ''}`}
           >
             <ListIcon />
           </Badge>
