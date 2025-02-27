@@ -1,7 +1,7 @@
 import { Box, CardHeader } from '@mui/material'
 import { useEffect } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
-import useResizeObserver from 'use-resize-observer'
+import { useResizeDetector } from 'react-resize-detector'
 import { UpdateFields } from '../../../../lib/util'
 import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
@@ -34,7 +34,7 @@ const useMaxVisibleActions = (totalActions: number) => {
   // By using local storage we can persist previous data between route changes,
   // preventing the undefined state when using the date picker to change sessions.
   const { ref, width = actionsToWidth(cardHeaderActions) } =
-    useResizeObserver<HTMLSpanElement>()
+    useResizeDetector<HTMLSpanElement>()
 
   // max number of action buttons that will visibly fit in the header
   const maxVisibleActions = widthToActions(width)
