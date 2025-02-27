@@ -77,7 +77,12 @@ export default function InputField(props: Props & TextFieldProps) {
                 </Tooltip>
               </TransitionIconButton>
               {/* mui does not provide proper typing to fields on slotProps */}
-              {(textFieldProps.slotProps?.input as InputProps).endAdornment}
+              {
+                (
+                  (textFieldProps.slotProps?.input as InputProps | undefined) ??
+                  {}
+                ).endAdornment
+              }
             </>
           ),
         },
