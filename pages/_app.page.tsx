@@ -6,6 +6,7 @@ import Layout from '../components/Layout'
 import useSWRCacheProvider from '../components/useSWRCacheProvider'
 import { swrFetcher } from '../lib/util'
 import { useEffect } from 'react'
+import { NuqsAdapter } from 'nuqs/adapters/next/pages'
 
 const disableNumberSpin = () => {
   if (!(document.activeElement instanceof HTMLInputElement)) return
@@ -28,9 +29,11 @@ function IronLog({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider>
       <SWRConfig value={{ fetcher: swrFetcher, provider }}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <NuqsAdapter>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </NuqsAdapter>
       </SWRConfig>
     </SessionProvider>
   )

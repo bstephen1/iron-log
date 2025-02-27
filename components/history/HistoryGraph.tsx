@@ -1,6 +1,7 @@
 import { Box, Stack, useTheme } from '@mui/material'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useResizeDetector } from 'react-resize-detector'
 import {
   Brush,
   CartesianGrid,
@@ -13,7 +14,6 @@ import {
   YAxis,
 } from 'recharts'
 import { CategoricalChartFunc } from 'recharts/types/chart/generateCategoricalChart'
-import useResizeObserver from 'use-resize-observer'
 import RecordDisplay from '../../components/history/RecordDisplay'
 import {
   DATE_FORMAT,
@@ -136,7 +136,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
 
   // to track width we want to use the size of the graph container, since that will be smaller than window width
   const { ref: graphContainerRef, width: graphContainerWidth = 0 } =
-    useResizeObserver()
+    useResizeDetector()
 
   // Track the full window height so the graph can be fullscreen.
   // Have to init as 0 so nextjs doesn't error out in SSR trying to find the window.

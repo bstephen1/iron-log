@@ -1,4 +1,5 @@
-import { useQueryState } from 'next-usequerystate'
+import { useQueryState } from 'nuqs'
+import { useCallback } from 'react'
 import {
   updateModifierFields,
   useExercises,
@@ -8,7 +9,6 @@ import Modifier from '../../models/AsyncSelectorOption/Modifier'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import ModifierSelector from '../form-fields/selectors/ModifierSelector'
 import ModifierForm from './ModifierForm'
-import { useCallback } from 'react'
 
 export default function useModifierForm() {
   const [urlModifier, setUrlModifier] = useQueryState('modifier')
