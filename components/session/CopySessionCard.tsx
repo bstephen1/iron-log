@@ -1,6 +1,5 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import { LoadingButton } from '@mui/lab'
-import { Paper, Stack, Typography } from '@mui/material'
+import { Button, Paper, Stack, Typography } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
@@ -104,7 +103,7 @@ export default function CopySessionCard() {
         {isSessionEmpty ? (
           <Typography> No session data to copy!</Typography>
         ) : (
-          <LoadingButton
+          <Button
             loading={isLoading}
             loadingPosition="start"
             // if using loadingPosition, a startIcon is required
@@ -112,9 +111,8 @@ export default function CopySessionCard() {
             variant="contained"
             onClick={handleCopy}
           >
-            {/* add html tag to LoadingButtons to prevent possible crash: https://mui.com/material-ui/react-button/#loading-button */}
-            <span>Copy session</span>
-          </LoadingButton>
+            Copy session
+          </Button>
         )}
       </Stack>
     </Paper>

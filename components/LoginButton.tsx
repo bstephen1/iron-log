@@ -1,5 +1,4 @@
-import { LoadingButton } from '@mui/lab'
-import { Box } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { useSWRConfig } from 'swr'
 
@@ -38,14 +37,14 @@ export default function LoginButton() {
 
   return (
     <Box>
-      <LoadingButton
+      <Button
         loading={status === 'loading'}
         variant="contained"
         color="secondary"
         onClick={status === 'unauthenticated' ? handleSignin : handleSignout}
       >
         <span>Sign {status === 'unauthenticated' ? 'in' : 'out'}</span>
-      </LoadingButton>
+      </Button>
     </Box>
   )
 }

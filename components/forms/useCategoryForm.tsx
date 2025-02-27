@@ -1,4 +1,5 @@
-import { useQueryState } from 'next-usequerystate'
+import { useQueryState } from 'nuqs'
+import { useCallback } from 'react'
 import {
   updateCategoryFields,
   useCategories,
@@ -8,7 +9,6 @@ import Category from '../../models/AsyncSelectorOption/Category'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import CategorySelector from '../form-fields/selectors/CategorySelector'
 import CategoryForm from './CategoryForm'
-import { useCallback } from 'react'
 
 export default function useCategoryForm() {
   const [urlCategory, setUrlCategory] = useQueryState('category')

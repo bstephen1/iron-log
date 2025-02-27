@@ -1,5 +1,5 @@
 import Grid from '@mui/material/Grid2'
-import { useQueryState } from 'next-usequerystate'
+import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
   deleteExercise,

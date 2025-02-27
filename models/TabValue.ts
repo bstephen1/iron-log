@@ -1,4 +1,4 @@
-import { parseAsStringEnum, useQueryState } from 'next-usequerystate'
+import { parseAsStringEnum, useQueryState } from 'nuqs'
 
 export type TabValue = (typeof tabValues)[number]
 export const tabValues = ['exercises', 'modifiers', 'categories'] as const
