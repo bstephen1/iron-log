@@ -9,18 +9,11 @@
     "projectService": true
   },
   "rules": {
-    "react/no-unescaped-entities": [
-      "error",
-      {
-        "forbid": [">", "}"]
-      }
-    ],
     "spaced-comment": [
       "error",
       "always",
       { "exceptions": ["-", "*"], "markers": ["/"] }
     ],
-    "react/display-name": "off",
     // we disable this because vitest needs var to hoist mock variables above imports
     "no-var": "off",
     // duplicate of @typescript-eslint/no-unused-vars
