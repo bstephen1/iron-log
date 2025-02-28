@@ -4,6 +4,7 @@ import Exercise from '../models/AsyncSelectorOption/Exercise'
 import { SetType } from '../models/Record'
 import { DB_UNITS, Set, Units } from '../models/Set'
 import { DATE_FORMAT } from './frontend/constants'
+import { ApiError } from 'next/dist/server/api-utils'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -38,7 +39,7 @@ export const arrayToIndex = <T extends object>(index: keyof T, arr?: T[]) => {
 export const dayjsStringAdd = (
   date: string,
   value: number,
-  unit?: dayjs.ManipulateType | undefined
+  unit?: dayjs.ManipulateType
 ) => dayjs(date).add(value, unit).format(DATE_FORMAT)
 
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
@@ -50,13 +51,16 @@ export const swrFetcher = (url: string) => fetchJson(url)
  *  Also checks if the res is an error. Note just calling fetch() by itself
  *  has no inherent error checking!
  */
-export const fetchJson = async (...params: Parameters<typeof fetch>) => {
+export const fetchJson = async <T>(...params: Parameters<typeof fetch>) => {
   const res = await fetch(...params)
-  const json = await res.json()
+  const json: T = await res.json()
   if (res.ok) {
     return json
   }
-  throw json
+  throw new ApiError(
+    res.status,
+    (json as { message?: string }).message ?? 'unknown error'
+  )
 }
 
 /** Capitalize first letter of a string.
@@ -79,10 +83,6 @@ export const calculateTotalReps = (
     : 0
 }
 
-/** returns units for a field, with correct typing */
-export const getUnit = (field: SetType['field'], units: Units) =>
-  units[field as keyof Units]
-
 /** returns the exercises the given category or modifier is used in */
 export const getUsage = (
   exercises: Exercise[] | undefined | null,
@@ -97,5 +97,5 @@ export function stringifySetType(
 ) {
   return `${operator} ${
     operator === 'between' ? min + ' and ' + max : value
-  } ${getUnit(field, units ?? DB_UNITS)}`
+  } ${(units ?? DB_UNITS)[field]}`
 }

@@ -24,7 +24,7 @@ import {
   useRecords,
 } from '../../lib/frontend/restService'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
-import { getUnit, UpdateState } from '../../lib/util'
+import { UpdateState } from '../../lib/util'
 import Bodyweight from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
@@ -156,6 +156,8 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     if (!records || !nextState.activePayload) return
 
     const date = dayjs
+      // activePayload is hardcoded as any[]
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       .unix(nextState.activePayload[0].payload.unixDate)
       .format(DATE_FORMAT)
     const index = records.findIndex((record) => record.date === date)
@@ -321,12 +323,9 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   name={recordDisplay.field}
                   dataKey="value"
                   type="number"
+                  // todo: get units from exercise
                   // note the whitespace!
-                  unit={` ${getUnit(
-                    recordDisplay.field,
-                    // todo: get units from exercise
-                    DEFAULT_DISPLAY_FIELDS.units
-                  )}`}
+                  unit={` ${DEFAULT_DISPLAY_FIELDS.units[recordDisplay.field]}`}
                   orientation="left"
                   // line color
                   stroke={palette.primary.dark}
@@ -348,11 +347,12 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
               trigger={isDesktop ? 'hover' : 'click'}
               labelFormatter={convertUnixToDate}
               formatter={(value, name) =>
-                `${value} ${getUnit(
-                  name === 'bodyweight' ? 'weight' : recordDisplay.field,
-                  // todo: add unit to RecordDisplay so it is selectzble
-                  DEFAULT_DISPLAY_FIELDS.units
-                )}`
+                // todo: add unit to RecordDisplay so it is selectzble
+                `${value.toString()} ${
+                  DEFAULT_DISPLAY_FIELDS.units[
+                    name === 'bodyweight' ? 'weight' : recordDisplay.field
+                  ]
+                }`
               }
             />
             {/* todo: only show if multiple lines */}

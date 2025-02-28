@@ -385,7 +385,7 @@ export async function deleteExercise(userId: ObjectId, name: string) {
   if (usedRecords.length) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      `Cannot delete exercise: used in one or more records: ${usedRecords.map((record) => record.date + ', ')}`
+      `Cannot delete exercise: used in one or more records on the following dates: ${usedRecords.map(({ date }) => date).join(', ')}`
     )
   }
 

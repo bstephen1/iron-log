@@ -28,7 +28,7 @@ export default function NotesListItem(props: Props) {
     readOnly,
   } = props
 
-  const inputRef = useRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>(undefined)
   const handleSubmit = (value: string) =>
     handleUpdate(index, { ...note, value })
   const { control, isEmpty, reset } = useField({
