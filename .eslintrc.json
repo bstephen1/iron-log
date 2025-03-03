@@ -9,6 +9,12 @@
     "projectService": true
   },
   "rules": {
+    "react/no-unescaped-entities": [
+      "error",
+      {
+        "forbid": [">", "}"]
+      }
+    ],
     "spaced-comment": [
       "error",
       "always",
@@ -47,7 +53,7 @@
     ],
     "@typescript-eslint/restrict-template-expressions": [
       "error",
-      // allows numbers grave strings: `example: ${5}`
+      // allows numbers in grave strings: `example: ${5}`
       { "allowNumber": true }
     ],
     "@typescript-eslint/restrict-plus-operands": [
@@ -60,7 +66,7 @@
     // this one seems too restrictive for little gain
     "@typescript-eslint/no-dynamic-delete": "off",
     // we use StatusCodes enums as a list of values, sometimes relationally comparing them
-    // eg statusCode > 499
+    // eg statusCode > 499; statusCode === StatusCodes.INTERNAL_SERVER_ERROR
     "@typescript-eslint/no-unsafe-enum-comparison": "off",
     // too many external pkgs use floating promises. Eg, router.push, mutate (optimistic data)
     "@typescript-eslint/no-floating-promises": "off",
