@@ -247,9 +247,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     setReducer,
   ])
 
-  return !graphData.length ? (
-    <></>
-  ) : (
+  return (
     <Stack spacing={2}>
       <GraphOptionsForm
         {...{
@@ -284,7 +282,9 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
             <XAxis
               dataKey="unixDate"
               type="number"
-              tickFormatter={(value) => dayjs.unix(value).format(DATE_FORMAT)}
+              tickFormatter={(value: number) =>
+                dayjs.unix(value).format(DATE_FORMAT)
+              }
               domain={['auto', 'auto']}
               angle={-25}
               scale="time"
