@@ -102,8 +102,11 @@ export default function useField<T = string>({
         setError('')
         return true
       })
-      .catch((e: yup.ValidationError) => {
-        setError(e.message)
+      .catch((e: unknown) => {
+        // error type will be yup.ValidationError
+        if (e instanceof Error) {
+          setError(e.message)
+        }
         return false
       })
   }

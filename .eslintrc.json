@@ -74,7 +74,6 @@
     // todo: validate api body reqs and turn on
     "@typescript-eslint/no-unsafe-argument": "off",
     // todo: fix errors and turn on
-    "@typescript-eslint/no-unsafe-assignment": "off",
-    "@typescript-eslint/use-unknown-in-catch-callback-variable": "off"
+    "@typescript-eslint/no-unsafe-assignment": "off"
   }
 }
