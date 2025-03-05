@@ -18,7 +18,6 @@
     "@auth/mongodb-adapter": "^3.8.0",
     "@emotion/react": "^11.14.0",
     "@mui/icons-material": "^6.4.6",
-    "@mui/lab": "^6.0.0-beta.29",
     "@mui/material": "^6.4.6",
     "@mui/x-date-pickers": "^7.27.1",
     "dayjs": "^1.11.13",
