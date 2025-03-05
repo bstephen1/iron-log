@@ -70,11 +70,9 @@
     "@typescript-eslint/no-unsafe-enum-comparison": "off",
     // too many external pkgs use floating promises. Eg, router.push, mutate (optimistic data)
     "@typescript-eslint/no-floating-promises": "off",
-
-    // todo: validate api body reqs and turn on
-    "@typescript-eslint/no-unsafe-argument": "off",
-    // todo: fix errors and turn on
+    // doesn't seem to add any value
     "@typescript-eslint/no-unsafe-assignment": "off",
-    "@typescript-eslint/use-unknown-in-catch-callback-variable": "off"
+    // todo: validate api body reqs and turn on
+    "@typescript-eslint/no-unsafe-argument": "off"
   }
 }
