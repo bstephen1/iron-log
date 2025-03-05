@@ -13,7 +13,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { CategoricalChartFunc } from 'recharts/types/chart/generateCategoricalChart'
 import RecordDisplay from '../../components/history/RecordDisplay'
 import {
   DATE_FORMAT,
@@ -30,6 +29,7 @@ import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
 import { Set } from '../../models/Set'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
+import { CategoricalChartFunc } from 'recharts/types/chart/types'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {
@@ -152,14 +152,12 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     return window.removeEventListener('resize', handleWindowResize)
   }, [])
 
-  const handleGraphClick: CategoricalChartFunc = (nextState) => {
-    if (!records || !nextState.activePayload) return
+  const handleGraphClick: CategoricalChartFunc = ({
+    activeLabel: unixDate,
+  }) => {
+    if (!records || !unixDate) return
 
-    const date = dayjs
-      // activePayload is hardcoded as any[]
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      .unix(nextState.activePayload[0].payload.unixDate)
-      .format(DATE_FORMAT)
+    const date = dayjs.unix(+unixDate).format(DATE_FORMAT)
     const index = records.findIndex((record) => record.date === date)
 
     // have to reverse the index since swiper is also reversed
