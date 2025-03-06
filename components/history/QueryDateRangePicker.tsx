@@ -1,4 +1,3 @@
-import { DatePickerProps } from '@mui/lab'
 import { MenuItem, Stack, TextField } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
@@ -30,10 +29,7 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
       })
     } else if (monthsNum < 0) {
       // a negative month amount is considered "no filter"
-      updateQuery({
-        start: undefined,
-        end: undefined,
-      })
+      updateQuery({ start: undefined, end: undefined })
     }
   }
   return (
@@ -44,9 +40,7 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
         value={quickMonthRange}
         onChange={(e) => handleQuickMonthChange(e.target.value)}
         slotProps={{
-          select: {
-            displayEmpty: true,
-          },
+          select: { displayEmpty: true },
           inputLabel: { shrink: true },
         }}
       >
@@ -74,18 +68,15 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
   )
 }
 
-interface QueryDatePickerProps extends DatePickerProps<string> {
+interface QueryDatePickerProps {
   date?: string
   upDate: (date?: string) => void
+  label: string
 }
-function QueryDatePicker({
-  date,
-  upDate,
-  ...datePickerProps
-}: QueryDatePickerProps) {
+function QueryDatePicker({ date, upDate, label }: QueryDatePickerProps) {
   return (
     <DatePicker
-      {...datePickerProps}
+      label={label}
       showDaysOutsideCurrentMonth
       value={dayjs(date)}
       onChange={(newDay) => {
