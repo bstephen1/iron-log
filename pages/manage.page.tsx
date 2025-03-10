@@ -13,7 +13,11 @@ const RenderTabs = memo(function RenderTabs() {
   const [urlTab, setUrlTab] = useQueryTab()
 
   return (
-    <Tabs value={urlTab} onChange={(_, value) => setUrlTab(value)} centered>
+    <Tabs
+      value={urlTab}
+      onChange={(_, value: (typeof tabValues)[number]) => setUrlTab(value)}
+      centered
+    >
       {tabValues.map((tab: TabValue) => (
         <Tab key={tab} label={tab} value={tab} />
       ))}
