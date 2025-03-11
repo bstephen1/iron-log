@@ -22,9 +22,10 @@ export const createExercise = (
     weight = null,
     categories = [],
     modifiers = [],
+    status = Status.active,
   }: Partial<Exercise> = {}
 ): Exercise => ({
-  ...createAsyncSelectorOption(name, Status.active),
+  ...createAsyncSelectorOption(name, status),
   attributes,
   notes,
   displayFields,
