@@ -10,10 +10,10 @@ import {
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import SessionLog from '../../models/SessionLog'
+import { createRecord } from '../../models/Record'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
-import { createRecord } from '../../models/Record'
+import { createSessionLog } from '../../models/SessionLog'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
@@ -61,7 +61,7 @@ export default function CopySessionCard() {
     // need to check if the current day already has a session so _id isn't changed
     const newSessionLog = curSessionLog
       ? curSessionLog
-      : new SessionLog(day.format(DATE_FORMAT))
+      : createSessionLog(day.format(DATE_FORMAT))
 
     // We want the records to be added in sequence so they remain in order
     // See: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop

@@ -9,9 +9,9 @@ import {
   useExercises,
 } from '../../lib/frontend/restService'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import SessionLog from '../../models/SessionLog'
-import useCurrentSessionLog from './useCurrentSessionLog'
 import { createRecord } from '../../models/Record'
+import useCurrentSessionLog from './useCurrentSessionLog'
+import { createSessionLog } from '../../models/SessionLog'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
@@ -31,7 +31,7 @@ export default function AddRecordCard() {
           ...sessionLog,
           records: sessionLog.records.concat(newRecord._id),
         }
-      : new SessionLog(date, [newRecord._id])
+      : createSessionLog(date, [newRecord._id])
 
     mutateSession(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,

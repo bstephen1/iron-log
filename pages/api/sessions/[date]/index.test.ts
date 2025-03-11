@@ -1,20 +1,20 @@
 import { vi } from 'vitest'
 import {
-  fetchSession,
   addSession,
+  fetchSession,
   updateSession,
 } from '../../../../lib/backend/mongoService'
 import {
-  expectApiRespondsWithData,
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
+  expectApiRespondsWithData,
 } from '../../../../lib/testUtils'
-import SessionLog from '../../../../models/SessionLog'
 
 import handler from './index.api'
+import { createSessionLog } from '../../../../models/SessionLog'
 
 const date = '2000-01-01'
-const data = new SessionLog(date)
+const data = createSessionLog(date)
 const params = { date }
 
 it('fetches given session', async () => {

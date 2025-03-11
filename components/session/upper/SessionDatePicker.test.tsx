@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { vi } from 'vitest'
 import { render, screen, useServer } from '../../../lib/testUtils'
-import SessionLog from '../../../models/SessionLog'
+import { createSessionLog } from '../../../models/SessionLog'
 import SessionDatePicker from './SessionDatePicker'
 
 const mockHandleDateChange = vi.fn()
@@ -28,8 +28,8 @@ it('triggers date change when the new value is a valid date', async () => {
 
 it('shows existing session data with badges', async () => {
   useServer('/api/sessions/*', [
-    new SessionLog('2020-01-05', ['dummyRecordID']),
-    new SessionLog('2020-01-10'),
+    createSessionLog('2020-01-05', ['dummyRecordID']),
+    createSessionLog('2020-01-10'),
   ])
   const { user } = render(
     <SessionDatePicker
@@ -49,8 +49,8 @@ it('shows existing session data with badges', async () => {
 
 it('handles changing month', async () => {
   useServer('/api/sessions/*', [
-    new SessionLog('2020-01-05', ['dummyRecordID']),
-    new SessionLog('2020-01-10'),
+    createSessionLog('2020-01-05', ['dummyRecordID']),
+    createSessionLog('2020-01-10'),
   ])
   const { user } = render(
     <SessionDatePicker

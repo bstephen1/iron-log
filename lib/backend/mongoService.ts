@@ -6,7 +6,7 @@ import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight } from '../../models/Bodyweight'
 import { Record } from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
+import { SessionLog } from '../../models/SessionLog'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import {
   MatchType,

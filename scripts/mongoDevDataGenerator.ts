@@ -6,6 +6,7 @@ import { devUserId } from '../lib/frontend/constants'
 import { createCategory } from '../models/AsyncSelectorOption/Category'
 import { createExercise } from '../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../models/AsyncSelectorOption/Modifier'
+import { createBodyweight } from '../models/Bodyweight'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
@@ -13,11 +14,10 @@ import {
 } from '../models/DisplayFields'
 import { createNote } from '../models/Note'
 import { createRecord } from '../models/Record'
-import SessionLog from '../models/SessionLog'
+import { createSessionLog } from '../models/SessionLog'
 import { DB_UNITS, Units } from '../models/Set'
 import { Status } from '../models/Status'
 import './polyfills'
-import { createBodyweight } from '../models/Bodyweight'
 
 const envPath = path.resolve(__dirname, '..', '.env.development')
 dotenv.config({ path: envPath })
@@ -260,8 +260,8 @@ const createSessionLogs = () => {
     {}
   )
 
-  return Object.entries(sessionMap).map(
-    ([date, records]) => new SessionLog(date, records)
+  return Object.entries(sessionMap).map(([date, records]) =>
+    createSessionLog(date, records)
   )
 }
 

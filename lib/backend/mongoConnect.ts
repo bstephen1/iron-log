@@ -5,7 +5,7 @@ import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight } from '../../models/Bodyweight'
 import { Record } from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
+import { SessionLog } from '../../models/SessionLog'
 
 /** add userId, an extra field only visible to mongo records */
 type WithUserId<T> = { userId: ObjectId } & T
