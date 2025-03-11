@@ -1,7 +1,10 @@
 import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
 import { addModifier } from '../../../lib/frontend/restService'
-import Modifier from '../../../models/AsyncSelectorOption/Modifier'
+import {
+  createModifier,
+  Modifier,
+} from '../../../models/AsyncSelectorOption/Modifier'
 import AsyncSelector from './AsyncSelector'
 
 interface Props {
@@ -24,7 +27,7 @@ export default function ModifierSelector({
       value={modifier}
       label="Modifier"
       placeholder="Select or add new modifier"
-      Constructor={Modifier}
+      createOption={createModifier}
       addNewItem={addModifier}
     />
   )

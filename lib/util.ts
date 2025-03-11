@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
-import Exercise from '../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../models/AsyncSelectorOption/Exercise'
 import { SetType } from '../models/Record'
 import { DB_UNITS, Set, Units } from '../models/Set'
 import { DATE_FORMAT } from './frontend/constants'

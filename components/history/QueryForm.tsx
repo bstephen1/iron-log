@@ -5,7 +5,7 @@ import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutos
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
 import { UpdateState } from '../../lib/util'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
   RecordHistoryQuery,

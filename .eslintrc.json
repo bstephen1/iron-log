@@ -63,6 +63,12 @@
         "allowNumberAndString": true
       }
     ],
+    "@typescript-eslint/no-empty-object-type": [
+      "error",
+      {
+        "allowInterfaces": "with-single-extends"
+      }
+    ],
     // this one seems too restrictive for little gain
     "@typescript-eslint/no-dynamic-delete": "off",
     // we use StatusCodes enums as a list of values, sometimes relationally comparing them

@@ -4,11 +4,11 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import handler from './index.api'
+import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
 
 it('fetches exercises', async () => {
-  const data = [new Exercise('hi')]
+  const data = [createExercise('hi')]
   vi.mocked(fetchExercises).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })

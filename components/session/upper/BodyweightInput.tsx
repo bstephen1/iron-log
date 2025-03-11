@@ -13,7 +13,7 @@ import {
   updateBodyweight,
   useBodyweightHistory,
 } from '../../../lib/frontend/restService'
-import Bodyweight, { WeighInType } from '../../../models/Bodyweight'
+import { createBodyweight, WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
@@ -40,7 +40,7 @@ export default function BodyweightInput({
   const loading = !data
 
   const handleSubmit = async (value: string) => {
-    const newBodyweight = new Bodyweight(Number(value), bodyweightType, day)
+    const newBodyweight = createBodyweight(Number(value), bodyweightType, day)
 
     // new weigh-ins on the same day and of the same type will overwrite the previous value.
     // updateBodweight returns a single bw, so have to convert it to an array

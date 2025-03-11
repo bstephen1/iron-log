@@ -10,10 +10,10 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import Exercise from '../../../models/AsyncSelectorOption/Exercise'
 import handler from './[name].api'
+import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
 
-const data = new Exercise('hi')
+const data = createExercise('hi')
 const params = { name: 'name' }
 
 it('fetches given exercise', async () => {

@@ -5,7 +5,7 @@ import {
   useCategories,
   useExercises,
 } from '../../lib/frontend/restService'
-import Category from '../../models/AsyncSelectorOption/Category'
+import { Category } from '../../models/AsyncSelectorOption/Category'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import CategorySelector from '../form-fields/selectors/CategorySelector'
 import CategoryForm from './CategoryForm'

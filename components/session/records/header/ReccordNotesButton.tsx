@@ -2,16 +2,16 @@ import NotesIcon from '@mui/icons-material/Notes'
 import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import TooltipIconButton from '../../../TooltipIconButton'
 import NotesList from '../../../../components/form-fields/NotesList'
 import {
   updateSessionLog,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
 import { UpdateFields } from '../../../../lib/util'
-import Note from '../../../../models/Note'
-import Record from '../../../../models/Record'
+import { Note } from '../../../../models/Note'
+import { Record } from '../../../../models/Record'
 import { Set } from '../../../../models/Set'
+import TooltipIconButton from '../../../TooltipIconButton'
 
 const title = 'Record notes'
 

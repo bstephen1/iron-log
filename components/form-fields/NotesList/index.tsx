@@ -1,6 +1,6 @@
 import { Collapse, Typography } from '@mui/material'
 import { TransitionGroup } from 'react-transition-group'
-import Note from '../../../models/Note'
+import { Note } from '../../../models/Note'
 import FormDivider from '../../forms/FormDivider'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'

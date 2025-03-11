@@ -1,12 +1,12 @@
 import { AutocompleteChangeReason } from '@mui/material'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 import {
   updateExerciseFields,
   useExercises,
 } from '../../lib/frontend/restService'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import ComboBoxField from './ComboBoxField'
-import { memo } from 'react'
-import isEqual from 'react-fast-compare'
 
 interface Props {
   field: 'categories' | 'modifiers'

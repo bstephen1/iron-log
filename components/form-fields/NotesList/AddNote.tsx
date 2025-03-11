@@ -3,7 +3,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
 import { useRef, useState } from 'react'
 import TransitionIconButton from '../../../components/TransitionIconButton'
-import Note from '../../../models/Note'
+import { createNote, Note } from '../../../models/Note'
 import useField from '../useField'
 import TagSelect from './TagSelect'
 
@@ -27,7 +27,7 @@ export default function AddNote({
   const inputRef = useRef<HTMLInputElement>(undefined)
   const [tags, setTags] = useState<Note['tags']>(initialTags)
   const handleSubmit = (value: string) => {
-    handleAdd(new Note(value.trim(), tags))
+    handleAdd(createNote(value.trim(), tags))
     onReset()
   }
   const onReset = () => {

@@ -1,12 +1,12 @@
 import { StatusCodes } from 'http-status-codes'
 import { Document, Filter, ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
-import Category from '../../models/AsyncSelectorOption/Category'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import Modifier from '../../models/AsyncSelectorOption/Modifier'
-import Bodyweight from '../../models/Bodyweight'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
+import { Category } from '../../models/AsyncSelectorOption/Category'
+import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import { Bodyweight } from '../../models/Bodyweight'
+import { Record } from '../../models/Record'
+import { SessionLog } from '../../models/SessionLog'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import {
   MatchType,

@@ -3,9 +3,9 @@ import { Filter, ObjectId } from 'mongodb'
 import { ApiError } from 'next/dist/server/api-utils'
 import { validDateStringRegex } from '../../lib/frontend/constants'
 import { isValidId } from '../../lib/util'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import Modifier from '../../models/AsyncSelectorOption/Modifier'
-import Bodyweight, { WeighInType, weighInTypes } from '../../models/Bodyweight'
+import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import { Bodyweight, WeighInType, weighInTypes } from '../../models/Bodyweight'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
@@ -16,7 +16,7 @@ import {
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
-import Record from '../../models/Record'
+import { Record } from '../../models/Record'
 import { Status } from '../../models/Status'
 
 type ApiParam = string | string[] | undefined

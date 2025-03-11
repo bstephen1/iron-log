@@ -1,18 +1,18 @@
 import { vi } from 'vitest'
 import { fetchRecords } from '../../../../../lib/backend/mongoService'
 import {
-  expectApiRespondsWithData,
   expectApiErrorsOnInvalidMethod,
+  expectApiRespondsWithData,
 } from '../../../../../lib/testUtils'
-import Record from '../../../../../models/Record'
 
 import handler from './index.api'
+import { createRecord } from '../../../../../models/Record'
 
 const date = '2000-01-01'
 const params = { date }
 
 it('fetches records', async () => {
-  const data = [new Record(date)]
+  const data = [createRecord(date)]
   vi.mocked(fetchRecords).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })

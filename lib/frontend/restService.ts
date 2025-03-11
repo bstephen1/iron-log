@@ -1,14 +1,15 @@
 import dayjs, { Dayjs } from 'dayjs'
+import { ApiError } from 'next/dist/server/api-utils'
 import { ParsedUrlQueryInput, stringify } from 'querystring'
 import useSWR, { SWRConfiguration } from 'swr'
 import { arrayToIndex, fetchJson } from '../../lib/util'
 import { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import Category from '../../models/AsyncSelectorOption/Category'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import Modifier from '../../models/AsyncSelectorOption/Modifier'
-import Bodyweight from '../../models/Bodyweight'
-import Record from '../../models/Record'
-import SessionLog from '../../models/SessionLog'
+import { Category } from '../../models/AsyncSelectorOption/Category'
+import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import { Bodyweight } from '../../models/Bodyweight'
+import { Record } from '../../models/Record'
+import { SessionLog } from '../../models/SessionLog'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
@@ -22,7 +23,6 @@ import {
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
-import { ApiError } from 'next/dist/server/api-utils'
 
 // todo: res.json() breaks if json is null. Have to guard against that.
 

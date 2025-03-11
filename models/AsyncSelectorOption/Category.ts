@@ -1,8 +1,7 @@
-import { AsyncSelectorOption } from '.'
+import { AsyncSelectorOption, createAsyncSelectorOption } from '.'
 import { Status } from '../Status'
 
-export default class Category extends AsyncSelectorOption {
-  constructor(public name: string) {
-    super(name, Status.active)
-  }
-}
+export interface Category extends AsyncSelectorOption {}
+
+export const createCategory = (name: string): Category =>
+  createAsyncSelectorOption(name, Status.active)

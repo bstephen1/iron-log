@@ -1,11 +1,13 @@
 import { generateId } from '../lib/util'
 
-export default class Note {
-  readonly _id: string
-  constructor(
-    public value = '',
-    public tags: string[] = []
-  ) {
-    this._id = generateId()
-  }
+export interface Note {
+  _id: string
+  value: string
+  tags: string[]
 }
+
+export const createNote = (value = '', tags: string[] = []): Note => ({
+  _id: generateId(),
+  value,
+  tags,
+})

@@ -9,8 +9,11 @@ import {
   useModifiers,
   useRecords,
 } from '../../lib/frontend/restService'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
-import Note from '../../models/Note'
+import {
+  createExercise,
+  Exercise,
+} from '../../models/AsyncSelectorOption/Exercise'
+import { Note } from '../../models/Note'
 import ActionItems from '../form-fields/actions/ActionItems'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import ComboBoxField from '../form-fields/ComboBoxField'
@@ -58,13 +61,13 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const handleDuplicate = useCallback(
     async (name: string) => {
       const newName = name + ' (copy)'
-      mutateExercises(async (cur) => {
-        const exercise = cur?.find((e) => e.name === name) ?? {}
-        const newExercise = new Exercise(newName, exercise)
+      mutateExercises(async (cur = []) => {
+        const exercise = cur.find((e) => e.name === name) ?? {}
+        const newExercise = createExercise(newName, exercise)
         await updateExercise(newExercise)
         setUrlExercise(newName)
 
-        return [...(cur ?? []), newExercise]
+        return [...cur, newExercise]
       })
     },
     [mutateExercises, setUrlExercise]

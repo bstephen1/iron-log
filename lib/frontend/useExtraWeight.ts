@@ -1,4 +1,4 @@
-import Record from '../../models/Record'
+import { Record } from '../../models/Record'
 import { useBodyweightHistory, useModifiers } from './restService'
 
 export default function useExtraWeight(record: Record) {

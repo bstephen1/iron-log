@@ -4,11 +4,11 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import SessionLog from '../../../models/SessionLog'
 import handler from './index.api'
+import { createSessionLog } from '../../../models/SessionLog'
 
 it('fetches sessions', async () => {
-  const data = [new SessionLog('2000-01-01')]
+  const data = [createSessionLog('2000-01-01')]
   vi.mocked(fetchSessions).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })

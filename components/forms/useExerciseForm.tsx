@@ -4,7 +4,7 @@ import {
   updateExerciseFields,
   useExercises,
 } from '../../lib/frontend/restService'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import ExerciseSelector from '../form-fields/selectors/ExerciseSelector'
 import ExerciseForm from './ExerciseForm'

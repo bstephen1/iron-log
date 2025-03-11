@@ -1,12 +1,12 @@
 import dayjs from 'dayjs'
 import { URI_BODYWEIGHT } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
-import Bodyweight from '../../../models/Bodyweight'
 import BodyweightInput from './BodyweightInput'
+import { createBodyweight } from '../../../models/Bodyweight'
 
 const date2020 = dayjs('2020-01-01')
 const date2000 = dayjs('2000-01-01')
-const officialBw2000 = new Bodyweight(45, 'official', date2000)
+const officialBw2000 = createBodyweight(45, 'official', date2000)
 
 it('renders with no data', async () => {
   useServer(URI_BODYWEIGHT, [])
@@ -20,7 +20,7 @@ it('renders with no data', async () => {
 it('renders official weigh-in initially', async () => {
   const weight = 45
   const date = '2000-01-01'
-  useServer(URI_BODYWEIGHT, [new Bodyweight(weight, 'official', dayjs(date))])
+  useServer(URI_BODYWEIGHT, [createBodyweight(weight, 'official', dayjs(date))])
 
   render(<BodyweightInput day={date2020} />)
 
@@ -41,7 +41,9 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
   expect(await screen.findByText(/no existing official/i)).toBeVisible()
 
   // after switching to unofficial mode we can return the latest unofficial bodyweight
-  useServer(URI_BODYWEIGHT, [new Bodyweight(weight, 'unofficial', dayjs(date))])
+  useServer(URI_BODYWEIGHT, [
+    createBodyweight(weight, 'unofficial', dayjs(date)),
+  ])
 
   await user.click(screen.getByLabelText('Options'))
   await user.click(screen.getByText('unofficial weigh-ins'))
@@ -54,7 +56,9 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
 it('does not render data if unexpected weigh-in type is received', async () => {
   const weight = 45
   const date = '2010-01-01'
-  useServer(URI_BODYWEIGHT, [new Bodyweight(weight, 'unofficial', dayjs(date))])
+  useServer(URI_BODYWEIGHT, [
+    createBodyweight(weight, 'unofficial', dayjs(date)),
+  ])
   render(<BodyweightInput day={date2020} />)
 
   expect(await screen.findByText(/no existing official/i)).toBeVisible()
@@ -143,7 +147,7 @@ describe('input', () => {
     const newWeight = 15
     useServer(
       URI_BODYWEIGHT,
-      new Bodyweight(newWeight, 'official', date2020),
+      createBodyweight(newWeight, 'official', date2020),
       // slight delay is necessary for the optimistic data to be detected
       { delay: 100 }
     )

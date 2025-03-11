@@ -20,7 +20,7 @@ import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
 } from '../../../models/DisplayFields'
-import Record, { SetType, setOperators } from '../../../models/Record'
+import { Record, SetType, setOperators } from '../../../models/Record'
 import { Units } from '../../../models/Set'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(

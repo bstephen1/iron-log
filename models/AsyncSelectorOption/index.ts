@@ -1,13 +1,17 @@
 import { generateId } from '../../lib/util'
 import { Status } from '../Status'
 
-/** Objects used in AsyncSelector must extend this class. */
-export abstract class AsyncSelectorOption {
-  readonly _id: string
-  protected constructor(
-    public name: string,
-    public status: Status = Status.active
-  ) {
-    this._id = generateId()
-  }
+export interface AsyncSelectorOption {
+  _id: string
+  name: string
+  status: Status
 }
+
+export const createAsyncSelectorOption = (
+  name: string,
+  status = Status.active
+): AsyncSelectorOption => ({
+  _id: generateId(),
+  name,
+  status,
+})

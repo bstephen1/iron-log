@@ -1,6 +1,9 @@
 import { vi } from 'vitest'
 import { render, screen } from '../../../lib/testUtils'
-import { AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
+import {
+  AsyncSelectorOption,
+  createAsyncSelectorOption,
+} from '../../../models/AsyncSelectorOption'
 import { Status } from '../../../models/Status'
 import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
 
@@ -10,19 +13,13 @@ const mockAddNewItem = vi.fn()
 
 const placeholder = 'placeholder'
 
-class MockAsyncSelectorOption extends AsyncSelectorOption {
-  constructor(name = '', status = Status.active) {
-    super(name, status)
-  }
-}
-
 const TestSelector = (
   props: Partial<AsyncSelectorProps<AsyncSelectorOption, false>>
 ) => (
   <AsyncSelector
     handleChange={mockHandleChange}
     mutateOptions={mockMutate}
-    Constructor={MockAsyncSelectorOption}
+    createOption={createAsyncSelectorOption}
     addNewItem={mockAddNewItem}
     placeholder={placeholder}
     {...props}

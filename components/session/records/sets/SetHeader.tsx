@@ -16,7 +16,7 @@ import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../../lib/util'
-import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,

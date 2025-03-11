@@ -9,13 +9,13 @@ import {
   expectApiRespondsWithData,
 } from '../../../../../lib/testUtils'
 import { generateId } from '../../../../../lib/util'
-import Record from '../../../../../models/Record'
-import SessionLog from '../../../../../models/SessionLog'
+import { createRecord } from '../../../../../models/Record'
 import handler from './[id].api'
+import { createSessionLog } from '../../../../../models/SessionLog'
 
 const date = '2000-01-01'
-const record = new Record(date)
-const session = new SessionLog(date)
+const record = createRecord(date)
+const session = createSessionLog(date)
 const id = generateId()
 const params = { id, date }
 

@@ -5,7 +5,7 @@ import {
   useExercises,
   useModifiers,
 } from '../../lib/frontend/restService'
-import Modifier from '../../models/AsyncSelectorOption/Modifier'
+import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import ModifierSelector from '../form-fields/selectors/ModifierSelector'
 import ModifierForm from './ModifierForm'

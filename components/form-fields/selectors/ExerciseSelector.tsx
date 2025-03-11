@@ -3,9 +3,12 @@ import { useState } from 'react'
 import { KeyedMutator } from 'swr'
 import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
-import Exercise from '../../../models/AsyncSelectorOption/Exercise'
-import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
+import {
+  createExercise,
+  Exercise,
+} from '../../../models/AsyncSelectorOption/Exercise'
 import { StatusOrder } from '../../../models/Status'
+import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
 
 type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
   exercise: DisableClearable extends true ? Exercise : Exercise | null
@@ -65,7 +68,7 @@ export default function ExerciseSelector<
       filterCustom={filterCategories}
       handleFilterChange={handleFilterChange}
       adornmentOpen={!!categoryAnchorEl}
-      Constructor={Exercise}
+      createOption={createExercise}
       addNewItem={addExercise}
       // we have to spread because autocomplete considers the options to be readonly, and sort() mutates the array
       options={[...exercises].sort(
