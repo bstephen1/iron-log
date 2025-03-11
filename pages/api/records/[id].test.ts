@@ -11,10 +11,10 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import { generateId } from '../../../lib/util'
-import Record from '../../../models/Record'
 import handler from './[id].api'
+import { createRecord } from '../../../models/Record'
 
-const data = new Record('2000-01-01')
+const data = createRecord('2000-01-01')
 const id = generateId()
 const params = { id }
 

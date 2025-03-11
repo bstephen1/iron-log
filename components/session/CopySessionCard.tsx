@@ -10,10 +10,10 @@ import {
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
+import { createRecord } from '../../models/Record'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
@@ -68,7 +68,7 @@ export default function CopySessionCard() {
     for (const id of prevSessionLog.records) {
       const prevRecord = recordsIndex[id]
       // const newSets = createNewSets(prevRecord.sets, prevRecord.activeModifiers)
-      const newRecord = new Record(day.format(DATE_FORMAT), {
+      const newRecord = createRecord(day.format(DATE_FORMAT), {
         ...prevRecord,
         notes: [],
       })

@@ -4,7 +4,7 @@ import { memo } from 'react'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
 import { updateRecordFields } from '../../../../lib/frontend/restService'
-import Record from '../../../../models/Record'
+import { Record } from '../../../../models/Record'
 
 interface Props extends IconButtonProps {
   _id: Record['_id']

@@ -9,9 +9,9 @@ import {
   useExercises,
 } from '../../lib/frontend/restService'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import useCurrentSessionLog from './useCurrentSessionLog'
+import { createRecord } from '../../models/Record'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
@@ -24,7 +24,7 @@ export default function AddRecordCard() {
   const handleAdd = () => {
     if (!exercise) return
 
-    const newRecord = new Record(date, { exercise })
+    const newRecord = createRecord(date, { exercise })
     newRecord.sets.push({})
     const newSessionLog = sessionLog
       ? {

@@ -4,27 +4,37 @@ import { Note } from './Note'
 import { Set } from './Set'
 
 // todo: add activeCategory (for programming)
-export default class Record {
+export interface Record {
+  _id: string
+  date: string
   exercise: Exercise | null
   activeModifiers: string[]
   category: string | null
   notes: Note[]
   setType: SetType
   sets: Set[]
-  readonly _id: string
-  constructor(
-    public date: string,
-    record?: Partial<Record>
-  ) {
-    this.exercise = record?.exercise || null
-    this.activeModifiers = record?.activeModifiers || []
-    this.category = record?.category || ''
-    this.notes = record?.notes || []
-    this.sets = record?.sets || []
-    this.setType = record?.setType ?? DEFAULT_SET_TYPE
-    this._id = generateId()
-  }
 }
+
+export const createRecord = (
+  date: string,
+  {
+    exercise = null,
+    activeModifiers = [],
+    category = null,
+    notes = [],
+    sets = [],
+    setType = DEFAULT_SET_TYPE,
+  }: Partial<Record> = {}
+): Record => ({
+  _id: generateId(),
+  date,
+  exercise,
+  activeModifiers,
+  category,
+  notes,
+  sets,
+  setType,
+})
 
 /** Marks the structure of the set in a record. Reads as <operator> <value|range> <field>.
  *  Eg, "exactly 5 reps" means every set in the record is supposed to have 5 reps.

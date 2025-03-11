@@ -1,6 +1,6 @@
 import { generateId } from '../lib/util'
 import { Note } from './Note'
-import Record from './Record'
+import { Record } from './Record'
 
 // todo: add session time. Start / end times? Program stuff (not hashed out yet), overall notes?
 // todo: gym location?

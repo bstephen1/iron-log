@@ -9,12 +9,12 @@ import {
   expectApiRespondsWithData,
 } from '../../../../../lib/testUtils'
 import { generateId } from '../../../../../lib/util'
-import Record from '../../../../../models/Record'
 import SessionLog from '../../../../../models/SessionLog'
 import handler from './[id].api'
+import { createRecord } from '../../../../../models/Record'
 
 const date = '2000-01-01'
-const record = new Record(date)
+const record = createRecord(date)
 const session = new SessionLog(date)
 const id = generateId()
 const params = { id, date }

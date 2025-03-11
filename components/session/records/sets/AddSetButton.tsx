@@ -3,7 +3,7 @@ import { Box, Fab, Tooltip } from '@mui/material'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
 import { updateRecordFields } from '../../../../lib/frontend/restService'
-import Record from '../../../../models/Record'
+import { Record } from '../../../../models/Record'
 import { Set } from '../../../../models/Set'
 
 interface Props {

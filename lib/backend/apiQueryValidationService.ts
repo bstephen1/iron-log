@@ -16,7 +16,7 @@ import {
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
-import Record from '../../models/Record'
+import { Record } from '../../models/Record'
 import { Status } from '../../models/Status'
 
 type ApiParam = string | string[] | undefined
