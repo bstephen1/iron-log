@@ -5,7 +5,7 @@ import { AsyncSelectorProps } from '../../../components/form-fields/selectors/As
 import ExerciseSelector from '../../../components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from '../../../lib/frontend/restService'
 import { UpdateFields } from '../../../lib/util'
-import Exercise from '../../../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import Record from '../../../models/Record'
 
 type Props<DisableClearable extends boolean | undefined> = {

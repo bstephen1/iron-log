@@ -1,5 +1,5 @@
 import { generateId } from '../lib/util'
-import Exercise from './AsyncSelectorOption/Exercise'
+import { Exercise } from './AsyncSelectorOption/Exercise'
 import Note from './Note'
 import { Set } from './Set'
 

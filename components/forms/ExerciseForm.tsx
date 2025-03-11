@@ -9,7 +9,10 @@ import {
   useModifiers,
   useRecords,
 } from '../../lib/frontend/restService'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import {
+  createExercise,
+  Exercise,
+} from '../../models/AsyncSelectorOption/Exercise'
 import Note from '../../models/Note'
 import ActionItems from '../form-fields/actions/ActionItems'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
@@ -60,7 +63,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       const newName = name + ' (copy)'
       mutateExercises(async (cur) => {
         const exercise = cur?.find((e) => e.name === name) ?? {}
-        const newExercise = new Exercise(newName, exercise)
+        const newExercise = createExercise(newName, exercise)
         await updateExercise(newExercise)
         setUrlExercise(newName)
 

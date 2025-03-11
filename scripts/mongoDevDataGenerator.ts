@@ -1,23 +1,23 @@
+import dayjs from 'dayjs'
+import dotenv from 'dotenv'
 import { ObjectId } from 'mongodb'
-import Category from '../models/AsyncSelectorOption/Category'
+import path from 'path'
+import { devUserId } from '../lib/frontend/constants'
+import { createCategory } from '../models/AsyncSelectorOption/Category'
+import { createExercise } from '../models/AsyncSelectorOption/Exercise'
+import { createModifier } from '../models/AsyncSelectorOption/Modifier'
+import Bodyweight from '../models/Bodyweight'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   VisibleField,
 } from '../models/DisplayFields'
-import Exercise from '../models/AsyncSelectorOption/Exercise'
-import Modifier from '../models/AsyncSelectorOption/Modifier'
 import Note from '../models/Note'
 import Record from '../models/Record'
 import SessionLog from '../models/SessionLog'
 import { DB_UNITS, Units } from '../models/Set'
 import { Status } from '../models/Status'
 import './polyfills'
-import { devUserId } from '../lib/frontend/constants'
-import path from 'path'
-import dotenv from 'dotenv'
-import Bodyweight from '../models/Bodyweight'
-import dayjs from 'dayjs'
 
 const envPath = path.resolve(__dirname, '..', '.env.development')
 dotenv.config({ path: envPath })
@@ -41,51 +41,51 @@ const withId = <T>(items: T[]) =>
   items.map((item) => ({ ...item, userId: devUserObjectId }))
 
 const categories = {
-  quads: new Category('quads'),
-  squat: new Category('squat'),
-  sideDelts: new Category('side delts'),
-  biceps: new Category('biceps'),
-  hamstrings: new Category('hamstrings'),
-  bench: new Category('bench press'),
-  chest: new Category('chest'),
-  triceps: new Category('triceps'),
-  cardio: new Category('cardio'),
-  strongman: new Category('strongman'),
-  lats: new Category('lats'),
+  quads: createCategory('quads'),
+  squat: createCategory('squat'),
+  sideDelts: createCategory('side delts'),
+  biceps: createCategory('biceps'),
+  hamstrings: createCategory('hamstrings'),
+  bench: createCategory('bench press'),
+  chest: createCategory('chest'),
+  triceps: createCategory('triceps'),
+  cardio: createCategory('cardio'),
+  strongman: createCategory('strongman'),
+  lats: createCategory('lats'),
 }
 
 const modifiers = {
-  barbell: new Modifier('barbell'),
-  dumbbell: new Modifier('dumbbell'),
-  belt: new Modifier('belt'),
-  band: new Modifier('band'),
-  pause: new Modifier('pause'),
-  flared: new Modifier('flared elbows'),
-  tucked: new Modifier('tucked elbows'),
-  wide: new Modifier('wide grip'),
-  narrow: new Modifier('narrow grip'),
-  middle: new Modifier('middle grip'),
-  wraps: new Modifier('wraps'),
-  amrap: new Modifier('AMRAP'),
-  myo: new Modifier('myo'),
-  pin: new Modifier('lifting pin', 1.5),
-  dipBelt: new Modifier('dip belt', 1.5),
+  barbell: createModifier('barbell'),
+  dumbbell: createModifier('dumbbell'),
+  belt: createModifier('belt'),
+  band: createModifier('band'),
+  pause: createModifier('pause'),
+  flared: createModifier('flared elbows'),
+  tucked: createModifier('tucked elbows'),
+  wide: createModifier('wide grip'),
+  narrow: createModifier('narrow grip'),
+  middle: createModifier('middle grip'),
+  wraps: createModifier('wraps'),
+  amrap: createModifier('AMRAP'),
+  myo: createModifier('myo'),
+  pin: createModifier('lifting pin', 1.5),
+  dipBelt: createModifier('dip belt', 1.5),
 }
 
 const exercises = {
-  squats: new Exercise('high bar squats', {
+  squats: createExercise('high bar squats', {
     notes: [new Note('knees out'), new Note('chest up')],
     categories: [categories.squat.name, categories.quads.name],
     modifiers: [modifiers.band.name, modifiers.belt.name],
   }),
-  curls: new Exercise('curls', {
+  curls: createExercise('curls', {
     notes: [new Note('twist in', [modifiers.barbell.name])],
     categories: [categories.biceps.name],
     displayFields: getDisplayFields(['side', 'weight', 'reps']),
     modifiers: [modifiers.barbell.name, modifiers.dumbbell.name],
     attributes: { unilateral: true },
   }),
-  multiGripBench: new Exercise('multi grip bench press', {
+  multiGripBench: createExercise('multi grip bench press', {
     notes: [
       new Note('great for triceps', [
         modifiers.tucked.name,
@@ -111,32 +111,32 @@ const exercises = {
       modifiers.wraps.name,
     ],
   }),
-  zercherSquat: new Exercise('zercher squat', {
+  zercherSquat: createExercise('zercher squat', {
     status: Status.archived,
     notes: [new Note('too painful')],
     categories: [categories.squat.name],
   }),
-  sprints: new Exercise('sprints', {
+  sprints: createExercise('sprints', {
     categories: [categories.cardio.name],
     displayFields: getDisplayFields(['distance', 'time']),
   }),
-  running: new Exercise('running', {
+  running: createExercise('running', {
     categories: [categories.cardio.name],
     displayFields: getDisplayFields(['distance', 'time'], {
       distance: 'km',
       time: 'min',
     }),
   }),
-  yoke: new Exercise('yoke', {
+  yoke: createExercise('yoke', {
     categories: [categories.strongman.name],
     displayFields: getDisplayFields(['weight', 'distance', 'time', 'effort']),
   }),
-  uprightRow: new Exercise('upright row', {
+  uprightRow: createExercise('upright row', {
     categories: [categories.sideDelts.name],
     modifiers: [modifiers.barbell.name, modifiers.pin.name],
     displayFields: getDisplayFields(['weight', 'reps']),
   }),
-  chinUps: new Exercise('chinups', {
+  chinUps: createExercise('chinups', {
     categories: [categories.biceps.name, categories.lats.name],
     modifiers: [modifiers.dipBelt.name],
     attributes: { bodyweight: true },

@@ -9,10 +9,10 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import Category from '../../../models/AsyncSelectorOption/Category'
+import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import handler from './[name].api'
 
-const data = new Category('hi')
+const data = createCategory('hi')
 const params = { name: 'name' }
 
 it('fetches given category', async () => {

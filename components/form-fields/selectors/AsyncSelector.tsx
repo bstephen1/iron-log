@@ -27,8 +27,8 @@ export interface AsyncSelectorProps<
    *  If omitted, adding new items is disabled.
    */
   mutateOptions?: KeyedMutator<C[]>
-  /** constructor for C  */
-  Constructor: new (name: string) => C
+  /** function to create C  */
+  createOption: (name: string) => C
   /**  function to add new C to db */
   addNewItem: (value: C) => Promise<C>
   /** This component does not support multiple selections. */
@@ -43,7 +43,7 @@ export default function AsyncSelector<
   handleChange,
   options = [],
   mutateOptions,
-  Constructor,
+  createOption,
   addNewItem,
   ...asyncAutocompleteProps
 }: AsyncSelectorProps<C, DisableClearable>) {
@@ -81,7 +81,7 @@ export default function AsyncSelector<
         if (newValue?.inputValue) {
           // The new option's name is the visible label `Add "xxx"`.
           // We want to set the name to be the raw inputValue.
-          const newOption = new Constructor(newValue.inputValue)
+          const newOption = createOption(newValue.inputValue)
           setInputValue(inputValue)
 
           // mutateOptions will always be defined here since otherwise inputValue will not be set in filterOptions
@@ -119,7 +119,7 @@ export default function AsyncSelector<
           // We create a new object every time the input changes.
           // We could possibly use a ref instead, but that can result in duplicate _ids.
           const newOption = {
-            ...new Constructor(`Add "${inputValue}"`),
+            ...createOption(`Add "${inputValue}"`),
             inputValue,
           }
 

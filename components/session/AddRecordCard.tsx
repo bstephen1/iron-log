@@ -8,7 +8,7 @@ import {
   updateSessionLog,
   useExercises,
 } from '../../lib/frontend/restService'
-import Exercise from '../../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import Record from '../../models/Record'
 import SessionLog from '../../models/SessionLog'
 import useCurrentSessionLog from './useCurrentSessionLog'

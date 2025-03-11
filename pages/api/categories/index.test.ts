@@ -4,11 +4,11 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import Category from '../../../models/AsyncSelectorOption/Category'
+import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import handler from './index.api'
 
 it('fetches categories', async () => {
-  const data = [new Category('hi')]
+  const data = [createCategory('hi')]
   vi.mocked(fetchCategories).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })

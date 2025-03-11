@@ -2,19 +2,22 @@ import { ComponentProps } from 'react'
 import { vi } from 'vitest'
 import { URI_CATEGORIES } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
-import Category from '../../../models/AsyncSelectorOption/Category'
-import Exercise from '../../../models/AsyncSelectorOption/Exercise'
+import {
+  createExercise,
+  Exercise,
+} from '../../../models/AsyncSelectorOption/Exercise'
 import { Status } from '../../../models/Status'
 import ExerciseSelector from './ExerciseSelector'
+import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 
 const mockHandleChange = vi.fn()
 const mockMutate = vi.fn()
 const mockHandleCategoryChange = vi.fn()
 
 const testCategoryName = 'test category'
-const testCategory = new Category(testCategoryName)
-const matchingExercise = new Exercise('blah')
-const unmatchedExercise = new Exercise('yah')
+const testCategory = createCategory(testCategoryName)
+const matchingExercise = createExercise('blah')
+const unmatchedExercise = createExercise('yah')
 matchingExercise.categories = [testCategoryName]
 
 const autocompletePlaceholder = /add new exercise/i
@@ -83,7 +86,7 @@ it('filters exercises based on category filter', async () => {
 
 it('unselects exercise if it is not valid for selected category', async () => {
   const otherCategoryName = 'other'
-  useServer(URI_CATEGORIES, [testCategory, new Category(otherCategoryName)])
+  useServer(URI_CATEGORIES, [testCategory, createCategory(otherCategoryName)])
   const { user } = render(
     <TestSelector
       exercises={[unmatchedExercise]}
@@ -104,10 +107,10 @@ it('unselects exercise if it is not valid for selected category', async () => {
 
 it('sorts exercises by status', async () => {
   const unsortedExercises: Exercise[] = [
-    new Exercise('option 1'),
-    new Exercise('option 2', { status: Status.archived }),
-    new Exercise('option 3'),
-    new Exercise('option 4', { status: Status.archived }),
+    createExercise('option 1'),
+    createExercise('option 2', { status: Status.archived }),
+    createExercise('option 3'),
+    createExercise('option 4', { status: Status.archived }),
   ]
   const { user } = render(<TestSelector exercises={unsortedExercises} />)
 

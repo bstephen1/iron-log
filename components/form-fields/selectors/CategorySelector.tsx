@@ -1,7 +1,10 @@
 import { Dispatch, SetStateAction } from 'react'
 import { KeyedMutator } from 'swr'
 import { addCategory } from '../../../lib/frontend/restService'
-import Category from '../../../models/AsyncSelectorOption/Category'
+import {
+  Category,
+  createCategory,
+} from '../../../models/AsyncSelectorOption/Category'
 import AsyncSelector from './AsyncSelector'
 
 interface Props {
@@ -24,7 +27,7 @@ export default function CategorySelector({
       value={category}
       label="Category"
       placeholder="Select or add new category"
-      Constructor={Category}
+      createOption={createCategory}
       addNewItem={addCategory}
     />
   )

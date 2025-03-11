@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { UpdateFields } from '../../../../lib/util'
-import Exercise from '../../../../models/AsyncSelectorOption/Exercise'
+import { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
 import Record from '../../../../models/Record'
 import AddSetButton from './AddSetButton'

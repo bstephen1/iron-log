@@ -7,7 +7,7 @@ import {
   useExercises,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
-import Category from '../../models/AsyncSelectorOption/Category'
+import { Category } from '../../models/AsyncSelectorOption/Category'
 import NameField from '../form-fields/NameField'
 import UsageComboBox from '../form-fields/UsageComboBox'
 import ActionItems from '../form-fields/actions/ActionItems'

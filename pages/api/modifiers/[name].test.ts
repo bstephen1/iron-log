@@ -9,10 +9,10 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import Modifier from '../../../models/AsyncSelectorOption/Modifier'
 import handler from './[name].api'
+import { createModifier } from '../../../models/AsyncSelectorOption/Modifier'
 
-const data = new Modifier('hi', 5)
+const data = createModifier('hi', 5)
 const params = { name: 'name' }
 
 it('fetches given modifier', async () => {

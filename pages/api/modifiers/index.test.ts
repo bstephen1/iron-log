@@ -4,11 +4,11 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import Modifier from '../../../models/AsyncSelectorOption/Modifier'
 import handler from './index.api'
+import { createModifier } from '../../../models/AsyncSelectorOption/Modifier'
 
 it('fetches modifiers', async () => {
-  const data = [new Modifier('hi', 5)]
+  const data = [createModifier('hi', 5)]
   vi.mocked(fetchModifiers).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })
