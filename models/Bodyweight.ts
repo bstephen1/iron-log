@@ -2,20 +2,27 @@ import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
 
-export default class Bodyweight {
-  readonly _id: string
+export interface Bodyweight {
+  _id: string
+  value: number
+  type: WeighInType
   /** YYYY-MM-DD */
   date: string
-  constructor(
-    public value: number,
-    public type: WeighInType,
-    /** a dayjs() date object that will be formatted internally. This avoids the possibility of being passed an incorrectly formatted date string. */
-    dayjsDate = dayjs()
-  ) {
-    this._id = generateId()
-    this.date = dayjsDate.format(DATE_FORMAT)
-  }
 }
+
+export const createBodyweight = (
+  value: number,
+  type: WeighInType,
+  /** a dayjs() date object that will be formatted internally.
+   * This avoids the possibility of being passed an incorrectly
+   * formatted date string. */
+  dayjsDate = dayjs()
+): Bodyweight => ({
+  _id: generateId(),
+  value,
+  type,
+  date: dayjsDate.format(DATE_FORMAT),
+})
 
 /** A weigh-in can be one of two types:
  * - Official: Used for tracking bodyweight over time. Ideally measured at the same time of day under similar conditions.

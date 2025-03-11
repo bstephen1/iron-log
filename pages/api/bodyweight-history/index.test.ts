@@ -8,10 +8,10 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import Bodyweight from '../../../models/Bodyweight'
 import handler from './index.api'
+import { createBodyweight } from '../../../models/Bodyweight'
 
-const data = new Bodyweight(50, 'official')
+const data = createBodyweight(50, 'official')
 
 it('fetches given bodyweight', async () => {
   vi.mocked(fetchBodyweightHistory).mockResolvedValue([data])

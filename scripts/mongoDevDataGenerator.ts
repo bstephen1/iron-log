@@ -6,18 +6,18 @@ import { devUserId } from '../lib/frontend/constants'
 import { createCategory } from '../models/AsyncSelectorOption/Category'
 import { createExercise } from '../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../models/AsyncSelectorOption/Modifier'
-import Bodyweight from '../models/Bodyweight'
 import {
   DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   VisibleField,
 } from '../models/DisplayFields'
 import { createNote } from '../models/Note'
+import { createRecord } from '../models/Record'
 import SessionLog from '../models/SessionLog'
 import { DB_UNITS, Units } from '../models/Set'
 import { Status } from '../models/Status'
 import './polyfills'
-import { createRecord } from '../models/Record'
+import { createBodyweight } from '../models/Bodyweight'
 
 const envPath = path.resolve(__dirname, '..', '.env.development')
 dotenv.config({ path: envPath })
@@ -242,12 +242,12 @@ const records = [
 ]
 
 const bodyweights = [
-  new Bodyweight(70, 'official', dayjs('2022-09-26')),
-  new Bodyweight(73, 'unofficial', dayjs('2022-09-26')),
-  new Bodyweight(68, 'official', dayjs('2022-09-24')),
-  new Bodyweight(67, 'official', dayjs('2022-09-23')),
-  new Bodyweight(65, 'official', dayjs('2022-09-20')),
-  new Bodyweight(60, 'official', dayjs('2022-09-14')),
+  createBodyweight(70, 'official', dayjs('2022-09-26')),
+  createBodyweight(73, 'unofficial', dayjs('2022-09-26')),
+  createBodyweight(68, 'official', dayjs('2022-09-24')),
+  createBodyweight(67, 'official', dayjs('2022-09-23')),
+  createBodyweight(65, 'official', dayjs('2022-09-20')),
+  createBodyweight(60, 'official', dayjs('2022-09-14')),
 ]
 
 /** maps over all records and creates the appropriate session logs */

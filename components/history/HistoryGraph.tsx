@@ -24,7 +24,7 @@ import {
 } from '../../lib/frontend/restService'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 import { UpdateState } from '../../lib/util'
-import Bodyweight from '../../models/Bodyweight'
+import { Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
 import { Set } from '../../models/Set'
