@@ -5,7 +5,7 @@ import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
 import { UpdateFields } from '../../../../lib/util'
 import { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
-import Note from '../../../../models/Note'
+import { Note } from '../../../../models/Note'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 const title = 'Exercise notes'

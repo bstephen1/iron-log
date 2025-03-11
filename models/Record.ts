@@ -1,6 +1,6 @@
 import { generateId } from '../lib/util'
 import { Exercise } from './AsyncSelectorOption/Exercise'
-import Note from './Note'
+import { Note } from './Note'
 import { Set } from './Set'
 
 // todo: add activeCategory (for programming)

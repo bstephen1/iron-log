@@ -12,7 +12,7 @@ import {
   ORDERED_DISPLAY_FIELDS,
   VisibleField,
 } from '../models/DisplayFields'
-import Note from '../models/Note'
+import { createNote } from '../models/Note'
 import Record from '../models/Record'
 import SessionLog from '../models/SessionLog'
 import { DB_UNITS, Units } from '../models/Set'
@@ -74,12 +74,12 @@ const modifiers = {
 
 const exercises = {
   squats: createExercise('high bar squats', {
-    notes: [new Note('knees out'), new Note('chest up')],
+    notes: [createNote('knees out'), createNote('chest up')],
     categories: [categories.squat.name, categories.quads.name],
     modifiers: [modifiers.band.name, modifiers.belt.name],
   }),
   curls: createExercise('curls', {
-    notes: [new Note('twist in', [modifiers.barbell.name])],
+    notes: [createNote('twist in', [modifiers.barbell.name])],
     categories: [categories.biceps.name],
     displayFields: getDisplayFields(['side', 'weight', 'reps']),
     modifiers: [modifiers.barbell.name, modifiers.dumbbell.name],
@@ -87,11 +87,11 @@ const exercises = {
   }),
   multiGripBench: createExercise('multi grip bench press', {
     notes: [
-      new Note('great for triceps', [
+      createNote('great for triceps', [
         modifiers.tucked.name,
         modifiers.wide.name,
       ]),
-      new Note('great for chest', [
+      createNote('great for chest', [
         modifiers.flared.name,
         modifiers.narrow.name,
       ]),
@@ -113,7 +113,7 @@ const exercises = {
   }),
   zercherSquat: createExercise('zercher squat', {
     status: Status.archived,
-    notes: [new Note('too painful')],
+    notes: [createNote('too painful')],
     categories: [categories.squat.name],
   }),
   sprints: createExercise('sprints', {
@@ -148,7 +148,7 @@ const records = [
   new Record('2022-09-20', {
     exercise: exercises.squats,
     activeModifiers: ['belt'],
-    notes: [new Note('Very tired today', ['Session'])],
+    notes: [createNote('Very tired today', ['Session'])],
     setType: { operator: 'exactly', value: 6, field: 'reps' },
     sets: [
       { reps: 6, effort: 8, weight: 100 },
@@ -180,8 +180,8 @@ const records = [
     exercise: exercises.squats,
     activeModifiers: ['belt'],
     notes: [
-      new Note('felt great', ['Set 1']),
-      new Note('felt heavy', ['Set 3']),
+      createNote('felt great', ['Set 1']),
+      createNote('felt heavy', ['Set 3']),
     ],
     setType: { operator: 'exactly', value: 6, field: 'reps' },
     sets: [
@@ -193,7 +193,7 @@ const records = [
   new Record('2022-09-26', {
     exercise: exercises.curls,
     activeModifiers: [modifiers.dumbbell.name],
-    notes: [new Note('felt great', ['Record'])],
+    notes: [createNote('felt great', ['Record'])],
     setType: { operator: 'between', min: 10, max: 15, field: 'reps' },
     sets: [
       { reps: 15, weight: 25 },

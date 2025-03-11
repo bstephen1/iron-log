@@ -9,7 +9,7 @@ import {
   useSessionLog,
 } from '../../../../lib/frontend/restService'
 import { UpdateFields } from '../../../../lib/util'
-import Note from '../../../../models/Note'
+import { Note } from '../../../../models/Note'
 import Record from '../../../../models/Record'
 import { Set } from '../../../../models/Set'
 

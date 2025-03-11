@@ -1,7 +1,7 @@
 import { AsyncSelectorOption, createAsyncSelectorOption } from '.'
 import Attributes from '../Attributes'
 import { DisplayFields } from '../DisplayFields'
-import Note from '../Note'
+import { Note } from '../Note'
 import { Status } from '../Status'
 
 export interface Exercise extends AsyncSelectorOption {
