@@ -9,9 +9,12 @@
     "projectService": true
   },
   "rules": {
+    // this rule wants you to have <div>today&apos;s session</div>
+    // instead of <div>today's session</div>
     "react/no-unescaped-entities": [
       "error",
       {
+        // remove " and ' from the default "forbid" array
         "forbid": [">", "}"]
       }
     ],
@@ -20,8 +23,6 @@
       "always",
       { "exceptions": ["-", "*"], "markers": ["/"] }
     ],
-    // we disable this because vitest needs var to hoist mock variables above imports
-    "no-var": "off",
     // duplicate of @typescript-eslint/no-unused-vars
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
