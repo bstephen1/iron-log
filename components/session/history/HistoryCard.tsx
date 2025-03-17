@@ -123,7 +123,9 @@ export default memo(function HistoryCard({
             {date}
           </Link>
         }
-        titleTypographyProps={{ variant: 'h6' }}
+        slotProps={{
+          title: { variant: 'h6' },
+        }}
         action={actions?.map((action) => actionComponents[action])}
       />
       <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />

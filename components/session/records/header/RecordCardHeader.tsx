@@ -108,7 +108,9 @@ export default function RecordCardHeader({
     <CardHeader
       ref={ref}
       title={`Record ${swiperIndex + 1}`}
-      titleTypographyProps={{ variant: 'h6' }}
+      slotProps={{
+        title: { variant: 'h6' },
+      }}
       action={
         <Box sx={{ cursor: 'default', width: '100%' }}>
           {actionButtons.slice(0, visibleActions)}
