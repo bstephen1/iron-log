@@ -1,5 +1,4 @@
 import { ChangeEvent, useRef, useState } from 'react'
-import * as yup from 'yup'
 import { Schema, ZodError } from 'zod'
 
 /*
@@ -19,8 +18,6 @@ import { Schema, ZodError } from 'zod'
 interface Props<T = string> {
   /** zod schema that determines whether the value is valid */
   valueSchema?: Schema
-  /** the validator should be for a single field. Run reach() to specify the field to use. */
-  yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
   /** handleSubmit should be provided unless manually handling submit (eg, combobox) */
   handleSubmit?: (value: T) => void
@@ -31,7 +28,6 @@ interface Props<T = string> {
 }
 export default function useField<T = string>({
   valueSchema,
-  yupValidator,
   debounceMilliseconds = 800,
   autoSubmit = true,
   handleSubmit,

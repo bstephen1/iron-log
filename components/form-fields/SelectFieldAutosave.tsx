@@ -1,8 +1,7 @@
 import { MenuItem, TextField, TextFieldProps } from '@mui/material'
 import { ReactNode } from 'react'
-import * as yup from 'yup'
-import useField from './useField'
 import { Schema } from 'zod'
+import useField from './useField'
 
 interface Props<V, O> {
   label: string
@@ -10,7 +9,6 @@ interface Props<V, O> {
   options: O[]
   defaultHelperText?: string
   handleSubmit: (value: V) => void
-  yupValidator?: ReturnType<typeof yup.reach>
   valueSchema?: Schema
   children?: ReactNode
   readOnly?: boolean
@@ -31,7 +29,6 @@ export default function SelectFieldAutosave<
     initialValue,
     handleSubmit,
     valueSchema,
-    yupValidator,
     children,
     readOnly,
     emptyOption,
@@ -42,7 +39,6 @@ export default function SelectFieldAutosave<
     handleSubmit,
     initialValue,
     valueSchema,
-    yupValidator,
     // select should submit as soon as a new option is picked
     debounceMilliseconds: 0,
   })

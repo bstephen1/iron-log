@@ -1,10 +1,9 @@
 import { Input, InputProps, TextField, TextFieldProps } from '@mui/material'
 import { ChangeEvent, InputHTMLAttributes } from 'react'
 import { useIMask } from 'react-imask'
-import * as yup from 'yup'
+import { Schema } from 'zod'
 import { doNothing } from '../../lib/util'
 import useField from './useField'
-import { Schema } from 'zod'
 
 const numericInput: InputHTMLAttributes<HTMLInputElement> = {
   inputMode: 'decimal',
@@ -17,7 +16,6 @@ export type InputFieldAutosaveProps = {
   initialValue?: string
   defaultHelperText?: string
   handleSubmit: (value: string) => void
-  yupValidator?: ReturnType<typeof yup.reach>
   valueSchema?: Schema
   readOnly?: boolean
   /** Render an Input instead of a TextField. This will allow label / helper text to
@@ -50,7 +48,6 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     initialValue = '',
     handleSubmit,
     valueSchema,
-    yupValidator,
     readOnly,
     renderAsInput,
     id,
@@ -65,7 +62,6 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const { error, isEmpty, ...field } = useField({
     initialValue,
     valueSchema,
-    yupValidator,
     handleSubmit,
     debounceMilliseconds,
   })
