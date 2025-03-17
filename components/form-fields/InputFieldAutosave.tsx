@@ -16,7 +16,7 @@ export type InputFieldAutosaveProps = {
   initialValue?: string
   defaultHelperText?: string
   handleSubmit: (value: string) => void
-  valueSchema?: Schema
+  schema?: Schema
   readOnly?: boolean
   /** Render an Input instead of a TextField. This will allow label / helper text to
    *  be customized outside the component.
@@ -47,7 +47,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
     defaultHelperText = ' ',
     initialValue = '',
     handleSubmit,
-    valueSchema,
+    schema,
     readOnly,
     renderAsInput,
     id,
@@ -61,7 +61,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
 
   const { error, isEmpty, ...field } = useField({
     initialValue,
-    valueSchema,
+    schema,
     handleSubmit,
     debounceMilliseconds,
   })

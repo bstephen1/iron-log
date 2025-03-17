@@ -17,7 +17,7 @@ import { Schema, ZodError } from 'zod'
 
 interface Props<T = string> {
   /** zod schema that determines whether the value is valid */
-  valueSchema?: Schema
+  schema?: Schema
   debounceMilliseconds?: number
   /** handleSubmit should be provided unless manually handling submit (eg, combobox) */
   handleSubmit?: (value: T) => void
@@ -27,7 +27,7 @@ interface Props<T = string> {
   autoSubmit?: boolean
 }
 export default function useField<T = string>({
-  valueSchema,
+  schema,
   debounceMilliseconds = 800,
   autoSubmit = true,
   handleSubmit,
@@ -84,9 +84,9 @@ export default function useField<T = string>({
         `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )
 
-    if (valueSchema) {
+    if (schema) {
       try {
-        valueSchema.parse(value)
+        schema.parse(value)
       } catch (e) {
         // zod returns an array of errors, so we have to extract the actual error
         if (e instanceof ZodError) {

@@ -19,7 +19,7 @@ export default memo(function NameField({ name, handleUpdate, options }: Props) {
         (name) => handleUpdate({ name }),
         [handleUpdate]
       )}
-      valueSchema={z
+      schema={z
         .string()
         .min(1, 'Must have a name')
         .refine(

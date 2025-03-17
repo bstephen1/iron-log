@@ -35,7 +35,7 @@ export default function BodyweightInput({
   })
 
   // note: the value will be cast to a number on submit
-  const valueSchema = z.string().min(1, 'Must have a value')
+  const schema = z.string().min(1, 'Must have a value')
   const loading = !data
 
   const handleSubmit = async (value: string) => {
@@ -67,7 +67,7 @@ export default function BodyweightInput({
           : String(data[0].value)
       }
       handleSubmit={handleSubmit}
-      valueSchema={valueSchema}
+      schema={schema}
       // allow user to update bw with same value if latest date isn't the current date
       showSubmit={data?.[0]?.date !== day.format(DATE_FORMAT) || undefined}
       slotProps={{

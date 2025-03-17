@@ -11,7 +11,7 @@ interface Props {
   initialValue?: string
   defaultHelperText?: string
   handleSubmit: (value: string) => void
-  valueSchema?: Schema
+  schema?: Schema
   /** Overrides internal behavior of when to show submit button.
    *  Has no effect if undefined.
    */
@@ -23,14 +23,14 @@ export default function InputField(props: Props & TextFieldProps) {
     initialValue = '',
     defaultHelperText = ' ',
     handleSubmit,
-    valueSchema,
+    schema,
     showSubmit,
     ...textFieldProps
   } = props
 
   const inputRef = useRef<HTMLInputElement>(undefined)
   const { control, reset, submit, isDirty, error } = useField({
-    valueSchema,
+    schema,
     handleSubmit,
     initialValue,
     autoSubmit: false,
