@@ -1,5 +1,6 @@
 import { ChangeEvent, useRef, useState } from 'react'
 import * as yup from 'yup'
+import { Schema, ZodError } from 'zod'
 
 /*
  * This hook is based off the behavior of react-hook-form's useForm hook,
@@ -16,6 +17,8 @@ import * as yup from 'yup'
  */
 
 interface Props<T = string> {
+  /** zod schema that determines whether the value is valid */
+  valueSchema?: Schema
   /** the validator should be for a single field. Run reach() to specify the field to use. */
   yupValidator?: ReturnType<typeof yup.reach>
   debounceMilliseconds?: number
@@ -27,6 +30,7 @@ interface Props<T = string> {
   autoSubmit?: boolean
 }
 export default function useField<T = string>({
+  valueSchema,
   yupValidator,
   debounceMilliseconds = 800,
   autoSubmit = true,
@@ -83,6 +87,20 @@ export default function useField<T = string>({
       console.log(
         `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )
+
+    if (valueSchema) {
+      try {
+        valueSchema.parse(value)
+      } catch (e) {
+        // zod returns an array of errors, so we have to extract the actual error
+        if (e instanceof ZodError) {
+          setError(e.errors[0].message)
+        }
+        return false
+      }
+    }
+
+    return true
 
     // updating yup to v1 changed reach() to return Schema | Reference
     // yup has no documentation about what a reference is. Reference makes typescript

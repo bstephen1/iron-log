@@ -6,7 +6,7 @@ import {
 } from '@mui/material'
 import { Dayjs } from 'dayjs'
 import { useState } from 'react'
-import * as yup from 'yup'
+import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
@@ -33,10 +33,9 @@ export default function BodyweightInput({
     type: bodyweightType,
     sort: 'newestFirst',
   })
-  const validationSchema = yup.object({
-    // this will be cast to a number on submit
-    value: yup.string().required('Must have a value'),
-  })
+
+  // note: the value will be cast to a number on submit
+  const valueSchema = z.string().min(1, 'Must have a value')
   const loading = !data
 
   const handleSubmit = async (value: string) => {
@@ -68,7 +67,7 @@ export default function BodyweightInput({
           : String(data[0].value)
       }
       handleSubmit={handleSubmit}
-      yupValidator={yup.reach(validationSchema, 'value')}
+      valueSchema={valueSchema}
       // allow user to update bw with same value if latest date isn't the current date
       showSubmit={data?.[0]?.date !== day.format(DATE_FORMAT) || undefined}
       slotProps={{

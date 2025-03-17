@@ -3,6 +3,7 @@ import ReplayIcon from '@mui/icons-material/Replay'
 import { InputProps, TextField, TextFieldProps, Tooltip } from '@mui/material'
 import { useRef } from 'react'
 import { reach } from 'yup'
+import { Schema } from 'zod'
 import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
 
@@ -11,7 +12,8 @@ interface Props {
   initialValue?: string
   defaultHelperText?: string
   handleSubmit: (value: string) => void
-  yupValidator: ReturnType<typeof reach>
+  yupValidator?: ReturnType<typeof reach>
+  valueSchema?: Schema
   /** Overrides internal behavior of when to show submit button.
    *  Has no effect if undefined.
    */
@@ -24,6 +26,7 @@ export default function InputField(props: Props & TextFieldProps) {
     defaultHelperText = ' ',
     handleSubmit,
     yupValidator,
+    valueSchema,
     showSubmit,
     ...textFieldProps
   } = props
@@ -31,6 +34,7 @@ export default function InputField(props: Props & TextFieldProps) {
   const inputRef = useRef<HTMLInputElement>(undefined)
   const { control, reset, submit, isDirty, error } = useField({
     yupValidator,
+    valueSchema,
     handleSubmit,
     initialValue,
     autoSubmit: false,
