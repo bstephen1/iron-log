@@ -95,6 +95,7 @@ export default function useField<T = string>({
         return false
       }
     }
+    setError('')
     return true
   }
 
