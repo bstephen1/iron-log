@@ -99,34 +99,7 @@ export default function useField<T = string>({
         return false
       }
     }
-
     return true
-
-    // updating yup to v1 changed reach() to return Schema | Reference
-    // yup has no documentation about what a reference is. Reference makes typescript
-    // complain because it has no validate() property. Quick fix is to just guard it here.
-    // See (unanswered): https://stackoverflow.com/questions/75704105/yup-1-x-how-to-validate-against-the-schema-of-a-specific-field
-    if (
-      !yupValidator ||
-      value === initialValue ||
-      !yup.isSchema(yupValidator)
-    ) {
-      return true
-    }
-
-    return await yupValidator
-      .validate(value)
-      .then(() => {
-        setError('')
-        return true
-      })
-      .catch((e: unknown) => {
-        // error type will be yup.ValidationError
-        if (e instanceof Error) {
-          setError(e.message)
-        }
-        return false
-      })
   }
 
   const submit = async (newValue = value) => {
