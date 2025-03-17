@@ -6,5 +6,5 @@ const buildNextLintCommand = (filenames) =>
   `npx next lint --fix --file ${filenames.join(' --file ')}`
 
 export default {
-  '*.{ts,tsx,js}': [buildNextLintCommand, 'npx prettier --write'],
+  '*.{ts,tsx}': [buildNextLintCommand, 'npx prettier --write'],
 }

@@ -35,7 +35,9 @@ export default function RecordCardSkeleton({
         <>
           <CardHeader
             title={title}
-            titleTypographyProps={{ variant: 'h6', ...titleTypographyProps }}
+            slotProps={{
+              title: { variant: 'h6', ...titleTypographyProps },
+            }}
           />
           <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
         </>
