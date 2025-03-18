@@ -1,5 +1,5 @@
 import { ChangeEvent, useRef, useState } from 'react'
-import * as yup from 'yup'
+import { Schema, ZodError } from 'zod'
 
 /*
  * This hook is based off the behavior of react-hook-form's useForm hook,
@@ -16,8 +16,8 @@ import * as yup from 'yup'
  */
 
 interface Props<T = string> {
-  /** the validator should be for a single field. Run reach() to specify the field to use. */
-  yupValidator?: ReturnType<typeof yup.reach>
+  /** zod schema that determines whether the value is valid */
+  schema?: Schema
   debounceMilliseconds?: number
   /** handleSubmit should be provided unless manually handling submit (eg, combobox) */
   handleSubmit?: (value: T) => void
@@ -27,7 +27,7 @@ interface Props<T = string> {
   autoSubmit?: boolean
 }
 export default function useField<T = string>({
-  yupValidator,
+  schema,
   debounceMilliseconds = 800,
   autoSubmit = true,
   handleSubmit,
@@ -84,31 +84,19 @@ export default function useField<T = string>({
         `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
       )
 
-    // updating yup to v1 changed reach() to return Schema | Reference
-    // yup has no documentation about what a reference is. Reference makes typescript
-    // complain because it has no validate() property. Quick fix is to just guard it here.
-    // See (unanswered): https://stackoverflow.com/questions/75704105/yup-1-x-how-to-validate-against-the-schema-of-a-specific-field
-    if (
-      !yupValidator ||
-      value === initialValue ||
-      !yup.isSchema(yupValidator)
-    ) {
-      return true
-    }
-
-    return await yupValidator
-      .validate(value)
-      .then(() => {
-        setError('')
-        return true
-      })
-      .catch((e: unknown) => {
-        // error type will be yup.ValidationError
-        if (e instanceof Error) {
-          setError(e.message)
+    if (schema) {
+      try {
+        schema.parse(value)
+      } catch (e) {
+        // zod returns an array of errors, so we have to extract the actual error
+        if (e instanceof ZodError) {
+          setError(e.errors[0].message)
         }
         return false
-      })
+      }
+    }
+    setError('')
+    return true
   }
 
   const submit = async (newValue = value) => {

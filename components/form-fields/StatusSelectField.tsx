@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react'
-import * as yup from 'yup'
+import { z } from 'zod'
 import { Status } from '../../models/Status'
 import SelectFieldAutosave from './SelectFieldAutosave'
 
@@ -18,7 +18,7 @@ export default memo(function StatusSelectField({
       initialValue={status}
       required
       fullWidth
-      yupValidator={yup.string().required('Must have a status')}
+      schema={z.string({ message: 'Must have a status' })}
       handleSubmit={useCallback(
         // unsure why we need to specify type Status here. Will otherwise assume it's "never"
         (status: Status) => handleUpdate({ status }),
