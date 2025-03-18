@@ -1,6 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
 import { Document, Filter, ObjectId } from 'mongodb'
-import { ApiError } from 'next/dist/server/api-utils'
 import { Category } from '../../models/AsyncSelectorOption/Category'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
@@ -13,6 +12,7 @@ import {
   MatchTypes,
   MongoQuery,
 } from '../../models/query-filters/MongoQuery'
+import { ApiError } from '../../models/ApiError'
 import { collections } from './mongoConnect'
 const {
   sessions,

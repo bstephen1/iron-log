@@ -1,6 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
 import { Filter, ObjectId } from 'mongodb'
-import { ApiError } from 'next/dist/server/api-utils'
 import { validDateStringRegex } from '../../lib/frontend/constants'
 import { isValidId } from '../../lib/util'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
@@ -18,6 +17,7 @@ import {
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import { Record } from '../../models/Record'
 import { Status } from '../../models/Status'
+import { ApiError } from '../../models/ApiError'
 
 type ApiParam = string | string[] | undefined
 // only exported for the test file

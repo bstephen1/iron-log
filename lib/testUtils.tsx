@@ -10,12 +10,12 @@ import {
   NtarhInitPagesRouter,
   testApiHandler,
 } from 'next-test-api-route-handler'
-import { ApiError } from 'next/dist/server/api-utils'
 import { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 import { vi } from 'vitest'
 import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
+import { ApiError } from '../models/ApiError'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.

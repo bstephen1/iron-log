@@ -1,5 +1,4 @@
 import dayjs, { Dayjs } from 'dayjs'
-import { ApiError } from 'next/dist/server/api-utils'
 import { ParsedUrlQueryInput, stringify } from 'querystring'
 import useSWR, { SWRConfiguration } from 'swr'
 import { arrayToIndex, fetchJson } from '../../lib/util'
@@ -14,6 +13,7 @@ import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
+import { ApiError } from '../../models/ApiError'
 import {
   DATE_FORMAT,
   URI_BODYWEIGHT,

@@ -2,8 +2,8 @@ import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import { GetServerSidePropsContext, NextApiRequest } from 'next'
 import { getServerSession } from 'next-auth'
-import { ApiError } from 'next/dist/server/api-utils'
 import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
+import { ApiError } from '../../../models/ApiError'
 
 export type ApiHandler<T> = (
   req: NextApiRequest,

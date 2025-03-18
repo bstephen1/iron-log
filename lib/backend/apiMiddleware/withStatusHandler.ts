@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ApiError } from 'next/dist/server/api-utils'
+import { ApiError } from '../../../models/ApiError'
 import { ApiHandler, getUserId } from './util'
 
 /** This HOF is responsible for anything involving "res" in the handler.

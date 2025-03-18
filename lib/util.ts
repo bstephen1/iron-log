@@ -4,7 +4,7 @@ import { Exercise } from '../models/AsyncSelectorOption/Exercise'
 import { SetType } from '../models/Record'
 import { DB_UNITS, Set, Units } from '../models/Set'
 import { DATE_FORMAT } from './frontend/constants'
-import { ApiError } from 'next/dist/server/api-utils'
+import { ApiError } from '../models/ApiError'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,

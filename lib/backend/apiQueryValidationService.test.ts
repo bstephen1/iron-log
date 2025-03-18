@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb'
-import { ApiError } from 'next/dist/server/api-utils'
 import { v1 as invalidUuid } from 'uuid'
 import { generateId } from '../../lib/util'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
@@ -8,6 +7,8 @@ import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { MatchType } from '../../models/query-filters/MongoQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import { Status } from '../../models/Status'
+import { devUserId } from '../frontend/constants'
+import { ApiError } from '../../models/ApiError'
 import {
   ApiReq,
   buildBodyweightQuery,
@@ -21,7 +22,6 @@ import {
   validateSort,
   validateStatus,
 } from './apiQueryValidationService'
-import { devUserId } from '../frontend/constants'
 
 describe('validation', () => {
   describe('validateId', () => {

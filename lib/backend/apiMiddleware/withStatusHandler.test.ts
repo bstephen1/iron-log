@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import { testApiHandler } from 'next-test-api-route-handler'
-import { ApiError } from 'next/dist/server/api-utils'
 import { vi } from 'vitest'
+import { ApiError } from '../../../models/ApiError'
 import withStatusHandler from './withStatusHandler'
 
 const mockHandler = vi.fn()
