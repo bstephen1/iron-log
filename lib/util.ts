@@ -53,14 +53,13 @@ export const swrFetcher = (url: string) => fetchJson(url)
  */
 export const fetchJson = async <T>(...params: Parameters<typeof fetch>) => {
   const res = await fetch(...params)
-  const json: T = await res.json()
+  const json: T | ApiError = await res.json()
   if (res.ok) {
-    return json
+    return json as T
   }
-  throw new ApiError(
-    res.status,
-    (json as { message?: string }).message ?? 'unknown error'
-  )
+
+  const error = json as ApiError
+  throw new ApiError(res.status, error.message, error.details)
 }
 
 /** Capitalize first letter of a string.

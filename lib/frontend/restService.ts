@@ -29,12 +29,6 @@ import {
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
 
-// todo: querystring's stringify is a bit sloppy when fields are undefined.
-// eg, {reps: undefined} => 'reps=&'. It doesn't affect the backend call though because
-// the validator filters that out. Might be ok to leave as is.
-// Also, note that stringify doesn't add the leading '?'.
-// See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
-
 /** Parse a Query object into a rest param string. Query objects should be spread into this function. */
 export const paramify = (query: ParsedUrlQueryInput) => {
   const parsedQuery: ParsedUrlQueryInput = {}
@@ -43,6 +37,8 @@ export const paramify = (query: ParsedUrlQueryInput) => {
   for (const [key, value] of Object.entries(query)) {
     parsedQuery[key] = Array.isArray(value) && !value.length ? '' : value
   }
+  // note that stringify doesn't add the leading '?'.
+  // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
   return '?' + stringify(parsedQuery)
 }
 

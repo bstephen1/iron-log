@@ -154,7 +154,10 @@ export async function expectApiErrorsOnInvalidMethod({
       const res = await fetch({ method: method ?? 'OPTIONS' })
 
       expect(res.status).toBe(methodNotAllowed.statusCode)
-      expect(await res.json()).toBe(methodNotAllowed.message)
+      expect(await res.json()).toMatchObject({
+        message: methodNotAllowed.message,
+        statusCode: methodNotAllowed.statusCode,
+      })
     },
   })
 }
