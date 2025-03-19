@@ -7,6 +7,7 @@ import {
 } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
+  expectApiErrorsOnMalformedBody,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
@@ -50,6 +51,31 @@ it('blocks invalid method types', async () => {
   await expectApiErrorsOnInvalidMethod({ handler, params })
 })
 
-it('requires a name', async () => {
+it('guards against missing fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    params,
+    data: { name: 'hi' },
+  })
+})
+
+it('guards against extra fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    params,
+    data: { ...data, extra: 'field' },
+  })
+})
+
+it('guards against invalid fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    params,
+    method: 'PATCH',
+    data: { status: 'invalid' },
+  })
+})
+
+it('requires an id', async () => {
   await expectApiErrorsOnMissingParams({ handler })
 })
