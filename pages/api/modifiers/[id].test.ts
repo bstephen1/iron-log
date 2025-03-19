@@ -9,11 +9,12 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './[name].api'
+import handler from './[id].api'
 import { createModifier } from '../../../models/AsyncSelectorOption/Modifier'
+import { generateId } from '../../../lib/util'
 
 const data = createModifier('hi', 5)
-const params = { name: 'name' }
+const params = { id: generateId() }
 
 it('fetches given modifier', async () => {
   vi.mocked(fetchModifier).mockResolvedValue(data)

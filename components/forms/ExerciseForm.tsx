@@ -50,19 +50,22 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   // todo: validate (drop empty notes)
 
   const handleDelete = useCallback(
-    async (name: string) => {
-      await deleteExercise(name)
+    async (id: string) => {
+      await deleteExercise(id)
       setUrlExercise(null)
-      mutateExercises((cur) => cur?.filter((e) => e.name !== name))
+      mutateExercises((cur) => cur?.filter((e) => e._id !== id))
     },
     [mutateExercises, setUrlExercise]
   )
 
   const handleDuplicate = useCallback(
-    async (name: string) => {
-      const newName = name + ' (copy)'
+    async (id: string) => {
       mutateExercises(async (cur = []) => {
-        const exercise = cur.find((e) => e.name === name) ?? {}
+        const exercise = cur.find((e) => e._id === id)
+
+        if (!exercise) return cur
+
+        const newName = exercise.name + ' (copy)'
         const newExercise = createExercise(newName, exercise)
         await updateExercise(newExercise)
         setUrlExercise(newName)
@@ -143,6 +146,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       </Grid>
       <Grid size={12}>
         <ActionItems
+          id={_id}
           name={name}
           type="exercise"
           handleDelete={handleDelete}

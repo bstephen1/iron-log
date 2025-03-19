@@ -6,18 +6,17 @@ import UsageButton from './UsageButton'
 import { memo, JSX } from 'react'
 
 interface Props {
-  /** name of currently selected option */
+  id: string
   name: string
-  /** type of the option */
   type: 'exercise' | 'category' | 'modifier'
-  handleDelete?: (name: string) => void
-  handleDuplicate?: (name: string) => void
+  handleDelete?: (id: string) => void
+  handleDuplicate?: (id: string) => void
   deleteDisabled?: boolean
 }
-/** render all common action items  */
 export default memo(function ActionItems({
-  name,
   type,
+  id,
+  name,
   handleDelete,
   handleDuplicate,
   deleteDisabled,
@@ -30,7 +29,7 @@ export default memo(function ActionItems({
           description={`Create a new ${type} which is a duplicate of this ${type}.`}
           button={
             <Button
-              onClick={() => handleDuplicate(name)}
+              onClick={() => handleDuplicate(id)}
               startIcon={<ContentCopyIcon />}
             >
               Duplicate
@@ -51,7 +50,7 @@ export default memo(function ActionItems({
             <DeleteButton
               type={type}
               name={name}
-              handleDelete={() => handleDelete(name)}
+              handleDelete={() => handleDelete(id)}
               buttonProps={{ disabled: !!deleteDisabled }}
             />
           }

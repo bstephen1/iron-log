@@ -4,26 +4,29 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { validateName } from '../../../lib/backend/apiQueryValidationService'
+import { validateId } from '../../../lib/backend/apiQueryValidationService'
 import {
-  addCategory,
-  deleteCategory,
-  fetchCategory,
-  updateCategoryFields,
+  addExercise,
+  deleteExercise,
+  fetchExercise,
+  updateExercise,
+  updateExerciseFields,
 } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
-  const name = validateName(req.query.name)
+  const id = validateId(req.query.id)
 
   switch (req.method) {
     case 'GET':
-      return await fetchCategory(userId, name)
+      return await fetchExercise(userId, id)
     case 'POST':
-      return await addCategory(userId, req.body)
+      return await addExercise(userId, req.body)
+    case 'PUT':
+      return await updateExercise(userId, req.body)
     case 'PATCH':
-      return await updateCategoryFields(userId, req.body)
+      return await updateExerciseFields(userId, req.body)
     case 'DELETE':
-      return await deleteCategory(userId, name)
+      return await deleteExercise(userId, id)
     default:
       throw methodNotAllowed
   }

@@ -10,10 +10,11 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
-import handler from './[name].api'
+import handler from './[id].api'
+import { generateId } from '../../../lib/util'
 
 const data = createCategory('hi')
-const params = { name: 'name' }
+const params = { id: generateId() }
 
 it('fetches given category', async () => {
   vi.mocked(fetchCategory).mockResolvedValue(data)

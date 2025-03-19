@@ -32,12 +32,10 @@ export default function ModifierForm({
   )
 
   const handleDelete = useCallback(
-    async (name: string) => {
-      await deleteModifier(name)
+    async (id: string) => {
+      await deleteModifier(id)
       setUrlModifier(null)
-      mutateModifiers((cur) =>
-        cur?.filter((modifier) => modifier.name !== name)
-      )
+      mutateModifiers((cur) => cur?.filter((modifier) => modifier._id !== id))
     },
     [mutateModifiers, setUrlModifier]
   )
@@ -69,6 +67,7 @@ export default function ModifierForm({
       </Grid>
       <Grid size={12}>
         <ActionItems
+          id={_id}
           name={name}
           type="modifier"
           handleDelete={handleDelete}

@@ -375,9 +375,10 @@ export async function updateExerciseFields(
   )
 }
 
-export async function deleteExercise(userId: ObjectId, name: string) {
-  const exercise = await exercises.find({ userId, name }).next()
-  // cannot use the name because the full exercise is not guaranteed to be up to date
+export async function deleteExercise(userId: ObjectId, _id: string) {
+  const exercise = await exercises.find({ userId, _id }).next()
+  // note that the content of exercises in records is not guaranteed
+  // to be up to date, but the exercise _id WILL be.
   const usedRecords = await records
     .find({ userId, 'exercise._id': exercise?._id })
     .toArray()
@@ -389,8 +390,8 @@ export async function deleteExercise(userId: ObjectId, name: string) {
     )
   }
 
-  await exercises.deleteOne({ userId, name })
-  return name
+  await exercises.deleteOne({ userId, _id })
+  return _id
 }
 
 //----------
@@ -416,12 +417,9 @@ export async function fetchModifiers({
 
 export async function fetchModifier(
   userId: ObjectId,
-  name: string
+  _id: string
 ): Promise<Modifier | null> {
-  return await modifiers.findOne(
-    { userId, name },
-    { projection: { userId: 0, _id: 0 } }
-  )
+  return await modifiers.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
 export async function updateModifierFields(
@@ -459,21 +457,26 @@ export async function updateModifierFields(
   )
 }
 
-export async function deleteModifier(userId: ObjectId, name: string) {
-  const userExercises = await exercises.find({ userId }).toArray()
-  const usedExercise = userExercises.find((exercise) =>
-    exercise.modifiers.includes(name)
-  )
+export async function deleteModifier(userId: ObjectId, _id: string) {
+  const modifier = await modifiers.findOne({ userId, _id })
 
-  if (usedExercise) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      `Cannot delete modifier: used in exercise "${usedExercise.name}"`
+  if (modifier) {
+    const userExercises = await exercises.find({ userId }).toArray()
+    const usedExercise = userExercises.find((exercise) =>
+      exercise.modifiers.includes(modifier.name)
     )
+
+    if (usedExercise) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        `Cannot delete modifier: used in exercise "${usedExercise.name}"`
+      )
+    }
+
+    await modifiers.deleteOne({ userId, _id })
   }
 
-  await modifiers.deleteOne({ userId, name })
-  return name
+  return _id
 }
 
 //----------
@@ -498,12 +501,9 @@ export async function fetchCategories(
 
 export async function fetchCategory(
   userId: ObjectId,
-  name: string
+  id: string
 ): Promise<Category | null> {
-  return await categories.findOne(
-    { userId, name },
-    { projection: { userId: 0, _id: 0 } }
-  )
+  return await categories.findOne({ userId, id }, { projection: { userId: 0 } })
 }
 
 export async function updateCategoryFields(
@@ -533,21 +533,26 @@ export async function updateCategoryFields(
   )
 }
 
-export async function deleteCategory(userId: ObjectId, name: string) {
-  const userExercises = await exercises.find({ userId }).toArray()
-  const usedExercise = userExercises.find((exercise) =>
-    exercise.categories.includes(name)
-  )
+export async function deleteCategory(userId: ObjectId, _id: string) {
+  const category = await categories.findOne({ userId, _id })
 
-  if (usedExercise) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      `Cannot delete category: used in exercise "${usedExercise.name}"`
+  if (category) {
+    const userExercises = await exercises.find({ userId }).toArray()
+    const usedExercise = userExercises.find((exercise) =>
+      exercise.categories.includes(category.name)
     )
+
+    if (usedExercise) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        `Cannot delete category: used in exercise "${usedExercise.name}"`
+      )
+    }
+
+    await categories.deleteOne({ userId, _id })
   }
 
-  await categories.deleteOne({ userId, name })
-  return name
+  return _id
 }
 
 //------------

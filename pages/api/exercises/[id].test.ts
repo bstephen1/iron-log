@@ -10,11 +10,12 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './[name].api'
+import handler from './[id].api'
 import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
+import { generateId } from '../../../lib/util'
 
 const data = createExercise('hi')
-const params = { name: 'name' }
+const params = { id: generateId() }
 
 it('fetches given exercise', async () => {
   vi.mocked(fetchExercise).mockResolvedValue(data)
