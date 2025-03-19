@@ -20,7 +20,6 @@ import { stringifySetType } from '../../../lib/util'
 const maxRecords = 10
 
 interface Props {
-  /** name of the exercise */
   name: string
   buttonProps?: ButtonProps
 }

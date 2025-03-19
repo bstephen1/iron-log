@@ -23,7 +23,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'PUT':
       return await updateRecord(userId, req.body)
     case 'PATCH':
-      return await updateRecordFields(userId, req.body)
+      return await updateRecordFields(userId, id, req.body)
     default:
       throw methodNotAllowed
   }

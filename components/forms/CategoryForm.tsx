@@ -31,12 +31,10 @@ export default function CategoryForm({
   )
 
   const handleDelete = useCallback(
-    async (name: string) => {
-      await deleteCategory(name)
+    async (id: string) => {
+      await deleteCategory(id)
       setUrlCategory(null)
-      mutateCategories((cur) =>
-        cur?.filter((category) => category.name !== name)
-      )
+      mutateCategories((cur) => cur?.filter((category) => category._id !== id))
     },
     [mutateCategories, setUrlCategory]
   )
@@ -55,6 +53,7 @@ export default function CategoryForm({
       </Grid>
       <Grid size={12}>
         <ActionItems
+          id={_id}
           name={name}
           type="category"
           handleDelete={handleDelete}

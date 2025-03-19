@@ -23,11 +23,6 @@ const {
   bodyweightHistory,
 } = collections
 
-interface UpdateFieldsProps<T extends { _id: string }> {
-  id: T['_id']
-  updates: Partial<T>
-}
-
 const convertSort = (sort: DateRangeQuery['sort']) =>
   sort === 'oldestFirst' ? 1 : -1
 
@@ -291,18 +286,16 @@ export async function updateRecord(
   )
 
   // When updating record, we have to make sure the exercise data is up to date.
-  // Previously mongo functions returned null, so this was done with a separate GET
-  // from the client.
-  // Now, mongo functions are responsible for returning up to date data.
   return await fetchRecord(userId, record._id)
 }
 
 export async function updateRecordFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Record>
+  _id: string,
+  updates: Partial<Record>
 ): Promise<Record | null> {
-  await records.updateOne({ userId, _id: id }, { $set: updates })
-  return await fetchRecord(userId, id)
+  await records.updateOne({ userId, _id }, { $set: updates })
+  return await fetchRecord(userId, _id)
 }
 
 // Currently not exporting. To delete call deleteSessionRecord().
@@ -363,10 +356,11 @@ export async function updateExercise(
 
 export async function updateExerciseFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Exercise>
+  _id: string,
+  updates: Partial<Exercise>
 ): Promise<Exercise | null> {
   return await exercises.findOneAndUpdate(
-    { userId, _id: id },
+    { userId, _id },
     { $set: updates },
     {
       returnDocument: 'after',
@@ -375,9 +369,10 @@ export async function updateExerciseFields(
   )
 }
 
-export async function deleteExercise(userId: ObjectId, name: string) {
-  const exercise = await exercises.find({ userId, name }).next()
-  // cannot use the name because the full exercise is not guaranteed to be up to date
+export async function deleteExercise(userId: ObjectId, _id: string) {
+  const exercise = await exercises.find({ userId, _id }).next()
+  // note that the content of exercises in records is not guaranteed
+  // to be up to date, but the exercise _id WILL be.
   const usedRecords = await records
     .find({ userId, 'exercise._id': exercise?._id })
     .toArray()
@@ -389,8 +384,8 @@ export async function deleteExercise(userId: ObjectId, name: string) {
     )
   }
 
-  await exercises.deleteOne({ userId, name })
-  return name
+  await exercises.deleteOne({ userId, _id })
+  return _id
 }
 
 //----------
@@ -416,20 +411,18 @@ export async function fetchModifiers({
 
 export async function fetchModifier(
   userId: ObjectId,
-  name: string
+  _id: string
 ): Promise<Modifier | null> {
-  return await modifiers.findOne(
-    { userId, name },
-    { projection: { userId: 0, _id: 0 } }
-  )
+  return await modifiers.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
 export async function updateModifierFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Modifier>
+  _id: string,
+  updates: Partial<Modifier>
 ): Promise<Modifier | null> {
   if (updates.name) {
-    const oldModifier = await modifiers.find({ userId, _id: id }).next()
+    const oldModifier = await modifiers.find({ userId, _id }).next()
     await exercises.updateMany(
       { userId, modifiers: oldModifier?.name },
       { $set: { 'modifiers.$': updates.name } }
@@ -450,7 +443,7 @@ export async function updateModifierFields(
     )
   }
   return await modifiers.findOneAndUpdate(
-    { userId, _id: id },
+    { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },
@@ -459,21 +452,26 @@ export async function updateModifierFields(
   )
 }
 
-export async function deleteModifier(userId: ObjectId, name: string) {
-  const userExercises = await exercises.find({ userId }).toArray()
-  const usedExercise = userExercises.find((exercise) =>
-    exercise.modifiers.includes(name)
-  )
+export async function deleteModifier(userId: ObjectId, _id: string) {
+  const modifier = await modifiers.findOne({ userId, _id })
 
-  if (usedExercise) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      `Cannot delete modifier: used in exercise "${usedExercise.name}"`
+  if (modifier) {
+    const userExercises = await exercises.find({ userId }).toArray()
+    const usedExercise = userExercises.find((exercise) =>
+      exercise.modifiers.includes(modifier.name)
     )
+
+    if (usedExercise) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        `Cannot delete modifier: used in exercise "${usedExercise.name}"`
+      )
+    }
+
+    await modifiers.deleteOne({ userId, _id })
   }
 
-  await modifiers.deleteOne({ userId, name })
-  return name
+  return _id
 }
 
 //----------
@@ -498,22 +496,20 @@ export async function fetchCategories(
 
 export async function fetchCategory(
   userId: ObjectId,
-  name: string
+  id: string
 ): Promise<Category | null> {
-  return await categories.findOne(
-    { userId, name },
-    { projection: { userId: 0, _id: 0 } }
-  )
+  return await categories.findOne({ userId, id }, { projection: { userId: 0 } })
 }
 
 export async function updateCategoryFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Category>
+  _id: string,
+  updates: Partial<Category>
 ): Promise<Category | null> {
   // todo: should this be a transaction? Apparently that requires a cluster
   // can run single testing node as cluster with mongod --replset rs0
   if (updates.name) {
-    const oldCategory = await categories.find({ userId, _id: id }).next()
+    const oldCategory = await categories.find({ userId, _id }).next()
     await exercises.updateMany(
       { userId, categories: oldCategory?.name },
       { $set: { 'categories.$': updates.name } }
@@ -524,7 +520,7 @@ export async function updateCategoryFields(
     )
   }
   return await categories.findOneAndUpdate(
-    { userId, _id: id },
+    { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },
@@ -533,21 +529,26 @@ export async function updateCategoryFields(
   )
 }
 
-export async function deleteCategory(userId: ObjectId, name: string) {
-  const userExercises = await exercises.find({ userId }).toArray()
-  const usedExercise = userExercises.find((exercise) =>
-    exercise.categories.includes(name)
-  )
+export async function deleteCategory(userId: ObjectId, _id: string) {
+  const category = await categories.findOne({ userId, _id })
 
-  if (usedExercise) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      `Cannot delete category: used in exercise "${usedExercise.name}"`
+  if (category) {
+    const userExercises = await exercises.find({ userId }).toArray()
+    const usedExercise = userExercises.find((exercise) =>
+      exercise.categories.includes(category.name)
     )
+
+    if (usedExercise) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        `Cannot delete category: used in exercise "${usedExercise.name}"`
+      )
+    }
+
+    await categories.deleteOne({ userId, _id })
   }
 
-  await categories.deleteOne({ userId, name })
-  return name
+  return _id
 }
 
 //------------
