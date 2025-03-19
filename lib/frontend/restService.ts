@@ -182,7 +182,7 @@ export async function updateRecordFields(
 ): Promise<Record> {
   return fetchJson(URI_RECORDS + id, {
     method: 'PATCH',
-    body: toJson({ id, updates }),
+    body: toJson(updates),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -239,10 +239,9 @@ export async function updateExerciseFields(
   exercise: Exercise,
   updates: Partial<Exercise>
 ): Promise<Exercise> {
-  const id = exercise._id
   return fetchJson(URI_EXERCISES + exercise._id, {
     method: 'PATCH',
-    body: toJson({ id, updates }),
+    body: toJson(updates),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -283,10 +282,9 @@ export async function updateModifierFields(
   modifier: Modifier,
   updates: Partial<Modifier>
 ): Promise<Modifier> {
-  const id = modifier._id
   return fetchJson(URI_MODIFIERS + modifier._id, {
     method: 'PATCH',
-    body: toJson({ id, updates }),
+    body: toJson(updates),
     headers: { 'content-type': 'application/json' },
   })
 }
@@ -326,10 +324,9 @@ export async function updateCategoryFields(
   category: Category,
   updates: Partial<Category>
 ): Promise<Category> {
-  const id = category._id
   return fetchJson(URI_CATEGORIES + category._id, {
     method: 'PATCH',
-    body: toJson({ id, updates }),
+    body: toJson(updates),
     headers: { 'content-type': 'application/json' },
   })
 }

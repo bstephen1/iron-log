@@ -23,11 +23,6 @@ const {
   bodyweightHistory,
 } = collections
 
-interface UpdateFieldsProps<T extends { _id: string }> {
-  id: T['_id']
-  updates: Partial<T>
-}
-
 const convertSort = (sort: DateRangeQuery['sort']) =>
   sort === 'oldestFirst' ? 1 : -1
 
@@ -291,18 +286,16 @@ export async function updateRecord(
   )
 
   // When updating record, we have to make sure the exercise data is up to date.
-  // Previously mongo functions returned null, so this was done with a separate GET
-  // from the client.
-  // Now, mongo functions are responsible for returning up to date data.
   return await fetchRecord(userId, record._id)
 }
 
 export async function updateRecordFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Record>
+  _id: string,
+  updates: Partial<Record>
 ): Promise<Record | null> {
-  await records.updateOne({ userId, _id: id }, { $set: updates })
-  return await fetchRecord(userId, id)
+  await records.updateOne({ userId, _id }, { $set: updates })
+  return await fetchRecord(userId, _id)
 }
 
 // Currently not exporting. To delete call deleteSessionRecord().
@@ -363,10 +356,11 @@ export async function updateExercise(
 
 export async function updateExerciseFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Exercise>
+  _id: string,
+  updates: Partial<Exercise>
 ): Promise<Exercise | null> {
   return await exercises.findOneAndUpdate(
-    { userId, _id: id },
+    { userId, _id },
     { $set: updates },
     {
       returnDocument: 'after',
@@ -424,10 +418,11 @@ export async function fetchModifier(
 
 export async function updateModifierFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Modifier>
+  _id: string,
+  updates: Partial<Modifier>
 ): Promise<Modifier | null> {
   if (updates.name) {
-    const oldModifier = await modifiers.find({ userId, _id: id }).next()
+    const oldModifier = await modifiers.find({ userId, _id }).next()
     await exercises.updateMany(
       { userId, modifiers: oldModifier?.name },
       { $set: { 'modifiers.$': updates.name } }
@@ -448,7 +443,7 @@ export async function updateModifierFields(
     )
   }
   return await modifiers.findOneAndUpdate(
-    { userId, _id: id },
+    { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },
@@ -508,12 +503,13 @@ export async function fetchCategory(
 
 export async function updateCategoryFields(
   userId: ObjectId,
-  { id, updates }: UpdateFieldsProps<Category>
+  _id: string,
+  updates: Partial<Category>
 ): Promise<Category | null> {
   // todo: should this be a transaction? Apparently that requires a cluster
   // can run single testing node as cluster with mongod --replset rs0
   if (updates.name) {
-    const oldCategory = await categories.find({ userId, _id: id }).next()
+    const oldCategory = await categories.find({ userId, _id }).next()
     await exercises.updateMany(
       { userId, categories: oldCategory?.name },
       { $set: { 'categories.$': updates.name } }
@@ -524,7 +520,7 @@ export async function updateCategoryFields(
     )
   }
   return await categories.findOneAndUpdate(
-    { userId, _id: id },
+    { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },

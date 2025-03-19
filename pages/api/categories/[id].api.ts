@@ -21,7 +21,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'POST':
       return await addCategory(userId, req.body)
     case 'PATCH':
-      return await updateCategoryFields(userId, req.body)
+      return await updateCategoryFields(userId, id, req.body)
     case 'DELETE':
       return await deleteCategory(userId, id)
     default:

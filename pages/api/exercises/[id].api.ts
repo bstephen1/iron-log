@@ -24,7 +24,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'PUT':
       return await updateExercise(userId, req.body)
     case 'PATCH':
-      return await updateExerciseFields(userId, req.body)
+      return await updateExerciseFields(userId, id, req.body)
     case 'DELETE':
       return await deleteExercise(userId, id)
     default:

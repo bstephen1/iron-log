@@ -21,7 +21,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'POST':
       return await addModifier(userId, req.body)
     case 'PATCH':
-      return await updateModifierFields(userId, req.body)
+      return await updateModifierFields(userId, id, req.body)
     case 'DELETE':
       return await deleteModifier(userId, id)
     default:
