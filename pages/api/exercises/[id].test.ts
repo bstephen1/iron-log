@@ -45,6 +45,6 @@ it('blocks invalid method types', async () => {
   await expectApiErrorsOnInvalidMethod({ handler, params })
 })
 
-it('requires a name', async () => {
+it('requires an id', async () => {
   await expectApiErrorsOnMissingParams({ handler })
 })

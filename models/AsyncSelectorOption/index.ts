@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { generateId } from '../../lib/util'
 import { Status } from '../Status'
 
@@ -6,6 +7,12 @@ export interface AsyncSelectorOption {
   name: string
   status: Status
 }
+
+export const asyncSelectorOptionSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  status: z.nativeEnum(Status),
+})
 
 export const createAsyncSelectorOption = (
   name: string,

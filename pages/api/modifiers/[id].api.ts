@@ -11,6 +11,7 @@ import {
   fetchModifier,
   updateModifierFields,
 } from '../../../lib/backend/mongoService'
+import { modifierSchema } from '../../../models/AsyncSelectorOption/Modifier'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = validateId(req.query.id)
@@ -19,9 +20,13 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'GET':
       return await fetchModifier(userId, id)
     case 'POST':
-      return await addModifier(userId, req.body)
+      return await addModifier(userId, modifierSchema.parse(req.body))
     case 'PATCH':
-      return await updateModifierFields(userId, id, req.body)
+      return await updateModifierFields(
+        userId,
+        id,
+        modifierSchema.partial().parse(req.body)
+      )
     case 'DELETE':
       return await deleteModifier(userId, id)
     default:
