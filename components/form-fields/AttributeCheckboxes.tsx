@@ -1,9 +1,9 @@
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material'
-import { capitalize } from '../../lib/util'
-import Attributes from '../../models/Attributes'
-import FormDivider from '../forms/FormDivider'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
+import { capitalize } from '../../lib/util'
+import { Attributes } from '../../models/Attributes'
+import FormDivider from '../forms/FormDivider'
 
 interface Props {
   attributes?: Attributes
