@@ -15,7 +15,7 @@ import isEqual from 'react-fast-compare'
 import { UpdateFields, UpdateState } from '../../../../lib/util'
 import { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
-import { Units, unitsSchema } from '../../../../models/Set'
+import { Units, unitsSchema } from '../../../../models/Units'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {

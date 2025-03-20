@@ -2,8 +2,8 @@ import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
 import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
-import { SetType } from '../models/Record'
-import { DB_UNITS, Set, Units } from '../models/Set'
+import { Set, SetType } from '../models/Set'
+import { DB_UNITS, Units } from '../models/Units'
 import { DATE_FORMAT } from './frontend/constants'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.

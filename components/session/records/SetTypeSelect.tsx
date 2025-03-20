@@ -20,8 +20,9 @@ import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
 } from '../../../models/DisplayFields'
-import { Record, SetType, setOperators } from '../../../models/Record'
-import { Units } from '../../../models/Set'
+import { Record } from '../../../models/Record'
+import { SetType, setOperators } from '../../../models/Set'
+import { Units } from '../../../models/Units'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
