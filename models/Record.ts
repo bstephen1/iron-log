@@ -6,7 +6,7 @@ import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
-export const recordSchema = z.object({
+export const recordSchema = z.strictObject({
   _id: z.string(),
   date: z.string(),
   exercise: exerciseSchema.nullable(),

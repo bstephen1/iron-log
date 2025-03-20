@@ -20,12 +20,15 @@ const dimensions = unitsSchema.keyof().exclude(['side']).options
 export const setSchema = z
   .strictObject(
     dimensions.reduce(
-      (prev, key) => ({ ...prev, [key]: z.number() }),
+      (prev, key) => ({ ...prev, [key]: z.number().nullish() }),
       // the key definition is the same idea as making a type from a const array
-      {} as { [key in (typeof dimensions)[number]]: z.ZodNumber }
+      {} as {
+        [key in (typeof dimensions)[number]]: z.ZodOptional<
+          z.ZodNullable<z.ZodNumber>
+        >
+      }
     )
   )
-  .partial()
   .extend({ side: z.enum(['L', 'R', '']).nullish() })
 
 export type SetOperator = (typeof setOperators)[number]

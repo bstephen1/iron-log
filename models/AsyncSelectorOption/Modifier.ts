@@ -5,11 +5,9 @@ import { asyncSelectorOptionSchema, createAsyncSelectorOption } from '.'
 // And groups can have a validation restraint that only 1 element of the same group can be selected
 export interface Modifier extends z.infer<typeof modifierSchema> {}
 
-export const modifierSchema = asyncSelectorOptionSchema
-  .extend({
-    weight: z.number().nullish(),
-  })
-  .strict()
+export const modifierSchema = asyncSelectorOptionSchema.extend({
+  weight: z.number().nullish(),
+})
 
 export const createModifier = (
   name: string,

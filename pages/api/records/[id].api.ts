@@ -11,6 +11,7 @@ import {
   updateRecord,
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
+import { recordSchema } from '../../../models/Record'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = validateId(req.query.id)
@@ -19,11 +20,15 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'GET':
       return await fetchRecord(userId, id)
     case 'POST':
-      return await addRecord(userId, req.body)
+      return await addRecord(userId, recordSchema.parse(req.body))
     case 'PUT':
-      return await updateRecord(userId, req.body)
+      return await updateRecord(userId, recordSchema.parse(req.body))
     case 'PATCH':
-      return await updateRecordFields(userId, id, req.body)
+      return await updateRecordFields(
+        userId,
+        id,
+        recordSchema.partial().parse(req.body)
+      )
     default:
       throw methodNotAllowed
   }

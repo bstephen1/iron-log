@@ -12,6 +12,7 @@ import {
   updateExercise,
   updateExerciseFields,
 } from '../../../lib/backend/mongoService'
+import { exerciseSchema } from '../../../models/AsyncSelectorOption/Exercise'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = validateId(req.query.id)
@@ -20,11 +21,15 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'GET':
       return await fetchExercise(userId, id)
     case 'POST':
-      return await addExercise(userId, req.body)
+      return await addExercise(userId, exerciseSchema.parse(req.body))
     case 'PUT':
-      return await updateExercise(userId, req.body)
+      return await updateExercise(userId, exerciseSchema.parse(req.body))
     case 'PATCH':
-      return await updateExerciseFields(userId, id, req.body)
+      return await updateExerciseFields(
+        userId,
+        id,
+        exerciseSchema.partial().parse(req.body)
+      )
     case 'DELETE':
       return await deleteExercise(userId, id)
     default:
