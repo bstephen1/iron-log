@@ -1,3 +1,6 @@
+import { z } from 'zod'
+import { TIME_FORMAT } from '../lib/frontend/constants'
+
 /*
 todo: 
 
@@ -9,27 +12,37 @@ And for failure it can be anything > 10 (or < 0 for rir). I guess you can rate t
 
 */
 
-import { TIME_FORMAT } from '../lib/frontend/constants'
-
 /** An exercise set. */
 export type Set = {
-  -readonly [field in keyof Omit<Units, 'side'>]?: number
+  [field in keyof Omit<Units, 'side'>]?: number
 } & { side?: 'L' | 'R' | '' | null }
 
-/** Specifies the possible units for each field in a set */
-export type Units = {
-  [dimension in keyof typeof UNITS]: keyof (typeof UNITS)[dimension]
-}
+/** Specifies the possible units for each field in a set.
+ *  A unit with the same value as its key is considered to be unitless.
+ */
+export interface Units extends z.infer<typeof unitsSchema> {}
+export const unitsSchema = z.strictObject({
+  weight: z.enum(['kg', 'lbs']),
+  distance: z.enum(['m', 'km', 'ft', 'mi', 'cm', 'in']),
+  /** Considered having a separate HH:mm:ss and mm:ss but then the latter
+   *  would be overflow limited, so you wouldn't always be able to freely swap units.
+   *  May revisit if real usage with HH is cumbersome.
+   */
+  time: z.enum(['sec', 'min', 'hr', TIME_FORMAT]),
+  reps: z.enum(['reps']),
+  side: z.enum(['side']),
+  effort: z.enum(['rpe', 'rir']),
+})
 
 /** Units used to store sets in the database. No matter the units used to display
  * data on the frontend, they must be converted to these units before sending to the db.
  */
-export const DB_UNITS: Units = {
-  side: 'side',
+export const DB_UNITS: Readonly<Units> = {
   weight: 'kg',
   distance: 'm',
   time: 'sec',
   reps: 'reps',
+  side: 'side',
   effort: 'rpe',
 }
 
@@ -44,28 +57,22 @@ export const DB_UNITS: Units = {
  * multiplication. In those cases the factors should be set to 1 and the conversion handled
  * manually in convertUnit().
  */
-// Don't want to give this a type because the type should explicitly be the listed values.
-// Think that's making ts complain in convertUnit() that the symbols could potentially not be numbers.
-export const UNITS = {
+const factors: {
+  readonly [dimension in keyof Units]: {
+    readonly [unit in Units[dimension]]: number
+  }
+} = {
   weight: { kg: 1, lbs: 0.45359237 },
   distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471, cm: 0.01, in: 0.0254 },
-  /** Considered having a separate HH:mm:ss and mm:ss but then the latter
-   *  would be overflow limited, so you wouldn't always be able to freely swap units.
-   *  May revisit if real usage with HH is cumbersome.
-   */
+
   time: { sec: 1, min: 60, hr: 3600, [TIME_FORMAT]: 1 },
-  /** reps have no units */
   reps: { reps: 1 },
-  /** side has no units */
   side: { side: 1 },
-  /** effort requires a custom conversion */
   effort: { rpe: 1, rir: 1 },
   // const assertion is being favored over Object.freeze(), which is more strict but doesn't freeze nested fields
 } as const
 
-/** Convert a unit from source to dest type.
- * Note the generic type is inferred from the dimension arg so it doesn't need to be provided explicitly.
- */
+/** Convert a unit from source to dest type. */
 export function convertUnit<Dimension extends keyof Units>(
   value: number | undefined,
   dimension: Dimension,
@@ -101,9 +108,8 @@ function convertUnitHelper<Dimension extends keyof Units>(
   // This would work if value === 0 too, but have to watch out for "effort" dimension.
   if (value === undefined) return undefined
 
-  // ts doesn't infer the type is number even though it can only be number
-  const sourceFactor = UNITS[dimension][source] as number
-  const destFactor = UNITS[dimension][dest] as number
+  const sourceFactor: number = factors[dimension][source]
+  const destFactor: number = factors[dimension][dest]
 
   if (dimension === 'effort' && source !== dest) {
     // rpe = 10 - rir (factor is not used)

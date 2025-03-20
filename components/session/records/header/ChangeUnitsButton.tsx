@@ -15,7 +15,7 @@ import isEqual from 'react-fast-compare'
 import { UpdateFields, UpdateState } from '../../../../lib/util'
 import { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { DisplayFields } from '../../../../models/DisplayFields'
-import { UNITS, Units } from '../../../../models/Set'
+import { Units, unitsSchema } from '../../../../models/Set'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
@@ -80,7 +80,7 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
   value,
   handleChange,
 }: UnitDimensionRadioGroupProps<Dimension>) {
-  const unitSymbols = Object.keys(UNITS[dimension])
+  const unitSymbols = Object.keys(unitsSchema.shape[dimension].Values)
 
   // Don't render if there is only one option (eg, reps or side)
   if (unitSymbols.length < 2) {
