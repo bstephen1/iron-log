@@ -59,7 +59,11 @@ export const fetchJson = async <T>(...params: Parameters<typeof fetch>) => {
   }
 
   const error = json as ApiError
-  throw new ApiError(res.status, error.message, error.details)
+  console.error(error)
+  throw new ApiError(
+    res.status,
+    'could not fetch data. Check console for details.'
+  )
 }
 
 /** The api will throw a 404 error if the requested resource is not found.

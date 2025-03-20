@@ -7,16 +7,14 @@ import { Status } from '../Status'
 
 export interface Exercise extends z.infer<typeof exerciseSchema> {}
 
-export const exerciseSchema = asyncSelectorOptionSchema
-  .extend({
-    attributes: attributesSchema,
-    notes: z.array(noteSchema),
-    displayFields: displayFieldsSchema.nullish(),
-    weight: z.number().nullish(),
-    categories: z.array(z.string()),
-    modifiers: z.array(z.string()),
-  })
-  .strict()
+export const exerciseSchema = asyncSelectorOptionSchema.extend({
+  attributes: attributesSchema,
+  notes: z.array(noteSchema),
+  displayFields: displayFieldsSchema.nullish(),
+  weight: z.number().nullish(),
+  categories: z.array(z.string()),
+  modifiers: z.array(z.string()),
+})
 
 export const createExercise = (
   name: string,

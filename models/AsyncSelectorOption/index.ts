@@ -5,7 +5,7 @@ import { Status } from '../Status'
 export interface AsyncSelectorOption
   extends z.infer<typeof asyncSelectorOptionSchema> {}
 
-export const asyncSelectorOptionSchema = z.object({
+export const asyncSelectorOptionSchema = z.strictObject({
   _id: z.string(),
   name: z.string(),
   status: z.nativeEnum(Status),
