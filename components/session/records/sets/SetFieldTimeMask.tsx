@@ -1,11 +1,11 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { TIME_FORMAT } from '../../../../lib/frontend/constants'
 import { UpdateFields } from '../../../../lib/util'
 import { Set } from '../../../../models/Set'
 import InputFieldAutosave, {
   InputFieldAutosaveProps,
 } from '../../../form-fields/InputFieldAutosave'
-import { TIME_FORMAT } from '../../../../lib/frontend/constants'
 
 dayjs.extend(duration)
 

@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { CategoricalChartFunc } from 'recharts/types/chart/types'
 import RecordDisplay from '../../components/history/RecordDisplay'
 import {
   DATE_FORMAT,
@@ -29,7 +30,6 @@ import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
 import { Set } from '../../models/Set'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
-import { CategoricalChartFunc } from 'recharts/types/chart/types'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {

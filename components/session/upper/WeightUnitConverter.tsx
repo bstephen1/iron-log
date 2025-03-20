@@ -6,7 +6,7 @@ import {
   TextField,
 } from '@mui/material'
 import { useState } from 'react'
-import { convertUnit } from '../../../models/Set'
+import { convertUnit } from '../../../models/Units'
 
 export default function WeightUnitConverter() {
   // the Textfield's value is a string, but it's based off kg here which is a number.

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { generateId } from '../lib/util'
 import { Exercise, exerciseSchema } from './AsyncSelectorOption/Exercise'
 import { Note, noteSchema } from './Note'
-import { Set } from './Set'
+import { DEFAULT_SET_TYPE, Set, setOperators, SetType } from './Set'
 
 // todo: add activeCategory (for programming)
 export interface Record {
@@ -26,11 +26,7 @@ export const recordSchema = z.object({
   setType: z.object({
     field: z.string(),
     // field: z.string().refine((field) => Object.keys(Set).includes(field)),
-    // we could do z.enum(setOperators), but then it would have to be defined above this,
-    // and for clarity we want the record definition at the top of the file.
-    operator: z
-      .string()
-      .refine((operator) => setOperators.includes(operator as SetOperator)),
+    operator: z.enum(setOperators),
     value: z.number().optional(),
     min: z.number().optional(),
     max: z.number().optional(),
@@ -64,34 +60,3 @@ export const createRecord = (
   sets,
   setType,
 })
-
-/** Marks the structure of the set in a record. Reads as <operator> <value|range> <field>.
- *  Eg, "exactly 5 reps" means every set in the record is supposed to have 5 reps.
- *
- * Records with the same SetType are grouped together when pulling history so progress can be tracked.
- */
-export interface SetType {
-  field: keyof Set
-  operator: SetOperator
-  value?: number
-  /** used for "between" operator */
-  min?: number
-  /** used for "between" operator */
-  max?: number
-}
-
-export type SetOperator = (typeof setOperators)[number]
-export const setOperators = [
-  'exactly',
-  'at most',
-  'at least',
-  'between',
-  'total',
-  'rest',
-] as const
-
-export const DEFAULT_SET_TYPE: SetType = {
-  operator: 'exactly',
-  value: 6,
-  field: 'reps',
-}

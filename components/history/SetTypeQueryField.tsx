@@ -2,7 +2,7 @@ import SetTypeSelect from '../../components/session/records/SetTypeSelect'
 import { UpdateState } from '../../lib/util'
 import { MatchType } from '../../models/query-filters/MongoQuery'
 import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
-import { Units } from '../../models/Set'
+import { Units } from '../../models/Units'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props {

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
-import { DEFAULT_SET_TYPE, SetType } from '../../models/Record'
+import { DEFAULT_SET_TYPE, SetType } from '../Set'
 import DateRangeQuery from './DateRangeQuery'
 import { MatchType } from './MongoQuery'
 
