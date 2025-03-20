@@ -1,7 +1,8 @@
 import dayjs, { Dayjs } from 'dayjs'
 import { ParsedUrlQueryInput, stringify } from 'querystring'
-import useSWR, { SWRConfiguration } from 'swr'
-import { arrayToIndex, fetchJson } from '../../lib/util'
+import useSWR from 'swr'
+import { arrayToIndex, fetchJson, fetchJsonNullable } from '../../lib/util'
+import { ApiError } from '../../models/ApiError'
 import { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import { Category } from '../../models/AsyncSelectorOption/Category'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
@@ -13,7 +14,6 @@ import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
-import { ApiError } from '../../models/ApiError'
 import {
   DATE_FORMAT,
   URI_BODYWEIGHT,
@@ -65,14 +65,13 @@ const nameSort = <T extends { name: string }>(data?: T[]) =>
 // SESSION
 //---------
 
-export function useSessionLog(day: Dayjs | string, config?: SWRConfiguration) {
+export function useSessionLog(day: Dayjs | string) {
   const { data, error, isLoading, mutate } = useSWR<
     SessionLog | null,
     ApiError
-  >(
-    URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)),
-    config
-  )
+  >(URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)), {
+    fetcher: fetchJsonNullable,
+  })
 
   return {
     sessionLog: data,
@@ -134,10 +133,10 @@ export async function deleteSessionRecord(
  *
  *  Note that this applies to any other useSWR hook as well.
  */
-export function useRecord(id: string, config?: SWRConfiguration) {
+export function useRecord(id: string) {
   const { data, error, isLoading, mutate } = useSWR<Record | null, ApiError>(
     URI_RECORDS + id,
-    config
+    { fetcher: fetchJsonNullable }
   )
 
   return {
@@ -201,11 +200,11 @@ export function useExercises(query?: ExerciseQuery) {
   }
 }
 
-export function useExercise(id: string | null, config?: SWRConfiguration) {
+export function useExercise(id: string | null) {
   // passing null to useSWR disables fetching
   const { data, error, mutate } = useSWR<Exercise | null, ApiError>(
     id ? URI_EXERCISES + id : null,
-    config
+    { fetcher: fetchJsonNullable }
   )
 
   return {

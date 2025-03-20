@@ -1,10 +1,10 @@
 import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
+import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
 import { SetType } from '../models/Record'
 import { DB_UNITS, Set, Units } from '../models/Set'
 import { DATE_FORMAT } from './frontend/constants'
-import { ApiError } from '../models/ApiError'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -60,6 +60,25 @@ export const fetchJson = async <T>(...params: Parameters<typeof fetch>) => {
 
   const error = json as ApiError
   throw new ApiError(res.status, error.message, error.details)
+}
+
+/** The api will throw a 404 error if the requested resource is not found.
+ *  This function will ignore 404 errors and pass along null values.
+ *  It should only be used if null values are expected (typically for
+ *  a useSwr request of a single item, which assumes not found will
+ *  return null).)
+ */
+export const fetchJsonNullable = async <T>(
+  ...params: Parameters<typeof fetchJson>
+) => {
+  try {
+    return await fetchJson<T>(...params)
+  } catch (e) {
+    if (e instanceof ApiError && e.statusCode === 404) {
+      return null
+    }
+    throw e
+  }
 }
 
 /** Capitalize first letter of a string.
