@@ -1,11 +1,8 @@
-import {
-  AsyncSelectorOption,
-  asyncSelectorOptionSchema,
-  createAsyncSelectorOption,
-} from '.'
+import { z } from 'zod'
+import { asyncSelectorOptionSchema, createAsyncSelectorOption } from '.'
 import { Status } from '../Status'
 
-export interface Category extends AsyncSelectorOption {}
+export interface Category extends z.infer<typeof categorySchema> {}
 
 export const categorySchema = asyncSelectorOptionSchema.strict()
 
