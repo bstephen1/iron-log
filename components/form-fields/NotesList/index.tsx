@@ -9,7 +9,8 @@ import isEqual from 'react-fast-compare'
 
 interface Props {
   label?: string
-  options: string[]
+  /** list of selectable tags */
+  options?: string[]
   addItemPlaceholder?: string
   listItemPlaceholder?: string
   initialTags?: string[]
@@ -26,7 +27,7 @@ export default memo(function NotesList(props: Props) {
   const {
     label,
     notes,
-    options,
+    options = [],
     addItemPlaceholder = 'Add Note',
     listItemPlaceholder = 'Empty Note (will be deleted)',
     initialTags,

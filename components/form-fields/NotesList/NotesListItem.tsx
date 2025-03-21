@@ -12,7 +12,7 @@ interface Props {
   handleDelete: (index: number) => void
   handleUpdate: (index: number, value: Note) => void
   placeholder?: string
-  options: string[]
+  options?: string[]
   multiple?: boolean
   readOnly?: boolean
 }
@@ -23,7 +23,7 @@ export default function NotesListItem(props: Props) {
     index,
     handleDelete,
     handleUpdate,
-    options,
+    options = [],
     multiple,
     readOnly,
   } = props
