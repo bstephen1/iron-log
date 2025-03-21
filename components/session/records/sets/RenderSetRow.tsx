@@ -57,8 +57,13 @@ export default memo(function RenderSetRow({
           return updateRecordFields(_id, { sets: newSets })
         },
         {
-          // We don't need to revalidate since updateRecordFields returns the fresh data.
-          // optimisticData is unnecessary since the sets only affect the current record.
+          optimisticData: (cur) => {
+            if (!cur) return null
+
+            const newSets = [...cur.sets]
+            newSets[index] = { ...newSets[index], ...changes }
+            return { ...cur, sets: newSets }
+          },
           revalidate: false,
         }
       )
