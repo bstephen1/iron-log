@@ -39,8 +39,7 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
       revalidate: false,
     })
     swiper.update()
-    // todo: think about animation here. Instant speed? Maybe if it could change to a fade transition?
-    swiper.slideTo(j, 0)
+    swiper.slideTo(j, 200)
   }
 
   return (
