@@ -19,7 +19,7 @@ interface Props {
 export default function NotesListItem(props: Props) {
   const {
     note,
-    placeholder = '',
+    placeholder = 'Empty note (will be deleted)',
     index,
     handleDelete,
     handleUpdate,
