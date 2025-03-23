@@ -11,16 +11,16 @@ interface Props {
   placeholder?: string
   handleAdd: (value: Note) => void
   disabled?: boolean
-  options: string[]
+  options?: string[]
   multiple?: boolean
   initialTags?: string[]
 }
 // This Input is a temporary value that isn't include in the list until/unless it is submitted.
 export default function AddNote({
-  placeholder,
+  placeholder = 'Add Note',
   handleAdd,
   disabled,
-  options,
+  options = [],
   multiple,
   initialTags = [],
 }: Props) {
@@ -31,9 +31,8 @@ export default function AddNote({
     onReset()
   }
   const onReset = () => {
+    // we only reset the input; tags are left as-is
     reset('')
-    // if it's single we can just leave the tag as is
-    if (multiple) setTags(initialTags)
     inputRef.current?.focus()
   }
 
@@ -51,8 +50,6 @@ export default function AddNote({
       fullWidth
       placeholder={placeholder}
       disabled={disabled}
-      // removing this for multiline notes
-      // onKeyDown={(e) => e.code === 'Enter' && submit()}
       inputRef={inputRef}
       startAdornment={
         <TagSelect
@@ -70,7 +67,7 @@ export default function AddNote({
             <CheckIcon />
           </TransitionIconButton>
           <TransitionIconButton
-            isVisible={!isEmpty || !!tags.length}
+            isVisible={!isEmpty}
             onClick={onReset}
             aria-label="clear input"
           >

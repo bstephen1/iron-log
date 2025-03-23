@@ -12,15 +12,17 @@ import { useState } from 'react'
 import TagChips from './TagChips'
 
 type Props = {
-  options: string[]
-  selectedTags: string[] // single mode uses a singleton array
+  options?: string[]
+  /** use a singleton array if multiple is false */
+  selectedTags?: string[]
   multiple?: boolean
   handleUpdate: (tags: string[]) => void
 } & Partial<SelectProps<string | string[]>>
-// this should be used as a start adornment in an input to render tags for that input
+/** this should be used as a start adornment in an input to render tags for that input */
 export default function TagSelect({
-  options,
-  selectedTags,
+  options = [],
+  // we need the empty string if it's not multiple so the value isn't undefined
+  selectedTags = [''],
   handleUpdate,
   multiple,
   ...selectProps

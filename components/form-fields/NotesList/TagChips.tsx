@@ -1,10 +1,10 @@
 import { Chip, ChipProps, Stack } from '@mui/material'
 
 interface Props {
-  selected: string | string[]
+  selected?: string | string[]
   multiple?: boolean
 }
-export default function TagChips({ selected, multiple }: Props) {
+export default function TagChips({ selected = [], multiple }: Props) {
   const tagPluralOrSingle = multiple ? 'tags' : 'tag'
   selected = typeof selected === 'string' ? [selected] : selected
 
