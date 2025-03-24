@@ -15,11 +15,9 @@ const devProviders =
           id: 'dev',
           name: 'dev user',
           credentials: {},
+          // Any object returned will be saved in `user` property of the JWT
           async authorize() {
-            const user = { id: devUserId }
-
-            // Any object returned will be saved in `user` property of the JWT
-            return user
+            return { id: devUserId }
           },
         }),
       ]
