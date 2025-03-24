@@ -76,13 +76,13 @@ describe('input', () => {
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
-    await user.type(input, '{End}30')
+    await user.type(input, '{End}3')
 
     expect(await screen.findByLabelText('Reset')).toBeVisible()
     expect(screen.getByLabelText('Submit')).toBeVisible()
-    expect(screen.getByDisplayValue('4530')).toBeVisible()
+    expect(screen.getByDisplayValue('453')).toBeVisible()
 
-    await user.type(input, '{Backspace}{Backspace}')
+    await user.type(input, '{Backspace}')
 
     expect(await screen.findByLabelText('Reset')).not.toBeVisible()
     // submit is still visible since latest bw data is not for current date
@@ -96,13 +96,13 @@ describe('input', () => {
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
-    await user.type(input, '{End}30')
+    await user.type(input, '{End}3')
 
     expect(await screen.findByLabelText('Reset')).toBeVisible()
     expect(screen.getByLabelText('Submit')).toBeVisible()
-    expect(screen.getByDisplayValue('4530')).toBeVisible()
+    expect(screen.getByDisplayValue('453')).toBeVisible()
 
-    await user.type(input, '{Backspace}{Backspace}')
+    await user.type(input, '{Backspace}')
 
     expect(await screen.findByLabelText('Reset')).not.toBeVisible()
     // submit is not visible since latest bw data is already on current date
@@ -129,7 +129,7 @@ describe('input', () => {
     const input = screen.getByLabelText('bodyweight input')
     await screen.findByText(/official/i)
 
-    await user.type(input, '30')
+    await user.type(input, '3')
     await user.click(screen.getByLabelText('Reset'))
 
     expect(await screen.findByLabelText('Reset')).not.toBeVisible()
