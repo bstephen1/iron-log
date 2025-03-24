@@ -1,6 +1,7 @@
 import { vi } from 'vitest'
 import {
   addExercise,
+  deleteExercise,
   fetchExercise,
   updateExercise,
   updateExerciseFields,
@@ -39,6 +40,17 @@ it('updates given exercise', async () => {
   vi.mocked(updateExercise).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
+})
+
+it('deletes given exercise', async () => {
+  vi.mocked(deleteExercise).mockResolvedValue(data._id)
+
+  await expectApiRespondsWithData({
+    data: data._id,
+    handler,
+    params,
+    method: 'DELETE',
+  })
 })
 
 it('blocks invalid method types', async () => {

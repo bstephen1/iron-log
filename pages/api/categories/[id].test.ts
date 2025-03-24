@@ -1,6 +1,7 @@
 import { vi } from 'vitest'
 import {
   addCategory,
+  deleteCategory,
   fetchCategory,
   updateCategoryFields,
 } from '../../../lib/backend/mongoService'
@@ -32,6 +33,17 @@ it('updates given category', async () => {
   vi.mocked(updateCategoryFields).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PATCH' })
+})
+
+it('deletes given category', async () => {
+  vi.mocked(deleteCategory).mockResolvedValue(data._id)
+
+  await expectApiRespondsWithData({
+    data: data._id,
+    handler,
+    params,
+    method: 'DELETE',
+  })
 })
 
 it('blocks invalid method types', async () => {
