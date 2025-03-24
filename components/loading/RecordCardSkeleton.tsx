@@ -7,13 +7,12 @@ import {
   SxProps,
   TypographyProps,
 } from '@mui/material'
-import StyledDivider from '../../components/StyledDivider'
 import { JSX } from 'react'
+import StyledDivider from '../../components/StyledDivider'
 
 interface Props {
   title?: string
-  noHeader?: boolean
-  noSetButton?: boolean
+  showSetButton?: boolean
   /** Override all card content.  */
   Content?: JSX.Element
   elevation?: number
@@ -21,17 +20,16 @@ interface Props {
   sx?: SxProps
 }
 export default function RecordCardSkeleton({
-  title = 'Record',
-  noHeader,
+  title,
   elevation = 3,
-  noSetButton,
+  showSetButton,
   Content,
   titleTypographyProps,
   sx,
 }: Props) {
   return (
     <Card elevation={elevation} sx={{ px: 1, m: 0.5, ...sx }}>
-      {!noHeader && (
+      {title && (
         <>
           <CardHeader
             title={title}
@@ -46,14 +44,14 @@ export default function RecordCardSkeleton({
         {Content ? (
           Content
         ) : (
-          <>
+          <div aria-label="Loading record...">
             <Skeleton height="50px" />
             <Skeleton height="50px" />
             <Skeleton height="50px" />
-          </>
+          </div>
         )}
       </CardContent>
-      {!noSetButton && !Content && (
+      {showSetButton && (
         <CardActions sx={{ display: 'flex', justifyContent: 'center', pb: 2 }}>
           <Skeleton variant="circular" height="50px" width="50px" />
         </CardActions>

@@ -66,8 +66,6 @@ export default memo(function HistoryCardsSwiper({
   if (isLoading || !historyRecords) {
     return (
       <RecordCardSkeleton
-        noHeader
-        noSetButton
         titleTypographyProps={{ textAlign: 'center' }}
         elevation={0}
         sx={{ px: 0, m: 0 }}

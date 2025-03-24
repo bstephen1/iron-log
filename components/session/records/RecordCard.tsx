@@ -52,10 +52,13 @@ export default memo(function RecordCard(props: Props) {
   )
 
   if (record === undefined || exercise === undefined || props.isQuickRender) {
-    return <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} />
+    return (
+      <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
+    )
   } else if (record === null) {
     return (
       <RecordCardSkeleton
+        title={`Record ${swiperIndex + 1}`}
         Content={
           <Typography textAlign="center">
             Could not find record! Try reloading.

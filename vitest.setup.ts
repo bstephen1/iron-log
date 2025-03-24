@@ -12,7 +12,8 @@ import { devUserId } from './lib/frontend/constants'
 // Limit for printing dom on failed expect(). Default is 7000.
 // typing is from vite/client in tsconfig
 import.meta.env.DEBUG_PRINT_LIMIT = '0'
-// import.meta.env.COLORS = false
+import.meta.env.NEXTAUTH_GITHUB_ID = 'my id'
+import.meta.env.NEXTAUTH_GITHUB_SECRET = 'secret secret'
 
 // vi.mock will import the actual module and automock all exports.
 // If a factory is provided, it replaces the actual module with the factory.
@@ -47,6 +48,7 @@ beforeAll(() => {
   // Note userEvent.setup must also include {advanceTimers: vi.advanceTimersByTime},
   // but this must be done on a per-test basis as it will break any test not using fake timers
   // See: https://github.com/testing-library/react-testing-library/issues/1197
+  // eslint-disable-next-line
   ;((globalThis as any).jest as Record<string, unknown>) = {
     advanceTimersByTime: vi.advanceTimersByTime.bind(vi),
   }
