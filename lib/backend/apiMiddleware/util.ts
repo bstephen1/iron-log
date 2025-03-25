@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
-import { GetServerSidePropsContext, NextApiRequest } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
 import { ApiError } from '../../../models/ApiError'
+import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
 
 export type ApiHandler<T> = (
   req: NextApiRequest,
@@ -26,13 +26,9 @@ export type UserId = ObjectId
 
 /** Return the userId, formatted as a UserId. */
 export async function getUserId(
-  // Can't use NextApiRequest because getServerSideProps gives different req/res objects.
-  // NextApiReq/Res extend these types though. They actually now match the object shape that
-  // getServerSession is expecting exactly, whereas NextApiReq/Res have additional fields.
-  req: GetServerSidePropsContext['req'],
-  res: GetServerSidePropsContext['res']
+  req: NextApiRequest,
+  res: NextApiResponse
 ): Promise<UserId> {
-  // req and res appear to be required. You can call the function without them but it won't work correctly.
   const session = await getServerSession(req, res, authOptions)
 
   if (!session || !session.user?.id) {
@@ -46,5 +42,5 @@ export async function getUserId(
     )
   }
 
-  return new ObjectId(session.user.id)
+  return ObjectId.createFromHexString(session.user.id)
 }
