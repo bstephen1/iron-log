@@ -48,10 +48,8 @@ beforeAll(() => {
   // Note userEvent.setup must also include {advanceTimers: vi.advanceTimersByTime},
   // but this must be done on a per-test basis as it will break any test not using fake timers
   // See: https://github.com/testing-library/react-testing-library/issues/1197
-  // eslint-disable-next-line
-  ;((globalThis as any).jest as Record<string, unknown>) = {
-    advanceTimersByTime: vi.advanceTimersByTime.bind(vi),
-  }
+  // @ts-expect-error ts can't see the type of globalThis
+  globalThis.jest = vi
 })
 beforeEach(() => server.resetHandlers())
 afterAll(() => server.close())
