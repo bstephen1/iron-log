@@ -1,9 +1,8 @@
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getServerSession } from 'next-auth'
+import { auth } from '../../../auth'
 import { ApiError } from '../../../models/ApiError'
-import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
 
 export type ApiHandler<T> = (
   req: NextApiRequest,
@@ -29,7 +28,7 @@ export async function getUserId(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<UserId> {
-  const session = await getServerSession(req, res, authOptions)
+  const session = await auth(req, res)
 
   if (!session || !session.user?.id) {
     throw new ApiError(StatusCodes.UNAUTHORIZED, 'You must be logged in.')

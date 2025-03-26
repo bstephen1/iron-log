@@ -4,6 +4,7 @@ import { server } from './msw-mocks/server'
 import { vi } from 'vitest'
 import 'whatwg-fetch'
 import { devUserId } from './lib/frontend/constants'
+import { auth } from './auth'
 
 // set env variables with import.meta.env
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
@@ -26,10 +27,14 @@ vi.mock('./lib/backend/mongoConnect', () => ({
   client: vi.fn(),
 }))
 vi.mock('./lib/backend/mongoService')
-vi.mock('./pages/api/auth/[...nextauth].api', () => ({ authOptions: vi.fn() }))
-vi.mock('next-auth', () => ({
-  getServerSession: () => ({ user: { id: devUserId } }),
+
+// todo
+// vi.mock('./pages/api/auth/[...nextauth].api', () => ({ authOptions: vi.fn() }))
+vi.mock('./auth', () => ({
+  auth: () => ({ user: { id: devUserId } }),
 }))
+
+// vi.mocked(auth).mockImplementation(() => async ()=>({ user: { id: devUserId } }))
 
 // configure testing-library options
 configure({
