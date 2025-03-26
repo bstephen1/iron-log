@@ -45,15 +45,10 @@ export const authOptions: AuthOptions = {
     // todo: add logo
     // logo: '',
   },
-  // todo: look into database strategy. It is the default in v5, so this comment is probably outdated
-  // using a database adapter changes the strategy to "database", which causes an infinite redirect loop.
-  // See: https://github.com/nextauthjs/next-auth/issues/5392
-  // Per the docs, jwt stores user session data in the client instead of in the database.
-  // See: https://next-auth.js.org/adapters/overview
+  // in v5, "database" is the default session strategy. Credentials providers are prevented
+  // from using "database" strategy and must use JWT.
   session: { strategy: 'jwt' },
   // The official adapter uses an auto generated mongo ObjectId for the id.
-  // We could define a custom adapter to use our own generateId() function but that adds a maintenance and complexity cost.
-  // So for now we're going with the stock adapter and seeing if that causes issues.
   adapter: MongoDBAdapter(clientPromise),
   // By default the client receives only minimal information. Callbacks allow us to add needed properties to the client model.
   // (We want the id)
