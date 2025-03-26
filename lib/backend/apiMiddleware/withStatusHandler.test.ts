@@ -80,7 +80,7 @@ it('returns error when ZodError is thrown', async () => {
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
       expect(await res.json()).toEqual({
         statusCode: StatusCodes.BAD_REQUEST,
-        message: 'request body is malformed',
+        message: 'invalid request',
         details: error.errors,
       })
     },

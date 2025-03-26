@@ -31,7 +31,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
         const statusCode = StatusCodes.BAD_REQUEST
         res.status(statusCode).json({
           statusCode,
-          message: 'request body is malformed',
+          message: 'invalid request',
           details: e.errors,
         })
       } else {
