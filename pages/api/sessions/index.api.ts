@@ -12,9 +12,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
   if (req.method !== 'GET') {
     throw methodNotAllowed
   }
-  const query = buildDateRangeQuery<SessionLog>(req.query, userId)
+  const query = buildDateRangeQuery<SessionLog>(req.query)
 
-  return await fetchSessions(query)
+  return await fetchSessions(userId, query)
 }
 
 export default withStatusHandler(handler)

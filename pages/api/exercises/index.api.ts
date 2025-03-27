@@ -12,9 +12,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
     throw methodNotAllowed
   }
 
-  const query = buildExerciseQuery(req.query, userId)
+  const query = buildExerciseQuery(req.query)
 
-  return await fetchExercises(query)
+  return await fetchExercises(userId, query)
 }
 
 export default withStatusHandler(handler)

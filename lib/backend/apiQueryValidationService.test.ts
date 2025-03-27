@@ -1,14 +1,12 @@
-import { ObjectId } from 'mongodb'
 import { v1 as invalidUuid } from 'uuid'
 import { generateId } from '../../lib/util'
+import { ApiError } from '../../models/ApiError'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { MatchType } from '../../models/query-filters/MongoQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import { Status } from '../../models/Status'
-import { devUserId } from '../frontend/constants'
-import { ApiError } from '../../models/ApiError'
 import {
   ApiReq,
   buildBodyweightQuery,
@@ -114,8 +112,6 @@ describe('validation', () => {
 })
 
 describe('build query', () => {
-  const userId = new ObjectId(devUserId)
-
   describe('buildDateRangeQuery', () => {
     it('builds full query', () => {
       const apiQuery: ApiReq<DateRangeQuery> = {
@@ -124,11 +120,10 @@ describe('build query', () => {
         end: '2001-01-01',
         sort: 'oldestFirst',
       }
-      expect(buildDateRangeQuery(apiQuery, userId)).toMatchObject({
+      expect(buildDateRangeQuery(apiQuery)).toMatchObject({
         ...apiQuery,
         limit: Number(apiQuery.limit),
         sort: 'oldestFirst',
-        userId,
       })
     })
 
@@ -139,28 +134,32 @@ describe('build query', () => {
         end: undefined,
         sort: undefined,
       }
-      expect(buildDateRangeQuery(apiQuery, userId)).toMatchObject({
+      expect(buildDateRangeQuery(apiQuery)).toMatchObject({
         start: apiQuery.start,
-        userId,
       })
     })
 
     it('validates limit', () => {
-      expect(() => buildDateRangeQuery({ limit: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
-      expect(() => buildDateRangeQuery({ limit: ['5'] }, userId)).toThrow(
-        ApiError
-      )
+      // We shouldn't ever get singleton arrays from api requests.
+      // This test is more to document the behavior that Number(['5']) does coerce to a number
+      expect(() => buildDateRangeQuery({ limit: ['5'] })).not.toThrow()
+
+      expect(() => buildDateRangeQuery({ limit: 'invalid' })).toThrow()
+      expect(() => buildDateRangeQuery({ limit: ['5', '3'] })).toThrow()
+      expect(() => buildDateRangeQuery({ limit: ['invalid'] })).toThrow()
+      expect(() => buildDateRangeQuery({ limit: '3.5' })).toThrow()
     })
 
     it('validates dates', () => {
-      expect(() => buildDateRangeQuery({ start: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
-      expect(() => buildDateRangeQuery({ end: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
+      expect(() => buildDateRangeQuery({ start: 'invalid' })).toThrow()
+      expect(() => buildDateRangeQuery({ start: '2000-10-10-10' })).toThrow()
+      expect(() => buildDateRangeQuery({ start: '20001010' })).toThrow()
+      expect(() => buildDateRangeQuery({ start: '2000-13-10' })).toThrow()
+
+      expect(() => buildDateRangeQuery({ end: 'invalid' })).toThrow()
+      expect(() => buildDateRangeQuery({ end: '2000-10-10-10' })).toThrow()
+      expect(() => buildDateRangeQuery({ end: '20001010' })).toThrow()
+      expect(() => buildDateRangeQuery({ end: '2000-13-10' })).toThrow()
     })
   })
 
@@ -173,7 +172,7 @@ describe('build query', () => {
         end: '2001-01-01',
         sort: 'oldestFirst',
       }
-      expect(buildBodyweightQuery(apiQuery, userId)).toMatchObject({
+      expect(buildBodyweightQuery(apiQuery)).toMatchObject({
         filter: {
           type: apiQuery.type,
         },
@@ -181,7 +180,6 @@ describe('build query', () => {
         end: apiQuery.end,
         limit: Number(apiQuery.limit),
         sort: 'oldestFirst',
-        userId,
       })
     })
 
@@ -192,29 +190,14 @@ describe('build query', () => {
         start: '2000-01-01',
         end: undefined,
       }
-      expect(buildBodyweightQuery(apiQuery, userId)).toMatchObject({
+      expect(buildBodyweightQuery(apiQuery)).toMatchObject({
         start: apiQuery.start,
-        userId,
       })
     })
 
     it('validates type', () => {
-      expect(() => buildBodyweightQuery({ type: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
-      expect(() =>
-        buildBodyweightQuery({ type: ['official'] }, userId)
-      ).toThrow(ApiError)
-    })
-
-    it('validates dateRange params', () => {
-      expect(() => buildBodyweightQuery({ start: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
-      expect(() => buildBodyweightQuery({ end: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
-      expect(() => buildBodyweightQuery({ limit: 'invalid' }, userId)).toThrow(
+      expect(() => buildBodyweightQuery({ type: 'invalid' })).toThrow(ApiError)
+      expect(() => buildBodyweightQuery({ type: ['official'] })).toThrow(
         ApiError
       )
     })
@@ -237,7 +220,7 @@ describe('build query', () => {
         min: '1',
         max: '8',
       }
-      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
         filter: {
           date: apiQuery.date,
           activeModifiers: [apiQuery.modifier],
@@ -253,7 +236,6 @@ describe('build query', () => {
           activeModifiers: apiQuery.modifierMatchType,
         },
         sort: 'oldestFirst',
-        userId,
       })
     })
 
@@ -262,33 +244,29 @@ describe('build query', () => {
         date: '2000-01-01',
         exercise: undefined,
       }
-      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
         filter: {
           date: apiQuery.date,
         },
-        userId,
       })
     })
 
     it('validates exercise', () => {
-      expect(() => buildRecordQuery({ exercise: ['invalid'] }, userId)).toThrow(
+      expect(() => buildRecordQuery({ exercise: ['invalid'] })).toThrow(
         ApiError
       )
     })
 
     it('validates date', () => {
-      expect(() => buildRecordQuery({ date: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
+      expect(() => buildRecordQuery({ date: 'invalid' })).toThrow(ApiError)
     })
 
     it('builds modifiers from string modifier', () => {
       const apiQuery: ApiReq<RecordQuery> = {
         modifier: 'modifier',
       }
-      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
         filter: { activeModifiers: [apiQuery.modifier] },
-        userId,
       })
     })
 
@@ -296,9 +274,8 @@ describe('build query', () => {
       const apiQuery: ApiReq<RecordQuery> = {
         modifier: '',
       }
-      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
         filter: { activeModifiers: [] },
-        userId,
       })
     })
 
@@ -306,97 +283,85 @@ describe('build query', () => {
       const apiQuery: ApiReq<RecordQuery> = {
         modifier: ['modifier'],
       }
-      expect(buildRecordQuery(apiQuery, userId)).toMatchObject({
+      expect(buildRecordQuery(apiQuery)).toMatchObject({
         filter: { activeModifiers: apiQuery.modifier },
-        userId,
       })
     })
 
     it('validates match type', () => {
       expect(() =>
-        buildRecordQuery(
-          { modifier: 'modifier', modifierMatchType: 'invalid' },
-          userId
-        )
+        buildRecordQuery({ modifier: 'modifier', modifierMatchType: 'invalid' })
       ).toThrow(ApiError)
     })
 
     it('ignores matchType when modifier is empty', () => {
       expect(
-        buildRecordQuery({ modifierMatchType: MatchType.Partial }, userId)
-      ).toMatchObject({ userId })
+        buildRecordQuery({ modifierMatchType: MatchType.Partial })
+      ).toMatchObject({})
     })
 
     it('ignores modifier when matchType is "any"', () => {
       expect(
-        buildRecordQuery(
-          { modifierMatchType: MatchType.Any, modifier: 'my mod' },
-          userId
-        )
-      ).toMatchObject({ userId })
+        buildRecordQuery({
+          modifierMatchType: MatchType.Any,
+          modifier: 'my mod',
+        })
+      ).toMatchObject({})
     })
 
     describe('setType', () => {
       it('validates field', () => {
         expect(() =>
-          buildRecordQuery(
-            { field: ['invalid'], operator: 'exactly', value: '1' },
-            userId
-          )
+          buildRecordQuery({
+            field: ['invalid'],
+            operator: 'exactly',
+            value: '1',
+          })
         ).toThrow(ApiError)
       })
 
       it('validates operator', () => {
         expect(() =>
-          buildRecordQuery(
-            { operator: ['invalid'], field: 'reps', value: '1' },
-            userId
-          )
+          buildRecordQuery({ operator: ['invalid'], field: 'reps', value: '1' })
         ).toThrow(ApiError)
       })
 
       it('validates value', () => {
         expect(() =>
-          buildRecordQuery(
-            { value: 'invalid', operator: 'exactly', field: 'reps' },
-            userId
-          )
+          buildRecordQuery({
+            value: 'invalid',
+            operator: 'exactly',
+            field: 'reps',
+          })
         ).toThrow(ApiError)
         expect(() =>
-          buildRecordQuery(
-            { value: ['5'], operator: 'exactly', field: 'reps' },
-            userId
-          )
+          buildRecordQuery({ value: ['5'], operator: 'exactly', field: 'reps' })
         ).toThrow(ApiError)
       })
 
       it('validates min', () => {
         expect(() =>
-          buildRecordQuery(
-            { min: 'invalid', operator: 'between', field: 'reps' },
-            userId
-          )
+          buildRecordQuery({
+            min: 'invalid',
+            operator: 'between',
+            field: 'reps',
+          })
         ).toThrow(ApiError)
         expect(() =>
-          buildRecordQuery(
-            { min: ['5'], operator: 'between', field: 'reps' },
-            userId
-          )
+          buildRecordQuery({ min: ['5'], operator: 'between', field: 'reps' })
         ).toThrow(ApiError)
       })
 
       it('validates max', () => {
         expect(() =>
-          buildRecordQuery(
-            { max: 'invalid', operator: 'between', field: 'reps' },
-            userId
-          )
+          buildRecordQuery({
+            max: 'invalid',
+            operator: 'between',
+            field: 'reps',
+          })
         ).toThrow(ApiError)
         expect(() =>
-          buildRecordQuery(
-            { max: ['5'], operator: 'between', field: 'reps' },
-            userId
-          )
+          buildRecordQuery({ max: ['5'], operator: 'between', field: 'reps' })
         ).toThrow(ApiError)
       })
 
@@ -408,7 +373,7 @@ describe('build query', () => {
           max: '8',
           field: 'reps',
         }
-        expect(buildRecordQuery(apiQuery, userId)).not.toMatchObject({
+        expect(buildRecordQuery(apiQuery)).not.toMatchObject({
           filter: {
             'setType.min': Number(apiQuery.min),
             'setType.max': Number(apiQuery.max),
@@ -424,7 +389,7 @@ describe('build query', () => {
           max: '8',
           field: 'reps',
         }
-        expect(buildRecordQuery(apiQuery, userId)).not.toMatchObject({
+        expect(buildRecordQuery(apiQuery)).not.toMatchObject({
           filter: {
             'setType.value': Number(apiQuery.value),
           },
@@ -432,20 +397,18 @@ describe('build query', () => {
       })
 
       it('ignores invalid setType', () => {
-        expect(
-          buildRecordQuery({ operator: 'exactly' }, userId)
-        ).not.toMatchObject({
+        expect(buildRecordQuery({ operator: 'exactly' })).not.toMatchObject({
           filter: {
             'setType.operator': 'exactly',
           },
         })
-        expect(buildRecordQuery({ field: 'reps' }, userId)).not.toMatchObject({
+        expect(buildRecordQuery({ field: 'reps' })).not.toMatchObject({
           filter: {
             'setType.field': 'reps',
           },
         })
         expect(
-          buildRecordQuery({ operator: 'exactly', field: 'reps' }, userId)
+          buildRecordQuery({ operator: 'exactly', field: 'reps' })
         ).not.toMatchObject({
           filter: {
             'setType.operator': 'exactly',
@@ -453,7 +416,7 @@ describe('build query', () => {
           },
         })
         expect(
-          buildRecordQuery({ operator: 'between', field: 'reps' }, userId)
+          buildRecordQuery({ operator: 'between', field: 'reps' })
         ).not.toMatchObject({
           filter: {
             'setType.operator': 'between',
@@ -472,7 +435,7 @@ describe('build query', () => {
         category: 'category',
         categoryMatchType: MatchType.Partial,
       }
-      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+      expect(buildExerciseQuery(apiQuery)).toMatchObject({
         filter: {
           status: apiQuery.status,
           name: apiQuery.name,
@@ -481,7 +444,6 @@ describe('build query', () => {
         matchTypes: {
           categories: MatchType.Partial,
         },
-        userId,
       })
     })
 
@@ -491,9 +453,8 @@ describe('build query', () => {
         name: undefined,
         category: undefined,
       }
-      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+      expect(buildExerciseQuery(apiQuery)).toMatchObject({
         filter: { status: apiQuery.status },
-        userId,
       })
     })
 
@@ -501,9 +462,8 @@ describe('build query', () => {
       const apiQuery: ApiReq<ExerciseQuery> = {
         category: 'category',
       }
-      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+      expect(buildExerciseQuery(apiQuery)).toMatchObject({
         filter: { categories: [apiQuery.category] },
-        userId,
       })
     })
 
@@ -511,37 +471,32 @@ describe('build query', () => {
       const apiQuery: ApiReq<ExerciseQuery> = {
         category: ['category'],
       }
-      expect(buildExerciseQuery(apiQuery, userId)).toMatchObject({
+      expect(buildExerciseQuery(apiQuery)).toMatchObject({
         filter: { categories: apiQuery.category },
-        userId,
       })
     })
 
     it('validates match type', () => {
       expect(() =>
-        buildExerciseQuery(
-          { category: 'category', categoryMatchType: 'invalid' },
-          userId
-        )
+        buildExerciseQuery({
+          category: 'category',
+          categoryMatchType: 'invalid',
+        })
       ).toThrow(ApiError)
     })
 
     it('ignores matchType when category is empty', () => {
       expect(
-        buildExerciseQuery({ categoryMatchType: MatchType.Partial }, userId)
-      ).toMatchObject({ userId })
+        buildExerciseQuery({ categoryMatchType: MatchType.Partial })
+      ).toMatchObject({})
     })
 
     it('validates status', () => {
-      expect(() => buildExerciseQuery({ status: 'invalid' }, userId)).toThrow(
-        ApiError
-      )
+      expect(() => buildExerciseQuery({ status: 'invalid' })).toThrow(ApiError)
     })
 
     it('validates name', () => {
-      expect(() => buildExerciseQuery({ name: ['invalid'] }, userId)).toThrow(
-        ApiError
-      )
+      expect(() => buildExerciseQuery({ name: ['invalid'] })).toThrow(ApiError)
     })
   })
 })

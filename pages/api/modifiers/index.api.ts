@@ -12,9 +12,9 @@ async function handler(req: NextApiRequest, userId: UserId) {
     throw methodNotAllowed
   }
 
-  const query = buildModifierQuery(req.query, userId)
+  const query = buildModifierQuery(req.query)
 
-  return await fetchModifiers(query)
+  return await fetchModifiers(userId, query)
 }
 
 export default withStatusHandler(handler)

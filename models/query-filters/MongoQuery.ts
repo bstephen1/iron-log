@@ -1,19 +1,11 @@
-import { Filter, ObjectId } from 'mongodb'
+import { Filter } from 'mongodb'
+import DateRangeQuery from './DateRangeQuery'
 
 /** A query to send to mongo.  */
-export interface MongoQuery<T> {
+export interface MongoQuery<T> extends DateRangeQuery {
   filter?: Filter<T>
-  /** limit the number of results */
-  limit?: number
-  /** start date */
-  start?: string
-  /** end date */
-  end?: string
   /** Matches array fields corresponding to the given filter field with a schema for match type. */
   matchTypes?: MatchTypes<T>
-  sort?: 'oldestFirst' | 'newestFirst'
-  /** Required. Split out from the filter since the filter is optional. */
-  userId: ObjectId
 }
 
 /** An object that has keys corresponding to Partial\<T\> keys,

@@ -1,12 +1,15 @@
 import { StatusCodes } from 'http-status-codes'
-import { Filter, ObjectId } from 'mongodb'
+import { Filter } from 'mongodb'
 import { validDateStringRegex } from '../../lib/frontend/constants'
 import { isValidId } from '../../lib/util'
+import { ApiError } from '../../models/ApiError'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight, WeighInType, weighInTypes } from '../../models/Bodyweight'
 import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
-import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import DateRangeQuery, {
+  dateRangeQuerySchema,
+} from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import {
@@ -17,7 +20,6 @@ import {
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
 import { Record } from '../../models/Record'
 import { Status } from '../../models/Status'
-import { ApiError } from '../../models/ApiError'
 
 type ApiParam = string | string[] | undefined
 // only exported for the test file
@@ -33,37 +35,17 @@ export type ApiReq<T> = { [key in keyof T]: ApiParam }
 
 /** Build and validate a query to send to the db from the rest param input. */
 export function buildDateRangeQuery<T>(
-  { limit, start, end, sort }: ApiReq<DateRangeQuery>,
-  userId: ObjectId
+  query: ApiReq<DateRangeQuery>
 ): MongoQuery<T> {
-  const query: DateRangeQuery = {}
-
-  // only add the defined params to the query
-  if (limit) {
-    query.limit = validateNumber(limit, 'Limit')
-  }
-  if (start) {
-    query.start = valiDate(start)
-  }
-  if (end) {
-    query.end = valiDate(end)
-  }
-  if (sort) {
-    query.sort = validateSort(sort)
-  }
-
-  return { ...query, userId }
+  return dateRangeQuerySchema.parse(query)
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildBodyweightQuery(
-  { limit, start, end, type, sort }: ApiReq<BodyweightQuery>,
-  userId: ObjectId
-): MongoQuery<Bodyweight> {
-  const query: MongoQuery<Bodyweight> = buildDateRangeQuery<Bodyweight>(
-    { limit, start, end, sort },
-    userId
-  )
+export function buildBodyweightQuery({
+  type,
+  ...rest
+}: ApiReq<BodyweightQuery>): MongoQuery<Bodyweight> {
+  const query: MongoQuery<Bodyweight> = buildDateRangeQuery<Bodyweight>(rest)
   const filter: Filter<Bodyweight> = {}
 
   if (type) {
@@ -79,31 +61,30 @@ export function buildBodyweightQuery(
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildRecordQuery(
-  {
-    exercise,
-    date,
-    modifier,
-    modifierMatchType,
-    setTypeMatchType = MatchType.Exact,
-    // setType fields
-    field,
-    operator,
-    value,
-    min,
-    max,
-    // dateRange fields
+export function buildRecordQuery({
+  exercise,
+  date,
+  modifier,
+  modifierMatchType,
+  setTypeMatchType = MatchType.Exact,
+  // setType fields
+  field,
+  operator,
+  value,
+  min,
+  max,
+  // dateRange fields
+  start,
+  end,
+  limit,
+  sort,
+}: ApiReq<RecordQuery>): MongoQuery<Record> {
+  const query: MongoQuery<Record> = buildDateRangeQuery<Record>({
     start,
     end,
     limit,
     sort,
-  }: ApiReq<RecordQuery>,
-  userId: ObjectId
-): MongoQuery<Record> {
-  const query: MongoQuery<Record> = buildDateRangeQuery<Record>(
-    { start, end, limit, sort },
-    userId
-  )
+  })
   const filter: Filter<Record> = {}
   const matchTypes: MatchTypes<Record> = {}
 
@@ -152,10 +133,12 @@ export function buildRecordQuery(
 }
 
 /** Build and validate a query to send to the db from the rest param input. */
-export function buildExerciseQuery(
-  { status, name, category, categoryMatchType }: ApiReq<ExerciseQuery>,
-  userId: ObjectId
-): MongoQuery<Exercise> {
+export function buildExerciseQuery({
+  status,
+  name,
+  category,
+  categoryMatchType,
+}: ApiReq<ExerciseQuery>): MongoQuery<Exercise> {
   const filter: Filter<Exercise> = {}
   const matchTypes: MatchTypes<Exercise> = {}
 
@@ -174,20 +157,19 @@ export function buildExerciseQuery(
     }
   }
 
-  return { filter, matchTypes, userId }
+  return { filter, matchTypes }
 }
 
-export function buildModifierQuery(
-  { status }: ApiReq<ModifierQuery>,
-  userId: ObjectId
-): MongoQuery<Modifier> {
+export function buildModifierQuery({
+  status,
+}: ApiReq<ModifierQuery>): MongoQuery<Modifier> {
   const filter: Filter<Modifier> = {}
 
   if (status) {
     filter.status = validateStatus(status)
   }
 
-  return { filter, userId }
+  return { filter }
 }
 
 //------------------------

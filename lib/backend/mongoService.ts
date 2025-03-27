@@ -96,13 +96,15 @@ export async function fetchSession(
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchSessions({
-  userId,
-  limit,
-  start = '0',
-  end = '9',
-  sort = 'newestFirst',
-}: MongoQuery<SessionLog>): Promise<SessionLog[]> {
+export async function fetchSessions(
+  userId: ObjectId,
+  {
+    limit,
+    start = '0',
+    end = '9',
+    sort = 'newestFirst',
+  }: MongoQuery<SessionLog>
+): Promise<SessionLog[]> {
   return await sessions
     .find(
       { userId, date: { $gte: start, $lte: end } },
@@ -209,15 +211,17 @@ export async function addRecord(
 }
 
 // todo: pagination
-export async function fetchRecords({
-  filter = {},
-  limit,
-  start = '0',
-  end = '9',
-  userId,
-  sort = 'newestFirst',
-  matchTypes,
-}: MongoQuery<Record>): Promise<Record[]> {
+export async function fetchRecords(
+  userId: ObjectId,
+  {
+    filter = {},
+    limit,
+    start = '0',
+    end = '9',
+    sort = 'newestFirst',
+    matchTypes,
+  }: MongoQuery<Record>
+): Promise<Record[]> {
   setArrayMatchTypes(filter, matchTypes)
 
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
@@ -319,11 +323,10 @@ export async function addExercise(
 /** This fetch supports the array field "categories". By default, a query on categories
  * will match records that contain any one of the given categories array.
  */
-export async function fetchExercises({
-  userId,
-  filter,
-  matchTypes,
-}: MongoQuery<Exercise>): Promise<Exercise[]> {
+export async function fetchExercises(
+  userId: ObjectId,
+  { filter, matchTypes }: MongoQuery<Exercise>
+): Promise<Exercise[]> {
   setArrayMatchTypes(filter, matchTypes)
 
   return await exercises
@@ -400,10 +403,10 @@ export async function addModifier(
   return modifier
 }
 
-export async function fetchModifiers({
-  filter,
-  userId,
-}: MongoQuery<Modifier>): Promise<Modifier[]> {
+export async function fetchModifiers(
+  userId: ObjectId,
+  { filter }: MongoQuery<Modifier>
+): Promise<Modifier[]> {
   return await modifiers
     .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
@@ -566,14 +569,10 @@ export async function addBodyweight(
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchBodyweightHistory({
-  userId,
-  limit,
-  start = '0',
-  end = '9',
-  filter,
-  sort,
-}: MongoQuery<Bodyweight>): Promise<Bodyweight[]> {
+export async function fetchBodyweightHistory(
+  userId: ObjectId,
+  { limit, start = '0', end = '9', filter, sort }: MongoQuery<Bodyweight>
+): Promise<Bodyweight[]> {
   return await bodyweightHistory
     .find(
       { userId, date: { $gte: start, $lte: end }, ...filter },
