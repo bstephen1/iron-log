@@ -4,14 +4,12 @@ import { validDateStringRegex } from '../../lib/frontend/constants'
 import { isValidId } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight, WeighInType, weighInTypes } from '../../models/Bodyweight'
-import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery, {
   dateRangeQuerySchema,
 } from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
-import ModifierQuery from '../../models/query-filters/ModifierQuery'
 import {
   MatchType,
   MatchTypes,
@@ -24,6 +22,8 @@ import { Status } from '../../models/Status'
 type ApiParam = string | string[] | undefined
 // only exported for the test file
 export type ApiReq<T> = { [key in keyof T]: ApiParam }
+
+// todo: delete, move tests to zod schemas
 
 // It could be debated whether to be permissive of unsupported params.
 // For now we are just ignoring them since it probably won't matter for our use case.
@@ -160,22 +160,11 @@ export function buildExerciseQuery({
   return { filter, matchTypes }
 }
 
-export function buildModifierQuery({
-  status,
-}: ApiReq<ModifierQuery>): MongoQuery<Modifier> {
-  const filter: Filter<Modifier> = {}
-
-  if (status) {
-    filter.status = validateStatus(status)
-  }
-
-  return { filter }
-}
-
 //------------------------
 // validation functions
 //------------------------
 
+// todo: zod
 export function validateId(id: ApiParam) {
   if (!(typeof id === 'string' && isValidId(id))) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid id format.')
@@ -192,6 +181,7 @@ export function validateSort(sort: ApiParam) {
   return sort as DateRangeQuery['sort']
 }
 
+// todo: zod
 /** validate a date */
 export function valiDate(param: ApiParam) {
   if (typeof param !== 'string' || !param.match(validDateStringRegex)) {

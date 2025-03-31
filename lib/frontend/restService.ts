@@ -10,7 +10,7 @@ import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight } from '../../models/Bodyweight'
 import { Record } from '../../models/Record'
 import { SessionLog } from '../../models/SessionLog'
-import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
@@ -32,10 +32,14 @@ import {
 /** Parse a Query object into a rest param string. Query objects should be spread into this function. */
 export const paramify = (query: ParsedUrlQueryInput) => {
   const parsedQuery: ParsedUrlQueryInput = {}
-  // Any empty arrays must be converted into empty strings instead.
-  // stringify() just drops empty arrays.
   for (const [key, value] of Object.entries(query)) {
-    parsedQuery[key] = Array.isArray(value) && !value.length ? '' : value
+    // stringify() adds empty strings to the url param, which can cause unintended behavior.
+    // Generally the presence of a query param indicates truthiness, whereas an empty string indicates a falsy value.
+    if (!value) continue
+
+    // note: stringify() drops empty arrays.
+    // See: https://github.com/psf/requests/issues/6557
+    parsedQuery[key] = value
   }
   // note that stringify doesn't add the leading '?'.
   // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options

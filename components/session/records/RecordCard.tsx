@@ -14,9 +14,10 @@ import {
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { UpdateFields, calculateTotalReps } from '../../../lib/util'
+import { UpdateFields } from '../../../lib/util'
 import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { Record } from '../../../models/Record'
+import { calculateTotalValue } from '../../../models/Set'
 import { MatchType } from '../../../models/query-filters/MongoQuery'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
@@ -180,7 +181,7 @@ function LoadedRecordCard({
             />
             <SetTypeSelect
               units={displayFields.units}
-              totalReps={calculateTotalReps(sets, setType)}
+              totalReps={calculateTotalValue(sets, setType)}
               showRemaining
               {...{ handleChange: mutateRecordFields, setType }}
             />

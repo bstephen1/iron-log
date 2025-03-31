@@ -15,13 +15,13 @@ import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { UpdateFields, UpdateState, stringifySetType } from '../../../lib/util'
+import { UpdateFields, UpdateState } from '../../../lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
 } from '../../../models/DisplayFields'
 import { Record } from '../../../models/Record'
-import { SetType, setOperators } from '../../../models/Set'
+import { SetType, setOperators, stringifySetType } from '../../../models/Set'
 import { Units } from '../../../models/Units'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(

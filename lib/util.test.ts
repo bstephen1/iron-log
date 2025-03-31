@@ -1,4 +1,4 @@
-import { arrayToIndex } from './util'
+import { arrayToIndex, capitalize, removeUndefinedKeys, toArray } from './util'
 
 describe('arrayToIndex', () => {
   interface Sample {
@@ -25,5 +25,45 @@ describe('arrayToIndex', () => {
     const badObj = { a: [1, 2, 3] }
 
     expect(() => arrayToIndex('a', [badObj])).toThrow(Error)
+  })
+})
+
+describe('capitalize', () => {
+  it('capitalizes first letter of string', () => {
+    expect(capitalize('string')).toBe('String')
+    expect(capitalize('string string')).toBe('String string')
+  })
+
+  it('handles empty string', () => {
+    expect(capitalize('')).toBe('')
+  })
+})
+
+describe('removeUndefinedKeys', () => {
+  it('removes undefined keys', () => {
+    expect(removeUndefinedKeys({ a: 1, b: undefined })).toEqual({ a: 1 })
+  })
+
+  it('does not remove falsy keys', () => {
+    expect(removeUndefinedKeys({ a: '', b: {} })).toEqual({ a: '', b: {} })
+  })
+
+  // if we did remove nested keys, we might expect nested objects that become
+  // empty to be removed
+  // ie, {a: {b: undefined}} -> {a: undefined} -> {}
+  it('does not remove nested undefined keys', () => {
+    expect(removeUndefinedKeys({ a: { b: undefined } })).toEqual({
+      a: { b: undefined },
+    })
+  })
+})
+
+describe('toArray', () => {
+  it('returns singleton as an array', () => {
+    expect(toArray('hi')).toEqual(['hi'])
+  })
+
+  it('returns array as itself', () => {
+    expect(toArray(['hi'])).toEqual(['hi'])
   })
 })

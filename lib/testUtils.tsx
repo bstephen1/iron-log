@@ -133,9 +133,12 @@ export async function expectApiRespondsWithData({
     pagesHandler: handler,
     test: async ({ fetch }) => {
       const res = await fetch({ method, body, headers })
-
+      const json = await res.json()
+      if (!res.ok) {
+        console.error(json)
+      }
       expect(res.status).toBe(StatusCodes.OK)
-      expect(await res.json()).toEqual(data)
+      expect(json).toEqual(data)
     },
   })
 }
@@ -178,7 +181,7 @@ export async function expectApiErrorsOnMalformedBody({
 
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
       expect(await res.json()).toMatchObject({
-        message: expect.stringContaining('malformed'),
+        message: expect.any(String),
         statusCode: StatusCodes.BAD_REQUEST,
         // details should exist if it's a ZodError
         details: expect.any(Array),

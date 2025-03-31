@@ -4,7 +4,6 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { buildModifierQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchModifiers } from '../../../lib/backend/mongoService'
 
 async function handler(req: NextApiRequest, userId: UserId) {
@@ -12,9 +11,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     throw methodNotAllowed
   }
 
-  const query = buildModifierQuery(req.query)
-
-  return await fetchModifiers(userId, query)
+  return await fetchModifiers(userId)
 }
 
 export default withStatusHandler(handler)

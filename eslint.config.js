@@ -74,7 +74,7 @@ const eslintConfig = [
       '@typescript-eslint/restrict-template-expressions': [
         'error',
         // allows numbers in grave strings: `example: ${5}`
-        { allowNumber: true },
+        { allowNumber: true, allowNever: true },
       ],
       '@typescript-eslint/restrict-plus-operands': [
         'error',

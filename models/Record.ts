@@ -1,8 +1,10 @@
+import { Filter } from 'mongodb'
 import { z } from 'zod'
-import { generateId } from '../lib/util'
+import { generateId, removeUndefinedKeys, toArray } from '../lib/util'
 import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
+import { buildMatchTypeFilter, MatchType } from './query-filters/MongoQuery'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
@@ -37,3 +39,49 @@ export const createRecord = (
   sets,
   setType,
 })
+
+export type RecordQuery = z.input<typeof recordQuerySchema>
+export const recordQuerySchema = z
+  .object({
+    exercise: z.string(),
+    modifier: z.preprocess(toArray, z.array(z.string())),
+    modifierMatchType: z.nativeEnum(MatchType),
+    // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
+    setTypeMatchType: z.nativeEnum(MatchType),
+  })
+  .partial()
+  // turn off strictObject
+  .and(setTypeSchema.strip().partial())
+  .transform(
+    ({
+      exercise,
+      modifier,
+      modifierMatchType,
+      setTypeMatchType,
+      field,
+      operator,
+      value,
+      min,
+      max,
+      ...rest
+    }) => {
+      const setTypeFields =
+        setTypeMatchType !== MatchType.Any
+          ? {
+              'setType.field': field,
+              'setType.operator': operator,
+              'setType.value': value,
+              'setType.min': min,
+              'setType.max': max,
+            }
+          : {}
+      const filter: Filter<Record> = {
+        ...rest,
+        ...setTypeFields,
+        'exercise.name': exercise,
+        activeModifiers: buildMatchTypeFilter(modifier, modifierMatchType),
+      }
+
+      return removeUndefinedKeys(filter)
+    }
+  )

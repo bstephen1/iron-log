@@ -2,8 +2,6 @@ import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
 import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
-import { Set, SetType } from '../models/Set'
-import { DB_UNITS, Units } from '../models/Units'
 import { DATE_FORMAT } from './frontend/constants'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
@@ -95,29 +93,23 @@ export type UpdateFields<T> = (changes: Partial<T>) => Promise<void>
 /** Partial state update that spreads over previous state. For async type use UpdateFields.  */
 export type UpdateState<T> = (changes: Partial<T>) => void
 
-/** Returns total reps over all sets when operator is "total", otherwise zero. */
-export const calculateTotalReps = (
-  sets: Set[],
-  { field, operator }: SetType
-) => {
-  return operator === 'total'
-    ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
-    : 0
-}
-
 /** returns the exercises the given category or modifier is used in */
 export const getUsage = (
   exercises: Exercise[] | undefined | null,
-  // would rather not hardcode these but unable to pull the keys from Exercise using keyof
-  field: 'categories' | 'modifiers',
+  field: keyof Pick<Exercise, 'categories' | 'modifiers'>,
   name: string
 ) => exercises?.filter((exercise) => exercise[field].includes(name)) ?? []
 
-export function stringifySetType(
-  { operator, min = 0, max = 0, value = 0, field }: SetType,
-  units?: Units
-) {
-  return `${operator} ${
-    operator === 'between' ? min + ' and ' + max : value
-  } ${(units ?? DB_UNITS)[field]}`
-}
+/** Removes undefined keys at the root level.
+ * Does not remove nested undefined keys, and does not remove falsy keys
+ * like '' or {} */
+export const removeUndefinedKeys = <T extends object>(obj: T) =>
+  Object.entries(obj).reduce<Partial<T>>(
+    (prev, [key, value]) =>
+      value !== undefined ? { ...prev, [key]: value } : prev,
+    {}
+  )
+
+/** converts a value that may be a singleton or array into an array */
+export const toArray = <T>(value: T | T[]) =>
+  Array.isArray(value) ? value : [value]

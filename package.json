@@ -10,8 +10,8 @@
     "lint": "next lint",
     "prepare": "husky",
     "cy": "npx cypress open --config-file cypress/cypress.config.ts",
-    "test": "vitest --ui --open=false",
-    "test:once": "vitest run",
+    "test": "vitest --ui --open=false --hideSkippedTests",
+    "test:once": "vitest run --hideSkippedTests",
     "db:dev": "npx vite-node scripts/mongoDevDataGenerator.ts"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 import { v1 as invalidUuid } from 'uuid'
 import { generateId } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
-import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { MatchType } from '../../models/query-filters/MongoQuery'

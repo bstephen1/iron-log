@@ -11,7 +11,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
     throw methodNotAllowed
   }
 
-  return await fetchCategories({ userId })
+  return await fetchCategories(userId)
 }
 
 export default withStatusHandler(handler)
