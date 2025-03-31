@@ -11,6 +11,7 @@ import {
 } from '../../../lib/backend/mongoService'
 import { bodyweightSchema } from '../../../models/Bodyweight'
 import { bodyweightQuerySchema } from '../../../models/query-filters/BodyweightQuery'
+import { dateRangeQuerySchema } from '../../../models/query-filters/DateRangeQuery'
 
 // todo: This endpoint is weird in that it can return a singleton or an array depending on the http method.
 // May want to update it to have a [date].ts for post/put to stay in line with other endpoints.
@@ -19,7 +20,8 @@ async function handler(req: NextApiRequest, userId: UserId) {
     case 'GET':
       return await fetchBodyweightHistory(
         userId,
-        bodyweightQuerySchema.parse(req.query)
+        bodyweightQuerySchema.parse(req.query),
+        dateRangeQuerySchema.parse(req.query)
       )
     case 'POST':
       return await addBodyweight(userId, bodyweightSchema.parse(req.body))

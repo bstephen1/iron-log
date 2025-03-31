@@ -1,22 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { Filter } from 'mongodb'
 import { validDateStringRegex } from '../../lib/frontend/constants'
 import { isValidId } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
-import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { Bodyweight, WeighInType, weighInTypes } from '../../models/Bodyweight'
-import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
-import DateRangeQuery, {
-  dateRangeQuerySchema,
-} from '../../models/query-filters/DateRangeQuery'
-import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
-import {
-  MatchType,
-  MatchTypes,
-  MongoQuery,
-} from '../../models/query-filters/MongoQuery'
-import { RecordQuery } from '../../models/query-filters/RecordQuery'
-import { Record } from '../../models/Record'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
+import { MatchType } from '../../models/query-filters/MongoQuery'
 import { Status } from '../../models/Status'
 
 type ApiParam = string | string[] | undefined
@@ -28,137 +15,6 @@ export type ApiReq<T> = { [key in keyof T]: ApiParam }
 // It could be debated whether to be permissive of unsupported params.
 // For now we are just ignoring them since it probably won't matter for our use case.
 // See: https://softwareengineering.stackexchange.com/questions/311484/should-i-be-permissive-of-unknown-parameters
-
-//------------------------
-// buildQuery() functions
-//------------------------
-
-/** Build and validate a query to send to the db from the rest param input. */
-export function buildDateRangeQuery<T>(
-  query: ApiReq<DateRangeQuery>
-): MongoQuery<T> {
-  return dateRangeQuerySchema.parse(query)
-}
-
-/** Build and validate a query to send to the db from the rest param input. */
-export function buildBodyweightQuery({
-  type,
-  ...rest
-}: ApiReq<BodyweightQuery>): MongoQuery<Bodyweight> {
-  const query: MongoQuery<Bodyweight> = buildDateRangeQuery<Bodyweight>(rest)
-  const filter: Filter<Bodyweight> = {}
-
-  if (type) {
-    if (
-      !(typeof type === 'string' && weighInTypes.includes(type as WeighInType))
-    ) {
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid weigh-in type.')
-    }
-    filter.type = type as WeighInType
-  }
-
-  return { ...query, filter }
-}
-
-/** Build and validate a query to send to the db from the rest param input. */
-export function buildRecordQuery({
-  exercise,
-  date,
-  modifier,
-  modifierMatchType,
-  setTypeMatchType = MatchType.Exact,
-  // setType fields
-  field,
-  operator,
-  value,
-  min,
-  max,
-  // dateRange fields
-  start,
-  end,
-  limit,
-  sort,
-}: ApiReq<RecordQuery>): MongoQuery<Record> {
-  const query: MongoQuery<Record> = buildDateRangeQuery<Record>({
-    start,
-    end,
-    limit,
-    sort,
-  })
-  const filter: Filter<Record> = {}
-  const matchTypes: MatchTypes<Record> = {}
-
-  // only add the defined params to the query
-  if (exercise) {
-    filter['exercise.name'] = validateString(exercise, 'Exercise')
-  }
-  if (date) {
-    filter.date = valiDate(date)
-  }
-  // modifier can be an empty string
-  if (modifier != undefined) {
-    filter.activeModifiers = validateStringArray(modifier, 'Modifier')
-    if (modifierMatchType) {
-      matchTypes.activeModifiers = validateMatchType(modifierMatchType)
-    }
-  }
-
-  const isRange = operator === 'between'
-  const isValidSetType = !!operator && !!field && (isRange ? min || max : value)
-
-  if (setTypeMatchType === MatchType.Any || !isValidSetType) {
-    return { ...query, filter, matchTypes }
-  }
-
-  if (operator) {
-    filter['setType.operator'] = validateString(operator, 'Operator')
-  }
-
-  if (field) {
-    // todo: validate union type, not just string
-    filter['setType.field'] = validateString(field, 'Field')
-  }
-  // value & min/max are mutually exclusive
-  if (value && !isRange) {
-    filter['setType.value'] = validateNumber(value, 'Value')
-  }
-  if (min && isRange) {
-    filter['setType.min'] = validateNumber(min, 'Min')
-  }
-  if (max && isRange) {
-    filter['setType.max'] = validateNumber(max, 'Max')
-  }
-
-  return { ...query, filter, matchTypes }
-}
-
-/** Build and validate a query to send to the db from the rest param input. */
-export function buildExerciseQuery({
-  status,
-  name,
-  category,
-  categoryMatchType,
-}: ApiReq<ExerciseQuery>): MongoQuery<Exercise> {
-  const filter: Filter<Exercise> = {}
-  const matchTypes: MatchTypes<Exercise> = {}
-
-  // only add the defined params to the query
-  if (status) {
-    filter.status = validateStatus(status)
-  }
-  if (name) {
-    filter.name = validateName(name)
-  }
-  // must convert the frontend "category" to the backend "categories"
-  if (category) {
-    filter.categories = validateStringArray(category, 'Category')
-    if (categoryMatchType) {
-      matchTypes.categories = validateMatchType(categoryMatchType)
-    }
-  }
-
-  return { filter, matchTypes }
-}
 
 //------------------------
 // validation functions
