@@ -1,4 +1,24 @@
-import { arrayToIndex, capitalize, removeUndefinedKeys, toArray } from './util'
+import { v6 as uuidv6 } from 'uuid'
+import {
+  arrayToIndex,
+  capitalize,
+  generateId,
+  idSchema,
+  removeUndefinedKeys,
+  toArray,
+} from './util'
+
+describe('validateId', () => {
+  it('throws error when id format is invalid', () => {
+    expect(() => idSchema.parse('invalid')).toThrow()
+    expect(() => idSchema.parse(uuidv6())).toThrow()
+  })
+
+  it('returns id when valid', () => {
+    const id = generateId()
+    expect(idSchema.parse(id)).toBe(id)
+  })
+})
 
 describe('arrayToIndex', () => {
   interface Sample {

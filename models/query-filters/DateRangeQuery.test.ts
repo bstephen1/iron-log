@@ -1,8 +1,8 @@
-import { ApiReq } from '../../lib/backend/apiQueryValidationService'
+import { ApiParams } from './ApiParams'
 import DateRangeQuery, { dateRangeQuerySchema } from './DateRangeQuery'
 
 it('builds full query', () => {
-  const apiQuery: ApiReq<DateRangeQuery> = {
+  const apiQuery: ApiParams<DateRangeQuery> = {
     limit: '5',
     start: '2000-01-01',
     end: '2001-01-01',
@@ -16,7 +16,7 @@ it('builds full query', () => {
 })
 
 it('builds partial query', () => {
-  const apiQuery: ApiReq<DateRangeQuery> = {
+  const apiQuery: ApiParams<DateRangeQuery> = {
     limit: undefined,
     start: '2000-01-01',
     end: undefined,

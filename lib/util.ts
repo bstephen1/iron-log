@@ -3,6 +3,7 @@ import { v4 as uuid, validate, version } from 'uuid'
 import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
 import { DATE_FORMAT } from './frontend/constants'
+import { z } from 'zod'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -10,10 +11,12 @@ import { DATE_FORMAT } from './frontend/constants'
  */
 export const generateId = () => uuid()
 
-/** Currently enforcing that UUIDs are v4 but that may not be particularly useful.
- v4 is total random generation instead of using time / hardware to generate the uuid.
- */
-export const isValidId = (id: string) => validate(id) && version(id) === 4
+/** enforces an id is a uuid v4*/
+export const idSchema = z
+  .string()
+  .refine((id) => validate(id) && version(id) === 4)
+
+export const dateSchema = z.string().date()
 
 // manually have to specify undefined is possible
 export type Index<T> = { [key: string]: T | undefined }

@@ -1,11 +1,11 @@
-import { ApiReq } from '../lib/backend/apiQueryValidationService'
+import { ApiParams } from './query-filters/ApiParams'
 import {
   BodyweightQuery,
   bodyweightQuerySchema,
 } from './query-filters/BodyweightQuery'
 
 it('builds full query', () => {
-  const apiQuery: ApiReq<BodyweightQuery> = {
+  const apiQuery: ApiParams<BodyweightQuery> = {
     type: 'official',
   }
   expect(bodyweightQuerySchema.parse(apiQuery)).toMatchObject({

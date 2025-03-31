@@ -4,17 +4,17 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { validateId } from '../../../lib/backend/apiQueryValidationService'
 import {
   addCategory,
   deleteCategory,
   fetchCategory,
   updateCategoryFields,
 } from '../../../lib/backend/mongoService'
+import { idSchema } from '../../../lib/util'
 import { categorySchema } from '../../../models/AsyncSelectorOption/Category'
 
 async function handler(req: NextApiRequest, userId: UserId) {
-  const id = validateId(req.query.id)
+  const id = idSchema.parse(req.query.id)
 
   switch (req.method) {
     case 'GET':

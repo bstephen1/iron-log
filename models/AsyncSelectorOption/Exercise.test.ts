@@ -1,9 +1,9 @@
-import { ApiReq } from '../../lib/backend/apiQueryValidationService'
+import { ApiParams } from '../query-filters/ApiParams'
 import { Status } from '../Status'
 import { ExerciseQuery, exerciseQuerySchema } from './Exercise'
 
 it('builds full query', () => {
-  const apiQuery: ApiReq<ExerciseQuery> = {
+  const apiQuery: ApiParams<ExerciseQuery> = {
     status: Status.active,
     category: 'category',
   }
@@ -14,7 +14,7 @@ it('builds full query', () => {
 })
 
 it('builds partial query', () => {
-  const apiQuery: ApiReq<ExerciseQuery> = {
+  const apiQuery: ApiParams<ExerciseQuery> = {
     status: Status.active,
     category: undefined,
   }
@@ -24,7 +24,7 @@ it('builds partial query', () => {
 })
 
 it('builds categories from string category', () => {
-  const apiQuery: ApiReq<ExerciseQuery> = {
+  const apiQuery: ApiParams<ExerciseQuery> = {
     category: 'category',
   }
   expect(exerciseQuerySchema.parse(apiQuery)).toEqual({
@@ -33,7 +33,7 @@ it('builds categories from string category', () => {
 })
 
 it('builds categories from array category', () => {
-  const apiQuery: ApiReq<ExerciseQuery> = {
+  const apiQuery: ApiParams<ExerciseQuery> = {
     category: ['category'],
   }
   expect(exerciseQuerySchema.parse(apiQuery)).toEqual({
