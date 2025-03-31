@@ -1,8 +1,5 @@
+import { BodyweightQuery, bodyweightQuerySchema } from './Bodyweight'
 import { ApiParams } from './query-filters/ApiParams'
-import {
-  BodyweightQuery,
-  bodyweightQuerySchema,
-} from './query-filters/BodyweightQuery'
 
 it('builds full query', () => {
   const apiQuery: ApiParams<BodyweightQuery> = {

@@ -9,8 +9,10 @@ import {
   fetchBodyweightHistory,
   updateBodyweight,
 } from '../../../lib/backend/mongoService'
-import { bodyweightSchema } from '../../../models/Bodyweight'
-import { bodyweightQuerySchema } from '../../../models/query-filters/BodyweightQuery'
+import {
+  bodyweightQuerySchema,
+  bodyweightSchema,
+} from '../../../models/Bodyweight'
 import { dateRangeQuerySchema } from '../../../models/query-filters/DateRangeQuery'
 
 // todo: This endpoint is weird in that it can return a singleton or an array depending on the http method.

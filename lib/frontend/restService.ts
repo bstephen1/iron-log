@@ -5,15 +5,15 @@ import { arrayToIndex, fetchJson, fetchJsonNullable } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
 import { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import { Category } from '../../models/AsyncSelectorOption/Category'
-import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import {
+  Exercise,
+  ExerciseQuery,
+} from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight } from '../../models/Bodyweight'
-import { Record } from '../../models/Record'
-import { SessionLog } from '../../models/SessionLog'
-import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
+import { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
-import { RecordQuery } from '../../models/query-filters/RecordQuery'
+import { Record, RecordRangeQuery } from '../../models/Record'
+import { SessionLog } from '../../models/SessionLog'
 import {
   DATE_FORMAT,
   URI_BODYWEIGHT,
@@ -152,7 +152,10 @@ export function useRecord(id: string) {
   }
 }
 
-export function useRecords(query?: RecordQuery, shouldFetch = true) {
+export function useRecords(
+  query?: RecordRangeQuery & DateRangeQuery,
+  shouldFetch = true
+) {
   const { data, isLoading, error, mutate } = useSWR<Record[], ApiError>(
     shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
   )

@@ -1,9 +1,9 @@
 import { ApiParams } from './query-filters/ApiParams'
 import { ArrayMatchType } from './query-filters/ArrayMatchType'
-import { RecordQuery, recordQuerySchema } from './Record'
+import { RecordRangeQuery, recordQuerySchema } from './Record'
 
 it('builds full query', () => {
-  const apiQuery: ApiParams<RecordQuery> = {
+  const apiQuery: ApiParams<RecordRangeQuery> = {
     exercise: 'exercise',
     modifier: 'modifier',
     modifierMatchType: ArrayMatchType.Partial,
@@ -25,7 +25,7 @@ it('builds full query', () => {
 })
 
 it('builds partial query', () => {
-  const apiQuery: ApiParams<RecordQuery> = {
+  const apiQuery: ApiParams<RecordRangeQuery> = {
     field: 'reps',
     exercise: undefined,
   }
@@ -39,7 +39,7 @@ it('validates exercise', () => {
 })
 
 it('builds modifiers from string modifier', () => {
-  const apiQuery: ApiParams<RecordQuery> = {
+  const apiQuery: ApiParams<RecordRangeQuery> = {
     modifier: 'modifier',
     modifierMatchType: ArrayMatchType.Exact,
   }
@@ -49,7 +49,7 @@ it('builds modifiers from string modifier', () => {
 })
 
 it('builds modifiers from array modifier', () => {
-  const apiQuery: ApiParams<RecordQuery> = {
+  const apiQuery: ApiParams<RecordRangeQuery> = {
     modifier: ['modifier'],
     modifierMatchType: ArrayMatchType.Exact,
   }

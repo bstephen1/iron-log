@@ -4,11 +4,10 @@ import { ApiError } from '../../models/ApiError'
 import { Category } from '../../models/AsyncSelectorOption/Category'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight } from '../../models/Bodyweight'
+import { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { Record } from '../../models/Record'
 import { SessionLog } from '../../models/SessionLog'
-import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
-import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { collections } from './mongoConnect'
 const {
   sessions,

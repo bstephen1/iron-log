@@ -83,6 +83,10 @@ describe('toArray', () => {
     expect(toArray('hi')).toEqual(['hi'])
   })
 
+  it('returns undefined as an empty array', () => {
+    expect(toArray(undefined)).toEqual([])
+  })
+
   it('returns array as itself', () => {
     expect(toArray(['hi'])).toEqual(['hi'])
   })

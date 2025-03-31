@@ -18,6 +18,8 @@ export const idSchema = z
 
 export const dateSchema = z.string().date()
 
+export const stringOrArraySchema = z.string().or(z.array(z.string()))
+
 // manually have to specify undefined is possible
 export type Index<T> = { [key: string]: T | undefined }
 /** Takes an array of objects which each have a given index field and converts them to an object of objects indexed by the given field.
@@ -114,5 +116,5 @@ export const removeUndefinedKeys = <T extends object>(obj: T) =>
   )
 
 /** converts a value that may be a singleton or array into an array */
-export const toArray = <T>(value: T | T[]) =>
-  Array.isArray(value) ? value : [value]
+export const toArray = <T>(value: T | T[] | undefined) =>
+  Array.isArray(value) ? value : value ? [value] : []

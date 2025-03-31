@@ -4,14 +4,14 @@ import dayjs from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import { UpdateState } from '../../lib/util'
-import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
+import { RecordRangeQuery } from '../../models/Record'
 
 const today = dayjs()
 const todayFormatted = dayjs().format(DATE_FORMAT)
 
 interface Props {
-  query: RecordHistoryQuery
-  updateQuery: UpdateState<RecordHistoryQuery>
+  query: RecordRangeQuery
+  updateQuery: UpdateState<RecordRangeQuery>
 }
 export default function QueryDateRangePicker({ query, updateQuery }: Props) {
   const { start, end } = query

@@ -1,6 +1,13 @@
+import dayjs from 'dayjs'
 import { Filter } from 'mongodb'
 import { z } from 'zod'
-import { generateId, removeUndefinedKeys, toArray } from '../lib/util'
+import { DATE_FORMAT } from '../lib/frontend/constants'
+import {
+  generateId,
+  removeUndefinedKeys,
+  stringOrArraySchema,
+  toArray,
+} from '../lib/util'
 import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
@@ -8,6 +15,7 @@ import {
   ArrayMatchType,
   buildMatchTypeFilter,
 } from './query-filters/ArrayMatchType'
+import DateRangeQuery from './query-filters/DateRangeQuery'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
@@ -43,11 +51,13 @@ export const createRecord = (
   setType,
 })
 
-export type RecordQuery = z.input<typeof recordQuerySchema>
+/** Record queries may include a date range, which must be parsed separately */
+export type RecordRangeQuery = z.input<typeof recordQuerySchema> &
+  DateRangeQuery
 export const recordQuerySchema = z
   .object({
     exercise: z.string(),
-    modifier: z.preprocess(toArray, z.array(z.string())),
+    modifier: stringOrArraySchema,
     modifierMatchType: z.nativeEnum(ArrayMatchType),
     // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
     setTypeMatchType: z.nativeEnum(ArrayMatchType),
@@ -82,9 +92,22 @@ export const recordQuerySchema = z
         ...rest,
         ...setTypeFields,
         'exercise.name': exercise,
-        activeModifiers: buildMatchTypeFilter(modifier, modifierMatchType),
+        activeModifiers: buildMatchTypeFilter(
+          toArray(modifier),
+          modifierMatchType
+        ),
       }
 
       return removeUndefinedKeys(filter)
     }
   )
+
+export const DEFAULT_RECORD_HISTORY_QUERY: RecordRangeQuery = {
+  exercise: '',
+  modifier: [],
+  modifierMatchType: ArrayMatchType.Partial,
+  setTypeMatchType: ArrayMatchType.Any,
+  end: dayjs().format(DATE_FORMAT),
+  limit: 100,
+  ...DEFAULT_SET_TYPE,
+}

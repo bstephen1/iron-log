@@ -2,7 +2,6 @@ import { Box, CardProps, Stack, Typography } from '@mui/material'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import { Swiper, SwiperProps, SwiperRef, SwiperSlide } from 'swiper/react'
 import { useRecords } from '../../../lib/frontend/restService'
-import { RecordQuery } from '../../../models/query-filters/RecordQuery'
 import HistoryCard, { HistoryAction, HistoryContent } from './HistoryCard'
 
 import 'swiper/css'
@@ -14,6 +13,7 @@ import 'swiper/css/pagination'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import NavigationBar from '../../../components/slider/NavigationBar'
 import { DisplayFields } from '../../../models/DisplayFields'
+import { RecordRangeQuery } from '../../../models/Record'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination
@@ -21,7 +21,7 @@ import { DisplayFields } from '../../../models/DisplayFields'
 interface Props {
   /** displayFields to use for each history card. If omitted, cards will use their own displayFields. */
   displayFields?: DisplayFields
-  query?: RecordQuery
+  query?: RecordRangeQuery
   /** actions to include in each history card */
   actions?: HistoryAction[]
   /** content to include in each history card */

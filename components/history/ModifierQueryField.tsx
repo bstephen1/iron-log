@@ -2,12 +2,12 @@ import { ComponentProps } from 'react'
 import ComboBoxField from '../../components/form-fields/ComboBoxField'
 import { UpdateState } from '../../lib/util'
 import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
-import { RecordQuery } from '../../models/query-filters/RecordQuery'
+import { RecordRangeQuery } from '../../models/Record'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
   matchType?: ArrayMatchType
-  updateQuery: UpdateState<RecordQuery>
+  updateQuery: UpdateState<RecordRangeQuery>
   initialValue?: string[]
   options?: string[]
 }

@@ -1,7 +1,11 @@
 import { Filter } from 'mongodb'
 import { z } from 'zod'
 import { asyncSelectorOptionSchema, createAsyncSelectorOption } from '.'
-import { removeUndefinedKeys, toArray } from '../../lib/util'
+import {
+  removeUndefinedKeys,
+  stringOrArraySchema,
+  toArray,
+} from '../../lib/util'
 import { attributesSchema } from '../Attributes'
 import { displayFieldsSchema } from '../DisplayFields'
 import { noteSchema } from '../Note'
@@ -47,8 +51,8 @@ export const exerciseQuerySchema = z
   .object({
     bodyweight: z.coerce.boolean(),
     unilateral: z.coerce.boolean(),
-    category: z.preprocess(toArray, z.array(z.string())),
-    modifier: z.preprocess(toArray, z.array(z.string())),
+    category: stringOrArraySchema,
+    modifier: stringOrArraySchema,
     status: z.nativeEnum(Status),
   })
   .partial()
@@ -56,8 +60,14 @@ export const exerciseQuerySchema = z
     const filter: Filter<Exercise> = {
       ...rest,
       // it only makes sense to query exercises with a partial array match
-      categories: buildMatchTypeFilter(category, ArrayMatchType.Partial),
-      modifiers: buildMatchTypeFilter(modifier, ArrayMatchType.Partial),
+      categories: buildMatchTypeFilter(
+        toArray(category),
+        ArrayMatchType.Partial
+      ),
+      modifiers: buildMatchTypeFilter(
+        toArray(modifier),
+        ArrayMatchType.Partial
+      ),
       'attributes.unilateral': unilateral,
       'attributes.bodyweight': bodyweight,
     }

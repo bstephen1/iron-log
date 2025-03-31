@@ -1,14 +1,15 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
 import { UpdateState } from '../../lib/util'
 import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
-import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
+import { RecordRangeQuery } from '../../models/Record'
+import { DEFAULT_SET_TYPE } from '../../models/Set'
 import { Units } from '../../models/Units'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props {
   units: Units
-  query: RecordHistoryQuery
-  updateQuery: UpdateState<RecordHistoryQuery>
+  query: RecordRangeQuery
+  updateQuery: UpdateState<RecordRangeQuery>
   disabled?: boolean
 }
 export default function SetTypeQueryField({
@@ -22,13 +23,13 @@ export default function SetTypeQueryField({
       variant="outlined"
       handleChange={({ setType }) => updateQuery(setType ?? {})}
       units={units}
-      setType={query}
+      setType={{ ...DEFAULT_SET_TYPE, ...query }}
       disabled={disabled || query.setTypeMatchType === ArrayMatchType.Any}
       slotProps={{
         select: {
           startAdornment: (
             <MatchTypeSelector
-              matchType={query.setTypeMatchType}
+              matchType={query.setTypeMatchType ?? ArrayMatchType.Any}
               updateMatchType={(setTypeMatchType) =>
                 updateQuery({ setTypeMatchType })
               }
