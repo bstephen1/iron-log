@@ -1,6 +1,6 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
 import { UpdateState } from '../../lib/util'
-import { MatchType } from '../../models/query-filters/MongoQuery'
+import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
 import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
 import { Units } from '../../models/Units'
 import MatchTypeSelector from './MatchTypeSelector'
@@ -23,7 +23,7 @@ export default function SetTypeQueryField({
       handleChange={({ setType }) => updateQuery(setType ?? {})}
       units={units}
       setType={query}
-      disabled={disabled || query.setTypeMatchType === MatchType.Any}
+      disabled={disabled || query.setTypeMatchType === ArrayMatchType.Any}
       slotProps={{
         select: {
           startAdornment: (
@@ -32,12 +32,12 @@ export default function SetTypeQueryField({
               updateMatchType={(setTypeMatchType) =>
                 updateQuery({ setTypeMatchType })
               }
-              options={[MatchType.Exact, MatchType.Any]}
+              options={[ArrayMatchType.Exact, ArrayMatchType.Any]}
               descriptions={{
-                [MatchType.Exact]: 'Records with the same set type',
-                [MatchType.Partial]:
+                [ArrayMatchType.Exact]: 'Records with the same set type',
+                [ArrayMatchType.Partial]:
                   'Records with any set matching the set type',
-                [MatchType.Any]: 'No filter',
+                [ArrayMatchType.Any]: 'No filter',
               }}
             />
           ),

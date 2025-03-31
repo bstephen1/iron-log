@@ -4,7 +4,10 @@ import { generateId, removeUndefinedKeys, toArray } from '../lib/util'
 import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
-import { buildMatchTypeFilter, MatchType } from './query-filters/MongoQuery'
+import {
+  ArrayMatchType,
+  buildMatchTypeFilter,
+} from './query-filters/ArrayMatchType'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
@@ -45,9 +48,9 @@ export const recordQuerySchema = z
   .object({
     exercise: z.string(),
     modifier: z.preprocess(toArray, z.array(z.string())),
-    modifierMatchType: z.nativeEnum(MatchType),
+    modifierMatchType: z.nativeEnum(ArrayMatchType),
     // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
-    setTypeMatchType: z.nativeEnum(MatchType),
+    setTypeMatchType: z.nativeEnum(ArrayMatchType),
   })
   .partial()
   // turn off strictObject
@@ -66,7 +69,7 @@ export const recordQuerySchema = z
       ...rest
     }) => {
       const setTypeFields =
-        setTypeMatchType !== MatchType.Any
+        setTypeMatchType !== ArrayMatchType.Any
           ? {
               'setType.field': field,
               'setType.operator': operator,

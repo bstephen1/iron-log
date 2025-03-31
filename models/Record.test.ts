@@ -1,12 +1,12 @@
 import { ApiReq } from '../lib/backend/apiQueryValidationService'
 import { RecordQuery, recordQuerySchema } from './Record'
-import { MatchType } from './query-filters/MongoQuery'
+import { ArrayMatchType } from './query-filters/ArrayMatchType'
 
 it('builds full query', () => {
   const apiQuery: ApiReq<RecordQuery> = {
     exercise: 'exercise',
     modifier: 'modifier',
-    modifierMatchType: MatchType.Partial,
+    modifierMatchType: ArrayMatchType.Partial,
     operator: 'exactly',
     field: 'reps',
     value: '5',
@@ -41,7 +41,7 @@ it('validates exercise', () => {
 it('builds modifiers from string modifier', () => {
   const apiQuery: ApiReq<RecordQuery> = {
     modifier: 'modifier',
-    modifierMatchType: MatchType.Exact,
+    modifierMatchType: ArrayMatchType.Exact,
   }
   expect(recordQuerySchema.parse(apiQuery)).toEqual({
     activeModifiers: { $all: [apiQuery.modifier], $size: 1 },
@@ -51,7 +51,7 @@ it('builds modifiers from string modifier', () => {
 it('builds modifiers from array modifier', () => {
   const apiQuery: ApiReq<RecordQuery> = {
     modifier: ['modifier'],
-    modifierMatchType: MatchType.Exact,
+    modifierMatchType: ArrayMatchType.Exact,
   }
   expect(recordQuerySchema.parse(apiQuery)).toEqual({
     activeModifiers: { $size: 1, $all: apiQuery.modifier },
@@ -69,6 +69,6 @@ it('validates match type', () => {
 
 it('ignores matchType when modifier is empty', () => {
   expect(
-    recordQuerySchema.parse({ modifierMatchType: MatchType.Partial })
+    recordQuerySchema.parse({ modifierMatchType: ArrayMatchType.Partial })
   ).toEqual({})
 })

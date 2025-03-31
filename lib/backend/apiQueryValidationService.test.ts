@@ -1,7 +1,7 @@
 import { v1 as invalidUuid } from 'uuid'
 import { generateId } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
-import { MatchType } from '../../models/query-filters/MongoQuery'
+import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
 import { Status } from '../../models/Status'
 import {
   valiDate,
@@ -88,18 +88,20 @@ describe('validation', () => {
   describe('validateMatchType', () => {
     it('throws error when not a MatchType', () => {
       expect(() => validateMatchType(undefined)).toThrow(ApiError)
-      expect(() => validateMatchType([MatchType.Partial])).toThrow(ApiError)
+      expect(() => validateMatchType([ArrayMatchType.Partial])).toThrow(
+        ApiError
+      )
       expect(() => validateMatchType('invalid')).toThrow(ApiError)
     })
 
     it('returns ArrayMatchType when valid', () => {
-      expect(validateMatchType(MatchType.Partial)).toBe(MatchType.Partial)
+      expect(validateMatchType(ArrayMatchType.Partial)).toBe(
+        ArrayMatchType.Partial
+      )
     })
 
     it('ignores case', () => {
-      expect(validateMatchType('PaRtIaL')).toBe(MatchType.Partial)
+      expect(validateMatchType('PaRtIaL')).toBe(ArrayMatchType.Partial)
     })
   })
 })
-
-describe('build query', () => {})

@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import { DEFAULT_SET_TYPE, SetType } from '../Set'
+import { ArrayMatchType } from './ArrayMatchType'
 import DateRangeQuery from './DateRangeQuery'
-import { MatchType } from './MongoQuery'
 
 /** Query to retrieve history for a given exercise in the frontend */
 export type RecordHistoryQuery = SetType &
@@ -12,9 +12,9 @@ export type RecordHistoryQuery = SetType &
     /** Active modifier names */
     modifier: string[]
     /** Specify how to match against the given modifiers array */
-    modifierMatchType: MatchType
+    modifierMatchType: ArrayMatchType
     /** Specify how to match SetType fields */
-    setTypeMatchType: MatchType
+    setTypeMatchType: ArrayMatchType
   }
 
 /** Generalized record query used in the api */
@@ -27,8 +27,8 @@ export type RecordQuery = Partial<RecordHistoryQuery> & {
 export const DEFAULT_RECORD_HISTORY_QUERY: RecordHistoryQuery = {
   exercise: '',
   modifier: [],
-  modifierMatchType: MatchType.Partial,
-  setTypeMatchType: MatchType.Any,
+  modifierMatchType: ArrayMatchType.Partial,
+  setTypeMatchType: ArrayMatchType.Any,
   end: dayjs().format(DATE_FORMAT),
   limit: 100,
   ...DEFAULT_SET_TYPE,

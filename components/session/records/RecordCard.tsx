@@ -18,7 +18,7 @@ import { UpdateFields } from '../../../lib/util'
 import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { Record } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
-import { MatchType } from '../../../models/query-filters/MongoQuery'
+import { ArrayMatchType } from '../../../models/query-filters/ArrayMatchType'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
 import RecordExerciseSelector from './RecordExerciseSelector'
@@ -116,8 +116,8 @@ function LoadedRecordCard({
     end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
     exercise: exercise?.name,
     limit: 5,
-    modifierMatchType: MatchType.Exact,
-    setTypeMatchType: MatchType.Exact,
+    modifierMatchType: ArrayMatchType.Exact,
+    setTypeMatchType: ArrayMatchType.Exact,
     ...setType,
   }
 

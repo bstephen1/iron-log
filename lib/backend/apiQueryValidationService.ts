@@ -2,8 +2,8 @@ import { StatusCodes } from 'http-status-codes'
 import { validDateStringRegex } from '../../lib/frontend/constants'
 import { isValidId } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
+import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import { MatchType } from '../../models/query-filters/MongoQuery'
 import { Status } from '../../models/Status'
 
 type ApiParam = string | string[] | undefined
@@ -71,13 +71,15 @@ export function validateMatchType(param: ApiParam) {
   if (
     !(
       typeof param === 'string' &&
-      Object.values(MatchType).includes(param.toLocaleLowerCase() as MatchType)
+      Object.values(ArrayMatchType).includes(
+        param.toLocaleLowerCase() as ArrayMatchType
+      )
     )
   ) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid match type.')
   }
 
-  return param.toLocaleLowerCase() as MatchType
+  return param.toLocaleLowerCase() as ArrayMatchType
 }
 
 //-------------------

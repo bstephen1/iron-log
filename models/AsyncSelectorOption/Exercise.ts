@@ -5,7 +5,10 @@ import { removeUndefinedKeys, toArray } from '../../lib/util'
 import { attributesSchema } from '../Attributes'
 import { displayFieldsSchema } from '../DisplayFields'
 import { noteSchema } from '../Note'
-import { buildMatchTypeFilter, MatchType } from '../query-filters/MongoQuery'
+import {
+  ArrayMatchType,
+  buildMatchTypeFilter,
+} from '../query-filters/ArrayMatchType'
 import { Status } from '../Status'
 
 export interface Exercise extends z.infer<typeof exerciseSchema> {}
@@ -53,8 +56,8 @@ export const exerciseQuerySchema = z
     const filter: Filter<Exercise> = {
       ...rest,
       // it only makes sense to query exercises with a partial array match
-      categories: buildMatchTypeFilter(category, MatchType.Partial),
-      modifiers: buildMatchTypeFilter(modifier, MatchType.Partial),
+      categories: buildMatchTypeFilter(category, ArrayMatchType.Partial),
+      modifiers: buildMatchTypeFilter(modifier, ArrayMatchType.Partial),
       'attributes.unilateral': unilateral,
       'attributes.bodyweight': bodyweight,
     }
