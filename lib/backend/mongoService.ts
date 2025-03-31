@@ -1,18 +1,13 @@
 import { StatusCodes } from 'http-status-codes'
 import { Document, Filter, ObjectId } from 'mongodb'
+import { ApiError } from '../../models/ApiError'
 import { Category } from '../../models/AsyncSelectorOption/Category'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight } from '../../models/Bodyweight'
+import { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
+import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { Record } from '../../models/Record'
 import { SessionLog } from '../../models/SessionLog'
-import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import {
-  MatchType,
-  MatchTypes,
-  MongoQuery,
-} from '../../models/query-filters/MongoQuery'
-import { ApiError } from '../../models/ApiError'
 import { collections } from './mongoConnect'
 const {
   sessions,
@@ -25,50 +20,6 @@ const {
 
 const convertSort = (sort: DateRangeQuery['sort']) =>
   sort === 'oldestFirst' ? 1 : -1
-
-// todo: add a guard to not do anything if calling multiple times
-/** sets a Filter to query based on the desired MatchType schema.
- * Should only be called once on a given filter.
- *
- * If no matchTypes are provided, arrays will be matched as ArrayMatchType.Exact
- */
-function setArrayMatchTypes<T>(filter?: Filter<T>, matchTypes?: MatchTypes<T>) {
-  if (!filter) {
-    return
-  }
-
-  for (const key in matchTypes) {
-    // set type cannot be handled as an array
-    if (key === 'setType') {
-      continue
-    }
-    // The array needs special handling if it's empty. $all and $in always return no documents for empty arrays.
-    const array = filter[key]
-    const isEmpty = !array.length
-    switch (matchTypes[key]) {
-      case MatchType.Partial:
-        filter[key] = { $all: array } as typeof array
-
-        // for empty arrays, matching any means match anything
-        isEmpty && delete filter[key]
-        break
-      case MatchType.Exact:
-      default:
-        // Note: for standard exact matches, order of array elements matters.
-        // It is possible, but potentially expensive to query for an exact match where order
-        // doesn't matter (ie, the "equivalent" matchType). Alternatively, arrays should be sorted on insertion.
-        // The latter provides for some pretty clunky ux when editing Autocomplete chips, so
-        // we are opting for the former unless performance notably degrades.
-        // See: https://stackoverflow.com/questions/29774032/mongodb-find-exact-array-match-but-order-doesnt-matter
-        filter[key] = { $size: array.length } as typeof array
-        // If matching empty array, can't use $all. It always returns no documents when given an empty array.
-        if (!isEmpty) {
-          filter[key]['$all'] = array
-        }
-        break
-    }
-  }
-}
 
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
 // This is to make the api less tightly coupled to mongo, in case the db changes down the line.
@@ -96,16 +47,13 @@ export async function fetchSession(
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchSessions({
-  userId,
-  limit,
-  start = '0',
-  end = '9',
-  sort = 'newestFirst',
-}: MongoQuery<SessionLog>): Promise<SessionLog[]> {
+export async function fetchSessions(
+  userId: ObjectId,
+  { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
+): Promise<SessionLog[]> {
   return await sessions
     .find(
-      { userId, date: { $gte: start, $lte: end } },
+      { userId, date: date ?? { $gte: start, $lte: end } },
       { projection: { userId: 0 } }
     )
     .sort({ date: convertSort(sort) })
@@ -209,17 +157,11 @@ export async function addRecord(
 }
 
 // todo: pagination
-export async function fetchRecords({
-  filter = {},
-  limit,
-  start = '0',
-  end = '9',
-  userId,
-  sort = 'newestFirst',
-  matchTypes,
-}: MongoQuery<Record>): Promise<Record[]> {
-  setArrayMatchTypes(filter, matchTypes)
-
+export async function fetchRecords(
+  userId: ObjectId,
+  filter: Filter<Record> = {},
+  { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
+): Promise<Record[]> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
   // So for this query anything within the "exercise" object must be
   // matched AFTER the exercises $lookup.
@@ -231,9 +173,12 @@ export async function fetchRecords({
 
   return await records
     .aggregate<Record>([
-      // date range will be overwritten if a specific date is given in the filter
       {
-        $match: { date: { $gte: start, $lte: end }, ...otherFilters, userId },
+        $match: {
+          date: date ?? { $gte: start, $lte: end },
+          ...otherFilters,
+          userId,
+        },
       },
       recordPipeline.lookupExercise,
       {
@@ -316,16 +261,10 @@ export async function addExercise(
   return exercise
 }
 
-/** This fetch supports the array field "categories". By default, a query on categories
- * will match records that contain any one of the given categories array.
- */
-export async function fetchExercises({
-  userId,
-  filter,
-  matchTypes,
-}: MongoQuery<Exercise>): Promise<Exercise[]> {
-  setArrayMatchTypes(filter, matchTypes)
-
+export async function fetchExercises(
+  userId: ObjectId,
+  filter: Filter<Exercise>
+): Promise<Exercise[]> {
   return await exercises
     .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
@@ -400,12 +339,9 @@ export async function addModifier(
   return modifier
 }
 
-export async function fetchModifiers({
-  filter,
-  userId,
-}: MongoQuery<Modifier>): Promise<Modifier[]> {
+export async function fetchModifiers(userId: ObjectId): Promise<Modifier[]> {
   return await modifiers
-    .find({ ...filter, userId }, { projection: { userId: 0 } })
+    .find({ userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
@@ -486,11 +422,9 @@ export async function addCategory(
   return category
 }
 
-export async function fetchCategories(
-  filter?: Filter<Category>
-): Promise<Category[]> {
+export async function fetchCategories(userId: ObjectId): Promise<Category[]> {
   return await categories
-    .find({ ...filter }, { projection: { userId: 0 } })
+    .find({ userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
@@ -566,17 +500,14 @@ export async function addBodyweight(
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchBodyweightHistory({
-  userId,
-  limit,
-  start = '0',
-  end = '9',
-  filter,
-  sort,
-}: MongoQuery<Bodyweight>): Promise<Bodyweight[]> {
+export async function fetchBodyweightHistory(
+  userId: ObjectId,
+  filter: BodyweightQuery,
+  { limit, start = '0', end = '9', sort, date }: DateRangeQuery
+): Promise<Bodyweight[]> {
   return await bodyweightHistory
     .find(
-      { userId, date: { $gte: start, $lte: end }, ...filter },
+      { userId, date: date ?? { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ date: convertSort(sort) })

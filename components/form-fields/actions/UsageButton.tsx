@@ -15,7 +15,7 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRecords } from '../../../lib/frontend/restService'
-import { stringifySetType } from '../../../lib/util'
+import { stringifySetType } from '../../../models/Set'
 
 const maxRecords = 10
 

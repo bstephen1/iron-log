@@ -4,17 +4,16 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { buildDateRangeQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchSessions } from '../../../lib/backend/mongoService'
-import { SessionLog } from '../../../models/SessionLog'
+import { dateRangeQuerySchema } from '../../../models/query-filters/DateRangeQuery'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   if (req.method !== 'GET') {
     throw methodNotAllowed
   }
-  const query = buildDateRangeQuery<SessionLog>(req.query, userId)
 
-  return await fetchSessions(query)
+  const filter = dateRangeQuerySchema.parse(req.query)
+  return await fetchSessions(userId, filter)
 }
 
 export default withStatusHandler(handler)

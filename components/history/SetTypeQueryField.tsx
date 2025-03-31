@@ -1,14 +1,15 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
 import { UpdateState } from '../../lib/util'
-import { MatchType } from '../../models/query-filters/MongoQuery'
-import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
-import { Units } from '../../models/Set'
+import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
+import { RecordRangeQuery } from '../../models/Record'
+import { DEFAULT_SET_TYPE } from '../../models/Set'
+import { Units } from '../../models/Units'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props {
   units: Units
-  query: RecordHistoryQuery
-  updateQuery: UpdateState<RecordHistoryQuery>
+  query: RecordRangeQuery
+  updateQuery: UpdateState<RecordRangeQuery>
   disabled?: boolean
 }
 export default function SetTypeQueryField({
@@ -22,22 +23,22 @@ export default function SetTypeQueryField({
       variant="outlined"
       handleChange={({ setType }) => updateQuery(setType ?? {})}
       units={units}
-      setType={query}
-      disabled={disabled || query.setTypeMatchType === MatchType.Any}
+      setType={{ ...DEFAULT_SET_TYPE, ...query }}
+      disabled={disabled || query.setTypeMatchType === ArrayMatchType.Any}
       slotProps={{
         select: {
           startAdornment: (
             <MatchTypeSelector
-              matchType={query.setTypeMatchType}
+              matchType={query.setTypeMatchType ?? ArrayMatchType.Any}
               updateMatchType={(setTypeMatchType) =>
                 updateQuery({ setTypeMatchType })
               }
-              options={[MatchType.Exact, MatchType.Any]}
+              options={[ArrayMatchType.Exact, ArrayMatchType.Any]}
               descriptions={{
-                [MatchType.Exact]: 'Records with the same set type',
-                [MatchType.Partial]:
+                [ArrayMatchType.Exact]: 'Records with the same set type',
+                [ArrayMatchType.Partial]:
                   'Records with any set matching the set type',
-                [MatchType.Any]: 'No filter',
+                [ArrayMatchType.Any]: 'No filter',
               }}
             />
           ),

@@ -1,12 +1,12 @@
 import { renderHook } from '@testing-library/react'
+import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_DISPLAY_FIELDS,
   DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
   DisplayFields,
 } from '../../models/DisplayFields'
-import { DB_UNITS } from '../../models/Set'
+import { DB_UNITS } from '../../models/Units'
 import useDisplayFields from './useDisplayFields'
-import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 
 it('returns display fields from record', () => {
   const displayFields: DisplayFields = {

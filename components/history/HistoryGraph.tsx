@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { CategoricalChartFunc } from 'recharts/types/chart/types'
 import RecordDisplay from '../../components/history/RecordDisplay'
 import {
   DATE_FORMAT,
@@ -26,10 +27,9 @@ import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 import { UpdateState } from '../../lib/util'
 import { Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
-import { RecordHistoryQuery } from '../../models/query-filters/RecordQuery'
 import { Set } from '../../models/Set'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
-import { CategoricalChartFunc } from 'recharts/types/chart/types'
+import { RecordRangeQuery } from '../../models/Record'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {
@@ -66,7 +66,7 @@ const getStartIndex = (data: GraphData[], dayRange = 60) => {
   return i + 1
 }
 interface Props {
-  query?: RecordHistoryQuery
+  query?: RecordRangeQuery
   swipeToRecord: (i: number) => void
 }
 export default function HistoryGraph({ query, swipeToRecord }: Props) {

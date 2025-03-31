@@ -10,11 +10,11 @@ import SessionSwiper from '../../components/session/SessionSwiper'
 import RestTimer from '../../components/session/upper/RestTimer'
 import TitleBar from '../../components/session/upper/TitleBar'
 import WeightUnitConverter from '../../components/session/upper/WeightUnitConverter'
-import { valiDate } from '../../lib/backend/apiQueryValidationService'
+import { dateSchema } from '../../lib/util'
 
 export function getServerSideProps({ query }: GetServerSidePropsContext) {
   try {
-    const date = valiDate(query.date)
+    const date = dateSchema.parse(query.date)
     return { props: { date } }
   } catch {
     return { notFound: true }

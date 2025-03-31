@@ -13,9 +13,9 @@ import {
 import { ReactElement, ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 import { vi } from 'vitest'
+import { ApiError } from '../models/ApiError'
 import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
-import { ApiError } from '../models/ApiError'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.
@@ -133,9 +133,12 @@ export async function expectApiRespondsWithData({
     pagesHandler: handler,
     test: async ({ fetch }) => {
       const res = await fetch({ method, body, headers })
-
+      const json = await res.json()
+      if (!res.ok) {
+        console.error(json)
+      }
       expect(res.status).toBe(StatusCodes.OK)
-      expect(await res.json()).toEqual(data)
+      expect(json).toEqual(data)
     },
   })
 }
@@ -157,6 +160,31 @@ export async function expectApiErrorsOnInvalidMethod({
       expect(await res.json()).toMatchObject({
         message: methodNotAllowed.message,
         statusCode: methodNotAllowed.statusCode,
+      })
+    },
+  })
+}
+
+export async function expectApiErrorsOnMalformedBody({
+  handler,
+  method = 'POST',
+  data,
+  ...testApiHandlerProps
+}: TestApiResponseProps) {
+  await testApiHandler<ApiError>({
+    ...testApiHandlerProps,
+    pagesHandler: handler,
+    test: async ({ fetch }) => {
+      const body = JSON.stringify(data)
+      const headers = { 'content-type': 'application/json' }
+      const res = await fetch({ method, headers, body })
+
+      expect(res.status).toBe(StatusCodes.BAD_REQUEST)
+      expect(await res.json()).toMatchObject({
+        message: expect.any(String),
+        statusCode: StatusCodes.BAD_REQUEST,
+        // details should exist if it's a ZodError
+        details: expect.any(Array),
       })
     },
   })

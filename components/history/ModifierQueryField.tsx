@@ -1,18 +1,18 @@
 import { ComponentProps } from 'react'
 import ComboBoxField from '../../components/form-fields/ComboBoxField'
 import { UpdateState } from '../../lib/util'
-import { MatchType } from '../../models/query-filters/MongoQuery'
-import { RecordQuery } from '../../models/query-filters/RecordQuery'
+import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
+import { RecordRangeQuery } from '../../models/Record'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
-  matchType?: MatchType
-  updateQuery: UpdateState<RecordQuery>
+  matchType?: ArrayMatchType
+  updateQuery: UpdateState<RecordRangeQuery>
   initialValue?: string[]
   options?: string[]
 }
 export default function ModifierQueryField({
-  matchType = MatchType.Exact,
+  matchType = ArrayMatchType.Exact,
   updateQuery,
   options,
   initialValue,
@@ -32,10 +32,10 @@ export default function ModifierQueryField({
           updateMatchType={(matchType) =>
             updateQuery({ modifierMatchType: matchType })
           }
-          options={[MatchType.Exact, MatchType.Partial]}
+          options={[ArrayMatchType.Exact, ArrayMatchType.Partial]}
           descriptions={{
-            [MatchType.Exact]: 'Records have only the listed modifiers',
-            [MatchType.Partial]: 'Records may have extra modifiers',
+            [ArrayMatchType.Exact]: 'Records have only the listed modifiers',
+            [ArrayMatchType.Partial]: 'Records may have extra modifiers',
           }}
         />
       }

@@ -2,9 +2,8 @@ import dayjs from 'dayjs'
 import { v4 as uuid, validate, version } from 'uuid'
 import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
-import { SetType } from '../models/Record'
-import { DB_UNITS, Set, Units } from '../models/Set'
 import { DATE_FORMAT } from './frontend/constants'
+import { z } from 'zod'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -12,10 +11,14 @@ import { DATE_FORMAT } from './frontend/constants'
  */
 export const generateId = () => uuid()
 
-/** Currently enforcing that UUIDs are v4 but that may not be particularly useful.
- v4 is total random generation instead of using time / hardware to generate the uuid.
- */
-export const isValidId = (id: string) => validate(id) && version(id) === 4
+/** enforces an id is a uuid v4*/
+export const idSchema = z
+  .string()
+  .refine((id) => validate(id) && version(id) === 4)
+
+export const dateSchema = z.string().date()
+
+export const stringOrArraySchema = z.string().or(z.array(z.string()))
 
 // manually have to specify undefined is possible
 export type Index<T> = { [key: string]: T | undefined }
@@ -59,7 +62,11 @@ export const fetchJson = async <T>(...params: Parameters<typeof fetch>) => {
   }
 
   const error = json as ApiError
-  throw new ApiError(res.status, error.message, error.details)
+  console.error(error)
+  throw new ApiError(
+    res.status,
+    'could not fetch data. Check console for details.'
+  )
 }
 
 /** The api will throw a 404 error if the requested resource is not found.
@@ -91,29 +98,23 @@ export type UpdateFields<T> = (changes: Partial<T>) => Promise<void>
 /** Partial state update that spreads over previous state. For async type use UpdateFields.  */
 export type UpdateState<T> = (changes: Partial<T>) => void
 
-/** Returns total reps over all sets when operator is "total", otherwise zero. */
-export const calculateTotalReps = (
-  sets: Set[],
-  { field, operator }: SetType
-) => {
-  return operator === 'total'
-    ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
-    : 0
-}
-
 /** returns the exercises the given category or modifier is used in */
 export const getUsage = (
   exercises: Exercise[] | undefined | null,
-  // would rather not hardcode these but unable to pull the keys from Exercise using keyof
-  field: 'categories' | 'modifiers',
+  field: keyof Pick<Exercise, 'categories' | 'modifiers'>,
   name: string
 ) => exercises?.filter((exercise) => exercise[field].includes(name)) ?? []
 
-export function stringifySetType(
-  { operator, min = 0, max = 0, value = 0, field }: SetType,
-  units?: Units
-) {
-  return `${operator} ${
-    operator === 'between' ? min + ' and ' + max : value
-  } ${(units ?? DB_UNITS)[field]}`
-}
+/** Removes undefined keys at the root level.
+ * Does not remove nested undefined keys, and does not remove falsy keys
+ * like '' or {} */
+export const removeUndefinedKeys = <T extends object>(obj: T) =>
+  Object.entries(obj).reduce<Partial<T>>(
+    (prev, [key, value]) =>
+      value !== undefined ? { ...prev, [key]: value } : prev,
+    {}
+  )
+
+/** converts a value that may be a singleton or array into an array */
+export const toArray = <T>(value: T | T[] | undefined) =>
+  Array.isArray(value) ? value : value ? [value] : []

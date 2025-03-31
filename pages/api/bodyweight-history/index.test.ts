@@ -7,6 +7,7 @@ import {
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
+  expectApiErrorsOnMalformedBody,
 } from '../../../lib/testUtils'
 import handler from './index.api'
 import { createBodyweight } from '../../../models/Bodyweight'
@@ -33,4 +34,26 @@ it('updates given bodyweight', async () => {
 
 it('blocks invalid method types', async () => {
   await expectApiErrorsOnInvalidMethod({ handler })
+})
+
+it('guards against missing fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    data: { weight: 50 },
+  })
+})
+
+it('guards against extra fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    data: { ...data, extra: 'field' },
+  })
+})
+
+it('guards against invalid fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    method: 'PUT',
+    data: { ...data, type: 'invalid' },
+  })
 })

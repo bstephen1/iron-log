@@ -5,15 +5,15 @@ import { arrayToIndex, fetchJson, fetchJsonNullable } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
 import { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import { Category } from '../../models/AsyncSelectorOption/Category'
-import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import {
+  Exercise,
+  ExerciseQuery,
+} from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight } from '../../models/Bodyweight'
-import { Record } from '../../models/Record'
-import { SessionLog } from '../../models/SessionLog'
-import BodyweightQuery from '../../models/query-filters/BodyweightQuery'
+import { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
-import { RecordQuery } from '../../models/query-filters/RecordQuery'
+import { Record, RecordRangeQuery } from '../../models/Record'
+import { SessionLog } from '../../models/SessionLog'
 import {
   DATE_FORMAT,
   URI_BODYWEIGHT,
@@ -32,10 +32,14 @@ import {
 /** Parse a Query object into a rest param string. Query objects should be spread into this function. */
 export const paramify = (query: ParsedUrlQueryInput) => {
   const parsedQuery: ParsedUrlQueryInput = {}
-  // Any empty arrays must be converted into empty strings instead.
-  // stringify() just drops empty arrays.
   for (const [key, value] of Object.entries(query)) {
-    parsedQuery[key] = Array.isArray(value) && !value.length ? '' : value
+    // stringify() adds empty strings to the url param, which can cause unintended behavior.
+    // Generally the presence of a query param indicates truthiness, whereas an empty string indicates a falsy value.
+    if (!value) continue
+
+    // note: stringify() drops empty arrays.
+    // See: https://github.com/psf/requests/issues/6557
+    parsedQuery[key] = value
   }
   // note that stringify doesn't add the leading '?'.
   // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
@@ -148,7 +152,10 @@ export function useRecord(id: string) {
   }
 }
 
-export function useRecords(query?: RecordQuery, shouldFetch = true) {
+export function useRecords(
+  query?: RecordRangeQuery & DateRangeQuery,
+  shouldFetch = true
+) {
   const { data, isLoading, error, mutate } = useSWR<Record[], ApiError>(
     shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
   )

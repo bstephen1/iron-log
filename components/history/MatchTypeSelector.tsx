@@ -4,32 +4,32 @@ import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import { ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import { useState } from 'react'
 import TooltipIconButton from '../../components/TooltipIconButton'
-import { MatchType } from '../../models/query-filters/MongoQuery'
+import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
 
-type MatchTypeDescriptions = { [matchType in MatchType]: string }
+type MatchTypeDescriptions = { [matchType in ArrayMatchType]: string }
 
 const matchTypeOptions = {
-  [MatchType.Exact]: {
+  [ArrayMatchType.Exact]: {
     name: 'Exact match',
-    value: MatchType.Exact,
+    value: ArrayMatchType.Exact,
     Icon: <HourglassFullIcon />,
   },
-  [MatchType.Partial]: {
+  [ArrayMatchType.Partial]: {
     name: 'Partial match',
-    value: MatchType.Partial,
+    value: ArrayMatchType.Partial,
     Icon: <HourglassBottomIcon />,
   },
-  [MatchType.Any]: {
+  [ArrayMatchType.Any]: {
     name: 'Disabled',
-    value: MatchType.Any,
+    value: ArrayMatchType.Any,
     Icon: <HourglassDisabledIcon />,
   },
 }
 
 interface Props {
-  matchType: MatchType
-  updateMatchType: (matchType: MatchType) => void
-  options: MatchType[]
+  matchType: ArrayMatchType
+  updateMatchType: (matchType: ArrayMatchType) => void
+  options: ArrayMatchType[]
   /** Add an optional description to an option */
   descriptions?: Partial<MatchTypeDescriptions>
 }
@@ -53,7 +53,7 @@ export default function MatchTypeSelector({
 
   // somehow mui has no way to actually get the value you clicked on in a menu,
   // so we have to manually pass it in.
-  const handleClick = (matchType: MatchType) => {
+  const handleClick = (matchType: ArrayMatchType) => {
     updateMatchType(matchType)
     handleClose()
   }

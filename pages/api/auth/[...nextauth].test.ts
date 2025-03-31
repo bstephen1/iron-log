@@ -59,8 +59,15 @@ it('replaces session id with token id in session callback', async () => {
     await authOptions.callbacks?.session?.({
       session: sessionObj,
       token,
-      // we don't care about the unused fields
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any)
+      // user only uses id
+      user: {
+        id: 'replaced id',
+        email: '',
+        emailVerified: null,
+      },
+      // unused fields
+      newSession: undefined,
+      trigger: 'update',
+    })
   ).toMatchObject({ ...sessionObj, user: { id: token.sub } })
 })

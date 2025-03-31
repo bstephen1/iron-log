@@ -49,15 +49,17 @@ export default memo(function RenderSetRow({
     async (changes) => {
       mutate<Record | null>(
         URI_RECORDS + _id,
-        (cur) =>
-          cur
-            ? updateRecordFields(_id, {
-                [`sets.${index}`]: { ...cur.sets[index], ...changes },
-              })
-            : null,
+        (cur) => {
+          if (!cur) return null
+
+          const newSets = [...cur.sets]
+          newSets[index] = { ...newSets[index], ...changes }
+          return updateRecordFields(_id, { sets: newSets })
+        },
         {
           optimisticData: (cur) => {
             if (!cur) return null
+
             const newSets = [...cur.sets]
             newSets[index] = { ...newSets[index], ...changes }
             return { ...cur, sets: newSets }

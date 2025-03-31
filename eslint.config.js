@@ -74,7 +74,7 @@ const eslintConfig = [
       '@typescript-eslint/restrict-template-expressions': [
         'error',
         // allows numbers in grave strings: `example: ${5}`
-        { allowNumber: true },
+        { allowNumber: true, allowNever: true },
       ],
       '@typescript-eslint/restrict-plus-operands': [
         'error',
@@ -100,8 +100,6 @@ const eslintConfig = [
       '@typescript-eslint/no-floating-promises': 'off',
       // doesn't seem to add any value
       '@typescript-eslint/no-unsafe-assignment': 'off',
-      // todo: validate api body reqs and turn on
-      '@typescript-eslint/no-unsafe-argument': 'off',
     },
   }),
 ]

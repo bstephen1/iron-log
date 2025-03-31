@@ -4,17 +4,19 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { buildRecordQuery } from '../../../lib/backend/apiQueryValidationService'
 import { fetchRecords } from '../../../lib/backend/mongoService'
+import { recordQuerySchema } from '../../../models/Record'
+import { dateRangeQuerySchema } from '../../../models/query-filters/DateRangeQuery'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   if (req.method !== 'GET') {
     throw methodNotAllowed
   }
 
-  const query = buildRecordQuery(req.query, userId)
+  const recordFilter = recordQuerySchema.parse(req.query)
+  const dateFilter = dateRangeQuerySchema.parse(req.query)
 
-  return await fetchRecords(query)
+  return await fetchRecords(userId, recordFilter, dateFilter)
 }
 
 export default withStatusHandler(handler)

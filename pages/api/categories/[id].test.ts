@@ -9,6 +9,7 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
+  expectApiErrorsOnMalformedBody,
 } from '../../../lib/testUtils'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import handler from './[id].api'
@@ -50,6 +51,31 @@ it('blocks invalid method types', async () => {
   await expectApiErrorsOnInvalidMethod({ handler, params })
 })
 
-it('requires a name', async () => {
+it('requires an id', async () => {
   await expectApiErrorsOnMissingParams({ handler })
+})
+
+it('guards against missing fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    params,
+    data: { name: 'hi' },
+  })
+})
+
+it('guards against extra fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    params,
+    data: { ...data, extra: 'field' },
+  })
+})
+
+it('guards against invalid fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    params,
+    method: 'PATCH',
+    data: { status: 'invalid' },
+  })
 })

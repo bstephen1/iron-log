@@ -4,19 +4,19 @@ import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
-import { UpdateState } from '../../lib/util'
+import { toArray, UpdateState } from '../../lib/util'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
-  RecordHistoryQuery,
-} from '../../models/query-filters/RecordQuery'
+  RecordRangeQuery,
+} from '../../models/Record'
 import ModifierQueryField from './ModifierQueryField'
 import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'
 
 interface Props {
-  query?: RecordHistoryQuery
-  setQuery: Dispatch<SetStateAction<RecordHistoryQuery | undefined>>
+  query?: RecordRangeQuery
+  setQuery: Dispatch<SetStateAction<RecordRangeQuery | undefined>>
 }
 export default function QueryCard({ query, setQuery }: Props) {
   const initialQuery = query ?? DEFAULT_RECORD_HISTORY_QUERY
@@ -24,11 +24,13 @@ export default function QueryCard({ query, setQuery }: Props) {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   // reset to this exercise if reset button is clicked
   const [initialExercise, setInitialExercise] = useState(exercise)
+  // todo: make a different type? modifier can only be an array in the query
+  // but we need to call toArray() to shed off string | undefined
   const [unsavedQuery, setUnsavedQuery] =
-    useState<RecordHistoryQuery>(initialQuery)
+    useState<RecordRangeQuery>(initialQuery)
   const displayFields = useDisplayFields(exercise)
 
-  const updateUnsavedQuery: UpdateState<RecordHistoryQuery> = (changes) =>
+  const updateUnsavedQuery: UpdateState<RecordRangeQuery> = (changes) =>
     setUnsavedQuery((prev) => ({ ...prev, ...changes }))
 
   return (
@@ -46,7 +48,7 @@ export default function QueryCard({ query, setQuery }: Props) {
             })
           }
         }}
-        activeModifiers={unsavedQuery.modifier}
+        activeModifiers={toArray(unsavedQuery.modifier)}
         exercise={exercise}
         category={null}
         variant="outlined"
@@ -55,7 +57,7 @@ export default function QueryCard({ query, setQuery }: Props) {
         disabled={!exercise}
         matchType={unsavedQuery.modifierMatchType}
         options={exercise?.modifiers || []}
-        initialValue={unsavedQuery.modifier}
+        initialValue={toArray(unsavedQuery.modifier)}
         updateQuery={updateUnsavedQuery}
       />
       <SetTypeQueryField
