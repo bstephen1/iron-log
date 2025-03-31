@@ -14,6 +14,7 @@ export const dateRangeQuerySchema = z
     end: z.string().date(),
     sort: z.enum(['oldestFirst', 'newestFirst']),
     /** Use a specific date. Overrides start/end */
+    // todo: remove this or have it set start/limit to the same value
     date: z.string().date(),
   })
   .partial()

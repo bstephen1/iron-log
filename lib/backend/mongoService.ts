@@ -7,8 +7,8 @@ import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight } from '../../models/Bodyweight'
 import { Record } from '../../models/Record'
 import { SessionLog } from '../../models/SessionLog'
+import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
 import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
-import { MongoQuery } from '../../models/query-filters/MongoQuery'
 import { collections } from './mongoConnect'
 const {
   sessions,
@@ -50,16 +50,11 @@ export async function fetchSession(
  */
 export async function fetchSessions(
   userId: ObjectId,
-  {
-    limit,
-    start = '0',
-    end = '9',
-    sort = 'newestFirst',
-  }: MongoQuery<SessionLog>
+  { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
 ): Promise<SessionLog[]> {
   return await sessions
     .find(
-      { userId, date: { $gte: start, $lte: end } },
+      { userId, date: date ?? { $gte: start, $lte: end } },
       { projection: { userId: 0 } }
     )
     .sort({ date: convertSort(sort) })
@@ -166,7 +161,7 @@ export async function addRecord(
 export async function fetchRecords(
   userId: ObjectId,
   filter: Filter<Record> = {},
-  { limit, start = '0', end = '9', sort = 'newestFirst' }: DateRangeQuery
+  { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
 ): Promise<Record[]> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
   // So for this query anything within the "exercise" object must be
@@ -179,9 +174,12 @@ export async function fetchRecords(
 
   return await records
     .aggregate<Record>([
-      // date range will be overwritten if a specific date is given in the filter
       {
-        $match: { date: { $gte: start, $lte: end }, ...otherFilters, userId },
+        $match: {
+          date: date ?? { $gte: start, $lte: end },
+          ...otherFilters,
+          userId,
+        },
       },
       recordPipeline.lookupExercise,
       {
@@ -505,11 +503,12 @@ export async function addBodyweight(
  */
 export async function fetchBodyweightHistory(
   userId: ObjectId,
-  { limit, start = '0', end = '9', filter, sort }: MongoQuery<Bodyweight>
+  filter: BodyweightQuery,
+  { limit, start = '0', end = '9', sort, date }: DateRangeQuery
 ): Promise<Bodyweight[]> {
   return await bodyweightHistory
     .find(
-      { userId, date: { $gte: start, $lte: end }, ...filter },
+      { userId, date: date ?? { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ date: convertSort(sort) })

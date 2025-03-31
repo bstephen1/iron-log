@@ -2,7 +2,6 @@ import { v1 as invalidUuid } from 'uuid'
 import { generateId } from '../../lib/util'
 import { ApiError } from '../../models/ApiError'
 import { BodyweightQuery } from '../../models/query-filters/BodyweightQuery'
-import DateRangeQuery from '../../models/query-filters/DateRangeQuery'
 import { ExerciseQuery } from '../../models/query-filters/ExerciseQuery'
 import { MatchType } from '../../models/query-filters/MongoQuery'
 import { RecordQuery } from '../../models/query-filters/RecordQuery'
@@ -10,7 +9,6 @@ import { Status } from '../../models/Status'
 import {
   ApiReq,
   buildBodyweightQuery,
-  buildDateRangeQuery,
   buildExerciseQuery,
   buildRecordQuery,
   valiDate,
@@ -112,57 +110,6 @@ describe('validation', () => {
 })
 
 describe('build query', () => {
-  describe('buildDateRangeQuery', () => {
-    it('builds full query', () => {
-      const apiQuery: ApiReq<DateRangeQuery> = {
-        limit: '5',
-        start: '2000-01-01',
-        end: '2001-01-01',
-        sort: 'oldestFirst',
-      }
-      expect(buildDateRangeQuery(apiQuery)).toMatchObject({
-        ...apiQuery,
-        limit: Number(apiQuery.limit),
-        sort: 'oldestFirst',
-      })
-    })
-
-    it('builds partial query', () => {
-      const apiQuery: ApiReq<DateRangeQuery> = {
-        limit: undefined,
-        start: '2000-01-01',
-        end: undefined,
-        sort: undefined,
-      }
-      expect(buildDateRangeQuery(apiQuery)).toMatchObject({
-        start: apiQuery.start,
-      })
-    })
-
-    it('validates limit', () => {
-      // We shouldn't ever get singleton arrays from api requests.
-      // This test is more to document the behavior that Number(['5']) does coerce to a number
-      expect(() => buildDateRangeQuery({ limit: ['5'] })).not.toThrow()
-
-      expect(() => buildDateRangeQuery({ limit: 'invalid' })).toThrow()
-      expect(() => buildDateRangeQuery({ limit: ['5', '3'] })).toThrow()
-      expect(() => buildDateRangeQuery({ limit: ['invalid'] })).toThrow()
-      expect(() => buildDateRangeQuery({ limit: '3.5' })).toThrow()
-    })
-
-    it('validates dates', () => {
-      expect(() => buildDateRangeQuery({ start: 'invalid' })).toThrow()
-      expect(() => buildDateRangeQuery({ start: '2000-10-10-10' })).toThrow()
-      expect(() => buildDateRangeQuery({ start: '20001010' })).toThrow()
-      expect(() => buildDateRangeQuery({ start: '2000-13-10' })).toThrow()
-
-      expect(() => buildDateRangeQuery({ end: 'invalid' })).toThrow()
-      expect(() => buildDateRangeQuery({ end: '2000-10-10-10' })).toThrow()
-      expect(() => buildDateRangeQuery({ end: '20001010' })).toThrow()
-      expect(() => buildDateRangeQuery({ end: '2000-13-10' })).toThrow()
-    })
-  })
-
   describe('buildBodyweightQuery', () => {
     it('builds full query', () => {
       const apiQuery: ApiReq<BodyweightQuery> = {
