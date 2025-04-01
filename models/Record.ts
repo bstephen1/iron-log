@@ -48,9 +48,9 @@ export const createRecord = (
   setType,
 })
 
-/** Record queries may include a date range, which must be parsed separately */
-export type RecordRangeQuery = z.input<typeof recordQuerySchema> &
-  DateRangeQuery
+// we use a type instead of extending an interface so you can see the component queries
+export type RecordRangeQuery = RecordQuery & DateRangeQuery
+export interface RecordQuery extends z.input<typeof recordQuerySchema> {}
 export const recordQuerySchema = z
   .object({
     exercise: z.string(),

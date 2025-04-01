@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
-import { dateRangeQuerySchema } from './DateRangeQuery'
+import DateRangeQuery, { dateRangeQuerySchema } from './DateRangeQuery'
 
 /** A weigh-in can be one of two types:
  * - Official: Used for tracking bodyweight over time. Ideally measured at the same time of day under similar conditions.
@@ -39,10 +39,11 @@ export const createBodyweight = (
   date: dayjsDate.format(DATE_FORMAT),
 })
 
+export type BodyweightRangeQuery = BodyweightQuery & DateRangeQuery
 export interface BodyweightQuery
   extends z.infer<typeof bodyweightQuerySchema> {}
-export const bodyweightQuerySchema = dateRangeQuerySchema
-  .extend({
+export const bodyweightQuerySchema = z
+  .object({
     type: z.enum(weighInTypes),
   })
   .partial()

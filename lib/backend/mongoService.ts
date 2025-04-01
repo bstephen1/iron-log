@@ -5,7 +5,7 @@ import { ApiError } from '../../models/ApiError'
 import { Category } from '../../models/AsyncSelectorOption/Category'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
+import { Bodyweight } from '../../models/Bodyweight'
 import { Record } from '../../models/Record'
 import { SessionLog } from '../../models/SessionLog'
 import { collections } from './mongoConnect'
@@ -502,7 +502,7 @@ export async function addBodyweight(
  */
 export async function fetchBodyweightHistory(
   userId: ObjectId,
-  filter: BodyweightQuery,
+  filter: Filter<Bodyweight>,
   { limit, start = '0', end = '9', sort, date }: DateRangeQuery
 ): Promise<Bodyweight[]> {
   return await bodyweightHistory

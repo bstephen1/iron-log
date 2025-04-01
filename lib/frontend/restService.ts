@@ -11,7 +11,7 @@ import {
   ExerciseQuery,
 } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
+import { Bodyweight, BodyweightRangeQuery } from '../../models/Bodyweight'
 import { Record, RecordRangeQuery } from '../../models/Record'
 import { SessionLog } from '../../models/SessionLog'
 import {
@@ -345,7 +345,7 @@ export async function deleteCategory(id: string): Promise<string> {
 //------------
 
 export function useBodyweightHistory(
-  query?: BodyweightQuery,
+  query?: BodyweightRangeQuery,
   shouldFetch = true
 ) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
