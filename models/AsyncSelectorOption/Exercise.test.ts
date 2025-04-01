@@ -1,42 +1,30 @@
-import { ApiParams } from '../query-filters/ApiParams'
+import { ParsedUrlQuery } from 'querystring'
 import { Status } from '../Status'
-import { ExerciseQuery, exerciseQuerySchema } from './Exercise'
+import { exerciseQuerySchema } from './Exercise'
 
-it('builds full query', () => {
-  const apiQuery: ApiParams<ExerciseQuery> = {
+it('transforms query params', () => {
+  const apiQuery: ParsedUrlQuery = {
     status: Status.active,
     category: 'category',
+    bodyweight: 'bodyweight',
+    unilateral: '',
+    modifier: ['m1', 'm2'],
   }
   expect(exerciseQuerySchema.parse(apiQuery)).toEqual({
     status: apiQuery.status,
     categories: { $all: [apiQuery.category] },
+    modifiers: { $all: apiQuery.modifier },
+    'attributes.bodyweight': true,
+    'attributes.unilateral': false,
   })
 })
 
-it('builds partial query', () => {
-  const apiQuery: ApiParams<ExerciseQuery> = {
+it('ignores undefined keys', () => {
+  const apiQuery: ParsedUrlQuery = {
     status: Status.active,
     category: undefined,
   }
   expect(exerciseQuerySchema.parse(apiQuery)).toEqual({
     status: apiQuery.status,
-  })
-})
-
-it('builds categories from string category', () => {
-  const apiQuery: ApiParams<ExerciseQuery> = {
-    category: 'category',
-  }
-  expect(exerciseQuerySchema.parse(apiQuery)).toEqual({
-    categories: { $all: [apiQuery.category] },
-  })
-})
-
-it('builds categories from array category', () => {
-  const apiQuery: ApiParams<ExerciseQuery> = {
-    category: ['category'],
-  }
-  expect(exerciseQuerySchema.parse(apiQuery)).toEqual({
-    categories: { $all: apiQuery.category },
   })
 })
