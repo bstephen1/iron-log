@@ -1,6 +1,6 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
 import { UpdateState } from '../../lib/util'
-import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
+import { ArrayMatchType } from '../../models//ArrayMatchType'
 import { RecordRangeQuery } from '../../models/Record'
 import { DEFAULT_SET_TYPE } from '../../models/Set'
 import { Units } from '../../models/Units'

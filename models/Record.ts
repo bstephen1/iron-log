@@ -8,14 +8,11 @@ import {
   stringOrArraySchema,
   toArray,
 } from '../lib/util'
+import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
 import { exerciseSchema } from './AsyncSelectorOption/Exercise'
+import DateRangeQuery from './DateRangeQuery'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
-import {
-  ArrayMatchType,
-  buildMatchTypeFilter,
-} from './query-filters/ArrayMatchType'
-import DateRangeQuery from './query-filters/DateRangeQuery'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}

@@ -4,7 +4,7 @@ import HourglassFullIcon from '@mui/icons-material/HourglassFull'
 import { ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import { useState } from 'react'
 import TooltipIconButton from '../../components/TooltipIconButton'
-import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
+import { ArrayMatchType } from '../../models//ArrayMatchType'
 
 type MatchTypeDescriptions = { [matchType in ArrayMatchType]: string }
 

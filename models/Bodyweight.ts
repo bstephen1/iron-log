@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
-import { dateRangeQuerySchema } from './query-filters/DateRangeQuery'
+import { dateRangeQuerySchema } from './DateRangeQuery'
 
 /** A weigh-in can be one of two types:
  * - Official: Used for tracking bodyweight over time. Ideally measured at the same time of day under similar conditions.

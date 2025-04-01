@@ -9,11 +9,11 @@ import {
   fetchBodyweightHistory,
   updateBodyweight,
 } from '../../../lib/backend/mongoService'
+import { dateRangeQuerySchema } from '../../../models//DateRangeQuery'
 import {
   bodyweightQuerySchema,
   bodyweightSchema,
 } from '../../../models/Bodyweight'
-import { dateRangeQuerySchema } from '../../../models/query-filters/DateRangeQuery'
 
 // todo: This endpoint is weird in that it can return a singleton or an array depending on the http method.
 // May want to update it to have a [date].ts for post/put to stay in line with other endpoints.

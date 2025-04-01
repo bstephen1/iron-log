@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import isEqual from 'react-fast-compare'
-import { ApiError } from '../ApiError'
+import { ApiError } from './ApiError'
 
 /** An object that has keys corresponding to Partial\<T\> keys,
  * declaring the MatchTypes for a MongoQuery

@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react'
 import ComboBoxField from '../../components/form-fields/ComboBoxField'
 import { UpdateState } from '../../lib/util'
-import { ArrayMatchType } from '../../models/query-filters/ArrayMatchType'
+import { ArrayMatchType } from '../../models//ArrayMatchType'
 import { RecordRangeQuery } from '../../models/Record'
 import MatchTypeSelector from './MatchTypeSelector'
 

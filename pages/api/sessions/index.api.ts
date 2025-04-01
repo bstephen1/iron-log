@@ -5,7 +5,7 @@ import {
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import { fetchSessions } from '../../../lib/backend/mongoService'
-import { dateRangeQuerySchema } from '../../../models/query-filters/DateRangeQuery'
+import { dateRangeQuerySchema } from '../../../models//DateRangeQuery'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   if (req.method !== 'GET') {
