@@ -9,6 +9,10 @@ const nextConfig = {
     config.experiments.topLevelAwait = true
     return config
   },
+  eslint: {
+    // next lint defaults to only linting ['lib', 'components', 'pages', 'app', 'src']
+    dirs: ['lib', 'components', 'pages', 'models', 'scripts'],
+  },
   pageExtensions: ['page.tsx', 'api.ts'],
 }
 

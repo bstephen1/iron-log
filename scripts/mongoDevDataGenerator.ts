@@ -17,7 +17,6 @@ import { createRecord } from '../models/Record'
 import { createSessionLog } from '../models/SessionLog'
 import { Status } from '../models/Status'
 import { DB_UNITS, Units } from '../models/Units'
-import './polyfills'
 
 const envPath = path.resolve(__dirname, '..', '.env.development')
 dotenv.config({ path: envPath })
