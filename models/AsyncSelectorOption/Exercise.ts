@@ -6,13 +6,10 @@ import {
   stringOrArraySchema,
   toArray,
 } from '../../lib/util'
+import { ArrayMatchType, buildMatchTypeFilter } from '../ArrayMatchType'
 import { attributesSchema } from '../Attributes'
 import { displayFieldsSchema } from '../DisplayFields'
 import { noteSchema } from '../Note'
-import {
-  ArrayMatchType,
-  buildMatchTypeFilter,
-} from '../query-filters/ArrayMatchType'
 import { Status } from '../Status'
 
 export interface Exercise extends z.infer<typeof exerciseSchema> {}

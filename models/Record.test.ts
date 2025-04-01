@@ -1,12 +1,12 @@
-import { ApiParams } from './query-filters/ApiParams'
-import { ArrayMatchType } from './query-filters/ArrayMatchType'
-import { RecordRangeQuery, recordQuerySchema } from './Record'
+import { ParsedUrlQuery } from 'querystring'
+import { ArrayMatchType } from './ArrayMatchType'
+import { recordQuerySchema } from './Record'
 
-it('builds full query', () => {
-  const apiQuery: ApiParams<RecordRangeQuery> = {
+it('transforms query params', () => {
+  const apiQuery: ParsedUrlQuery = {
     exercise: 'exercise',
     modifier: 'modifier',
-    modifierMatchType: ArrayMatchType.Partial,
+    modifierMatchType: ArrayMatchType.Exact,
     operator: 'exactly',
     field: 'reps',
     value: '5',
@@ -14,7 +14,7 @@ it('builds full query', () => {
     max: '8',
   }
   expect(recordQuerySchema.parse(apiQuery)).toEqual({
-    activeModifiers: { $all: [apiQuery.modifier] },
+    activeModifiers: { $all: [apiQuery.modifier], $size: 1 },
     'exercise.name': apiQuery.exercise,
     'setType.operator': apiQuery.operator,
     'setType.field': apiQuery.field,
@@ -24,51 +24,12 @@ it('builds full query', () => {
   })
 })
 
-it('builds partial query', () => {
-  const apiQuery: ApiParams<RecordRangeQuery> = {
-    field: 'reps',
-    exercise: undefined,
+it('ignores undefined keys', () => {
+  const apiQuery: ParsedUrlQuery = {
+    exercise: '2000-01-01',
+    category: undefined,
   }
   expect(recordQuerySchema.parse(apiQuery)).toEqual({
-    'setType.field': 'reps',
+    'exercise.name': apiQuery.exercise,
   })
-})
-
-it('validates exercise', () => {
-  expect(() => recordQuerySchema.parse({ exercise: ['invalid'] })).toThrow()
-})
-
-it('builds modifiers from string modifier', () => {
-  const apiQuery: ApiParams<RecordRangeQuery> = {
-    modifier: 'modifier',
-    modifierMatchType: ArrayMatchType.Exact,
-  }
-  expect(recordQuerySchema.parse(apiQuery)).toEqual({
-    activeModifiers: { $all: [apiQuery.modifier], $size: 1 },
-  })
-})
-
-it('builds modifiers from array modifier', () => {
-  const apiQuery: ApiParams<RecordRangeQuery> = {
-    modifier: ['modifier'],
-    modifierMatchType: ArrayMatchType.Exact,
-  }
-  expect(recordQuerySchema.parse(apiQuery)).toEqual({
-    activeModifiers: { $size: 1, $all: apiQuery.modifier },
-  })
-})
-
-it('validates match type', () => {
-  expect(() =>
-    recordQuerySchema.parse({
-      modifier: 'modifier',
-      modifierMatchType: 'invalid',
-    })
-  ).toThrow()
-})
-
-it('ignores matchType when modifier is empty', () => {
-  expect(
-    recordQuerySchema.parse({ modifierMatchType: ArrayMatchType.Partial })
-  ).toEqual({})
 })
