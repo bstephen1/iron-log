@@ -1,24 +1,14 @@
 import dayjs from 'dayjs'
-import { v4 as uuid, validate, version } from 'uuid'
+import { v4 as uuid } from 'uuid'
 import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
 import { DATE_FORMAT } from './frontend/constants'
-import { z } from 'zod'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
  and to ensure no information is leaked from the ID (eg, userId=55 implies users 1-54 exist)
  */
 export const generateId = () => uuid()
-
-/** enforces an id is a uuid v4*/
-export const idSchema = z
-  .string()
-  .refine((id) => validate(id) && version(id) === 4)
-
-export const dateSchema = z.string().date()
-
-export const stringOrArraySchema = z.string().or(z.array(z.string()))
 
 // manually have to specify undefined is possible
 export type Index<T> = { [key: string]: T | undefined }

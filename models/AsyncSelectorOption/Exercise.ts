@@ -1,16 +1,13 @@
 import { Filter } from 'mongodb'
 import { z } from 'zod'
 import { asyncSelectorOptionSchema, createAsyncSelectorOption } from '.'
-import {
-  removeUndefinedKeys,
-  stringOrArraySchema,
-  toArray,
-} from '../../lib/util'
+import { removeUndefinedKeys, toArray } from '../../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from '../ArrayMatchType'
 import { attributesSchema } from '../Attributes'
 import { displayFieldsSchema } from '../DisplayFields'
 import { noteSchema } from '../Note'
 import { Status } from '../Status'
+import { stringOrArraySchema } from '../schemas'
 
 export interface Exercise extends z.infer<typeof exerciseSchema> {}
 export const exerciseSchema = asyncSelectorOptionSchema.extend({

@@ -11,7 +11,7 @@ import {
   updateRecord,
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
-import { idSchema } from '../../../lib/util'
+import { idSchema } from '../../../models/schemas'
 import { recordSchema } from '../../../models/Record'
 
 async function handler(req: NextApiRequest, userId: UserId) {

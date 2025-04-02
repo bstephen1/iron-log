@@ -2,17 +2,13 @@ import dayjs from 'dayjs'
 import { Filter } from 'mongodb'
 import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
-import {
-  generateId,
-  removeUndefinedKeys,
-  stringOrArraySchema,
-  toArray,
-} from '../lib/util'
+import { generateId, removeUndefinedKeys, toArray } from '../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
 import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import DateRangeQuery from './DateRangeQuery'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
+import { stringOrArraySchema } from './schemas'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
