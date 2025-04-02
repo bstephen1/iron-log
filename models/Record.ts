@@ -8,7 +8,7 @@ import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import DateRangeQuery from './DateRangeQuery'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
-import { stringOrArraySchema } from './schemas'
+import { apiArraySchema } from './schemas'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
@@ -50,7 +50,7 @@ export interface RecordQuery extends z.input<typeof recordQuerySchema> {}
 export const recordQuerySchema = z
   .object({
     exercise: z.string(),
-    modifier: stringOrArraySchema,
+    modifier: apiArraySchema,
     modifierMatchType: z.nativeEnum(ArrayMatchType),
     // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
     setTypeMatchType: z.nativeEnum(ArrayMatchType),

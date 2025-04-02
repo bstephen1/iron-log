@@ -7,7 +7,7 @@ import { attributesSchema } from '../Attributes'
 import { displayFieldsSchema } from '../DisplayFields'
 import { noteSchema } from '../Note'
 import { Status } from '../Status'
-import { stringOrArraySchema } from '../schemas'
+import { apiArraySchema } from '../schemas'
 
 export interface Exercise extends z.infer<typeof exerciseSchema> {}
 export const exerciseSchema = asyncSelectorOptionSchema.extend({
@@ -45,8 +45,8 @@ export const exerciseQuerySchema = z
   .object({
     bodyweight: z.coerce.boolean(),
     unilateral: z.coerce.boolean(),
-    category: stringOrArraySchema,
-    modifier: stringOrArraySchema,
+    category: apiArraySchema,
+    modifier: apiArraySchema,
     status: z.nativeEnum(Status),
   })
   .partial()

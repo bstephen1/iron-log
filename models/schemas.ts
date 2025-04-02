@@ -6,6 +6,8 @@ export const idSchema = z
   .string()
   .refine((id) => validate(id) && version(id) === 4)
 
+/** enforces YYYY-MM-DD format */
 export const dateSchema = z.string().date()
 
-export const stringOrArraySchema = z.string().or(z.array(z.string()))
+/** enforces api query param format, which may be string | string[] */
+export const apiArraySchema = z.string().or(z.array(z.string()))
