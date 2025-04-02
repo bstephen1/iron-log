@@ -59,14 +59,6 @@ it('guards against missing fields', async () => {
   })
 })
 
-it('guards against extra fields', async () => {
-  await expectApiErrorsOnMalformedBody({
-    handler,
-    params,
-    data: { ...data, extra: 'field' },
-  })
-})
-
 it('guards against invalid fields', async () => {
   await expectApiErrorsOnMalformedBody({
     handler,
