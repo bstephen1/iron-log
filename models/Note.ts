@@ -3,7 +3,7 @@ import { generateId } from '../lib/util'
 
 export interface Note extends z.infer<typeof noteSchema> {}
 
-export const noteSchema = z.strictObject({
+export const noteSchema = z.object({
   _id: z.string(),
   value: z.string(),
   tags: z.array(z.string()),

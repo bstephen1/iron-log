@@ -16,7 +16,7 @@ import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
-export const recordSchema = z.strictObject({
+export const recordSchema = z.object({
   _id: z.string(),
   date: z.string(),
   exercise: exerciseSchema.nullable(),
@@ -60,8 +60,7 @@ export const recordQuerySchema = z
     setTypeMatchType: z.nativeEnum(ArrayMatchType),
   })
   .partial()
-  // turn off strictObject
-  .and(setTypeSchema.strip().partial())
+  .and(setTypeSchema.partial())
   .transform(
     ({
       exercise,

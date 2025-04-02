@@ -3,7 +3,7 @@ import { capitalize } from '../lib/util'
 import { DB_UNITS, Units, unitsSchema } from './Units'
 
 export interface VisibleField extends z.infer<typeof visibleFieldSchema> {}
-export const visibleFieldSchema = z.strictObject({
+export const visibleFieldSchema = z.object({
   name: unitsSchema.keyof().or(z.enum(['plateWeight', 'totalWeight'])),
   /** The visible label. Only needed if it is different than "name" */
   label: z.string().optional(),
@@ -29,7 +29,7 @@ export const visibleFieldSchema = z.strictObject({
 
 /** signifies which Set fields are visible, and which units they are using.  */
 export interface DisplayFields extends z.infer<typeof displayFieldsSchema> {}
-export const displayFieldsSchema = z.strictObject({
+export const displayFieldsSchema = z.object({
   /** ordered array that denotes which fields are active and in what order */
   visibleFields: z.array(visibleFieldSchema),
   /** must have units for all fields, not just visible ones.  */

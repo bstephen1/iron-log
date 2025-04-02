@@ -17,7 +17,7 @@ export const weighInTypes = ['official', 'unofficial'] as const
 // instead of listing all the properties of the schema
 export interface Bodyweight extends z.infer<typeof bodyweightSchema> {}
 
-export const bodyweightSchema = z.strictObject({
+export const bodyweightSchema = z.object({
   _id: z.string(),
   value: z.number(),
   type: z.enum(weighInTypes),
