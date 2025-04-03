@@ -117,15 +117,6 @@ export async function updateSessionLog(
   })
 }
 
-export async function deleteSessionRecord(
-  date: string,
-  recordId: string
-): Promise<SessionLog> {
-  return fetchJson(`${URI_SESSIONS}${date}/records/${recordId}`, {
-    method: 'DELETE',
-  })
-}
-
 //--------
 // RECORD
 //--------
@@ -179,12 +170,19 @@ export async function addRecord(newRecord: Record): Promise<Record> {
 }
 
 export async function updateRecordFields(
-  id: Record['_id'],
+  id: string,
   updates: Partial<Record>
 ): Promise<Record> {
   return fetchJson(URI_RECORDS + id, {
     method: 'PATCH',
     body: toJson(updates),
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
+export async function deleteRecord(id: string): Promise<string> {
+  return fetchJson(URI_RECORDS + id, {
+    method: 'DELETE',
     headers: { 'content-type': 'application/json' },
   })
 }

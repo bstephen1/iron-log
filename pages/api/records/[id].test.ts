@@ -1,6 +1,7 @@
 import { vi } from 'vitest'
 import {
   addRecord,
+  deleteRecord,
   fetchRecord,
   updateRecord,
   updateRecordFields,
@@ -40,6 +41,17 @@ it('updates given record', async () => {
   vi.mocked(updateRecord).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
+})
+
+it('deletes given record', async () => {
+  vi.mocked(deleteRecord).mockResolvedValue('id')
+
+  await expectApiRespondsWithData({
+    data: 'id',
+    handler,
+    params,
+    method: 'DELETE',
+  })
 })
 
 it('blocks invalid method types', async () => {

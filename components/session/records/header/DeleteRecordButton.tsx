@@ -3,7 +3,6 @@ import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import TooltipIconButton from '../../../TooltipIconButton'
 import useCurrentSessionLog from '../../../../components/session/useCurrentSessionLog'
-import { deleteSessionRecord } from '../../../../lib/frontend/restService'
 
 interface Props {
   _id: string
@@ -15,11 +14,20 @@ export default memo(function DeleteRecordButton({ _id }: Props) {
   const deleteRecord = async (recordId: string) => {
     if (!sessionLog) return
 
-    const newRecords = sessionLog.records.filter((id) => id !== recordId)
-    mutate(deleteSessionRecord(sessionLog.date, recordId), {
-      optimisticData: { ...sessionLog, records: newRecords },
-      revalidate: false,
-    })
+    const newSession = {
+      ...sessionLog,
+      records: sessionLog.records.filter((id) => id !== recordId),
+    }
+
+    mutate(
+      async () => {
+        await deleteRecord(recordId)
+        return newSession
+      },
+      {
+        optimisticData: newSession,
+      }
+    )
     swiper.update()
     swiper.slidePrev()
   }
