@@ -2,7 +2,7 @@
 // Cypress says to use cy.clock() but using that was preventing anything from rendering.
 it(`navigates to today's session from home page`, () => {
   cy.visit('/')
-  cy.contains(`Today's Log`).click()
+  cy.contains(`Today's log`).click()
 
   // cannot import dayjs since this uses an isolated tsconfig I guess
   cy.window().then((win) => {
