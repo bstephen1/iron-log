@@ -5,7 +5,7 @@ import { z } from 'zod'
  */
 export interface Attributes extends z.infer<typeof attributesSchema> {}
 
-export const attributesSchema = z.strictObject({
+export const attributesSchema = z.object({
   /** An exercise that includes bodyweight as a part of total weight lifted. */
   bodyweight: z.boolean().optional(),
   /** An exercise that is split into left and right sides which can be recorded separately. */

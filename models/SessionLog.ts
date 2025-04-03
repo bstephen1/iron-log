@@ -6,7 +6,7 @@ import { Record } from './Record'
 // todo: add session time. Start / end times? Program stuff (not hashed out yet), overall notes?
 // todo: gym location?
 export interface SessionLog extends z.infer<typeof sessionLogSchema> {}
-export const sessionLogSchema = z.strictObject({
+export const sessionLogSchema = z.object({
   _id: z.string(),
   /** YYYY-MM-DD */
   date: z.string().date(),

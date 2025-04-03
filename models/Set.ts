@@ -18,7 +18,7 @@ export interface Set extends z.infer<typeof setSchema> {}
 // plus overwrite "side"
 const dimensions = unitsSchema.keyof().exclude(['side']).options
 export const setSchema = z
-  .strictObject(
+  .object(
     dimensions.reduce(
       (prev, key) => ({ ...prev, [key]: z.number().nullish() }),
       // the key definition is the same idea as making a type from a const array
@@ -51,7 +51,7 @@ export const setOperators = [
  * This allows value/min/max to be saved when switching between operators.
  */
 export interface SetType extends z.infer<typeof setTypeSchema> {}
-export const setTypeSchema = z.strictObject({
+export const setTypeSchema = z.object({
   field: unitsSchema.keyof(),
   operator: z.enum(setOperators),
   value: z.coerce.number().optional(),

@@ -5,7 +5,7 @@ import { TIME_FORMAT } from '../lib/frontend/constants'
  *  A unit with the same value as its key is considered to be unitless.
  */
 export interface Units extends z.infer<typeof unitsSchema> {}
-export const unitsSchema = z.strictObject({
+export const unitsSchema = z.object({
   weight: z.enum(['kg', 'lbs']),
   distance: z.enum(['m', 'km', 'ft', 'mi', 'cm', 'in']),
   /** Considered having a separate HH:mm:ss and mm:ss but then the latter

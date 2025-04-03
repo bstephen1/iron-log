@@ -2,21 +2,17 @@ import dayjs from 'dayjs'
 import { Filter } from 'mongodb'
 import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
-import {
-  generateId,
-  removeUndefinedKeys,
-  stringOrArraySchema,
-  toArray,
-} from '../lib/util'
+import { generateId, removeUndefinedKeys, toArray } from '../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
 import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import DateRangeQuery from './DateRangeQuery'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
+import { apiArraySchema } from './schemas'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
-export const recordSchema = z.strictObject({
+export const recordSchema = z.object({
   _id: z.string(),
   date: z.string(),
   exercise: exerciseSchema.nullable(),
@@ -54,14 +50,13 @@ export interface RecordQuery extends z.input<typeof recordQuerySchema> {}
 export const recordQuerySchema = z
   .object({
     exercise: z.string(),
-    modifier: stringOrArraySchema,
+    modifier: apiArraySchema,
     modifierMatchType: z.nativeEnum(ArrayMatchType),
     // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
     setTypeMatchType: z.nativeEnum(ArrayMatchType),
   })
   .partial()
-  // turn off strictObject
-  .and(setTypeSchema.strip().partial())
+  .and(setTypeSchema.partial())
   .transform(
     ({
       exercise,

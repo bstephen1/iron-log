@@ -9,8 +9,8 @@ import {
   fetchSession,
   updateSession,
 } from '../../../lib/backend/mongoService'
-import { dateSchema } from '../../../lib/util'
 import { sessionLogSchema } from '../../../models/SessionLog'
+import { dateSchema } from '../../../models/schemas'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const date = dateSchema.parse(req.query.date)

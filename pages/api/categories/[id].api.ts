@@ -10,8 +10,8 @@ import {
   fetchCategory,
   updateCategoryFields,
 } from '../../../lib/backend/mongoService'
-import { idSchema } from '../../../lib/util'
 import { categorySchema } from '../../../models/AsyncSelectorOption/Category'
+import { idSchema } from '../../../models/schemas'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = idSchema.parse(req.query.id)

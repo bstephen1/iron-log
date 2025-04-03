@@ -10,7 +10,7 @@ import SessionSwiper from '../../components/session/SessionSwiper'
 import RestTimer from '../../components/session/upper/RestTimer'
 import TitleBar from '../../components/session/upper/TitleBar'
 import WeightUnitConverter from '../../components/session/upper/WeightUnitConverter'
-import { dateSchema } from '../../lib/util'
+import { dateSchema } from '../../models/schemas'
 
 export function getServerSideProps({ query }: GetServerSidePropsContext) {
   try {

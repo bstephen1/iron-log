@@ -3,10 +3,10 @@ import {
   arrayToIndex,
   capitalize,
   generateId,
-  idSchema,
   removeUndefinedKeys,
   toArray,
 } from './util'
+import { idSchema } from '../models/schemas'
 
 describe('validateId', () => {
   it('throws error when id format is invalid', () => {

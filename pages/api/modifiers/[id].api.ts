@@ -10,8 +10,8 @@ import {
   fetchModifier,
   updateModifierFields,
 } from '../../../lib/backend/mongoService'
-import { idSchema } from '../../../lib/util'
 import { modifierSchema } from '../../../models/AsyncSelectorOption/Modifier'
+import { idSchema } from '../../../models/schemas'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = idSchema.parse(req.query.id)

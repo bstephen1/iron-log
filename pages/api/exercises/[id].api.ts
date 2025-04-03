@@ -11,8 +11,8 @@ import {
   updateExercise,
   updateExerciseFields,
 } from '../../../lib/backend/mongoService'
-import { idSchema } from '../../../lib/util'
 import { exerciseSchema } from '../../../models/AsyncSelectorOption/Exercise'
+import { idSchema } from '../../../models/schemas'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   const id = idSchema.parse(req.query.id)
