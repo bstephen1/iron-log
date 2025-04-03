@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from 'dayjs'
 import { ParsedUrlQueryInput, stringify } from 'querystring'
 import useSWR from 'swr'
-import { arrayToIndex, fetchJson, fetchJsonNullable } from '../../lib/util'
+import { arrayToIndex, fetchJson } from '../../lib/util'
 import DateRangeQuery from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
@@ -70,23 +70,20 @@ const nameSort = <T extends { name: string }>(data?: T[]) =>
 //---------
 
 export function useSessionLog(day: Dayjs | string) {
-  const { data, error, isLoading, mutate } = useSWR<
-    SessionLog | null,
-    ApiError
-  >(URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)), {
-    fetcher: fetchJsonNullable,
-  })
+  const { data, isLoading, mutate } = useSWR<SessionLog | null, ApiError>(
+    URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT))
+  )
 
   return {
     sessionLog: data,
-    isError: !!error,
+
     isLoading,
     mutate,
   }
 }
 
 export function useSessionLogs(query: DateRangeQuery) {
-  const { data, error, isLoading, mutate } = useSWR<SessionLog[], ApiError>(
+  const { data, isLoading, mutate } = useSWR<SessionLog[], ApiError>(
     URI_SESSIONS + paramify({ ...query })
   )
 
@@ -94,7 +91,7 @@ export function useSessionLogs(query: DateRangeQuery) {
     sessionLogs: data,
     sessionLogsIndex: arrayToIndex<SessionLog>('date', data),
     isLoading,
-    isError: !!error,
+
     mutate,
   }
 }
@@ -117,15 +114,6 @@ export async function updateSessionLog(
   })
 }
 
-export async function deleteSessionRecord(
-  date: string,
-  recordId: string
-): Promise<SessionLog> {
-  return fetchJson(`${URI_SESSIONS}${date}/records/${recordId}`, {
-    method: 'DELETE',
-  })
-}
-
 //--------
 // RECORD
 //--------
@@ -138,14 +126,13 @@ export async function deleteSessionRecord(
  *  Note that this applies to any other useSWR hook as well.
  */
 export function useRecord(id: string) {
-  const { data, error, isLoading, mutate } = useSWR<Record | null, ApiError>(
-    URI_RECORDS + id,
-    { fetcher: fetchJsonNullable }
+  const { data, isLoading, mutate } = useSWR<Record | null, ApiError>(
+    URI_RECORDS + id
   )
 
   return {
     record: data,
-    isError: !!error,
+
     isLoading,
     // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
     mutate,
@@ -156,7 +143,7 @@ export function useRecords(
   query?: RecordRangeQuery & DateRangeQuery,
   shouldFetch = true
 ) {
-  const { data, isLoading, error, mutate } = useSWR<Record[], ApiError>(
+  const { data, isLoading, mutate } = useSWR<Record[], ApiError>(
     shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
   )
 
@@ -164,7 +151,7 @@ export function useRecords(
     // data will be undefined forever if the fetch is null
     records: shouldFetch ? data : [],
     recordsIndex: shouldFetch ? arrayToIndex<Record>('_id', data) : {},
-    isError: !!error,
+
     mutate,
     isLoading,
   }
@@ -179,7 +166,7 @@ export async function addRecord(newRecord: Record): Promise<Record> {
 }
 
 export async function updateRecordFields(
-  id: Record['_id'],
+  id: string,
   updates: Partial<Record>
 ): Promise<Record> {
   return fetchJson(URI_RECORDS + id, {
@@ -189,12 +176,19 @@ export async function updateRecordFields(
   })
 }
 
+export async function deleteRecord(id: string): Promise<string> {
+  return fetchJson(URI_RECORDS + id, {
+    method: 'DELETE',
+    headers: { 'content-type': 'application/json' },
+  })
+}
+
 //----------
 // EXERCISE
 //----------
 
 export function useExercises(query?: ExerciseQuery) {
-  const { data, error, mutate } = useSWR<Exercise[], ApiError>(
+  const { data, mutate } = useSWR<Exercise[], ApiError>(
     URI_EXERCISES + paramify({ ...query })
   )
   const sortedData = nameSort(data)
@@ -202,21 +196,20 @@ export function useExercises(query?: ExerciseQuery) {
   return {
     exercises: sortedData,
     exerciseNames: toNames(sortedData),
-    isError: !!error,
+
     mutate,
   }
 }
 
 export function useExercise(id: string | null) {
   // passing null to useSWR disables fetching
-  const { data, error, mutate } = useSWR<Exercise | null, ApiError>(
-    id ? URI_EXERCISES + id : null,
-    { fetcher: fetchJsonNullable }
+  const { data, mutate } = useSWR<Exercise | null, ApiError>(
+    id ? URI_EXERCISES + id : null
   )
 
   return {
     exercise: data,
-    isError: !!error,
+
     mutate,
   }
 }
@@ -260,14 +253,14 @@ export async function deleteExercise(id: string): Promise<string> {
 //----------
 
 export function useModifiers() {
-  const { data, error, mutate } = useSWR<Modifier[], ApiError>(URI_MODIFIERS)
+  const { data, mutate } = useSWR<Modifier[], ApiError>(URI_MODIFIERS)
   const sortedData = nameSort(data)
 
   return {
     modifiers: sortedData,
     modifiersIndex: arrayToIndex<Modifier>('name', data),
     modifierNames: toNames(sortedData),
-    isError: !!error,
+
     mutate,
   }
 }
@@ -303,13 +296,13 @@ export async function deleteModifier(id: string): Promise<string> {
 //----------
 
 export function useCategories() {
-  const { data, error, mutate } = useSWR<Category[], ApiError>(URI_CATEGORIES)
+  const { data, mutate } = useSWR<Category[], ApiError>(URI_CATEGORIES)
   const sortedData = nameSort(data)
 
   return {
     categories: sortedData,
     categoryNames: toNames(sortedData),
-    isError: !!error,
+
     mutate,
   }
 }
@@ -356,13 +349,13 @@ export function useBodyweightHistory(
   const start = query?.start ? addDay(query.start) : undefined
   const end = query?.end ? addDay(query.end) : undefined
 
-  const { data, error, mutate } = useSWR<Bodyweight[], ApiError>(
+  const { data, mutate } = useSWR<Bodyweight[], ApiError>(
     shouldFetch ? URI_BODYWEIGHT + paramify({ start, end, ...query }) : null
   )
 
   return {
     data: shouldFetch ? data : [],
-    isError: !!error,
+
     mutate,
   }
 }

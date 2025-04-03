@@ -24,14 +24,25 @@ it('should set the response body to the returned payload', async () => {
   })
 })
 
-it('returns error when payload is null', async () => {
+it('returns error when payload is null and method is not GET', async () => {
+  mockHandler.mockReturnValueOnce(null)
+  await testApiHandler({
+    pagesHandler: withStatusHandler(mockHandler),
+    test: async ({ fetch }) => {
+      const res = await fetch({ method: 'PUT' })
+      expect(res.status).toBe(StatusCodes.NOT_FOUND)
+    },
+  })
+})
+
+it('returns null and does not throw error when payload is null and method is GET', async () => {
   mockHandler.mockReturnValueOnce(null)
   await testApiHandler({
     pagesHandler: withStatusHandler(mockHandler),
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'GET' })
-      expect(res.status).toBe(StatusCodes.NOT_FOUND)
-      expect(await res.json()).toMatchObject(/not found/i)
+      expect(res.status).toBe(StatusCodes.OK)
+      expect(await res.json()).toBe(null)
     },
   })
 })

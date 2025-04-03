@@ -6,6 +6,7 @@ import {
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import {
   addRecord,
+  deleteRecord,
   fetchRecord,
   updateRecord,
   updateRecordFields,
@@ -29,6 +30,8 @@ async function handler(req: NextApiRequest, userId: UserId) {
         id,
         recordSchema.partial().parse(req.body)
       )
+    case 'DELETE':
+      return await deleteRecord(userId, id)
     default:
       throw methodNotAllowed
   }

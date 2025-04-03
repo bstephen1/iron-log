@@ -54,15 +54,15 @@ export const swrFetcher = (url: string) => fetchJson(url)
  *  Also checks if the res is an error. Note just calling fetch() by itself
  *  has no inherent error checking!
  */
-export const fetchJson = async <T>(...params: Parameters<typeof fetch>) => {
-  const res = await fetch(...params)
+export const fetchJson = async <T>(...args: Parameters<typeof fetch>) => {
+  // note: If the second arg omitted, request defaults to fetch.
+  const res = await fetch(...args)
   const json: T | ApiError = await res.json()
   if (res.ok) {
     return json as T
   }
 
-  const error = json as ApiError
-  console.error(error)
+  // the original error details can be viewed in the network tab
   throw new ApiError(
     res.status,
     'could not fetch data. Check console for details.'

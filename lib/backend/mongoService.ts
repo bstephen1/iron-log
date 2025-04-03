@@ -76,26 +76,6 @@ export async function updateSession(
   )
 }
 
-// todo: make this a transaction?
-export async function deleteSessionRecord(
-  userId: ObjectId,
-  date: string,
-  recordId: string
-): Promise<SessionLog | null> {
-  await deleteRecord(userId, recordId)
-  return await sessions.findOneAndUpdate(
-    { userId, date },
-    // $pull is equivalent to removing an element from an array
-    { $pull: { records: recordId } },
-    {
-      projection: { userId: 0 },
-      returnDocument: 'after',
-    }
-  )
-}
-
-// todo: fetch sessions in date range
-
 //--------
 // RECORD
 //--------
@@ -243,10 +223,19 @@ export async function updateRecordFields(
   return await fetchRecord(userId, _id)
 }
 
-// Currently not exporting. To delete call deleteSessionRecord().
-// All Records must belong to a Session, so a record can only be deleted in the context of a Session.
-async function deleteRecord(userId: ObjectId, _id: string) {
-  return await records.deleteOne({ userId, _id })
+export async function deleteRecord(
+  userId: ObjectId,
+  _id: string
+): Promise<string> {
+  const record = await records.findOneAndDelete({ userId, _id })
+  // remove the record from its associated session
+  await sessions.updateOne(
+    { userId, date: record?.date },
+    // $pull is equivalent to removing an element from an array
+    { $pull: { records: _id } }
+  )
+
+  return _id
 }
 
 //----------
@@ -277,7 +266,6 @@ export async function fetchExercise(
   return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
-// todo: add guard to anything with Status such that Status.new cannot be saved to db.
 export async function updateExercise(
   userId: ObjectId,
   exercise: Exercise

@@ -3,15 +3,15 @@ import {
   addSession,
   fetchSession,
   updateSession,
-} from '../../../../lib/backend/mongoService'
+} from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
-} from '../../../../lib/testUtils'
+} from '../../../lib/testUtils'
 
-import handler from './index.api'
-import { createSessionLog } from '../../../../models/SessionLog'
+import handler from './[date].api'
+import { createSessionLog } from '../../../models/SessionLog'
 
 const date = '2000-01-01'
 const data = createSessionLog(date)
