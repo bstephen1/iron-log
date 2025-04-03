@@ -18,8 +18,16 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
 
       const payload = await handler(req, userId)
 
-      if (!payload) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'not found')
+      // The payload may be null. For GET requests, useSWR expects the res to be
+      // null when the resource does not exist, so we don't throw a 404 error.
+      // We rely on this behavior in the sessions/[date] endpoint -- we don't want
+      // to create a new session every time a user flips through dates unless they
+      // actually create a record for that date.
+      // For any other method, the request is attempting to update data in the db,
+      // so a null res indicates that something went wrong. All other methods
+      // expect the res to contain the updated data.
+      if (!payload && req.method?.toLocaleUpperCase() !== 'GET') {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'record does not exist')
       }
 
       res.status(StatusCodes.OK).json(payload)

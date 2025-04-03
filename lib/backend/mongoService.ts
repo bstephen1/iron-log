@@ -266,7 +266,6 @@ export async function fetchExercise(
   return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
-// todo: add guard to anything with Status such that Status.new cannot be saved to db.
 export async function updateExercise(
   userId: ObjectId,
   exercise: Exercise

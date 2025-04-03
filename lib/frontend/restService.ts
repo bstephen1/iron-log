@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from 'dayjs'
 import { ParsedUrlQueryInput, stringify } from 'querystring'
 import useSWR from 'swr'
-import { arrayToIndex, fetchJson, fetchJsonNullable } from '../../lib/util'
+import { arrayToIndex, fetchJson } from '../../lib/util'
 import DateRangeQuery from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
@@ -73,9 +73,7 @@ export function useSessionLog(day: Dayjs | string) {
   const { data, error, isLoading, mutate } = useSWR<
     SessionLog | null,
     ApiError
-  >(URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)), {
-    fetcher: fetchJsonNullable,
-  })
+  >(URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT)))
 
   return {
     sessionLog: data,
@@ -130,8 +128,7 @@ export async function updateSessionLog(
  */
 export function useRecord(id: string) {
   const { data, error, isLoading, mutate } = useSWR<Record | null, ApiError>(
-    URI_RECORDS + id,
-    { fetcher: fetchJsonNullable }
+    URI_RECORDS + id
   )
 
   return {
@@ -208,8 +205,7 @@ export function useExercises(query?: ExerciseQuery) {
 export function useExercise(id: string | null) {
   // passing null to useSWR disables fetching
   const { data, error, mutate } = useSWR<Exercise | null, ApiError>(
-    id ? URI_EXERCISES + id : null,
-    { fetcher: fetchJsonNullable }
+    id ? URI_EXERCISES + id : null
   )
 
   return {
