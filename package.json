@@ -5,14 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "dev:test": "npx cross-env NODE_ENV=test npx next dev -p 7357",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky",
-    "cy": "npx cypress open --config-file cypress/cypress.config.ts",
+    "cy": "npx cypress open --browser chrome --config-file cypress/cypress.config.ts",
+    "cy:once": "npx cypress run --browser chrome --config-file cypress/cypress.config.ts",
     "test": "vitest --ui --open=false --hideSkippedTests",
     "test:once": "vitest run --hideSkippedTests",
-    "db:dev": "npx vite-node scripts/mongoDevDataGenerator.ts"
+    "db:dev": "npx vite-node scripts/mongoSeedDev.ts",
+    "db:test": "npx vite-node scripts/mongoResetTest.ts"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.8.0",
@@ -51,6 +54,7 @@
     "@vitest/coverage-v8": "^3.0.7",
     "@vitest/eslint-plugin": "^1.1.37",
     "@vitest/ui": "^3.0.7",
+    "cross-env": "^7.0.3",
     "cypress": "^14.1.0",
     "eslint": "^9.22.0",
     "eslint-config-next": "^15.2.0",

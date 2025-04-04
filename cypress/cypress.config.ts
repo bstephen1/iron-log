@@ -9,6 +9,9 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:7357',
+    // todo: look into this -- allows generating tests from recording interactions in the browser
+    // see: https://docs.cypress.io/app/guides/cypress-studio
+    // experimentalStudio: true,
   },
 })
