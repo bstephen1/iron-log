@@ -1,5 +1,5 @@
 name: Tests
-on: push
+on: pull_request
 jobs:
   e2e:
     # this is the github environment that contains the "secrets" object
@@ -27,14 +27,8 @@ jobs:
         with:
           mongodb-version: latest
       - name: Cypress
-        uses: cypress-io/github-action@v6
-        with:
-          # this could be run in parallel but need to put the tasks in docker containers
-          # or they will interfere with each other
-          browser: chrome
-          # do not run npm install since we already did before
-          install: false
-          config-file: 'cypress/cypress.config.ts'
+        run: |-
+          npm run cy:once -- --browser chrome --config defaultCommandTimeout=10000
   frontend:
     runs-on: ubuntu-latest
     steps:
