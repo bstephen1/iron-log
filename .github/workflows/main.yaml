@@ -28,7 +28,7 @@ jobs:
           mongodb-version: latest
       - name: Cypress
         run: |-
-          npm run cy:once -- --browser chrome --config defaultCommandTimeout=10_000
+          npm run cy:once -- --browser chrome --config defaultCommandTimeout=10000
   frontend:
     runs-on: ubuntu-latest
     steps:
