@@ -27,14 +27,8 @@ jobs:
         with:
           mongodb-version: latest
       - name: Cypress
-        uses: cypress-io/github-action@v6
-        with:
-          # this could be run in parallel but need to put the tasks in docker containers
-          # or they will interfere with each other
-          browser: chrome
-          # do not run npm install since we already did before
-          install: false
-          config-file: 'cypress/cypress.config.ts'
+        run: |-
+          npm run cy:test -- --browser chrome --config defaultCommandTimeout=10_000
   frontend:
     runs-on: ubuntu-latest
     steps:
