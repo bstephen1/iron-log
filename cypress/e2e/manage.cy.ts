@@ -15,7 +15,7 @@ it(`adds an exercise`, () => {
   cy.get('label').contains('Name').type('{home}SSB ')
   cy.get('button[data-testid="submit button"]').click()
   // name change should update name/exercise inputs and url
-  cy.get('input[value="SSB squats"').should('have.length', 2)
+  cy.get('input[value="SSB squats"]').should('have.length', 2)
   cy.url().should('include', 'SSB+squats')
 
   cy.contains('Active').click()
@@ -37,11 +37,11 @@ it(`adds an exercise`, () => {
   // confirm edits persist on reload
 
   cy.reload()
-  cy.get('input[value="SSB squats"')
+  cy.get('input[value="SSB squats"]')
     .should('have.length', 2)
     .should('be.visible')
   cy.contains('Archived').should('be.visible')
-  cy.get('input[value="7.5"').should('be.visible')
+  cy.get('input[value="7.5"]').should('be.visible')
   cy.contains('Bodyweight')
     .closest('label')
     .within(() => {
