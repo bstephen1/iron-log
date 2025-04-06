@@ -18,8 +18,9 @@ import { createSessionLog } from '../models/SessionLog'
 import { Status } from '../models/Status'
 import { DB_UNITS, Units } from '../models/Units'
 
+// we do not need to include .env.local since we aren't interacting with authjs
 const envPath = path.resolve(__dirname, '..', '.env.development')
-dotenv.config({ path: envPath })
+dotenv.config({ path: envPath, override: true })
 
 // must wait to import until dotenv is done pulling in env vars
 const { db, collections, client } = await import('../lib/backend/mongoConnect')

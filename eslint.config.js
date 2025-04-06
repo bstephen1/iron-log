@@ -27,6 +27,7 @@ const eslintConfig = [
       // generates type information for (strict) rules that require typed linting
       projectService: true,
     },
+    ignorePatterns: ['cypress'],
     rules: {
       // this rule wants you to have <div>today&apos;s session</div>
       // instead of <div>today's session</div>

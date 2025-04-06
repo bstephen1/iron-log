@@ -47,7 +47,10 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
           console.error(e)
         }
         const statusCode = StatusCodes.INTERNAL_SERVER_ERROR
-        res.status(statusCode).json({ statusCode, message: 'unknown error' })
+        res.status(statusCode).json({
+          statusCode,
+          message: e instanceof Error ? e.message : 'error could not be parsed',
+        })
       }
     }
   }

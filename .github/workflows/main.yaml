@@ -1,0 +1,48 @@
+name: Tests
+on: push
+jobs:
+  e2e:
+    # this is the github environment that contains the "secrets" object
+    environment: test
+    # contains chrome, firefox, and edge browsers, and node
+    # see: https://github.com/actions/runner-images?tab=readme-ov-file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Start app
+        env:
+          # this is an arbitrary value for enabling dev user sign in
+          # we are not importing secrets for external oauth providers
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          # renamed to AUTH_SECRET in authjs v5
+          NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+        # we can't do npm build because nextjs overwrites NODE_ENV to be production
+        # which disables the dev user login that cypress uses
+        run: |-
+          npm i 
+          npm run dev:test &
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: latest
+      - name: Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          # this could be run in parallel but need to put the tasks in docker containers
+          # or they will interfere with each other
+          browser: chrome
+          # do not run npm install since we already did before
+          install: false
+          config-file: 'cypress/cypress.config.ts'
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install packages
+        run: npm i
+      - name: Lint
+        run: npm run lint
+      - name: Vitest
+        run: npm run test:once

@@ -17,7 +17,7 @@ interface Props {
 }
 // This Input is a temporary value that isn't include in the list until/unless it is submitted.
 export default function AddNote({
-  placeholder = 'Add Note',
+  placeholder = 'Add note',
   handleAdd,
   disabled,
   options = [],
