@@ -1,5 +1,5 @@
 name: Tests
-on: push
+on: pull_request
 jobs:
   e2e:
     # this is the github environment that contains the "secrets" object
