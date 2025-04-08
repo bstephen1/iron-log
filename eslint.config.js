@@ -1,5 +1,6 @@
 import { FlatCompat } from '@eslint/eslintrc'
 import vitest from '@vitest/eslint-plugin'
+import unusedImports from 'eslint-plugin-unused-imports'
 
 const compat = new FlatCompat({
   // import.meta.dirname is available after Node.js v20.11.0
@@ -7,7 +8,7 @@ const compat = new FlatCompat({
 })
 const eslintConfig = [
   {
-    plugins: { vitest },
+    plugins: { vitest, 'unused-imports': unusedImports },
     rules: {
       ...vitest.configs.recommended.rules,
       // we allows expects to be in external functions as long as they start with "expect"
@@ -43,9 +44,12 @@ const eslintConfig = [
         'always',
         { exceptions: ['-', '*'], markers: ['/'] },
       ],
-      // duplicate of @typescript-eslint/no-unused-vars
+      // turn off duplicate no-unused-var rules
       'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': [
+      '@typescript-eslint/no-unused-vars': 'off',
+      // allows --fix to automatically remove unused imports
+      'unused-imports/no-unused-imports': 'warn',
+      'unused-imports/no-unused-vars': [
         'warn',
         {
           caughtErrorsIgnorePattern: '^e',
