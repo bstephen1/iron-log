@@ -1,4 +1,4 @@
-name: Tests
+name: CI
 on: pull_request
 jobs:
   e2e:
@@ -40,3 +40,18 @@ jobs:
         run: npm run lint
       - name: Vitest
         run: npm run test:once
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install packages
+        run: npm i
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: latest
+      - name: Generate dev data
+        run: npm run db:dev
+      - name: Generate test data
+        run: npm run db:test
