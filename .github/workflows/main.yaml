@@ -28,7 +28,7 @@ jobs:
           browser: chrome
           # we can't do npm build because nextjs overwrites NODE_ENV to be production
           # which disables the dev user login that cypress uses
-          start: npm run dev:test
+          start: npm run dev:test &
           wait-on: 'http://localhost:3000'
           config-file: 'cypress/cypress.config.ts'
           # the default of 4000 can be too quick and result in premature failures
