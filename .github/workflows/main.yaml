@@ -1,15 +1,28 @@
 name: CI
-on: pull_request
+on: [pull_request, push]
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install packages
+        run: npm i
+  mongo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: latest
   e2e:
+    needs: [setup, mongo]
     # this is the github environment that contains the "secrets" object
     environment: test
     # contains chrome, firefox, and edge browsers, and node
     # see: https://github.com/actions/runner-images?tab=readme-ov-file
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Start app
         env:
           # this is an arbitrary value for enabling dev user sign in
@@ -19,38 +32,38 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
         # we can't do npm build because nextjs overwrites NODE_ENV to be production
         # which disables the dev user login that cypress uses
-        run: |-
-          npm i 
-          npm run dev:test &
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.12.0
-        with:
-          mongodb-version: latest
+        run: npm run dev:test &
       - name: Cypress
         run: |-
           npm run cy:once -- --browser chrome --config defaultCommandTimeout=10000
   frontend:
     runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix:
+        include:
+          - branch: main
+            artifact: main
+          - branch: ${{ github.head_ref }}
+            artifact: pull-request
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install packages
-        run: npm i
       - name: Lint
         run: npm run lint
       - name: Vitest
         run: npm run test:once
+      - name: 'Coverage'
+        # uncomment to generate reports if tests fail.
+        # requires `reportOnFailure: true` in vite config.
+        # if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          # set to "pr" to add a comment to the pr with the coverage stats
+          # note: requires write permission to be enabled
+          comment-on: 'none'
   scripts:
     runs-on: ubuntu-latest
+    needs: [setup, mongo]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install packages
-        run: npm i
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.12.0
-        with:
-          mongodb-version: latest
       - name: Generate dev data
         run: npm run db:dev
       - name: Generate test data
