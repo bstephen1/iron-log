@@ -10,25 +10,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Start app
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: latest
+      - name: Run cypress
         env:
           # this is an arbitrary value for enabling dev user sign in
           # we are not importing secrets for external oauth providers
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           # renamed to AUTH_SECRET in authjs v5
           NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-        # we can't do npm build because nextjs overwrites NODE_ENV to be production
-        # which disables the dev user login that cypress uses
-        run: |-
-          npm i 
-          npm run dev:test &
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.12.0
+        uses: cypress-io/github-action@v6
         with:
-          mongodb-version: latest
-      - name: Cypress
-        run: |-
-          npm run cy:once -- --browser chrome --config defaultCommandTimeout=10000
+          # this could be run in parallel but need to put the tasks in docker containers
+          # or they will interfere with each other
+          browser: chrome
+          # we can't do npm build because nextjs overwrites NODE_ENV to be production
+          # which disables the dev user login that cypress uses
+          start: npm run dev:test
+          wait-on: 'http://localhost:3000'
+          config-file: 'cypress/cypress.config.ts'
+          # the default of 4000 can be too quick and result in premature failures
+          config: defaultCommandTimeout=10000
   frontend:
     runs-on: ubuntu-latest
     steps:
@@ -36,11 +40,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Install packages
         run: npm i
-      - name: Lint
+      - name: Run linter
         run: npm run lint
-      - name: Vitest
+      - name: Run vitest
         run: npm run test:once
-      - name: 'Coverage'
+      - name: 'Generate coverage report'
         # uncomment to generate reports if tests fail.
         # requires `reportOnFailure: true` in vite config.
         # if: always()
@@ -60,7 +64,7 @@ jobs:
         uses: supercharge/mongodb-github-action@1.12.0
         with:
           mongodb-version: latest
-      - name: Generate dev data
+      - name: Run dev data generator
         run: npm run db:dev
-      - name: Generate test data
+      - name: Run test data generator
         run: npm run db:test
