@@ -7,7 +7,8 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
     coverage: {
-      reporter: ['html'],
+      // json reporters are needed for github action summary report
+      reporter: ['text-summary', 'html', 'json-summary', 'json'],
       all: true,
       enabled: true,
       include: ['components', 'lib', 'pages', 'models'],
