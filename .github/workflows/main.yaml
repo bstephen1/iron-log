@@ -35,7 +35,7 @@ jobs:
           wait-on: 'http://localhost:7357'
           config-file: 'cypress/cypress.config.ts'
           # the default of 4000 can be too quick and result in premature failures
-          config: defaultCommandTimeout=10000
+          config: defaultCommandTimeout=20000
   frontend:
     runs-on: ubuntu-latest
     steps:
