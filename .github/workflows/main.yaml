@@ -32,7 +32,6 @@ jobs:
           # this could be run in parallel but need to put the tasks in docker containers
           # or they will interfere with each other
           browser: chrome
-          wait-on: 'http://localhost:3000'
           config-file: 'cypress/cypress.config.ts'
           # the default of 4000 can be too quick and result in premature failures
           config: defaultCommandTimeout=10000
