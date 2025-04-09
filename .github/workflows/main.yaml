@@ -10,6 +10,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Start app
+        # we can't do npm build because nextjs overwrites NODE_ENV to be production
+        # which disables the dev user login that cypress uses
+        run: |-
+          npm i 
+          npm run dev:test &
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.0
         with:
@@ -26,9 +32,6 @@ jobs:
           # this could be run in parallel but need to put the tasks in docker containers
           # or they will interfere with each other
           browser: chrome
-          # we can't do npm build because nextjs overwrites NODE_ENV to be production
-          # which disables the dev user login that cypress uses
-          start: npm run dev:test &
           wait-on: 'http://localhost:3000'
           config-file: 'cypress/cypress.config.ts'
           # the default of 4000 can be too quick and result in premature failures
