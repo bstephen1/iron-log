@@ -449,7 +449,7 @@ export async function deleteCategory(userId: ObjectId, _id: string) {
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchBodyweightHistory(
+export async function fetchBodyweights(
   userId: ObjectId,
   filter: Filter<Bodyweight>,
   { limit, start = '0', end = '9', sort, date }: DateRangeQuery
@@ -489,9 +489,4 @@ export async function updateBodyweight(
       returnDocument: 'after',
     }
   )
-}
-
-// todo: use id, not date. Not currently in use.
-export async function deleteBodyweight(userId: ObjectId, date: string) {
-  return await bodyweightHistory.deleteOne({ userId, date })
 }

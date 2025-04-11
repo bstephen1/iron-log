@@ -1,9 +1,9 @@
 import { Record } from '../../models/Record'
-import { useBodyweightHistory, useModifiers } from './restService'
+import { useBodyweights, useModifiers } from './restService'
 
 export default function useExtraWeight(record: Record) {
   const { modifiersIndex } = useModifiers()
-  const { data: bodyweightData } = useBodyweightHistory(
+  const { data: bodyweightData } = useBodyweights(
     {
       limit: 2,
       end: record.date,

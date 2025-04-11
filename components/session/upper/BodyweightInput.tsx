@@ -11,7 +11,7 @@ import InputField from '../../../components/form-fields/InputField'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateBodyweight,
-  useBodyweightHistory,
+  useBodyweights,
 } from '../../../lib/frontend/restService'
 import { createBodyweight, WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
@@ -27,7 +27,7 @@ export default function BodyweightInput({
   ...textFieldProps
 }: Props & Omit<TextFieldProps, 'slotProps'>) {
   const [bodyweightType, setBodyweightType] = useState<WeighInType>('official')
-  const { data, mutate } = useBodyweightHistory({
+  const { data, mutate } = useBodyweights({
     limit: 1,
     end: day.format(DATE_FORMAT),
     type: bodyweightType,

@@ -321,7 +321,7 @@ export async function deleteCategory(id: string): Promise<string> {
 // BODYWEIGHT
 //------------
 
-export function useBodyweightHistory(
+export function useBodyweights(
   query?: BodyweightRangeQuery,
   shouldFetch = true
 ) {
@@ -347,7 +347,7 @@ export function useBodyweightHistory(
 export async function updateBodyweight(
   newBodyweight: Bodyweight
 ): Promise<Bodyweight> {
-  return fetchJson(URI_BODYWEIGHT, {
+  return fetchJson(URI_BODYWEIGHT + newBodyweight.date, {
     method: 'PUT',
     body: toJson(newBodyweight),
     headers: { 'content-type': 'application/json' },

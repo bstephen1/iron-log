@@ -1,38 +1,31 @@
 import { vi } from 'vitest'
-import {
-  fetchBodyweightHistory,
-  updateBodyweight,
-} from '../../../lib/backend/mongoService'
+import { updateBodyweight } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
-  expectApiRespondsWithData,
   expectApiErrorsOnMalformedBody,
+  expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './index.api'
 import { createBodyweight } from '../../../models/Bodyweight'
+import handler from './[date].api'
 
 const data = createBodyweight(50, 'official')
-
-it('fetches given bodyweight', async () => {
-  vi.mocked(fetchBodyweightHistory).mockResolvedValue([data])
-
-  await expectApiRespondsWithData({ data: [data], handler })
-})
+const params = { date: data.date }
 
 it('updates given bodyweight', async () => {
   vi.mocked(updateBodyweight).mockResolvedValue(data)
 
-  await expectApiRespondsWithData({ data, handler, method: 'PUT' })
+  await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
 })
 
 it('blocks invalid method types', async () => {
-  await expectApiErrorsOnInvalidMethod({ handler })
+  await expectApiErrorsOnInvalidMethod({ handler, params })
 })
 
 it('guards against missing required fields', async () => {
   await expectApiErrorsOnMalformedBody({
     handler,
     method: 'PUT',
+    params,
     data: { missing: 'type, value' },
   })
 })
@@ -41,6 +34,7 @@ it('guards against invalid fields', async () => {
   await expectApiErrorsOnMalformedBody({
     handler,
     method: 'PUT',
+    params,
     data: { ...data, type: 'invalid' },
   })
 })
