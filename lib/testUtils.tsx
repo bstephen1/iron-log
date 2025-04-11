@@ -112,6 +112,12 @@ export function useServer(
   )
 }
 
+const printBodyifError = async (res: Response, expectedStatus: number) => {
+  if (res.status !== expectedStatus) {
+    console.error(await res.json())
+  }
+}
+
 interface TestApiResponseProps<T = unknown>
   extends Partial<NtarhInitPagesRouter<T>> {
   data?: T
@@ -134,9 +140,8 @@ export async function expectApiRespondsWithData({
     test: async ({ fetch }) => {
       const res = await fetch({ method, body, headers })
       const json = await res.json()
-      if (!res.ok) {
-        console.error(json)
-      }
+      printBodyifError(res, StatusCodes.OK)
+
       expect(res.status).toBe(StatusCodes.OK)
       expect(json).toEqual(data)
     },
@@ -155,6 +160,7 @@ export async function expectApiErrorsOnInvalidMethod({
       // must be a supported nextjs method: https://github.com/vercel/next.js/blob/canary/packages/next/src/server/web/http.ts
       // default method is one that is never used in the app
       const res = await fetch({ method: method ?? 'OPTIONS' })
+      printBodyifError(res, methodNotAllowed.statusCode)
 
       expect(res.status).toBe(methodNotAllowed.statusCode)
       expect(await res.json()).toMatchObject({
@@ -178,6 +184,7 @@ export async function expectApiErrorsOnMalformedBody({
       const body = JSON.stringify(data)
       const headers = { 'content-type': 'application/json' }
       const res = await fetch({ method, headers, body })
+      printBodyifError(res, StatusCodes.BAD_REQUEST)
 
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
       expect(await res.json()).toMatchObject({
@@ -199,6 +206,7 @@ export async function expectApiErrorsOnMissingParams({
     pagesHandler: handler,
     test: async ({ fetch }) => {
       const res = await fetch({ method: 'PUT' })
+      printBodyifError(res, StatusCodes.BAD_REQUEST)
 
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
     },

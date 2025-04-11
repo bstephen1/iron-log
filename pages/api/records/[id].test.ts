@@ -1,6 +1,5 @@
 import { vi } from 'vitest'
 import {
-  addRecord,
   deleteRecord,
   fetchRecord,
   updateRecord,
@@ -15,7 +14,7 @@ import { generateId } from '../../../lib/util'
 import handler from './[id].api'
 import { createRecord } from '../../../models/Record'
 
-const data = createRecord('2000-01-01')
+export const data = createRecord('2000-01-01')
 const id = generateId()
 const params = { id }
 
@@ -23,12 +22,6 @@ it('fetches given record', async () => {
   vi.mocked(fetchRecord).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
-})
-
-it('adds given record', async () => {
-  vi.mocked(addRecord).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'POST' })
 })
 
 it('updates given record fields', async () => {

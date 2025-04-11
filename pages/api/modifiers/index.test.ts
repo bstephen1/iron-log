@@ -1,7 +1,8 @@
 import { vi } from 'vitest'
-import { fetchModifiers } from '../../../lib/backend/mongoService'
+import { addModifier, fetchModifiers } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
+  expectApiErrorsOnMalformedBody,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import handler from './index.api'
@@ -12,6 +13,20 @@ it('fetches modifiers', async () => {
   vi.mocked(fetchModifiers).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })
+})
+
+it('adds modifier', async () => {
+  const data = createModifier('hi')
+  vi.mocked(addModifier).mockResolvedValue(data)
+
+  await expectApiRespondsWithData({ data, handler, method: 'POST' })
+})
+
+it('guards against missing required fields', async () => {
+  await expectApiErrorsOnMalformedBody({
+    handler,
+    data: { missing: 'name' },
+  })
 })
 
 it('blocks invalid method types', async () => {

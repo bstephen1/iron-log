@@ -4,14 +4,18 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { fetchCategories } from '../../../lib/backend/mongoService'
+import { addCategory, fetchCategories } from '../../../lib/backend/mongoService'
+import { categorySchema } from '../../../models/AsyncSelectorOption/Category'
 
 async function handler(req: NextApiRequest, userId: UserId) {
-  if (req.method !== 'GET') {
-    throw methodNotAllowed
+  switch (req.method) {
+    case 'GET':
+      return await fetchCategories(userId)
+    case 'POST':
+      return await addCategory(userId, categorySchema.parse(req.body))
+    default:
+      throw methodNotAllowed
   }
-
-  return await fetchCategories(userId)
 }
 
 export default withStatusHandler(handler)

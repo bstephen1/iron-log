@@ -5,7 +5,6 @@ import {
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import {
-  addRecord,
   deleteRecord,
   fetchRecord,
   updateRecord,
@@ -20,8 +19,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
   switch (req.method) {
     case 'GET':
       return await fetchRecord(userId, id)
-    case 'POST':
-      return await addRecord(userId, recordSchema.parse(req.body))
     case 'PUT':
       return await updateRecord(userId, recordSchema.parse(req.body))
     case 'PATCH':

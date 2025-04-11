@@ -1,6 +1,5 @@
 import { vi } from 'vitest'
 import {
-  addCategory,
   deleteCategory,
   fetchCategory,
   updateCategoryFields,
@@ -15,19 +14,13 @@ import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import handler from './[id].api'
 import { generateId } from '../../../lib/util'
 
-const data = createCategory('hi')
+export const data = createCategory('hi')
 const params = { id: generateId() }
 
 it('fetches given category', async () => {
   vi.mocked(fetchCategory).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
-})
-
-it('adds given category', async () => {
-  vi.mocked(addCategory).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'POST' })
 })
 
 it('updates given category', async () => {
@@ -53,14 +46,6 @@ it('blocks invalid method types', async () => {
 
 it('requires an id', async () => {
   await expectApiErrorsOnMissingParams({ handler })
-})
-
-it('guards against missing fields', async () => {
-  await expectApiErrorsOnMalformedBody({
-    handler,
-    params,
-    data: { missing: 'name' },
-  })
 })
 
 it('guards against invalid fields', async () => {

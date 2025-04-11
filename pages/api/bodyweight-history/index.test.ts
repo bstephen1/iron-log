@@ -36,7 +36,7 @@ it('blocks invalid method types', async () => {
   await expectApiErrorsOnInvalidMethod({ handler })
 })
 
-it('guards against missing fields', async () => {
+it('guards against missing required fields', async () => {
   await expectApiErrorsOnMalformedBody({
     handler,
     data: { missing: 'type, value' },

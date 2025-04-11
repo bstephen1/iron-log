@@ -4,14 +4,18 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { fetchModifiers } from '../../../lib/backend/mongoService'
+import { addModifier, fetchModifiers } from '../../../lib/backend/mongoService'
+import { modifierSchema } from '../../../models/AsyncSelectorOption/Modifier'
 
 async function handler(req: NextApiRequest, userId: UserId) {
-  if (req.method !== 'GET') {
-    throw methodNotAllowed
+  switch (req.method) {
+    case 'GET':
+      return await fetchModifiers(userId)
+    case 'POST':
+      return await addModifier(userId, modifierSchema.parse(req.body))
+    default:
+      throw methodNotAllowed
   }
-
-  return await fetchModifiers(userId)
 }
 
 export default withStatusHandler(handler)

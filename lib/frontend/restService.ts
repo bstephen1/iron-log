@@ -158,7 +158,7 @@ export function useRecords(
 }
 
 export async function addRecord(newRecord: Record): Promise<Record> {
-  return fetchJson(URI_RECORDS + newRecord._id, {
+  return fetchJson(URI_RECORDS, {
     method: 'POST',
     body: toJson(newRecord),
     headers: { 'content-type': 'application/json' },
@@ -258,7 +258,7 @@ export function useModifiers() {
 }
 
 export async function addModifier(newModifier: Modifier): Promise<Modifier> {
-  return fetchJson(URI_MODIFIERS + newModifier._id, {
+  return fetchJson(URI_MODIFIERS, {
     method: 'POST',
     body: toJson(newModifier),
     headers: { 'content-type': 'application/json' },
@@ -300,7 +300,7 @@ export function useCategories() {
 }
 
 export async function addCategory(newCategory: Category): Promise<Category> {
-  return fetchJson(URI_CATEGORIES + newCategory._id, {
+  return fetchJson(URI_CATEGORIES, {
     method: 'POST',
     body: toJson(newCategory),
     headers: { 'content-type': 'application/json' },
