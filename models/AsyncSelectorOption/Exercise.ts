@@ -1,6 +1,6 @@
 import { Filter } from 'mongodb'
 import { z } from 'zod'
-import { asyncSelectorOptionSchema, createAsyncSelectorOption } from '.'
+import { asyncSelectorOptionSchema } from '.'
 import { removeUndefinedKeys, toArray } from '../../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from '../ArrayMatchType'
 import { attributesSchema } from '../Attributes'
@@ -11,34 +11,18 @@ import { apiArraySchema } from '../schemas'
 
 export interface Exercise extends z.infer<typeof exerciseSchema> {}
 export const exerciseSchema = asyncSelectorOptionSchema.extend({
-  attributes: attributesSchema,
-  notes: z.array(noteSchema),
-  displayFields: displayFieldsSchema.nullish(),
-  weight: z.number().nullish(),
-  categories: z.array(z.string()),
-  modifiers: z.array(z.string()),
+  attributes: attributesSchema.default({}),
+  notes: z.array(noteSchema).default([]),
+  displayFields: displayFieldsSchema.nullish().default(null),
+  weight: z.number().nullish().default(null),
+  categories: z.array(z.string()).default([]),
+  modifiers: z.array(z.string()).default([]),
 })
 
 export const createExercise = (
   name: string,
-  {
-    attributes = {},
-    notes = [],
-    displayFields = null,
-    weight = null,
-    categories = [],
-    modifiers = [],
-    status = Status.active,
-  }: Partial<Exercise> = {}
-): Exercise => ({
-  ...createAsyncSelectorOption(name, status),
-  attributes,
-  notes,
-  displayFields,
-  weight,
-  categories,
-  modifiers,
-})
+  draft: Partial<Exercise> = {}
+): Exercise => exerciseSchema.parse({ name, ...draft })
 
 export type ExerciseQuery = z.input<typeof exerciseQuerySchema>
 export const exerciseQuerySchema = z

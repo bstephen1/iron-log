@@ -1,6 +1,5 @@
 import { vi } from 'vitest'
 import {
-  addModifier,
   deleteModifier,
   fetchModifier,
   updateModifierFields,
@@ -15,19 +14,13 @@ import handler from './[id].api'
 import { createModifier } from '../../../models/AsyncSelectorOption/Modifier'
 import { generateId } from '../../../lib/util'
 
-const data = createModifier('hi', 5)
+export const data = createModifier('hi', 5)
 const params = { id: generateId() }
 
 it('fetches given modifier', async () => {
   vi.mocked(fetchModifier).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
-})
-
-it('adds given modifier', async () => {
-  vi.mocked(addModifier).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'POST' })
 })
 
 it('updates given modifier', async () => {
@@ -49,14 +42,6 @@ it('deletes given modifier', async () => {
 
 it('blocks invalid method types', async () => {
   await expectApiErrorsOnInvalidMethod({ handler, params })
-})
-
-it('guards against missing fields', async () => {
-  await expectApiErrorsOnMalformedBody({
-    handler,
-    params,
-    data: { name: 'hi' },
-  })
 })
 
 it('guards against invalid fields', async () => {

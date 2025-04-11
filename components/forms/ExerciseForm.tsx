@@ -2,8 +2,8 @@ import Grid from '@mui/material/Grid2'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
+  addExercise,
   deleteExercise,
-  updateExercise,
   useCategories,
   useExercises,
   useModifiers,
@@ -67,7 +67,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
 
         const newName = exercise.name + ' (copy)'
         const newExercise = createExercise(newName, exercise)
-        await updateExercise(newExercise)
+        await addExercise(newExercise)
         setUrlExercise(newName)
 
         return [...cur, newExercise]

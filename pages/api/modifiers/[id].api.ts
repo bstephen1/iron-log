@@ -5,7 +5,6 @@ import {
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import {
-  addModifier,
   deleteModifier,
   fetchModifier,
   updateModifierFields,
@@ -19,8 +18,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
   switch (req.method) {
     case 'GET':
       return await fetchModifier(userId, id)
-    case 'POST':
-      return await addModifier(userId, modifierSchema.parse(req.body))
     case 'PATCH':
       return await updateModifierFields(
         userId,

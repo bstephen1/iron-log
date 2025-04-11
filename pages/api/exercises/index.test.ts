@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import { fetchExercises } from '../../../lib/backend/mongoService'
+import { addExercise, fetchExercises } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
@@ -12,6 +12,13 @@ it('fetches exercises', async () => {
   vi.mocked(fetchExercises).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })
+})
+
+it('adds given exercise', async () => {
+  const data = createExercise('hi')
+  vi.mocked(addExercise).mockResolvedValue(data)
+
+  await expectApiRespondsWithData({ data, handler, method: 'POST' })
 })
 
 it('blocks invalid method types', async () => {

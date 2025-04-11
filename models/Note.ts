@@ -1,10 +1,11 @@
 import { z } from 'zod'
 import { generateId } from '../lib/util'
+import { idSchema } from './schemas'
 
 export interface Note extends z.infer<typeof noteSchema> {}
 
 export const noteSchema = z.object({
-  _id: z.string(),
+  _id: idSchema,
   value: z.string(),
   tags: z.array(z.string()),
 })

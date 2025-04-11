@@ -4,15 +4,18 @@ import {
   UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { addModifier, fetchModifiers } from '../../../lib/backend/mongoService'
-import { modifierSchema } from '../../../models/AsyncSelectorOption/Modifier'
+import { fetchBodyweights } from '../../../lib/backend/mongoService'
+import { dateRangeQuerySchema } from '../../../models/DateRangeQuery'
+import { bodyweightQuerySchema } from '../../../models/Bodyweight'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   switch (req.method) {
     case 'GET':
-      return await fetchModifiers(userId)
-    case 'POST':
-      return await addModifier(userId, modifierSchema.parse(req.body))
+      return await fetchBodyweights(
+        userId,
+        bodyweightQuerySchema.parse(req.query),
+        dateRangeQuerySchema.parse(req.query)
+      )
     default:
       throw methodNotAllowed
   }

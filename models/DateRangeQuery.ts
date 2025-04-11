@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { dateSchema } from './schemas'
 
 export default interface DateRangeQuery
   extends z.infer<typeof dateRangeQuerySchema> {}
@@ -15,6 +16,6 @@ export const dateRangeQuerySchema = z
     sort: z.enum(['oldestFirst', 'newestFirst']),
     /** Use a specific date. Overrides start/end */
     // todo: remove this or have it set start/limit to the same value
-    date: z.string().date(),
+    date: dateSchema,
   })
   .partial()

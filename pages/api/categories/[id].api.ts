@@ -5,7 +5,6 @@ import {
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import {
-  addCategory,
   deleteCategory,
   fetchCategory,
   updateCategoryFields,
@@ -19,8 +18,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
   switch (req.method) {
     case 'GET':
       return await fetchCategory(userId, id)
-    case 'POST':
-      return await addCategory(userId, categorySchema.parse(req.body))
     case 'PATCH':
       return await updateCategoryFields(
         userId,

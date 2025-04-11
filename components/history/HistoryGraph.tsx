@@ -19,17 +19,14 @@ import {
   DATE_FORMAT,
   DEFAULT_CLOTHING_OFFSET,
 } from '../../lib/frontend/constants'
-import {
-  useBodyweightHistory,
-  useRecords,
-} from '../../lib/frontend/restService'
+import { useBodyweights, useRecords } from '../../lib/frontend/restService'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 import { UpdateState } from '../../lib/util'
 import { Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
+import { RecordRangeQuery } from '../../models/Record'
 import { Set } from '../../models/Set'
 import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
-import { RecordRangeQuery } from '../../models/Record'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {
@@ -72,13 +69,13 @@ interface Props {
 export default function HistoryGraph({ query, swipeToRecord }: Props) {
   // BWs and records are sorted newest first. It looks more natural in the
   // swiper to start on the right and move left vs oldest first.
-  const { data: bodyweightData } = useBodyweightHistory(query)
-  const { data: earliestRecordOfficialBw } = useBodyweightHistory({
+  const { data: bodyweightData } = useBodyweights(query)
+  const { data: earliestRecordOfficialBw } = useBodyweights({
     end: query?.start,
     limit: 1,
     type: 'official',
   })
-  const { data: earliestRecordAnyBw } = useBodyweightHistory({
+  const { data: earliestRecordAnyBw } = useBodyweights({
     end: query?.start,
     limit: 1,
   })

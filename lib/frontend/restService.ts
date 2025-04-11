@@ -96,14 +96,6 @@ export function useSessionLogs(query: DateRangeQuery) {
   }
 }
 
-export async function addSessionLog(session: SessionLog): Promise<SessionLog> {
-  return fetchJson(URI_SESSIONS + session.date, {
-    method: 'POST',
-    body: toJson(session),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
 export async function updateSessionLog(
   newSesson: SessionLog
 ): Promise<SessionLog> {
@@ -158,7 +150,7 @@ export function useRecords(
 }
 
 export async function addRecord(newRecord: Record): Promise<Record> {
-  return fetchJson(URI_RECORDS + newRecord._id, {
+  return fetchJson(URI_RECORDS, {
     method: 'POST',
     body: toJson(newRecord),
     headers: { 'content-type': 'application/json' },
@@ -215,16 +207,8 @@ export function useExercise(id: string | null) {
 }
 
 export async function addExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES + newExercise._id, {
+  return fetchJson(URI_EXERCISES, {
     method: 'POST',
-    body: toJson(newExercise),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function updateExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES + newExercise._id, {
-    method: 'PUT',
     body: toJson(newExercise),
     headers: { 'content-type': 'application/json' },
   })
@@ -266,7 +250,7 @@ export function useModifiers() {
 }
 
 export async function addModifier(newModifier: Modifier): Promise<Modifier> {
-  return fetchJson(URI_MODIFIERS + newModifier._id, {
+  return fetchJson(URI_MODIFIERS, {
     method: 'POST',
     body: toJson(newModifier),
     headers: { 'content-type': 'application/json' },
@@ -308,7 +292,7 @@ export function useCategories() {
 }
 
 export async function addCategory(newCategory: Category): Promise<Category> {
-  return fetchJson(URI_CATEGORIES + newCategory._id, {
+  return fetchJson(URI_CATEGORIES, {
     method: 'POST',
     body: toJson(newCategory),
     headers: { 'content-type': 'application/json' },
@@ -337,7 +321,7 @@ export async function deleteCategory(id: string): Promise<string> {
 // BODYWEIGHT
 //------------
 
-export function useBodyweightHistory(
+export function useBodyweights(
   query?: BodyweightRangeQuery,
   shouldFetch = true
 ) {
@@ -360,20 +344,10 @@ export function useBodyweightHistory(
   }
 }
 
-export async function addBodyweight(
-  newBodyweight: Bodyweight
-): Promise<Bodyweight> {
-  return fetchJson(URI_BODYWEIGHT, {
-    method: 'POST',
-    body: toJson(newBodyweight),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
 export async function updateBodyweight(
   newBodyweight: Bodyweight
 ): Promise<Bodyweight> {
-  return fetchJson(URI_BODYWEIGHT, {
+  return fetchJson(URI_BODYWEIGHT + newBodyweight.date, {
     method: 'PUT',
     body: toJson(newBodyweight),
     headers: { 'content-type': 'application/json' },

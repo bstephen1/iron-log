@@ -8,13 +8,13 @@ import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import DateRangeQuery from './DateRangeQuery'
 import { noteSchema } from './Note'
 import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
-import { apiArraySchema } from './schemas'
+import { apiArraySchema, dateSchema, idSchema } from './schemas'
 
 // todo: add activeCategory (for programming)
 export interface Record extends z.infer<typeof recordSchema> {}
 export const recordSchema = z.object({
-  _id: z.string(),
-  date: z.string(),
+  _id: idSchema,
+  date: dateSchema,
   exercise: exerciseSchema.nullable(),
   activeModifiers: z.array(z.string()),
   category: z.string().nullable(),

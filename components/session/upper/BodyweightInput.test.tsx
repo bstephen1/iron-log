@@ -145,9 +145,11 @@ describe('input', () => {
 
     // simulate the res from revalidation is different from UI value
     const newWeight = 15
+
+    const newBW = createBodyweight(newWeight, 'official', date2020)
     useServer(
-      URI_BODYWEIGHT,
-      createBodyweight(newWeight, 'official', date2020),
+      URI_BODYWEIGHT + newBW.date,
+      newBW,
       // slight delay is necessary for the optimistic data to be detected
       { delay: 100 }
     )
