@@ -198,22 +198,6 @@ export async function fetchRecord(
     .next()
 }
 
-export async function updateRecord(
-  userId: ObjectId,
-  record: Record
-): Promise<Record | null> {
-  await records.replaceOne(
-    { userId, _id: record._id },
-    { ...record, userId },
-    {
-      upsert: true,
-    }
-  )
-
-  // When updating record, we have to make sure the exercise data is up to date.
-  return await fetchRecord(userId, record._id)
-}
-
 export async function updateRecordFields(
   userId: ObjectId,
   _id: string,
@@ -461,14 +445,6 @@ export async function deleteCategory(userId: ObjectId, _id: string) {
 //------------
 // BODYWEIGHT
 //------------
-
-export async function addBodyweight(
-  userId: ObjectId,
-  bodyweight: Bodyweight
-): Promise<Bodyweight> {
-  await bodyweightHistory.insertOne({ ...bodyweight, userId })
-  return bodyweight
-}
 
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999

@@ -7,7 +7,6 @@ import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHand
 import {
   deleteRecord,
   fetchRecord,
-  updateRecord,
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
 import { idSchema } from '../../../models/schemas'
@@ -19,8 +18,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
   switch (req.method) {
     case 'GET':
       return await fetchRecord(userId, id)
-    case 'PUT':
-      return await updateRecord(userId, recordSchema.parse(req.body))
     case 'PATCH':
       return await updateRecordFields(
         userId,

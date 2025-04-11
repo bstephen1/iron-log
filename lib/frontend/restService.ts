@@ -96,14 +96,6 @@ export function useSessionLogs(query: DateRangeQuery) {
   }
 }
 
-export async function addSessionLog(session: SessionLog): Promise<SessionLog> {
-  return fetchJson(URI_SESSIONS + session.date, {
-    method: 'POST',
-    body: toJson(session),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
 export async function updateSessionLog(
   newSesson: SessionLog
 ): Promise<SessionLog> {
@@ -350,16 +342,6 @@ export function useBodyweightHistory(
 
     mutate,
   }
-}
-
-export async function addBodyweight(
-  newBodyweight: Bodyweight
-): Promise<Bodyweight> {
-  return fetchJson(URI_BODYWEIGHT, {
-    method: 'POST',
-    body: toJson(newBodyweight),
-    headers: { 'content-type': 'application/json' },
-  })
 }
 
 export async function updateBodyweight(

@@ -1,9 +1,5 @@
 import { vi } from 'vitest'
-import {
-  addSession,
-  fetchSession,
-  updateSession,
-} from '../../../lib/backend/mongoService'
+import { fetchSession, updateSession } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
@@ -21,12 +17,6 @@ it('fetches given session', async () => {
   vi.mocked(fetchSession).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
-})
-
-it('adds given session', async () => {
-  vi.mocked(addSession).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'POST' })
 })
 
 it('updates given session', async () => {

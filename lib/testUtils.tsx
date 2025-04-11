@@ -205,7 +205,7 @@ export async function expectApiErrorsOnMissingParams({
     ...testApiHandlerProps,
     pagesHandler: handler,
     test: async ({ fetch }) => {
-      const res = await fetch({ method: 'PUT' })
+      const res = await fetch({ method: 'GET' })
       printBodyifError(res, StatusCodes.BAD_REQUEST)
 
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)

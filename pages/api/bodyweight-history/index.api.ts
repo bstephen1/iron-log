@@ -5,7 +5,6 @@ import {
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import {
-  addBodyweight,
   fetchBodyweightHistory,
   updateBodyweight,
 } from '../../../lib/backend/mongoService'
@@ -25,8 +24,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
         bodyweightQuerySchema.parse(req.query),
         dateRangeQuerySchema.parse(req.query)
       )
-    case 'POST':
-      return await addBodyweight(userId, bodyweightSchema.parse(req.body))
     case 'PUT':
       return await updateBodyweight(userId, bodyweightSchema.parse(req.body))
     default:

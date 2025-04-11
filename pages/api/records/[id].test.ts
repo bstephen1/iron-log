@@ -2,7 +2,6 @@ import { vi } from 'vitest'
 import {
   deleteRecord,
   fetchRecord,
-  updateRecord,
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
 import {
@@ -28,12 +27,6 @@ it('updates given record fields', async () => {
   vi.mocked(updateRecordFields).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PATCH' })
-})
-
-it('updates given record', async () => {
-  vi.mocked(updateRecord).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
 })
 
 it('deletes given record', async () => {
