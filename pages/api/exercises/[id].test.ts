@@ -1,9 +1,7 @@
 import { vi } from 'vitest'
 import {
-  addExercise,
   deleteExercise,
   fetchExercise,
-  updateExercise,
   updateExerciseFields,
 } from '../../../lib/backend/mongoService'
 import {
@@ -24,22 +22,10 @@ it('fetches given exercise', async () => {
   await expectApiRespondsWithData({ data, handler, params })
 })
 
-it('adds given exercise', async () => {
-  vi.mocked(addExercise).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'POST' })
-})
-
 it('updates given exercise fields', async () => {
   vi.mocked(updateExerciseFields).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params, method: 'PATCH' })
-})
-
-it('updates given exercise', async () => {
-  vi.mocked(updateExercise).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
 })
 
 it('deletes given exercise', async () => {

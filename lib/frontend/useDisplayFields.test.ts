@@ -16,7 +16,7 @@ it('returns display fields from record', () => {
   const exercise = createExercise('lift heavy thing', { displayFields })
   const { result } = renderHook(() => useDisplayFields(exercise))
 
-  expect(result.current).toBe(displayFields)
+  expect(result.current).toEqual(displayFields)
 })
 
 it('returns default split weight fields', () => {

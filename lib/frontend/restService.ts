@@ -215,16 +215,8 @@ export function useExercise(id: string | null) {
 }
 
 export async function addExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES + newExercise._id, {
+  return fetchJson(URI_EXERCISES, {
     method: 'POST',
-    body: toJson(newExercise),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function updateExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES + newExercise._id, {
-    method: 'PUT',
     body: toJson(newExercise),
     headers: { 'content-type': 'application/json' },
   })

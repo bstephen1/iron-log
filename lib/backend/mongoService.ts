@@ -266,21 +266,6 @@ export async function fetchExercise(
   return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
-export async function updateExercise(
-  userId: ObjectId,
-  exercise: Exercise
-): Promise<Exercise | null> {
-  return await exercises.findOneAndReplace(
-    { userId, _id: exercise._id },
-    { ...exercise, userId },
-    {
-      upsert: true,
-      returnDocument: 'after',
-      projection: { userId: 0 },
-    }
-  )
-}
-
 export async function updateExerciseFields(
   userId: ObjectId,
   _id: string,
