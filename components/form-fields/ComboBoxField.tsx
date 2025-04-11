@@ -16,7 +16,7 @@ import useField from './useField'
 interface ComboBoxFieldProps
   extends AsyncAutocompleteProps<string, true, false> {
   options?: string[]
-  initialValue: string[]
+  initialValue?: string[]
   /** Placeholder that will only show if there are no values selected.
    *  If normal placeholder is provided it will overwrite this.
    */
@@ -46,7 +46,7 @@ interface ComboBoxFieldProps
  */
 export default memo(function ComboBoxField({
   options = [],
-  initialValue,
+  initialValue = [],
   emptyPlaceholder = '',
   handleSubmit = doNothing,
   handleChange = doNothing,
