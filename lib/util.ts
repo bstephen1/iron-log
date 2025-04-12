@@ -1,8 +1,6 @@
-import dayjs from 'dayjs'
 import { v4 as uuid } from 'uuid'
 import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
-import { DATE_FORMAT } from './frontend/constants'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -11,7 +9,7 @@ import { DATE_FORMAT } from './frontend/constants'
 export const generateId = () => uuid()
 
 // manually have to specify undefined is possible
-export type Index<T> = { [key: string]: T | undefined }
+type Index<T> = { [key: string]: T | undefined }
 /** Takes an array of objects which each have a given index field and converts them to an object of objects indexed by the given field.
  * Index field values must be strings
  *
@@ -28,12 +26,6 @@ export const arrayToIndex = <T extends object>(index: keyof T, arr?: T[]) => {
   })
   return map
 }
-
-export const dayjsStringAdd = (
-  date: string,
-  value: number,
-  unit?: dayjs.ManipulateType
-) => dayjs(date).add(value, unit).format(DATE_FORMAT)
 
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
 export const doNothing = () => {}
@@ -57,25 +49,6 @@ export const fetchJson = async <T>(...args: Parameters<typeof fetch>) => {
     res.status,
     'could not fetch data. Check console for details.'
   )
-}
-
-/** The api will throw a 404 error if the requested resource is not found.
- *  This function will ignore 404 errors and pass along null values.
- *  It should only be used if null values are expected (typically for
- *  a useSwr request of a single item, which assumes not found will
- *  return null).)
- */
-export const fetchJsonNullable = async <T>(
-  ...params: Parameters<typeof fetchJson>
-) => {
-  try {
-    return await fetchJson<T>(...params)
-  } catch (e) {
-    if (e instanceof ApiError && e.statusCode === 404) {
-      return null
-    }
-    throw e
-  }
 }
 
 /** Capitalize first letter of a string.

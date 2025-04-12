@@ -45,8 +45,8 @@ export const createRecord = (
 })
 
 // we use a type instead of extending an interface so you can see the component queries
-export type RecordRangeQuery = RecordQuery & DateRangeQuery
-export interface RecordQuery extends z.input<typeof recordQuerySchema> {}
+export type RecordRangeQuery = z.input<typeof recordQuerySchema> &
+  DateRangeQuery
 export const recordQuerySchema = z
   .object({
     exercise: z.string(),

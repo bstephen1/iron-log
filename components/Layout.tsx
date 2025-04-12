@@ -4,7 +4,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { ReactNode } from 'react'
 import { bluePalette } from '../styles/themePalettes'
-import Footer from './Footer'
 import Navbar from './Navbar'
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -19,7 +18,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         <main>
           <Container maxWidth="lg">{children}</Container>
         </main>
-        <Footer />
       </LocalizationProvider>
     </ThemeProvider>
   )

@@ -29,14 +29,6 @@ const convertSort = (sort: DateRangeQuery['sort']) =>
 // SESSION
 //---------
 
-export async function addSession(
-  userId: ObjectId,
-  sessionLog: SessionLog
-): Promise<SessionLog> {
-  await sessions.insertOne({ ...sessionLog, userId })
-  return sessionLog
-}
-
 export async function fetchSession(
   userId: ObjectId,
   date: string
