@@ -10,7 +10,7 @@ import TooltipIconButton from '../../../TooltipIconButton'
 
 const title = 'Exercise notes'
 
-export interface Props {
+interface Props {
   /** considered readOnly if not provided */
   mutateExerciseFields?: UpdateFields<Exercise>
   notes?: Note[]

@@ -15,11 +15,6 @@ export const methodNotAllowed = new ApiError(
   'Method not allowed.'
 )
 
-export const recordNotFound = new ApiError(
-  StatusCodes.NOT_FOUND,
-  'Record not found.'
-)
-
 /** userId format for backend use. The frontend will not see the userId.
  * For mongo this is an ObjectId. */
 export type UserId = ObjectId
