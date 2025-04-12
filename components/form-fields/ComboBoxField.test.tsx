@@ -1,16 +1,42 @@
-import { render } from '../../lib/testUtils'
+import { render, screen } from '../../lib/testUtils'
 import ComboBoxField from './ComboBoxField'
 
 const mockHandleChange = vi.fn()
 const mockHandleSubmit = vi.fn()
 
-it('', async () => {
-  const option = 'option'
+it('calls handlers on remove', async () => {
+  const options = ['one', 'two', 'three']
   const { user } = render(
     <ComboBoxField
-      options={[option]}
+      initialValue={options}
+      options={options}
       handleChange={mockHandleChange}
       handleSubmit={mockHandleSubmit}
     />
   )
+
+  // remove  middle value
+  await user.click(screen.getAllByTestId('CancelIcon')[1])
+  expect(mockHandleSubmit).toHaveBeenCalledWith(['one', 'three'])
+  expect(mockHandleChange).toHaveBeenCalledWith('two', 'removeOption')
+})
+
+it('calls handlers on add', async () => {
+  const options = ['one', 'two', 'three']
+  const { user } = render(
+    <ComboBoxField
+      // without setting an initialValue tests cause infinite rerenders, unsure why
+      initialValue={[]}
+      options={options}
+      handleChange={mockHandleChange}
+      handleSubmit={mockHandleSubmit}
+    />
+  )
+
+  // open dropbox and add value
+  await user.click(screen.getByRole('combobox'))
+  await user.click(screen.getByText('one'))
+
+  expect(mockHandleSubmit).toHaveBeenCalledWith(['one'])
+  expect(mockHandleChange).toHaveBeenCalledWith('one', 'selectOption')
 })
