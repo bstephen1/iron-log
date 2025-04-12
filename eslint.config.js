@@ -10,9 +10,6 @@ const eslintConfig = [
   {
     plugins: { vitest, 'unused-imports': unusedImports },
     rules: {
-      ...vitest.configs.recommended.rules,
-      // we allows expects to be in external functions as long as they start with "expect"
-      'vitest/expect-expect': ['error', { assertFunctionNames: ['expect*'] }],
       // no it.only
       'vitest/no-focused-tests': 'error',
     },

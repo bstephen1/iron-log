@@ -1,5 +1,5 @@
 name: CI
-on: pull_request
+on: push
 jobs:
   e2e:
     # this is the github environment that contains the "secrets" object

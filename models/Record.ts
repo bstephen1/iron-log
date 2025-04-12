@@ -18,9 +18,9 @@ export const recordSchema = z.object({
   exercise: exerciseSchema.nullable(),
   activeModifiers: z.array(z.string()),
   category: z.string().nullable(),
-  notes: z.array(noteSchema),
+  notes: z.array(noteSchema).default([]),
   setType: setTypeSchema,
-  sets: z.array(setSchema),
+  sets: z.array(setSchema).default([]),
 })
 
 export const createRecord = (
