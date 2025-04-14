@@ -3,6 +3,7 @@ import type { AuthOptions } from 'next-auth'
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import GitHub from 'next-auth/providers/github'
+import { z } from 'zod'
 import { clientPromise } from '../../../lib/backend/mongoConnect'
 import { devUserId } from '../../../lib/frontend/constants'
 
@@ -12,10 +13,36 @@ const devProvider =
   Credentials({
     id: 'dev',
     name: 'dev user',
-    credentials: {},
+    credentials: {
+      id: {
+        label: 'user id',
+        type: 'text',
+        placeholder: '24 digits. Uses default id if blank',
+      },
+    },
     // Any object returned will be saved in `user` property of the JWT
-    async authorize() {
-      return { id: devUserId }
+    async authorize(credentials) {
+      // default value
+      if (!credentials?.id) return { id: devUserId }
+
+      const objectIdSchema = z
+        .string()
+        .regex(/^\d{24}$/, {
+          message: 'Input must be a 24-digit number',
+        })
+        .optional()
+        .default(devUserId)
+
+      const parsedId = objectIdSchema.safeParse(credentials.id)
+
+      if (parsedId.error) {
+        console.error(parsedId.error.format(), 'given: ', credentials.id)
+        return null
+      }
+
+      return {
+        id: parsedId.data,
+      }
     },
   })
 
@@ -24,11 +51,13 @@ const devProvider =
 const guestProvider = Credentials({
   id: 'guest',
   name: 'guest user',
+  // we have to trick typescript into thinking this is the same type as devProvider
+  // by manually specifying the generic type instead of letting it infer.
   credentials: {},
   async authorize() {
     // session is only getting passed "name", "email", and "image" fields.
     // May be related to session() callback below
-    return { id: devUserId, name: 'guest' }
+    return { id: devUserId }
   },
 })
 
@@ -40,7 +69,8 @@ export const authOptions: AuthOptions = {
       id: 'github',
     }),
     guestProvider,
-  ].concat(isProd ? [] : devProvider),
+    ...(isProd ? [] : [devProvider]),
+  ],
   theme: {
     // todo: add logo
     // logo: '',
