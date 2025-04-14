@@ -6,6 +6,7 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
+    exclude: ['playwright', 'node_modules'],
     coverage: {
       // json reporters are needed for github action summary report
       reporter: ['text-summary', 'html', 'json-summary', 'json'],
