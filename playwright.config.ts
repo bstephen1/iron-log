@@ -28,7 +28,6 @@ export default defineConfig({
      */
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    storageState: DEV_USER,
   },
   projects: [
     {
@@ -40,6 +39,7 @@ export default defineConfig({
       dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],
+        storageState: DEV_USER,
       },
     },
     // {
@@ -59,7 +59,7 @@ export default defineConfig({
       name: 'Mobile Safari',
       dependencies: ['setup'],
 
-      use: { ...devices['iPhone 12'] },
+      use: { ...devices['iPhone 12'], storageState: DEV_USER },
     },
     /* Test against branded browsers. */
     // {
