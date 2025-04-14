@@ -10,28 +10,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Start app
+      - name: Install deps
+        # we can't do npm build because nextjs overwrites NODE_ENV to be production
+        # which disables the dev user login that cypress uses
+        run: npm ci
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: latest
+      - name: Run playwright tests
         env:
           # this is an arbitrary value for enabling dev user sign in
           # we are not importing secrets for external oauth providers
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           # renamed to AUTH_SECRET in authjs v5
           NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-        # we can't do npm build because nextjs overwrites NODE_ENV to be production
-        # which disables the dev user login that cypress uses
-        run: |-
-          npm ci 
-          npm run dev:test &
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.12.0
-        with:
-          mongodb-version: latest
-      - name: Run cypress
-        run: |-
-          npm run cy:once -- --browser chrome --config defaultCommandTimeout=10000
-      - name: Install playwright browsers
-        run: npx playwright install --with-deps
-      - name: Run playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
