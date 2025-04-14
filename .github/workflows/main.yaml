@@ -20,7 +20,7 @@ jobs:
         # we can't do npm build because nextjs overwrites NODE_ENV to be production
         # which disables the dev user login that cypress uses
         run: |-
-          npm i 
+          npm ci 
           npm run dev:test &
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.0
@@ -29,13 +29,24 @@ jobs:
       - name: Run cypress
         run: |-
           npm run cy:once -- --browser chrome --config defaultCommandTimeout=10000
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run playwright tests
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
   frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install packages
-        run: npm i
+        run: npm ci
       - name: Run linter
         run: npm run lint
       - name: Run vitest
@@ -55,7 +66,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install packages
-        run: npm i
+        run: npm ci
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.0
         with:
