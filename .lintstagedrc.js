@@ -10,9 +10,7 @@ const prettier = 'npx prettier --write'
 // tasks are run in parallel, but they MUST have mutually exclusive matchers
 // to avoid multiple tasks writing to the same file
 export default {
-  '!(cypress/**/*).{ts,tsx}': [buildNextLintCommand, prettier],
-  // cypress has its own setup so we don't want to run next lint on it
-  '*cypress/**/*.ts': [prettier],
+  '*.{ts,tsx}': [buildNextLintCommand, prettier],
   // js files are usually jsut config for external pkgs, so we don't lint them
   '*.js': [prettier],
 }

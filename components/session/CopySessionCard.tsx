@@ -94,6 +94,7 @@ export default function CopySessionCard() {
     <Paper elevation={3} sx={{ p: 2 }}>
       <Stack spacing={2} alignItems="center">
         <SessionDatePicker
+          label="Previous session"
           day={prevDay}
           handleDayChange={handlePrevDayChange}
           textFieldProps={{ variant: 'standard' }}

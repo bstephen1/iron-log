@@ -62,14 +62,14 @@ export default function AddNote({
           <TransitionIconButton
             isVisible={!isEmpty}
             onClick={() => submit()}
-            aria-label="add note"
+            tooltip="Confirm"
           >
             <CheckIcon />
           </TransitionIconButton>
           <TransitionIconButton
             isVisible={!isEmpty}
             onClick={onReset}
-            aria-label="clear input"
+            tooltip="Clear"
           >
             <ClearIcon />
           </TransitionIconButton>

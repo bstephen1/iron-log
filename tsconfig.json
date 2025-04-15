@@ -22,9 +22,5 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "eslint.config.js"],
   "exclude": [
     "node_modules",
-    // cypress redefines jest assertion types. See: https://stackoverflow.com/a/69990369
-    "cypress",
-    // this is only if any cypress tests are outside the cypress folder
-    "**/*.cy.ts*"
   ]
 }

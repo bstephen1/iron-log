@@ -118,9 +118,7 @@ describe('input', () => {
     await user.type(input, '{End}{Backspace}{Backspace}')
 
     expect(await screen.findByText(/must have a value/i)).toBeVisible()
-    // mui makes it exceedingly annoying to access these buttons.
-    // The outer button has the role and whether it's disabled, but the child svg img has the label
-    expect(screen.getByTestId('submit button')).not.toBeEnabled()
+    expect(screen.queryByLabelText('Submit')).not.toBeInTheDocument()
   })
 
   it('resets to existing value when button is clicked', async () => {

@@ -10,32 +10,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Start app
+      - name: Install deps
+        # we can't do npm build because nextjs overwrites NODE_ENV to be production
+        # which disables the dev user login
+        run: npm ci
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: latest
+      - name: Run playwright tests
         env:
           # this is an arbitrary value for enabling dev user sign in
           # we are not importing secrets for external oauth providers
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           # renamed to AUTH_SECRET in authjs v5
           NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-        # we can't do npm build because nextjs overwrites NODE_ENV to be production
-        # which disables the dev user login that cypress uses
-        run: |-
-          npm i 
-          npm run dev:test &
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.12.0
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          mongodb-version: latest
-      - name: Run cypress
-        run: |-
-          npm run cy:once -- --browser chrome --config defaultCommandTimeout=10000
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
   frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install packages
-        run: npm i
+        run: npm ci
       - name: Run linter
         run: npm run lint
       - name: Run vitest
@@ -55,7 +61,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install packages
-        run: npm i
+        run: npm ci
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.0
         with:
