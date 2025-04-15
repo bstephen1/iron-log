@@ -13,7 +13,7 @@ it('adds a note', async () => {
 
   await user.click(screen.getByPlaceholderText(/add/i))
   await user.paste('new note')
-  await user.click(screen.getByLabelText(/add/i))
+  await user.click(screen.getByLabelText('Confirm'))
 
   expect(mockSubmit).toHaveBeenCalledWith(
     [expect.objectContaining({ value: 'new note' })].concat(initialNotes)
@@ -44,7 +44,7 @@ it('updates notes', async () => {
   // switch focus to trigger submit
   // note: change is also triggered with a long debounce but fakeTimers
   // were not working to trigger that
-  await user.click(screen.getByLabelText(/add/i))
+  await user.click(screen.getByLabelText('Confirm'))
 
   expect(mockSubmit).toHaveBeenCalledWith([
     initialNotes[0],

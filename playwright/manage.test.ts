@@ -27,7 +27,7 @@ test('adds an exercise', async ({ page }) => {
   await page.getByText('Bodyweight').click()
 
   await page.getByPlaceholder('Add note').fill('my note')
-  await page.getByRole('button', { name: 'add note' }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
 
   // confirm edits persist on reload
   await page.reload()

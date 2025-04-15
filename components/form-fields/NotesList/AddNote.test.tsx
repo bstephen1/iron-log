@@ -27,12 +27,12 @@ it('submits the given note and resets the input', async () => {
   await user.paste(noteText)
 
   // reset
-  await user.click(screen.getByLabelText(/clear/i))
+  await user.click(screen.getByLabelText('Clear'))
   expect(screen.queryByText(noteText)).not.toBeInTheDocument()
 
   // submit
   await user.paste(noteText)
-  await user.click(screen.getByLabelText(/add/i))
+  await user.click(screen.getByLabelText('Confirm'))
   expect(mockHandleAdd).toHaveBeenCalledWith(
     expect.objectContaining({
       value: noteText,

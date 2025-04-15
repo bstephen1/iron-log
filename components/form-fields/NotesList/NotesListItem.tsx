@@ -71,7 +71,7 @@ export default function NotesListItem(props: Props) {
             <TransitionIconButton
               isVisible={!isEmpty}
               onClick={() => onDelete(index)}
-              aria-label="delete item"
+              tooltip="Delete"
             >
               <ClearIcon />
             </TransitionIconButton>

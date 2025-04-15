@@ -39,7 +39,7 @@ export default function BodyweightInputToggle({
   return (
     <>
       <Tooltip title="Options">
-        <IconButton onClick={handleOpen} sx={{ p: '2px' }}>
+        <IconButton onClick={handleOpen} sx={{ p: '2px', pr: 1 }}>
           <ScaleOutlinedIcon />
         </IconButton>
       </Tooltip>

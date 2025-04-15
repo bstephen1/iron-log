@@ -14,7 +14,9 @@ export default function TransitionIconButton({
 }: Props) {
   return (
     <Grow in={isVisible}>
-      <Tooltip title={tooltip}>
+      {/* have to explicitly remove the tooltip if disabled to avoid mui warning */}
+      <Tooltip title={iconButtonProps.disabled ? '' : tooltip}>
+        {/* could wrap IconButton in a span to show tooltip when disabled */}
         <IconButton {...iconButtonProps}>{children}</IconButton>
       </Tooltip>
     </Grow>

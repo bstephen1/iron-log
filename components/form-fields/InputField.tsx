@@ -72,7 +72,6 @@ export default function InputField(props: Props & TextFieldProps) {
                 isVisible={showSubmit ?? isDirty}
                 disabled={!!error}
                 onClick={() => submit()}
-                data-testid="submit button"
                 tooltip="Submit"
               >
                 <CheckIcon />
