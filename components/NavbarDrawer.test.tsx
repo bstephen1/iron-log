@@ -28,7 +28,7 @@ it('renders with sample session link', async () => {
   )
 })
 
-it("renders with today's session link", async () => {
+it(`renders with today's session link`, async () => {
   const { user } = render(<NavbarDrawer />)
 
   await user.click(screen.getByLabelText(/open/))
