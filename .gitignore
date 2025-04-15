@@ -12,9 +12,6 @@
 /.next/
 /out/
 
-# cypress
-/cypress/downloads/
-
 # production
 /build
 
