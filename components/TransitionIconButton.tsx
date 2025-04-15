@@ -6,7 +6,7 @@ interface Props extends IconButtonProps {
   children?: JSX.Element
 }
 export default function TransitionIconButton({
-  isVisible = true,
+  isVisible,
   children,
   ...iconButtonProps
 }: Props) {
