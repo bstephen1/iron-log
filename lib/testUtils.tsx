@@ -16,6 +16,8 @@ import { vi } from 'vitest'
 import { ApiError } from '../models/ApiError'
 import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
+import { devUserId } from './frontend/constants'
+import { Session } from 'next-auth'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.
@@ -26,14 +28,20 @@ import { methodNotAllowed } from './backend/apiMiddleware/util'
 // Note: fetch() needs to be polyfilled or it will be undefined (just need to add "import 'whatwg-fetch'" in the test setup file).
 // See: https://testing-library.com/docs/react-testing-library/setup/#configuring-jest-with-test-utils
 // See: https://mswjs.io/docs/faq#swr
-const FrontendLayout = ({ children }: { children: ReactNode }) => (
+const FrontendLayout = ({
+  children,
+  user,
+}: {
+  children: ReactNode
+  user?: Session['user']
+}) => (
   <SWRConfig
     value={{
       fetcher: (url: string) => fetch(url).then((r) => r.json()),
       provider: () => new Map(),
     }}
   >
-    <SessionProvider session={{ user: { id: '' }, expires: '' }}>
+    <SessionProvider session={{ user: user ?? { id: devUserId }, expires: '' }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         {children}
       </LocalizationProvider>
@@ -58,6 +66,7 @@ const customRender = (
      *  It cannot be enabled globally because then any test NOT using fake timers will fail.
      */
     useFakeTimers?: boolean
+    user?: Session['user']
   }
 ) => ({
   user: userEvent.setup(
@@ -67,7 +76,11 @@ const customRender = (
         }
       : undefined
   ),
-  ...render(ui, { wrapper: FrontendLayout, ...options }),
+  ...render(ui, {
+    wrapper: ({ children }) =>
+      FrontendLayout({ children, user: options?.user }),
+    ...options,
+  }),
 })
 
 export * from '@testing-library/react'

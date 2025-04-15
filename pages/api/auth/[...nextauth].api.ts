@@ -5,7 +5,7 @@ import Credentials from 'next-auth/providers/credentials'
 import GitHub from 'next-auth/providers/github'
 import { z } from 'zod'
 import { clientPromise } from '../../../lib/backend/mongoConnect'
-import { devUserId } from '../../../lib/frontend/constants'
+import { devUserId, guestUserName } from '../../../lib/frontend/constants'
 
 const isProd = process.env.NODE_ENV === 'production'
 const devProvider =
@@ -27,9 +27,7 @@ const devProvider =
 
       const objectIdSchema = z
         .string()
-        .regex(/^\d{24}$/, {
-          message: 'Input must be a 24-digit number',
-        })
+        .regex(/^\d{24}$/, { message: 'Input must be a 24-digit number' })
         .optional()
         .default(devUserId)
 
@@ -40,9 +38,7 @@ const devProvider =
         return null
       }
 
-      return {
-        id: parsedId.data,
-      }
+      return { id: parsedId.data }
     },
   })
 
@@ -57,7 +53,7 @@ const guestProvider = Credentials({
   async authorize() {
     // session is only getting passed "name", "email", and "image" fields.
     // May be related to session() callback below
-    return { id: devUserId }
+    return { id: devUserId, name: guestUserName }
   },
 })
 
