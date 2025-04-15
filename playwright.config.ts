@@ -14,7 +14,9 @@ export default defineConfig({
   testDir: './playwright',
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  fullyParallel: true,
+  // todo: setup parallel workers so we can run multiple browsers.
+  // need to manage multiple logins / reset db between tests
+  // fullyParallel: true,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* See https://playwright.dev/docs/test-reporters */
@@ -55,12 +57,12 @@ export default defineConfig({
     //   name: 'Mobile Chrome',
     //   use: { ...devices['Pixel 5'] },
     // },
-    {
-      name: 'Mobile Safari',
-      dependencies: ['setup'],
+    // {
+    //   name: 'Mobile Safari',
+    //   dependencies: ['setup'],
 
-      use: { ...devices['iPhone 12'], storageState: DEV_USER },
-    },
+    //   use: { ...devices['iPhone 12'], storageState: DEV_USER },
+    // },
     /* Test against branded browsers. */
     // {
     //   name: 'Microsoft Edge',

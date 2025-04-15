@@ -1,6 +1,6 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
-import { InputProps, TextField, TextFieldProps, Tooltip } from '@mui/material'
+import { InputProps, TextField, TextFieldProps } from '@mui/material'
 import { useRef } from 'react'
 import { Schema } from 'zod'
 import TransitionIconButton from '../TransitionIconButton'
@@ -61,20 +61,21 @@ export default function InputField(props: Props & TextFieldProps) {
           ...textFieldProps.slotProps?.input,
           endAdornment: (
             <>
-              <TransitionIconButton isVisible={isDirty} onClick={onReset}>
-                <Tooltip title="Reset">
-                  <ReplayIcon />
-                </Tooltip>
+              <TransitionIconButton
+                isVisible={isDirty}
+                onClick={onReset}
+                tooltip="Reset"
+              >
+                <ReplayIcon />
               </TransitionIconButton>
               <TransitionIconButton
                 isVisible={showSubmit ?? isDirty}
                 disabled={!!error}
                 onClick={() => submit()}
                 data-testid="submit button"
+                tooltip="Submit"
               >
-                <Tooltip title="Submit">
-                  <CheckIcon />
-                </Tooltip>
+                <CheckIcon />
               </TransitionIconButton>
               {/* mui does not provide proper typing to fields on slotProps */}
               {
