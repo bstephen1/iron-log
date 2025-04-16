@@ -118,7 +118,7 @@ describe('input', () => {
     await user.type(input, '{End}{Backspace}{Backspace}')
 
     expect(await screen.findByText(/must have a value/i)).toBeVisible()
-    expect(screen.queryByLabelText('Submit')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Submit')).toBeDisabled()
   })
 
   it('resets to existing value when button is clicked', async () => {

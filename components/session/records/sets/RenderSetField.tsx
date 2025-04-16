@@ -121,7 +121,6 @@ function SetFieldNumeric<S extends keyof Units>({
         name === 'totalWeight' ? extraWeight : 0,
         2
       )}
-      // todo: add validation that this is a number
       handleSubmit={(value) =>
         handleSetChange({
           [source]: convertUnit(

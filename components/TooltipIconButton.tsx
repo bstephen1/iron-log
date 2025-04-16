@@ -3,10 +3,10 @@ import {
   IconButtonProps,
   MenuItem,
   MenuItemProps,
-  Tooltip,
   TooltipProps,
 } from '@mui/material'
 import { createContext, useContext, JSX } from 'react'
+import Tooltip from './Tooltip'
 
 /** context for TooltipIconButtons. Allows parent to determine
  *  whether to render as a menu item on a predefined component.
@@ -48,36 +48,30 @@ export default function TooltipIconButton({
 
   return isMenuItem ? (
     <Tooltip title={title} placement="left" {...tooltipProps}>
-      <span>
-        <MenuItem
-          onClick={onClickMenu ?? onClick}
-          disabled={disabled}
-          {...menuItemProps}
-        >
-          {/* Tooltip can't have its direct child be disabled so add in a buffer. Note a react Fragment won't work. */}
-          <IconButton
-            disableFocusRipple
-            disableRipple
-            disableTouchRipple
-            {...iconButtonProps}
-          >
-            {children}
-          </IconButton>
-        </MenuItem>
-      </span>
-    </Tooltip>
-  ) : (
-    <Tooltip title={title} placement="bottom-end" {...tooltipProps}>
-      {/* Tooltip can't have its direct child be disabled so add in a buffer. Note a react Fragment won't work. */}
-      <span>
+      <MenuItem
+        onClick={onClickMenu ?? onClick}
+        disabled={disabled}
+        {...menuItemProps}
+      >
         <IconButton
-          onClick={onClickButton ?? onClick}
-          disabled={disabled}
+          disableFocusRipple
+          disableRipple
+          disableTouchRipple
           {...iconButtonProps}
         >
           {children}
         </IconButton>
-      </span>
+      </MenuItem>
+    </Tooltip>
+  ) : (
+    <Tooltip title={title} placement="bottom-end" {...tooltipProps}>
+      <IconButton
+        onClick={onClickButton ?? onClick}
+        disabled={disabled}
+        {...iconButtonProps}
+      >
+        {children}
+      </IconButton>
     </Tooltip>
   )
 }

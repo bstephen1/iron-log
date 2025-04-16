@@ -30,7 +30,6 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
       return
     }
 
-    // todo: avoid the semi colon?
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
     const newSession = { ...sessionLog, records: newRecords }

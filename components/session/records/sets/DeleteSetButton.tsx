@@ -1,5 +1,5 @@
 import ClearIcon from '@mui/icons-material/Clear'
-import { IconButton, IconButtonProps } from '@mui/material'
+import { IconButton, IconButtonProps, SxProps } from '@mui/material'
 import { memo } from 'react'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
@@ -9,9 +9,9 @@ import { Record } from '../../../../models/Record'
 interface Props extends IconButtonProps {
   _id: Record['_id']
   index: number
-  my?: number
+  sx?: SxProps
 }
-export default memo(function DeleteSetButton({ _id, index, my }: Props) {
+export default memo(function DeleteSetButton({ _id, index, sx }: Props) {
   const { mutate } = useSWRConfig()
 
   const handleDeleteSet = async () => {
@@ -35,8 +35,9 @@ export default memo(function DeleteSetButton({ _id, index, my }: Props) {
     <IconButton
       size="small"
       onClick={handleDeleteSet}
+      aria-label={`Delete set ${index + 1}`}
       sx={{
-        my,
+        ...sx,
         p: 1,
         borderRadius: 0,
         '& .MuiTouchRipple-ripple .MuiTouchRipple-child': {

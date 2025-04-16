@@ -69,7 +69,6 @@ export default memo(function SetHeader({
 
     // Make sure we aren't submitting if there aren't actually any changes.
     // Should only need to check the length because if there is a change the length must change.
-    // todo: test for this
     if (newVisibleFields.length !== selectedNames.length) {
       mutateExerciseFields({
         displayFields: {
@@ -80,7 +79,6 @@ export default memo(function SetHeader({
     }
   }
 
-  // todo: this Select doesn't focus when you click on it. SetTypeSelect also doesn't when you click on the renderValue portion (it does with the label)
   return (
     <FormControl fullWidth variant="standard">
       <InputLabel shrink={true} id="set-header-label">

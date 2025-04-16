@@ -128,7 +128,6 @@ export async function addRecord(
   return record
 }
 
-// todo: pagination
 export async function fetchRecords(
   userId: ObjectId,
   filter: Filter<Record> = {},
@@ -170,7 +169,6 @@ export async function fetchRecords(
     .toArray()
 }
 
-// todo: update record if exercise has been modified since last fetch
 export async function fetchRecord(
   userId: ObjectId,
   _id: Record['_id']
@@ -389,8 +387,6 @@ export async function updateCategoryFields(
   _id: string,
   updates: Partial<Category>
 ): Promise<Category | null> {
-  // todo: should this be a transaction? Apparently that requires a cluster
-  // can run single testing node as cluster with mongod --replset rs0
   if (updates.name) {
     const oldCategory = await categories.find({ userId, _id }).next()
     await exercises.updateMany(

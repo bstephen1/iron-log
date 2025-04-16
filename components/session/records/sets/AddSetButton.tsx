@@ -1,5 +1,5 @@
 import AddIcon from '@mui/icons-material/Add'
-import { Box, Fab, Tooltip } from '@mui/material'
+import { Box, Fab } from '@mui/material'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
 import { updateRecordFields } from '../../../../lib/frontend/restService'
@@ -9,6 +9,7 @@ import { Set } from '../../../../models/Set'
 interface Props {
   sets: Set[]
   disabled?: boolean
+  /** record id to add the set to */
   _id: string
 }
 export default function AddSetButton({ sets, disabled, _id }: Props) {
@@ -51,18 +52,15 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
         p: 2,
       }}
     >
-      <Tooltip title="Add set" placement="right">
-        <span>
-          <Fab
-            color="primary"
-            size="medium"
-            disabled={disabled}
-            onClick={addSet}
-          >
-            <AddIcon />
-          </Fab>
-        </span>
-      </Tooltip>
+      <Fab
+        color="primary"
+        size="medium"
+        disabled={disabled}
+        onClick={addSet}
+        aria-label="Add new set"
+      >
+        <AddIcon />
+      </Fab>
     </Box>
   )
 }

@@ -8,7 +8,7 @@ interface Props {
   className: string
   /** in pixels */
   desktopSize?: number
-  /** in */
+  /** in pixels */
   mobileSize?: number
 }
 export default function PaginationBullets({
