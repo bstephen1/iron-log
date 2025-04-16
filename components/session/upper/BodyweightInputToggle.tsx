@@ -7,10 +7,10 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  Tooltip,
 } from '@mui/material'
 import { useState } from 'react'
 import { WeighInType } from '../../../models/Bodyweight'
+import Tooltip from '../../Tooltip'
 
 interface Props {
   type: WeighInType

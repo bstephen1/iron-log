@@ -3,17 +3,10 @@ import PauseIcon from '@mui/icons-material/Pause'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import ReplayIcon from '@mui/icons-material/Replay'
 import StopIcon from '@mui/icons-material/Stop'
-import {
-  Box,
-  Button,
-  Grow,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Grow, IconButton, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useReducer } from 'react'
+import Tooltip from '../../Tooltip'
 
 const formatTime = (totalSeconds: number) => {
   const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
