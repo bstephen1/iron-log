@@ -31,7 +31,6 @@ interface Props extends Set {
   extraWeight: number
   _id: Record['_id']
 }
-// todo: indicator for failing a rep
 /** Render a set. Note the set to render must be spread into the props.
  *  This destructures the set into primitive values to avoid unecessary rerenders.
  */
@@ -103,7 +102,6 @@ export default memo(function RenderSetRow({
           }}
         />
       ))}
-      {/* todo: maybe make this a "more..." with failed/warmup/delete options */}
       {readOnly ? (
         // insert a box for padding when clear icon is hidden
         <Box minWidth={'32px'} />

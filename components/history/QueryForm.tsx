@@ -24,8 +24,6 @@ export default function QueryCard({ query, setQuery }: Props) {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   // reset to this exercise if reset button is clicked
   const [initialExercise, setInitialExercise] = useState(exercise)
-  // todo: make a different type? modifier can only be an array in the query
-  // but we need to call toArray() to shed off string | undefined
   const [unsavedQuery, setUnsavedQuery] =
     useState<RecordRangeQuery>(initialQuery)
   const displayFields = useDisplayFields(exercise)
