@@ -106,7 +106,7 @@ export default memo(function RenderSetRow({
         // insert a box for padding when clear icon is hidden
         <Box minWidth={'32px'} />
       ) : (
-        <DeleteSetButton index={index} _id={_id} my={-pyStack} />
+        <DeleteSetButton index={index} _id={_id} sx={{ my: -pyStack }} />
       )}
     </Stack>
   )

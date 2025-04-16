@@ -5,7 +5,6 @@ import { URI_RECORDS } from '../../../../lib/frontend/constants'
 import { updateRecordFields } from '../../../../lib/frontend/restService'
 import { Record } from '../../../../models/Record'
 import { Set } from '../../../../models/Set'
-import Tooltip from '../../../Tooltip'
 
 interface Props {
   sets: Set[]
@@ -53,11 +52,15 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
         p: 2,
       }}
     >
-      <Tooltip title="Add set" placement="right">
-        <Fab color="primary" size="medium" disabled={disabled} onClick={addSet}>
-          <AddIcon />
-        </Fab>
-      </Tooltip>
+      <Fab
+        color="primary"
+        size="medium"
+        disabled={disabled}
+        onClick={addSet}
+        aria-label="Add new set"
+      >
+        <AddIcon />
+      </Fab>
     </Box>
   )
 }
