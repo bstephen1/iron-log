@@ -25,7 +25,6 @@ export default function AddRecordCard() {
     if (!exercise) return
 
     const newRecord = createRecord(date, { exercise })
-    newRecord.sets.push({})
     const newSessionLog = sessionLog
       ? {
           ...sessionLog,
