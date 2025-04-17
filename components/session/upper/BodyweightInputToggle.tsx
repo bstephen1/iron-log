@@ -38,7 +38,7 @@ export default function BodyweightInputToggle({
 
   return (
     <>
-      <Tooltip title="Options">
+      <Tooltip title="Weigh-in type">
         <IconButton onClick={handleOpen} sx={{ p: '2px', pr: 1 }}>
           <ScaleOutlinedIcon />
         </IconButton>

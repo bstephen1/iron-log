@@ -45,7 +45,7 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
     createBodyweight(weight, 'unofficial', dayjs(date)),
   ])
 
-  await user.click(screen.getByLabelText('Options'))
+  await user.click(screen.getByLabelText(/type/))
   await user.click(screen.getByText('unofficial weigh-ins'))
 
   expect(await screen.findByText(/using latest unofficial/i)).toBeVisible()
