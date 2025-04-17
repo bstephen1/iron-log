@@ -1,7 +1,5 @@
-import { enqueueSnackbar } from 'notistack'
 import { ChangeEvent, useRef, useState } from 'react'
 import { Schema, ZodError } from 'zod'
-import { useSnackbar } from '../SnackbarContext'
 
 /*
  * This hook is based off the behavior of react-hook-form's useForm hook,
@@ -41,7 +39,6 @@ export default function useField<T = string>({
   const [initialValue, setInitialValue] = useState(props.initialValue)
   const [value, setValue] = useState(props.initialValue)
   const isDirty = value !== initialValue
-  const { showSnackbar } = useSnackbar()
 
   // Spread this into an input component to set up the value.
   // If the input is simple this may be all that's needed!
@@ -107,8 +104,6 @@ export default function useField<T = string>({
 
     if (await validate(newValue)) {
       handleSubmit(newValue)
-      // showSnackbar()
-      enqueueSnackbar({ message: 'Changes saved', variant: 'success' })
     }
   }
 
