@@ -7,7 +7,7 @@ import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight } from '../../models/Bodyweight'
 import { Record } from '../../models/Record'
-import { SessionLog } from '../../models/SessionLog'
+import { createSessionLog, SessionLog } from '../../models/SessionLog'
 import { collections } from './mongoConnect'
 const {
   sessions,
@@ -125,6 +125,19 @@ export async function addRecord(
   record: Record
 ): Promise<Record> {
   await records.insertOne({ ...record, userId })
+
+  // add the record to its session (or create new session if needed)
+  const { records: _unused, ...newSession } = createSessionLog(record.date)
+  await sessions.updateOne(
+    {
+      userId,
+      date: record.date,
+    },
+    // can't include records in $setOnInsert since that is getting updated in $push.
+    // $push handles an undefined field like an empty array
+    { $push: { records: record._id }, $setOnInsert: newSession },
+    { upsert: true }
+  )
   return record
 }
 
