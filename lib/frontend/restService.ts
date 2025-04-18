@@ -76,7 +76,6 @@ export function useSessionLog(day: Dayjs | string) {
 
   return {
     sessionLog: data,
-
     isLoading,
     mutate,
   }
