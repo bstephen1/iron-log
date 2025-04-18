@@ -1,9 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
 import { testApiHandler } from 'next-test-api-route-handler'
 import { vi } from 'vitest'
-import { ApiError } from '../../../models/ApiError'
-import withStatusHandler from './withStatusHandler'
 import { ZodError } from 'zod'
+import { ApiError } from '../../../models/ApiError'
+import { ERRORS } from '../../frontend/constants'
+import withStatusHandler from './withStatusHandler'
 
 const mockHandler = vi.fn()
 
@@ -91,7 +92,7 @@ it('returns error when ZodError is thrown', async () => {
       expect(res.status).toBe(StatusCodes.BAD_REQUEST)
       expect(await res.json()).toEqual({
         statusCode: StatusCodes.BAD_REQUEST,
-        message: 'invalid request',
+        message: ERRORS.validationFail,
         details: error.errors,
       })
     },

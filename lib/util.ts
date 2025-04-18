@@ -45,10 +45,7 @@ export const fetchJson = async <T>(...args: Parameters<typeof fetch>) => {
   }
 
   // the original error details can be viewed in the network tab
-  throw new ApiError(
-    res.status,
-    'could not fetch data. Check console for details.'
-  )
+  throw new ApiError(res.status, (json as ApiError).message)
 }
 
 /** Capitalize first letter of a string.

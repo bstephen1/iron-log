@@ -29,6 +29,13 @@ export const standardLinkStyle: CSSProperties = {
   textDecoration: 'underline',
 }
 
+/** error messages returned from the api  */
+export const ERRORS = {
+  validationFail: 'invalid request',
+  default: 'error could not be parsed',
+  retry: 'Something went wrong. Please retry.',
+}
+
 //------
 // URIS
 //------
