@@ -1,11 +1,10 @@
 import { Button, Paper, Stack } from '@mui/material'
-import { enqueueSnackbar } from 'notistack'
 import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useSWRConfig } from 'swr'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import { ERRORS } from '../../lib/frontend/constants'
 import { addRecord, useExercises } from '../../lib/frontend/restService'
+import { enqueueError } from '../../lib/util'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
@@ -26,16 +25,10 @@ export default function AddRecordCard() {
     try {
       await addRecord(newRecord)
     } catch (e) {
-      const originalMessage = e instanceof Error ? e.message : ''
-
-      enqueueSnackbar({
-        message:
-          originalMessage === ERRORS.validationFail
-            ? `The exercise is corrupt and can't be used to create records.`
-            : ERRORS.retry,
-        severity: 'error',
-        persist: true,
-      })
+      enqueueError(
+        e,
+        `The exercise is corrupt and can't be used to create records.`
+      )
       return
     }
     const newSessionLog = sessionLog ?? createSessionLog(date)

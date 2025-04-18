@@ -1,7 +1,7 @@
 import { Filter } from 'mongodb'
 import { z } from 'zod'
 import { asyncSelectorOptionSchema } from '.'
-import { removeUndefinedKeys, toArray } from '../../lib/util'
+import { generateId, removeUndefinedKeys, toArray } from '../../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from '../ArrayMatchType'
 import { attributesSchema } from '../Attributes'
 import { displayFieldsSchema } from '../DisplayFields'
@@ -19,10 +19,32 @@ export const exerciseSchema = asyncSelectorOptionSchema.extend({
   modifiers: z.array(z.string()).default([]),
 })
 
+// todo: make this based on the schema. Requires some thought because we
+// don't want to parse it immediately, only when sending to the api.
+// So may require a separate client model with only the fields the client can
+// edit (everything except id?)
 export const createExercise = (
   name: string,
-  draft: Partial<Exercise> = {}
-): Exercise => exerciseSchema.parse({ name, ...draft })
+  {
+    attributes = {},
+    notes = [],
+    displayFields = null,
+    weight = null,
+    categories = [],
+    modifiers = [],
+    status = Status.active,
+  }: Partial<Exercise> = {}
+): Exercise => ({
+  _id: generateId(),
+  name,
+  attributes,
+  notes,
+  displayFields,
+  weight,
+  categories,
+  modifiers,
+  status,
+})
 
 export type ExerciseQuery = z.input<typeof exerciseQuerySchema>
 export const exerciseQuerySchema = z

@@ -21,6 +21,7 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
+import { enqueueError } from '../../lib/util'
 
 interface Props {
   exercise: Exercise
@@ -67,9 +68,15 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
 
         const newName = exercise.name + ' (copy)'
         const newExercise = createExercise(newName, exercise)
-        await addExercise(newExercise)
-        setUrlExercise(newName)
 
+        try {
+          await addExercise(newExercise)
+        } catch (e) {
+          enqueueError(e, `The exercise is corrupt and can't be duplicated.`)
+          return cur
+        }
+
+        setUrlExercise(newName)
         return [...cur, newExercise]
       })
     },
