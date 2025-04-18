@@ -1,4 +1,4 @@
-import { Card, CardContent, Stack, Typography } from '@mui/material'
+import { Card, CardContent, Stack } from '@mui/material'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import { KeyedMutator } from 'swr'
@@ -17,7 +17,7 @@ import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
-import { Record } from '../../../models/Record'
+import { createRecord, Record } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
@@ -26,6 +26,7 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
+import useCurrentSessionLog from '../useCurrentSessionLog'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -43,34 +44,37 @@ interface Props {
 }
 export default memo(function RecordCard(props: Props) {
   const { id, swiperIndex } = props
-  const { record, mutate: mutateRecord } = useRecord(id)
+  const { date } = useCurrentSessionLog()
+  const { record, isLoadingRecord, mutate: mutateRecord } = useRecord(id)
   // Instead of using record.exercise, we make a separate rest call to get the exercise.
   // This ensures the exercise is up to date if the user has multiple records with the
   // same exercise. record.exercise is only updated upon fetching the record,
   // so if one record updated an exercise any other records would still be using the outdated exercise.
-  const { exercise, mutate: mutateExercise } = useExercise(
-    record?.exercise?._id ?? null
-  )
+  const {
+    exercise,
+    isLoadingExercise,
+    mutate: mutateExercise,
+  } = useExercise(record?.exercise?._id)
 
-  if (record === undefined || exercise === undefined || props.isQuickRender) {
+  // If the record is null then somehow there is a recordId in the session
+  // with no corresponding record document. If that happens we create a new
+  // record to associate with that id
+  const ghostRecord = { ...createRecord(date), _id: id }
+
+  if (isLoadingRecord || isLoadingExercise || props.isQuickRender) {
     return (
       <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
-    )
-  } else if (record === null) {
-    return (
-      <RecordCardSkeleton
-        title={`Record ${swiperIndex + 1}`}
-        Content={
-          <Typography textAlign="center">
-            Could not find record! Try reloading.
-          </Typography>
-        }
-      />
     )
   } else {
     return (
       <LoadedRecordCard
-        {...{ record, exercise, mutateRecord, mutateExercise, ...props }}
+        {...{
+          record: record ?? ghostRecord,
+          exercise,
+          mutateRecord,
+          mutateExercise,
+          ...props,
+        }}
       />
     )
   }
