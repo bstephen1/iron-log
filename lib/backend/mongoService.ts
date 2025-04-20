@@ -55,7 +55,8 @@ export async function fetchSessions(
 
 export async function updateSession(
   userId: ObjectId,
-  sessionLog: SessionLog
+  // ignore the id so we don't accidentally try to update it
+  { _id, ...sessionLog }: SessionLog
 ): Promise<SessionLog | null> {
   return await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },

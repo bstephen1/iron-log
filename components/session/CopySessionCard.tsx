@@ -58,11 +58,7 @@ export default function CopySessionCard() {
       return
     }
 
-    // need to check if the current day already has a session so _id isn't changed
-    const newSessionLog = curSessionLog
-      ? curSessionLog
-      : createSessionLog(day.format(DATE_FORMAT))
-
+    const copiedRecords = []
     // We want the records to be added in sequence so they remain in order
     // See: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
     for (const id of prevSessionLog.records) {
@@ -74,9 +70,13 @@ export default function CopySessionCard() {
       })
 
       await addRecord(newRecord)
-      newSessionLog.records.push(newRecord._id)
+      copiedRecords.push(newRecord._id)
     }
 
+    const newSessionLog = createSessionLog(
+      day.format(DATE_FORMAT),
+      copiedRecords
+    )
     mutate(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
