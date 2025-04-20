@@ -14,7 +14,7 @@ import {
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { UpdateFields } from '../../../lib/util'
+import { enqueueError, UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { createRecord, Record } from '../../../models/Record'
@@ -140,13 +140,20 @@ function LoadedRecordCard({
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
     async (changes) => {
-      mutateRecord(
-        (cur) => (cur ? updateRecordFields(cur._id, { ...changes }) : null),
-        {
-          optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
-          revalidate: false,
-        }
-      )
+      try {
+        await mutateRecord(
+          (cur) => (cur ? updateRecordFields(cur._id, { ...changes }) : null),
+          {
+            optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
+            revalidate: false,
+          }
+        )
+      } catch (e) {
+        enqueueError(
+          e,
+          'Could not update record to a corrupt state. Changes were not saved.'
+        )
+      }
     },
     [mutateRecord]
   )
