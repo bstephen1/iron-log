@@ -1,4 +1,4 @@
-import { Card, CardContent, Stack } from '@mui/material'
+import { Card, CardContent, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import { KeyedMutator } from 'swr'
@@ -17,7 +17,7 @@ import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { enqueueError, UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
-import { createRecord, Record } from '../../../models/Record'
+import { Record } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
@@ -26,7 +26,6 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
-import useCurrentSessionLog from '../useCurrentSessionLog'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -44,7 +43,6 @@ interface Props {
 }
 export default memo(function RecordCard(props: Props) {
   const { id, swiperIndex } = props
-  const { date } = useCurrentSessionLog()
   const { record, isLoadingRecord, mutate: mutateRecord } = useRecord(id)
   // Instead of using record.exercise, we make a separate rest call to get the exercise.
   // This ensures the exercise is up to date if the user has multiple records with the
@@ -56,11 +54,23 @@ export default memo(function RecordCard(props: Props) {
     mutate: mutateExercise,
   } = useExercise(record?.exercise?._id)
 
-  // If the record is null then somehow there is a recordId in the session
-  // with no corresponding record document. If that happens we create a new
-  // record to associate with that id
-  const ghostRecord = { ...createRecord(date), _id: id }
-
+  // NOTE: If the record is null then somehow there is a recordId in the session
+  // with no corresponding record document. The backend removes a null record id
+  // from any sessions it exists in on fetch, so if this case is ever visible it
+  // should disappear on rerender.
+  if (record === null) {
+    return (
+      <RecordCardSkeleton
+        title={`Record ${swiperIndex + 1}`}
+        Content={
+          <Typography textAlign="center">
+            Whoops! This record does not actually exist. Reload the page to
+            remove it.
+          </Typography>
+        }
+      />
+    )
+  }
   if (isLoadingRecord || isLoadingExercise || props.isQuickRender) {
     return (
       <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
@@ -69,7 +79,7 @@ export default memo(function RecordCard(props: Props) {
     return (
       <LoadedRecordCard
         {...{
-          record: record ?? ghostRecord,
+          record,
           exercise,
           mutateRecord,
           mutateExercise,

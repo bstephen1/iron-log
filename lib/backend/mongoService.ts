@@ -187,7 +187,7 @@ export async function fetchRecord(
   userId: ObjectId,
   _id: Record['_id']
 ): Promise<Record | null> {
-  return await records
+  const record = await records
     .aggregate<Record>([
       { $match: { userId, _id } },
 
@@ -200,6 +200,14 @@ export async function fetchRecord(
     ])
     // return just the first (there's only the one)
     .next()
+
+  // if we queried an id that doesn't exist, make sure it isn't
+  // in any sessions
+  if (!record) {
+    sessions.updateMany({ userId }, { $pull: { records: _id } })
+  }
+
+  return record
 }
 
 export async function updateRecordFields(
@@ -207,8 +215,11 @@ export async function updateRecordFields(
   _id: string,
   updates: Partial<Record>
 ): Promise<Record | null> {
-  await records.updateOne({ userId, _id }, { $set: updates })
-  return await fetchRecord(userId, _id)
+  return await records.findOneAndUpdate(
+    { userId, _id },
+    { $set: updates },
+    { returnDocument: 'after' }
+  )
 }
 
 export async function deleteRecord(
