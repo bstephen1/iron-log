@@ -10,10 +10,11 @@ import {
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
+import { enqueueError } from '../../lib/util'
 import { createRecord } from '../../models/Record'
+import { createSessionLog } from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
-import { createSessionLog } from '../../models/SessionLog'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
@@ -25,8 +26,7 @@ export default function CopySessionCard() {
   const [prevDay, setPrevDay] = useState<Dayjs>(day.add(-7, 'day'))
   const { sessionLog: prevSessionLog, isLoading: isPrevSessionLoading } =
     useSessionLog(prevDay)
-  const { sessionLog: curSessionLog, isLoading: isCurSessionLoading } =
-    useSessionLog(day)
+  const { isLoading: isCurSessionLoading } = useSessionLog(day)
   const { recordsIndex, isLoading: isRecordLoading } = useRecords({
     date: prevDay.format(DATE_FORMAT),
   })
@@ -69,8 +69,16 @@ export default function CopySessionCard() {
         notes: [],
       })
 
-      await addRecord(newRecord)
-      copiedRecords.push(newRecord._id)
+      try {
+        await addRecord(newRecord)
+        copiedRecords.push(newRecord._id)
+      } catch (e) {
+        enqueueError(
+          e,
+          'Previous session has a corrupt record. Could not finish copying the session.'
+        )
+        break
+      }
     }
 
     const newSessionLog = createSessionLog(
