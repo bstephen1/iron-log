@@ -1,6 +1,8 @@
 import { v4 as uuid } from 'uuid'
 import { ApiError } from '../models/ApiError'
 import { Exercise } from '../models/AsyncSelectorOption/Exercise'
+import { enqueueSnackbar } from 'notistack'
+import { ERRORS } from './frontend/constants'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,
@@ -45,10 +47,7 @@ export const fetchJson = async <T>(...args: Parameters<typeof fetch>) => {
   }
 
   // the original error details can be viewed in the network tab
-  throw new ApiError(
-    res.status,
-    'could not fetch data. Check console for details.'
-  )
+  throw new ApiError(res.status, (json as ApiError).message)
 }
 
 /** Capitalize first letter of a string.
@@ -81,3 +80,20 @@ export const removeUndefinedKeys = <T extends object>(obj: T) =>
 /** converts a value that may be a singleton or array into an array */
 export const toArray = <T>(value: T | T[] | undefined) =>
   Array.isArray(value) ? value : value ? [value] : []
+
+export const enqueueError = (
+  e: unknown,
+  /** message to show if the error is a validation error */
+  validationMessage: string
+) => {
+  const originalMessage = e instanceof Error ? e.message : ''
+
+  enqueueSnackbar({
+    message:
+      originalMessage === ERRORS.validationFail
+        ? validationMessage
+        : ERRORS.retry,
+    severity: 'error',
+    persist: true,
+  })
+}

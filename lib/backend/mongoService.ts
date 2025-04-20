@@ -7,7 +7,7 @@ import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { Bodyweight } from '../../models/Bodyweight'
 import { Record } from '../../models/Record'
-import { SessionLog } from '../../models/SessionLog'
+import { createSessionLog, SessionLog } from '../../models/SessionLog'
 import { collections } from './mongoConnect'
 const {
   sessions,
@@ -55,7 +55,8 @@ export async function fetchSessions(
 
 export async function updateSession(
   userId: ObjectId,
-  sessionLog: SessionLog
+  // ignore the id so we don't accidentally try to update it
+  { _id, ...sessionLog }: SessionLog
 ): Promise<SessionLog | null> {
   return await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },
@@ -125,6 +126,19 @@ export async function addRecord(
   record: Record
 ): Promise<Record> {
   await records.insertOne({ ...record, userId })
+
+  // add the record to its session (or create new session if needed)
+  const { records: _unused, ...newSession } = createSessionLog(record.date)
+  await sessions.updateOne(
+    {
+      userId,
+      date: record.date,
+    },
+    // can't include records in $setOnInsert since that is getting updated in $push.
+    // $push handles an undefined field like an empty array
+    { $push: { records: record._id }, $setOnInsert: newSession },
+    { upsert: true }
+  )
   return record
 }
 
@@ -173,7 +187,7 @@ export async function fetchRecord(
   userId: ObjectId,
   _id: Record['_id']
 ): Promise<Record | null> {
-  return await records
+  const record = await records
     .aggregate<Record>([
       { $match: { userId, _id } },
 
@@ -186,6 +200,14 @@ export async function fetchRecord(
     ])
     // return just the first (there's only the one)
     .next()
+
+  // if we queried an id that doesn't exist, make sure it isn't
+  // in any sessions
+  if (!record) {
+    sessions.updateMany({ userId }, { $pull: { records: _id } })
+  }
+
+  return record
 }
 
 export async function updateRecordFields(
@@ -193,8 +215,11 @@ export async function updateRecordFields(
   _id: string,
   updates: Partial<Record>
 ): Promise<Record | null> {
-  await records.updateOne({ userId, _id }, { $set: updates })
-  return await fetchRecord(userId, _id)
+  return await records.findOneAndUpdate(
+    { userId, _id },
+    { $set: updates },
+    { returnDocument: 'after' }
+  )
 }
 
 export async function deleteRecord(

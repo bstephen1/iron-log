@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ZodError } from 'zod'
 import { ApiError } from '../../../models/ApiError'
+import { ERRORS } from '../../frontend/constants'
 import { ApiHandler, getUserId } from './util'
 
 /** This HOF is responsible for anything involving "res" in the handler.
@@ -39,7 +40,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
         const statusCode = StatusCodes.BAD_REQUEST
         res.status(statusCode).json({
           statusCode,
-          message: 'invalid request',
+          message: ERRORS.validationFail,
           details: e.errors,
         })
       } else {
@@ -49,7 +50,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
         const statusCode = StatusCodes.INTERNAL_SERVER_ERROR
         res.status(statusCode).json({
           statusCode,
-          message: e instanceof Error ? e.message : 'error could not be parsed',
+          message: e instanceof Error ? e.message : ERRORS.default,
         })
       }
     }

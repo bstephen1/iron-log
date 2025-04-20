@@ -14,7 +14,7 @@ import {
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { UpdateFields } from '../../../lib/util'
+import { enqueueError, UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { Record } from '../../../models/Record'
@@ -43,34 +43,48 @@ interface Props {
 }
 export default memo(function RecordCard(props: Props) {
   const { id, swiperIndex } = props
-  const { record, mutate: mutateRecord } = useRecord(id)
+  const { record, isLoadingRecord, mutate: mutateRecord } = useRecord(id)
   // Instead of using record.exercise, we make a separate rest call to get the exercise.
   // This ensures the exercise is up to date if the user has multiple records with the
   // same exercise. record.exercise is only updated upon fetching the record,
   // so if one record updated an exercise any other records would still be using the outdated exercise.
-  const { exercise, mutate: mutateExercise } = useExercise(
-    record?.exercise?._id ?? null
-  )
+  const {
+    exercise,
+    isLoadingExercise,
+    mutate: mutateExercise,
+  } = useExercise(record?.exercise?._id)
 
-  if (record === undefined || exercise === undefined || props.isQuickRender) {
-    return (
-      <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
-    )
-  } else if (record === null) {
+  // NOTE: If the record is null then somehow there is a recordId in the session
+  // with no corresponding record document. The backend removes a null record id
+  // from any sessions it exists in on fetch, so if this case is ever visible it
+  // should disappear on rerender.
+  if (record === null) {
     return (
       <RecordCardSkeleton
         title={`Record ${swiperIndex + 1}`}
         Content={
           <Typography textAlign="center">
-            Could not find record! Try reloading.
+            Whoops! This record does not actually exist. Reload the page to
+            remove it.
           </Typography>
         }
       />
     )
+  }
+  if (isLoadingRecord || isLoadingExercise || props.isQuickRender) {
+    return (
+      <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
+    )
   } else {
     return (
       <LoadedRecordCard
-        {...{ record, exercise, mutateRecord, mutateExercise, ...props }}
+        {...{
+          record,
+          exercise,
+          mutateRecord,
+          mutateExercise,
+          ...props,
+        }}
       />
     )
   }
@@ -136,13 +150,20 @@ function LoadedRecordCard({
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
     async (changes) => {
-      mutateRecord(
-        (cur) => (cur ? updateRecordFields(cur._id, { ...changes }) : null),
-        {
-          optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
-          revalidate: false,
-        }
-      )
+      try {
+        await mutateRecord(
+          (cur) => (cur ? updateRecordFields(cur._id, { ...changes }) : null),
+          {
+            optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
+            revalidate: false,
+          }
+        )
+      } catch (e) {
+        enqueueError(
+          e,
+          'Could not update record to a corrupt state. Changes were not saved.'
+        )
+      }
     },
     [mutateRecord]
   )

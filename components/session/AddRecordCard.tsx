@@ -3,15 +3,12 @@ import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useSWRConfig } from 'swr'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import {
-  addRecord,
-  updateSessionLog,
-  useExercises,
-} from '../../lib/frontend/restService'
+import { addRecord, useExercises } from '../../lib/frontend/restService'
+import { enqueueError } from '../../lib/util'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
-import useCurrentSessionLog from './useCurrentSessionLog'
 import { createSessionLog } from '../../models/SessionLog'
+import useCurrentSessionLog from './useCurrentSessionLog'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
@@ -21,25 +18,29 @@ export default function AddRecordCard() {
   const { sessionLog, date, mutate: mutateSession } = useCurrentSessionLog()
   const swiper = useSwiper()
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!exercise) return
 
     const newRecord = createRecord(date, { exercise })
-    const newSessionLog = sessionLog
-      ? {
-          ...sessionLog,
-          records: sessionLog.records.concat(newRecord._id),
-        }
-      : createSessionLog(date, [newRecord._id])
+    try {
+      await addRecord(newRecord)
+    } catch (e) {
+      enqueueError(
+        e,
+        `The exercise is corrupt and can't be used to create records.`
+      )
+      return
+    }
+    const newSessionLog = sessionLog ?? createSessionLog(date)
 
-    mutateSession(updateSessionLog(newSessionLog), {
-      optimisticData: newSessionLog,
-      revalidate: false,
-    })
     // Add new record to swr cache so it doesn't have to be fetched.
-    mutate(`/api/records/${newRecord._id}`, addRecord(newRecord), {
+    mutate(`/api/records/${newRecord._id}`, newRecord, {
       revalidate: false,
       optimisticData: newRecord,
+    })
+    mutateSession({
+      ...newSessionLog,
+      records: newSessionLog.records.concat(newRecord._id),
     })
 
     swiper.update()

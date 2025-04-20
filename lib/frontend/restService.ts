@@ -76,7 +76,6 @@ export function useSessionLog(day: Dayjs | string) {
 
   return {
     sessionLog: data,
-
     isLoading,
     mutate,
   }
@@ -123,9 +122,8 @@ export function useRecord(id: string) {
   )
 
   return {
-    record: data,
-
-    isLoading,
+    record: data ?? null,
+    isLoadingRecord: isLoading,
     // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
     mutate,
   }
@@ -192,16 +190,19 @@ export function useExercises(query?: ExerciseQuery) {
     mutate,
   }
 }
-
-export function useExercise(id: string | null) {
-  // passing null to useSWR disables fetching
-  const { data, mutate } = useSWR<Exercise | null, ApiError>(
+export function useExercise(
+  /** fetching will be disabled if id is falsy   */
+  id?: string | null
+) {
+  const { data, isLoading, mutate } = useSWR<Exercise | null, ApiError>(
+    // Passing null to useSWR disables fetching.
+    // NOTE: when fetching is disabled useSWR returns data as undefined, not null
     id ? URI_EXERCISES + id : null
   )
 
   return {
-    exercise: data,
-
+    exercise: data ?? null,
+    isLoadingExercise: isLoading,
     mutate,
   }
 }
