@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { GetServerSidePropsContext, NextApiRequest } from 'next'
 import { getServerSession } from 'next-auth'
 import { ApiError } from '../../../models/ApiError'
 import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
@@ -21,8 +21,8 @@ export type UserId = ObjectId
 
 /** Return the userId, formatted as a UserId. */
 export async function getUserId(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: GetServerSidePropsContext['req'],
+  res: GetServerSidePropsContext['res']
 ): Promise<UserId> {
   const session = await getServerSession(req, res, authOptions)
 

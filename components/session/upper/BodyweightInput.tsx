@@ -28,10 +28,10 @@ export default function BodyweightInput({
 }: Props & Omit<TextFieldProps, 'slotProps'>) {
   const [bodyweightType, setBodyweightType] = useState<WeighInType>('official')
   const { data, mutate } = useBodyweights({
-    limit: 1,
     end: day.format(DATE_FORMAT),
-    type: bodyweightType,
+    limit: 1,
     sort: 'newestFirst',
+    type: bodyweightType,
   })
 
   // note: the value will be cast to a number on submit
