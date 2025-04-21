@@ -13,6 +13,12 @@ export default function TitleBar({ day }: Props) {
   const router = useRouter()
   const theme = useTheme()
   const isMd = useMediaQuery(theme.breakpoints.up('md'))
+  // getServerSideProps messes up useSwr and prevents rerenders from
+  // being triggered for the bodyweight input and date picker, causing them to
+  // load infinitely. It only affects these useSwr calls.
+  // Other ones like useModifiers seem to still work due to nameSort().
+  // This is a tmp fix to force a rerender on small screens.
+  const _tmpLoadingFix = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleDateChange = (newDay: Dayjs) => {
     const date = newDay.format(DATE_FORMAT)
