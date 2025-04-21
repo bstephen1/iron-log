@@ -11,33 +11,59 @@ import RestTimer from '../../components/session/upper/RestTimer'
 import TitleBar from '../../components/session/upper/TitleBar'
 import WeightUnitConverter from '../../components/session/upper/WeightUnitConverter'
 import { dateSchema } from '../../models/schemas'
+import { SessionLog } from '../../models/SessionLog'
+import { fetchBodyweights, fetchSession } from '../../lib/backend/mongoService'
+import { getUserId } from '../../lib/backend/apiMiddleware/util'
 
-export function getServerSideProps({ query }: GetServerSidePropsContext) {
+export async function getServerSideProps({
+  query,
+  req,
+  res,
+}: GetServerSidePropsContext) {
   try {
+    const userId = await getUserId(req, res)
     const date = dateSchema.parse(query.date)
-    return { props: { date } }
+
+    const session = await fetchSession(userId, date)
+    const latestWeight = (
+      await fetchBodyweights(
+        userId,
+        { type: 'official' },
+        {
+          limit: 1,
+          end: date,
+          sort: 'newestFirst',
+        }
+      )
+    )[0]
+    return { props: { date, session, latestWeight } }
   } catch {
     return { notFound: true }
   }
 }
 
-const DateContext = createContext('')
+interface SessionContext {
+  session: SessionLog
+  latestBodyweight: unknown
+}
+const SessionContext = createContext('')
 
 /** Returns the validated date url param.
  *  Preferred over using router to fetch the raw value. */
-export const useDateContext = () => useContext(DateContext)
+export const useSessionContext = () => useContext(SessionContext)
 
 interface Props {
   date: string
 }
-export default function SessionPage({ date }: Props) {
+export default function SessionPage({ date, session, latestWeight }: Props) {
+  console.log(latestWeight)
   return (
     <>
       <Head>
         {/* this needs to be a single string or it throws a warning */}
         <title>{`Iron Log - ${date}`}</title>
       </Head>
-      <DateContext.Provider value={date}>
+      <SessionContext.Provider value={date}>
         <Stack spacing={2}>
           <TitleBar day={dayjs(date)} />
           <Grid container>
@@ -64,7 +90,7 @@ export default function SessionPage({ date }: Props) {
           {/* resetting key on date change ensures quickRender resets */}
           <SessionSwiper key={date} />
         </Stack>
-      </DateContext.Provider>
+      </SessionContext.Provider>
     </>
   )
 }

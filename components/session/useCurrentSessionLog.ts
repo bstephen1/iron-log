@@ -1,11 +1,11 @@
-import { useDateContext } from '../../pages/sessions/[date].page'
 import { useSessionLog } from '../../lib/frontend/restService'
+import { useSessionContext } from '../../pages/sessions/[date].page'
 
 /** Use within DateContext to retrieve session data and mutators.
  *  Session fields are spread out directly for convenient access.
  */
 export default function useCurrentSessionLog() {
-  const date = useDateContext()
+  const date = useSessionContext()
   const { sessionLog, mutate } = useSessionLog(date)
 
   return {
