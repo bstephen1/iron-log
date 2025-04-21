@@ -470,7 +470,7 @@ export async function fetchBodyweights(
   return await bodyweightHistory
     .find(
       { userId, date: date ?? { $gte: start, $lte: end }, ...filter },
-      { projection: { userId: 0, _id: 0 } }
+      { projection: { userId: 0 } }
     )
     .sort({ date: convertSort(sort) })
     .limit(limit || Number.MAX_SAFE_INTEGER)
