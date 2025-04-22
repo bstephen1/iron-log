@@ -1,12 +1,18 @@
 import { Chip, ChipProps, Stack } from '@mui/material'
 
 interface Props {
-  selected?: string | string[]
+  value: string | string[]
   multiple?: boolean
 }
-export default function TagChips({ selected = [], multiple }: Props) {
+export default function TagChips({ value, multiple }: Props) {
   const tagPluralOrSingle = multiple ? 'tags' : 'tag'
-  selected = typeof selected === 'string' ? [selected] : selected
+  if (!value.length) {
+    // empty string/array signifies no tags
+    value = []
+  } else if (typeof value === 'string') {
+    // convert non-multiple mode to an array
+    value = [value]
+  }
 
   const StyledChip = (props: ChipProps) => (
     <Chip {...props} sx={{ cursor: 'inherit', ...props.sx }} />
@@ -14,8 +20,8 @@ export default function TagChips({ selected = [], multiple }: Props) {
 
   return (
     <Stack spacing={0.5}>
-      {selected.length ? (
-        selected.map((value) => <StyledChip key={value} label={value} />)
+      {value.length ? (
+        value.map((value) => <StyledChip key={value} label={value} />)
       ) : (
         <StyledChip
           label={'no ' + tagPluralOrSingle}
