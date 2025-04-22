@@ -3,7 +3,7 @@ import NameField from './NameField'
 
 const mockHandleUpdate = vi.fn()
 
-it('x', async () => {
+it('submits valid edits', async () => {
   const existingName = 'existing'
   const initialName = 'init'
   const { user } = render(
