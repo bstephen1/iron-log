@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 
 test('adds an exercise', async ({ page }) => {
   // should default to exercise tab

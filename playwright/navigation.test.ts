@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from './fixtures'
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 
@@ -8,9 +8,14 @@ test(`navigates to today's session from home page`, async ({ page }) => {
 
   const today = dayjs()
 
-  await expect(page.getByRole('textbox', { name: 'Date' })).toHaveValue(
-    today.format('MM/DD/YYYY')
-  )
+  // mobile and desktop have different labels for the date picker
+  // due to mobile not showing the date select button, so mobile conflicts
+  // with the previous session picker for copying sessions
+  // Desktop: "Date"
+  // Mobile: "Choose date, selected date is Apr 23, 2025"
+  await expect(
+    page.locator(`input[value="${today.format('MM/DD/YYYY')}"]`)
+  ).toBeVisible()
   expect(page.url().includes(today.format(DATE_FORMAT)))
 })
 
