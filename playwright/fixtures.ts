@@ -20,8 +20,11 @@ export const test = baseTest.extend<object, { workerStorageState: string }>({
   // Authenticate once per worker with a worker-scoped fixture.
   workerStorageState: [
     async ({ browser }, apply) => {
-      // Use parallelIndex as a unique identifier for each worker.
-      const id = test.info().parallelIndex
+      // Workers have workerIndex and parallelIndex as unique ids.
+      // The difference is parallelIndex will remain the same if the worker is
+      // restarted (eg, due to a failure), but workerIndex will be regenerated.
+      const id = test.info().workerIndex
+
       const fileName = path.resolve(
         test.info().project.outputDir,
         `.auth/${id}.json`
@@ -40,7 +43,6 @@ export const test = baseTest.extend<object, { workerStorageState: string }>({
       // Alternatively, you can have a list of precreated accounts for testing.
       // Make sure that accounts are unique, so that multiple team members
       // can run tests at the same time without interference.
-      // todo: ids are only unique based on the worker index
       const userId = getUserId(id)
 
       // Perform authentication steps.

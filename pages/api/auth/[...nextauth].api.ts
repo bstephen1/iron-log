@@ -27,7 +27,7 @@ const devProvider =
 
       const objectIdSchema = z
         .string()
-        .regex(/^\d{24}$/, { message: 'Input must be a 24-digit number' })
+        .length(24, 'id must be 24 characters')
         .optional()
         .default(devUserId)
 
