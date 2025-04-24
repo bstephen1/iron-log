@@ -13,10 +13,12 @@ test('adds an exercise', async ({ page }) => {
   // -----------
 
   // note: fill clears existing text in the input
-  await page.getByLabel('Name').fill('SSB squats')
+  const newName = 'SSB squats'
+  await page.getByLabel('Name').fill(newName)
   await page.getByRole('button', { name: 'Submit' }).click()
-  // name change should update name/exercise inputs and url
-  await expect(page.locator('input[value="SSB squats"]')).toHaveCount(2)
+  // name change should immediately update name/exercise inputs and url
+  await expect(page.getByLabel('Exercise')).toHaveValue(newName)
+  await expect(page.getByLabel('Name')).toHaveValue(newName)
   await expect(page).toHaveURL(/SSB\+squats/)
 
   await page.getByText('Active').click()
@@ -32,8 +34,8 @@ test('adds an exercise', async ({ page }) => {
   // confirm edits persist on reload
   await page.reload()
 
-  await expect(page.getByLabel('Exercise')).toHaveValue('SSB squats')
-  await expect(page.getByLabel('Name')).toHaveValue('SSB squats')
+  await expect(page.getByLabel('Exercise')).toHaveValue(newName)
+  await expect(page.getByLabel('Name')).toHaveValue(newName)
   await expect(page.getByText('Archived')).toBeVisible()
   await expect(page.getByLabel('Equipment weight')).toHaveValue('7.5')
   await expect(page.getByLabel('Bodyweight')).toBeChecked()

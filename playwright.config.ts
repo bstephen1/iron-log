@@ -38,8 +38,8 @@ export default defineConfig({
   testDir: './playwright',
   forbidOnly: isCI,
   retries: isCI ? 2 : 1,
-  // this runs individual tests in each file in parallel, which is causing
-  // test failures due to hitting the db simultaneously
+  // Runs individual tests in each file in parallel.
+  // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,
   // Opt out of parallel tests on CI for more reliability / avoid concurrency issues
   workers: isCI ? 1 : undefined,
@@ -59,6 +59,8 @@ export default defineConfig({
   webServer: {
     command: 'npm run dev:test',
     url: 'http://localhost:7357',
+    // NOTE: in dev mode it's much more stable to run the test server separately.
+    // Playwright can spin up the server on its own but it frequently causes flakiness.
     reuseExistingServer: !isCI,
   },
 })
