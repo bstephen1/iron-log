@@ -37,7 +37,7 @@ const isCI = !!process.env.CI
 export default defineConfig({
   testDir: './playwright',
   forbidOnly: isCI,
-  retries: isCI ? 2 : 0,
+  retries: isCI ? 2 : 1,
   // Runs individual tests in each file in parallel.
   // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,

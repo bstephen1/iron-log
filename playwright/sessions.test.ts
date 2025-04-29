@@ -14,6 +14,18 @@ test('adds bodyweight', async ({ page }) => {
   await expect(page.getByText('Using latest official weight')).toBeVisible()
 })
 
+// todo: make 2 records and swap between the sessions
+test('loads calendar', async ({ page }) => {
+  await page.goto('/sessions/2000-01-01')
+
+  // open date picker -- have to specifically click the picker's label.
+  // On desktop there is a distinct icon, but on mobile the whole input opens the picker.
+  await page.getByLabel('Choose date').click()
+
+  // pick an arbitrary date to confirm the calendar is loaded
+  await expect(page.getByRole('gridcell', { name: '15' })).toBeVisible()
+})
+
 // The redirect is stored in local storage. This value is set in the settings
 // page, but it should redirect by default without first visiting settings
 // to set the value.
