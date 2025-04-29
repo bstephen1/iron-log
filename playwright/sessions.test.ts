@@ -20,7 +20,7 @@ test('loads calendar', async ({ page }) => {
 
   // open date picker -- have to specifically click the picker's label.
   // On desktop there is a distinct icon, but on mobile the whole input opens the picker.
-  await page.getByLabel('Choose date').click()
+  await page.getByLabel('selected date is Jan 1').click()
 
   // pick an arbitrary date to confirm the calendar is loaded
   await expect(page.getByRole('gridcell', { name: '15' })).toBeVisible()
