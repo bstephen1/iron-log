@@ -73,7 +73,7 @@ describe('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
-    const input = screen.getByLabelText('bodyweight input')
+    const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
 
     await user.type(input, '{End}3')
@@ -93,7 +93,7 @@ describe('input', () => {
   it('does not show submit button when latest bodyweight is unchanged and matches current date', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2000} />)
-    const input = screen.getByLabelText('bodyweight input')
+    const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
 
     await user.type(input, '{End}3')
@@ -112,7 +112,7 @@ describe('input', () => {
   it('validates against changing an existing value to be empty', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
-    const input = screen.getByLabelText('bodyweight input')
+    const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
 
     await user.type(input, '{End}{Backspace}{Backspace}')
@@ -124,7 +124,7 @@ describe('input', () => {
   it('resets to existing value when button is clicked', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
-    const input = screen.getByLabelText('bodyweight input')
+    const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
 
     await user.type(input, '3')
@@ -138,7 +138,7 @@ describe('input', () => {
   it('submits and revalidates when button is clicked', async () => {
     useServer(URI_BODYWEIGHT, [officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
-    const input = screen.getByLabelText('bodyweight input')
+    const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
 
     // simulate the res from revalidation is different from UI value

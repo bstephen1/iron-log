@@ -77,7 +77,6 @@ export default function BodyweightInput({
         },
         input: {
           readOnly: loading,
-          'aria-label': 'bodyweight input',
           // without the box the loading spinner has an uneven width
           startAdornment: (
             <>

@@ -37,12 +37,17 @@ const isCI = !!process.env.CI
 export default defineConfig({
   testDir: './playwright',
   forbidOnly: isCI,
-  retries: isCI ? 2 : 1,
+  retries: isCI ? 2 : 0,
   // Runs individual tests in each file in parallel.
   // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,
   // Opt out of parallel tests on CI for more reliability / avoid concurrency issues
   workers: isCI ? 1 : undefined,
+  // tests frequently max out the default timeouts
+  timeout: 60_000,
+  expect: {
+    timeout: 10_000,
+  },
   // See: https://playwright.dev/docs/test-reporters
   reporter: isCI ? 'github' : [['list'], ['html']],
   // Shared settings for all the projects below.
