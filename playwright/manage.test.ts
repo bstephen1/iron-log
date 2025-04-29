@@ -34,7 +34,10 @@ test('adds an exercise', async ({ page }) => {
   // confirm edits persist on reload
   await page.reload()
 
-  await expect(page.getByLabel('Exercise')).toHaveValue(newName)
+  await expect(page.getByLabel('Exercise')).toHaveValue(newName, {
+    // reload seems to frequently be the cause of test timeouts
+    timeout: 15_000,
+  })
   await expect(page.getByLabel('Name')).toHaveValue(newName)
   await expect(page.getByText('Archived')).toBeVisible()
   await expect(page.getByLabel('Equipment weight')).toHaveValue('7.5')

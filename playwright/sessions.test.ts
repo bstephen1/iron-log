@@ -1,5 +1,3 @@
-import dayjs from 'dayjs'
-import { DATE_FORMAT } from '../lib/frontend/constants'
 import { expect, test } from './fixtures'
 
 test('adds bodyweight', async ({ page }) => {
@@ -19,9 +17,24 @@ test('adds bodyweight', async ({ page }) => {
 // The redirect is stored in local storage. This value is set in the settings
 // page, but it should redirect by default without first visiting settings
 // to set the value.
-test.skip(`redirects to today's log if url has no date`, async ({ page }) => {
+test(`redirects to today's log if url has no date`, async ({ page }) => {
   await page.goto('/sessions')
 
-  const today = dayjs().format(DATE_FORMAT)
-  expect(page.url()).toContain(today)
+  await expect(page.getByText('Copy session')).toBeVisible()
+})
+
+test(`follows session redirect setting`, async ({ page }) => {
+  await page.goto('/settings')
+
+  // disable redirect
+  await page.getByLabel('redirect').click()
+  await page.getByText('sessions page').click()
+
+  // shows no redirect page
+  const enableRedirectButton = page.getByText('enable redirect')
+  await expect(enableRedirectButton).toBeVisible()
+  await enableRedirectButton.click()
+
+  // redirects
+  await expect(page.getByText('Copy session')).toBeVisible()
 })

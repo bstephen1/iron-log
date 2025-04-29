@@ -44,7 +44,7 @@ export default defineConfig({
   // Opt out of parallel tests on CI for more reliability / avoid concurrency issues
   workers: isCI ? 1 : undefined,
   // tests frequently max out the default timeouts
-  timeout: 60_000,
+  timeout: 45_000,
   expect: {
     timeout: 10_000,
   },
