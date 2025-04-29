@@ -1,5 +1,6 @@
 import { FormControlLabel, FormGroup, Switch, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid2'
+import Link from 'next/link'
 import useLocalStorageState from 'use-local-storage-state'
 
 export default function SettingsPage() {
@@ -18,12 +19,15 @@ export default function SettingsPage() {
                 onChange={() => setSessionRedirect(!sessionRedirect)}
               />
             }
-            label="Redirect to today's session"
+            label="Session redirect"
           />
           <Typography variant="body2">
-            Redirect to today's session when when navigating to the sessions
-            page with no date in the url. Disabling this can be useful for
-            directly bookmarking the redirect page.
+            Redirects to today's session when when navigating to the{' '}
+            <Link href="/sessions" className="default-link">
+              sessions page
+            </Link>{' '}
+            with no date in the url. Temporarily disabling this can be useful
+            for directly bookmarking the redirect page.
           </Typography>
         </FormGroup>
       </Grid>

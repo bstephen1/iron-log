@@ -22,6 +22,12 @@ a {
   text-decoration: none;
 }
 
+/* default href link styling */
+.default-link {
+  color: blue;
+  text-decoration: underline;
+}
+
 /* disable spinner buttons on numeric input */
 
 /* Chrome, Safari, Edge, Opera */

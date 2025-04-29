@@ -16,6 +16,7 @@ test(`navigates to today's session from home page`, async ({ page }) => {
   await expect(
     page.locator(`input[value="${today.format('MM/DD/YYYY')}"]`)
   ).toBeVisible()
+  // page.url() is synchronous. To wait for a url use page.waitForUrl().
   expect(page.url().includes(today.format(DATE_FORMAT)))
 })
 

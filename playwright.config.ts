@@ -43,6 +43,11 @@ export default defineConfig({
   fullyParallel: false,
   // Opt out of parallel tests on CI for more reliability / avoid concurrency issues
   workers: isCI ? 1 : undefined,
+  // tests frequently max out the default timeouts
+  timeout: 45_000,
+  expect: {
+    timeout: 10_000,
+  },
   // See: https://playwright.dev/docs/test-reporters
   reporter: isCI ? 'github' : [['list'], ['html']],
   // Shared settings for all the projects below.

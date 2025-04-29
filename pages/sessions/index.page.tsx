@@ -8,9 +8,15 @@ import { DATE_FORMAT } from '../../lib/frontend/constants'
 
 export default function Page() {
   const router = useRouter()
-  // initial value is undefined while loading
-  const [sessionRedirect, setSessionRedirect] =
-    useLocalStorageState('sessionRedirect')
+  const [sessionRedirect, setSessionRedirect] = useLocalStorageState(
+    'sessionRedirect',
+    // serverValue is the value on the initial render from the server.
+    // We needed a distinct state separate from true/false to indicate "loading".
+    // We cannot use undefined because then the hook just reuses defaultValue for
+    // defaultServerValue. We need default values in case the value is not
+    // saved in local storage yet.
+    { defaultServerValue: null, defaultValue: true }
+  )
 
   // need to wrap router.push in a useEffect because otherwise it would try to
   // render serverside and cause an error since the router doesn't exist yet.
@@ -20,7 +26,7 @@ export default function Page() {
     router.push(`sessions/${today}`)
   }, [router, sessionRedirect])
 
-  return sessionRedirect || sessionRedirect === undefined ? (
+  return sessionRedirect !== false ? (
     <>
       <LoadingSpinner />
     </>
@@ -29,16 +35,16 @@ export default function Page() {
       <Typography variant="h6" component="h1" py={1} textAlign="center">
         No Session
       </Typography>
-      <Typography>
+      <Typography textAlign="center">
         Normally coming here would redirect to the page for today's session, but
-        the redirect has been disabled!
+        the redirect has been disabled.
       </Typography>
       <div></div>
-      <Typography>
+      <Typography textAlign="center">
         Typically you might want to turn off the redirect temporarily to
         bookmark this page.
       </Typography>
-      <Typography>
+      <Typography textAlign="center">
         You can re-enable the redirect through settings, or by clicking the
         button below.
       </Typography>
