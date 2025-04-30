@@ -49,6 +49,7 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
       options={exerciseNames}
       fullWidth
       handleChange={handleUpdateExercise}
+      disableClearable
       // cannot use "append" because options are recomputed from exercises on rerender
       changeBehavior="filter"
     />

@@ -108,8 +108,6 @@ export default function SessionSwiper() {
       pagination={{
         el: `.${paginationClassName}`,
         clickable: true,
-        // todo: maybe add a custom render and make the last one a "+" or something.
-        // Kind of tricky to do though.
       }}
       // Extra padding lets autoHeight remember scroll position for longer slides.
       // Has to be large enough to still be showing swiper on AddRecord slide,

@@ -13,8 +13,8 @@ import AsyncAutocomplete, {
 import { doNothing } from '../../lib/util'
 import useField from './useField'
 
-interface ComboBoxFieldProps
-  extends AsyncAutocompleteProps<string, true, false> {
+interface ComboBoxFieldProps<Clearable extends boolean | undefined>
+  extends AsyncAutocompleteProps<string, true, Clearable> {
   options?: string[]
   initialValue?: string[]
   /** Placeholder that will only show if there are no values selected.
@@ -44,7 +44,9 @@ interface ComboBoxFieldProps
 /** This component is setup for memoization. For memoization to work any functions passed in
  *  must be wrapped in useCallback(). Eg, handleSubmit().
  */
-export default memo(function ComboBoxField({
+export default memo(function ComboBoxField<
+  Clearable extends boolean | undefined,
+>({
   options = [],
   initialValue = [],
   emptyPlaceholder = '',
@@ -54,7 +56,7 @@ export default memo(function ComboBoxField({
   textFieldProps,
   helperText = ' ',
   ...asyncAutocompleteProps
-}: ComboBoxFieldProps) {
+}: ComboBoxFieldProps<Clearable>) {
   const { control, value, setValue } = useField<string[]>({
     initialValue,
     autoSubmit: false,
@@ -91,8 +93,6 @@ export default memo(function ComboBoxField({
       onChange={(_, value, reason) => onChange(value, reason)}
       fullWidth
       multiple
-      // todo: change color?
-      // ChipProps={{ color: 'primary', variant: 'outlined' }}
       options={options}
       disableCloseOnSelect
       autoHighlight

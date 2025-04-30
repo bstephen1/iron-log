@@ -350,7 +350,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                 }`
               }
             />
-            {/* todo: only show if multiple lines */}
             <Legend verticalAlign="top" height={30} />
             <Brush
               dataKey="unixDate"

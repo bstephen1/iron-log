@@ -48,7 +48,6 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
     (updates: Partial<Exercise>) => handleUpdate(_id, updates),
     [_id, handleUpdate]
   )
-  // todo: validate (drop empty notes)
 
   const handleDelete = useCallback(
     async (id: string) => {

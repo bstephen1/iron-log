@@ -4,8 +4,7 @@ import { Note, noteSchema } from './Note'
 import { Record } from './Record'
 import { dateSchema, idSchema } from './schemas'
 
-// todo: add session time. Start / end times? Program stuff (not hashed out yet), overall notes?
-// todo: gym location?
+// todo: add session time. start time: first set created. end time: last update to a set on the same day.
 export interface SessionLog extends z.infer<typeof sessionLogSchema> {}
 export const sessionLogSchema = z.object({
   _id: idSchema,
