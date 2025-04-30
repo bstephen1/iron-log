@@ -77,10 +77,6 @@ export const removeUndefinedKeys = <T extends object>(obj: T) =>
     {}
   )
 
-/** converts a value that may be a singleton or array into an array */
-export const toArray = <T>(value: T | T[] | undefined) =>
-  Array.isArray(value) ? value : value ? [value] : []
-
 export const enqueueError = (
   e: unknown,
   /** message to show if the error is a validation error */

@@ -1,12 +1,11 @@
 import { v6 as uuidv6 } from 'uuid'
+import { idSchema } from '../models/schemas'
 import {
   arrayToIndex,
   capitalize,
   generateId,
   removeUndefinedKeys,
-  toArray,
 } from './util'
-import { idSchema } from '../models/schemas'
 
 describe('validateId', () => {
   it('throws error when id format is invalid', () => {
@@ -75,19 +74,5 @@ describe('removeUndefinedKeys', () => {
     expect(removeUndefinedKeys({ a: { b: undefined } })).toEqual({
       a: { b: undefined },
     })
-  })
-})
-
-describe('toArray', () => {
-  it('returns singleton as an array', () => {
-    expect(toArray('hi')).toEqual(['hi'])
-  })
-
-  it('returns undefined as an empty array', () => {
-    expect(toArray(undefined)).toEqual([])
-  })
-
-  it('returns array as itself', () => {
-    expect(toArray(['hi'])).toEqual(['hi'])
   })
 })

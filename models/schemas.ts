@@ -9,5 +9,10 @@ export const idSchema = z
 /** enforces YYYY-MM-DD format */
 export const dateSchema = z.string().date()
 
-/** enforces api query param format, which may be string | string[] */
-export const apiArraySchema = z.string().or(z.array(z.string()))
+/** enforces api query param format, which may be string | string[],
+ *  and transforms to a string[]
+ */
+export const apiArraySchema = z
+  .string()
+  .transform((str) => [str])
+  .or(z.array(z.string()))
