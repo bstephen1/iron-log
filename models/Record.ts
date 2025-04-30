@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { Filter } from 'mongodb'
 import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
-import { generateId, removeUndefinedKeys, toArray } from '../lib/util'
+import { generateId, removeUndefinedKeys } from '../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
 import { exerciseSchema } from './AsyncSelectorOption/Exercise'
 import DateRangeQuery from './DateRangeQuery'
@@ -84,10 +84,7 @@ export const recordQuerySchema = z
         ...rest,
         ...setTypeFields,
         'exercise.name': exercise,
-        activeModifiers: buildMatchTypeFilter(
-          toArray(modifier),
-          modifierMatchType
-        ),
+        activeModifiers: buildMatchTypeFilter(modifier, modifierMatchType),
       }
 
       return removeUndefinedKeys(filter)

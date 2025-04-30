@@ -4,12 +4,13 @@ import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
-import { toArray, UpdateState } from '../../lib/util'
+import { UpdateState } from '../../lib/util'
 import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
   RecordRangeQuery,
 } from '../../models/Record'
+import { apiArraySchema } from '../../models/schemas'
 import ModifierQueryField from './ModifierQueryField'
 import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'
@@ -46,7 +47,7 @@ export default function QueryCard({ query, setQuery }: Props) {
             })
           }
         }}
-        activeModifiers={toArray(unsavedQuery.modifier)}
+        activeModifiers={apiArraySchema.parse(unsavedQuery.modifier)}
         exercise={exercise}
         category={null}
         variant="outlined"
@@ -55,7 +56,7 @@ export default function QueryCard({ query, setQuery }: Props) {
         disabled={!exercise}
         matchType={unsavedQuery.modifierMatchType}
         options={exercise?.modifiers || []}
-        initialValue={toArray(unsavedQuery.modifier)}
+        initialValue={apiArraySchema.parse(unsavedQuery.modifier)}
         updateQuery={updateUnsavedQuery}
       />
       <SetTypeQueryField
