@@ -18,7 +18,6 @@ export default function HistoryPage() {
     swiper.slideTo(index)
   }
 
-  // todo: scroll snap?
   return (
     <Stack spacing={2}>
       <Typography variant="h5" mb={2} display="flex" justifyContent="center">

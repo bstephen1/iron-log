@@ -9,7 +9,6 @@ import ManageWelcomeCard from '../ManageWelcomeCard'
 import ExerciseSelector from '../form-fields/selectors/ExerciseSelector'
 import ExerciseForm from './ExerciseForm'
 
-// todo: ui element showing "changes saved". Snackbar?
 export default function useExerciseForm() {
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
   const { exercises, mutate: mutateExercises } = useExercises()

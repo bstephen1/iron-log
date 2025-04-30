@@ -22,6 +22,7 @@ export default memo(function NameField({ name, handleUpdate, options }: Props) {
       schema={z
         .string()
         .min(1, 'Must have a name')
+        // todo: this is showing an error if you type and then bksp to initial name
         .refine(
           (name) => options.length !== new Set(options.concat(name)).size,
           'Already exists!'

@@ -17,8 +17,6 @@ import { createBodyweight, WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
-// todo: when using bw in sets, default this to using the same weight the sets are using
-
 interface Props {
   day: Dayjs
 }
