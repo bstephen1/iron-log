@@ -10,6 +10,7 @@ import { preload } from 'swr'
 import { DATE_FORMAT, URI_SESSIONS } from '../../../lib/frontend/constants'
 import { paramify, useSessionLogs } from '../../../lib/frontend/restService'
 import { swrFetcher } from '../../../lib/util'
+import useCurrentSessionLog from '../useCurrentSessionLog'
 
 // The query gets data for the current month +/- 1 month so that
 // data for daysOutsideCurrentMonth is still visible on the current month
@@ -67,6 +68,8 @@ function SessionDatePickerInner({
   const { sessionLogsIndex, isLoading } = useSessionLogs(
     buildSessionLogQuery(0, visibleMonth)
   )
+  const { records: currentRecords, sessionLog: currentSession } =
+    useCurrentSessionLog()
 
   const handleChange = (newPickerValue: Dayjs | null) => {
     if (newPickerValue?.isValid()) {
@@ -109,7 +112,12 @@ function SessionDatePickerInner({
       slots={{
         day: (DayComponentProps) => {
           const day = DayComponentProps.day.format(DATE_FORMAT)
-          const isBadgeVisible = sessionLogsIndex[day]?.records.length
+          // the index will not be updated for the current day if user creates a new
+          // session by creating a record
+          const isCurrentDay = day === currentSession?.date
+          const isBadgeVisible = isCurrentDay
+            ? currentRecords?.length
+            : sessionLogsIndex[day]?.records.length
           // todo: can populate this with more info, like session type (after that's implemented)
           return (
             <Badge
@@ -118,7 +126,7 @@ function SessionDatePickerInner({
               variant="dot"
               color="secondary"
               aria-label={`${day}, ${
-                isBadgeVisible ? 'Session data exists' : 'No session'
+                isBadgeVisible ? 'Session data exists' : 'No session data'
               }`}
               invisible={!isBadgeVisible}
             >
