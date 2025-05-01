@@ -1,6 +1,3 @@
-import { URI_EXERCISES, URI_RECORDS } from '../lib/frontend/constants'
-import { createExercise } from '../models/AsyncSelectorOption/Exercise'
-import { createRecord } from '../models/Record'
 import { expect, test } from './fixtures'
 
 test('adds bodyweight', async ({ page }) => {
@@ -17,13 +14,11 @@ test('adds bodyweight', async ({ page }) => {
   await expect(page.getByText('Using latest official weight')).toBeVisible()
 })
 
-test('loads calendar', async ({ page, request }) => {
-  const exercise = createExercise('squats')
-  const prevRecord = createRecord('2000-01-01', { exercise })
-  const curRecord = createRecord('2000-01-05', { exercise })
-  await request.post(URI_EXERCISES, { data: exercise })
-  await request.post(URI_RECORDS, { data: prevRecord })
-  await request.post(URI_RECORDS, { data: curRecord })
+test('loads calendar', async ({ page, api }) => {
+  const exercise = await api.addExercise('squats')
+  await api.addRecord('2000-01-01', { exercise })
+  await api.addRecord('2000-01-05', { exercise })
+
   await page.goto('/sessions/2000-01-05')
 
   // open date picker -- have to specifically click the picker's label.
