@@ -14,16 +14,22 @@ test('adds bodyweight', async ({ page }) => {
   await expect(page.getByText('Using latest official weight')).toBeVisible()
 })
 
-// todo: make 2 records and swap between the sessions
-test('loads calendar', async ({ page }) => {
-  await page.goto('/sessions/2000-01-01')
+test('loads calendar', async ({ page, api }) => {
+  const exercise = await api.addExercise('squats')
+  await api.addRecord('2000-01-01', { exercise })
+  await api.addRecord('2000-01-05', { exercise })
+
+  await page.goto('/sessions/2000-01-05')
 
   // open date picker -- have to specifically click the picker's label.
   // On desktop there is a distinct icon, but on mobile the whole input opens the picker.
-  await page.getByLabel('selected date is Jan 1').click()
+  await page.getByLabel('selected date is Jan 5').click()
 
-  // pick an arbitrary date to confirm the calendar is loaded
-  await expect(page.getByRole('gridcell', { name: '15' })).toBeVisible()
+  // confirm the populated sessions have badges
+  await expect(page.getByLabel('2000-01-01, Session data exists')).toBeVisible()
+  await expect(page.getByLabel('2000-01-05, Session data exists')).toBeVisible()
+  // and other dates do not
+  await expect(page.getByLabel('2000-01-22, No session data')).toBeVisible()
 })
 
 // The redirect is stored in local storage. This value is set in the settings

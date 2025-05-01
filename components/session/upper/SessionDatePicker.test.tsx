@@ -42,9 +42,9 @@ it('shows existing session data with badges', async () => {
 
   expect(screen.getByLabelText('2020-01-05, Session data exists')).toBeVisible()
   // session exists, but is empty -- should be displayed as "no session"
-  expect(screen.getByLabelText('2020-01-10, No session')).toBeVisible()
+  expect(screen.getByLabelText('2020-01-10, No session data')).toBeVisible()
   // no session exists
-  expect(screen.getByLabelText('2020-01-04, No session')).toBeVisible()
+  expect(screen.getByLabelText('2020-01-04, No session data')).toBeVisible()
 })
 
 it('handles changing month', async () => {
