@@ -41,8 +41,6 @@ export default defineConfig({
   // Runs individual tests in each file in parallel.
   // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,
-  // Opt out of parallel tests on CI for more reliability / avoid concurrency issues
-  workers: isCI ? 1 : undefined,
   // tests frequently max out the default timeouts
   timeout: 45_000,
   expect: {
