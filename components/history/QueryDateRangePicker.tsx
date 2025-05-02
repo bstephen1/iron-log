@@ -3,8 +3,8 @@ import { DatePicker } from '@mui/x-date-pickers'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
-import { UpdateState } from '../../lib/util'
-import { RecordRangeQuery } from '../../models/Record'
+import { type UpdateState } from '../../lib/util'
+import { type RecordRangeQuery } from '../../models/Record'
 
 const today = dayjs()
 const todayFormatted = dayjs().format(DATE_FORMAT)

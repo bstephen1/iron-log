@@ -1,11 +1,11 @@
-import { MongoClient, ObjectId, W } from 'mongodb'
+import { MongoClient, type ObjectId, type W } from 'mongodb'
 import { generateId } from '../../lib/util'
-import { Category } from '../../models/AsyncSelectorOption/Category'
-import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight } from '../../models/Bodyweight'
-import { Record } from '../../models/Record'
-import { SessionLog } from '../../models/SessionLog'
+import { type Category } from '../../models/AsyncSelectorOption/Category'
+import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import { type Bodyweight } from '../../models/Bodyweight'
+import { type Record } from '../../models/Record'
+import { type SessionLog } from '../../models/SessionLog'
 
 /** add userId, an extra field only visible to mongo records */
 type WithUserId<T> = { userId: ObjectId } & T

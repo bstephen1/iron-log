@@ -1,4 +1,4 @@
-import { Filter } from 'mongodb'
+import { type Filter } from 'mongodb'
 import { z } from 'zod'
 import { asyncSelectorOptionSchema } from '.'
 import { generateId, removeUndefinedKeys } from '../../lib/util'

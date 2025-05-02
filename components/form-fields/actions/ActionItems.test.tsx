@@ -1,4 +1,4 @@
-import { ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 import { render, screen, within } from '../../../lib/testUtils'
 import ActionItems from './ActionItems'
 

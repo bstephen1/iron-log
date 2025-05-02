@@ -1,6 +1,6 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { Menu, MenuItemProps } from '@mui/material'
-import { memo, ReactNode, useState } from 'react'
+import { Menu, type MenuItemProps } from '@mui/material'
+import { memo, type ReactNode, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import TooltipIconButton, {
   IsMenuContext,

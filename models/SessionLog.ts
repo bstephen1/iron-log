@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { generateId } from '../lib/util'
-import { Note, noteSchema } from './Note'
-import { Record } from './Record'
+import { type Note, noteSchema } from './Note'
+import { type Record } from './Record'
 import { dateSchema, idSchema } from './schemas'
 
 // todo: add session time. start time: first set created. end time: last update to a set on the same day.

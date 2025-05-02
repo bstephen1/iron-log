@@ -1,12 +1,12 @@
 import {
   Autocomplete,
-  AutocompleteProps,
-  AutocompleteRenderInputParams,
+  type AutocompleteProps,
+  type AutocompleteRenderInputParams,
   CircularProgress,
   TextField,
-  TextFieldProps,
+  type TextFieldProps,
 } from '@mui/material'
-import { useState, JSX } from 'react'
+import { useState, type JSX } from 'react'
 
 // Extending Autocomplete is a lesson in frustration.
 // Long story short, it needs to have a generic signature that exactly matches

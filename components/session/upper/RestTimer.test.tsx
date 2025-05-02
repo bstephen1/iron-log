@@ -1,4 +1,4 @@
-import dayjs, { ManipulateType } from 'dayjs'
+import dayjs, { type ManipulateType } from 'dayjs'
 import { beforeEach, vi } from 'vitest'
 import { act, render, screen } from '../../../lib/testUtils'
 import RestTimer from './RestTimer'

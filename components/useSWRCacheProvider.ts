@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { State } from 'swr'
+import { type State } from 'swr'
 
 // useSwr has a currently open issue where the cache cannot be loaded from localStorage
 // on init with nextjs because it causes a hydration error.

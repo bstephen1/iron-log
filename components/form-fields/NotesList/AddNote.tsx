@@ -3,7 +3,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { OutlinedInput } from '@mui/material'
 import { useRef, useState } from 'react'
 import TransitionIconButton from '../../../components/TransitionIconButton'
-import { createNote, Note } from '../../../models/Note'
+import { createNote, type Note } from '../../../models/Note'
 import useField from '../useField'
 import TagSelect from './TagSelect'
 

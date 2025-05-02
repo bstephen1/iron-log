@@ -1,12 +1,12 @@
-import { TextFieldProps } from '@mui/material'
+import { type TextFieldProps } from '@mui/material'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
-import { AsyncSelectorProps } from '../../../components/form-fields/selectors/AsyncSelector'
+import { type AsyncSelectorProps } from '../../../components/form-fields/selectors/AsyncSelector'
 import ExerciseSelector from '../../../components/form-fields/selectors/ExerciseSelector'
 import { useExercises } from '../../../lib/frontend/restService'
-import { UpdateFields } from '../../../lib/util'
-import { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
-import { Record } from '../../../models/Record'
+import { type UpdateFields } from '../../../lib/util'
+import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
+import { type Record } from '../../../models/Record'
 
 type Props<DisableClearable extends boolean | undefined> = {
   exercise: DisableClearable extends true ? Exercise : Exercise | null

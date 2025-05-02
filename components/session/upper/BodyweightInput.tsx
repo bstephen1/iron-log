@@ -2,9 +2,9 @@ import {
   Box,
   CircularProgress,
   InputAdornment,
-  TextFieldProps,
+  type TextFieldProps,
 } from '@mui/material'
-import { Dayjs } from 'dayjs'
+import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'
@@ -13,7 +13,7 @@ import {
   updateBodyweight,
   useBodyweights,
 } from '../../../lib/frontend/restService'
-import { createBodyweight, WeighInType } from '../../../models/Bodyweight'
+import { createBodyweight, type WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
 

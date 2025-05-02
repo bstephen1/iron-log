@@ -1,10 +1,10 @@
-import { Badge, TextFieldProps } from '@mui/material'
+import { Badge, type TextFieldProps } from '@mui/material'
 import {
   DatePicker,
   DayCalendarSkeleton,
   PickersDay,
 } from '@mui/x-date-pickers'
-import { Dayjs } from 'dayjs'
+import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { preload } from 'swr'
 import { DATE_FORMAT, URI_SESSIONS } from '../../../lib/frontend/constants'

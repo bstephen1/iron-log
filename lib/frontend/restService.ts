@@ -1,19 +1,22 @@
-import dayjs, { Dayjs } from 'dayjs'
-import { ParsedUrlQueryInput, stringify } from 'querystring'
+import dayjs, { type Dayjs } from 'dayjs'
+import { type ParsedUrlQueryInput, stringify } from 'querystring'
 import useSWR from 'swr'
 import { arrayToIndex, fetchJson } from '../../lib/util'
-import DateRangeQuery from '../../models//DateRangeQuery'
-import { ApiError } from '../../models/ApiError'
-import { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import { Category } from '../../models/AsyncSelectorOption/Category'
+import type DateRangeQuery from '../../models//DateRangeQuery'
+import { type ApiError } from '../../models/ApiError'
+import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
+import { type Category } from '../../models/AsyncSelectorOption/Category'
 import {
-  Exercise,
-  ExerciseQuery,
+  type Exercise,
+  type ExerciseQuery,
 } from '../../models/AsyncSelectorOption/Exercise'
-import { Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { Bodyweight, BodyweightRangeQuery } from '../../models/Bodyweight'
-import { Record, RecordRangeQuery } from '../../models/Record'
-import { SessionLog } from '../../models/SessionLog'
+import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import {
+  type Bodyweight,
+  type BodyweightRangeQuery,
+} from '../../models/Bodyweight'
+import { type Record, type RecordRangeQuery } from '../../models/Record'
+import { type SessionLog } from '../../models/SessionLog'
 import {
   DATE_FORMAT,
   URI_BODYWEIGHT,

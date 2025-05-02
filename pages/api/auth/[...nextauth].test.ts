@@ -1,5 +1,5 @@
-import { Session } from 'next-auth/core/types'
-import { JWT } from 'next-auth/jwt'
+import { type Session } from 'next-auth/core/types'
+import { type JWT } from 'next-auth/jwt'
 import { devUserId } from '../../../lib/frontend/constants'
 import { authOptions } from './[...nextauth].api'
 

@@ -1,19 +1,27 @@
-import { Box, CardProps, Stack, Typography } from '@mui/material'
+import { Box, type CardProps, Stack, Typography } from '@mui/material'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
-import { Swiper, SwiperProps, SwiperRef, SwiperSlide } from 'swiper/react'
+import {
+  Swiper,
+  type SwiperProps,
+  type SwiperRef,
+  SwiperSlide,
+} from 'swiper/react'
 import { useRecords } from '../../../lib/frontend/restService'
-import HistoryCard, { HistoryAction, HistoryContent } from './HistoryCard'
+import HistoryCard, {
+  type HistoryAction,
+  type HistoryContent,
+} from './HistoryCard'
 
 import 'swiper/css'
 import 'swiper/css/pagination'
 
-import { memo, Ref, useEffect, useState } from 'react'
+import { memo, type Ref, useEffect, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import NavigationBar from '../../../components/slider/NavigationBar'
-import { DisplayFields } from '../../../models/DisplayFields'
-import { RecordRangeQuery } from '../../../models/Record'
+import { type DisplayFields } from '../../../models/DisplayFields'
+import { type RecordRangeQuery } from '../../../models/Record'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination

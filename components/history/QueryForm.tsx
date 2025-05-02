@@ -1,14 +1,14 @@
 import { Button, Stack } from '@mui/material'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { type Dispatch, type SetStateAction, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
-import { UpdateState } from '../../lib/util'
-import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import { type UpdateState } from '../../lib/util'
+import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
-  RecordRangeQuery,
+  type RecordRangeQuery,
 } from '../../models/Record'
 import { apiArraySchema } from '../../models/schemas'
 import ModifierQueryField from './ModifierQueryField'

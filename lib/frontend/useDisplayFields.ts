@@ -1,4 +1,4 @@
-import { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_DISPLAY_FIELDS,
   DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,

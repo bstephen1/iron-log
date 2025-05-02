@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction } from 'react'
-import { KeyedMutator } from 'swr'
+import { type Dispatch, type SetStateAction } from 'react'
+import { type KeyedMutator } from 'swr'
 import { addCategory } from '../../../lib/frontend/restService'
 import {
-  Category,
+  type Category,
   createCategory,
 } from '../../../models/AsyncSelectorOption/Category'
 import AsyncSelector from './AsyncSelector'

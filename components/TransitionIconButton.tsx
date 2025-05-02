@@ -1,5 +1,5 @@
-import { Grow, IconButton, IconButtonProps } from '@mui/material'
-import { JSX } from 'react'
+import { Grow, IconButton, type IconButtonProps } from '@mui/material'
+import { type JSX } from 'react'
 import Tooltip from './Tooltip'
 
 interface Props extends IconButtonProps {

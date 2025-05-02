@@ -1,6 +1,6 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { Button, Paper, Stack, Typography } from '@mui/material'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs, { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'

@@ -2,7 +2,7 @@ import ListIcon from '@mui/icons-material/List'
 import {
   Badge,
   Button,
-  ButtonProps,
+  type ButtonProps,
   Dialog,
   DialogActions,
   DialogContent,

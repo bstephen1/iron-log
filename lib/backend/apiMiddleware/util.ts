@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { ObjectId } from 'mongodb'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { type NextApiRequest, type NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { ApiError } from '../../../models/ApiError'
 import { authOptions } from '../../../pages/api/auth/[...nextauth].api'

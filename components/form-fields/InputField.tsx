@@ -1,8 +1,8 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
-import { InputProps, TextField, TextFieldProps } from '@mui/material'
+import { type InputProps, TextField, type TextFieldProps } from '@mui/material'
 import { useRef } from 'react'
-import { Schema } from 'zod'
+import { type Schema } from 'zod'
 import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
 

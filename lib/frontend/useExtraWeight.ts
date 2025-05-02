@@ -1,4 +1,4 @@
-import { Record } from '../../models/Record'
+import { type Record } from '../../models/Record'
 import { useBodyweights, useModifiers } from './restService'
 
 export default function useExtraWeight(record: Record) {

@@ -16,7 +16,7 @@ import {
 } from '@mui/material'
 import dayjs from 'dayjs'
 import Link from 'next/link'
-import { ComponentProps, useState } from 'react'
+import { type ComponentProps, useState } from 'react'
 import {
   DATE_FORMAT,
   guestUserName,

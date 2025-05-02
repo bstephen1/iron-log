@@ -1,9 +1,9 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
-import { UpdateState } from '../../lib/util'
+import { type UpdateState } from '../../lib/util'
 import { ArrayMatchType } from '../../models//ArrayMatchType'
-import { RecordRangeQuery } from '../../models/Record'
+import { type RecordRangeQuery } from '../../models/Record'
 import { DEFAULT_SET_TYPE } from '../../models/Set'
-import { Units } from '../../models/Units'
+import { type Units } from '../../models/Units'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props {

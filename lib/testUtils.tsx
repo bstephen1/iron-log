@@ -1,23 +1,23 @@
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { render, RenderOptions } from '@testing-library/react'
+import { render, type RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
-import { delay, http, HttpResponse, JsonBodyType, Path } from 'msw'
-import { NextApiHandler } from 'next'
+import { delay, http, HttpResponse, type JsonBodyType, type Path } from 'msw'
+import { type NextApiHandler } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import {
-  NtarhInitPagesRouter,
+  type NtarhInitPagesRouter,
   testApiHandler,
 } from 'next-test-api-route-handler'
-import { ReactElement, ReactNode } from 'react'
+import { type ReactElement, type ReactNode } from 'react'
 import { SWRConfig } from 'swr'
 import { vi } from 'vitest'
-import { ApiError } from '../models/ApiError'
+import { type ApiError } from '../models/ApiError'
 import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
 import { devUserId } from './frontend/constants'
-import { Session } from 'next-auth'
+import { type Session } from 'next-auth'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.

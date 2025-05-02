@@ -2,18 +2,18 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardProps,
+  type CardProps,
   Stack,
   TextField,
 } from '@mui/material'
 import Link from 'next/link'
-import { JSX, memo } from 'react'
+import { type JSX, memo } from 'react'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
 import StyledDivider from '../../../components/StyledDivider'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
-import { DisplayFields } from '../../../models/DisplayFields'
-import { Record } from '../../../models/Record'
+import { type DisplayFields } from '../../../models/DisplayFields'
+import { type Record } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
 import ExerciseNotesButton from '../records/header/ExerciseNotesButton'
 import ManageExerciseButton from '../records/header/ManageExerciseButton'

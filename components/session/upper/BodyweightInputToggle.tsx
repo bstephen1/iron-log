@@ -9,7 +9,7 @@ import {
   MenuItem,
 } from '@mui/material'
 import { useState } from 'react'
-import { WeighInType } from '../../../models/Bodyweight'
+import { type WeighInType } from '../../../models/Bodyweight'
 import Tooltip from '../../Tooltip'
 
 interface Props {

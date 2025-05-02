@@ -1,10 +1,10 @@
 import { createFilterOptions } from '@mui/material'
 import { useState } from 'react'
-import { KeyedMutator } from 'swr'
+import { type KeyedMutator } from 'swr'
 import AsyncAutocomplete, {
-  AsyncAutocompleteProps,
+  type AsyncAutocompleteProps,
 } from '../../../components/AsyncAutocomplete'
-import { AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
+import { type AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
 import { Status } from '../../../models/Status'
 
 /** The Option type is a wrapper for the generic C which adds inputValue.

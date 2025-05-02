@@ -2,7 +2,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { Box, IconButton } from '@mui/material'
 import { useState } from 'react'
-import Swiper from 'swiper'
+import type Swiper from 'swiper'
 import { useSwiper } from 'swiper/react'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 

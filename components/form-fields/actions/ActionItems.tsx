@@ -3,7 +3,7 @@ import { Box, Button, Paper, Typography } from '@mui/material'
 import FormDivider from '../../forms/FormDivider'
 import DeleteButton from './DeleteButton'
 import UsageButton from './UsageButton'
-import { memo, JSX } from 'react'
+import { memo, type JSX } from 'react'
 
 interface Props {
   id: string

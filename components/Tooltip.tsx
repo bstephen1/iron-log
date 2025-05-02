@@ -1,4 +1,4 @@
-import { Tooltip as MuiTooltip, TooltipProps } from '@mui/material'
+import { Tooltip as MuiTooltip, type TooltipProps } from '@mui/material'
 import { useState } from 'react'
 
 /** The tooltip provided by mui does not follow aria accessibility

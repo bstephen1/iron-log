@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction } from 'react'
-import { KeyedMutator } from 'swr'
+import { type Dispatch, type SetStateAction } from 'react'
+import { type KeyedMutator } from 'swr'
 import { addModifier } from '../../../lib/frontend/restService'
 import {
   createModifier,
-  Modifier,
+  type Modifier,
 } from '../../../models/AsyncSelectorOption/Modifier'
 import AsyncSelector from './AsyncSelector'
 

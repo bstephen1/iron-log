@@ -1,8 +1,8 @@
-import { ComponentProps, memo } from 'react'
+import { type ComponentProps, memo } from 'react'
 import isEqual from 'react-fast-compare'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
-import { UpdateFields } from '../../../lib/util'
-import { Record } from '../../../models/Record'
+import { type UpdateFields } from '../../../lib/util'
+import { type Record } from '../../../models/Record'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
   mutateRecordFields: UpdateFields<Record>

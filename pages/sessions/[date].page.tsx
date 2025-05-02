@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import dayjs from 'dayjs'
-import { GetServerSidePropsContext } from 'next'
+import { type GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { createContext, useContext } from 'react'
 import 'swiper/css'

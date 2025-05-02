@@ -1,7 +1,12 @@
-import { Input, InputProps, TextField, TextFieldProps } from '@mui/material'
-import { ChangeEvent, InputHTMLAttributes } from 'react'
+import {
+  Input,
+  type InputProps,
+  TextField,
+  type TextFieldProps,
+} from '@mui/material'
+import { type ChangeEvent, type InputHTMLAttributes } from 'react'
 import { useIMask } from 'react-imask'
-import { Schema } from 'zod'
+import { type Schema } from 'zod'
 import { doNothing } from '../../lib/util'
 import useField from './useField'
 

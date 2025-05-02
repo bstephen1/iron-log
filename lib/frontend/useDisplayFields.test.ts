@@ -3,7 +3,7 @@ import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_DISPLAY_FIELDS,
   DEFAULT_DISPLAY_FIELDS_SPLIT_WEIGHT,
-  DisplayFields,
+  type DisplayFields,
 } from '../../models/DisplayFields'
 import { DB_UNITS } from '../../models/Units'
 import useDisplayFields from './useDisplayFields'

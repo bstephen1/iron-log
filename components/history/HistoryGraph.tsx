@@ -13,20 +13,20 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { CategoricalChartFunc } from 'recharts/types/chart/types'
-import RecordDisplay from '../../components/history/RecordDisplay'
+import { type CategoricalChartFunc } from 'recharts/types/chart/types'
+import type RecordDisplay from '../../components/history/RecordDisplay'
 import {
   DATE_FORMAT,
   DEFAULT_CLOTHING_OFFSET,
 } from '../../lib/frontend/constants'
 import { useBodyweights, useRecords } from '../../lib/frontend/restService'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
-import { UpdateState } from '../../lib/util'
-import { Bodyweight } from '../../models/Bodyweight'
+import { type UpdateState } from '../../lib/util'
+import { type Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
-import { RecordRangeQuery } from '../../models/Record'
-import { Set } from '../../models/Set'
-import GraphOptionsForm, { GraphOptions } from './GraphOptionsForm'
+import { type RecordRangeQuery } from '../../models/Record'
+import { type Set } from '../../models/Set'
+import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {

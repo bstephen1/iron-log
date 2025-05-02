@@ -1,5 +1,5 @@
-import { Alert, AlertColor, Button, Snackbar } from '@mui/material'
-import { CustomContentProps, closeSnackbar } from 'notistack'
+import { Alert, type AlertColor, Button, Snackbar } from '@mui/material'
+import { type CustomContentProps, closeSnackbar } from 'notistack'
 import { forwardRef } from 'react'
 
 export type AppSnackbarProps = {
