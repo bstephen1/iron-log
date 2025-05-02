@@ -1,5 +1,5 @@
-import { ChangeEvent, useRef, useState } from 'react'
-import { Schema, ZodError } from 'zod'
+import { type ChangeEvent, useRef, useState } from 'react'
+import { type Schema, ZodError } from 'zod'
 
 /*
  * This hook is based off the behavior of react-hook-form's useForm hook,

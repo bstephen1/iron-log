@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
-import DateRangeQuery from './DateRangeQuery'
+import type DateRangeQuery from './DateRangeQuery'
 import { dateSchema, idSchema } from './schemas'
 
 /** A weigh-in can be one of two types:

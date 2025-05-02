@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 import { ApiError } from '../models/ApiError'
-import { Exercise } from '../models/AsyncSelectorOption/Exercise'
+import { type Exercise } from '../models/AsyncSelectorOption/Exercise'
 import { enqueueSnackbar } from 'notistack'
 import { ERRORS } from './frontend/constants'
 

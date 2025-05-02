@@ -1,10 +1,10 @@
-import { ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 import { vi } from 'vitest'
 import { URI_CATEGORIES } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
 import {
   createExercise,
-  Exercise,
+  type Exercise,
 } from '../../../models/AsyncSelectorOption/Exercise'
 import { Status } from '../../../models/Status'
 import ExerciseSelector from './ExerciseSelector'

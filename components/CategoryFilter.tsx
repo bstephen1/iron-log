@@ -1,6 +1,13 @@
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-import { Box, Chip, IconButton, Menu, MenuItem, SxProps } from '@mui/material'
-import { Dispatch, SetStateAction } from 'react'
+import {
+  Box,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  type SxProps,
+} from '@mui/material'
+import { type Dispatch, type SetStateAction } from 'react'
 import Tooltip from './Tooltip'
 
 interface Props {

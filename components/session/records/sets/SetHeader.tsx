@@ -8,20 +8,20 @@ import {
   ListItemText,
   MenuItem,
   Select,
-  SelectProps,
+  type SelectProps,
   Stack,
   Typography,
 } from '@mui/material'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import { UpdateFields } from '../../../../lib/util'
-import { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import { type UpdateFields } from '../../../../lib/util'
+import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import {
-  DisplayFields,
+  type DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
-  VisibleField,
+  type VisibleField,
 } from '../../../../models/DisplayFields'
 
 type Props = {

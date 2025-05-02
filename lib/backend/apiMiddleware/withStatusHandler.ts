@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { type NextApiRequest, type NextApiResponse } from 'next'
 import { ZodError } from 'zod'
 import { ApiError } from '../../../models/ApiError'
 import { ERRORS } from '../../frontend/constants'
-import { ApiHandler, getUserId } from './util'
+import { type ApiHandler, getUserId } from './util'
 
 /** This HOF is responsible for anything involving "res" in the handler.
  * The handler either returns an ApiResponse or throws an ApiError.

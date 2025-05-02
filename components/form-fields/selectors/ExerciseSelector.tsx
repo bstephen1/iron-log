@@ -1,14 +1,14 @@
-import { TextFieldProps } from '@mui/material'
+import { type TextFieldProps } from '@mui/material'
 import { useState } from 'react'
-import { KeyedMutator } from 'swr'
+import { type KeyedMutator } from 'swr'
 import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise, useCategories } from '../../../lib/frontend/restService'
 import {
   createExercise,
-  Exercise,
+  type Exercise,
 } from '../../../models/AsyncSelectorOption/Exercise'
 import { StatusOrder } from '../../../models/Status'
-import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
+import AsyncSelector, { type AsyncSelectorProps } from './AsyncSelector'
 
 type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
   exercise: DisableClearable extends true ? Exercise : Exercise | null

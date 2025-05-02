@@ -7,10 +7,10 @@ import {
   updateSessionLog,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
-import { UpdateFields } from '../../../../lib/util'
-import { Note } from '../../../../models/Note'
-import { Record } from '../../../../models/Record'
-import { Set } from '../../../../models/Set'
+import { type UpdateFields } from '../../../../lib/util'
+import { type Note } from '../../../../models/Note'
+import { type Record } from '../../../../models/Record'
+import { type Set } from '../../../../models/Set'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 const title = 'Record notes'

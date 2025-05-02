@@ -1,5 +1,5 @@
 import { render, screen } from '../../lib/testUtils'
-import { Attributes } from '../../models/Attributes'
+import { type Attributes } from '../../models/Attributes'
 import AttributeCheckboxes from './AttributeCheckboxes'
 
 const mockHandleSubmit = vi.fn()

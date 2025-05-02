@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { ZodError } from 'zod'
+import { type ZodError } from 'zod'
 
 /** Error class returned from calls to the api.
  *  Based on ApiError from next/dist/server/api-utils

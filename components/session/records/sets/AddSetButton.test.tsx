@@ -1,9 +1,9 @@
-import { MockInstance } from 'vitest'
+import { type MockInstance } from 'vitest'
 import * as restService from '../../../../lib/frontend/restService'
 import { render, screen } from '../../../../lib/testUtils'
 import { generateId } from '../../../../lib/util'
 import AddSetButton from './AddSetButton'
-import { Set } from '../../../../models/Set'
+import { type Set } from '../../../../models/Set'
 
 const _id = generateId()
 let updateFieldsSpy: MockInstance

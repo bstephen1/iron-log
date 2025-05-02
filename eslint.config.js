@@ -54,6 +54,10 @@ const eslintConfig = [
           varsIgnorePattern: '^_',
         },
       ],
+      '@typescript-eslint/consistent-type-imports': [
+        'warn',
+        { fixStyle: 'inline-type-imports' },
+      ],
       '@typescript-eslint/no-unused-expressions': [
         'error',
         {

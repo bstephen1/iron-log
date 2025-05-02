@@ -1,4 +1,4 @@
-import { InputAdornment, InputProps } from '@mui/material'
+import { InputAdornment, type InputProps } from '@mui/material'
 import { memo, useCallback } from 'react'
 import NumericFieldAutosave from './NumericFieldAutosave'
 

@@ -1,6 +1,6 @@
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import {
-  FilledInputProps,
+  type FilledInputProps,
   InputAdornment,
   Stack,
   TextField,

@@ -1,6 +1,6 @@
 import type { NextApiRequest } from 'next'
 import {
-  UserId,
+  type UserId,
   methodNotAllowed,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'

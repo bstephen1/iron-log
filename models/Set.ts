@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { DB_UNITS, Units, unitsSchema } from './Units'
+import { DB_UNITS, type Units, unitsSchema } from './Units'
 
 /** An exercise set. */
 export interface Set extends z.infer<typeof setSchema> {}

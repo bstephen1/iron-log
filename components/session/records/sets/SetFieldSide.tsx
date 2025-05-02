@@ -1,8 +1,12 @@
-import { Box, InputBaseComponentProps, SelectProps } from '@mui/material'
-import { ComponentProps } from 'react'
+import {
+  Box,
+  type InputBaseComponentProps,
+  type SelectProps,
+} from '@mui/material'
+import { type ComponentProps } from 'react'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import { UpdateFields } from '../../../../lib/util'
-import { Set } from '../../../../models/Set'
+import { type UpdateFields } from '../../../../lib/util'
+import { type Set } from '../../../../models/Set'
 import SelectFieldAutosave from '../../../form-fields/SelectFieldAutosave'
 
 type Props = {

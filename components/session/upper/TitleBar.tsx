@@ -1,6 +1,6 @@
 import { useMediaQuery, useTheme } from '@mui/material'
 import Grid from '@mui/material/Grid'
-import { Dayjs } from 'dayjs'
+import { type Dayjs } from 'dayjs'
 import { useRouter } from 'next/router'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import BodyweightInput from './BodyweightInput'

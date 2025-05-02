@@ -1,14 +1,14 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import {
-  AutocompleteChangeReason,
+  type AutocompleteChangeReason,
   Checkbox,
-  TextFieldProps,
+  type TextFieldProps,
 } from '@mui/material'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import AsyncAutocomplete, {
-  AsyncAutocompleteProps,
+  type AsyncAutocompleteProps,
 } from '../../components/AsyncAutocomplete'
 import { doNothing } from '../../lib/util'
 import useField from './useField'

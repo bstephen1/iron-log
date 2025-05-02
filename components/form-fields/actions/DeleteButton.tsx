@@ -1,7 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
   Button,
-  ButtonProps,
+  type ButtonProps,
   Dialog,
   DialogActions,
   DialogContent,

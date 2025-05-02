@@ -1,11 +1,11 @@
 import { vi } from 'vitest'
 import { render, screen } from '../../../lib/testUtils'
 import {
-  AsyncSelectorOption,
+  type AsyncSelectorOption,
   createAsyncSelectorOption,
 } from '../../../models/AsyncSelectorOption'
 import { Status } from '../../../models/Status'
-import AsyncSelector, { AsyncSelectorProps } from './AsyncSelector'
+import AsyncSelector, { type AsyncSelectorProps } from './AsyncSelector'
 
 const mockMutate = vi.fn()
 const mockHandleChange = vi.fn()

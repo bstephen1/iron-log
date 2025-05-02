@@ -8,15 +8,15 @@ import { createExercise } from '../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../models/AsyncSelectorOption/Modifier'
 import { createBodyweight } from '../models/Bodyweight'
 import {
-  DisplayFields,
+  type DisplayFields,
   ORDERED_DISPLAY_FIELDS,
-  VisibleField,
+  type VisibleField,
 } from '../models/DisplayFields'
 import { createNote } from '../models/Note'
 import { createRecord } from '../models/Record'
 import { createSessionLog } from '../models/SessionLog'
 import { Status } from '../models/Status'
-import { DB_UNITS, Units } from '../models/Units'
+import { DB_UNITS, type Units } from '../models/Units'
 
 // we do not need to include .env.local since we aren't interacting with authjs
 const envPath = path.resolve(__dirname, '..', '.env.development')

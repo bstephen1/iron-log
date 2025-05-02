@@ -1,11 +1,11 @@
 import {
   IconButton,
-  IconButtonProps,
+  type IconButtonProps,
   MenuItem,
-  MenuItemProps,
-  TooltipProps,
+  type MenuItemProps,
+  type TooltipProps,
 } from '@mui/material'
-import { createContext, useContext, JSX } from 'react'
+import { createContext, useContext, type JSX } from 'react'
 import Tooltip from './Tooltip'
 
 /** context for TooltipIconButtons. Allows parent to determine

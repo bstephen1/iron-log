@@ -12,9 +12,9 @@ import {
 import { enqueueError } from '../../lib/util'
 import {
   createExercise,
-  Exercise,
+  type Exercise,
 } from '../../models/AsyncSelectorOption/Exercise'
-import { Note } from '../../models/Note'
+import { type Note } from '../../models/Note'
 import ActionItems from '../form-fields/actions/ActionItems'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import ComboBoxField from '../form-fields/ComboBoxField'

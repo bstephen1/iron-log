@@ -12,10 +12,10 @@ import {
 } from '@mui/material'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import { UpdateFields, UpdateState } from '../../../../lib/util'
-import { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
-import { DisplayFields } from '../../../../models/DisplayFields'
-import { Units, unitsSchema } from '../../../../models/Units'
+import { type UpdateFields, type UpdateState } from '../../../../lib/util'
+import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import { type DisplayFields } from '../../../../models/DisplayFields'
+import { type Units, unitsSchema } from '../../../../models/Units'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {

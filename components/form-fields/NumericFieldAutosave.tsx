@@ -1,5 +1,5 @@
 import InputFieldAutosave, {
-  InputFieldAutosaveProps,
+  type InputFieldAutosaveProps,
 } from './InputFieldAutosave'
 
 // This has to be a type because TextFieldProps isn't "statically known".

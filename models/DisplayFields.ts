@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { capitalize } from '../lib/util'
-import { DB_UNITS, Units, unitsSchema } from './Units'
+import { DB_UNITS, type Units, unitsSchema } from './Units'
 
 export interface VisibleField extends z.infer<typeof visibleFieldSchema> {}
 export const visibleFieldSchema = z.object({

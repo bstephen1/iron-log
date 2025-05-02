@@ -1,7 +1,7 @@
 import type { NextApiRequest } from 'next'
 import {
   methodNotAllowed,
-  UserId,
+  type UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
 import { addExercise, fetchExercises } from '../../../lib/backend/mongoService'

@@ -1,4 +1,4 @@
-import { ParsedUrlQuery } from 'querystring'
+import { type ParsedUrlQuery } from 'querystring'
 import { ArrayMatchType } from './ArrayMatchType'
 import { recordQuerySchema } from './Record'
 

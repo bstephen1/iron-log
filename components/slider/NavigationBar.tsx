@@ -1,4 +1,4 @@
-import { Stack, SxProps } from '@mui/material'
+import { Stack, type SxProps } from '@mui/material'
 import NavigationArrow from './NavigationArrow'
 import PaginationBullets from './PaginationBullets'
 

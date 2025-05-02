@@ -6,7 +6,7 @@ import {
   ListItemText,
   MenuItem,
   Select,
-  SelectProps,
+  type SelectProps,
 } from '@mui/material'
 import { useState } from 'react'
 import TagChips from './TagChips'
