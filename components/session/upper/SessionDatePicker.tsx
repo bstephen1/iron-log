@@ -92,6 +92,9 @@ function SessionDatePickerInner({
       onChange={handleChange}
       slotProps={{
         textField: textFieldProps,
+        field: {
+          clearable: true,
+        },
       }}
       // onChange only changes when a new date is actually selected.
       // onMonthChange changes when the visible month in the calendar changes.

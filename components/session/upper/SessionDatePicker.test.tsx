@@ -9,14 +9,13 @@ const mockHandleDateChange = vi.fn()
 it('triggers date change when the new value is a valid date', async () => {
   const { user } = render(
     <SessionDatePicker
-      day={dayjs('2020-01-01')}
+      day={dayjs('2020-01-02')}
       handleDayChange={mockHandleDateChange}
     />
   )
 
-  const input = screen.getByDisplayValue('01/01/2020')
+  await user.click(screen.getByRole('button', { name: 'Clear' }))
 
-  await user.clear(input)
   // input day, month, and year separately
   await user.paste('03')
   await user.paste('15')
