@@ -7,6 +7,7 @@ import { bluePalette } from '../styles/themePalettes'
 import Navbar from './Navbar'
 import { SnackbarProvider } from 'notistack'
 import AppSnackbar from './AppSnackbar'
+import { Analytics } from '@vercel/analytics/next'
 
 export default function Layout({ children }: { children: ReactNode }) {
   const theme = createTheme({
@@ -28,6 +29,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           }}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
+          <Analytics />
           <Navbar />
           <main>
             <Container maxWidth="lg">{children}</Container>
