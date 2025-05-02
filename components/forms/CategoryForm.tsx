@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Grid2'
+import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {

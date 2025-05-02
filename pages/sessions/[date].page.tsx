@@ -1,5 +1,5 @@
 import { Stack } from '@mui/material'
-import Grid from '@mui/material/Grid2'
+import Grid from '@mui/material/Grid'
 import dayjs from 'dayjs'
 import { GetServerSidePropsContext } from 'next'
 import Head from 'next/head'

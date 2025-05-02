@@ -22,9 +22,9 @@
   "dependencies": {
     "@auth/mongodb-adapter": "^3.9.0",
     "@emotion/react": "^11.14.0",
-    "@mui/icons-material": "^6.4.6",
-    "@mui/material": "^6.4.6",
-    "@mui/x-date-pickers": "^7.27.1",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
+    "@mui/x-date-pickers": "^8.2.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
     "http-status-codes": "^2.3.0",

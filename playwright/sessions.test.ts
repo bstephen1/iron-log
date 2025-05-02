@@ -21,8 +21,7 @@ test('loads calendar', async ({ page, api }) => {
 
   await page.goto('/sessions/2000-01-05')
 
-  // open date picker -- have to specifically click the picker's label.
-  // On desktop there is a distinct icon, but on mobile the whole input opens the picker.
+  // open date picker
   await page.getByLabel('selected date is Jan 5').click()
 
   // confirm the populated sessions have badges
