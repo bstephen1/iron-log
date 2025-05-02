@@ -5,7 +5,7 @@ import {
   Switch,
   TextField,
 } from '@mui/material'
-import Grid from '@mui/material/Grid2'
+import Grid from '@mui/material/Grid'
 import RecordDisplay from '../../components/history/RecordDisplay'
 import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
 import { UpdateState } from '../../lib/util'

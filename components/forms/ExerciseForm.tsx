@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Grid2'
+import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
@@ -9,6 +9,7 @@ import {
   useModifiers,
   useRecords,
 } from '../../lib/frontend/restService'
+import { enqueueError } from '../../lib/util'
 import {
   createExercise,
   Exercise,
@@ -21,7 +22,6 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
-import { enqueueError } from '../../lib/util'
 
 interface Props {
   exercise: Exercise

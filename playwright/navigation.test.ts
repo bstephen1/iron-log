@@ -8,14 +8,9 @@ test(`navigates to today's session from home page`, async ({ page }) => {
 
   const today = dayjs()
 
-  // mobile and desktop have different labels for the date picker
-  // due to mobile not showing the date select button, so mobile conflicts
-  // with the previous session picker for copying sessions
-  // Desktop: "Date"
-  // Mobile: "Choose date, selected date is Apr 23, 2025"
-  await expect(
-    page.locator(`input[value="${today.format('MM/DD/YYYY')}"]`)
-  ).toBeVisible()
+  // DatePicker input splits MM DD and YYYY into separate spans in the input,
+  // but getByText can combine them all together
+  await expect(page.getByText(today.format('MM/DD/YYYY'))).toBeVisible()
   // page.url() is synchronous. To wait for a url use page.waitForUrl().
   expect(page.url().includes(today.format(DATE_FORMAT)))
 })

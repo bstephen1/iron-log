@@ -91,13 +91,9 @@ function SessionDatePickerInner({
       value={pickerValue}
       onChange={handleChange}
       slotProps={{
-        textField: {
-          ...textFieldProps,
-          slotProps: {
-            inputLabel: {
-              shrink: true,
-            },
-          },
+        textField: textFieldProps,
+        field: {
+          clearable: true,
         },
       }}
       // onChange only changes when a new date is actually selected.
