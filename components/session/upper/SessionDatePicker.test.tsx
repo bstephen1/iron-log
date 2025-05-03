@@ -6,7 +6,7 @@ import SessionDatePicker from './SessionDatePicker'
 
 const mockHandleDateChange = vi.fn()
 
-it('triggers date change when the new value is a valid date', async () => {
+it('updates date from keyboard input', async () => {
   const { user } = render(
     <SessionDatePicker
       day={dayjs('2020-01-02')}
@@ -14,15 +14,50 @@ it('triggers date change when the new value is a valid date', async () => {
     />
   )
 
-  await user.click(screen.getByRole('button', { name: 'Clear' }))
+  await user.click(screen.getByText('01'))
 
   // input day, month, and year separately
   await user.paste('03')
-  await user.paste('15')
-  await user.paste('2022')
+  await user.paste('09')
+  await user.paste('22')
 
-  // should only have called once, not three times
+  await user.keyboard('{Enter}')
+
   expect(mockHandleDateChange).toHaveBeenCalledTimes(1)
+})
+
+it('updates date from picker', async () => {
+  const { user } = render(
+    <SessionDatePicker
+      day={dayjs('2020-01-02')}
+      handleDayChange={mockHandleDateChange}
+    />
+  )
+
+  await user.click(screen.getByLabelText(/Choose date/))
+
+  // click a new day
+  await user.click(screen.getByText('15'))
+
+  // automatically submits
+  expect(mockHandleDateChange).toHaveBeenCalledTimes(1)
+})
+
+it('Shows correct aria label for picker button', async () => {
+  const { user } = render(
+    <SessionDatePicker
+      day={dayjs('2020-01-02')}
+      handleDayChange={mockHandleDateChange}
+    />
+  )
+
+  expect(screen.getByLabelText(/Jan 2, 2020/))
+
+  await user.click(screen.getByText('01'))
+  await user.keyboard('{Backspace}')
+
+  // exact label -- doesn't have a date
+  expect(screen.getByLabelText('Choose date'))
 })
 
 it('shows existing session data with badges', async () => {

@@ -1,6 +1,7 @@
 import { type CSSProperties } from '@mui/material/styles/createMixins'
 
 export const DATE_FORMAT = 'YYYY-MM-DD'
+export const DATE_PICKER_FORMAT = 'MM/DD/YY'
 export const TIME_FORMAT = 'HH:mm:ss'
 
 // Was thinking of making this a user pref, but may not be necessary.

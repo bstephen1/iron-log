@@ -13,10 +13,12 @@ vi.mock('next/router', () => ({
 }))
 
 it('updates on date change', async () => {
-  const { user } = render(<TitleBar day={dayjs('2020-01-01')} />)
+  const { user } = render(<TitleBar day={dayjs('2020-01-05')} />)
 
-  await user.clear(screen.getByText('2020'))
-  await user.paste('2021')
+  // update the date
+  await user.click(screen.getByText('05'))
+  await user.paste('15')
+  await user.click(screen.getByLabelText('Confirm'))
 
-  expect(mocks.push).toHaveBeenCalledWith('2021-01-01')
+  expect(mocks.push).toHaveBeenCalledWith('2020-01-15')
 })
