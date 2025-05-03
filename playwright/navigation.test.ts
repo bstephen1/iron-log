@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures'
 import dayjs from 'dayjs'
-import { DATE_FORMAT } from '../lib/frontend/constants'
+import { DATE_FORMAT, DATE_PICKER_FORMAT } from '../lib/frontend/constants'
 
 test(`navigates to today's session from home page`, async ({ page }) => {
   await page.goto('/')
@@ -8,9 +8,9 @@ test(`navigates to today's session from home page`, async ({ page }) => {
 
   const today = dayjs()
 
-  // DatePicker input splits MM DD and YYYY into separate spans in the input,
+  // DatePicker input splits month, day, and year into separate spans in the input,
   // but getByText can combine them all together
-  await expect(page.getByText(today.format('MM/DD/YYYY'))).toBeVisible()
+  await expect(page.getByText(today.format(DATE_PICKER_FORMAT))).toBeVisible()
   // page.url() is synchronous. To wait for a url use page.waitForUrl().
   expect(page.url().includes(today.format(DATE_FORMAT)))
 })
