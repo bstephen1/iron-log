@@ -1,4 +1,13 @@
-import { Badge, type TextFieldProps } from '@mui/material'
+import CheckIcon from '@mui/icons-material/Check'
+import CalendarIcon from '@mui/icons-material/InsertInvitation'
+import {
+  Badge,
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+  Stack,
+  type TextFieldProps,
+} from '@mui/material'
 import {
   DatePicker,
   DayCalendarSkeleton,
@@ -7,9 +16,14 @@ import {
 import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { preload } from 'swr'
-import { DATE_FORMAT, URI_SESSIONS } from '../../../lib/frontend/constants'
+import {
+  DATE_FORMAT,
+  DATE_PICKER_FORMAT,
+  URI_SESSIONS,
+} from '../../../lib/frontend/constants'
 import { paramify, useSessionLogs } from '../../../lib/frontend/restService'
 import { swrFetcher } from '../../../lib/util'
+import TransitionIconButton from '../../TransitionIconButton'
 import useCurrentSessionLog from '../useCurrentSessionLog'
 
 // The query gets data for the current month +/- 1 month so that
@@ -47,7 +61,7 @@ interface Props {
    */
   handleDayChange: (day: Dayjs) => void
   label?: string
-  textFieldProps?: Omit<TextFieldProps, 'slotProps'>
+  textFieldProps?: TextFieldProps
 }
 export default function SessionDatePicker(props: Props) {
   return (
@@ -64,6 +78,8 @@ function SessionDatePickerInner({
   // You can type freely in a DatePicker. pickerValue updates on input change,
   // and only triggers handleDateChange when pickerValue changes to a valid date.
   const [pickerValue, setPickerValue] = useState<Dayjs | null>(day)
+  const [open, setOpen] = useState(false)
+  const [isChangingDay, setIsChangingDay] = useState(false)
   const [visibleMonth, setVisibleMonth] = useState(day)
   const { sessionLogsIndex, isLoading } = useSessionLogs(
     buildSessionLogQuery(0, visibleMonth)
@@ -72,11 +88,21 @@ function SessionDatePickerInner({
     useCurrentSessionLog()
 
   const handleChange = (newPickerValue: Dayjs | null) => {
-    if (newPickerValue?.isValid()) {
-      handleDayChange(newPickerValue)
-    }
     setPickerValue(newPickerValue)
+    // If the day was changed via the picker dialog, immediately submit the change.
+    // Otherwise the change is coming via keyboard input, so we wait until the submit
+    // button is clicked.
+    if (open && newPickerValue) {
+      handleSubmit(newPickerValue)
+    }
   }
+
+  const handleSubmit = (newDay: Dayjs) => {
+    setIsChangingDay(true)
+    handleDayChange(newDay)
+  }
+
+  const toggleOpen = () => setOpen(!open)
 
   // Prefetch on init
   fetchNearbyMonths(day)
@@ -87,15 +113,65 @@ function SessionDatePickerInner({
     <DatePicker
       showDaysOutsideCurrentMonth
       closeOnSelect // default is true for desktop, false for mobile
+      open={open}
+      onOpen={toggleOpen}
+      onClose={toggleOpen}
       label={label}
       value={pickerValue}
       onChange={handleChange}
       slotProps={{
-        textField: textFieldProps,
-        field: {
-          clearable: true,
+        textField: {
+          ...textFieldProps,
+          onKeyDown: ({ key }) => {
+            if (key === 'Enter') {
+              pickerValue && handleSubmit(pickerValue)
+            }
+          },
+          InputProps: {
+            endAdornment: (
+              // -12px is the margin for the default icon
+              <Stack direction="row" mr="-12px">
+                {isChangingDay ? (
+                  <InputAdornment
+                    position="end"
+                    sx={{ width: '32px', mt: '4px' }}
+                  >
+                    <CircularProgress color="inherit" size={20} />
+                  </InputAdornment>
+                ) : (
+                  <TransitionIconButton
+                    isVisible={
+                      pickerValue?.format(DATE_FORMAT) !==
+                      day.format(DATE_FORMAT)
+                    }
+                    disabled={!pickerValue?.isValid()}
+                    onClick={() => pickerValue && handleSubmit(pickerValue)}
+                    aria-label="Confirm"
+                    sx={{ pr: 0.5 }}
+                  >
+                    <CheckIcon />
+                  </TransitionIconButton>
+                )}
+                {/* we have to reimplement the behavior of the default button.
+                    Alternatively could move the calendar to a startAdornment with
+                    the "field" slotProp */}
+                <IconButton
+                  onClick={toggleOpen}
+                  aria-label={
+                    'Choose date' +
+                    (pickerValue
+                      ? `, selected date is ${pickerValue.format('MMM D, YYYY')}`
+                      : '')
+                  }
+                >
+                  <CalendarIcon />
+                </IconButton>
+              </Stack>
+            ),
+          },
         },
       }}
+      format={DATE_PICKER_FORMAT}
       // onChange only changes when a new date is actually selected.
       // onMonthChange changes when the visible month in the calendar changes.
       onMonthChange={(newMonth) => {

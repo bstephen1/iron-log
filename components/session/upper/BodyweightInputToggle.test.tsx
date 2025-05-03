@@ -40,7 +40,7 @@ it('switches type when same type clicked', async () => {
   )
 
   await user.click(screen.getByTestId('ScaleOutlinedIcon'))
-  await user.click(await screen.findByText('unofficial', { exact: false }))
+  await user.click(await screen.findByText(/unofficial/))
 
   expect(screen.queryByText('unofficial')).not.toBeInTheDocument()
   expect(handleTypeChange).toHaveBeenCalledTimes(1)
