@@ -1,6 +1,7 @@
 import { type ComponentProps } from 'react'
 import { render, screen, within } from '../../../lib/testUtils'
 import ActionItems from './ActionItems'
+import { vi, it, expect } from 'vitest'
 
 const mockHandleDelete = vi.fn()
 const mockHandleDuplicate = vi.fn()

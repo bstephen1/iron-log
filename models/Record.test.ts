@@ -1,6 +1,7 @@
 import { type ParsedUrlQuery } from 'querystring'
 import { ArrayMatchType } from './ArrayMatchType'
 import { recordQuerySchema } from './Record'
+import { it, expect } from 'vitest'
 
 it('transforms query params', () => {
   const apiQuery: ParsedUrlQuery = {

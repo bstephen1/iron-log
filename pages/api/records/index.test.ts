@@ -1,4 +1,3 @@
-import { vi } from 'vitest'
 import { addRecord, fetchRecords } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
@@ -6,6 +5,7 @@ import {
 } from '../../../lib/testUtils'
 import handler from './index.api'
 import { createRecord } from '../../../models/Record'
+import { vi, it } from 'vitest'
 
 it('fetches records', async () => {
   const data = [createRecord('2000-01-01')]

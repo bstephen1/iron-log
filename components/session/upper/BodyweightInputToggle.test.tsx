@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import { render, screen, within } from '../../../lib/testUtils'
 import BodyweightInputToggle from './BodyweightInputToggle'
 

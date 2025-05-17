@@ -7,6 +7,7 @@ import {
 } from '../../models/DisplayFields'
 import { DB_UNITS } from '../../models/Units'
 import useDisplayFields from './useDisplayFields'
+import { it, expect } from 'vitest'
 
 it('returns display fields from record', () => {
   const displayFields: DisplayFields = {

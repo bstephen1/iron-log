@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { vi } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import { render, screen, useServer } from '../../../lib/testUtils'
 import { createSessionLog } from '../../../models/SessionLog'
 import SessionDatePicker from './SessionDatePicker'

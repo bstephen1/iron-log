@@ -2,6 +2,7 @@ import { type ComponentProps } from 'react'
 import { render, screen } from '../../../lib/testUtils'
 import { createNote } from '../../../models/Note'
 import NotesListItem from './NotesListItem'
+import { vi, it, expect } from 'vitest'
 
 const mockHandleDelete = vi.fn()
 const mockUpdate = vi.fn()

@@ -1,4 +1,5 @@
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
+import { it, expect } from 'vitest'
 
 it('builds standard MatchType', () => {
   expect(buildMatchTypeFilter(['hi'], ArrayMatchType.Exact)).toEqual({

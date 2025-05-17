@@ -1,6 +1,7 @@
 import { type ParsedUrlQuery } from 'querystring'
 import { Status } from '../Status'
 import { exerciseQuerySchema } from './Exercise'
+import { it, expect } from 'vitest'
 
 it('transforms query params', () => {
   const apiQuery: ParsedUrlQuery = {

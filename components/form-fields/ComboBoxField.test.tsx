@@ -1,3 +1,4 @@
+import { vi, it, expect } from 'vitest'
 import { render, screen } from '../../lib/testUtils'
 import ComboBoxField from './ComboBoxField'
 

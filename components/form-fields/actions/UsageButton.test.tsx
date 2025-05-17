@@ -1,3 +1,4 @@
+import { it, expect } from 'vitest'
 import { URI_RECORDS } from '../../../lib/frontend/constants'
 import { render, screen, useServer, waitFor } from '../../../lib/testUtils'
 import { createRecord } from '../../../models/Record'

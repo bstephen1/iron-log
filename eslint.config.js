@@ -1,5 +1,4 @@
 import { FlatCompat } from '@eslint/eslintrc'
-import vitest from '@vitest/eslint-plugin'
 import unusedImports from 'eslint-plugin-unused-imports'
 
 const compat = new FlatCompat({
@@ -8,11 +7,7 @@ const compat = new FlatCompat({
 })
 const eslintConfig = [
   {
-    plugins: { vitest, 'unused-imports': unusedImports },
-    rules: {
-      // no it.only
-      'vitest/no-focused-tests': 'error',
-    },
+    plugins: { 'unused-imports': unusedImports },
   },
   // nextjs rules are formatted using this FlatCompat setup
   ...compat.config({

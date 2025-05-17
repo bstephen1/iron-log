@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest'
-import { configure } from '@testing-library/react'
+import { cleanup, configure } from '@testing-library/react'
 import { server } from './msw-mocks/server'
-import { vi } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest'
 import 'whatwg-fetch'
 import { devUserId } from './lib/frontend/constants'
 
@@ -52,4 +52,7 @@ beforeAll(() => {
   globalThis.jest = vi
 })
 beforeEach(() => server.resetHandlers())
+// RTL cleanup is only automatically called if vitest has globals on.
+// Without this, the DOM will leak between tests.
+afterEach(() => cleanup())
 afterAll(() => server.close())

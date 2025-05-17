@@ -12,19 +12,16 @@ import {
 } from 'next-test-api-route-handler'
 import { type ReactElement, type ReactNode } from 'react'
 import { SWRConfig } from 'swr'
-import { vi } from 'vitest'
 import { type ApiError } from '../models/ApiError'
 import { server } from '../msw-mocks/server'
 import { methodNotAllowed } from './backend/apiMiddleware/util'
 import { devUserId } from './frontend/constants'
 import { type Session } from 'next-auth'
+import { vi, expect } from 'vitest'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.
 
-// Any frontend component that uses SWR needs to be wrapped in SWRConfig to set the fetcher value.
-// Also, resetting provider resets the SWR cache between tests.
-// Components that don't use SWR can use the normal render.
 // Note: fetch() needs to be polyfilled or it will be undefined (just need to add "import 'whatwg-fetch'" in the test setup file).
 // See: https://testing-library.com/docs/react-testing-library/setup/#configuring-jest-with-test-utils
 // See: https://mswjs.io/docs/faq#swr

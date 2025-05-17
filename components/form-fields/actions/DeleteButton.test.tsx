@@ -1,3 +1,4 @@
+import { vi, it, expect } from 'vitest'
 import { render, screen, waitFor, within } from '../../../lib/testUtils'
 import DeleteButton from './DeleteButton'
 
