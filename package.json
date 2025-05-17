@@ -14,7 +14,7 @@
     "cg:phone": "npx playwright codegen --device \"iPhone 15 Pro Max\" localhost:7357",
     "cg:chrome": "npx playwright codegen --viewport-size \"1000,800\" localhost:7357",
     "test": "vitest --ui --open=false --hideSkippedTests",
-    "test:once": "vitest run --hideSkippedTests --allowOnly=false",
+    "test:once": "vitest run --allowOnly=false",
     "test:start": "vitest --ui --open=false --standalone",
     "db:dev": "npx vite-node scripts/mongoSeedDev.ts",
     "db:test": "npx vite-node scripts/mongoResetTest.ts",
