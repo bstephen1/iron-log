@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { vi, it } from 'vitest'
 import { addCategory, fetchCategories } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,

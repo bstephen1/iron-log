@@ -3,6 +3,7 @@ import { render, screen, useServer } from '../../lib/testUtils'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import UsageComboBox from './UsageComboBox'
 import * as restService from '../../lib/frontend/restService'
+import { it, vi, expect } from 'vitest'
 
 it('adds category to exercise', async () => {
   // spy must be inside the test

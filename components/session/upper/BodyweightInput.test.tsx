@@ -3,6 +3,7 @@ import { URI_BODYWEIGHT } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
 import BodyweightInput from './BodyweightInput'
 import { createBodyweight } from '../../../models/Bodyweight'
+import { it, expect, describe } from 'vitest'
 
 const date2020 = dayjs('2020-01-01')
 const date2000 = dayjs('2000-01-01')

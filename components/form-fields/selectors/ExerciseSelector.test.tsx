@@ -1,5 +1,5 @@
 import { type ComponentProps } from 'react'
-import { vi } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import { URI_CATEGORIES } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
 import {

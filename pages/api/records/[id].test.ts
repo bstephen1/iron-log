@@ -1,4 +1,3 @@
-import { vi } from 'vitest'
 import {
   deleteRecord,
   fetchRecord,
@@ -12,6 +11,7 @@ import {
 import { generateId } from '../../../lib/util'
 import handler from './[id].api'
 import { createRecord } from '../../../models/Record'
+import { vi, it } from 'vitest'
 
 export const data = createRecord('2000-01-01')
 const id = generateId()

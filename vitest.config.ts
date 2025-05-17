@@ -8,13 +8,6 @@ export default defineConfig({
   test: {
     exclude: ['playwright', 'node_modules'],
     bail: process.env.CI ? 1 : 0,
-    // Unlike jest, vitest has the option to not globally import describe/it etc keywords.
-    // This is desireable to avoid conflicts with other testing libraries we may use (eg e2e tests).
-    // However, disabling this causes two major issues with no easily traceable cause or solution:
-    // - vscode can only sometimes detect vitest package to auto import keywords, so you have to manually type in imports
-    // - tests start failing because apparently server.resetHandlers() stops being called before each test for unknown reasons
-    // In light of these issues we've opted to keep globals enabled.
-    globals: true,
     environment: 'jsdom',
     setupFiles: 'vitest.setup.ts',
     // clear mock history, restore each implementation to its original, and restore original descriptors of spied-on objects

@@ -1,3 +1,4 @@
+import { it, expect } from 'vitest'
 import { render, screen } from '../../../lib/testUtils'
 import TagChips from './TagChips'
 

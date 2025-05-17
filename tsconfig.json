@@ -1,18 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     // node_modules has to be a typeRoot for vite/client.
     // See: https://github.com/microsoft/TypeScript/issues/54629#issuecomment-1589593147
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types",
-      "./node_modules"
-    ],
+    "typeRoots": ["./types", "./node_modules/@types", "./node_modules"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -24,10 +16,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "types": [
-      "vite/client",
-      "vitest/globals"
-    ],
+    "types": ["vite/client"],
     "incremental": true,
     "plugins": [
       {
@@ -42,7 +31,5 @@
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
