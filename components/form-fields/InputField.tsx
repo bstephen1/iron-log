@@ -1,10 +1,11 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
-import { type InputProps, TextField, type TextFieldProps } from '@mui/material'
 import { useRef } from 'react'
 import { type Schema } from 'zod'
 import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
+import { type InputProps } from '@mui/material/Input'
+import TextField, { type TextFieldProps } from '@mui/material/TextField'
 
 interface Props {
   label: string

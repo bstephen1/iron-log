@@ -1,11 +1,9 @@
-import {
-  Autocomplete,
+import Autocomplete, {
   type AutocompleteProps,
   type AutocompleteRenderInputParams,
-  CircularProgress,
-  TextField,
-  type TextFieldProps,
-} from '@mui/material'
+} from '@mui/material/Autocomplete'
+import CircularProgress from '@mui/material/CircularProgress'
+import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import { useState, type JSX } from 'react'
 
 // Extending Autocomplete is a lesson in frustration.

@@ -1,4 +1,3 @@
-import { Button, Paper, Stack } from '@mui/material'
 import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useSWRConfig } from 'swr'
@@ -9,6 +8,9 @@ import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import useCurrentSessionLog from './useCurrentSessionLog'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)

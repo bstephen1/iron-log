@@ -1,5 +1,5 @@
 import ClearIcon from '@mui/icons-material/Clear'
-import { OutlinedInput } from '@mui/material'
+import OutlinedInput from '@mui/material/OutlinedInput'
 import { useRef } from 'react'
 import TransitionIconButton from '../../../components/TransitionIconButton'
 import { type Note } from '../../../models/Note'

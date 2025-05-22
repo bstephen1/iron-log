@@ -1,21 +1,19 @@
 import ListIcon from '@mui/icons-material/List'
-import {
-  Badge,
-  Button,
-  type ButtonProps,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material'
+
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRecords } from '../../../lib/frontend/restService'
 import { stringifySetType } from '../../../models/Set'
+import Badge from '@mui/material/Badge'
+import Button, { type ButtonProps } from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
 
 const maxRecords = 10
 

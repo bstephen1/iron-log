@@ -1,5 +1,4 @@
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
-import { Badge, Dialog, DialogContent, DialogTitle } from '@mui/material'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
@@ -7,6 +6,10 @@ import { type UpdateFields } from '../../../../lib/util'
 import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { type Note } from '../../../../models/Note'
 import TooltipIconButton from '../../../TooltipIconButton'
+import Badge from '@mui/material/Badge'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
 
 const title = 'Exercise notes'
 

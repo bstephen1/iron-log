@@ -1,4 +1,4 @@
-import { type TextFieldProps } from '@mui/material'
+import { type TextFieldProps } from '@mui/material/TextField'
 import { useState } from 'react'
 import { type KeyedMutator } from 'swr'
 import CategoryFilter from '../../../components/CategoryFilter'

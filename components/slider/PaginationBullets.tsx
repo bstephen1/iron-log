@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 
 // swiper's default is 8

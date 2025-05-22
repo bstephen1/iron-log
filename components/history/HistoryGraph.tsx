@@ -1,4 +1,3 @@
-import { Box, Stack, useTheme } from '@mui/material'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
@@ -27,6 +26,9 @@ import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { type RecordRangeQuery } from '../../models/Record'
 import { type Set } from '../../models/Set'
 import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
+import { useTheme } from '@mui/material/styles'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {

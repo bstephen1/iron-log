@@ -1,8 +1,12 @@
-import { AppBar, Box, Slide, Toolbar, Typography } from '@mui/material'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import LoginButton from './LoginButton'
 import NavbarDrawer from './NavbarDrawer'
+import AppBar from '@mui/material/AppBar'
+import Box from '@mui/material/Box'
+import Slide from '@mui/material/Slide'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
 
 export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true)

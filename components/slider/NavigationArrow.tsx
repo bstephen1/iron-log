@@ -1,10 +1,11 @@
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import { Box, IconButton } from '@mui/material'
 import { useState } from 'react'
 import type Swiper from 'swiper'
 import { useSwiper } from 'swiper/react'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
 
 interface Props {
   direction: 'next' | 'prev'

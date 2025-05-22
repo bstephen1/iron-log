@@ -1,15 +1,5 @@
 import DesignServicesIcon from '@mui/icons-material/DesignServices'
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-} from '@mui/material'
+
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import { type UpdateFields, type UpdateState } from '../../../../lib/util'
@@ -17,6 +7,15 @@ import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Units, unitsSchema } from '../../../../models/Units'
 import TooltipIconButton from '../../../TooltipIconButton'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Stack from '@mui/material/Stack'
 
 interface Props {
   mutateExerciseFields: UpdateFields<Exercise>

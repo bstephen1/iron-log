@@ -1,4 +1,5 @@
-import { Paper, type SxProps, useTheme } from '@mui/material'
+import Paper from '@mui/material/Paper'
+import { type SxProps, useTheme } from '@mui/material/styles'
 
 export default function StyledDivider({
   sx,

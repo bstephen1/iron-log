@@ -1,4 +1,4 @@
-import { createFilterOptions } from '@mui/material'
+import { createFilterOptions } from '@mui/material/Autocomplete'
 import { useState } from 'react'
 import { type KeyedMutator } from 'swr'
 import AsyncAutocomplete, {

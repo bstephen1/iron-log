@@ -1,9 +1,3 @@
-import {
-  Box,
-  CircularProgress,
-  InputAdornment,
-  type TextFieldProps,
-} from '@mui/material'
 import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { z } from 'zod'
@@ -16,6 +10,10 @@ import {
 import { createBodyweight, type WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import InputAdornment from '@mui/material/InputAdornment'
+import { type TextFieldProps } from '@mui/material/TextField'
 
 interface Props {
   day: Dayjs

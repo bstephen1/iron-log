@@ -1,4 +1,3 @@
-import { Stack } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import dayjs from 'dayjs'
 import { type GetServerSidePropsContext } from 'next'
@@ -11,6 +10,7 @@ import RestTimer from '../../components/session/upper/RestTimer'
 import TitleBar from '../../components/session/upper/TitleBar'
 import WeightUnitConverter from '../../components/session/upper/WeightUnitConverter'
 import { dateSchema } from '../../models/schemas'
+import Stack from '@mui/material/Stack'
 
 export function getServerSideProps({ query }: GetServerSidePropsContext) {
   try {

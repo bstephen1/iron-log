@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { type UpdateFields } from '../../../../lib/util'
 import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { type DisplayFields } from '../../../../models/DisplayFields'

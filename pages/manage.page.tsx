@@ -1,4 +1,3 @@
-import { Tab, Tabs } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { type JSX, memo, useEffect, useState } from 'react'
 import StyledDivider from '../components/StyledDivider'
@@ -6,6 +5,8 @@ import useCategoryForm from '../components/forms/useCategoryForm'
 import useExerciseForm from '../components/forms/useExerciseForm'
 import useModifierForm from '../components/forms/useModifierForm'
 import { type TabValue, tabValues, useQueryTab } from '../models/TabValue'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 
 let Selector: JSX.Element, Form: JSX.Element
 

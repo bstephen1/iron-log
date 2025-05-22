@@ -1,6 +1,4 @@
-import { ThemeProvider } from '@emotion/react'
-import { Container, createTheme } from '@mui/material'
-import { LocalizationProvider } from '@mui/x-date-pickers'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { type ReactNode } from 'react'
 import { bluePalette } from '../styles/themePalettes'
@@ -8,6 +6,8 @@ import Navbar from './Navbar'
 import { SnackbarProvider } from 'notistack'
 import AppSnackbar from './AppSnackbar'
 import { Analytics } from '@vercel/analytics/next'
+import Container from '@mui/material/Container'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 export default function Layout({ children }: { children: ReactNode }) {
   const theme = createTheme({

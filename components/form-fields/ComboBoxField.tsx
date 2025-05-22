@@ -1,10 +1,6 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import {
-  type AutocompleteChangeReason,
-  Checkbox,
-  type TextFieldProps,
-} from '@mui/material'
+
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import AsyncAutocomplete, {
@@ -12,6 +8,9 @@ import AsyncAutocomplete, {
 } from '../../components/AsyncAutocomplete'
 import { doNothing } from '../../lib/util'
 import useField from './useField'
+import Checkbox from '@mui/material/Checkbox'
+import { type TextFieldProps } from '@mui/material/TextField'
+import { type AutocompleteChangeReason } from '@mui/material/useAutocomplete'
 
 interface ComboBoxFieldProps<Clearable extends boolean | undefined>
   extends AsyncAutocompleteProps<string, true, Clearable> {

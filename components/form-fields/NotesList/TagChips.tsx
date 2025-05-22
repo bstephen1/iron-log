@@ -1,4 +1,5 @@
-import { Chip, type ChipProps, Stack } from '@mui/material'
+import Chip, { type ChipProps } from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
 
 interface Props {
   value: string | string[]
