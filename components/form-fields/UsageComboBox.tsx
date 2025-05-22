@@ -1,4 +1,4 @@
-import { type AutocompleteChangeReason } from '@mui/material'
+import { type AutocompleteChangeReason } from '@mui/material/Autocomplete'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import {

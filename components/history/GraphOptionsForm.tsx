@@ -1,14 +1,12 @@
-import {
-  FormControlLabel,
-  FormGroup,
-  InputAdornment,
-  Switch,
-  TextField,
-} from '@mui/material'
 import Grid from '@mui/material/Grid'
 import type RecordDisplay from '../../components/history/RecordDisplay'
 import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
 import { type UpdateState } from '../../lib/util'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
+import InputAdornment from '@mui/material/InputAdornment'
+import Switch from '@mui/material/Switch'
+import TextField from '@mui/material/TextField'
 
 export interface GraphOptions {
   showBodyweight?: boolean

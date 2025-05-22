@@ -1,4 +1,4 @@
-import { useMediaQuery } from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 /** returns true if the screen is determined to be a desktop */
 export default function useDesktopCheck() {

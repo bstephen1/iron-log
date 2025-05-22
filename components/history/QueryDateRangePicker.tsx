@@ -1,10 +1,12 @@
-import { MenuItem, Stack, TextField } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import { type UpdateState } from '../../lib/util'
 import { type RecordRangeQuery } from '../../models/Record'
+import MenuItem from '@mui/material/MenuItem'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 
 const today = dayjs()
 const todayFormatted = dayjs().format(DATE_FORMAT)

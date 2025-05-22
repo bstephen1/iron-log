@@ -1,8 +1,6 @@
-import {
-  Box,
-  type InputBaseComponentProps,
-  type SelectProps,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import { type InputBaseComponentProps } from '@mui/material/InputBase'
+import { type SelectProps } from '@mui/material/Select'
 import { type ComponentProps } from 'react'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import { type UpdateFields } from '../../../../lib/util'

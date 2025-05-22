@@ -1,10 +1,11 @@
 import AddIcon from '@mui/icons-material/Add'
-import { Box, Fab } from '@mui/material'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
 import { updateRecordFields } from '../../../../lib/frontend/restService'
 import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
+import Box from '@mui/material/Box'
+import Fab from '@mui/material/Fab'
 
 interface Props {
   sets: Set[]

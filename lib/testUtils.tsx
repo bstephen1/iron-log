@@ -1,5 +1,3 @@
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { render, type RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
@@ -18,6 +16,8 @@ import { methodNotAllowed } from './backend/apiMiddleware/util'
 import { devUserId } from './frontend/constants'
 import { type Session } from 'next-auth'
 import { vi, expect } from 'vitest'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.

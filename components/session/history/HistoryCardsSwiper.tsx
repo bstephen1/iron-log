@@ -1,4 +1,3 @@
-import { Box, type CardProps, Stack, Typography } from '@mui/material'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import {
   Swiper,
@@ -22,6 +21,10 @@ import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import NavigationBar from '../../../components/slider/NavigationBar'
 import { type DisplayFields } from '../../../models/DisplayFields'
 import { type RecordRangeQuery } from '../../../models/Record'
+import Box from '@mui/material/Box'
+import { type CardProps } from '@mui/material/Card'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination

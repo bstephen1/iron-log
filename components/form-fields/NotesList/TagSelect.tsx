@@ -1,15 +1,12 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import {
-  Checkbox,
-  Input,
-  ListItemText,
-  MenuItem,
-  Select,
-  type SelectProps,
-} from '@mui/material'
 import { useState } from 'react'
 import TagChips from './TagChips'
+import Checkbox from '@mui/material/Checkbox'
+import Input from '@mui/material/Input'
+import ListItemText from '@mui/material/ListItemText'
+import MenuItem from '@mui/material/MenuItem'
+import Select, { type SelectProps } from '@mui/material/Select'
 
 type Props = {
   options?: string[]

@@ -1,7 +1,8 @@
-import { MenuItem, TextField, type TextFieldProps } from '@mui/material'
 import { type ReactNode } from 'react'
 import { type Schema } from 'zod'
 import useField from './useField'
+import MenuItem from '@mui/material/MenuItem'
+import TextField, { type TextFieldProps } from '@mui/material/TextField'
 
 interface Props<V, O> {
   label: string

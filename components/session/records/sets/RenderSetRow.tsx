@@ -1,4 +1,3 @@
-import { Box, Stack } from '@mui/material'
 import { blue, grey, lightGreen } from '@mui/material/colors'
 import { memo, useCallback } from 'react'
 import { useSWRConfig } from 'swr'
@@ -10,6 +9,8 @@ import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
 import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './RenderSetField'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
 
 const pyStack = 0.5
 

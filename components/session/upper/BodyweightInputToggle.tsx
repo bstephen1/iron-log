@@ -1,16 +1,14 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ScaleOutlinedIcon from '@mui/icons-material/ScaleOutlined'
-import {
-  Grow,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-} from '@mui/material'
 import { useState } from 'react'
 import { type WeighInType } from '../../../models/Bodyweight'
 import Tooltip from '../../Tooltip'
+import Grow from '@mui/material/Grow'
+import IconButton from '@mui/material/IconButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 
 interface Props {
   type: WeighInType

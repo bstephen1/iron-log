@@ -1,6 +1,7 @@
-import { Grow, IconButton, type IconButtonProps } from '@mui/material'
 import { type JSX } from 'react'
 import Tooltip from './Tooltip'
+import Grow from '@mui/material/Grow'
+import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 
 interface Props extends IconButtonProps {
   isVisible?: boolean

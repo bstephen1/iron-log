@@ -1,4 +1,6 @@
-import { Alert, type AlertColor, Button, Snackbar } from '@mui/material'
+import Alert, { type AlertColor } from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import Snackbar from '@mui/material/Snackbar'
 import { type CustomContentProps, closeSnackbar } from 'notistack'
 import { forwardRef } from 'react'
 

@@ -1,5 +1,8 @@
-import { FormControlLabel, FormGroup, Switch, Typography } from '@mui/material'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
 import Grid from '@mui/material/Grid'
+import Switch from '@mui/material/Switch'
+import Typography from '@mui/material/Typography'
 import Link from 'next/link'
 import useLocalStorageState from 'use-local-storage-state'
 

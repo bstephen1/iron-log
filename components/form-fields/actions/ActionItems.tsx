@@ -1,9 +1,12 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import { Box, Button, Paper, Typography } from '@mui/material'
 import FormDivider from '../../forms/FormDivider'
 import DeleteButton from './DeleteButton'
 import UsageButton from './UsageButton'
 import { memo, type JSX } from 'react'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
 
 interface Props {
   id: string

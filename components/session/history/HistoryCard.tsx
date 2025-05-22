@@ -1,11 +1,3 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  type CardProps,
-  Stack,
-  TextField,
-} from '@mui/material'
 import Link from 'next/link'
 import { type JSX, memo } from 'react'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
@@ -20,6 +12,11 @@ import ManageExerciseButton from '../records/header/ManageExerciseButton'
 import RecordNotesButton from '../records/header/ReccordNotesButton'
 import RenderSets from '../records/sets/RenderSets'
 import SetTypeSelect from '../records/SetTypeSelect'
+import Card, { type CardProps } from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 
 export type HistoryAction = 'recordNotes' | 'exerciseNotes' | 'manage'
 export type HistoryContent = 'sets' | 'exercise' | 'modifiers' | 'setType'

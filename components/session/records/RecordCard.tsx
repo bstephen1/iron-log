@@ -1,4 +1,3 @@
-import { Card, CardContent, Stack, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import { type KeyedMutator } from 'swr'
@@ -26,6 +25,10 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also

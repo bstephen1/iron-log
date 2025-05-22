@@ -1,4 +1,3 @@
-import { Box, CardHeader } from '@mui/material'
 import { useEffect } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
 import useLocalStorageState from 'use-local-storage-state'
@@ -13,6 +12,8 @@ import ManageExerciseButton from './ManageExerciseButton'
 import MoreActionsButton from './MoreActionsButton'
 import RecordNotesButton from './ReccordNotesButton'
 import SwapRecordButton from './SwapRecordButton'
+import Box from '@mui/material/Box'
+import CardHeader from '@mui/material/CardHeader'
 const actionButtonWidth = 40
 const minTitleWidth = 120
 

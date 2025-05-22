@@ -1,17 +1,5 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import {
-  Box,
-  Checkbox,
-  FormControl,
-  Input,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  Select,
-  type SelectProps,
-  Stack,
-  Typography,
-} from '@mui/material'
+
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
@@ -23,6 +11,16 @@ import {
   printFieldWithUnits,
   type VisibleField,
 } from '../../../../models/DisplayFields'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import FormControl from '@mui/material/FormControl'
+import Input from '@mui/material/Input'
+import InputLabel from '@mui/material/InputLabel'
+import ListItemText from '@mui/material/ListItemText'
+import MenuItem from '@mui/material/MenuItem'
+import Select, { type SelectProps } from '@mui/material/Select'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 type Props = {
   mutateExerciseFields?: UpdateFields<Exercise>

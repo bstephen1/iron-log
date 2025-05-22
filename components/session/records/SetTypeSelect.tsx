@@ -1,16 +1,5 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Stack,
-  TextField,
-  type TextFieldProps,
-  Typography,
-} from '@mui/material'
+
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
@@ -27,6 +16,15 @@ import {
   stringifySetType,
 } from '../../../models/Set'
 import { type Units } from '../../../models/Units'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormLabel from '@mui/material/FormLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Stack from '@mui/material/Stack'
+import TextField, { type TextFieldProps } from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight

@@ -1,18 +1,11 @@
 import CheckIcon from '@mui/icons-material/Check'
 import CalendarIcon from '@mui/icons-material/InsertInvitation'
-import {
-  Badge,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
-  Stack,
-  type TextFieldProps,
-} from '@mui/material'
-import {
-  DatePicker,
-  DayCalendarSkeleton,
-  PickersDay,
-} from '@mui/x-date-pickers'
+import Badge from '@mui/material/Badge'
+import CircularProgress from '@mui/material/CircularProgress'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import Stack from '@mui/material/Stack'
+import { type TextFieldProps } from '@mui/material/TextField'
 import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { preload } from 'swr'
@@ -25,6 +18,9 @@ import { paramify, useSessionLogs } from '../../../lib/frontend/restService'
 import { swrFetcher } from '../../../lib/util'
 import TransitionIconButton from '../../TransitionIconButton'
 import useCurrentSessionLog from '../useCurrentSessionLog'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { PickersDay } from '@mui/x-date-pickers/PickersDay'
+import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton'
 
 // The query gets data for the current month +/- 1 month so that
 // data for daysOutsideCurrentMonth is still visible on the current month

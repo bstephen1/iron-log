@@ -21,6 +21,23 @@ const eslintConfig = [
       projectService: true,
     },
     rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^@mui/[^/]+$',
+              message:
+                'This is a performance optimization for dev/test mode.' +
+                ' Use the named import, eg "@mui/material/Box"',
+            },
+            {
+              regex: '@emotion/react',
+              message: 'use @mui/material/styles for theme',
+            },
+          ],
+        },
+      ],
       // this rule wants you to have <div>today&apos;s session</div>
       // instead of <div>today's session</div>
       'react/no-unescaped-entities': [
