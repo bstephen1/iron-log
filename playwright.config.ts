@@ -1,4 +1,8 @@
-import { defineConfig, devices, PlaywrightTestConfig } from '@playwright/test'
+import {
+  defineConfig,
+  devices,
+  type PlaywrightTestConfig,
+} from '@playwright/test'
 
 /** limited project list to run locally  */
 const localProjects: PlaywrightTestConfig['projects'] = [
@@ -36,6 +40,7 @@ const isCI = !!process.env.CI
 // See: https://playwright.dev/docs/test-configuration.
 export default defineConfig({
   testDir: './playwright',
+  outputDir: 'playwright/test-results',
   forbidOnly: isCI,
   retries: isCI ? 2 : 1,
   // Runs individual tests in each file in parallel.
@@ -47,7 +52,9 @@ export default defineConfig({
     timeout: 10_000,
   },
   // See: https://playwright.dev/docs/test-reporters
-  reporter: isCI ? 'github' : [['list'], ['html']],
+  reporter: isCI
+    ? 'github'
+    : [['list'], ['html', { outputFolder: 'playwright/html-report' }]],
   // Shared settings for all the projects below.
   // See: https://playwright.dev/docs/api/class-testoptions.
   use: {
