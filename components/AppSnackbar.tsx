@@ -1,8 +1,13 @@
 import Alert, { type AlertColor } from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import Snackbar from '@mui/material/Snackbar'
-import { type CustomContentProps, closeSnackbar } from 'notistack'
+import {
+  type CustomContentProps,
+  closeSnackbar,
+  enqueueSnackbar,
+} from 'notistack'
 import { forwardRef } from 'react'
+import { ERRORS } from '../lib/frontend/constants'
 
 export type AppSnackbarProps = {
   /** renders an alert of the given severity */
@@ -59,5 +64,22 @@ const AppSnackbar = forwardRef<
     </Snackbar>
   )
 })
+
+export const enqueueError = (
+  e: unknown,
+  /** message to show if the error is a validation error */
+  validationMessage: string
+) => {
+  const originalMessage = e instanceof Error ? e.message : ''
+
+  enqueueSnackbar({
+    message:
+      originalMessage === ERRORS.validationFail
+        ? validationMessage
+        : ERRORS.retry,
+    severity: 'error',
+    persist: true,
+  })
+}
 
 export default AppSnackbar

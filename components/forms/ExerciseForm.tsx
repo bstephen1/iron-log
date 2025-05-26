@@ -9,7 +9,6 @@ import {
   useModifiers,
   useRecords,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/util'
 import {
   createExercise,
   type Exercise,
@@ -22,6 +21,7 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
+import { enqueueError } from '../AppSnackbar'
 
 interface Props {
   exercise: Exercise

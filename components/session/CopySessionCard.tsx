@@ -9,7 +9,6 @@ import {
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/util'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
@@ -18,6 +17,7 @@ import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { enqueueError } from '../AppSnackbar'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
