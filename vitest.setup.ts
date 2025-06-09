@@ -9,9 +9,7 @@ import { devUserId } from './lib/frontend/constants'
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
 // note: node only supports string vars. See: https://vitest.dev/api/vi.html#vi-stubenv
 
-// Limit for printing dom on failed expect(). Default is 7000.
 // typing is from vite/client in tsconfig
-import.meta.env.DEBUG_PRINT_LIMIT = '0'
 import.meta.env.NEXTAUTH_GITHUB_ID = 'my id'
 import.meta.env.NEXTAUTH_GITHUB_SECRET = 'secret secret'
 

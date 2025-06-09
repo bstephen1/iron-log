@@ -8,6 +8,9 @@ export default defineConfig({
   test: {
     exclude: ['playwright', 'node_modules'],
     bail: process.env.CI ? 1 : 0,
+    reporters: process.env.CI
+      ? ['dot', 'github-actions']
+      : ['default', ['html', { outputFile: 'vitest/html/index.html' }]],
     environment: 'jsdom',
     setupFiles: 'vitest.setup.ts',
     // clear mock history, restore each implementation to its original, and restore original descriptors of spied-on objects

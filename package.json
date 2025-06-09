@@ -16,6 +16,7 @@
     "test": "vitest --ui --open=false --hideSkippedTests",
     "test:once": "vitest run --allowOnly=false",
     "test:start": "vitest --ui --open=false --standalone",
+    "test:view": "vite preview --outDir vitest/html",
     "db:dev": "vite-node scripts/mongoSeedDev.ts",
     "db:test": "vite-node scripts/mongoResetTest.ts",
     "knip": "knip"
@@ -57,8 +58,8 @@
     "@types/react-dom": "^19.1.5",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.4.1",
-    "@vitest/coverage-v8": "^3.1.4",
-    "@vitest/ui": "^3.1.4",
+    "@vitest/coverage-v8": "^3.2.3",
+    "@vitest/ui": "^3.2.3",
     "cross-env": "^7.0.3",
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.3.2",
@@ -74,7 +75,7 @@
     "react-dom": "^19.1.0",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.4",
+    "vitest": "^3.2.3",
     "whatwg-fetch": "^3.6.20"
   },
   "prettier": {
