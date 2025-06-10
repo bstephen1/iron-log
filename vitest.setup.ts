@@ -1,9 +1,32 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
 import { server } from './msw-mocks/server'
-import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  vi,
+} from 'vitest'
 import 'whatwg-fetch'
 import { devUserId } from './lib/frontend/constants'
+import { it } from 'node:test'
+
+/* eslint-disable no-var */
+// var is required to hoist globals
+declare global {
+  var jest: typeof vi
+  var fit: typeof it.only
+  var xit: typeof it.skip
+  var fdescribe: typeof describe.only
+  var xdescribe: typeof describe.skip
+}
+
+globalThis.fit = it.only
+globalThis.xit = it.skip
+globalThis.fdescribe = describe.only
+globalThis.xdescribe = describe.skip
 
 // set env variables with import.meta.env
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
@@ -37,7 +60,6 @@ configure({
   defaultHidden: true,
 })
 
-// msw server
 beforeAll(() => {
   server.listen()
   // @testing-library/react explicitly hardcodes "jest.advanceTimersByTime" when using fake timers,
@@ -46,7 +68,6 @@ beforeAll(() => {
   // Note userEvent.setup must also include {advanceTimers: vi.advanceTimersByTime},
   // but this must be done on a per-test basis as it will break any test not using fake timers
   // See: https://github.com/testing-library/react-testing-library/issues/1197
-  // @ts-expect-error ts can't see the type of globalThis
   globalThis.jest = vi
 })
 beforeEach(() => server.resetHandlers())
