@@ -1,6 +1,10 @@
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import dayjs, { type Dayjs } from 'dayjs'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import {
@@ -14,10 +18,6 @@ import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
-import Button from '@mui/material/Button'
-import Paper from '@mui/material/Paper'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
@@ -29,11 +29,11 @@ export default function CopySessionCard() {
   const [prevDay, setPrevDay] = useState<Dayjs>(day.add(-7, 'day'))
   const { sessionLog: prevSessionLog, isLoading: isPrevSessionLoading } =
     useSessionLog(prevDay)
-  const { isLoading: isCurSessionLoading } = useSessionLog(day)
   const { recordsIndex, isLoading: isRecordLoading } = useRecords({
     date: prevDay.format(DATE_FORMAT),
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [isPendingCopy, setIsPendingCopy] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
 
   const handlePrevDayChange = (newPrevDay: Dayjs) => {
@@ -42,18 +42,13 @@ export default function CopySessionCard() {
     setPrevDay(newPrevDay)
   }
 
-  const waitForFetch = () => {
-    if (isRecordLoading || isPrevSessionLoading || isCurSessionLoading) {
-      setTimeout(waitForFetch, 100)
-    }
-  }
-
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     setIsLoading(true)
 
-    // we need to wait after clicking the button, since the session type will
-    // be selected on the fly
-    waitForFetch()
+    if (isRecordLoading || isPrevSessionLoading) {
+      setIsPendingCopy(true)
+      return
+    }
 
     if (!prevSessionLog) {
       setIsSessionEmpty(true)
@@ -99,7 +94,22 @@ export default function CopySessionCard() {
       setIsSessionEmpty(true)
     }
     setIsLoading(false)
-  }
+  }, [
+    day,
+    isPrevSessionLoading,
+    isRecordLoading,
+    mutate,
+    prevSessionLog,
+    recordsIndex,
+    swiper,
+  ])
+
+  useEffect(() => {
+    if (isPendingCopy && !(isPrevSessionLoading || isRecordLoading)) {
+      setIsPendingCopy(false)
+      handleCopy()
+    }
+  }, [handleCopy, isPendingCopy, isPrevSessionLoading, isRecordLoading])
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
