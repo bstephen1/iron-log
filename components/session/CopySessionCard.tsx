@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import dayjs, { type Dayjs } from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useSwiper } from 'swiper/react'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { DATE_FORMAT, URI_RECORDS } from '../../lib/frontend/constants'
 import {
   addRecord,
   updateSessionLog,
@@ -18,11 +18,12 @@ import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
+import { useSWRConfig } from 'swr'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
   const swiper = useSwiper()
-  const { date, mutate } = useCurrentSessionLog()
+  const { date, mutate: mutateSession } = useCurrentSessionLog()
   const day = dayjs(date)
   // may want to init as current day to prevent extra fetch,
   // or optimistically fetch most recent session of the same type
@@ -32,6 +33,7 @@ export default function CopySessionCard() {
   const { recordsIndex, isLoading: isRecordLoading } = useRecords({
     date: prevDay.format(DATE_FORMAT),
   })
+  const { mutate } = useSWRConfig()
   const [isLoading, setIsLoading] = useState(false)
   const [isPendingCopy, setIsPendingCopy] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
@@ -69,6 +71,7 @@ export default function CopySessionCard() {
 
       try {
         await addRecord(newRecord)
+        mutate(URI_RECORDS + newRecord._id, newRecord, { revalidate: false })
         copiedRecords.push(newRecord._id)
       } catch (e) {
         enqueueError(
@@ -83,7 +86,7 @@ export default function CopySessionCard() {
       day.format(DATE_FORMAT),
       copiedRecords
     )
-    mutate(updateSessionLog(newSessionLog), {
+    mutateSession(updateSessionLog(newSessionLog), {
       optimisticData: newSessionLog,
       revalidate: false,
     })
@@ -99,6 +102,7 @@ export default function CopySessionCard() {
     isPrevSessionLoading,
     isRecordLoading,
     mutate,
+    mutateSession,
     prevSessionLog,
     recordsIndex,
     swiper,
