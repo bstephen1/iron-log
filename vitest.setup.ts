@@ -69,6 +69,11 @@ beforeAll(() => {
   // but this must be done on a per-test basis as it will break any test not using fake timers
   // See: https://github.com/testing-library/react-testing-library/issues/1197
   globalThis.jest = vi
+  if (process.env.MSW_LOG_ALL_REQUESTS) {
+    server.events.on('request:start', ({ request }) => {
+      console.log('MSW:', request.method, request.url)
+    })
+  }
 })
 beforeEach(() => server.resetHandlers())
 // RTL cleanup is only automatically called if vitest has globals on.
