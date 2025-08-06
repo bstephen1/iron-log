@@ -17,15 +17,10 @@ div#__next {
     sans-serif;
 }
 
+/* disable link styling */
 a {
   color: inherit;
   text-decoration: none;
-}
-
-/* default href link styling */
-.default-link {
-  color: blue;
-  text-decoration: underline;
 }
 
 /* disable spinner buttons on numeric input */

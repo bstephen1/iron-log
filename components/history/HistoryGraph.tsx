@@ -1,3 +1,7 @@
+import Box from '@mui/material/Box'
+import { green, grey } from '@mui/material/colors'
+import Stack from '@mui/material/Stack'
+import { useTheme } from '@mui/material/styles'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
@@ -26,9 +30,7 @@ import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { type RecordRangeQuery } from '../../models/Record'
 import { type Set } from '../../models/Set'
 import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
-import { useTheme } from '@mui/material/styles'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
+import useDarkMode from '../useDarkMode'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {
@@ -69,6 +71,11 @@ interface Props {
   swipeToRecord: (i: number) => void
 }
 export default function HistoryGraph({ query, swipeToRecord }: Props) {
+  const { palette } = useTheme()
+  const isDark = useDarkMode()
+  const bodyweightColor = isDark ? green[500] : green[800]
+  const exerciseColor = palette.primary[isDark ? 'light' : 'dark']
+
   // BWs and records are sorted newest first. It looks more natural in the
   // swiper to start on the right and move left vs oldest first.
   const { data: bodyweightData } = useBodyweights(query)
@@ -92,7 +99,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
   const { smoothLine, clothingOffset, showBodyweight, includeUnofficial } =
     graphOptions
   const lineType = smoothLine ? 'basis' : 'monotone'
-  const { palette } = useTheme()
   // only fetch if there is an exercise selected
   const { records } = useRecords(query, !!query?.exercise)
 
@@ -300,7 +306,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   type="number"
                   unit=" kg"
                   orientation={query?.exercise ? 'right' : 'left'}
-                  stroke="green"
+                  stroke={bodyweightColor}
                   domain={['auto', 'auto']}
                 />
                 <Line
@@ -308,7 +314,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   name="bodyweight"
                   dataKey="bodyweight"
                   type={lineType}
-                  stroke="green"
+                  stroke={bodyweightColor}
                   dot={false}
                 />
               </>
@@ -325,7 +331,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   unit={` ${DEFAULT_DISPLAY_FIELDS.units[recordDisplay.field]}`}
                   orientation="left"
                   // line color
-                  stroke={palette.primary.dark}
+                  stroke={exerciseColor}
                   domain={['auto', 'auto']}
                 />
 
@@ -333,7 +339,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   yAxisId="exercise"
                   name={query.exercise}
                   dataKey="value"
-                  stroke={palette.primary.dark}
+                  stroke={exerciseColor}
                   type={lineType}
                   dot={false}
                 />
@@ -351,6 +357,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   ]
                 }`
               }
+              contentStyle={isDark ? { backgroundColor: grey[800] } : undefined}
             />
             <Legend verticalAlign="top" height={30} />
             <Brush
@@ -361,6 +368,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
               // could only eyeball this trying to get it centered.
               x={graphContainerWidth * 0.2}
               startIndex={getStartIndex(graphData)}
+              {...(isDark ? { fill: grey[900], stroke: '#fff' } : {})}
             />
           </LineChart>
         </ResponsiveContainer>
