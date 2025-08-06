@@ -109,7 +109,14 @@ export default memo(function HistoryCard({
   return isQuickRender ? (
     <></>
   ) : (
-    <Card elevation={0} {...cardProps}>
+    <Card
+      elevation={0}
+      {...cardProps}
+      sx={{
+        ...cardProps?.sx,
+        backgroundColor: 'inherit', // dark mode fix
+      }}
+    >
       <CardHeader
         title={
           <Link
