@@ -22,7 +22,7 @@ export default memo(function HistoryTitle() {
           fontSize: 12,
           width: '80%',
           '&::before, &::after': {
-            borderColor: theme.palette.primary.main,
+            borderColor: theme.palette.primary.light,
           },
         }}
       >

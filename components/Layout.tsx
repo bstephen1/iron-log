@@ -1,20 +1,21 @@
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { type ReactNode } from 'react'
-import { bluePalette } from '../styles/themePalettes'
-import Navbar from './Navbar'
-import { SnackbarProvider } from 'notistack'
-import AppSnackbar from './AppSnackbar'
-import { Analytics } from '@vercel/analytics/next'
 import Container from '@mui/material/Container'
+import CssBaseline from '@mui/material/CssBaseline'
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { Analytics } from '@vercel/analytics/next'
+import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
+import { SnackbarProvider } from 'notistack'
+import { NuqsAdapter } from 'nuqs/adapters/next/pages'
+import { useEffect, type ReactNode } from 'react'
 import { SWRConfig, type SWRConfiguration } from 'swr'
 import useSWRCacheProvider from '../components/useSWRCacheProvider'
 import { swrFetcher } from '../lib/util'
-import { useEffect } from 'react'
-import { NuqsAdapter } from 'nuqs/adapters/next/pages'
-import { type Session } from 'next-auth'
+import { bluePalette } from '../styles/themePalettes'
+import AppSnackbar from './AppSnackbar'
+import Navbar from './Navbar'
 
 const disableNumberSpin = () => {
   if (!(document.activeElement instanceof HTMLInputElement)) return
@@ -38,8 +39,17 @@ export default function Layout({
   session,
   disableNavbar,
 }: Props) {
+  // theme uses CSS variables to better support dark mode.
+  // Any code changes should follow the CSS theme docs, not the normal theme docs.
+  // See: https://mui.com/material-ui/customization/css-theme-variables/usage/
+  // NOTE: when using the theme palette, theme.vars.palette is based on the current
+  // mode palette. theme.palette is the default palette and is NOT updated when mode
+  // changes. Both can be used as needed.
   const theme = createTheme({
-    palette: { ...bluePalette },
+    colorSchemes: { light: { palette: bluePalette }, dark: true },
+    cssVariables: {
+      colorSchemeSelector: 'class',
+    },
   })
   const provider = useSWRCacheProvider()
 
@@ -55,6 +65,8 @@ export default function Layout({
       <SWRConfig value={swrConfig ?? { fetcher: swrFetcher, provider }}>
         <NuqsAdapter>
           <ThemeProvider theme={theme}>
+            <CssBaseline /> {/* for dark mode */}
+            <InitColorSchemeScript attribute="class" />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <SnackbarProvider
                 maxSnack={1}

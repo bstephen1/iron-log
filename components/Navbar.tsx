@@ -1,12 +1,14 @@
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import LoginButton from './LoginButton'
-import NavbarDrawer from './NavbarDrawer'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
 import Slide from '@mui/material/Slide'
+import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import DarkModeButton from './DarkModeButton'
+import LoginButton from './LoginButton'
+import NavbarDrawer from './NavbarDrawer'
 
 export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true)
@@ -39,7 +41,10 @@ export default function Navbar() {
             <Link href={'/'}>Iron Log</Link>
           </Typography>
           <Box flex={1} />
-          <LoginButton />
+          <Stack direction="row" spacing={1}>
+            <DarkModeButton />
+            <LoginButton />
+          </Stack>
         </Toolbar>
       </AppBar>
     </Slide>

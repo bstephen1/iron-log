@@ -1,5 +1,3 @@
-import { type CSSProperties } from '@mui/material/styles/createMixins'
-
 export const DATE_FORMAT = 'YYYY-MM-DD'
 export const DATE_PICKER_FORMAT = 'MM/DD/YY'
 export const TIME_FORMAT = 'HH:mm:ss'
@@ -22,13 +20,6 @@ export const guestUserName = 'guest'
 export const sampleLogDate = '2022-09-26'
 
 export const userGuideLink = 'https://github.com/bstephen1/iron-log/wiki'
-/** globals.css overrides <a> style so internal links are not treating as standard
- *  href links. This style overrides the global to show links in the standard default style.
- */
-export const standardLinkStyle: CSSProperties = {
-  color: '-webkit-link',
-  textDecoration: 'underline',
-}
 
 /** error messages returned from the api  */
 export const ERRORS = {

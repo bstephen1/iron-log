@@ -7,12 +7,12 @@ import {
   DATE_FORMAT,
   guestUserName,
   sampleLogDate,
-  standardLinkStyle,
   userGuideLink,
 } from '../lib/frontend/constants'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import MuiLink from '@mui/material/Link'
 
 const Home: NextPage = () => {
   const { data } = useSession()
@@ -51,9 +51,7 @@ const Home: NextPage = () => {
         sx={{ width: '100%', position: 'absolute', bottom: 25, left: 0 }}
       >
         Need help? Check out the{' '}
-        <a href={userGuideLink} style={standardLinkStyle}>
-          user guide
-        </a>
+        <MuiLink href={userGuideLink}>user guide</MuiLink>
       </Typography>
     </>
   )

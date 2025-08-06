@@ -24,12 +24,19 @@ export default function PaginationBullets({
       display="flex"
       justifyContent="center"
       alignItems="center"
-      sx={{
-        '--swiper-pagination-bullet-size': `${
-          isDesktop ? desktopSize : mobileSize
-        }px`,
-        pb: isDesktop ? 0 : 1,
-      }}
+      sx={[
+        {
+          '--swiper-pagination-bullet-size': `${
+            isDesktop ? desktopSize : mobileSize
+          }px`,
+          pb: isDesktop ? 0 : 1,
+        },
+        (theme) =>
+          theme.applyStyles('dark', {
+            '--swiper-theme-color': theme.palette.primary.light,
+            '--swiper-pagination-bullet-inactive-color': '#fff',
+          }),
+      ]}
     />
   )
 }

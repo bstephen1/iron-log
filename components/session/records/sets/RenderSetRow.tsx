@@ -1,4 +1,6 @@
-import { blue, grey, lightGreen } from '@mui/material/colors'
+import Box from '@mui/material/Box'
+import { grey, lightBlue, lightGreen } from '@mui/material/colors'
+import Stack from '@mui/material/Stack'
 import { memo, useCallback } from 'react'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
@@ -9,19 +11,28 @@ import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
 import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './RenderSetField'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
 
 const pyStack = 0.5
 
-const background = (side: Set['side']) => {
+const getBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
-      return blue[50]
+      return lightBlue[50]
     case 'R':
       return lightGreen[50]
     default:
       return grey[100]
+  }
+}
+
+const getDarkBackground = (side: Set['side']) => {
+  switch (side) {
+    case 'L':
+      return lightBlue[900]
+    case 'R':
+      return lightGreen[900]
+    default:
+      return grey[800]
   }
 }
 
@@ -80,12 +91,19 @@ export default memo(function RenderSetRow({
       direction="row"
       alignItems="center"
       // border is from TextField underline
-      sx={{
-        borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
-        background: background(set.side),
-        py: pyStack,
-        pl: 1,
-      }}
+      sx={[
+        {
+          borderBottom: '1px solid rgba(0, 0, 0, .42)',
+          background: getBackground(set.side),
+          py: pyStack,
+          pl: 1,
+        },
+        (theme) =>
+          theme.applyStyles('dark', {
+            borderBottom: '1px solid rgba(255, 255, 255, 0.60)',
+            backgroundColor: getDarkBackground(set.side),
+          }),
+      ]}
     >
       {displayFields.visibleFields.map(({ delimiter, name, source }, i) => (
         <SetFieldInput
