@@ -3,6 +3,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import IconButton from '@mui/material/IconButton'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { useSWRConfig } from 'swr'
+import Tooltip from './Tooltip'
 
 export default function LoginButton() {
   const { cache } = useSWRConfig()
@@ -41,12 +42,14 @@ export default function LoginButton() {
   const isLoading = status === 'loading'
 
   return (
-    <IconButton
-      disabled={isLoading}
-      loading={isLoading}
-      onClick={isLoggedIn ? handleSignout : handleSignin}
-    >
-      {isLoggedIn ? <LogoutIcon /> : <LoginIcon />}
-    </IconButton>
+    <Tooltip title={isLoggedIn ? 'Sign out' : 'Sign in'}>
+      <IconButton
+        disabled={isLoading}
+        loading={isLoading}
+        onClick={isLoggedIn ? handleSignout : handleSignin}
+      >
+        {isLoggedIn ? <LogoutIcon /> : <LoginIcon />}
+      </IconButton>
+    </Tooltip>
   )
 }
