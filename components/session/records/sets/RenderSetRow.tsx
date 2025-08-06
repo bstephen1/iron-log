@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import { blue, grey, lightBlue, lightGreen } from '@mui/material/colors'
+import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { memo, useCallback } from 'react'
 import { useSWRConfig } from 'swr'
@@ -17,7 +17,7 @@ const pyStack = 0.5
 const getBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
-      return blue[50]
+      return lightBlue[50]
     case 'R':
       return lightGreen[50]
     default:
@@ -28,9 +28,9 @@ const getBackground = (side: Set['side']) => {
 const getDarkBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
-      return lightBlue[700]
+      return lightBlue[900]
     case 'R':
-      return lightGreen[700]
+      return lightGreen[900]
     default:
       return grey[800]
   }

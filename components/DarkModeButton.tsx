@@ -1,7 +1,7 @@
-import IconButton from '@mui/material/IconButton'
-import { useColorScheme } from '@mui/material/styles'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
+import IconButton from '@mui/material/IconButton'
+import { useColorScheme } from '@mui/material/styles'
 
 export default function DarkModeButton() {
   const { mode, setMode, systemMode } = useColorScheme()

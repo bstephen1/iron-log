@@ -1,5 +1,6 @@
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
+import LoginIcon from '@mui/icons-material/Login'
+import LogoutIcon from '@mui/icons-material/Logout'
+import IconButton from '@mui/material/IconButton'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { useSWRConfig } from 'swr'
 
@@ -36,16 +37,16 @@ export default function LoginButton() {
 
   const { status } = useSession()
 
+  const isLoggedIn = status === 'authenticated'
+  const isLoading = status === 'loading'
+
   return (
-    <Box>
-      <Button
-        loading={status === 'loading'}
-        variant="contained"
-        color="secondary"
-        onClick={status === 'unauthenticated' ? handleSignin : handleSignout}
-      >
-        <span>Sign {status === 'unauthenticated' ? 'in' : 'out'}</span>
-      </Button>
-    </Box>
+    <IconButton
+      disabled={isLoading}
+      loading={isLoading}
+      onClick={isLoggedIn ? handleSignout : handleSignin}
+    >
+      {isLoggedIn ? <LogoutIcon /> : <LoginIcon />}
+    </IconButton>
   )
 }
