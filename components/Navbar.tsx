@@ -7,6 +7,7 @@ import Box from '@mui/material/Box'
 import Slide from '@mui/material/Slide'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import DarkModeButton from './DarkModeButton'
 
 export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true)
@@ -39,6 +40,7 @@ export default function Navbar() {
             <Link href={'/'}>Iron Log</Link>
           </Typography>
           <Box flex={1} />
+          <DarkModeButton />
           <LoginButton />
         </Toolbar>
       </AppBar>

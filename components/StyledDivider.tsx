@@ -9,10 +9,10 @@ export default function StyledDivider({
   elevation?: number
 }) {
   const theme = useTheme()
-  const bgcolor =
-    theme.palette.mode === 'light'
-      ? theme.palette.primary.light
-      : theme.palette.secondary.main
-  const defaultSx: SxProps = { height: 5, my: 2, bgcolor: bgcolor }
+  const defaultSx: SxProps = {
+    height: 5,
+    my: 2,
+    bgcolor: theme.palette.primary.light,
+  }
   return <Paper sx={{ ...defaultSx, ...sx }} elevation={elevation} />
 }

@@ -104,7 +104,6 @@ export default memo(function SetHeader({
           <Stack
             direction="row"
             alignItems="center"
-            // border is from TextField underline
             sx={{
               px: 1,
               role: 'button',
