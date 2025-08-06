@@ -10,7 +10,7 @@ export default function FormDivider({ title }: { title: string }) {
       sx={{
         pb: 1,
         width: '100%',
-        '&::before, &::after': { borderColor: palette.primary.main },
+        '&::before, &::after': { borderColor: palette.primary.light },
       }}
     >
       {title}
