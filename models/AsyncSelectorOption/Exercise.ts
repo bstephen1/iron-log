@@ -46,14 +46,14 @@ export const createExercise = (
   status,
 })
 
-export type ExerciseQuery = z.input<typeof exerciseQuerySchema>
+export type ExerciseQuery = z.infer<typeof exerciseQuerySchema>
 export const exerciseQuerySchema = z
   .object({
     bodyweight: z.coerce.boolean(),
     unilateral: z.coerce.boolean(),
     category: apiArraySchema,
     modifier: apiArraySchema,
-    status: z.nativeEnum(Status),
+    status: z.enum(Status),
   })
   .partial()
   .transform(({ category, modifier, bodyweight, unilateral, ...rest }) => {

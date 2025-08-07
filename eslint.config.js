@@ -106,6 +106,7 @@ const eslintConfig = [
           allowInterfaces: 'with-single-extends',
         },
       ],
+      '@typescript-eslint/no-deprecated': 'warn',
       // this one seems too restrictive for little gain
       '@typescript-eslint/no-dynamic-delete': 'off',
       // this considers spreading JSX props as an error

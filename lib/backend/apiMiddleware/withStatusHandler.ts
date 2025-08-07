@@ -41,7 +41,7 @@ export default function withStatusHandler<T>(handler: ApiHandler<T>) {
         res.status(statusCode).json({
           statusCode,
           message: ERRORS.validationFail,
-          details: e.errors,
+          details: e.issues,
         })
       } else {
         if (process.env.SERVER_LOG_LEVEL === 'verbose') {

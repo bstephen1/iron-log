@@ -43,11 +43,15 @@ export interface SetType extends z.infer<typeof setTypeSchema> {}
 export const setTypeSchema = z.object({
   field: unitsSchema.keyof(),
   operator: z.enum(setOperators),
-  value: z.coerce.number().optional(),
+  // zod v4 has helpfully declared anything coerced as unknown,
+  // so now we have to force the type as number since RecordQuery
+  // uses z.input and would infer the type as unknown.
+  // But we need the coerce because the actual api query will be a string.
+  value: z.coerce.number<number>().optional(),
   /** used for "between" operator */
-  min: z.coerce.number().optional(),
+  min: z.coerce.number<number>().optional(),
   /** used for "between" operator */
-  max: z.coerce.number().optional(),
+  max: z.coerce.number<number>().optional(),
 })
 
 export const DEFAULT_SET_TYPE: Readonly<SetType> = {
