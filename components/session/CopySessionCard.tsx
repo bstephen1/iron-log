@@ -122,7 +122,7 @@ export default function CopySessionCard() {
           label="Previous session"
           day={prevDay}
           handleDayChange={handlePrevDayChange}
-          textFieldProps={{ variant: 'standard' }}
+          textFieldProps={{ variant: 'standard', fullWidth: true }}
         />
         {/* todo: assign session types to records, and add a selector here
          for latest X session */}
@@ -136,6 +136,7 @@ export default function CopySessionCard() {
             startIcon={<ContentCopyIcon />}
             variant="contained"
             onClick={handleCopy}
+            sx={{ width: 200 }}
           >
             Copy session
           </Button>

@@ -65,7 +65,7 @@ export default function AddRecordCard() {
         />
         <Button
           variant="contained"
-          sx={{ width: 250 }}
+          sx={{ width: 200 }}
           onClick={handleAdd}
           disabled={!exercise}
         >
