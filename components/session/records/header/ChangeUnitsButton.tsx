@@ -1,12 +1,5 @@
 import DesignServicesIcon from '@mui/icons-material/DesignServices'
 
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
-import { type UpdateFields, type UpdateState } from '../../../../lib/util'
-import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
-import { type DisplayFields } from '../../../../models/DisplayFields'
-import { type Units, unitsSchema } from '../../../../models/Units'
-import TooltipIconButton from '../../../TooltipIconButton'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -16,6 +9,13 @@ import FormLabel from '@mui/material/FormLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
+import { memo, useState } from 'react'
+import isEqual from 'react-fast-compare'
+import { type UpdateFields, type UpdateState } from '../../../../lib/util'
+import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import { type DisplayFields } from '../../../../models/DisplayFields'
+import { type Units, unitsSchema } from '../../../../models/Units'
+import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
   mutateExerciseFields: UpdateFields<Exercise>
@@ -79,7 +79,7 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
   value,
   handleChange,
 }: UnitDimensionRadioGroupProps<Dimension>) {
-  const unitSymbols = Object.keys(unitsSchema.shape[dimension].Values)
+  const unitSymbols = Object.keys(unitsSchema.shape[dimension].enum)
 
   // Don't render if there is only one option (eg, reps or side)
   if (unitSymbols.length < 2) {

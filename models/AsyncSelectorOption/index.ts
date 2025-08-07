@@ -9,7 +9,7 @@ export interface AsyncSelectorOption
 export const asyncSelectorOptionSchema = z.object({
   _id: idSchema.default(generateId),
   name: z.string(),
-  status: z.nativeEnum(Status).default(Status.active),
+  status: z.enum(Status).default(Status.active),
 })
 
 export const createAsyncSelectorOption = (

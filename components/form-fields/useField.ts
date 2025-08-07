@@ -1,5 +1,5 @@
 import { type ChangeEvent, useRef, useState } from 'react'
-import { type Schema, ZodError } from 'zod'
+import { ZodError, type ZodType } from 'zod'
 
 /*
  * This hook is based off the behavior of react-hook-form's useForm hook,
@@ -17,7 +17,7 @@ import { type Schema, ZodError } from 'zod'
 
 interface Props<T = string> {
   /** zod schema that determines whether the value is valid */
-  schema?: Schema
+  schema?: ZodType
   debounceMilliseconds?: number
   /** handleSubmit should be provided unless manually handling submit (eg, combobox) */
   handleSubmit?: (value: T) => void
@@ -90,7 +90,7 @@ export default function useField<T = string>({
       } catch (e) {
         // zod returns an array of errors, so we have to extract the actual error
         if (e instanceof ZodError) {
-          setError(e.errors[0].message)
+          setError(e.issues[0].message)
         }
         return false
       }

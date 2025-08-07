@@ -51,9 +51,9 @@ export const recordQuerySchema = z
   .object({
     exercise: z.string(),
     modifier: apiArraySchema,
-    modifierMatchType: z.nativeEnum(ArrayMatchType),
+    modifierMatchType: z.enum(ArrayMatchType),
     // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
-    setTypeMatchType: z.nativeEnum(ArrayMatchType),
+    setTypeMatchType: z.enum(ArrayMatchType),
   })
   .partial()
   .and(setTypeSchema.partial())

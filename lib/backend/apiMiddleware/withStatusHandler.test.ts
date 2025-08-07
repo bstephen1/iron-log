@@ -93,7 +93,7 @@ it('returns error when ZodError is thrown', async () => {
       expect(await res.json()).toEqual({
         statusCode: StatusCodes.BAD_REQUEST,
         message: ERRORS.validationFail,
-        details: error.errors,
+        details: error.issues,
       })
     },
   })
