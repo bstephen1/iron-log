@@ -59,11 +59,11 @@ export default defineConfig({
   // See: https://playwright.dev/docs/api/class-testoptions.
   use: {
     baseURL: 'http://localhost:7357',
-    // For CI. Local tests can use --ui to automatically create traces.
     // Traces show a ui view of what made the test fail.
+    // Local tests can use --ui to automatically create traces.
     //  See: https://playwright.dev/docs/trace-viewer
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    trace: isCI ? 'off' : 'retain-on-failure',
+    screenshot: isCI ? 'off' : 'only-on-failure',
   },
   projects: localProjects.concat(isCI ? CIProjects : []),
   webServer: {
