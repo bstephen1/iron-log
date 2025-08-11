@@ -1,12 +1,13 @@
+'use client'
 import Grid from '@mui/material/Grid'
-import { type JSX, memo, useEffect, useState } from 'react'
-import StyledDivider from '../components/StyledDivider'
-import useCategoryForm from '../components/forms/useCategoryForm'
-import useExerciseForm from '../components/forms/useExerciseForm'
-import useModifierForm from '../components/forms/useModifierForm'
-import { type TabValue, tabValues, useQueryTab } from '../models/TabValue'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
+import { type JSX, memo } from 'react'
+import useCategoryForm from '../../components/forms/useCategoryForm'
+import useExerciseForm from '../../components/forms/useExerciseForm'
+import useModifierForm from '../../components/forms/useModifierForm'
+import StyledDivider from '../../components/StyledDivider'
+import { type TabValue, tabValues, useQueryTab } from '../../models/TabValue'
 
 let Selector: JSX.Element, Form: JSX.Element
 
@@ -28,8 +29,6 @@ const RenderTabs = memo(function RenderTabs() {
 
 export default function ManagePage() {
   const [urlTab] = useQueryTab()
-  const [isFirstRender, setIsFirstRender] = useState(true)
-
   const { Form: CategoryForm, Selector: CategorySelector } = useCategoryForm()
   const { Form: ModifierForm, Selector: ModifierSelector } = useModifierForm()
   const { Form: ExerciseForm, Selector: ExerciseSelector } = useExerciseForm()
@@ -52,13 +51,7 @@ export default function ManagePage() {
     }
   }
 
-  useEffect(() => {
-    setIsFirstRender(false)
-  }, [])
-
-  // Must disable SSR to useQueryState or there will be hydration errors
-  // since router is not available server side.
-  return !isFirstRender ? (
+  return (
     <Grid container spacing={2}>
       <Grid size={12}>
         <RenderTabs />
@@ -71,7 +64,5 @@ export default function ManagePage() {
         {Form}
       </Grid>
     </Grid>
-  ) : (
-    <></>
   )
 }

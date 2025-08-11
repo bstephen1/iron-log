@@ -1,4 +1,4 @@
-import Home from '../pages/index.page'
+import Home from './page.page'
 import { render, screen } from '../lib/testUtils'
 import { expect, it } from 'vitest'
 

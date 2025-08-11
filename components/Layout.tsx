@@ -1,3 +1,4 @@
+'use client'
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'

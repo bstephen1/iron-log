@@ -1,14 +1,15 @@
-import { useRef, useState } from 'react'
-import { type SwiperRef } from 'swiper/react'
-import HistoryGraph from '../components/history/HistoryGraph'
-import QueryForm from '../components/history/QueryForm'
-import HistoryCardsSwiper from '../components/session/history/HistoryCardsSwiper'
-import StyledDivider from '../components/StyledDivider'
-import { type RecordRangeQuery } from '../models/Record'
+'use client'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import { useRef, useState } from 'react'
+import { type SwiperRef } from 'swiper/react'
+import HistoryGraph from '../../components/history/HistoryGraph'
+import QueryForm from '../../components/history/QueryForm'
+import HistoryCardsSwiper from '../../components/session/history/HistoryCardsSwiper'
+import StyledDivider from '../../components/StyledDivider'
+import { type RecordRangeQuery } from '../../models/Record'
 
 export default function HistoryPage() {
   const theme = useTheme()

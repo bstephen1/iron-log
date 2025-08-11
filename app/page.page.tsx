@@ -1,3 +1,4 @@
+'use client'
 import dayjs from 'dayjs'
 import type { NextPage } from 'next'
 import { useSession } from 'next-auth/react'
