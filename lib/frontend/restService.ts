@@ -1,7 +1,7 @@
 import dayjs, { type Dayjs } from 'dayjs'
 import { type ParsedUrlQueryInput, stringify } from 'querystring'
 import useSWR from 'swr'
-import { arrayToIndex, fetchJson } from '../../lib/util'
+import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { type ApiError } from '../../models/ApiError'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
@@ -47,19 +47,6 @@ export const paramify = (query: ParsedUrlQueryInput) => {
   return '?' + stringify(parsedQuery)
 }
 
-/** Formats an object to a json string, converting any undefined values to null instead.
- *  Undefined is not considered a valid json value, so it gets ignored.
- *
- *  JSON.stringify() should never be used directly outside this function, or updates may not go through
- *  when calling PATCH functions.
- *
- *  Any data fields that may be undefined should also expect "null" as a value.
- */
-const toJson = (obj: object) =>
-  JSON.stringify(obj, (_, value: unknown) =>
-    typeof value === 'undefined' ? null : value
-  )
-
 const toNames = (entities?: AsyncSelectorOption[]) =>
   entities?.map((entity) => entity.name) ?? []
 
@@ -94,16 +81,6 @@ export function useSessionLogs(query: DateRangeQuery) {
 
     mutate,
   }
-}
-
-export async function updateSessionLog(
-  newSesson: SessionLog
-): Promise<SessionLog> {
-  return fetchJson(URI_SESSIONS + newSesson.date, {
-    method: 'PUT',
-    body: toJson(newSesson),
-    headers: { 'content-type': 'application/json' },
-  })
 }
 
 //--------
@@ -148,32 +125,6 @@ export function useRecords(
   }
 }
 
-export async function addRecord(newRecord: Record): Promise<Record> {
-  return fetchJson(URI_RECORDS, {
-    method: 'POST',
-    body: toJson(newRecord),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function updateRecordFields(
-  id: string,
-  updates: Partial<Record>
-): Promise<Record> {
-  return fetchJson(URI_RECORDS + id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteRecord(id: string): Promise<string> {
-  return fetchJson(URI_RECORDS + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
 //----------
 // EXERCISE
 //----------
@@ -208,32 +159,6 @@ export function useExercise(
   }
 }
 
-export async function addExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES, {
-    method: 'POST',
-    body: toJson(newExercise),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function updateExerciseFields(
-  exercise: Exercise,
-  updates: Partial<Exercise>
-): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES + exercise._id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteExercise(id: string): Promise<string> {
-  return fetchJson(URI_EXERCISES + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
 //----------
 // MODIFIER
 //----------
@@ -249,32 +174,6 @@ export function useModifiers() {
 
     mutate,
   }
-}
-
-export async function addModifier(newModifier: Modifier): Promise<Modifier> {
-  return fetchJson(URI_MODIFIERS, {
-    method: 'POST',
-    body: toJson(newModifier),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function updateModifierFields(
-  modifier: Modifier,
-  updates: Partial<Modifier>
-): Promise<Modifier> {
-  return fetchJson(URI_MODIFIERS + modifier._id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteModifier(id: string): Promise<string> {
-  return fetchJson(URI_MODIFIERS + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
 }
 
 //----------
@@ -318,14 +217,4 @@ export function useBodyweights(
 
     mutate,
   }
-}
-
-export async function updateBodyweight(
-  newBodyweight: Bodyweight
-): Promise<Bodyweight> {
-  return fetchJson(URI_BODYWEIGHT + newBodyweight.date, {
-    method: 'PUT',
-    body: toJson(newBodyweight),
-    headers: { 'content-type': 'application/json' },
-  })
 }

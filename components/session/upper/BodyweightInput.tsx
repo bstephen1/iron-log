@@ -3,10 +3,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
-import {
-  updateBodyweight,
-  useBodyweights,
-} from '../../../lib/frontend/restService'
+import { useBodyweights } from '../../../lib/frontend/restService'
 import { createBodyweight, type WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
@@ -14,6 +11,7 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
 import { type TextFieldProps } from '@mui/material/TextField'
+import { updateBodyweight } from '../../../lib/backend/mongoService'
 
 interface Props {
   day: Dayjs

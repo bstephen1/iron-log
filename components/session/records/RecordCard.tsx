@@ -8,12 +8,7 @@ import { type KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
-import {
-  updateExerciseFields,
-  updateRecordFields,
-  useExercise,
-  useRecord,
-} from '../../../lib/frontend/restService'
+import { useExercise, useRecord } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
@@ -30,6 +25,10 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
+import {
+  updateExerciseFields,
+  updateRecordFields,
+} from '../../../lib/backend/mongoService'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -142,7 +141,7 @@ function LoadedRecordCard({
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (changes) => {
       mutateExercise(
-        (cur) => (cur ? updateExerciseFields(cur, { ...changes }) : null),
+        (cur) => (cur ? updateExerciseFields(cur._id, { ...changes }) : null),
         {
           optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
           revalidate: false,

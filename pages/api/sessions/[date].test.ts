@@ -1,28 +1,22 @@
-import { vi, it } from 'vitest'
-import { fetchSession, updateSession } from '../../../lib/backend/mongoService'
+import { it, vi } from 'vitest'
+import { fetchSessionLog } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 
-import handler from './[date]'
 import { createSessionLog } from '../../../models/SessionLog'
+import handler from './[date]'
 
 const date = '2000-01-01'
 const data = createSessionLog(date)
 const params = { date }
 
 it('fetches given session', async () => {
-  vi.mocked(fetchSession).mockResolvedValue(data)
+  vi.mocked(fetchSessionLog).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
-})
-
-it('updates given session', async () => {
-  vi.mocked(updateSession).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'PUT' })
 })
 
 it('blocks invalid method types', async () => {

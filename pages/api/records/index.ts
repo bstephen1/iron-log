@@ -4,9 +4,9 @@ import {
   type UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { addRecord, fetchRecords } from '../../../lib/backend/mongoService'
+import { fetchRecords } from '../../../lib/backend/mongoService'
 import { dateRangeQuerySchema } from '../../../models//DateRangeQuery'
-import { recordQuerySchema, recordSchema } from '../../../models/Record'
+import { recordQuerySchema } from '../../../models/Record'
 
 async function handler(req: NextApiRequest, userId: UserId) {
   switch (req.method) {
@@ -16,8 +16,6 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
       return await fetchRecords(userId, recordFilter, dateFilter)
     }
-    case 'POST':
-      return await addRecord(userId, recordSchema.parse(req.body))
     default:
       throw methodNotAllowed
   }

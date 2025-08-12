@@ -1,11 +1,11 @@
 import { type Dispatch, type SetStateAction } from 'react'
 import { type KeyedMutator } from 'swr'
-import { addModifier } from '../../../lib/frontend/restService'
 import {
   createModifier,
   type Modifier,
 } from '../../../models/AsyncSelectorOption/Modifier'
 import AsyncSelector from './AsyncSelector'
+import { addModifier } from '../../../lib/backend/mongoService'
 
 interface Props {
   modifiers?: Modifier[]

@@ -9,8 +9,8 @@ import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { type Bodyweight } from '../../models/Bodyweight'
 import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
-import { collections } from './mongoConnect'
 import { getUserId } from './auth'
+import { collections } from './mongoConnect'
 const {
   sessions,
   exercises,
@@ -31,7 +31,7 @@ const convertSort = (sort: DateRangeQuery['sort']) =>
 // SESSION
 //---------
 
-export async function fetchSession(
+export async function fetchSessionLog(
   userId: ObjectId,
   date: string
 ): Promise<SessionLog | null> {
@@ -41,7 +41,7 @@ export async function fetchSession(
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchSessions(
+export async function fetchSessionLogs(
   userId: ObjectId,
   { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
 ): Promise<SessionLog[]> {
@@ -55,11 +55,11 @@ export async function fetchSessions(
     .toArray()
 }
 
-export async function updateSession(
-  userId: ObjectId,
+export async function updateSessionLog(
   // ignore the id so we don't accidentally try to update it
   { _id, ...sessionLog }: SessionLog
 ): Promise<SessionLog | null> {
+  const userId = await getUserId()
   return await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },
     { ...sessionLog, userId },
@@ -123,10 +123,8 @@ const recordPipeline: RecordPipeline = {
   excludeUserIds: { $project: { userId: 0, 'exercise.userId': 0 } },
 }
 
-export async function addRecord(
-  userId: ObjectId,
-  record: Record
-): Promise<Record> {
+export async function addRecord(record: Record): Promise<Record> {
+  const userId = await getUserId()
   await records.insertOne({ ...record, userId })
 
   // add the record to its session (or create new session if needed)
@@ -213,21 +211,19 @@ export async function fetchRecord(
 }
 
 export async function updateRecordFields(
-  userId: ObjectId,
   _id: string,
   updates: Partial<Record>
-): Promise<Record | null> {
-  return await records.findOneAndUpdate(
+): Promise<Record> {
+  const userId = await getUserId()
+  return (await records.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
     { returnDocument: 'after' }
-  )
+  )) as Record
 }
 
-export async function deleteRecord(
-  userId: ObjectId,
-  _id: string
-): Promise<string> {
+export async function deleteRecord(_id: string): Promise<string> {
+  const userId = await getUserId()
   const record = await records.findOneAndDelete({ userId, _id })
   // remove the record from its associated session
   await sessions.updateOne(
@@ -243,10 +239,8 @@ export async function deleteRecord(
 // EXERCISE
 //----------
 
-export async function addExercise(
-  userId: ObjectId,
-  exercise: Exercise
-): Promise<Exercise> {
+export async function addExercise(exercise: Exercise): Promise<Exercise> {
+  const userId = await getUserId()
   await exercises.insertOne({ ...exercise, userId })
   return exercise
 }
@@ -268,21 +262,22 @@ export async function fetchExercise(
 }
 
 export async function updateExerciseFields(
-  userId: ObjectId,
   _id: string,
   updates: Partial<Exercise>
-): Promise<Exercise | null> {
-  return await exercises.findOneAndUpdate(
+): Promise<Exercise> {
+  const userId = await getUserId()
+  return (await exercises.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
     {
       returnDocument: 'after',
       projection: { userId: 0 },
     }
-  )
+  )) as Exercise
 }
 
-export async function deleteExercise(userId: ObjectId, _id: string) {
+export async function deleteExercise(_id: string) {
+  const userId = await getUserId()
   const exercise = await exercises.find({ userId, _id }).next()
   // note that the content of exercises in records is not guaranteed
   // to be up to date, but the exercise _id WILL be.
@@ -305,10 +300,8 @@ export async function deleteExercise(userId: ObjectId, _id: string) {
 // MODIFIER
 //----------
 
-export async function addModifier(
-  userId: ObjectId,
-  modifier: Modifier
-): Promise<Modifier> {
+export async function addModifier(modifier: Modifier): Promise<Modifier> {
+  const userId = await getUserId()
   await modifiers.insertOne({ ...modifier, userId })
   return modifier
 }
@@ -319,50 +312,43 @@ export async function fetchModifiers(userId: ObjectId): Promise<Modifier[]> {
     .toArray()
 }
 
-export async function fetchModifier(
-  userId: ObjectId,
-  _id: string
-): Promise<Modifier | null> {
-  return await modifiers.findOne({ userId, _id }, { projection: { userId: 0 } })
-}
-
 export async function updateModifierFields(
-  userId: ObjectId,
-  _id: string,
+  oldModifier: Modifier,
   updates: Partial<Modifier>
-): Promise<Modifier | null> {
+): Promise<Modifier> {
+  const userId = await getUserId()
   if (updates.name) {
-    const oldModifier = await modifiers.find({ userId, _id }).next()
     await exercises.updateMany(
-      { userId, modifiers: oldModifier?.name },
+      { userId, modifiers: oldModifier.name },
       { $set: { 'modifiers.$': updates.name } }
     )
     // nested $[] operator (cannot use simple $ operator more than once): https://jira.mongodb.org/browse/SERVER-831
     await exercises.updateMany(
-      { userId, 'notes.tags': oldModifier?.name },
+      { userId, 'notes.tags': oldModifier.name },
       { $set: { 'notes.$[].tags.$[tag]': updates.name } },
-      { arrayFilters: [{ tag: oldModifier?.name }] }
+      { arrayFilters: [{ tag: oldModifier.name }] }
     )
     await records.updateMany(
-      { userId, category: oldModifier?.name },
+      { userId, category: oldModifier.name },
       { $set: { category: updates.name } }
     )
     await records.updateMany(
-      { userId, activeModifiers: oldModifier?.name },
+      { userId, activeModifiers: oldModifier.name },
       { $set: { 'activeModifiers.$': updates.name } }
     )
   }
-  return await modifiers.findOneAndUpdate(
-    { userId, _id },
+  return (await modifiers.findOneAndUpdate(
+    { userId, _id: oldModifier._id },
     { $set: updates },
     {
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as Modifier
 }
 
-export async function deleteModifier(userId: ObjectId, _id: string) {
+export async function deleteModifier(_id: string) {
+  const userId = await getUserId()
   const modifier = await modifiers.findOne({ userId, _id })
 
   if (modifier) {
@@ -398,13 +384,6 @@ export async function fetchCategories(userId: ObjectId): Promise<Category[]> {
   return await categories
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
-}
-
-export async function fetchCategory(
-  userId: ObjectId,
-  id: string
-): Promise<Category | null> {
-  return await categories.findOne({ userId, id }, { projection: { userId: 0 } })
 }
 
 export async function updateCategoryFields(
@@ -484,10 +463,10 @@ export async function fetchBodyweights(
  * Note: two records can exist on the same date if they are different types.
  */
 export async function updateBodyweight(
-  userId: ObjectId,
   newBodyweight: Bodyweight
-): Promise<Bodyweight | null> {
-  return await bodyweightHistory.findOneAndUpdate(
+): Promise<Bodyweight> {
+  const userId = await getUserId()
+  return (await bodyweightHistory.findOneAndUpdate(
     { userId, date: newBodyweight.date, type: newBodyweight.type },
     // Can't just update the doc because the new one will have a new _id.
     // setOnInsert only activates if upserting. The upsert inserts a new doc built from
@@ -502,5 +481,5 @@ export async function updateBodyweight(
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as Bodyweight
 }

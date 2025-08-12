@@ -5,12 +5,13 @@ import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useSWRConfig } from 'swr'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import { addRecord, useExercises } from '../../lib/frontend/restService'
+import { useExercises } from '../../lib/frontend/restService'
 import { enqueueError } from '../../lib/frontend/util'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import useCurrentSessionLog from './useCurrentSessionLog'
+import { addRecord } from '../../lib/backend/mongoService'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)

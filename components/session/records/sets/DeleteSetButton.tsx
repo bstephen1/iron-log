@@ -2,10 +2,10 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { memo } from 'react'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
-import { updateRecordFields } from '../../../../lib/frontend/restService'
 import { type Record } from '../../../../models/Record'
 import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 import { type SxProps } from '@mui/material/styles'
+import { updateRecordFields } from '../../../../lib/backend/mongoService'
 
 interface Props extends IconButtonProps {
   _id: Record['_id']

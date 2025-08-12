@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import TooltipIconButton from '../../../TooltipIconButton'
 import useCurrentSessionLog from '../../../../components/session/useCurrentSessionLog'
-import { deleteRecord } from '../../../../lib/frontend/restService'
+import { deleteRecord } from '../../../../lib/backend/mongoService'
 
 interface Props {
   _id: string

@@ -4,13 +4,13 @@ import Stack from '@mui/material/Stack'
 import { memo, useCallback } from 'react'
 import { useSWRConfig } from 'swr'
 import { URI_RECORDS } from '../../../../lib/frontend/constants'
-import { updateRecordFields } from '../../../../lib/frontend/restService'
 import { type UpdateFields } from '../../../../lib/util'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
 import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './RenderSetField'
+import { updateRecordFields } from '../../../../lib/backend/mongoService'
 
 const pyStack = 0.5
 

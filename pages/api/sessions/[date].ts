@@ -4,8 +4,7 @@ import {
   methodNotAllowed,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { fetchSession, updateSession } from '../../../lib/backend/mongoService'
-import { sessionLogSchema } from '../../../models/SessionLog'
+import { fetchSessionLog } from '../../../lib/backend/mongoService'
 import { dateSchema } from '../../../models/schemas'
 
 async function handler(req: NextApiRequest, userId: UserId) {
@@ -13,9 +12,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
 
   switch (req.method) {
     case 'GET':
-      return await fetchSession(userId, date)
-    case 'PUT':
-      return await updateSession(userId, sessionLogSchema.parse(req.body))
+      return await fetchSessionLog(userId, date)
     default:
       throw methodNotAllowed
   }

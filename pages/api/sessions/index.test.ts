@@ -1,15 +1,15 @@
-import { vi, it } from 'vitest'
-import { fetchSessions } from '../../../lib/backend/mongoService'
+import { it, vi } from 'vitest'
+import { fetchSessionLogs } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './index.api'
 import { createSessionLog } from '../../../models/SessionLog'
+import handler from './index'
 
 it('fetches sessions', async () => {
   const data = [createSessionLog('2000-01-01')]
-  vi.mocked(fetchSessions).mockResolvedValue(data)
+  vi.mocked(fetchSessionLogs).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler })
 })

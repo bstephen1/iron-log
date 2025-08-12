@@ -1,13 +1,11 @@
 import { useQueryState } from 'nuqs'
 import { useCallback, useState } from 'react'
-import {
-  updateExerciseFields,
-  useExercises,
-} from '../../lib/frontend/restService'
+import { useExercises } from '../../lib/frontend/restService'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import ExerciseSelector from '../form-fields/selectors/ExerciseSelector'
 import ExerciseForm from './ExerciseForm'
+import { updateExerciseFields } from '../../lib/backend/mongoService'
 
 export default function useExerciseForm() {
   const [urlExercise, setUrlExercise] = useQueryState('exercise')
@@ -39,7 +37,7 @@ export default function useExerciseForm() {
           }
 
           const updatedExercise = await updateExerciseFields(
-            oldExercise,
+            oldExercise._id,
             updates
           )
           return cur?.map((e) =>

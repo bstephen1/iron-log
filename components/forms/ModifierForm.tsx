@@ -1,17 +1,14 @@
 import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
-import {
-  deleteModifier,
-  useExercises,
-  useModifiers,
-} from '../../lib/frontend/restService'
+import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import UsageComboBox from '../form-fields/UsageComboBox'
 import ActionItems from '../form-fields/actions/ActionItems'
+import { deleteModifier } from '../../lib/backend/mongoService'
 
 interface Props {
   modifier: Modifier

@@ -2,10 +2,7 @@ import NotesIcon from '@mui/icons-material/Notes'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
-import {
-  updateSessionLog,
-  useSessionLog,
-} from '../../../../lib/frontend/restService'
+import { useSessionLog } from '../../../../lib/frontend/restService'
 import { type UpdateFields } from '../../../../lib/util'
 import { type Note } from '../../../../models/Note'
 import { type Record } from '../../../../models/Record'
@@ -15,6 +12,7 @@ import Badge from '@mui/material/Badge'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import { updateSessionLog } from '../../../../lib/backend/mongoService'
 
 const title = 'Record notes'
 

@@ -2,8 +2,6 @@ import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
-  addExercise,
-  deleteExercise,
   useCategories,
   useExercises,
   useModifiers,
@@ -22,6 +20,7 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
+import { addExercise, deleteExercise } from '../../lib/backend/mongoService'
 
 interface Props {
   exercise: Exercise

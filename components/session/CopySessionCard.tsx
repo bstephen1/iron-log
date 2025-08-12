@@ -8,17 +8,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useSWRConfig } from 'swr'
 import { DATE_FORMAT, URI_RECORDS } from '../../lib/frontend/constants'
-import {
-  addRecord,
-  updateSessionLog,
-  useRecords,
-  useSessionLog,
-} from '../../lib/frontend/restService'
+import { useRecords, useSessionLog } from '../../lib/frontend/restService'
 import { enqueueError } from '../../lib/frontend/util'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
+import { addRecord, updateSessionLog } from '../../lib/backend/mongoService'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {

@@ -4,7 +4,7 @@ import {
   type UserId,
 } from '../../../lib/backend/apiMiddleware/util'
 import withStatusHandler from '../../../lib/backend/apiMiddleware/withStatusHandler'
-import { fetchSessions } from '../../../lib/backend/mongoService'
+import { fetchSessionLogs } from '../../../lib/backend/mongoService'
 import { dateRangeQuerySchema } from '../../../models//DateRangeQuery'
 
 async function handler(req: NextApiRequest, userId: UserId) {
@@ -13,7 +13,7 @@ async function handler(req: NextApiRequest, userId: UserId) {
   }
 
   const filter = dateRangeQuerySchema.parse(req.query)
-  return await fetchSessions(userId, filter)
+  return await fetchSessionLogs(userId, filter)
 }
 
 export default withStatusHandler(handler)

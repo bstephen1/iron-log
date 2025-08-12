@@ -1,14 +1,11 @@
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
-import {
-  updateModifierFields,
-  useExercises,
-  useModifiers,
-} from '../../lib/frontend/restService'
+import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import ManageWelcomeCard from '../ManageWelcomeCard'
 import ModifierSelector from '../form-fields/selectors/ModifierSelector'
 import ModifierForm from './ModifierForm'
+import { updateModifierFields } from '../../lib/backend/mongoService'
 
 export default function useModifierForm() {
   const [urlModifier, setUrlModifier] = useQueryState('modifier')

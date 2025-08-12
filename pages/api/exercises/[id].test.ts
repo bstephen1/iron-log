@@ -1,9 +1,5 @@
 import { vi, it } from 'vitest'
-import {
-  deleteExercise,
-  fetchExercise,
-  updateExerciseFields,
-} from '../../../lib/backend/mongoService'
+import { fetchExercise } from '../../../lib/backend/mongoService'
 import {
   expectApiErrorsOnInvalidMethod,
   expectApiErrorsOnMissingParams,
@@ -20,23 +16,6 @@ it('fetches given exercise', async () => {
   vi.mocked(fetchExercise).mockResolvedValue(data)
 
   await expectApiRespondsWithData({ data, handler, params })
-})
-
-it('updates given exercise fields', async () => {
-  vi.mocked(updateExerciseFields).mockResolvedValue(data)
-
-  await expectApiRespondsWithData({ data, handler, params, method: 'PATCH' })
-})
-
-it('deletes given exercise', async () => {
-  vi.mocked(deleteExercise).mockResolvedValue(data._id)
-
-  await expectApiRespondsWithData({
-    data: data._id,
-    handler,
-    params,
-    method: 'DELETE',
-  })
 })
 
 it('blocks invalid method types', async () => {
