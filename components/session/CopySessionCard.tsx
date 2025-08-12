@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography'
 import dayjs, { type Dayjs } from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 import { useSwiper } from 'swiper/react'
+import { useSWRConfig } from 'swr'
 import { DATE_FORMAT, URI_RECORDS } from '../../lib/frontend/constants'
 import {
   addRecord,
@@ -13,12 +14,11 @@ import {
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/util'
+import { enqueueError } from '../../lib/frontend/util'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
 import useCurrentSessionLog from './useCurrentSessionLog'
-import { useSWRConfig } from 'swr'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {

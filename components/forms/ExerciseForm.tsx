@@ -9,7 +9,7 @@ import {
   useModifiers,
   useRecords,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/util'
+import { enqueueError } from '../../lib/frontend/util'
 import {
   createExercise,
   type Exercise,

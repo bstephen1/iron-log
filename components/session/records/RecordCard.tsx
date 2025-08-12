@@ -1,3 +1,7 @@
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import { type KeyedMutator } from 'swr'
@@ -13,7 +17,8 @@ import {
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { enqueueError, type UpdateFields } from '../../../lib/util'
+import { enqueueError } from '../../../lib/frontend/util'
+import { type UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { type Record } from '../../../models/Record'
@@ -25,10 +30,6 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
