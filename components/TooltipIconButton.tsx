@@ -1,4 +1,4 @@
-import { createContext, useContext, type JSX } from 'react'
+import { createContext, use, type JSX } from 'react'
 import Tooltip from './Tooltip'
 import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 import MenuItem, { type MenuItemProps } from '@mui/material/MenuItem'
@@ -39,8 +39,8 @@ export default function TooltipIconButton({
   disabled,
   ...iconButtonProps
 }: Props) {
-  const isMenuItem = useContext(IsMenuContext)
-  const menuItemProps = useContext(MenuItemContext)
+  const isMenuItem = use(IsMenuContext)
+  const menuItemProps = use(MenuItemContext)
 
   return isMenuItem ? (
     <Tooltip title={title} placement="left" {...tooltipProps}>

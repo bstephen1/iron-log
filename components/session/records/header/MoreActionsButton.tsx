@@ -28,7 +28,7 @@ export default memo(function MoreActionsButton({ actions }: Props) {
           <MoreVertIcon />
         </TooltipIconButton>
       )}
-      <IsMenuContext.Provider value={true}>
+      <IsMenuContext value={true}>
         <Menu
           id="more options menu"
           anchorEl={moreButtonsAnchorEl}
@@ -44,7 +44,7 @@ export default memo(function MoreActionsButton({ actions }: Props) {
             <MenuPropsInjector key={i}>{Action}</MenuPropsInjector>
           ))}
         </Menu>
-      </IsMenuContext.Provider>
+      </IsMenuContext>
     </>
   )
 }, isEqual)
@@ -53,7 +53,5 @@ export default memo(function MoreActionsButton({ actions }: Props) {
  *  We have to intercept those props and pass them along to the MenuItem.
  */
 const MenuPropsInjector = (props: Partial<MenuItemProps>) => (
-  <MenuItemContext.Provider value={props}>
-    {props.children}
-  </MenuItemContext.Provider>
+  <MenuItemContext value={props}>{props.children}</MenuItemContext>
 )
