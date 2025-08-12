@@ -1,3 +1,4 @@
+'use server'
 import { StatusCodes } from 'http-status-codes'
 import { type Document, type Filter, type ObjectId } from 'mongodb'
 import type DateRangeQuery from '../../models//DateRangeQuery'
@@ -9,6 +10,7 @@ import { type Bodyweight } from '../../models/Bodyweight'
 import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { collections } from './mongoConnect'
+import { getUserId } from './auth'
 const {
   sessions,
   exercises,
@@ -386,10 +388,8 @@ export async function deleteModifier(userId: ObjectId, _id: string) {
 // CATEGORY
 //----------
 
-export async function addCategory(
-  userId: ObjectId,
-  category: Category
-): Promise<Category> {
+export async function addCategory(category: Category): Promise<Category> {
+  const userId = await getUserId()
   await categories.insertOne({ ...category, userId })
   return category
 }
@@ -408,32 +408,33 @@ export async function fetchCategory(
 }
 
 export async function updateCategoryFields(
-  userId: ObjectId,
-  _id: string,
+  oldCategory: Category,
   updates: Partial<Category>
-): Promise<Category | null> {
+): Promise<Category> {
+  const userId = await getUserId()
   if (updates.name) {
-    const oldCategory = await categories.find({ userId, _id }).next()
     await exercises.updateMany(
-      { userId, categories: oldCategory?.name },
+      { userId, categories: oldCategory.name },
       { $set: { 'categories.$': updates.name } }
     )
     await records.updateMany(
-      { userId, category: oldCategory?.name },
+      { userId, category: oldCategory.name },
       { $set: { category: updates.name } }
     )
   }
-  return await categories.findOneAndUpdate(
-    { userId, _id },
+
+  return (await categories.findOneAndUpdate(
+    { userId, _id: oldCategory._id },
     { $set: updates },
     {
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as Category
 }
 
-export async function deleteCategory(userId: ObjectId, _id: string) {
+export async function deleteCategory(_id: string) {
+  const userId = await getUserId()
   const category = await categories.findOne({ userId, _id })
 
   if (category) {

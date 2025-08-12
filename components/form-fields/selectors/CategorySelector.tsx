@@ -1,11 +1,11 @@
 import { type Dispatch, type SetStateAction } from 'react'
 import { type KeyedMutator } from 'swr'
-import { addCategory } from '../../../lib/frontend/restService'
 import {
   type Category,
   createCategory,
 } from '../../../models/AsyncSelectorOption/Category'
 import AsyncSelector from './AsyncSelector'
+import { addCategory } from '../../../lib/backend/mongoService'
 
 interface Props {
   categories?: Category[]

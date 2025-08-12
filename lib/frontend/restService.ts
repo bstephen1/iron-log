@@ -293,32 +293,6 @@ export function useCategories() {
   }
 }
 
-export async function addCategory(newCategory: Category): Promise<Category> {
-  return fetchJson(URI_CATEGORIES, {
-    method: 'POST',
-    body: toJson(newCategory),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function updateCategoryFields(
-  category: Category,
-  updates: Partial<Category>
-): Promise<Category> {
-  return fetchJson(URI_CATEGORIES + category._id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteCategory(id: string): Promise<string> {
-  return fetchJson(URI_CATEGORIES + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
 //------------
 // BODYWEIGHT
 //------------
