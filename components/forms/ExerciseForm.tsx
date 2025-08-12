@@ -21,6 +21,7 @@ import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
 import { addExercise, deleteExercise } from '../../lib/backend/mongoService'
+import { enqueueSnackbar } from 'notistack'
 
 interface Props {
   exercise: Exercise
@@ -75,6 +76,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         }
 
         setUrlExercise(newName)
+        enqueueSnackbar(`Duplicated as "${newName}"`, { severity: 'info' })
         return [...cur, newExercise]
       })
     },
