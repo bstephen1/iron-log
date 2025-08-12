@@ -1,5 +1,5 @@
 import SettingsIcon from '@mui/icons-material/Settings'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { memo } from 'react'
 import TooltipIconButton from '../../../../components/TooltipIconButton'
 

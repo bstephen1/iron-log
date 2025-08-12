@@ -1,25 +1,15 @@
+'use client'
 import Grid from '@mui/material/Grid'
+import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
-import { type GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { createContext, useContext } from 'react'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import SessionSwiper from '../../components/session/SessionSwiper'
-import RestTimer from '../../components/session/upper/RestTimer'
-import TitleBar from '../../components/session/upper/TitleBar'
-import WeightUnitConverter from '../../components/session/upper/WeightUnitConverter'
-import { dateSchema } from '../../models/schemas'
-import Stack from '@mui/material/Stack'
-
-export function getServerSideProps({ query }: GetServerSidePropsContext) {
-  try {
-    const date = dateSchema.parse(query.date)
-    return { props: { date } }
-  } catch {
-    return { notFound: true }
-  }
-}
+import SessionSwiper from '../../../components/session/SessionSwiper'
+import RestTimer from '../../../components/session/upper/RestTimer'
+import TitleBar from '../../../components/session/upper/TitleBar'
+import WeightUnitConverter from '../../../components/session/upper/WeightUnitConverter'
 
 const DateContext = createContext('')
 

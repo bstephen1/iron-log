@@ -6,7 +6,7 @@ import TitleBar from './TitleBar'
 const mocks = vi.hoisted(() => ({
   push: vi.fn(),
 }))
-vi.mock('next/router', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: mocks.push,
   }),

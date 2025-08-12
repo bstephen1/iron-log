@@ -1,4 +1,4 @@
-import { useDateContext } from '../../pages/sessions/[date].page'
+import { useDateContext } from '../../app/sessions/[date]/SessionPage'
 import { useSessionLog } from '../../lib/frontend/restService'
 
 /** Use within DateContext to retrieve session data and mutators.

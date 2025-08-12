@@ -1,6 +1,6 @@
 'uce client'
 import dayjs from 'dayjs'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 import LoadingSpinner from '../../components/loading/LoadingSpinner'

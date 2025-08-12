@@ -1,11 +1,11 @@
 import Grid from '@mui/material/Grid'
 import { type Dayjs } from 'dayjs'
-import { useRouter } from 'next/router'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import BodyweightInput from './BodyweightInput'
 import SessionDatePicker from './SessionDatePicker'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   day: Dayjs
