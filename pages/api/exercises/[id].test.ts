@@ -9,7 +9,7 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './[id].api'
+import handler from './[id]'
 import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { generateId } from '../../../lib/util'
 

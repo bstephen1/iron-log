@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { type NextApiRequest, type NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { ApiError } from '../../../models/ApiError'
-import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
+import { authOptions } from '../../../pages/api/auth/[...nextauth]'
 
 export type ApiHandler<T> = (
   req: NextApiRequest,

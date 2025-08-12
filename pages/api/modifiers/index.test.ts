@@ -5,7 +5,7 @@ import {
   expectApiErrorsOnMalformedBody,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './index.api'
+import handler from '.'
 import { createModifier } from '../../../models/AsyncSelectorOption/Modifier'
 
 it('fetches modifiers', async () => {

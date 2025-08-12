@@ -20,7 +20,6 @@ const nextConfig = {
   //   // See https://nextjs.org/docs/app/guides/package-bundling#optimizing-package-imports
   //   optimizePackageImports: true,
   // },
-  pageExtensions: ['page.tsx', 'api.ts'],
 }
 
 export default nextConfig

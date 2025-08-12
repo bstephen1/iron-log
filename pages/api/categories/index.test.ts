@@ -6,7 +6,7 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
-import handler from './index.api'
+import handler from '.'
 
 it('fetches categories', async () => {
   const data = [createCategory('hi')]

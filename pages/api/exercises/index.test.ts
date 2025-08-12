@@ -4,7 +4,7 @@ import {
   expectApiErrorsOnInvalidMethod,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './index.api'
+import handler from '.'
 import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
 
 it('fetches exercises', async () => {

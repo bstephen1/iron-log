@@ -1,4 +1,4 @@
-'uce client'
+'use client'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'

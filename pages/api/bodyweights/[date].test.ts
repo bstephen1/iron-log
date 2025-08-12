@@ -6,7 +6,7 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import { createBodyweight } from '../../../models/Bodyweight'
-import handler from './[date].api'
+import handler from './[date]'
 
 const data = createBodyweight(50, 'official')
 const params = { date: data.date }

@@ -9,7 +9,7 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 import { generateId } from '../../../lib/util'
-import handler from './[id].api'
+import handler from './[id]'
 import { createRecord } from '../../../models/Record'
 import { vi, it } from 'vitest'
 

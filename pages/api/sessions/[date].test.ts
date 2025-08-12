@@ -6,7 +6,7 @@ import {
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
 
-import handler from './[date].api'
+import handler from './[date]'
 import { createSessionLog } from '../../../models/SessionLog'
 
 const date = '2000-01-01'

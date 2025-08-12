@@ -11,7 +11,7 @@ import {
   expectApiErrorsOnMalformedBody,
 } from '../../../lib/testUtils'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
-import handler from './[id].api'
+import handler from './[id]'
 import { generateId } from '../../../lib/util'
 
 export const data = createCategory('hi')

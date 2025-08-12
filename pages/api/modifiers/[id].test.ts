@@ -10,7 +10,7 @@ import {
   expectApiErrorsOnMissingParams,
   expectApiRespondsWithData,
 } from '../../../lib/testUtils'
-import handler from './[id].api'
+import handler from './[id]'
 import { createModifier } from '../../../models/AsyncSelectorOption/Modifier'
 import { generateId } from '../../../lib/util'
 
