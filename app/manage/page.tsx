@@ -16,7 +16,7 @@ const RenderTabs = memo(function RenderTabs() {
 
   return (
     <Tabs
-      value={urlTab}
+      value={urlTab ?? 'exercise'}
       onChange={(_, value: (typeof tabValues)[number]) => setUrlTab(value)}
       centered
     >
