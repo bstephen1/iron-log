@@ -24,42 +24,16 @@ export default function useExerciseForm() {
   // so we isolate using it within the mutate callbacks.
   const handleUpdate = useCallback(
     async (id: string, updates: Partial<Exercise>) => {
+      const updatedExercise = await updateExerciseFields(id, updates)
       // setQueryState will rerender the entire page if setting to the same value
       if (updates.name) {
         setUrlExercise(updates.name)
       }
 
-      mutateExercises(
-        async (cur) => {
-          const oldExercise = cur?.find((e) => e._id === id)
-          if (!oldExercise) {
-            return cur
-          }
-
-          const updatedExercise = await updateExerciseFields(
-            oldExercise._id,
-            updates
-          )
-          return cur?.map((e) =>
-            e._id === updatedExercise._id ? updatedExercise : e
-          )
-        },
-        // todo: is there a way to simplify the duplicate code?
-        // The optimisticData should theoretically be useful if updateExerciseFields() is slow
-        {
-          optimisticData: (cur) => {
-            if (!cur) return []
-
-            const oldExercise = cur.find((e) => e._id === id)
-            if (!oldExercise) {
-              return cur
-            }
-
-            return cur.map((e) =>
-              e._id === oldExercise._id ? { ...oldExercise, ...updates } : e
-            )
-          },
-        }
+      mutateExercises(async (cur) =>
+        cur?.map((exercise) =>
+          exercise._id === id ? updatedExercise : exercise
+        )
       )
     },
     [setUrlExercise, mutateExercises]

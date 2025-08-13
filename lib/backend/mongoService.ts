@@ -313,32 +313,33 @@ export async function fetchModifiers(userId: ObjectId): Promise<Modifier[]> {
 }
 
 export async function updateModifierFields(
-  oldModifier: Modifier,
+  _id: string,
   updates: Partial<Modifier>
 ): Promise<Modifier> {
   const userId = await getUserId()
+  const oldModifier = await modifiers.find({ userId, _id }).next()
   if (updates.name) {
     await exercises.updateMany(
-      { userId, modifiers: oldModifier.name },
+      { userId, modifiers: oldModifier?.name },
       { $set: { 'modifiers.$': updates.name } }
     )
     // nested $[] operator (cannot use simple $ operator more than once): https://jira.mongodb.org/browse/SERVER-831
     await exercises.updateMany(
-      { userId, 'notes.tags': oldModifier.name },
+      { userId, 'notes.tags': oldModifier?.name },
       { $set: { 'notes.$[].tags.$[tag]': updates.name } },
-      { arrayFilters: [{ tag: oldModifier.name }] }
+      { arrayFilters: [{ tag: oldModifier?.name }] }
     )
     await records.updateMany(
-      { userId, category: oldModifier.name },
+      { userId, category: oldModifier?.name },
       { $set: { category: updates.name } }
     )
     await records.updateMany(
-      { userId, activeModifiers: oldModifier.name },
+      { userId, activeModifiers: oldModifier?.name },
       { $set: { 'activeModifiers.$': updates.name } }
     )
   }
   return (await modifiers.findOneAndUpdate(
-    { userId, _id: oldModifier._id },
+    { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },
@@ -386,24 +387,30 @@ export async function fetchCategories(userId: ObjectId): Promise<Category[]> {
     .toArray()
 }
 
+export async function testFetchCategories(): Promise<Category[]> {
+  const userId = await getUserId()
+  return categories.find({ userId }, { projection: { userId: 0 } }).toArray()
+}
+
 export async function updateCategoryFields(
-  oldCategory: Category,
+  _id: string,
   updates: Partial<Category>
 ): Promise<Category> {
   const userId = await getUserId()
+  const oldCategory = await categories.find({ userId, _id }).next()
   if (updates.name) {
     await exercises.updateMany(
-      { userId, categories: oldCategory.name },
+      { userId, categories: oldCategory?.name },
       { $set: { 'categories.$': updates.name } }
     )
     await records.updateMany(
-      { userId, category: oldCategory.name },
+      { userId, category: oldCategory?.name },
       { $set: { category: updates.name } }
     )
   }
 
   return (await categories.findOneAndUpdate(
-    { userId, _id: oldCategory._id },
+    { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },

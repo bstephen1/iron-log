@@ -17,42 +17,18 @@ export default function useModifierForm() {
 
   const handleUpdate = useCallback(
     async (id: string, updates: Partial<Modifier>) => {
+      const updatedModifier = await updateModifierFields(id, updates)
       // setQueryState will rerender the entire page if setting to the same value
       if (updates.name) {
         setUrlModifier(updates.name)
+        mutateExercises()
       }
 
-      mutateModifiers(
-        async (cur) => {
-          const oldModifier = cur?.find((m) => m._id === id)
-          if (!oldModifier) {
-            return cur
-          }
-
-          const updatedModifier = await updateModifierFields(
-            oldModifier,
-            updates
-          )
-          updates.name && mutateExercises()
-          return cur?.map((modifier) =>
-            modifier._id === updatedModifier._id ? updatedModifier : modifier
-          )
-        },
-        {
-          optimisticData: (cur) => {
-            if (!cur) return []
-
-            const oldModifier = cur.find((m) => m._id === id)
-            if (!oldModifier) {
-              return cur
-            }
-
-            return cur.map((m) =>
-              m._id === oldModifier._id ? { ...oldModifier, ...updates } : m
-            )
-          },
-        }
-      )
+      mutateModifiers(async (cur) => {
+        return cur?.map((modifier) =>
+          modifier._id === id ? updatedModifier : modifier
+        )
+      })
     },
     [mutateExercises, mutateModifiers, setUrlModifier]
   )
