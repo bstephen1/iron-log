@@ -1,6 +1,10 @@
 import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
+import {
+  deleteModifier,
+  updateModifierFields,
+} from '../../lib/backend/mongoService'
 import { useExercises, useModifiers } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
@@ -8,24 +12,34 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import UsageComboBox from '../form-fields/UsageComboBox'
 import ActionItems from '../form-fields/actions/ActionItems'
-import { deleteModifier } from '../../lib/backend/mongoService'
 
 interface Props {
   modifier: Modifier
-  handleUpdate: (id: string, updates: Partial<Modifier>) => void
 }
 export default function ModifierForm({
   modifier: { name, weight, _id },
-  handleUpdate,
 }: Props) {
   const { modifierNames, mutate: mutateModifiers } = useModifiers()
-  const { exercises } = useExercises()
+  const { exercises, mutate: mutateExercises } = useExercises()
   const usage = getUsage(exercises, 'modifiers', name)
   const [_, setUrlModifier] = useQueryState('modifier')
 
   const updateFields = useCallback(
-    (updates: Partial<Modifier>) => handleUpdate(_id, updates),
-    [_id, handleUpdate]
+    async (updates: Partial<Modifier>) => {
+      const updatedModifier = await updateModifierFields(_id, updates)
+      // setQueryState will rerender the entire page if setting to the same value
+      if (updates.name) {
+        setUrlModifier(updates.name)
+        mutateExercises()
+      }
+
+      mutateModifiers(async (cur) => {
+        return cur?.map((modifier) =>
+          modifier._id === _id ? updatedModifier : modifier
+        )
+      })
+    },
+    [_id, mutateExercises, mutateModifiers, setUrlModifier]
   )
 
   const handleDelete = useCallback(

@@ -7,24 +7,36 @@ import { type Category } from '../../models/AsyncSelectorOption/Category'
 import NameField from '../form-fields/NameField'
 import UsageComboBox from '../form-fields/UsageComboBox'
 import ActionItems from '../form-fields/actions/ActionItems'
-import { deleteCategory } from '../../lib/backend/mongoService'
+import {
+  deleteCategory,
+  updateCategoryFields,
+} from '../../lib/backend/mongoService'
 
 interface Props {
   category: Category
-  handleUpdate: (id: string, updates: Partial<Category>) => Promise<void>
 }
-export default function CategoryForm({
-  category: { name, _id },
-  handleUpdate,
-}: Props) {
+export default function CategoryForm({ category: { name, _id } }: Props) {
   const { categoryNames, mutate: mutateCategories } = useCategories()
-  const { exercises } = useExercises()
+  const { exercises, mutate: mutateExercises } = useExercises()
   const usage = getUsage(exercises, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')
 
   const updateFields = useCallback(
-    (updates: Partial<Category>) => handleUpdate(_id, updates),
-    [_id, handleUpdate]
+    async (updates: Partial<Category>) => {
+      const updatedCategory = await updateCategoryFields(_id, updates)
+      // setQueryState will rerender the entire page if setting to the same value
+      if (updates.name) {
+        setUrlCategory(updates.name)
+        mutateExercises()
+      }
+
+      mutateCategories(async (cur) => {
+        return cur?.map((category) =>
+          category._id === _id ? updatedCategory : category
+        )
+      })
+    },
+    [_id, mutateCategories, mutateExercises, setUrlCategory]
   )
 
   const handleDelete = useCallback(

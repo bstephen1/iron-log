@@ -20,14 +20,17 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
-import { addExercise, deleteExercise } from '../../lib/backend/mongoService'
+import {
+  addExercise,
+  deleteExercise,
+  updateExerciseFields,
+} from '../../lib/backend/mongoService'
 import { enqueueSnackbar } from 'notistack'
 
 interface Props {
   exercise: Exercise
-  handleUpdate: (id: string, updates: Partial<Exercise>) => void
 }
-export default function ExerciseForm({ exercise, handleUpdate }: Props) {
+export default function ExerciseForm({ exercise }: Props) {
   const {
     _id,
     name,
@@ -44,9 +47,23 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
   const { exerciseNames, mutate: mutateExercises } = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
 
+  // We need to avoid using "exercise" or this function will always trigger child rerenders,
+  // so we isolate using it within the mutate callbacks.
   const updateFields = useCallback(
-    (updates: Partial<Exercise>) => handleUpdate(_id, updates),
-    [_id, handleUpdate]
+    async (updates: Partial<Exercise>) => {
+      const updatedExercise = await updateExerciseFields(_id, updates)
+      // setQueryState will rerender the entire page if setting to the same value
+      if (updates.name) {
+        setUrlExercise(updates.name)
+      }
+
+      mutateExercises(async (cur) =>
+        cur?.map((exercise) =>
+          exercise._id === _id ? updatedExercise : exercise
+        )
+      )
+    },
+    [_id, setUrlExercise, mutateExercises]
   )
 
   const handleDelete = useCallback(
