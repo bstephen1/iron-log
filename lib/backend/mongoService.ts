@@ -32,9 +32,10 @@ const convertSort = (sort: DateRangeQuery['sort']) =>
 //---------
 
 export async function fetchSessionLog(
-  userId: ObjectId,
+  tmpId: ObjectId | undefined = undefined,
   date: string
 ): Promise<SessionLog | null> {
+  const userId = tmpId ?? (await getUserId())
   return await sessions.findOne({ userId, date }, { projection: { userId: 0 } })
 }
 
@@ -42,9 +43,10 @@ export async function fetchSessionLog(
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
 export async function fetchSessionLogs(
-  userId: ObjectId,
+  tmpId: ObjectId | undefined = undefined,
   { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
 ): Promise<SessionLog[]> {
+  const userId = tmpId ?? (await getUserId())
   return await sessions
     .find(
       { userId, date: date ?? { $gte: start, $lte: end } },
@@ -246,18 +248,20 @@ export async function addExercise(exercise: Exercise): Promise<Exercise> {
 }
 
 export async function fetchExercises(
-  userId: ObjectId,
-  filter: Filter<Exercise>
+  tmpId: ObjectId | undefined = undefined,
+  filter?: Filter<Exercise>
 ): Promise<Exercise[]> {
+  const userId = tmpId ?? (await getUserId())
   return await exercises
     .find({ ...filter, userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
 export async function fetchExercise(
-  userId: ObjectId,
+  tmpId: ObjectId | undefined = undefined,
   _id: string
 ): Promise<Exercise | null> {
+  const userId = tmpId ?? (await getUserId())
   return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
@@ -306,7 +310,8 @@ export async function addModifier(modifier: Modifier): Promise<Modifier> {
   return modifier
 }
 
-export async function fetchModifiers(userId: ObjectId): Promise<Modifier[]> {
+export async function fetchModifiers(tmpId?: ObjectId): Promise<Modifier[]> {
+  const userId = tmpId ?? (await getUserId())
   return await modifiers
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
@@ -381,15 +386,11 @@ export async function addCategory(category: Category): Promise<Category> {
   return category
 }
 
-export async function fetchCategories(userId: ObjectId): Promise<Category[]> {
+export async function fetchCategories(tmpId?: ObjectId): Promise<Category[]> {
+  const userId = tmpId ?? (await getUserId())
   return await categories
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
-}
-
-export async function testFetchCategories(): Promise<Category[]> {
-  const userId = await getUserId()
-  return categories.find({ userId }, { projection: { userId: 0 } }).toArray()
 }
 
 export async function updateCategoryFields(
@@ -450,10 +451,11 @@ export async function deleteCategory(_id: string) {
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
 export async function fetchBodyweights(
-  userId: ObjectId,
+  tmpId: ObjectId | undefined,
   filter: Filter<Bodyweight>,
   { limit, start = '0', end = '9', sort, date }: DateRangeQuery
 ): Promise<Bodyweight[]> {
+  const userId = tmpId ?? (await getUserId())
   return await bodyweightHistory
     .find(
       { userId, date: date ?? { $gte: start, $lte: end }, ...filter },
