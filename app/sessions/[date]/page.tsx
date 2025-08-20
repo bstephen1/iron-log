@@ -3,10 +3,10 @@ import SessionPage from './SessionPage'
 import { notFound } from 'next/navigation'
 
 interface Props {
-  params: { date: string }
+  params: Promise<{ date: string }>
 }
-export default function DatePage({ params }: Props) {
-  const { data: date } = dateSchema.safeParse(params.date)
+export default async function DatePage({ params }: Props) {
+  const { data: date } = dateSchema.safeParse((await params).date)
 
   if (!date) {
     notFound()
