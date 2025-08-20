@@ -2,13 +2,13 @@ import { type ComponentProps } from 'react'
 import { expect, it, vi } from 'vitest'
 import { URI_CATEGORIES } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
+import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import {
   createExercise,
   type Exercise,
 } from '../../../models/AsyncSelectorOption/Exercise'
 import { Status } from '../../../models/Status'
 import ExerciseSelector from './ExerciseSelector'
-import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 
 const mockHandleChange = vi.fn()
 const mockMutate = vi.fn()
@@ -31,8 +31,8 @@ const TestSelector = (
     handleChange={mockHandleChange}
     exercises={[]}
     mutate={mockMutate}
-    handleCategoryChange={mockHandleCategoryChange}
-    category={null}
+    handleCategoryFilterChange={mockHandleCategoryChange}
+    categoryFilter={null}
     {...props}
   />
 )
@@ -73,7 +73,7 @@ it('filters exercises based on category filter', async () => {
   const { user } = render(
     <TestSelector
       exercises={[matchingExercise, unmatchedExercise]}
-      category={testCategoryName}
+      categoryFilter={testCategoryName}
     />
   )
 
@@ -90,7 +90,7 @@ it('unselects exercise if it is not valid for selected category', async () => {
   const { user } = render(
     <TestSelector
       exercises={[unmatchedExercise]}
-      category={testCategoryName}
+      categoryFilter={testCategoryName}
       exercise={unmatchedExercise}
     />
   )

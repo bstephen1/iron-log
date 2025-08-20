@@ -51,7 +51,7 @@ const toNames = (entities?: AsyncSelectorOption[]) =>
   entities?.map((entity) => entity.name) ?? []
 
 const nameSort = <T extends { name: string }>(data?: T[]) =>
-  data?.sort((a, b) => a.name.localeCompare(b.name))
+  data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
 
 //---------
 // SESSION

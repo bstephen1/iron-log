@@ -1,29 +1,28 @@
 import { type Dispatch, type SetStateAction } from 'react'
-import { type KeyedMutator } from 'swr'
+import { addModifier } from '../../../lib/backend/mongoService'
+import { useModifiers } from '../../../lib/frontend/restService'
 import {
   createModifier,
   type Modifier,
 } from '../../../models/AsyncSelectorOption/Modifier'
 import AsyncSelector from './AsyncSelector'
-import { addModifier } from '../../../lib/backend/mongoService'
 
 interface Props {
-  modifiers?: Modifier[]
   modifier: Modifier | null
-  mutate: KeyedMutator<Modifier[]>
   handleChange: Dispatch<SetStateAction<Modifier | null>>
+  disableAddNew?: boolean
 }
 export default function ModifierSelector({
-  modifiers,
   modifier,
-  mutate,
-  ...asyncSelectorProps
+  disableAddNew,
+  handleChange,
 }: Props) {
+  const { modifiers, mutate } = useModifiers()
   return (
     <AsyncSelector
-      {...asyncSelectorProps}
+      handleChange={handleChange}
       options={modifiers}
-      mutateOptions={mutate}
+      mutateOptions={disableAddNew ? undefined : mutate}
       value={modifier}
       label="Modifier"
       placeholder="Select or add new modifier"

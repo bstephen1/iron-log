@@ -1,40 +1,37 @@
 import { type TextFieldProps } from '@mui/material/TextField'
 import { useState } from 'react'
-import { type KeyedMutator } from 'swr'
 import CategoryFilter from '../../../components/CategoryFilter'
-import { useCategories } from '../../../lib/frontend/restService'
+import { addExercise } from '../../../lib/backend/mongoService'
+import { useCategories, useExercises } from '../../../lib/frontend/restService'
 import {
   createExercise,
   type Exercise,
 } from '../../../models/AsyncSelectorOption/Exercise'
 import { StatusOrder } from '../../../models/Status'
 import AsyncSelector, { type AsyncSelectorProps } from './AsyncSelector'
-import { addExercise } from '../../../lib/backend/mongoService'
 
 type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
   exercise: DisableClearable extends true ? Exercise : Exercise | null
   handleChange: (
     value: DisableClearable extends true ? Exercise : Exercise | null
   ) => void
-  /** used for autocomplete options, which are considered readonly */
-  exercises?: readonly Exercise[]
-  /** if provided, allows for creating new exercises from typed input */
-  mutate?: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
   /** If this is omitted the category filter will not be rendered */
-  handleCategoryChange?: (category: string | null) => void
-  category?: string | null
+  handleCategoryFilterChange?: (category: string | null) => void
+  categoryFilter?: string | null
+  disableAddNew?: boolean
 } & Partial<AsyncSelectorProps<Exercise, DisableClearable>>
+
 export default function ExerciseSelector<
   DisableClearable extends boolean | undefined,
 >({
   exercise,
-  exercises = [],
-  mutate,
-  handleCategoryChange,
-  category = null,
+  handleCategoryFilterChange,
+  categoryFilter = null,
+  disableAddNew,
   ...asyncSelectorProps
 }: ExerciseSelectorProps<DisableClearable>) {
+  const { exercises, mutate } = useExercises()
   const { categoryNames } = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
@@ -43,7 +40,7 @@ export default function ExerciseSelector<
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
     if (
-      category &&
+      categoryFilter &&
       exercise &&
       !filtered.some((item) => item.name === exercise.name)
     ) {
@@ -56,16 +53,19 @@ export default function ExerciseSelector<
   }
 
   const filterCategories = (exercise: Exercise) => {
-    return !category || exercise.categories.some((name) => name === category)
+    return (
+      !categoryFilter ||
+      exercise.categories.some((name) => name === categoryFilter)
+    )
   }
 
   return (
     <AsyncSelector
       {...asyncSelectorProps}
       value={exercise}
-      mutateOptions={mutate}
+      mutateOptions={disableAddNew ? undefined : mutate}
       label="Exercise"
-      placeholder={`Select${!!mutate ? ' or add new' : ''} exercise`}
+      placeholder={`Select${!disableAddNew ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}
       handleFilterChange={handleFilterChange}
       adornmentOpen={!!categoryAnchorEl}
@@ -77,14 +77,14 @@ export default function ExerciseSelector<
       )}
       groupBy={(option) => option.status}
       startAdornment={
-        handleCategoryChange && (
+        handleCategoryFilterChange && (
           <CategoryFilter
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
               categories: categoryNames,
-              category,
-              setCategory: handleCategoryChange,
+              category: categoryFilter,
+              setCategory: handleCategoryFilterChange,
               anchorEl: categoryAnchorEl,
               setAnchorEl: setCategoryAnchorEl,
             }}

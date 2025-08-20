@@ -5,19 +5,17 @@ import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useSWRConfig } from 'swr'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import { useExercises } from '../../lib/frontend/restService'
+import { addRecord } from '../../lib/backend/mongoService'
 import { enqueueError } from '../../lib/frontend/util'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import useCurrentSessionLog from './useCurrentSessionLog'
-import { addRecord } from '../../lib/backend/mongoService'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [category, setCategory] = useState<string | null>(null)
   const { mutate } = useSWRConfig()
-  const { exercises, mutate: mutateExercises } = useExercises()
   const { sessionLog, date, mutate: mutateSession } = useCurrentSessionLog()
   const swiper = useSwiper()
 
@@ -57,11 +55,9 @@ export default function AddRecordCard() {
           variant="standard"
           {...{
             exercise,
-            exercises,
             handleChange: (newExercise) => setExercise(newExercise),
-            mutate: mutateExercises,
-            category,
-            handleCategoryChange: setCategory,
+            categoryFilter: category,
+            handleCategoryFilterChange: setCategory,
           }}
         />
         <Button

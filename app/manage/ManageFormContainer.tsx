@@ -1,32 +1,56 @@
 'use client'
 import Grid from '@mui/material/Grid'
 import { parseAsString, useQueryStates } from 'nuqs'
-import { use, useState, type JSX } from 'react'
+import { type ReactNode, useState } from 'react'
 import CategorySelector from '../../components/form-fields/selectors/CategorySelector'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import ModifierSelector from '../../components/form-fields/selectors/ModifierSelector'
 import CategoryForm from '../../components/forms/CategoryForm'
 import ExerciseForm from '../../components/forms/ExerciseForm'
 import ModifierForm from '../../components/forms/ModifierForm'
-import StyledDivider from '../../components/StyledDivider'
-import { type Category } from '../../models/AsyncSelectorOption/Category'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { useQueryTab } from '../../models/TabValue'
-import ManageFormTabs from './ManageFormTabs'
 import ManageWelcomeCard from '../../components/ManageWelcomeCard'
+import StyledDivider from '../../components/StyledDivider'
+import {
+  useCategories,
+  useExercises,
+  useModifiers,
+} from '../../lib/frontend/restService'
+import { type TabValue, useQueryTab } from '../../models/TabValue'
+import ManageFormTabs from './ManageFormTabs'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let RenderForm: (props: any) => JSX.Element
-
-interface Props {
-  promises: {
-    exercises: Promise<Exercise[]>
-    categories: Promise<Category[]>
-    modifiers: Promise<Modifier[]>
+// todo: need to add mutate
+const getComponents = (
+  tab: TabValue | null
+): {
+  field: 'modifier' | 'category' | 'exercise'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Selector: (props: any) => ReactNode
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Form: (props: any) => ReactNode
+} => {
+  switch (tab) {
+    case 'modifiers':
+      return {
+        Selector: ModifierSelector,
+        Form: ModifierForm,
+        field: 'modifier' as const,
+      }
+    case 'categories':
+      return {
+        Selector: CategorySelector,
+        Form: CategoryForm,
+        field: 'category' as const,
+      }
+    default:
+      return {
+        Selector: ExerciseSelector,
+        Form: ExerciseForm,
+        field: 'exercise' as const,
+      }
   }
 }
-export default function ManageFormContainer({ promises }: Props) {
+
+export default function ManageFormContainer() {
   const [urlTab] = useQueryTab()
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
   const [queryState, setQueryState] = useQueryStates({
@@ -34,76 +58,32 @@ export default function ManageFormContainer({ promises }: Props) {
     category: parseAsString,
     modifier: parseAsString,
   })
-
-  const data = {
-    exercises: use(promises.exercises),
-    modifiers: use(promises.modifiers),
-    categories: use(promises.categories),
-  }
+  const { exercises } = useExercises()
+  const { categories } = useCategories()
+  const { modifiers } = useModifiers()
 
   const unfilteredExercise =
-    use(promises.exercises).find(
-      (exercise) => exercise.name === queryState.exercise
-    ) ?? null
+    exercises.find((exercise) => exercise._id === queryState.exercise) ?? null
 
   const selected = {
-    categories:
-      use(promises.categories).find(
-        (category) => category.name === queryState.category
-      ) ?? null,
-    modifiers:
-      use(promises.modifiers).find(
-        (modifier) => modifier.name === queryState.modifier
-      ) ?? null,
-    exercises:
+    category:
+      categories.find((category) => category._id === queryState.category) ??
+      null,
+    modifier:
+      modifiers.find((modifier) => modifier._id === queryState.modifier) ??
+      null,
+    exercise:
       categoryFilter && !unfilteredExercise?.categories.includes(categoryFilter)
         ? null
         : unfilteredExercise,
   }
 
-  console.log(data)
-
   const updateQueryState = (
-    obj: { name: string } | null,
+    obj: { _id: string } | null,
     field: keyof typeof queryState
-  ) => setQueryState((prev) => ({ ...prev, [field]: obj?.name ?? null }))
+  ) => setQueryState((prev) => ({ ...prev, [field]: obj?._id ?? null }))
 
-  const RenderSelector = () => {
-    switch (urlTab) {
-      case 'exercises': {
-        RenderForm = ExerciseForm
-        return (
-          <ExerciseSelector
-            exercise={selected.exercises}
-            exercises={data.exercises}
-            category={categoryFilter}
-            handleCategoryChange={setCategoryFilter}
-            handleChange={(obj) => updateQueryState(obj, 'exercise')}
-          />
-        )
-      }
-      case 'modifiers': {
-        RenderForm = ModifierForm
-        return (
-          <ModifierSelector
-            modifier={selected.modifiers}
-            modifiers={data.modifiers}
-            handleChange={(obj) => updateQueryState(obj, 'modifier')}
-          />
-        )
-      }
-      case 'categories': {
-        RenderForm = CategoryForm
-        return (
-          <CategorySelector
-            category={selected.categories}
-            categories={data.categories}
-            handleChange={(obj) => updateQueryState(obj, 'category')}
-          />
-        )
-      }
-    }
-  }
+  const { Selector, Form, field } = getComponents(urlTab)
 
   return (
     <Grid container spacing={2}>
@@ -111,17 +91,21 @@ export default function ManageFormContainer({ promises }: Props) {
         <ManageFormTabs />
       </Grid>
       <Grid size={12}>
-        <RenderSelector />
+        <Selector
+          {...selected}
+          {...{
+            handleChange: (obj: { _id: string } | null) =>
+              updateQueryState(obj, field),
+            categoryFilter,
+            handleCategoryFilterChange: setCategoryFilter,
+          }}
+        />
       </Grid>
       <Grid size={12}>
         <StyledDivider />
       </Grid>
       <Grid container justifyContent="center" size={12}>
-        {urlTab && selected[urlTab] ? (
-          <RenderForm {...selected} />
-        ) : (
-          <ManageWelcomeCard />
-        )}
+        {!selected[field] ? <ManageWelcomeCard /> : <Form {...selected} />}
       </Grid>
     </Grid>
   )

@@ -1,29 +1,28 @@
 import { type Dispatch, type SetStateAction } from 'react'
-import { type KeyedMutator } from 'swr'
 import {
   type Category,
   createCategory,
 } from '../../../models/AsyncSelectorOption/Category'
 import AsyncSelector from './AsyncSelector'
 import { addCategory } from '../../../lib/backend/mongoService'
+import { useCategories } from '../../../lib/frontend/restService'
 
 interface Props {
-  categories?: Category[]
   category: Category | null
-  mutate: KeyedMutator<Category[]>
   handleChange: Dispatch<SetStateAction<Category | null>>
+  disableAddNew?: boolean
 }
 export default function CategorySelector({
-  categories,
   category,
-  mutate,
-  ...asyncSelectorProps
+  disableAddNew,
+  handleChange,
 }: Props) {
+  const { categories, mutate } = useCategories()
   return (
     <AsyncSelector
-      {...asyncSelectorProps}
+      handleChange={handleChange}
       options={categories}
-      mutateOptions={mutate}
+      mutateOptions={disableAddNew ? undefined : mutate}
       value={category}
       label="Category"
       placeholder="Select or add new category"
