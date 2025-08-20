@@ -1,13 +1,10 @@
-import { type Filter } from 'mongodb'
 import { z } from 'zod'
 import { asyncSelectorOptionSchema } from '.'
-import { generateId, removeUndefinedKeys } from '../../lib/util'
-import { ArrayMatchType, buildMatchTypeFilter } from '../ArrayMatchType'
+import { generateId } from '../../lib/util'
 import { attributesSchema } from '../Attributes'
 import { displayFieldsSchema } from '../DisplayFields'
 import { noteSchema } from '../Note'
 import { Status } from '../Status'
-import { apiArraySchema } from '../schemas'
 
 export interface Exercise extends z.infer<typeof exerciseSchema> {}
 export const exerciseSchema = asyncSelectorOptionSchema.extend({
@@ -45,25 +42,3 @@ export const createExercise = (
   modifiers,
   status,
 })
-
-export type ExerciseQuery = z.input<typeof exerciseQuerySchema>
-export const exerciseQuerySchema = z
-  .object({
-    bodyweight: z.coerce.boolean(),
-    unilateral: z.coerce.boolean(),
-    category: apiArraySchema,
-    modifier: apiArraySchema,
-    status: z.nativeEnum(Status),
-  })
-  .partial()
-  .transform(({ category, modifier, bodyweight, unilateral, ...rest }) => {
-    const filter: Filter<Exercise> = {
-      ...rest,
-      // it only makes sense to query exercises with a partial array match
-      categories: buildMatchTypeFilter(category, ArrayMatchType.Partial),
-      modifiers: buildMatchTypeFilter(modifier, ArrayMatchType.Partial),
-      'attributes.unilateral': unilateral,
-      'attributes.bodyweight': bodyweight,
-    }
-    return removeUndefinedKeys(filter)
-  })

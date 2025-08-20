@@ -248,12 +248,11 @@ export async function addExercise(exercise: Exercise): Promise<Exercise> {
 }
 
 export async function fetchExercises(
-  tmpId: ObjectId | undefined = undefined,
-  filter?: Filter<Exercise>
+  tmpId: ObjectId | undefined = undefined
 ): Promise<Exercise[]> {
   const userId = tmpId ?? (await getUserId())
   return await exercises
-    .find({ ...filter, userId }, { projection: { userId: 0 } })
+    .find({ userId }, { projection: { userId: 0 } })
     .toArray()
 }
 

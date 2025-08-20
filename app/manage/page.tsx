@@ -10,5 +10,5 @@ export default function ManagePage() {
   const categories = fetchCategories()
   const modifiers = fetchModifiers()
 
-  return <ManageFormContainer promises={{ exercises, categories, modifiers }} />
+  return <ManageFormContainer pending={{ exercises, categories, modifiers }} />
 }
