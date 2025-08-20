@@ -1,16 +1,18 @@
+'use client'
 import Grid from '@mui/material/Grid'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { type Dayjs } from 'dayjs'
+import dayjs, { type Dayjs } from 'dayjs'
 import { useRouter } from 'next/navigation'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import BodyweightInput from './BodyweightInput'
 import SessionDatePicker from './SessionDatePicker'
 
 interface Props {
-  day: Dayjs
+  date: string
 }
-export default function TitleBar({ day }: Props) {
+export default function TitleBar(props: Props) {
+  const day = dayjs(props.date)
   const router = useRouter()
   const theme = useTheme()
   // getServerSideProps messes up useSwr and prevents rerenders from

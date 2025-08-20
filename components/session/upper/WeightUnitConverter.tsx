@@ -1,3 +1,4 @@
+'use client'
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
 import { useState } from 'react'
 import { convertUnit } from '../../../models/Units'

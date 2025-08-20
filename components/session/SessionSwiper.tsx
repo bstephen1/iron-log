@@ -1,3 +1,7 @@
+'use client'
+import Stack from '@mui/material/Stack'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { useEffect, useRef, useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -10,9 +14,6 @@ import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
 import useCurrentSessionLog from './useCurrentSessionLog'
-import useMediaQuery from '@mui/material/useMediaQuery'
-import { useTheme } from '@mui/material/styles'
-import Stack from '@mui/material/Stack'
 
 // todo: look into prefetching data / preloading pages
 // https://swr.vercel.app/docs/prefetching

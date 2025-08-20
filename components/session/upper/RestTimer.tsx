@@ -1,3 +1,4 @@
+'use client'
 import DoneIcon from '@mui/icons-material/Done'
 import PauseIcon from '@mui/icons-material/Pause'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
