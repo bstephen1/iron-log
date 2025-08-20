@@ -1,6 +1,6 @@
 import dayjs, { type Dayjs } from 'dayjs'
-import { type ParsedUrlQueryInput, stringify } from 'querystring'
-import useSWR, { type SWRConfiguration } from 'swr'
+import { stringify, type ParsedUrlQueryInput } from 'querystring'
+import useSWR from 'swr'
 import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { type ApiError } from '../../models/ApiError'
@@ -126,8 +126,8 @@ export function useRecords(
 // EXERCISE
 //----------
 
-export function useExercises(config: SWRConfiguration = {}) {
-  const { data, mutate } = useSWR<Exercise[], ApiError>(URI_EXERCISES, config)
+export function useExercises() {
+  const { data, mutate } = useSWR<Exercise[], ApiError>(URI_EXERCISES)
   const sortedData = nameSort(data)
 
   return {
@@ -158,8 +158,8 @@ export function useExercise(
 // MODIFIER
 //----------
 
-export function useModifiers(config: SWRConfiguration = {}) {
-  const { data, mutate } = useSWR<Modifier[], ApiError>(URI_MODIFIERS, config)
+export function useModifiers() {
+  const { data, mutate } = useSWR<Modifier[], ApiError>(URI_MODIFIERS)
   const sortedData = nameSort(data)
 
   return {
@@ -175,14 +175,13 @@ export function useModifiers(config: SWRConfiguration = {}) {
 // CATEGORY
 //----------
 
-export function useCategories(config: SWRConfiguration = {}) {
-  const { data, mutate } = useSWR<Category[], ApiError>(URI_CATEGORIES, config)
+export function useCategories() {
+  const { data, mutate } = useSWR<Category[], ApiError>(URI_CATEGORIES)
   const sortedData = nameSort(data)
 
   return {
     categories: sortedData,
     categoryNames: toNames(sortedData),
-
     mutate,
   }
 }

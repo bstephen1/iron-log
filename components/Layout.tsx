@@ -10,10 +10,18 @@ import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { SnackbarProvider } from 'notistack'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { useEffect, type ReactNode } from 'react'
+import { use, useEffect, type ReactNode } from 'react'
 import { SWRConfig, type SWRConfiguration } from 'swr'
 import useSWRCacheProvider from '../components/useSWRCacheProvider'
+import {
+  URI_CATEGORIES,
+  URI_EXERCISES,
+  URI_MODIFIERS,
+} from '../lib/frontend/constants'
 import { swrFetcher } from '../lib/util'
+import { type Category } from '../models/AsyncSelectorOption/Category'
+import { type Exercise } from '../models/AsyncSelectorOption/Exercise'
+import { type Modifier } from '../models/AsyncSelectorOption/Modifier'
 import { bluePalette } from '../styles/themePalettes'
 import AppSnackbar from './AppSnackbar'
 import Navbar from './Navbar'
@@ -33,12 +41,18 @@ interface Props {
   session?: Session
   /** navbar should be disabled for component testing */
   disableNavbar?: boolean
+  serverData?: {
+    exercises: Promise<Exercise[]>
+    categories: Promise<Category[]>
+    modifiers: Promise<Modifier[]>
+  }
 }
 export default function Layout({
   children,
   swrConfig,
   session,
   disableNavbar,
+  serverData,
 }: Props) {
   // theme uses CSS variables to better support dark mode.
   // Any code changes should follow the CSS theme docs, not the normal theme docs.
@@ -61,9 +75,28 @@ export default function Layout({
     return () => document.removeEventListener('wheel', disableNumberSpin)
   }, [])
 
+  // These paths do not need any filter queries, so the initial data can be
+  // passed from the server along with the client javascript.
+  // This precludes these endpoints from ever being in a loading state.
+  const globalFallbacks = serverData
+    ? {
+        [URI_EXERCISES]: use(serverData.exercises),
+        [URI_CATEGORIES]: use(serverData.categories),
+        [URI_MODIFIERS]: use(serverData.modifiers),
+      }
+    : {}
+
   return (
     <SessionProvider session={session}>
-      <SWRConfig value={swrConfig ?? { fetcher: swrFetcher, provider }}>
+      <SWRConfig
+        value={
+          swrConfig ?? {
+            fetcher: swrFetcher,
+            provider,
+            fallback: globalFallbacks,
+          }
+        }
+      >
         <NuqsAdapter>
           <ThemeProvider theme={theme}>
             <CssBaseline /> {/* for dark mode */}
