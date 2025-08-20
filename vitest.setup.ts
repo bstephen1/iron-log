@@ -13,7 +13,6 @@ import 'whatwg-fetch'
 import { devUserId } from './lib/frontend/constants'
 import { it } from 'node:test'
 
-/* eslint-disable no-var */
 // var is required to hoist globals
 declare global {
   var jest: typeof vi
@@ -47,7 +46,7 @@ vi.mock('./lib/backend/mongoConnect', () => ({
   client: vi.fn(),
 }))
 vi.mock('./lib/backend/mongoService')
-vi.mock('./pages/api/auth/[...nextauth].api', () => ({ authOptions: vi.fn() }))
+vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
 vi.mock('next-auth', () => ({
   getServerSession: () => ({ user: { id: devUserId } }),
 }))

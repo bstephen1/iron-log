@@ -9,7 +9,7 @@ import { authOptions } from './[...nextauth]'
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 vi.mock('next-auth')
-vi.mock('./[...nextauth].api.ts', async (importOriginal) => ({
+vi.mock('./[...nextauth].ts', async (importOriginal) => ({
   ...(await importOriginal()),
   default: vi.fn(),
 }))
