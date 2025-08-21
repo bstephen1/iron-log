@@ -24,7 +24,7 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
     exerciseName: string | undefined,
     reason: AutocompleteChangeReason
   ) => {
-    const newExercise = exercises?.find(
+    const newExercise = exercises.find(
       (exercise) => exercise.name === exerciseName
     )
     if (!newExercise) return
