@@ -7,11 +7,12 @@ import {
   beforeAll,
   beforeEach,
   describe,
+  it,
   vi,
 } from 'vitest'
 import 'whatwg-fetch'
 import { devUserId } from './lib/frontend/constants'
-import { it } from 'node:test'
+import { loadEnvConfig } from '@next/env'
 
 // var is required to hoist globals
 declare global {
@@ -26,6 +27,12 @@ globalThis.fit = it.only
 globalThis.xit = it.skip
 globalThis.fdescribe = describe.only
 globalThis.xdescribe = describe.skip
+
+// Ensures env vars are loaded using the same load order nextjs uses.
+// Vitest does not instantiate the nextjs server so it doesn't automatically
+// call loadEnvConfig like dev/prod do.
+const projectDir = process.cwd()
+loadEnvConfig(projectDir)
 
 // set env variables with import.meta.env
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
@@ -49,6 +56,11 @@ vi.mock('./lib/backend/mongoService')
 vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
 vi.mock('next-auth', () => ({
   getServerSession: () => ({ user: { id: devUserId } }),
+}))
+vi.mock('next/navigation', () => ({
+  useParams: () => ({
+    date: '',
+  }),
 }))
 
 // configure testing-library options

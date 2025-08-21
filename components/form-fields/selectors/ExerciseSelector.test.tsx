@@ -1,6 +1,6 @@
 import { type ComponentProps } from 'react'
 import { expect, it, vi } from 'vitest'
-import { URI_CATEGORIES } from '../../../lib/frontend/constants'
+import { URI_CATEGORIES, URI_EXERCISES } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import {
@@ -11,7 +11,6 @@ import { Status } from '../../../models/Status'
 import ExerciseSelector from './ExerciseSelector'
 
 const mockHandleChange = vi.fn()
-const mockMutate = vi.fn()
 const mockHandleCategoryChange = vi.fn()
 
 const testCategoryName = 'test category'
@@ -29,8 +28,6 @@ const TestSelector = (
   <ExerciseSelector
     exercise={null}
     handleChange={mockHandleChange}
-    exercises={[]}
-    mutate={mockMutate}
     handleCategoryFilterChange={mockHandleCategoryChange}
     categoryFilter={null}
     {...props}
@@ -70,12 +67,8 @@ it('does not open autocomplete when filter menu is open', async () => {
 
 it('filters exercises based on category filter', async () => {
   useServer(URI_CATEGORIES, [testCategory])
-  const { user } = render(
-    <TestSelector
-      exercises={[matchingExercise, unmatchedExercise]}
-      categoryFilter={testCategoryName}
-    />
-  )
+  useServer(URI_EXERCISES, [matchingExercise, unmatchedExercise])
+  const { user } = render(<TestSelector categoryFilter={testCategoryName} />)
 
   // open autocomplete
   await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
@@ -87,9 +80,9 @@ it('filters exercises based on category filter', async () => {
 it('unselects exercise if it is not valid for selected category', async () => {
   const otherCategoryName = 'other'
   useServer(URI_CATEGORIES, [testCategory, createCategory(otherCategoryName)])
+  useServer(URI_EXERCISES, [unmatchedExercise])
   const { user } = render(
     <TestSelector
-      exercises={[unmatchedExercise]}
       categoryFilter={testCategoryName}
       exercise={unmatchedExercise}
     />
@@ -112,7 +105,8 @@ it('sorts exercises by status', async () => {
     createExercise('option 3'),
     createExercise('option 4', { status: Status.archived }),
   ]
-  const { user } = render(<TestSelector exercises={unsortedExercises} />)
+  useServer(URI_EXERCISES, unsortedExercises)
+  const { user } = render(<TestSelector />)
 
   // open autocomplete
   await user.click(screen.getByPlaceholderText(autocompletePlaceholder))

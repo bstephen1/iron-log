@@ -5,6 +5,9 @@ test('adds an exercise', async ({ page }) => {
   await page.goto('/manage')
 
   // add an exercise
+  // Note: initial click is required to ensure input is hydrated correctly.
+  // Just using fill() will prevent the input from ever being filled.
+  await page.getByLabel('Exercise').click()
   await page.getByLabel('Exercise').fill('squats')
   await page.getByText('Add "squats"').click()
 
@@ -19,7 +22,7 @@ test('adds an exercise', async ({ page }) => {
   // name change should immediately update name/exercise inputs and url
   await expect(page.getByLabel('Exercise')).toHaveValue(newName)
   await expect(page.getByLabel('Name')).toHaveValue(newName)
-  await expect(page).toHaveURL(/SSB\+squats/)
+  await expect(page).toHaveURL(/exercise=/)
 
   await page.getByText('Active').click()
   await page.getByText('Archived').click()

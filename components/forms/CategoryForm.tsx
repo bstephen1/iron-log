@@ -24,9 +24,8 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
   const updateFields = useCallback(
     async (updates: Partial<Category>) => {
       const updatedCategory = await updateCategoryFields(_id, updates)
-      // setQueryState will rerender the entire page if setting to the same value
+
       if (updates.name) {
-        setUrlCategory(updates.name)
         mutateExercises()
       }
 
@@ -36,7 +35,7 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
         )
       })
     },
-    [_id, mutateCategories, mutateExercises, setUrlCategory]
+    [_id, mutateCategories, mutateExercises]
   )
 
   const handleDelete = useCallback(

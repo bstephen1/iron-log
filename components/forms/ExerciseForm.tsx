@@ -52,10 +52,6 @@ export default function ExerciseForm({ exercise }: Props) {
   const updateFields = useCallback(
     async (updates: Partial<Exercise>) => {
       const updatedExercise = await updateExerciseFields(_id, updates)
-      // setQueryState will rerender the entire page if setting to the same value
-      if (updates.name) {
-        setUrlExercise(updates.name)
-      }
 
       mutateExercises(async (cur) =>
         cur?.map((exercise) =>
@@ -63,7 +59,7 @@ export default function ExerciseForm({ exercise }: Props) {
         )
       )
     },
-    [_id, setUrlExercise, mutateExercises]
+    [_id, mutateExercises]
   )
 
   const handleDelete = useCallback(

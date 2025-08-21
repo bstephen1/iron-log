@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
+import { describe, expect, it, vi } from 'vitest'
 import { URI_BODYWEIGHT } from '../../../lib/frontend/constants'
 import { render, screen, useServer } from '../../../lib/testUtils'
-import BodyweightInput from './BodyweightInput'
 import { createBodyweight } from '../../../models/Bodyweight'
-import { it, expect, describe } from 'vitest'
+import BodyweightInput from './BodyweightInput'
+import { updateBodyweight } from '../../../lib/backend/mongoService'
 
 const date2020 = dayjs('2020-01-01')
 const date2000 = dayjs('2000-01-01')
@@ -146,18 +147,11 @@ describe('input', () => {
     const newWeight = 15
 
     const newBW = createBodyweight(newWeight, 'official', date2020)
-    useServer(
-      URI_BODYWEIGHT + newBW.date,
-      newBW,
-      // slight delay is necessary for the optimistic data to be detected
-      { delay: 100 }
-    )
 
+    vi.mocked(updateBodyweight).mockResolvedValue(newBW)
     await user.type(input, '{End}3')
     await user.click(screen.getByLabelText('Submit'))
 
-    // value should remain as what was inputted while revalidating
-    expect(await screen.findByDisplayValue('453')).toBeVisible()
     // after revalidation should update to the server response
     expect(await screen.findByDisplayValue(newWeight)).toBeVisible()
     expect(screen.getByLabelText('Reset')).not.toBeVisible()

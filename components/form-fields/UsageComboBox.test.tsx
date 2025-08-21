@@ -16,12 +16,12 @@ it('adds category to exercise', async () => {
   await user.click(screen.getByRole('combobox'))
   await user.click(screen.getByText(exercise.name))
 
-  expect(vi.mocked(updateExerciseFields)).toHaveBeenCalledWith(exercise, {
+  expect(vi.mocked(updateExerciseFields)).toHaveBeenCalledWith(exercise._id, {
     categories: [category],
   })
 })
 
-it('removes modifirie from exercise', async () => {
+it('removes modifier from exercise', async () => {
   const modifier = 'my modifier'
   const exercise = createExercise('my exercise')
   useServer(URI_EXERCISES, [exercise])
@@ -32,7 +32,7 @@ it('removes modifirie from exercise', async () => {
   // click the X on the chip
   await user.click(screen.getByTestId('CancelIcon'))
 
-  expect(vi.mocked(updateExerciseFields)).toHaveBeenCalledWith(exercise, {
+  expect(vi.mocked(updateExerciseFields)).toHaveBeenCalledWith(exercise._id, {
     modifiers: [],
   })
 })

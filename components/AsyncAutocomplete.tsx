@@ -4,7 +4,7 @@ import Autocomplete, {
 } from '@mui/material/Autocomplete'
 import CircularProgress from '@mui/material/CircularProgress'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
-import { useState, type JSX } from 'react'
+import { useEffect, useState, type JSX } from 'react'
 
 // Extending Autocomplete is a lesson in frustration.
 // Long story short, it needs to have a generic signature that exactly matches
@@ -71,6 +71,13 @@ export default function AsyncAutocomplete<
     setOpen(false)
   }
 
+  // with app router the input is rendered on first load, but it needs to
+  // be hydrated for event handlers to be registered so it actually works
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => {
+    setHydrated(true)
+  }, [])
+
   return (
     <Autocomplete
       {...autocompleteProps}
@@ -88,6 +95,7 @@ export default function AsyncAutocomplete<
           placeholder={placeholder}
           label={label}
           variant={variant}
+          disabled={!hydrated}
           slotProps={{
             input: {
               ...params.InputProps,

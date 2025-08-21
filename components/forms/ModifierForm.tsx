@@ -27,9 +27,8 @@ export default function ModifierForm({
   const updateFields = useCallback(
     async (updates: Partial<Modifier>) => {
       const updatedModifier = await updateModifierFields(_id, updates)
-      // setQueryState will rerender the entire page if setting to the same value
+
       if (updates.name) {
-        setUrlModifier(updates.name)
         mutateExercises()
       }
 
@@ -39,7 +38,7 @@ export default function ModifierForm({
         )
       })
     },
-    [_id, mutateExercises, mutateModifiers, setUrlModifier]
+    [_id, mutateExercises, mutateModifiers]
   )
 
   const handleDelete = useCallback(

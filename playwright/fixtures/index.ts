@@ -2,7 +2,7 @@ import { test as baseTest } from '@playwright/test'
 import fs from 'fs'
 import { ObjectId } from 'mongodb'
 import path from 'path'
-import { Api } from './Api'
+import { SessionsPage } from './sessions-page'
 
 /** Generates a userId from a unique number.
  *  The result is idempotent: the same number will
@@ -15,10 +15,7 @@ const getUserId = (uniqueNum: number) =>
 // See: https://playwright.dev/docs/auth#moderate-one-account-per-parallel-worker
 
 interface CustomFixtures {
-  /** Fixture that manipulates data by interacting with the rest api.
-   *  This gives faster results than clicking around in the ui.
-   */
-  api: Api
+  sessionsPage: SessionsPage
 }
 
 export * from '@playwright/test'
@@ -71,5 +68,7 @@ export const test = baseTest.extend<
     },
     { scope: 'worker' },
   ],
-  api: async ({ request }, apply) => apply(new Api(request)),
+  sessionsPage: async ({ page }, apply) => {
+    await apply(new SessionsPage(page))
+  },
 })
