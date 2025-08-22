@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:test": "cross-env NODE_ENV=test next dev -p 7357",
-    "build": "next build",
+    "build": "next build --no-lint",
     "start": "next start",
     "start:test": "next start -p 7357",
     "lint": "next lint",
