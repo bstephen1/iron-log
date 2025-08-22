@@ -25,6 +25,7 @@ import { type Modifier } from '../models/AsyncSelectorOption/Modifier'
 import { bluePalette } from '../styles/themePalettes'
 import AppSnackbar from './AppSnackbar'
 import Navbar from './Navbar'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const disableNumberSpin = () => {
   if (!(document.activeElement instanceof HTMLInputElement)) return
@@ -33,6 +34,8 @@ const disableNumberSpin = () => {
     document.activeElement.blur()
   }
 }
+
+const queryClient = new QueryClient()
 
 interface Props {
   children: ReactNode
@@ -88,42 +91,44 @@ export default function Layout({
 
   return (
     <SessionProvider session={session}>
-      <SWRConfig
-        value={
-          swrConfig ?? {
-            fetcher: swrFetcher,
-            provider,
-            fallback: globalFallbacks,
+      <QueryClientProvider client={queryClient}>
+        <SWRConfig
+          value={
+            swrConfig ?? {
+              fetcher: swrFetcher,
+              provider,
+              fallback: globalFallbacks,
+            }
           }
-        }
-      >
-        <NuqsAdapter>
-          <ThemeProvider theme={theme}>
-            <CssBaseline /> {/* for dark mode */}
-            <InitColorSchemeScript attribute="class" />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <SnackbarProvider
-                maxSnack={1}
-                // notistack requires you to assign a snackbar to each variant.
-                // This means we would have to assign the same snackbar to each key
-                // (success, error, etc). Instead we override the default variant,
-                // turn off all other variants, and add a "severity" prop.
-                // See notistack.d.ts for type definitions
-                Components={{
-                  default: AppSnackbar,
-                }}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-              >
-                <Analytics />
-                {!disableNavbar && <Navbar />}
-                <main>
-                  <Container maxWidth="lg">{children}</Container>
-                </main>
-              </SnackbarProvider>
-            </LocalizationProvider>
-          </ThemeProvider>
-        </NuqsAdapter>
-      </SWRConfig>
+        >
+          <NuqsAdapter>
+            <ThemeProvider theme={theme}>
+              <CssBaseline /> {/* for dark mode */}
+              <InitColorSchemeScript attribute="class" />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <SnackbarProvider
+                  maxSnack={1}
+                  // notistack requires you to assign a snackbar to each variant.
+                  // This means we would have to assign the same snackbar to each key
+                  // (success, error, etc). Instead we override the default variant,
+                  // turn off all other variants, and add a "severity" prop.
+                  // See notistack.d.ts for type definitions
+                  Components={{
+                    default: AppSnackbar,
+                  }}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                >
+                  <Analytics />
+                  {!disableNavbar && <Navbar />}
+                  <main>
+                    <Container maxWidth="lg">{children}</Container>
+                  </main>
+                </SnackbarProvider>
+              </LocalizationProvider>
+            </ThemeProvider>
+          </NuqsAdapter>
+        </SWRConfig>
+      </QueryClientProvider>
     </SessionProvider>
   )
 }

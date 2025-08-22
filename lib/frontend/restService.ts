@@ -23,6 +23,7 @@ import {
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
+import { fetchExercises } from '../backend/mongoService'
 
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
@@ -127,13 +128,29 @@ export function useRecords(
 //----------
 
 export function useExercises() {
-  const { data, mutate } = useSWR<Exercise[], ApiError>(URI_EXERCISES)
-  const sortedData = nameSort(data)
+  // const { data: tanstackData } = useQuery({
+  //   queryKey: ['exercises'],
+  //   queryFn: fetchExercises,
+  // })
+
+  // so the way useSWR works is it takes a KEY and a FETCHER,
+  // and it then calls fetcher(key). KEY must be serializable (ie, a string)
+  // because that is the object key it uses to create its cache map.
+  // So here 'api/exercises' must be unique to the useExercises hook because
+  // it will store that data in the cache.
+  // We can hack around needing an api endpoint by passing a server function
+  // which takes no args as the FETCHER, and then give the desired KEY
+  // (which will have no effect on the no-arg function)
+  const { data, mutate } = useSWR<Exercise[], ApiError>(
+    URI_EXERCISES,
+    fetchExercises
+  )
+  const sortedData = nameSort(data as Exercise[])
+  console.log(data)
 
   return {
     exercises: sortedData,
     exerciseNames: toNames(sortedData),
-
     mutate,
   }
 }

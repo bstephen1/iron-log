@@ -1,6 +1,6 @@
 'use server'
 import { StatusCodes } from 'http-status-codes'
-import { type Document, type Filter, type ObjectId } from 'mongodb'
+import { type ObjectId, type Document, type Filter } from 'mongodb'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -250,7 +250,7 @@ export async function addExercise(exercise: Exercise): Promise<Exercise> {
 export async function fetchExercises(
   tmpId: ObjectId | undefined = undefined
 ): Promise<Exercise[]> {
-  const userId = tmpId ?? (await getUserId())
+  const userId = await getUserId()
   return await exercises
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
