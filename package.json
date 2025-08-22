@@ -8,6 +8,7 @@
     "dev:test": "cross-env NODE_ENV=test next dev -p 7357",
     "build": "next build",
     "start": "next start",
+    "start:test": "next start -p 7357",
     "lint": "next lint",
     "prepare": "husky",
     "pw": "npm run db:test && playwright test",

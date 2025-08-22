@@ -11,8 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install deps
-        # we can't do npm build because nextjs overwrites NODE_ENV to be production
-        # which disables the dev user login
         run: npm ci
       - name: Install playwright browsers
         run: npx playwright install --with-deps
@@ -20,6 +18,10 @@ jobs:
         uses: supercharge/mongodb-github-action@1.12.0
         with:
           mongodb-version: latest
+      # note: build currently requires mongo to be running to work
+      - name: Build app
+        run: |
+          npm run build
       - name: Run playwright tests
         env:
           # this is an arbitrary value for enabling dev user sign in
@@ -27,6 +29,7 @@ jobs:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           # renamed to AUTH_SECRET in authjs v5
           NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          OVERRIDE_NODE_ENV: test
         run: npx playwright test
 
   integration:

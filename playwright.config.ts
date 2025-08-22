@@ -46,6 +46,10 @@ export default defineConfig({
   // Runs individual tests in each file in parallel.
   // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,
+  timeout: 35_000,
+  expect: {
+    timeout: 15_000,
+  },
   // too many workers cause intense flakiness
   workers: 2,
   // See: https://playwright.dev/docs/test-reporters
@@ -64,7 +68,7 @@ export default defineConfig({
   },
   projects: localProjects.concat(isCI ? CIProjects : []),
   webServer: {
-    command: 'npm run dev:test',
+    command: isCI ? 'npm run start:test' : 'npm run dev:test',
     url: 'http://localhost:7357',
     // NOTE: in dev mode it's much more stable to run the test server separately.
     // Playwright can spin up the server on its own but it frequently causes flakiness.

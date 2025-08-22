@@ -43,10 +43,6 @@ if (process.env.NODE_ENV === 'development') {
   clientPromise = client.connect()
 }
 
-if (!process.env.MONGODB_NAME) {
-  throw new Error('MONGODB_NAME is undefined! Define in .env')
-}
-
 const db = (await clientPromise).db(process.env.MONGODB_NAME)
 
 /** db collections with proper typing */

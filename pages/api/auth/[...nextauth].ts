@@ -7,7 +7,8 @@ import { z } from 'zod'
 import { clientPromise } from '../../../lib/backend/mongoConnect'
 import { devUserId, guestUserName } from '../../../lib/frontend/constants'
 
-const isProd = process.env.NODE_ENV === 'production'
+const isProd =
+  (process.env.NODE_ENV_OVERRIDE ?? process.env.NODE_ENV) === 'production'
 const devProvider =
   // This provider logs on as the test user for dev mode.
   Credentials({

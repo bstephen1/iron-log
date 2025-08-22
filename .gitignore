@@ -24,8 +24,6 @@ yarn-error.log*
 
 # local env files
 .env*.local
-# local copy of .env.development for testing npm run build
-.env.production
 
 # vercel
 .vercel
