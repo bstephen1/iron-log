@@ -21,6 +21,7 @@ jobs:
       # note: build currently requires mongo to be running to work
       - name: Build app
         run: |
+          cp .env.test .env.production
           npm run build
       - name: Run playwright tests
         env:
@@ -29,7 +30,6 @@ jobs:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           # renamed to AUTH_SECRET in authjs v5
           NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          OVERRIDE_NODE_ENV: test
         run: npx playwright test
 
   integration:
