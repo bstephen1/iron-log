@@ -24,6 +24,7 @@ import {
   URI_SESSIONS,
 } from './constants'
 import { fetchExercises } from '../backend/mongoService'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
@@ -127,12 +128,44 @@ export function useRecords(
 // EXERCISE
 //----------
 
-export function useExercises() {
-  // const { data: tanstackData } = useQuery({
-  //   queryKey: ['exercises'],
-  //   queryFn: fetchExercises,
-  // })
+// export function useTanstackExerciseMutate() {
+//   const queryClient = useQueryClient()
+//   useMutation({
+//     mutationFn: updateExerciseFields,
+//     // When mutate is called:
+//     onMutate: async (_id, updates) => {
+//       const queryKey = ['exercise', _id]
+//       // Cancel any outgoing refetches
+//       // (so they don't overwrite our optimistic update)
+//       await queryClient.cancelQueries({ queryKey })
 
+//       // Snapshot the previous value
+//       const prevExercise = queryClient.getQueryData(queryKey)
+
+//       // Optimistically update to the new value
+//       queryClient.setQueryData(queryKey, (prev) => ({ ...prev, ...updates }))
+
+//       // Return a context object with the snapshotted value
+//       return { prevExercise }
+//     },
+//     // If the mutation fails,
+//     // use the context returned from onMutate to roll back
+//     onError: (err, newTodo, context) => {
+//       queryClient.setQueryData(['todos'], context.previousTodos)
+//     },
+//     // Always refetch after error or success:
+//     onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+//   })
+// }
+
+export function useTanstackExercises() {
+  return useSuspenseQuery({
+    queryKey: ['exercises'],
+    queryFn: () => fetchExercises(),
+  })
+}
+
+export function useExercises() {
   // so the way useSWR works is it takes a KEY and a FETCHER,
   // and it then calls fetcher(key). KEY must be serializable (ie, a string)
   // because that is the object key it uses to create its cache map.
@@ -146,7 +179,6 @@ export function useExercises() {
     fetchExercises
   )
   const sortedData = nameSort(data as Exercise[])
-  console.log(data)
 
   return {
     exercises: sortedData,

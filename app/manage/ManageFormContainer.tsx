@@ -14,6 +14,7 @@ import {
   useCategories,
   useExercises,
   useModifiers,
+  useTanstackExercises,
 } from '../../lib/frontend/restService'
 import { type TabValue, useQueryTab } from '../../models/TabValue'
 import ManageFormTabs from './ManageFormTabs'
@@ -58,9 +59,11 @@ export default function ManageFormContainer() {
     category: parseAsString,
     modifier: parseAsString,
   })
+  const { data, fetchStatus } = useTanstackExercises()
   const { exercises } = useExercises()
   const { categories } = useCategories()
   const { modifiers } = useModifiers()
+  console.log(fetchStatus, data)
 
   const unfilteredExercise =
     exercises.find((exercise) => exercise._id === queryState.exercise) ?? null

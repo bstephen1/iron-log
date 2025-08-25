@@ -247,9 +247,7 @@ export async function addExercise(exercise: Exercise): Promise<Exercise> {
   return exercise
 }
 
-export async function fetchExercises(
-  tmpId: ObjectId | undefined = undefined
-): Promise<Exercise[]> {
+export async function fetchExercises(): Promise<Exercise[]> {
   const userId = await getUserId()
   return await exercises
     .find({ userId }, { projection: { userId: 0 } })
