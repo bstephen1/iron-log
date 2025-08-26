@@ -307,8 +307,8 @@ export async function addModifier(modifier: Modifier): Promise<Modifier> {
   return modifier
 }
 
-export async function fetchModifiers(tmpId?: ObjectId): Promise<Modifier[]> {
-  const userId = tmpId ?? (await getUserId())
+export async function fetchModifiers(): Promise<Modifier[]> {
+  const userId = await getUserId()
   return await modifiers
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
@@ -383,8 +383,8 @@ export async function addCategory(category: Category): Promise<Category> {
   return category
 }
 
-export async function fetchCategories(tmpId?: ObjectId): Promise<Category[]> {
-  const userId = tmpId ?? (await getUserId())
+export async function fetchCategories(): Promise<Category[]> {
+  const userId = await getUserId()
   return await categories
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()

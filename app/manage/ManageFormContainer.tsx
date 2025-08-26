@@ -12,8 +12,8 @@ import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import StyledDivider from '../../components/StyledDivider'
 import {
   useCategories,
+  useExercises,
   useModifiers,
-  useTanstackExercises,
 } from '../../lib/frontend/restService'
 import { type TabValue, useQueryTab } from '../../models/TabValue'
 import ManageFormTabs from './ManageFormTabs'
@@ -59,8 +59,8 @@ export default function ManageFormContainer() {
     modifier: parseAsString,
   })
   const categories = useCategories()
-  const { data: exercises } = useTanstackExercises()
-  const { modifiers } = useModifiers()
+  const { data: exercises } = useExercises()
+  const modifiers = useModifiers()
 
   const unfilteredExercise =
     exercises.find((exercise) => exercise._id === queryState.exercise) ?? null
@@ -71,7 +71,7 @@ export default function ManageFormContainer() {
         (category) => category._id === queryState.category
       ) ?? null,
     modifier:
-      modifiers.find((modifier) => modifier._id === queryState.modifier) ??
+      modifiers.data.find((modifier) => modifier._id === queryState.modifier) ??
       null,
     exercise:
       categoryFilter && !unfilteredExercise?.categories.includes(categoryFilter)

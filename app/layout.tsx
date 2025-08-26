@@ -1,58 +1,35 @@
 import { type ReactNode } from 'react'
 import Layout from '../components/Layout'
 // global styles must be imported from this file
-import '../styles/globals.css'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import {
   fetchCategories,
   fetchExercises,
   fetchModifiers,
 } from '../lib/backend/mongoService'
+import { QUERY_KEYS } from '../lib/frontend/constants'
+import getQueryClient from '../lib/getQueryClient'
+import '../styles/globals.css'
 import QueryClientProvider from './QueryClientProvider'
-import {
-  defaultShouldDehydrateQuery,
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
 
 export default async function RootLayout({
   children,
 }: {
   children: ReactNode
 }) {
-  const serverData = {
-    exercises: fetchExercises(),
-    categories: fetchCategories(),
-    modifiers: fetchModifiers(),
-  }
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      dehydrate: {
-        // include pending queries in dehydration
-        shouldDehydrateQuery: (query) =>
-          defaultShouldDehydrateQuery(query) ||
-          query.state.status === 'pending',
-        shouldRedactErrors: (_err) => {
-          // We should not catch Next.js server errors
-          // as that's how Next.js detects dynamic pages
-          // so we cannot redact them.
-          // Next.js also automatically redacts errors for us
-          // with better digests.
-          return false
-        },
-      },
-    },
-  })
+  const queryClient = getQueryClient()
 
   queryClient.prefetchQuery({
-    queryKey: ['exercises'],
+    queryKey: [QUERY_KEYS.exercises],
     queryFn: fetchExercises,
   })
-
   queryClient.prefetchQuery({
-    queryKey: ['categories'],
-    queryFn: () => fetchCategories(),
+    queryKey: [QUERY_KEYS.categories],
+    queryFn: fetchCategories,
+  })
+  queryClient.prefetchQuery({
+    queryKey: [QUERY_KEYS.modifiers],
+    queryFn: fetchModifiers,
   })
 
   return (
@@ -62,7 +39,7 @@ export default async function RootLayout({
         <QueryClientProvider>
           {/* HydrationBoundary is a Client Component, so hydration will happen there. */}
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <Layout serverData={serverData}>{children}</Layout>
+            <Layout>{children}</Layout>
           </HydrationBoundary>
         </QueryClientProvider>
       </body>

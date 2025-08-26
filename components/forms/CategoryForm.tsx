@@ -5,7 +5,7 @@ import {
   useCategories,
   useCategoryDelete,
   useCategoryUpdate,
-  useTanstackExercises,
+  useExercises,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -20,7 +20,7 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
   const categories = useCategories()
   const updateCategory = useCategoryUpdate()
   const deleteCategory = useCategoryDelete()
-  const { data } = useTanstackExercises()
+  const { data } = useExercises()
   const usage = getUsage(data, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')
 

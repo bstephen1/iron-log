@@ -28,8 +28,10 @@ export const ERRORS = {
   retry: 'Something went wrong. Please retry.',
 }
 
-export const QUERY_KEYS = {
-  categories: 'categories',
+export enum QUERY_KEYS {
+  categories = 'categories',
+  modifiers = 'modifiers',
+  exercises = 'exercises',
 }
 
 //------

@@ -2,10 +2,11 @@ import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
-  deleteModifier,
-  updateModifierFields,
-} from '../../lib/backend/mongoService'
-import { useExercises, useModifiers } from '../../lib/frontend/restService'
+  useExercises,
+  useModifierDelete,
+  useModifiers,
+  useModifierUpdate,
+} from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
@@ -19,35 +20,26 @@ interface Props {
 export default function ModifierForm({
   modifier: { name, weight, _id },
 }: Props) {
-  const { modifierNames, mutate: mutateModifiers } = useModifiers()
-  const { exercises, mutate: mutateExercises } = useExercises()
-  const usage = getUsage(exercises, 'modifiers', name)
+  const modifiers = useModifiers()
+  const updateModifier = useModifierUpdate()
+  const deleteModifier = useModifierDelete()
+  const exercises = useExercises()
+  const usage = getUsage(exercises.data, 'modifiers', name)
   const [_, setUrlModifier] = useQueryState('modifier')
 
   const updateFields = useCallback(
     async (updates: Partial<Modifier>) => {
-      const updatedModifier = await updateModifierFields(_id, updates)
-
-      if (updates.name) {
-        mutateExercises()
-      }
-
-      mutateModifiers(async (cur) => {
-        return cur?.map((modifier) =>
-          modifier._id === _id ? updatedModifier : modifier
-        )
-      })
+      updateModifier({ _id, updates })
     },
-    [_id, mutateExercises, mutateModifiers]
+    [_id, updateModifier]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
-      await deleteModifier(id)
       setUrlModifier(null)
-      mutateModifiers((cur) => cur?.filter((modifier) => modifier._id !== id))
+      deleteModifier(id)
     },
-    [mutateModifiers, setUrlModifier]
+    [deleteModifier, setUrlModifier]
   )
 
   return (
@@ -61,7 +53,7 @@ export default function ModifierForm({
         <NameField
           name={name}
           handleUpdate={updateFields}
-          options={modifierNames}
+          options={modifiers.names}
         />
       </Grid>
       <Grid

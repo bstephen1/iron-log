@@ -1,10 +1,9 @@
 import { type AutocompleteChangeReason } from '@mui/material/Autocomplete'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
-import { useExercises } from '../../lib/frontend/restService'
+import { useExerciseUpdate, useExercises } from '../../lib/frontend/restService'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import ComboBoxField from './ComboBoxField'
-import { updateExerciseFields } from '../../lib/backend/mongoService'
 
 interface Props {
   field: 'categories' | 'modifiers'
@@ -17,14 +16,15 @@ interface Props {
  *  Ie, with a given category, add / remove it to exercises.
  */
 export default memo(function UsageComboBox({ field, name, usage }: Props) {
-  const { exercises, exerciseNames, mutate: mutateExercises } = useExercises()
+  const exercises = useExercises()
+  const updateExercise = useExerciseUpdate()
   const usageNames = usage.map((exercise) => exercise.name)
 
   const handleUpdateExercise = async (
     exerciseName: string | undefined,
     reason: AutocompleteChangeReason
   ) => {
-    const newExercise = exercises.find(
+    const newExercise = exercises.data.find(
       (exercise) => exercise.name === exerciseName
     )
     if (!newExercise) return
@@ -36,15 +36,14 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
       updatedField = updatedField.filter((itemName) => name !== itemName)
     }
 
-    await updateExerciseFields(newExercise._id, { [field]: updatedField })
-    mutateExercises()
+    updateExercise({ _id: newExercise._id, updates: { [field]: updatedField } })
   }
 
   return (
     <ComboBoxField
       label="Exercises"
       initialValue={usageNames}
-      options={exerciseNames}
+      options={exercises.names}
       fullWidth
       handleChange={handleUpdateExercise}
       disableClearable

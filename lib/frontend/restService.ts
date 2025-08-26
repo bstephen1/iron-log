@@ -1,9 +1,9 @@
 import {
-  type MutationFunction,
-  type QueryKey,
   useMutation,
   useQueryClient,
   useSuspenseQuery,
+  type MutationFunction,
+  type QueryKey,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
 import { stringify, type ParsedUrlQueryInput } from 'querystring'
@@ -23,17 +23,23 @@ import { type Record, type RecordRangeQuery } from '../../models/Record'
 import { type SessionLog } from '../../models/SessionLog'
 import {
   addCategory,
+  addExercise,
+  addModifier,
   deleteCategory,
+  deleteExercise,
+  deleteModifier,
   fetchCategories,
   fetchExercises,
+  fetchModifiers,
   updateCategoryFields,
+  updateExerciseFields,
+  updateModifierFields,
 } from '../backend/mongoService'
 import {
   DATE_FORMAT,
   QUERY_KEYS,
   URI_BODYWEIGHT,
   URI_EXERCISES,
-  URI_MODIFIERS,
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
@@ -193,34 +199,55 @@ export function useRecords(
 // EXERCISE
 //----------
 
-export function useTanstackExercises() {
-  return useSuspenseQuery({
-    queryKey: ['exercises'],
-    queryFn: () => fetchExercises(),
-  })
-}
-
 export function useExercises() {
-  // so the way useSWR works is it takes a KEY and a FETCHER,
-  // and it then calls fetcher(key). KEY must be serializable (ie, a string)
-  // because that is the object key it uses to create its cache map.
-  // So here 'api/exercises' must be unique to the useExercises hook because
-  // it will store that data in the cache.
-  // We can hack around needing an api endpoint by passing a server function
-  // which takes no args as the FETCHER, and then give the desired KEY
-  // (which will have no effect on the no-arg function)
-  const { data, mutate } = useSWR<Exercise[], ApiError>(
-    URI_EXERCISES,
-    fetchExercises
-  )
-  const sortedData = nameSort(data as Exercise[])
+  const { data, ...rest } = useSuspenseQuery({
+    queryKey: [QUERY_KEYS.exercises],
+    queryFn: fetchExercises,
+  })
 
   return {
-    exercises: sortedData,
-    exerciseNames: toNames(sortedData),
-    mutate,
+    data: nameSort(data),
+    names: toNames(data),
+    index: arrayToIndex('_id', data),
+    ...rest,
   }
 }
+
+export function useExerciseUpdate() {
+  const { mutate } = useOptimisticMutation<
+    Exercise[],
+    Exercise,
+    {
+      _id: string
+      updates: Partial<Exercise>
+    }
+  >({
+    mutationFn: ({ _id, updates }) => updateExerciseFields(_id, updates),
+    queryKey: [QUERY_KEYS.exercises],
+    updater: (prev, { _id, updates }) =>
+      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
+  })
+  return mutate
+}
+
+export function useExerciseAdd() {
+  const { mutate } = useOptimisticMutation<Exercise[], Exercise>({
+    mutationFn: (exercise: Exercise) => addExercise(exercise),
+    queryKey: [QUERY_KEYS.exercises],
+    updater: (prev, exercise) => prev?.concat(exercise),
+  })
+  return mutate
+}
+
+export function useExerciseDelete() {
+  const { mutate } = useOptimisticMutation<Exercise[], string>({
+    mutationFn: (id: string) => deleteExercise(id),
+    queryKey: [QUERY_KEYS.exercises],
+    updater: (prev, id) => prev?.filter((item) => item._id !== id),
+  })
+  return mutate
+}
+
 export function useExercise(
   /** fetching will be disabled if id is falsy   */
   id?: string | null
@@ -242,16 +269,53 @@ export function useExercise(
 // MODIFIER
 //----------
 
+export function useModifierUpdate() {
+  const { mutate } = useOptimisticMutation<
+    Modifier[],
+    Modifier,
+    {
+      _id: string
+      updates: Partial<Modifier>
+    }
+  >({
+    mutationFn: ({ _id, updates }) => updateModifierFields(_id, updates),
+    queryKey: [QUERY_KEYS.modifiers],
+    updater: (prev, { _id, updates }) =>
+      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
+    invalidates: ['exercises'],
+  })
+  return mutate
+}
+
+export function useModifierAdd() {
+  const { mutate } = useOptimisticMutation<Modifier[], Modifier>({
+    mutationFn: (modifier: Modifier) => addModifier(modifier),
+    queryKey: [QUERY_KEYS.modifiers],
+    updater: (prev, modifier) => prev?.concat(modifier),
+  })
+  return mutate
+}
+
+export function useModifierDelete() {
+  const { mutate } = useOptimisticMutation<Modifier[], string>({
+    mutationFn: (id: string) => deleteModifier(id),
+    queryKey: [QUERY_KEYS.modifiers],
+    updater: (prev, id) => prev?.filter((item) => item._id !== id),
+  })
+  return mutate
+}
+
 export function useModifiers() {
-  const { data, mutate } = useSWR<Modifier[], ApiError>(URI_MODIFIERS)
-  const sortedData = nameSort(data)
+  const { data, ...rest } = useSuspenseQuery({
+    queryKey: [QUERY_KEYS.modifiers],
+    queryFn: fetchModifiers,
+  })
 
   return {
-    modifiers: sortedData,
-    modifiersIndex: arrayToIndex<Modifier>('name', data),
-    modifierNames: toNames(sortedData),
-
-    mutate,
+    data: nameSort(data),
+    names: toNames(data),
+    index: arrayToIndex('_id', data),
+    ...rest,
   }
 }
 
@@ -308,15 +372,16 @@ export function useCategoryDelete() {
 }
 
 export function useCategories() {
-  const hook = useSuspenseQuery({
+  const { data, ...rest } = useSuspenseQuery({
     queryKey: [QUERY_KEYS.categories],
-    queryFn: () => fetchCategories(),
+    queryFn: fetchCategories,
   })
 
   return {
-    ...hook,
-    names: toNames(hook.data),
-    index: arrayToIndex('_id', hook.data),
+    data: nameSort(data),
+    names: toNames(data),
+    index: arrayToIndex('_id', data),
+    ...rest,
   }
 }
 

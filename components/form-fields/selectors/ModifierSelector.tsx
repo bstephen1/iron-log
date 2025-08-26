@@ -1,6 +1,5 @@
 import { type Dispatch, type SetStateAction } from 'react'
-import { addModifier } from '../../../lib/backend/mongoService'
-import { useModifiers } from '../../../lib/frontend/restService'
+import { useModifierAdd, useModifiers } from '../../../lib/frontend/restService'
 import {
   createModifier,
   type Modifier,
@@ -17,17 +16,17 @@ export default function ModifierSelector({
   disableAddNew,
   handleChange,
 }: Props) {
-  const { modifiers, mutate } = useModifiers()
+  const modifiers = useModifiers()
+  const addModifier = useModifierAdd()
   return (
     <AsyncSelector
       handleChange={handleChange}
-      options={modifiers}
-      mutateOptions={disableAddNew ? undefined : mutate}
+      options={modifiers.data}
+      addNewItem={disableAddNew ? undefined : addModifier}
       value={modifier}
       label="Modifier"
       placeholder="Select or add new modifier"
       createOption={createModifier}
-      addNewItem={addModifier}
     />
   )
 }

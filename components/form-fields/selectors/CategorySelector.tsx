@@ -25,7 +25,7 @@ export default function CategorySelector({
     <AsyncSelector
       handleChange={handleChange}
       options={categories.data}
-      tanstackMutate={disableAddNew ? undefined : addCategory}
+      addNewItem={disableAddNew ? undefined : addCategory}
       value={category}
       label="Category"
       placeholder="Select or add new category"
