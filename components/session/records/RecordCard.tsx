@@ -6,9 +6,13 @@ import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import { type KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
-import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
+import { updateRecordFields } from '../../../lib/backend/mongoService'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
-import { useExercise, useRecord } from '../../../lib/frontend/restService'
+import {
+  useExercises,
+  useExerciseUpdate,
+  useRecord,
+} from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
@@ -25,10 +29,7 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
-import {
-  updateExerciseFields,
-  updateRecordFields,
-} from '../../../lib/backend/mongoService'
+import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -51,11 +52,8 @@ export default memo(function RecordCard(props: Props) {
   // This ensures the exercise is up to date if the user has multiple records with the
   // same exercise. record.exercise is only updated upon fetching the record,
   // so if one record updated an exercise any other records would still be using the outdated exercise.
-  const {
-    exercise,
-    isLoadingExercise,
-    mutate: mutateExercise,
-  } = useExercise(record?.exercise?._id)
+  const exercises = useExercises()
+  const exercise = exercises.index[record?.exercise?._id ?? ''] ?? null
 
   // NOTE: If the record is null then somehow there is a recordId in the session
   // with no corresponding record document. The backend removes a null record id
@@ -74,7 +72,7 @@ export default memo(function RecordCard(props: Props) {
       />
     )
   }
-  if (isLoadingRecord || isLoadingExercise || props.isQuickRender) {
+  if (isLoadingRecord || props.isQuickRender) {
     return (
       <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
     )
@@ -85,7 +83,6 @@ export default memo(function RecordCard(props: Props) {
           record,
           exercise,
           mutateRecord,
-          mutateExercise,
           ...props,
         }}
       />
@@ -112,16 +109,15 @@ function LoadedRecordCard({
   record,
   exercise,
   mutateRecord,
-  mutateExercise,
 }: Props & {
   record: Record
   exercise: Exercise | null
   mutateRecord: KeyedMutator<Record | null>
-  mutateExercise: KeyedMutator<Exercise | null>
 }) {
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
+  const updateExercise = useExerciseUpdate()
   const noSwipingDesktop = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
@@ -139,16 +135,10 @@ function LoadedRecordCard({
   }
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
-    async (changes) => {
-      mutateExercise(
-        (cur) => (cur ? updateExerciseFields(cur._id, { ...changes }) : null),
-        {
-          optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
-          revalidate: false,
-        }
-      )
+    async (updates) => {
+      exercise?._id && updateExercise({ _id: exercise._id, updates })
     },
-    [mutateExercise]
+    [exercise?._id, updateExercise]
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(

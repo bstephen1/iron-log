@@ -39,7 +39,6 @@ import {
   DATE_FORMAT,
   QUERY_KEYS,
   URI_BODYWEIGHT,
-  URI_EXERCISES,
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
@@ -246,23 +245,6 @@ export function useExerciseDelete() {
     updater: (prev, id) => prev?.filter((item) => item._id !== id),
   })
   return mutate
-}
-
-export function useExercise(
-  /** fetching will be disabled if id is falsy   */
-  id?: string | null
-) {
-  const { data, isLoading, mutate } = useSWR<Exercise | null, ApiError>(
-    // Passing null to useSWR disables fetching.
-    // NOTE: when fetching is disabled useSWR returns data as undefined, not null
-    id ? URI_EXERCISES + id : null
-  )
-
-  return {
-    exercise: data ?? null,
-    isLoadingExercise: isLoading,
-    mutate,
-  }
 }
 
 //----------
