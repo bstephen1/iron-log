@@ -39,7 +39,5 @@ export enum QUERY_KEYS {
 //------
 
 export const URI_SESSIONS = '/api/sessions/'
-export const URI_EXERCISES = '/api/exercises/'
-export const URI_MODIFIERS = '/api/modifiers/'
 export const URI_RECORDS = '/api/records/'
 export const URI_BODYWEIGHT = '/api/bodyweights/'

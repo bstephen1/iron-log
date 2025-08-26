@@ -1,7 +1,10 @@
 import { type ComponentProps } from 'react'
 import { expect, it, vi } from 'vitest'
-import { URI_CATEGORIES, URI_EXERCISES } from '../../../lib/frontend/constants'
-import { render, screen, useServer } from '../../../lib/testUtils'
+import {
+  fetchCategories,
+  fetchExercises,
+} from '../../../lib/backend/mongoService'
+import { render, screen } from '../../../lib/testUtils'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import {
   createExercise,
@@ -35,7 +38,7 @@ const TestSelector = (
 )
 
 it('does not open autocomplete when filter menu is open', async () => {
-  useServer(URI_CATEGORIES, [testCategory])
+  vi.mocked(fetchCategories).mockResolvedValue([testCategory])
   const { user } = render(<TestSelector />)
   const autocompleteText = /no options/i
 
@@ -66,8 +69,11 @@ it('does not open autocomplete when filter menu is open', async () => {
 })
 
 it('filters exercises based on category filter', async () => {
-  useServer(URI_CATEGORIES, [testCategory])
-  useServer(URI_EXERCISES, [matchingExercise, unmatchedExercise])
+  vi.mocked(fetchCategories).mockResolvedValue([testCategory])
+  vi.mocked(fetchExercises).mockResolvedValue([
+    matchingExercise,
+    unmatchedExercise,
+  ])
   const { user } = render(<TestSelector categoryFilter={testCategoryName} />)
 
   // open autocomplete
@@ -79,8 +85,11 @@ it('filters exercises based on category filter', async () => {
 
 it('unselects exercise if it is not valid for selected category', async () => {
   const otherCategoryName = 'other'
-  useServer(URI_CATEGORIES, [testCategory, createCategory(otherCategoryName)])
-  useServer(URI_EXERCISES, [unmatchedExercise])
+  vi.mocked(fetchCategories).mockResolvedValue([
+    testCategory,
+    createCategory(otherCategoryName),
+  ])
+  vi.mocked(fetchExercises).mockResolvedValue([unmatchedExercise])
   const { user } = render(
     <TestSelector
       categoryFilter={testCategoryName}
@@ -105,7 +114,7 @@ it('sorts exercises by status', async () => {
     createExercise('option 3'),
     createExercise('option 4', { status: Status.archived }),
   ]
-  useServer(URI_EXERCISES, unsortedExercises)
+  vi.mocked(fetchExercises).mockResolvedValue(unsortedExercises)
   const { user } = render(<TestSelector />)
 
   // open autocomplete
