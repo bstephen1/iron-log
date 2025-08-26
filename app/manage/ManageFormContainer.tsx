@@ -12,7 +12,6 @@ import ManageWelcomeCard from '../../components/ManageWelcomeCard'
 import StyledDivider from '../../components/StyledDivider'
 import {
   useCategories,
-  useExercises,
   useModifiers,
   useTanstackExercises,
 } from '../../lib/frontend/restService'
@@ -59,19 +58,18 @@ export default function ManageFormContainer() {
     category: parseAsString,
     modifier: parseAsString,
   })
-  const { data, fetchStatus } = useTanstackExercises()
-  const { exercises } = useExercises()
-  const { categories } = useCategories()
+  const categories = useCategories()
+  const { data: exercises } = useTanstackExercises()
   const { modifiers } = useModifiers()
-  console.log(fetchStatus, data)
 
   const unfilteredExercise =
     exercises.find((exercise) => exercise._id === queryState.exercise) ?? null
 
   const selected = {
     category:
-      categories.find((category) => category._id === queryState.category) ??
-      null,
+      categories.data.find(
+        (category) => category._id === queryState.category
+      ) ?? null,
     modifier:
       modifiers.find((modifier) => modifier._id === queryState.modifier) ??
       null,

@@ -33,7 +33,7 @@ export default async function RootLayout({
         shouldDehydrateQuery: (query) =>
           defaultShouldDehydrateQuery(query) ||
           query.state.status === 'pending',
-        shouldRedactErrors: (error) => {
+        shouldRedactErrors: (_err) => {
           // We should not catch Next.js server errors
           // as that's how Next.js detects dynamic pages
           // so we cannot redact them.
@@ -48,6 +48,11 @@ export default async function RootLayout({
   queryClient.prefetchQuery({
     queryKey: ['exercises'],
     queryFn: fetchExercises,
+  })
+
+  queryClient.prefetchQuery({
+    queryKey: ['categories'],
+    queryFn: () => fetchCategories(),
   })
 
   return (

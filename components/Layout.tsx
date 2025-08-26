@@ -13,11 +13,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { use, useEffect, type ReactNode } from 'react'
 import { SWRConfig, type SWRConfiguration } from 'swr'
 import useSWRCacheProvider from '../components/useSWRCacheProvider'
-import {
-  URI_CATEGORIES,
-  URI_EXERCISES,
-  URI_MODIFIERS,
-} from '../lib/frontend/constants'
+import { URI_EXERCISES, URI_MODIFIERS } from '../lib/frontend/constants'
 import { swrFetcher } from '../lib/util'
 import { type Category } from '../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../models/AsyncSelectorOption/Exercise'
@@ -81,7 +77,6 @@ export default function Layout({
   const globalFallbacks = serverData
     ? {
         [URI_EXERCISES]: use(serverData.exercises),
-        [URI_CATEGORIES]: use(serverData.categories),
         [URI_MODIFIERS]: use(serverData.modifiers),
       }
     : {}

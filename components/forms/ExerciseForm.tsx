@@ -1,6 +1,12 @@
 import Grid from '@mui/material/Grid'
+import { enqueueSnackbar } from 'notistack'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
+import {
+  addExercise,
+  deleteExercise,
+  updateExerciseFields,
+} from '../../lib/backend/mongoService'
 import {
   useCategories,
   useExercises,
@@ -20,29 +26,14 @@ import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import NotesList from '../form-fields/NotesList'
 import StatusSelectField from '../form-fields/StatusSelectField'
-import {
-  addExercise,
-  deleteExercise,
-  updateExerciseFields,
-} from '../../lib/backend/mongoService'
-import { enqueueSnackbar } from 'notistack'
 
 interface Props {
   exercise: Exercise
 }
 export default function ExerciseForm({ exercise }: Props) {
-  const {
-    _id,
-    name,
-    status,
-    modifiers,
-    notes,
-    attributes,
-    categories,
-    weight,
-  } = exercise
+  const { _id, name, status, notes, attributes, weight } = exercise
   const { modifierNames } = useModifiers()
-  const { categoryNames } = useCategories()
+  const categories = useCategories()
   const { records } = useRecords({ exercise: name })
   const { exerciseNames, mutate: mutateExercises } = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
@@ -124,8 +115,8 @@ export default function ExerciseForm({ exercise }: Props) {
       <Grid size={12}>
         <ComboBoxField
           label="Categories"
-          initialValue={categories}
-          options={categoryNames}
+          initialValue={exercise.categories}
+          options={categories.names}
           handleSubmit={useCallback(
             (categories: string[]) => updateFields({ categories }),
             [updateFields]
@@ -135,7 +126,7 @@ export default function ExerciseForm({ exercise }: Props) {
       <Grid size={12}>
         <ComboBoxField
           label="Modifiers"
-          initialValue={modifiers}
+          initialValue={exercise.modifiers}
           options={modifierNames}
           handleSubmit={useCallback(
             (modifiers: string[]) => updateFields({ modifiers }),
@@ -156,7 +147,7 @@ export default function ExerciseForm({ exercise }: Props) {
         <NotesList
           label="Notes"
           notes={notes}
-          options={modifiers}
+          options={exercise.modifiers}
           handleSubmit={useCallback(
             (notes: Note[]) => updateFields({ notes }),
             [updateFields]

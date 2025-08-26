@@ -1,11 +1,13 @@
 import { type Dispatch, type SetStateAction } from 'react'
 import {
+  useCategories,
+  useCategoryAdd,
+} from '../../../lib/frontend/restService'
+import {
   type Category,
   createCategory,
 } from '../../../models/AsyncSelectorOption/Category'
 import AsyncSelector from './AsyncSelector'
-import { addCategory } from '../../../lib/backend/mongoService'
-import { useCategories } from '../../../lib/frontend/restService'
 
 interface Props {
   category: Category | null
@@ -17,17 +19,17 @@ export default function CategorySelector({
   disableAddNew,
   handleChange,
 }: Props) {
-  const { categories, mutate } = useCategories()
+  const categories = useCategories()
+  const addCategory = useCategoryAdd()
   return (
     <AsyncSelector
       handleChange={handleChange}
-      options={categories}
-      mutateOptions={disableAddNew ? undefined : mutate}
+      options={categories.data}
+      tanstackMutate={disableAddNew ? undefined : addCategory}
       value={category}
       label="Category"
       placeholder="Select or add new category"
       createOption={createCategory}
-      addNewItem={addCategory}
     />
   )
 }

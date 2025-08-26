@@ -32,7 +32,7 @@ export default function ExerciseSelector<
   ...asyncSelectorProps
 }: ExerciseSelectorProps<DisableClearable>) {
   const { exercises, mutate } = useExercises()
-  const { categoryNames } = useCategories()
+  const categories = useCategories()
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
   )
@@ -82,7 +82,7 @@ export default function ExerciseSelector<
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
-              categories: categoryNames,
+              categories: categories.names,
               category: categoryFilter,
               setCategory: handleCategoryFilterChange,
               anchorEl: categoryAnchorEl,

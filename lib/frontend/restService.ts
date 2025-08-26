@@ -1,3 +1,10 @@
+import {
+  type MutationFunction,
+  type QueryKey,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
 import { stringify, type ParsedUrlQueryInput } from 'querystring'
 import useSWR from 'swr'
@@ -15,16 +22,21 @@ import {
 import { type Record, type RecordRangeQuery } from '../../models/Record'
 import { type SessionLog } from '../../models/SessionLog'
 import {
+  addCategory,
+  deleteCategory,
+  fetchCategories,
+  fetchExercises,
+  updateCategoryFields,
+} from '../backend/mongoService'
+import {
   DATE_FORMAT,
+  QUERY_KEYS,
   URI_BODYWEIGHT,
-  URI_CATEGORIES,
   URI_EXERCISES,
   URI_MODIFIERS,
   URI_RECORDS,
   URI_SESSIONS,
 } from './constants'
-import { fetchExercises } from '../backend/mongoService'
-import { useSuspenseQuery } from '@tanstack/react-query'
 
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
@@ -51,6 +63,59 @@ const toNames = (entities?: AsyncSelectorOption[]) =>
 
 const nameSort = <T extends { name: string }>(data?: T[]) =>
   data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
+
+type OptimisticProps<
+  TQueryFnData = unknown,
+  TData = unknown,
+  TVariables = TData,
+> = {
+  mutationFn: MutationFunction<TData, TVariables>
+  queryKey: QueryKey
+  updater: (
+    input: TQueryFnData | undefined,
+    variables: TVariables
+  ) => TQueryFnData | undefined
+  invalidates?: QueryKey
+}
+const useOptimisticMutation = <
+  TQueryFnData = unknown,
+  TData = unknown,
+  TVariables = TData,
+>({
+  mutationFn,
+  queryKey,
+  updater,
+  invalidates,
+}: OptimisticProps<TQueryFnData, TData, TVariables>) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn,
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey,
+      })
+
+      const snapshot = queryClient.getQueryData(queryKey)
+
+      queryClient.setQueryData<TQueryFnData>(queryKey, (input) =>
+        updater(input, variables)
+      )
+
+      return () => {
+        queryClient.setQueryData(queryKey, snapshot)
+      }
+    },
+    onError: (_err, _variables, rollback) => {
+      rollback?.()
+    },
+    onSettled: () => {
+      return queryClient.invalidateQueries({
+        queryKey: invalidates,
+      })
+    },
+  })
+}
 
 //---------
 // SESSION
@@ -128,36 +193,6 @@ export function useRecords(
 // EXERCISE
 //----------
 
-// export function useTanstackExerciseMutate() {
-//   const queryClient = useQueryClient()
-//   useMutation({
-//     mutationFn: updateExerciseFields,
-//     // When mutate is called:
-//     onMutate: async (_id, updates) => {
-//       const queryKey = ['exercise', _id]
-//       // Cancel any outgoing refetches
-//       // (so they don't overwrite our optimistic update)
-//       await queryClient.cancelQueries({ queryKey })
-
-//       // Snapshot the previous value
-//       const prevExercise = queryClient.getQueryData(queryKey)
-
-//       // Optimistically update to the new value
-//       queryClient.setQueryData(queryKey, (prev) => ({ ...prev, ...updates }))
-
-//       // Return a context object with the snapshotted value
-//       return { prevExercise }
-//     },
-//     // If the mutation fails,
-//     // use the context returned from onMutate to roll back
-//     onError: (err, newTodo, context) => {
-//       queryClient.setQueryData(['todos'], context.previousTodos)
-//     },
-//     // Always refetch after error or success:
-//     onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
-//   })
-// }
-
 export function useTanstackExercises() {
   return useSuspenseQuery({
     queryKey: ['exercises'],
@@ -224,14 +259,64 @@ export function useModifiers() {
 // CATEGORY
 //----------
 
+export function useCategoryUpdate() {
+  const { mutate } = useOptimisticMutation<
+    Category[],
+    Category,
+    {
+      _id: string
+      name: string
+      updates: Partial<Category>
+    }
+  >({
+    mutationFn: ({ _id, name, updates }) => updateCategoryFields(_id, updates),
+    queryKey: [QUERY_KEYS.categories],
+    updater: (prev, { _id, updates }) =>
+      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
+    invalidates: ['exercises'],
+    // todo: not working
+    // if (updates.name) {
+    //   queryClient.setQueryData<Exercise[]>(['exercises'], (prev) =>
+    //     prev?.map((ex) => ({
+    //       ...ex,
+    //       categories: ex.categories.map((cat) =>
+    //         cat === name ? (updates.name as string) : cat
+    //       ),
+    //     }))
+    //   )
+    // }
+  })
+  return mutate
+}
+
+export function useCategoryAdd() {
+  const { mutate } = useOptimisticMutation<Category[], Category>({
+    mutationFn: (category: Category) => addCategory(category),
+    queryKey: [QUERY_KEYS.categories],
+    updater: (prev, category) => prev?.concat(category),
+  })
+  return mutate
+}
+
+export function useCategoryDelete() {
+  const { mutate } = useOptimisticMutation<Category[], string>({
+    mutationFn: (id: string) => deleteCategory(id),
+    queryKey: [QUERY_KEYS.categories],
+    updater: (prev, id) => prev?.filter((item) => item._id !== id),
+  })
+  return mutate
+}
+
 export function useCategories() {
-  const { data, mutate } = useSWR<Category[], ApiError>(URI_CATEGORIES)
-  const sortedData = nameSort(data)
+  const hook = useSuspenseQuery({
+    queryKey: [QUERY_KEYS.categories],
+    queryFn: () => fetchCategories(),
+  })
 
   return {
-    categories: sortedData,
-    categoryNames: toNames(sortedData),
-    mutate,
+    ...hook,
+    names: toNames(hook.data),
+    index: arrayToIndex('_id', hook.data),
   }
 }
 

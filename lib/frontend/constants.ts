@@ -28,6 +28,10 @@ export const ERRORS = {
   retry: 'Something went wrong. Please retry.',
 }
 
+export const QUERY_KEYS = {
+  categories: 'categories',
+}
+
 //------
 // URIS
 //------
@@ -35,6 +39,5 @@ export const ERRORS = {
 export const URI_SESSIONS = '/api/sessions/'
 export const URI_EXERCISES = '/api/exercises/'
 export const URI_MODIFIERS = '/api/modifiers/'
-export const URI_CATEGORIES = '/api/categories/'
 export const URI_RECORDS = '/api/records/'
 export const URI_BODYWEIGHT = '/api/bodyweights/'
