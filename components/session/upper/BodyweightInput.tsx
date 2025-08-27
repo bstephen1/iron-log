@@ -1,17 +1,19 @@
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import InputAdornment from '@mui/material/InputAdornment'
+import { type TextFieldProps } from '@mui/material/TextField'
 import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
-import { useBodyweights } from '../../../lib/frontend/restService'
+import {
+  useBodyweightUpsert,
+  useBodyweights,
+} from '../../../lib/frontend/restService'
 import { createBodyweight, type WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
-import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
-import InputAdornment from '@mui/material/InputAdornment'
-import { type TextFieldProps } from '@mui/material/TextField'
-import { updateBodyweight } from '../../../lib/backend/mongoService'
 
 interface Props {
   day: Dayjs
@@ -21,12 +23,13 @@ export default function BodyweightInput({
   ...textFieldProps
 }: Props & Omit<TextFieldProps, 'slotProps'>) {
   const [bodyweightType, setBodyweightType] = useState<WeighInType>('official')
-  const { data, mutate } = useBodyweights({
+  const { data } = useBodyweights({
     limit: 1,
     end: day.format(DATE_FORMAT),
     type: bodyweightType,
     sort: 'newestFirst',
   })
+  const upsertBodyweight = useBodyweightUpsert()
 
   // note: the value will be cast to a number on submit
   const schema = z.string().min(1, 'Must have a value')
@@ -34,13 +37,7 @@ export default function BodyweightInput({
 
   const handleSubmit = async (value: string) => {
     const newBodyweight = createBodyweight(Number(value), bodyweightType, day)
-
-    // new weigh-ins on the same day and of the same type will overwrite the previous value.
-    // updateBodweight returns a single bw, so have to convert it to an array
-    mutate(async () => [await updateBodyweight(newBodyweight)], {
-      optimisticData: [newBodyweight],
-      revalidate: false,
-    })
+    upsertBodyweight.mutate(newBodyweight)
   }
 
   const getHelperText = () => {

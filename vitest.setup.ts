@@ -14,6 +14,7 @@ import 'whatwg-fetch'
 import { devUserId } from './lib/frontend/constants'
 import { loadEnvConfig } from '@next/env'
 import {
+  fetchBodyweights,
   fetchCategories,
   fetchExercises,
   fetchModifiers,
@@ -93,10 +94,12 @@ beforeAll(() => {
 })
 beforeEach(async () => {
   server.resetHandlers()
-  // prefetched server data must return a value (not undefined)
+  // fetch functions used by useQuery cannot return undefined
+  // (automock makes everything return undefined)
   vi.mocked(fetchCategories).mockResolvedValue([])
   vi.mocked(fetchExercises).mockResolvedValue([])
   vi.mocked(fetchModifiers).mockResolvedValue([])
+  vi.mocked(fetchBodyweights).mockResolvedValue([])
 })
 // RTL cleanup is only automatically called if vitest has globals on.
 // Without this, the DOM will leak between tests.

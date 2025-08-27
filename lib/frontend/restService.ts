@@ -1,5 +1,6 @@
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
   type MutationFunction,
@@ -10,13 +11,14 @@ import { stringify, type ParsedUrlQueryInput } from 'querystring'
 import useSWR from 'swr'
 import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
+import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type ApiError } from '../../models/ApiError'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import {
-  type Bodyweight,
+  bodyweightQuerySchema,
   type BodyweightRangeQuery,
 } from '../../models/Bodyweight'
 import { type Record, type RecordRangeQuery } from '../../models/Record'
@@ -28,20 +30,16 @@ import {
   deleteCategory,
   deleteExercise,
   deleteModifier,
+  fetchBodyweights,
   fetchCategories,
   fetchExercises,
   fetchModifiers,
   updateCategoryFields,
   updateExerciseFields,
   updateModifierFields,
+  upsertBodyweight,
 } from '../backend/mongoService'
-import {
-  DATE_FORMAT,
-  QUERY_KEYS,
-  URI_BODYWEIGHT,
-  URI_RECORDS,
-  URI_SESSIONS,
-} from './constants'
+import { DATE_FORMAT, QUERY_KEYS, URI_RECORDS, URI_SESSIONS } from './constants'
 
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
@@ -371,10 +369,7 @@ export function useCategories() {
 // BODYWEIGHT
 //------------
 
-export function useBodyweights(
-  query?: BodyweightRangeQuery,
-  shouldFetch = true
-) {
+export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
   // Incrementing to 2020-04-03 will catch everything from the previous day.
@@ -383,13 +378,33 @@ export function useBodyweights(
   const start = query?.start ? addDay(query.start) : undefined
   const end = query?.end ? addDay(query.end) : undefined
 
-  const { data, mutate } = useSWR<Bodyweight[], ApiError>(
-    shouldFetch ? URI_BODYWEIGHT + paramify({ start, end, ...query }) : null
-  )
+  const filter = bodyweightQuerySchema.parse(query)
+  const dateQuery = dateRangeQuerySchema.parse({ start, end, ...query })
+
+  const { data, ...rest } = useQuery({
+    queryKey: [QUERY_KEYS.bodyweights, query],
+    queryFn: () => fetchBodyweights(undefined, filter, dateQuery),
+    enabled,
+  })
 
   return {
-    data: shouldFetch ? data : [],
-
-    mutate,
+    data: enabled ? data : [],
+    ...rest,
   }
+}
+
+export function useBodyweightUpsert() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: upsertBodyweight,
+    // make sure to _return_ the Promise from the query invalidation
+    // so that the mutation stays in `pending` state until the refetch is finished
+    onSettled: async () =>
+      await queryClient.invalidateQueries({
+        // Marks as stale any cache data that includes the queryKey (NOT exact).
+        // Could potentially tighten this to only keys with end date less than the
+        // new bw's date, but probably wouldn't make any noticeable improvement
+        queryKey: [QUERY_KEYS.bodyweights],
+      }),
+  })
 }

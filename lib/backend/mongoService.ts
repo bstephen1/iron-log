@@ -1,6 +1,6 @@
 'use server'
 import { StatusCodes } from 'http-status-codes'
-import { type ObjectId, type Document, type Filter } from 'mongodb'
+import { type Document, type Filter, type ObjectId } from 'mongodb'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -468,7 +468,7 @@ export async function fetchBodyweights(
  *
  * Note: two records can exist on the same date if they are different types.
  */
-export async function updateBodyweight(
+export async function upsertBodyweight(
   newBodyweight: Bodyweight
 ): Promise<Bodyweight> {
   const userId = await getUserId()

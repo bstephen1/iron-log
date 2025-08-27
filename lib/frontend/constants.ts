@@ -32,6 +32,7 @@ export enum QUERY_KEYS {
   categories = 'categories',
   modifiers = 'modifiers',
   exercises = 'exercises',
+  bodyweights = 'bodyweights',
 }
 
 //------
@@ -40,4 +41,3 @@ export enum QUERY_KEYS {
 
 export const URI_SESSIONS = '/api/sessions/'
 export const URI_RECORDS = '/api/records/'
-export const URI_BODYWEIGHT = '/api/bodyweights/'
