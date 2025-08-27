@@ -1,13 +1,17 @@
 'use client'
-
-// Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { type ReactNode } from 'react'
+import { Suspense, type ReactNode } from 'react'
 import getQueryClient from '../lib/getQueryClient'
 
 // This file is based on the tanstack SSR guide:
-// https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr
+// https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr#streaming-with-server-components
+
+// The basic idea is to use queryClient.prefetchQuery in a server component to generate a promise,
+// Then useSuspenseQuery in a client component to resolve the promise.
+// useSuspenseQuery guarantees the data is resolved (not undefined).
+// There's something going on with SSR and hydration so that the first paint will
+// always include the data so their is never a loading state.
 
 export default function QueryClientWrapper({
   children,
@@ -22,7 +26,9 @@ export default function QueryClientWrapper({
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      {/* Suspense is required to satisfy a build check due to something about prefetching with react-query. */}
+      {/* It doesn't need a fallback because it's not actually doing anything */}
+      <Suspense>{children}</Suspense>
       <ReactQueryDevtools />
     </QueryClientProvider>
   )
