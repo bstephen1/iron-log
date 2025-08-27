@@ -15,7 +15,7 @@ it('adds category to exercise', async () => {
     <UsageComboBox field="categories" name={category} usage={[]} />
   )
 
-  await user.click(screen.getByRole('combobox'))
+  await user.click(await screen.findByRole('combobox'))
   await user.click(screen.getByText(exercise.name))
 
   expect(vi.mocked(updateExerciseFields)).toHaveBeenCalledWith(exercise._id, {
@@ -32,7 +32,7 @@ it('removes modifier from exercise', async () => {
   )
 
   // click the X on the chip
-  await user.click(screen.getByTestId('CancelIcon'))
+  await user.click(await screen.findByTestId('CancelIcon'))
 
   expect(vi.mocked(updateExerciseFields)).toHaveBeenCalledWith(exercise._id, {
     modifiers: [],

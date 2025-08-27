@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, type RenderOptions } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StatusCodes } from 'http-status-codes'
@@ -5,10 +6,10 @@ import { delay, http, HttpResponse, type JsonBodyType, type Path } from 'msw'
 import { type NextApiHandler } from 'next'
 import { type Session } from 'next-auth'
 import {
-  type NtarhInitPagesRouter,
   testApiHandler,
+  type NtarhInitPagesRouter,
 } from 'next-test-api-route-handler'
-import { type ReactElement } from 'react'
+import { Suspense, type ReactElement } from 'react'
 import { expect, vi } from 'vitest'
 import Layout from '../components/Layout'
 import { type ApiError } from '../models/ApiError'
@@ -47,19 +48,42 @@ const customRender = (
       : undefined
   ),
   ...render(ui, {
-    wrapper: ({ children }) =>
-      Layout({
-        children,
-        disableNavbar: true,
-        swrConfig: {
-          // Note: fetch() needs to be polyfilled or it will be undefined (just need to add "import 'whatwg-fetch'" in the test setup file).
-          // See: https://testing-library.com/docs/react-testing-library/setup/#configuring-jest-with-test-utils
-          // See: https://mswjs.io/docs/faq#swr
-          fetcher: (url: string) => fetch(url).then((r) => r.json()),
-          provider: () => new Map(),
-        },
-        session: { user: options?.user ?? { id: devUserId }, expires: '' },
-      }),
+    wrapper: ({ children }) => {
+      // each test must have a new queryClient to ensure isolation
+      // (otherwise data will be cached and reused between tests)
+      const queryClient = new QueryClient()
+      return (
+        <QueryClientProvider client={queryClient}>
+          <Suspense
+            fallback={
+              <div>
+                Component is loading (probably because of useSuspenseQuery). Use
+                a screen.findByXXX query.
+              </div>
+            }
+          >
+            <Layout
+              {...{
+                disableNavbar: true,
+                swrConfig: {
+                  // Note: fetch() needs to be polyfilled or it will be undefined (just need to add "import 'whatwg-fetch'" in the test setup file).
+                  // See: https://testing-library.com/docs/react-testing-library/setup/#configuring-jest-with-test-utils
+                  // See: https://mswjs.io/docs/faq#swr
+                  fetcher: (url: string) => fetch(url).then((r) => r.json()),
+                  provider: () => new Map(),
+                },
+                session: {
+                  user: options?.user ?? { id: devUserId },
+                  expires: '',
+                },
+              }}
+            >
+              {children}
+            </Layout>
+          </Suspense>
+        </QueryClientProvider>
+      )
+    },
     ...options,
   }),
 })

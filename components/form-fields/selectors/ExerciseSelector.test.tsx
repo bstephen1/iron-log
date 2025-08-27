@@ -43,7 +43,7 @@ it('does not open autocomplete when filter menu is open', async () => {
   const autocompleteText = /no options/i
 
   // click open autocomplete
-  await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
+  await user.click(await screen.findByPlaceholderText(autocompletePlaceholder))
   expect(screen.getByText(autocompleteText)).toBeVisible()
 
   // click open filter
@@ -77,7 +77,7 @@ it('filters exercises based on category filter', async () => {
   const { user } = render(<TestSelector categoryFilter={testCategoryName} />)
 
   // open autocomplete
-  await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
+  await user.click(await screen.findByPlaceholderText(autocompletePlaceholder))
 
   expect(screen.getByText(matchingExercise.name)).toBeVisible()
   expect(screen.queryByText(unmatchedExercise.name)).not.toBeInTheDocument()
@@ -99,7 +99,7 @@ it('unselects exercise if it is not valid for selected category', async () => {
 
   // A category is already selected. We just need to trigger a category change
   // (which won't do anything because handleCategoryChange is being mocked)
-  await user.click(screen.getByLabelText(categoryLabel))
+  await user.click(await screen.findByLabelText(categoryLabel))
   await user.click(screen.getByText(otherCategoryName))
 
   // autocomplete has reset
@@ -118,7 +118,7 @@ it('sorts exercises by status', async () => {
   const { user } = render(<TestSelector />)
 
   // open autocomplete
-  await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
+  await user.click(await screen.findByPlaceholderText(autocompletePlaceholder))
   // Type a new option. This must be a shared string among all
   // unsortedExercises because the selector filters the options based on the input
   await user.paste('option')

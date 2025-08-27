@@ -10,7 +10,7 @@ import {
 import { QUERY_KEYS } from '../lib/frontend/constants'
 import getQueryClient from '../lib/getQueryClient'
 import '../styles/globals.css'
-import QueryClientProvider from './QueryClientProvider'
+import QueryClientWrapper from './QueryClientWrapper'
 
 export default async function RootLayout({
   children,
@@ -36,12 +36,12 @@ export default async function RootLayout({
     // suppression is for mui css theme variables
     <html lang="en" suppressHydrationWarning>
       <body>
-        <QueryClientProvider>
+        <QueryClientWrapper>
           {/* HydrationBoundary is a Client Component, so hydration will happen there. */}
           <HydrationBoundary state={dehydrate(queryClient)}>
             <Layout>{children}</Layout>
           </HydrationBoundary>
-        </QueryClientProvider>
+        </QueryClientWrapper>
       </body>
     </html>
   )

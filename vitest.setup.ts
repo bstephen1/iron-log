@@ -13,6 +13,11 @@ import {
 import 'whatwg-fetch'
 import { devUserId } from './lib/frontend/constants'
 import { loadEnvConfig } from '@next/env'
+import {
+  fetchCategories,
+  fetchExercises,
+  fetchModifiers,
+} from './lib/backend/mongoService'
 
 // var is required to hoist globals
 declare global {
@@ -52,7 +57,6 @@ vi.mock('./lib/backend/mongoConnect', () => ({
   collections: vi.fn(),
   client: vi.fn(),
 }))
-vi.mock('./lib/backend/mongoService')
 vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
 vi.mock('next-auth', () => ({
   getServerSession: () => ({ user: { id: devUserId } }),
@@ -62,6 +66,7 @@ vi.mock('next/navigation', () => ({
     date: '',
   }),
 }))
+vi.mock('./lib/backend/mongoService')
 
 // configure testing-library options
 configure({
@@ -86,7 +91,13 @@ beforeAll(() => {
     })
   }
 })
-beforeEach(() => server.resetHandlers())
+beforeEach(async () => {
+  server.resetHandlers()
+  // prefetched server data must return a value (not undefined)
+  vi.mocked(fetchCategories).mockResolvedValue([])
+  vi.mocked(fetchExercises).mockResolvedValue([])
+  vi.mocked(fetchModifiers).mockResolvedValue([])
+})
 // RTL cleanup is only automatically called if vitest has globals on.
 // Without this, the DOM will leak between tests.
 afterEach(() => cleanup())
