@@ -18,6 +18,8 @@ import {
   fetchCategories,
   fetchExercises,
   fetchModifiers,
+  fetchRecords,
+  fetchSessionLogs,
 } from './lib/backend/mongoService'
 
 // var is required to hoist globals
@@ -100,6 +102,8 @@ beforeEach(async () => {
   vi.mocked(fetchExercises).mockResolvedValue([])
   vi.mocked(fetchModifiers).mockResolvedValue([])
   vi.mocked(fetchBodyweights).mockResolvedValue([])
+  vi.mocked(fetchRecords).mockResolvedValue([])
+  vi.mocked(fetchSessionLogs).mockResolvedValue([])
 })
 // RTL cleanup is only automatically called if vitest has globals on.
 // Without this, the DOM will leak between tests.

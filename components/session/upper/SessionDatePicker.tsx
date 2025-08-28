@@ -11,14 +11,11 @@ import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton'
 import { PickersDay } from '@mui/x-date-pickers/PickersDay'
 import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
-import { preload } from 'swr'
 import {
   DATE_FORMAT,
   DATE_PICKER_FORMAT,
-  URI_SESSIONS,
 } from '../../../lib/frontend/constants'
-import { paramify, useSessionLogs } from '../../../lib/frontend/restService'
-import { swrFetcher } from '../../../lib/util'
+import { useSessionLogs } from '../../../lib/frontend/restService'
 import TransitionIconButton from '../../TransitionIconButton'
 
 // The query gets data for the current month +/- 1 month so that
@@ -34,21 +31,6 @@ const buildSessionLogQuery = (relativeMonth: number, day: Dayjs) => ({
     .add(relativeMonth + 1, 'month')
     .format(DATE_FORMAT),
 })
-
-/** Preload adjacent months in useSWR's cache.
- *  The cache uses the same api uri as the key, so we need to build the same query that the
- * currently selected month will use instead of widening the range.
- */
-const fetchNearbyMonths = (newMonth: Dayjs) => {
-  // preload() apparently only works client side. If called server side it complains about absolute url.
-  if (typeof window === 'undefined') return
-
-  const prev = buildSessionLogQuery(-1, newMonth)
-  const next = buildSessionLogQuery(1, newMonth)
-  preload(URI_SESSIONS + paramify({ ...prev }), swrFetcher)
-  preload(URI_SESSIONS + paramify({ ...next }), swrFetcher)
-}
-
 interface Props {
   day: Dayjs
   /** Triggered when the picker value changes to a new date.
@@ -77,6 +59,11 @@ function SessionDatePickerInner({
   const [isChangingDay, setIsChangingDay] = useState(false)
   const [visibleMonth, setVisibleMonth] = useState(day)
   const sessionLogs = useSessionLogs(buildSessionLogQuery(0, visibleMonth))
+  // preload adjacent months -- do each separately to keep a reusable cache key
+  // todo: it still frequently goes into a loading state flipping through months
+  // despite the cache saying thedata is loaded
+  useSessionLogs(buildSessionLogQuery(-1, visibleMonth))
+  useSessionLogs(buildSessionLogQuery(1, visibleMonth))
 
   const handleChange = (newPickerValue: Dayjs | null) => {
     setPickerValue(newPickerValue)
@@ -94,9 +81,6 @@ function SessionDatePickerInner({
   }
 
   const toggleOpen = () => setOpen(!open)
-
-  // Prefetch on init
-  fetchNearbyMonths(day)
 
   // todo: If using arrow keys while picker is open it should stop propagation so the underlying swiper doesn't move too.
   // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
@@ -166,7 +150,6 @@ function SessionDatePickerInner({
       // onChange only changes when a new date is actually selected.
       // onMonthChange changes when the visible month in the calendar changes.
       onMonthChange={(newMonth) => {
-        fetchNearbyMonths(newMonth)
         setVisibleMonth(newMonth)
       }}
       loading={sessionLogs.isPending}

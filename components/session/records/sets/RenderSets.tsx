@@ -35,6 +35,9 @@ export default function RenderSets({
 }: Props) {
   const readOnly = !mutateExerciseFields
 
+  // todo: clean up passing around the full sets to every set.
+  // Possibly have an updateSets() in mongoService to limit component scope.
+
   return (
     <Box>
       <SetHeader
@@ -51,6 +54,7 @@ export default function RenderSets({
           <RenderSetRow
             key={i}
             index={i}
+            sets={sets}
             {...{
               ...set,
               displayFields,

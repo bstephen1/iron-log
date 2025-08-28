@@ -36,10 +36,3 @@ export enum QUERY_KEYS {
   sessionLogs = 'sessionLogs',
   records = 'records',
 }
-
-//------
-// URIS
-//------
-
-export const URI_SESSIONS = '/api/sessions/'
-export const URI_RECORDS = '/api/records/'

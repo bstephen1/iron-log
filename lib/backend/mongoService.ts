@@ -221,7 +221,7 @@ export async function updateRecordFields(
   return (await records.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
-    { returnDocument: 'after' }
+    { returnDocument: 'after', projection: { userId: 0 } }
   )) as Record
 }
 
