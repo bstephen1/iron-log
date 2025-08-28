@@ -57,7 +57,7 @@ export async function fetchSessionLogs(
     .toArray()
 }
 
-export async function updateSessionLog(
+export async function upsertSessionLog(
   // ignore the id so we don't accidentally try to update it
   { _id, ...sessionLog }: SessionLog
 ): Promise<SessionLog | null> {
@@ -145,7 +145,7 @@ export async function addRecord(record: Record): Promise<Record> {
 }
 
 export async function fetchRecords(
-  userId: ObjectId,
+  tmpId: ObjectId | undefined,
   filter: Filter<Record> = {},
   { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
 ): Promise<Record[]> {
@@ -157,6 +157,7 @@ export async function fetchRecords(
   // (instead of looking up the exercise for every record first before starting to filter),
   // and only put the filters that depend on current exercise data into post-lookup.
   const { 'exercise.name': name, activeModifiers, ...otherFilters } = filter
+  const userId = tmpId ?? (await getUserId())
 
   return await records
     .aggregate<Record>([

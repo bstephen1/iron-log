@@ -8,11 +8,9 @@ import {
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
 import { stringify, type ParsedUrlQueryInput } from 'querystring'
-import useSWR from 'swr'
 import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
-import { type ApiError } from '../../models/ApiError'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
@@ -21,25 +19,36 @@ import {
   bodyweightQuerySchema,
   type BodyweightRangeQuery,
 } from '../../models/Bodyweight'
-import { type Record, type RecordRangeQuery } from '../../models/Record'
-import { type SessionLog } from '../../models/SessionLog'
+import {
+  recordQuerySchema,
+  type Record,
+  type RecordRangeQuery,
+} from '../../models/Record'
+import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
   addCategory,
   addExercise,
   addModifier,
+  addRecord,
   deleteCategory,
   deleteExercise,
   deleteModifier,
+  deleteRecord,
   fetchBodyweights,
   fetchCategories,
   fetchExercises,
   fetchModifiers,
+  fetchRecords,
+  fetchSessionLog,
+  fetchSessionLogs,
   updateCategoryFields,
   updateExerciseFields,
   updateModifierFields,
+  updateRecordFields,
   upsertBodyweight,
+  upsertSessionLog,
 } from '../backend/mongoService'
-import { DATE_FORMAT, QUERY_KEYS, URI_RECORDS, URI_SESSIONS } from './constants'
+import { DATE_FORMAT, QUERY_KEYS } from './constants'
 
 // Note: make sure any fetch() functions actually return after the fetch!
 // Otherwise there's no guarantee the write will be finished before it tries to read again...
@@ -125,71 +134,117 @@ const useOptimisticMutation = <
 //---------
 
 export function useSessionLog(day: Dayjs | string) {
-  const { data, isLoading, mutate } = useSWR<SessionLog | null, ApiError>(
-    URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT))
-  )
+  const date = typeof day === 'string' ? day : day.format(DATE_FORMAT)
 
-  return {
-    sessionLog: data,
-    isLoading,
-    mutate,
-  }
+  return useQuery({
+    queryKey: [QUERY_KEYS.sessionLogs, date],
+    queryFn: () => fetchSessionLog(undefined, date),
+  })
 }
 
 export function useSessionLogs(query: DateRangeQuery) {
-  const { data, isLoading, mutate } = useSWR<SessionLog[], ApiError>(
-    URI_SESSIONS + paramify({ ...query })
-  )
+  const hook = useQuery({
+    queryKey: [QUERY_KEYS.sessionLogs, query],
+    queryFn: () => fetchSessionLogs(undefined, query),
+  })
 
   return {
-    sessionLogs: data,
-    sessionLogsIndex: arrayToIndex<SessionLog>('date', data),
-    isLoading,
-
-    mutate,
+    ...hook,
+    index: arrayToIndex('date', hook.data),
   }
+}
+
+export function useSessionLogUpsert(date: string) {
+  const { mutate } = useOptimisticMutation({
+    mutationFn: upsertSessionLog,
+    queryKey: [QUERY_KEYS.sessionLogs, date],
+    updater: (_, sessionLog) => sessionLog,
+  })
+  return mutate
 }
 
 //--------
 // RECORD
 //--------
 
-/** Note: whenever mutate() is used, any component using useRecord will rerender, even if they don't
- *  use the record from this hook. This can be avoided by lifting the full record to a lightweight parent
- *  component and only passing the fields actually needed as props. If the child needs access to mutate(),
- *  it can either take the mutate from this hook as another prop, or use the global mutate from useSWRConfig().
- *
- *  Note that this applies to any other useSWR hook as well.
- */
-export function useRecord(id: string) {
-  const { data, isLoading, mutate } = useSWR<Record | null, ApiError>(
-    URI_RECORDS + id
-  )
+export function useRecords(
+  query?: RecordRangeQuery & DateRangeQuery,
+  enabled = true
+) {
+  const filter = recordQuerySchema.parse(query)
+  const dateFilter = dateRangeQuerySchema.parse(query)
+
+  const hook = useQuery({
+    queryKey: [QUERY_KEYS.records, query],
+    queryFn: () => fetchRecords(undefined, filter, dateFilter),
+    enabled,
+  })
 
   return {
-    record: data ?? null,
-    isLoadingRecord: isLoading,
-    // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
-    mutate,
+    ...hook,
+    index: arrayToIndex('_id', hook.data),
   }
 }
 
-export function useRecords(
-  query?: RecordRangeQuery & DateRangeQuery,
-  shouldFetch = true
-) {
-  const { data, isLoading, mutate } = useSWR<Record[], ApiError>(
-    shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
-  )
+export function useRecordUpdate(date: string) {
+  const { mutate } = useOptimisticMutation<
+    Record[],
+    Record,
+    {
+      _id: string
+      updates: Partial<Record>
+    }
+  >({
+    mutationFn: ({ _id, updates }) => updateRecordFields(_id, updates),
+    queryKey: [QUERY_KEYS.records, { date }],
+    updater: (prev, { _id, updates }) =>
+      prev?.map((rec) => (rec._id === _id ? { ...rec, ...updates } : rec)),
+  })
+  return mutate
+}
 
-  return {
-    // data will be undefined forever if the fetch is null
-    records: shouldFetch ? data : [],
-    recordsIndex: shouldFetch ? arrayToIndex<Record>('_id', data) : {},
+export function useRecordAdd(date: string) {
+  const queryClient = useQueryClient()
+  const { mutate } = useOptimisticMutation<Record[], Record>({
+    mutationFn: (record: Record) => addRecord(record),
+    queryKey: [QUERY_KEYS.records, { date }],
+    updater: (prev = [], record) => {
+      queryClient.setQueryData<SessionLog>(
+        [QUERY_KEYS.sessionLogs, date],
+        (prev) =>
+          createSessionLog(date, prev?.records.concat(record._id), prev?.notes)
+      )
 
-    mutate,
-    isLoading,
-  }
+      return [...prev, record]
+    },
+    invalidates: [QUERY_KEYS.sessionLogs],
+  })
+  return mutate
+}
+
+export function useRecordDelete(date: string) {
+  const queryClient = useQueryClient()
+
+  const { mutate } = useOptimisticMutation<Record[], string>({
+    mutationFn: (id: string) => deleteRecord(id),
+    queryKey: [QUERY_KEYS.records, { date }],
+    updater: (prev, id) => {
+      queryClient.setQueryData<SessionLog>(
+        [QUERY_KEYS.sessionLogs, date],
+        (prev) =>
+          prev
+            ? {
+                ...prev,
+                records: prev.records.filter((_id) => _id !== id),
+              }
+            : undefined
+      )
+
+      return prev?.filter((item) => item._id !== id)
+    },
+    invalidates: [QUERY_KEYS.sessionLogs],
+  })
+  return mutate
 }
 
 //----------

@@ -1,17 +1,15 @@
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
-import { type KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
-import { updateRecordFields } from '../../../lib/backend/mongoService'
+import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   useExercises,
   useExerciseUpdate,
-  useRecord,
+  useRecordUpdate,
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
@@ -29,7 +27,6 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
-import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -41,38 +38,24 @@ import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 // See bug: https://github.com/orgs/vercel/discussions/1657
 
 interface Props {
-  id: string
+  record: Record
   isQuickRender?: boolean
   swiperIndex: number
 }
 export default memo(function RecordCard(props: Props) {
-  const { id, swiperIndex } = props
-  const { record, isLoadingRecord, mutate: mutateRecord } = useRecord(id)
+  const { record, swiperIndex } = props
   // Instead of using record.exercise, we make a separate rest call to get the exercise.
   // This ensures the exercise is up to date if the user has multiple records with the
   // same exercise. record.exercise is only updated upon fetching the record,
   // so if one record updated an exercise any other records would still be using the outdated exercise.
   const exercises = useExercises()
-  const exercise = exercises.index[record?.exercise?._id ?? ''] ?? null
+  const exercise = exercises.index[record.exercise?._id ?? ''] ?? null
 
   // NOTE: If the record is null then somehow there is a recordId in the session
   // with no corresponding record document. The backend removes a null record id
   // from any sessions it exists in on fetch, so if this case is ever visible it
   // should disappear on rerender.
-  if (record === null) {
-    return (
-      <RecordCardSkeleton
-        title={`Record ${swiperIndex + 1}`}
-        Content={
-          <Typography textAlign="center">
-            Whoops! This record does not actually exist. Reload the page to
-            remove it.
-          </Typography>
-        }
-      />
-    )
-  }
-  if (isLoadingRecord || props.isQuickRender) {
+  if (props.isQuickRender) {
     return (
       <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
     )
@@ -80,9 +63,7 @@ export default memo(function RecordCard(props: Props) {
     return (
       <LoadedRecordCard
         {...{
-          record,
           exercise,
-          mutateRecord,
           ...props,
         }}
       />
@@ -108,16 +89,15 @@ function LoadedRecordCard({
   swiperIndex,
   record,
   exercise,
-  mutateRecord,
 }: Props & {
   record: Record
   exercise: Exercise | null
-  mutateRecord: KeyedMutator<Record | null>
 }) {
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const updateExercise = useExerciseUpdate()
+  const updateRecord = useRecordUpdate(record.date)
   const noSwipingDesktop = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
@@ -142,23 +122,19 @@ function LoadedRecordCard({
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
-    async (changes) => {
-      try {
-        await mutateRecord(
-          (cur) => (cur ? updateRecordFields(cur._id, { ...changes }) : null),
-          {
-            optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
-            revalidate: false,
-          }
-        )
-      } catch (e) {
-        enqueueError(
-          e,
-          'Could not update record to a corrupt state. Changes were not saved.'
-        )
-      }
+    async (updates) => {
+      updateRecord(
+        { _id: record._id, updates },
+        {
+          onError: (e) =>
+            enqueueError(
+              e,
+              'Could not update record to a corrupt state. Changes were not saved.'
+            ),
+        }
+      )
     },
-    [mutateRecord]
+    [record._id, updateRecord]
   )
 
   return (

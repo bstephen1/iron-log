@@ -14,6 +14,10 @@ import HistoryCard, {
 import 'swiper/css'
 import 'swiper/css/pagination'
 
+import Box from '@mui/material/Box'
+import { type CardProps } from '@mui/material/Card'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { memo, type Ref, useEffect, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
@@ -21,10 +25,6 @@ import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import NavigationBar from '../../../components/slider/NavigationBar'
 import { type DisplayFields } from '../../../models/DisplayFields'
 import { type RecordRangeQuery } from '../../../models/Record'
-import Box from '@mui/material/Box'
-import { type CardProps } from '@mui/material/Card'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 
 // todo: useSWRInfinite for infinite loading?
 // https://swr.vercel.app/docs/pagination
@@ -63,7 +63,7 @@ export default memo(function HistoryCardsSwiper({
   const [isFirstRender, setIsFirstRender] = useState(true)
 
   // todo: fetch more if the swiper gets close to the end. (Also future dates in case you're in the past?)
-  const { records: historyRecords, isLoading } = useRecords(query, !!query)
+  const { data: historyRecords, isPending } = useRecords(query, !!query)
 
   // each record's history needs a unique className
   const paginationClassName = `pagination-history${_id ? '-' + _id : ''}`
@@ -74,7 +74,7 @@ export default memo(function HistoryCardsSwiper({
     setIsFirstRender(false)
   }, [])
 
-  if (isLoading || !historyRecords) {
+  if (isPending || !historyRecords) {
     return (
       <RecordCardSkeleton
         titleTypographyProps={{ textAlign: 'center' }}

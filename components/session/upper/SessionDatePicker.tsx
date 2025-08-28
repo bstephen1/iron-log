@@ -6,6 +6,9 @@ import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Stack from '@mui/material/Stack'
 import { type TextFieldProps } from '@mui/material/TextField'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton'
+import { PickersDay } from '@mui/x-date-pickers/PickersDay'
 import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { preload } from 'swr'
@@ -17,10 +20,6 @@ import {
 import { paramify, useSessionLogs } from '../../../lib/frontend/restService'
 import { swrFetcher } from '../../../lib/util'
 import TransitionIconButton from '../../TransitionIconButton'
-import useCurrentSessionLog from '../useCurrentSessionLog'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { PickersDay } from '@mui/x-date-pickers/PickersDay'
-import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton'
 
 // The query gets data for the current month +/- 1 month so that
 // data for daysOutsideCurrentMonth is still visible on the current month
@@ -77,11 +76,7 @@ function SessionDatePickerInner({
   const [open, setOpen] = useState(false)
   const [isChangingDay, setIsChangingDay] = useState(false)
   const [visibleMonth, setVisibleMonth] = useState(day)
-  const { sessionLogsIndex, isLoading } = useSessionLogs(
-    buildSessionLogQuery(0, visibleMonth)
-  )
-  const { records: currentRecords, sessionLog: currentSession } =
-    useCurrentSessionLog()
+  const sessionLogs = useSessionLogs(buildSessionLogQuery(0, visibleMonth))
 
   const handleChange = (newPickerValue: Dayjs | null) => {
     setPickerValue(newPickerValue)
@@ -174,18 +169,13 @@ function SessionDatePickerInner({
         fetchNearbyMonths(newMonth)
         setVisibleMonth(newMonth)
       }}
-      loading={isLoading}
+      loading={sessionLogs.isPending}
       renderLoading={() => <DayCalendarSkeleton />}
       // apparently this needs PickersDayProps' type defined to infer types for the other args
       slots={{
         day: (DayComponentProps) => {
           const day = DayComponentProps.day.format(DATE_FORMAT)
-          // the index will not be updated for the current day if user creates a new
-          // session by creating a record
-          const isCurrentDay = day === currentSession?.date
-          const isBadgeVisible = isCurrentDay
-            ? currentRecords?.length
-            : sessionLogsIndex[day]?.records.length
+          const isBadgeVisible = sessionLogs.index[day]?.records.length
           // todo: can populate this with more info, like session type (after that's implemented)
           return (
             <Badge

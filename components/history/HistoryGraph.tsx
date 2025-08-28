@@ -29,8 +29,8 @@ import { type Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { type RecordRangeQuery } from '../../models/Record'
 import { type Set } from '../../models/Set'
-import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
 import useDarkMode from '../useDarkMode'
+import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
 
 // Note: values must be numbers. Y axis scaling gets messed up with strings.
 interface GraphData {
@@ -100,7 +100,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     graphOptions
   const lineType = smoothLine ? 'basis' : 'monotone'
   // only fetch if there is an exercise selected
-  const { records } = useRecords(query, !!query?.exercise)
+  const { data: records } = useRecords(query, !!query?.exercise)
 
   const updateRecordDisplay: UpdateState<RecordDisplay> = (changes) =>
     setRecordDisplay((prev) => ({ ...prev, ...changes }))

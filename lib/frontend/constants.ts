@@ -33,6 +33,8 @@ export enum QUERY_KEYS {
   modifiers = 'modifiers',
   exercises = 'exercises',
   bodyweights = 'bodyweights',
+  sessionLogs = 'sessionLogs',
+  records = 'records',
 }
 
 //------

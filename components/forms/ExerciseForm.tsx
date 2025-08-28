@@ -32,7 +32,7 @@ export default function ExerciseForm({ exercise }: Props) {
   const { _id, name, status, notes, attributes, weight } = exercise
   const modifiers = useModifiers()
   const categories = useCategories()
-  const { records } = useRecords({ exercise: name })
+  const { data: records } = useRecords({ exercise: name })
   const exercises = useExercises()
   const updateExercise = useExerciseUpdate()
   const deleteExercise = useExerciseDelete()

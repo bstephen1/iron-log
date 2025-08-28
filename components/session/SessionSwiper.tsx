@@ -7,20 +7,20 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import { Keyboard, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, type SwiperRef, SwiperSlide } from 'swiper/react'
-import LoadingSpinner from '../../components/loading/LoadingSpinner'
 import NavigationBar from '../../components/slider/NavigationBar'
 import { noSwipingRecord } from '../../lib/frontend/constants'
+import { useRecords, useSessionLog } from '../../lib/frontend/restService'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
-import useCurrentSessionLog from './useCurrentSessionLog'
 
-// todo: look into prefetching data / preloading pages
-// https://swr.vercel.app/docs/prefetching
-
-export default function SessionSwiper() {
+interface Props {
+  date: string
+}
+export default function SessionSwiper({ date }: Props) {
   const theme = useTheme()
-  const { sessionLog, date } = useCurrentSessionLog()
+  const { data: sessionLog } = useSessionLog(date)
+  const records = useRecords({ date })
   // reduce load time for initial render by only rendering the visible RecordCards
   const [isFirstRender, setIsFirstRender] = useState(true)
   // on large screens there are 3 visible slides, but on init the first one is centered
@@ -33,9 +33,6 @@ export default function SessionSwiper() {
   const paginationClassName = 'pagination-record-cards'
   const navPrevClassName = 'nav-prev-record-cards'
   const navNextClassName = 'nav-next-records-cards'
-
-  // instead of using isLoading from useSessionLog do this to let ts know it's not undefined
-  const isLoading = sessionLog === undefined
 
   useEffect(() => {
     setIsFirstRender(false)
@@ -121,7 +118,6 @@ export default function SessionSwiper() {
             how to vertically align them given variable slide height.  */}
       <NavigationBar
         {...{
-          isLoading,
           navNextClassName,
           navPrevClassName,
           paginationClassName,
@@ -129,29 +125,25 @@ export default function SessionSwiper() {
           slot: 'container-start',
         }}
       />
-      {/* Load inside the swiper to increase performance -- swiper is already rendered when loading finishes. 
-            Pagination doesn't work properly inside the isLoading check so it has to be extracted too. */}
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <>
-          {sessionLog?.records.map((id, i) => (
-            <SwiperSlide key={id}>
-              <RecordCard
-                isQuickRender={isFirstRender && i >= initialVisibleSlides}
-                id={id}
-                swiperIndex={i}
-              />
-            </SwiperSlide>
-          ))}
-          <SwiperSlide>
-            <Stack spacing={2} sx={{ p: 0.5 }}>
-              <AddRecordCard />
-              {!sessionHasRecords && <CopySessionCard key={date} />}
-            </Stack>
+      {sessionLog?.records.map((id, i) =>
+        records.index[id] ? (
+          <SwiperSlide key={id}>
+            <RecordCard
+              isQuickRender={isFirstRender && i >= initialVisibleSlides}
+              record={records.index[id]}
+              swiperIndex={i}
+            />
           </SwiperSlide>
-        </>
+        ) : (
+          <></>
+        )
       )}
+      <SwiperSlide>
+        <Stack spacing={2} sx={{ p: 0.5 }}>
+          <AddRecordCard />
+          {!sessionHasRecords && <CopySessionCard key={date} />}
+        </Stack>
+      </SwiperSlide>
     </Swiper>
   )
 }
