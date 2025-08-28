@@ -171,8 +171,8 @@ export function useRecords(
   query?: RecordRangeQuery & DateRangeQuery,
   enabled = true
 ) {
-  const filter = recordQuerySchema.parse(query)
-  const dateFilter = dateRangeQuerySchema.parse(query)
+  const filter = recordQuerySchema.safeParse(query).data ?? {}
+  const dateFilter = dateRangeQuerySchema.safeParse(query).data ?? {}
 
   const hook = useQuery({
     queryKey: [QUERY_KEYS.records, query],
@@ -433,8 +433,11 @@ export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
   const start = query?.start ? addDay(query.start) : undefined
   const end = query?.end ? addDay(query.end) : undefined
 
-  const filter = bodyweightQuerySchema.parse(query)
-  const dateQuery = dateRangeQuerySchema.parse({ start, end, ...query })
+  // todo: probably can get rid of zod now, this is cumbersome anyway.
+  // Just separate the filter and date queries?
+  const filter = bodyweightQuerySchema.safeParse(query).data ?? {}
+  const dateQuery = dateRangeQuerySchema.safeParse({ start, end, ...query })
+    .data ?? { start: dayjs().add(-6, 'months').format(DATE_FORMAT) }
 
   const { data, ...rest } = useQuery({
     queryKey: [QUERY_KEYS.bodyweights, query],

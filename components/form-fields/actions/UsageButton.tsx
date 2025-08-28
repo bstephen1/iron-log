@@ -24,7 +24,7 @@ interface Props {
 export default function UsageButton({ name, buttonProps }: Props) {
   const [open, setOpen] = useState(false)
   const handleClose = () => setOpen(false)
-  const { data: records, isPending } = useRecords({
+  const { data: records, isLoading } = useRecords({
     exercise: name,
     limit: maxRecords + 1,
   })
@@ -44,7 +44,7 @@ export default function UsageButton({ name, buttonProps }: Props) {
           </Badge>
         }
         disabled={!records?.length}
-        loading={isPending}
+        loading={isLoading}
         loadingPosition="start"
         {...buttonProps}
       >

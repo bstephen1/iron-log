@@ -62,8 +62,8 @@ export default memo(function HistoryCardsSwiper({
 }: Props) {
   const [isFirstRender, setIsFirstRender] = useState(true)
 
-  // todo: fetch more if the swiper gets close to the end. (Also future dates in case you're in the past?)
-  const { data: historyRecords, isPending } = useRecords(query, !!query)
+  // isPending will be true forever if useQuery is not enabled
+  const { data: historyRecords, isLoading } = useRecords(query, !!query)
 
   // each record's history needs a unique className
   const paginationClassName = `pagination-history${_id ? '-' + _id : ''}`
@@ -74,7 +74,11 @@ export default memo(function HistoryCardsSwiper({
     setIsFirstRender(false)
   }, [])
 
-  if (isPending || !historyRecords) {
+  if (!query) {
+    return <></>
+  }
+
+  if (isLoading || !historyRecords) {
     return (
       <RecordCardSkeleton
         titleTypographyProps={{ textAlign: 'center' }}
@@ -82,10 +86,6 @@ export default memo(function HistoryCardsSwiper({
         sx={{ px: 0, m: 0 }}
       />
     )
-  }
-
-  if (!query) {
-    return <></>
   }
 
   // assumes query has end date set to the current record's date (so will exclude it)

@@ -152,7 +152,7 @@ function SessionDatePickerInner({
       onMonthChange={(newMonth) => {
         setVisibleMonth(newMonth)
       }}
-      loading={sessionLogs.isPending}
+      loading={sessionLogs.isLoading}
       renderLoading={() => <DayCalendarSkeleton />}
       // apparently this needs PickersDayProps' type defined to infer types for the other args
       slots={{

@@ -87,7 +87,7 @@ export default function CopySessionCard() {
         ) : (
           <Button
             loading={
-              isLoading || prevSessionLog.isPending || prevRecords.isPending
+              isLoading || prevSessionLog.isLoading || prevRecords.isLoading
             }
             loadingPosition="start"
             // if using loadingPosition, a startIcon is required
