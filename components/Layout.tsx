@@ -11,9 +11,6 @@ import { SessionProvider } from 'next-auth/react'
 import { SnackbarProvider } from 'notistack'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { useEffect, type ReactNode } from 'react'
-import { SWRConfig, type SWRConfiguration } from 'swr'
-import useSWRCacheProvider from '../components/useSWRCacheProvider'
-import { swrFetcher } from '../lib/util'
 import { bluePalette } from '../styles/themePalettes'
 import AppSnackbar from './AppSnackbar'
 import Navbar from './Navbar'
@@ -28,18 +25,12 @@ const disableNumberSpin = () => {
 
 interface Props {
   children: ReactNode
-  swrConfig?: SWRConfiguration
   /** only needs to be provided if mocking the user */
   session?: Session
   /** navbar should be disabled for component testing */
   disableNavbar?: boolean
 }
-export default function Layout({
-  children,
-  swrConfig,
-  session,
-  disableNavbar,
-}: Props) {
+export default function Layout({ children, session, disableNavbar }: Props) {
   // theme uses CSS variables to better support dark mode.
   // Any code changes should follow the CSS theme docs, not the normal theme docs.
   // See: https://mui.com/material-ui/customization/css-theme-variables/usage/
@@ -52,8 +43,6 @@ export default function Layout({
       colorSchemeSelector: 'class',
     },
   })
-  const provider = useSWRCacheProvider()
-
   // disable any numeric fields from having the "scroll to increment value" feature
   useEffect(() => {
     document.addEventListener('wheel', disableNumberSpin)
@@ -63,41 +52,32 @@ export default function Layout({
 
   return (
     <SessionProvider session={session}>
-      <SWRConfig
-        value={
-          swrConfig ?? {
-            fetcher: swrFetcher,
-            provider,
-          }
-        }
-      >
-        <NuqsAdapter>
-          <ThemeProvider theme={theme}>
-            <CssBaseline /> {/* for dark mode */}
-            <InitColorSchemeScript attribute="class" />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <SnackbarProvider
-                maxSnack={1}
-                // notistack requires you to assign a snackbar to each variant.
-                // This means we would have to assign the same snackbar to each key
-                // (success, error, etc). Instead we override the default variant,
-                // turn off all other variants, and add a "severity" prop.
-                // See notistack.d.ts for type definitions
-                Components={{
-                  default: AppSnackbar,
-                }}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-              >
-                <Analytics />
-                {!disableNavbar && <Navbar />}
-                <main>
-                  <Container maxWidth="lg">{children}</Container>
-                </main>
-              </SnackbarProvider>
-            </LocalizationProvider>
-          </ThemeProvider>
-        </NuqsAdapter>
-      </SWRConfig>
+      <NuqsAdapter>
+        <ThemeProvider theme={theme}>
+          <CssBaseline /> {/* for dark mode */}
+          <InitColorSchemeScript attribute="class" />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <SnackbarProvider
+              maxSnack={1}
+              // notistack requires you to assign a snackbar to each variant.
+              // This means we would have to assign the same snackbar to each key
+              // (success, error, etc). Instead we override the default variant,
+              // turn off all other variants, and add a "severity" prop.
+              // See notistack.d.ts for type definitions
+              Components={{
+                default: AppSnackbar,
+              }}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+              <Analytics />
+              {!disableNavbar && <Navbar />}
+              <main>
+                <Container maxWidth="lg">{children}</Container>
+              </main>
+            </SnackbarProvider>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </NuqsAdapter>
     </SessionProvider>
   )
 }

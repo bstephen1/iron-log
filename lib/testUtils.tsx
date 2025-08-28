@@ -10,7 +10,7 @@ import { devUserId } from './frontend/constants'
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.
 
-/** Custom render implementation that wraps the element with necessary layout components (eg, SWRConfig).
+/** Custom render implementation that wraps the element with necessary layout components.
  *  Also returns a user object to remove the need to setup a userEvent.
  */
 // This does do an unnecessary setup if there's no interaction, but that's probably not a big deal.
@@ -55,13 +55,6 @@ const customRender = (
             <Layout
               {...{
                 disableNavbar: true,
-                swrConfig: {
-                  // Note: fetch() needs to be polyfilled or it will be undefined (just need to add "import 'whatwg-fetch'" in the test setup file).
-                  // See: https://testing-library.com/docs/react-testing-library/setup/#configuring-jest-with-test-utils
-                  // See: https://mswjs.io/docs/faq#swr
-                  fetcher: (url: string) => fetch(url).then((r) => r.json()),
-                  provider: () => new Map(),
-                },
                 session: {
                   user: options?.user ?? { id: devUserId },
                   expires: '',

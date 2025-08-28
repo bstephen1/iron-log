@@ -26,9 +26,6 @@ import NavigationBar from '../../../components/slider/NavigationBar'
 import { type DisplayFields } from '../../../models/DisplayFields'
 import { type RecordRangeQuery } from '../../../models/Record'
 
-// todo: useSWRInfinite for infinite loading?
-// https://swr.vercel.app/docs/pagination
-
 interface Props {
   /** displayFields to use for each history card. If omitted, cards will use their own displayFields. */
   displayFields?: DisplayFields

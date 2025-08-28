@@ -1,5 +1,4 @@
 import { v4 as uuid } from 'uuid'
-import { ApiError } from '../models/ApiError'
 import { type Exercise } from '../models/AsyncSelectorOption/Exercise'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
@@ -30,30 +29,12 @@ export const arrayToIndex = <T extends object>(index: keyof T, arr?: T[]) => {
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
 export const doNothing = () => {}
 
-export const swrFetcher = (url: string) => fetchJson(url)
-
-/** performs a fetch and pulls out the json from the res.
- *  Also checks if the res is an error. Note just calling fetch() by itself
- *  has no inherent error checking!
- */
-export const fetchJson = async <T>(...args: Parameters<typeof fetch>) => {
-  // note: If the second arg omitted, request defaults to fetch.
-  const res = await fetch(...args)
-  const json: T | ApiError = await res.json()
-  if (res.ok) {
-    return json as T
-  }
-
-  // the original error details can be viewed in the network tab
-  throw new ApiError(res.status, (json as ApiError).message)
-}
-
 /** Capitalize first letter of a string.
  *  Mui has an undocumented capitalize() function, but it doesn't work in node env
  *  (eg, running ts script files from command line).   */
 export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1)
 
-/** Async partial update, intended for swr mutate(). For non-async type use UpdateState.  */
+/** Async partial update, intended for db updates. For non-async type use UpdateState.  */
 export type UpdateFields<T> = (changes: Partial<T>) => Promise<void>
 /** Partial state update that spreads over previous state. For async type use UpdateFields.  */
 export type UpdateState<T> = (changes: Partial<T>) => void
