@@ -71,7 +71,6 @@ interface Props {
   swipeToRecord: (i: number) => void
 }
 export default function HistoryGraph({ query, swipeToRecord }: Props) {
-  console.log(query)
   const { palette } = useTheme()
   const isDark = useDarkMode()
   const bodyweightColor = isDark ? green[500] : green[800]
@@ -80,7 +79,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
   // BWs and records are sorted newest first. It looks more natural in the
   // swiper to start on the right and move left vs oldest first.
   const { data: bodyweightData } = useBodyweights(query)
-  console.log('FETCHED BW', bodyweightData)
   const { data: earliestRecordOfficialBw } = useBodyweights({
     end: query?.start,
     limit: 1,
@@ -140,8 +138,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     query?.exercise,
     query?.start,
   ])
-
-  console.log('BW DATA', bodyweightGraphData)
 
   // to track width we want to use the size of the graph container, since that will be smaller than window width
   const { ref: graphContainerRef, width: graphContainerWidth = 0 } =
@@ -253,8 +249,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     records,
     setReducer,
   ])
-
-  console.log('GRAPH', graphData)
 
   return (
     <Stack spacing={2}>
