@@ -7,7 +7,6 @@ import {
   type QueryKey,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
-import { stringify, type ParsedUrlQueryInput } from 'querystring'
 import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
@@ -60,22 +59,6 @@ interface UseOptions {
    *  NOTE: cannot use with useSuspenseQuery.
    */
   enabled?: boolean
-}
-/** Parse a Query object into a rest param string. Query objects should be spread into this function. */
-export const paramify = (query: ParsedUrlQueryInput) => {
-  const parsedQuery: ParsedUrlQueryInput = {}
-  for (const [key, value] of Object.entries(query)) {
-    // stringify() adds empty strings to the url param, which can cause unintended behavior.
-    // Generally the presence of a query param indicates truthiness, whereas an empty string indicates a falsy value.
-    if (!value) continue
-
-    // note: stringify() drops empty arrays.
-    // See: https://github.com/psf/requests/issues/6557
-    parsedQuery[key] = value
-  }
-  // note that stringify doesn't add the leading '?'.
-  // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
-  return '?' + stringify(parsedQuery)
 }
 
 const toNames = (entities?: AsyncSelectorOption[]) =>
@@ -376,22 +359,11 @@ export function useCategoryUpdate() {
       updates: Partial<Category>
     }
   >({
-    mutationFn: ({ _id, name, updates }) => updateCategoryFields(_id, updates),
+    mutationFn: ({ _id, updates }) => updateCategoryFields(_id, updates),
     queryKey: [QUERY_KEYS.categories],
     updater: (prev, { _id, updates }) =>
       prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
     invalidates: ['exercises'],
-    // todo: not working
-    // if (updates.name) {
-    //   queryClient.setQueryData<Exercise[]>(['exercises'], (prev) =>
-    //     prev?.map((ex) => ({
-    //       ...ex,
-    //       categories: ex.categories.map((cat) =>
-    //         cat === name ? (updates.name as string) : cat
-    //       ),
-    //     }))
-    //   )
-    // }
   })
   return mutate
 }

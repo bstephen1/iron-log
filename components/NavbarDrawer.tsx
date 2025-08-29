@@ -35,7 +35,11 @@ export default function NavbarDrawer() {
 
   return (
     <>
-      <IconButton onClick={toggleOpen} aria-label="open navbar menu drawer">
+      <IconButton
+        onClick={toggleOpen}
+        aria-label="open navbar menu drawer"
+        sx={{ mr: 1 }}
+      >
         <MenuIcon />
       </IconButton>
       <Drawer anchor="left" open={open} onClose={toggleOpen}>

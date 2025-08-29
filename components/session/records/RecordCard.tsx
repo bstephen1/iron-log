@@ -65,7 +65,7 @@ export default memo(function RecordCard({
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const updateExercise = useExerciseUpdate()
-  const updateRecord = useRecordUpdate(record.date)
+  const updateRecord = useRecordUpdate(date)
   const noSwipingDesktop = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
