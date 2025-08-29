@@ -75,8 +75,7 @@
     "react-dom": "^19.1.1",
     "typescript": "^5.9.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4",
-    "whatwg-fetch": "^3.6.20"
+    "vitest": "^3.2.4"
   },
   "prettier": {
     "semi": false,
