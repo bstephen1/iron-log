@@ -1,15 +1,15 @@
 import { type Session } from 'next-auth/core/types'
 import { type JWT } from 'next-auth/jwt'
 import { expect, it, vi } from 'vitest'
-import { devUserId } from '../../../lib/frontend/constants'
-import { authOptions } from './[...nextauth]'
+import { devUserId } from './lib/frontend/constants'
+import { authOptions } from './pages/api/auth/[...nextauth]'
 
 // provider options are typed as "any", so we can't avoid the eslint warnings
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 vi.mock('next-auth')
-vi.mock('./[...nextauth].ts', async (importOriginal) => ({
+vi.mock('./pages/api/auth/[...nextauth]', async (importOriginal) => ({
   ...(await importOriginal()),
   default: vi.fn(),
 }))

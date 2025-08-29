@@ -1,6 +1,6 @@
-import { it, expect } from 'vitest'
-import { URI_RECORDS } from '../../../lib/frontend/constants'
-import { render, screen, useServer, waitFor } from '../../../lib/testUtils'
+import { expect, it, vi } from 'vitest'
+import { fetchRecords } from '../../../lib/backend/mongoService'
+import { render, screen, waitFor } from '../../../lib/testUtils'
 import { createRecord } from '../../../models/Record'
 import UsageButton from './UsageButton'
 
@@ -14,7 +14,7 @@ it('displays usage when clicked', async () => {
     sets: [{ reps: 6 }],
     setType: { field: 'reps', operator: 'exactly', value: 6 },
   })
-  useServer(URI_RECORDS, [record, singularRecord])
+  vi.mocked(fetchRecords).mockResolvedValue([record, singularRecord])
   const { user } = render(<UsageButton name="name" />)
 
   // have to wait for server res
@@ -37,7 +37,7 @@ it('displays usage when clicked', async () => {
 it('shows singular label', async () => {
   const date = '2020-02-02'
   const record = createRecord(date)
-  useServer(URI_RECORDS, [record])
+  vi.mocked(fetchRecords).mockResolvedValue([record])
   render(<UsageButton name="name" />)
 
   expect(await screen.findByLabelText('used in 1 record')).toBeVisible()

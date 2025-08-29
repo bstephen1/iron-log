@@ -1,8 +1,9 @@
 import dayjs from 'dayjs'
 import { expect, it, vi } from 'vitest'
-import { render, screen, useServer } from '../../../lib/testUtils'
+import { render, screen } from '../../../lib/testUtils'
 import { createSessionLog } from '../../../models/SessionLog'
 import SessionDatePicker from './SessionDatePicker'
+import { fetchSessionLogs } from '../../../lib/backend/mongoService'
 
 const mockHandleDateChange = vi.fn()
 
@@ -61,7 +62,7 @@ it('Shows correct aria label for picker button', async () => {
 })
 
 it('shows existing session data with badges', async () => {
-  useServer('/api/sessions/*', [
+  vi.mocked(fetchSessionLogs).mockResolvedValue([
     createSessionLog('2020-01-05', ['dummyRecordID']),
     createSessionLog('2020-01-10'),
   ])
@@ -82,7 +83,7 @@ it('shows existing session data with badges', async () => {
 })
 
 it('handles changing month', async () => {
-  useServer('/api/sessions/*', [
+  vi.mocked(fetchSessionLogs).mockResolvedValue([
     createSessionLog('2020-01-05', ['dummyRecordID']),
     createSessionLog('2020-01-10'),
   ])

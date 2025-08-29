@@ -5,16 +5,6 @@ import { getServerSession } from 'next-auth'
 import { ApiError } from '../../../models/ApiError'
 import { authOptions } from '../../../pages/api/auth/[...nextauth]'
 
-export type ApiHandler<T> = (
-  req: NextApiRequest,
-  userId: UserId
-) => T | null | Promise<T | null>
-
-export const methodNotAllowed = new ApiError(
-  StatusCodes.METHOD_NOT_ALLOWED,
-  'Method not allowed.'
-)
-
 /** userId format for backend use. The frontend will not see the userId.
  * For mongo this is an ObjectId. */
 export type UserId = ObjectId

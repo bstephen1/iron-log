@@ -1,35 +1,27 @@
 import ClearIcon from '@mui/icons-material/Clear'
-import { memo } from 'react'
-import { useSWRConfig } from 'swr'
-import { URI_RECORDS } from '../../../../lib/frontend/constants'
-import { type Record } from '../../../../models/Record'
 import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 import { type SxProps } from '@mui/material/styles'
-import { updateRecordFields } from '../../../../lib/backend/mongoService'
+import { memo } from 'react'
+import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
+import { useRecordUpdate } from '../../../../lib/frontend/restService'
+import { type Record } from '../../../../models/Record'
+import { type Set } from '../../../../models/Set'
 
 interface Props extends IconButtonProps {
   _id: Record['_id']
   index: number
+  sets: Set[]
   sx?: SxProps
 }
-export default memo(function DeleteSetButton({ _id, index, sx }: Props) {
-  const { mutate } = useSWRConfig()
+export default memo(function DeleteSetButton({ _id, index, sets, sx }: Props) {
+  const date = useCurrentDate()
+  const updateRecord = useRecordUpdate(date)
 
   const handleDeleteSet = async () => {
-    mutate<Record | null>(
-      URI_RECORDS + _id,
-      (cur) =>
-        cur
-          ? updateRecordFields(_id, {
-              ['sets']: cur.sets.filter((_, j) => j !== index),
-            })
-          : null,
-      {
-        optimisticData: (cur) =>
-          cur ? { ...cur, sets: cur.sets.filter((_, j) => j !== index) } : null,
-        revalidate: false,
-      }
-    )
+    updateRecord({
+      _id,
+      updates: { sets: sets.filter((_, j) => j !== index) },
+    })
   }
 
   return (

@@ -1,9 +1,5 @@
 import ListIcon from '@mui/icons-material/List'
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { useRecords } from '../../../lib/frontend/restService'
-import { stringifySetType } from '../../../models/Set'
 import Badge from '@mui/material/Badge'
 import Button, { type ButtonProps } from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
@@ -14,6 +10,10 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
+import Link from 'next/link'
+import { useState } from 'react'
+import { useRecords } from '../../../lib/frontend/restService'
+import { stringifySetType } from '../../../models/Set'
 
 const maxRecords = 10
 
@@ -24,7 +24,10 @@ interface Props {
 export default function UsageButton({ name, buttonProps }: Props) {
   const [open, setOpen] = useState(false)
   const handleClose = () => setOpen(false)
-  const { records } = useRecords({ exercise: name, limit: maxRecords + 1 })
+  const { data: records, isLoading } = useRecords({
+    exercise: name,
+    limit: maxRecords + 1,
+  })
 
   return (
     <>
@@ -41,6 +44,8 @@ export default function UsageButton({ name, buttonProps }: Props) {
           </Badge>
         }
         disabled={!records?.length}
+        loading={isLoading}
+        loadingPosition="start"
         {...buttonProps}
       >
         Usage

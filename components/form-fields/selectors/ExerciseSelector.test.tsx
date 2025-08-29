@@ -1,7 +1,10 @@
 import { type ComponentProps } from 'react'
 import { expect, it, vi } from 'vitest'
-import { URI_CATEGORIES, URI_EXERCISES } from '../../../lib/frontend/constants'
-import { render, screen, useServer } from '../../../lib/testUtils'
+import {
+  fetchCategories,
+  fetchExercises,
+} from '../../../lib/backend/mongoService'
+import { render, screen } from '../../../lib/testUtils'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import {
   createExercise,
@@ -35,12 +38,12 @@ const TestSelector = (
 )
 
 it('does not open autocomplete when filter menu is open', async () => {
-  useServer(URI_CATEGORIES, [testCategory])
+  vi.mocked(fetchCategories).mockResolvedValue([testCategory])
   const { user } = render(<TestSelector />)
   const autocompleteText = /no options/i
 
   // click open autocomplete
-  await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
+  await user.click(await screen.findByPlaceholderText(autocompletePlaceholder))
   expect(screen.getByText(autocompleteText)).toBeVisible()
 
   // click open filter
@@ -66,12 +69,15 @@ it('does not open autocomplete when filter menu is open', async () => {
 })
 
 it('filters exercises based on category filter', async () => {
-  useServer(URI_CATEGORIES, [testCategory])
-  useServer(URI_EXERCISES, [matchingExercise, unmatchedExercise])
+  vi.mocked(fetchCategories).mockResolvedValue([testCategory])
+  vi.mocked(fetchExercises).mockResolvedValue([
+    matchingExercise,
+    unmatchedExercise,
+  ])
   const { user } = render(<TestSelector categoryFilter={testCategoryName} />)
 
   // open autocomplete
-  await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
+  await user.click(await screen.findByPlaceholderText(autocompletePlaceholder))
 
   expect(screen.getByText(matchingExercise.name)).toBeVisible()
   expect(screen.queryByText(unmatchedExercise.name)).not.toBeInTheDocument()
@@ -79,8 +85,11 @@ it('filters exercises based on category filter', async () => {
 
 it('unselects exercise if it is not valid for selected category', async () => {
   const otherCategoryName = 'other'
-  useServer(URI_CATEGORIES, [testCategory, createCategory(otherCategoryName)])
-  useServer(URI_EXERCISES, [unmatchedExercise])
+  vi.mocked(fetchCategories).mockResolvedValue([
+    testCategory,
+    createCategory(otherCategoryName),
+  ])
+  vi.mocked(fetchExercises).mockResolvedValue([unmatchedExercise])
   const { user } = render(
     <TestSelector
       categoryFilter={testCategoryName}
@@ -90,7 +99,7 @@ it('unselects exercise if it is not valid for selected category', async () => {
 
   // A category is already selected. We just need to trigger a category change
   // (which won't do anything because handleCategoryChange is being mocked)
-  await user.click(screen.getByLabelText(categoryLabel))
+  await user.click(await screen.findByLabelText(categoryLabel))
   await user.click(screen.getByText(otherCategoryName))
 
   // autocomplete has reset
@@ -105,11 +114,11 @@ it('sorts exercises by status', async () => {
     createExercise('option 3'),
     createExercise('option 4', { status: Status.archived }),
   ]
-  useServer(URI_EXERCISES, unsortedExercises)
+  vi.mocked(fetchExercises).mockResolvedValue(unsortedExercises)
   const { user } = render(<TestSelector />)
 
   // open autocomplete
-  await user.click(screen.getByPlaceholderText(autocompletePlaceholder))
+  await user.click(await screen.findByPlaceholderText(autocompletePlaceholder))
   // Type a new option. This must be a shared string among all
   // unsortedExercises because the selector filters the options based on the input
   await user.paste('option')

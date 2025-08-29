@@ -1,7 +1,5 @@
 'use client'
 import Grid from '@mui/material/Grid'
-import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import dayjs, { type Dayjs } from 'dayjs'
 import { useRouter } from 'next/navigation'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
@@ -14,13 +12,6 @@ interface Props {
 export default function TitleBar(props: Props) {
   const day = dayjs(props.date)
   const router = useRouter()
-  const theme = useTheme()
-  // getServerSideProps messes up useSwr and prevents rerenders from
-  // being triggered for the bodyweight input and date picker, causing them to
-  // load infinitely. It only affects these useSwr calls.
-  // Other ones like useModifiers seem to still work due to nameSort().
-  // This is a tmp fix to force a rerender on small screens.
-  const _tmpLoadingFix = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleDateChange = (newDay: Dayjs) => {
     const date = newDay.format(DATE_FORMAT)

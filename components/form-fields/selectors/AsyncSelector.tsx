@@ -1,6 +1,5 @@
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { useState } from 'react'
-import { type KeyedMutator } from 'swr'
 import AsyncAutocomplete, {
   type AsyncAutocompleteProps,
 } from '../../../components/AsyncAutocomplete'
@@ -23,14 +22,12 @@ export interface AsyncSelectorProps<
   handleFilterChange?: (options: C[]) => void
   /** standard autocomplete onChange() callback */
   handleChange: (value: C | null) => void
-  /** locally mutate options when adding a new item.
-   *  If omitted, adding new items is disabled.
-   */
-  mutateOptions?: KeyedMutator<C[]>
   /** function to create C  */
   createOption: (name: string) => C
-  /**  function to add new C to db */
-  addNewItem: (value: C) => Promise<C>
+  /**  function to add new C to db.
+   *   If omitted, adding new items is disabled.
+   */
+  addNewItem?: (value: C) => unknown
   /** This component does not support multiple selections. */
   multiple?: false
 }
@@ -42,12 +39,11 @@ export default function AsyncSelector<
   handleFilterChange,
   handleChange,
   options = [],
-  mutateOptions,
   createOption,
   addNewItem,
   ...asyncAutocompleteProps
 }: AsyncSelectorProps<C, DisableClearable>) {
-  const addNewDisabled = !mutateOptions
+  const addNewDisabled = !addNewItem
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic.
@@ -78,20 +74,16 @@ export default function AsyncSelector<
       getOptionLabel={(option) => option.name}
       onChange={async (_, newValue) => {
         // if the value is a new record, add it to the db
-        if (newValue?.inputValue) {
+        // note: the addNewDisabled check is not strictly necessary since
+        // the filterOptions callback will only allow the new input value
+        // if addNew is enabled
+        if (newValue?.inputValue && !addNewDisabled) {
           // The new option's name is the visible label `Add "xxx"`.
           // We want to set the name to be the raw inputValue.
           const newOption = createOption(newValue.inputValue)
           setInputValue(inputValue)
 
-          // mutateOptions will always be defined here since otherwise inputValue will not be set in filterOptions
-          mutateOptions?.(
-            async (options = []) => {
-              const newItem = await addNewItem(newOption)
-              return options.concat(newItem)
-            },
-            { optimisticData: options.concat(newOption) }
-          )
+          addNewItem(newOption)
 
           handleChange(newOption)
         } else {

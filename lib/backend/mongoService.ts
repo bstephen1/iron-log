@@ -57,7 +57,7 @@ export async function fetchSessionLogs(
     .toArray()
 }
 
-export async function updateSessionLog(
+export async function upsertSessionLog(
   // ignore the id so we don't accidentally try to update it
   { _id, ...sessionLog }: SessionLog
 ): Promise<SessionLog | null> {
@@ -145,7 +145,7 @@ export async function addRecord(record: Record): Promise<Record> {
 }
 
 export async function fetchRecords(
-  userId: ObjectId,
+  tmpId: ObjectId | undefined,
   filter: Filter<Record> = {},
   { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
 ): Promise<Record[]> {
@@ -157,6 +157,7 @@ export async function fetchRecords(
   // (instead of looking up the exercise for every record first before starting to filter),
   // and only put the filters that depend on current exercise data into post-lookup.
   const { 'exercise.name': name, activeModifiers, ...otherFilters } = filter
+  const userId = tmpId ?? (await getUserId())
 
   return await records
     .aggregate<Record>([
@@ -220,7 +221,7 @@ export async function updateRecordFields(
   return (await records.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
-    { returnDocument: 'after' }
+    { returnDocument: 'after', projection: { userId: 0 } }
   )) as Record
 }
 
@@ -247,10 +248,8 @@ export async function addExercise(exercise: Exercise): Promise<Exercise> {
   return exercise
 }
 
-export async function fetchExercises(
-  tmpId: ObjectId | undefined = undefined
-): Promise<Exercise[]> {
-  const userId = tmpId ?? (await getUserId())
+export async function fetchExercises(): Promise<Exercise[]> {
+  const userId = await getUserId()
   return await exercises
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
@@ -309,8 +308,8 @@ export async function addModifier(modifier: Modifier): Promise<Modifier> {
   return modifier
 }
 
-export async function fetchModifiers(tmpId?: ObjectId): Promise<Modifier[]> {
-  const userId = tmpId ?? (await getUserId())
+export async function fetchModifiers(): Promise<Modifier[]> {
+  const userId = await getUserId()
   return await modifiers
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
@@ -385,8 +384,8 @@ export async function addCategory(category: Category): Promise<Category> {
   return category
 }
 
-export async function fetchCategories(tmpId?: ObjectId): Promise<Category[]> {
-  const userId = tmpId ?? (await getUserId())
+export async function fetchCategories(): Promise<Category[]> {
+  const userId = await getUserId()
   return await categories
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
@@ -470,7 +469,7 @@ export async function fetchBodyweights(
  *
  * Note: two records can exist on the same date if they are different types.
  */
-export async function updateBodyweight(
+export async function upsertBodyweight(
   newBodyweight: Bodyweight
 ): Promise<Bodyweight> {
   const userId = await getUserId()
