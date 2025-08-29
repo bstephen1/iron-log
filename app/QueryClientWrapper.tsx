@@ -1,7 +1,7 @@
 'use client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Suspense, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import getQueryClient from '../lib/getQueryClient'
 
 // This file is based on the tanstack SSR guide:
@@ -26,9 +26,7 @@ export default function QueryClientWrapper({
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Suspense is required to satisfy a build check due to something about prefetching with react-query. */}
-      {/* It doesn't need a fallback because it's not actually doing anything */}
-      <Suspense>{children}</Suspense>
+      {children}
       <ReactQueryDevtools />
     </QueryClientProvider>
   )

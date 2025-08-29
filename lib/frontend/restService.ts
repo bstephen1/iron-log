@@ -50,9 +50,17 @@ import {
 } from '../backend/mongoService'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
 
-// Note: make sure any fetch() functions actually return after the fetch!
-// Otherwise there's no guarantee the write will be finished before it tries to read again...
-
+interface UseOptions {
+  /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
+   *  component using this option. The component will be given a promise from
+   *  the server and the Suspense boundary will render until the promise resolves.
+   */
+  suspense?: boolean
+  /** Determines whether the fetch will occur. Defaults to true.
+   *  NOTE: cannot use with useSuspenseQuery.
+   */
+  enabled?: boolean
+}
 /** Parse a Query object into a rest param string. Query objects should be spread into this function. */
 export const paramify = (query: ParsedUrlQueryInput) => {
   const parsedQuery: ParsedUrlQueryInput = {}
@@ -251,8 +259,8 @@ export function useRecordDelete(date: string) {
 // EXERCISE
 //----------
 
-export function useExercises() {
-  const { data, ...rest } = useSuspenseQuery({
+export function useExercises({ suspense }: UseOptions = {}) {
+  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.exercises],
     queryFn: fetchExercises,
   })
@@ -340,8 +348,8 @@ export function useModifierDelete() {
   return mutate
 }
 
-export function useModifiers() {
-  const { data, ...rest } = useSuspenseQuery({
+export function useModifiers({ suspense }: UseOptions = {}) {
+  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.modifiers],
     queryFn: fetchModifiers,
   })
@@ -406,8 +414,8 @@ export function useCategoryDelete() {
   return mutate
 }
 
-export function useCategories() {
-  const { data, ...rest } = useSuspenseQuery({
+export function useCategories({ suspense }: UseOptions = {}) {
+  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.categories],
     queryFn: fetchCategories,
   })
