@@ -34,6 +34,12 @@ test('adds an exercise', async ({ page }) => {
   await page.getByPlaceholder('Add note').fill('my note')
   await page.getByRole('button', { name: 'Confirm' }).click()
 
+  // wait for processing to finish -- reloading while a db save is in progress
+  // will abort it
+  // NOTE: Should fix the underlying issue that reloading aborts saving data
+  // reloading causes [Error: aborted] { code: 'ECONNRESET', digest: '4181194784' }
+  await page.waitForTimeout(1000)
+
   // confirm edits persist on reload
   await page.reload()
 

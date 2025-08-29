@@ -14,14 +14,17 @@ export class SessionsPage {
 
     // wait for loading
     await expect(this.page.getByRole('progressbar')).toHaveCount(0)
+    const recordCount = await this.page
+      .getByRole('button', { name: 'Add new set' })
+      .count()
 
     await this.page.getByLabel('Exercise').last().fill(exercise)
     await this.page.keyboard.press('Enter')
     await this.page.getByText('Add record').click()
 
-    // wait for everything to finish processing and Add Record is reset to default
+    // if page is refreshed before changes are saved, the changes would be aborted
     await expect(
-      this.page.getByRole('button', { name: 'Add Record' })
-    ).toBeDisabled()
+      this.page.getByRole('button', { name: 'Add new set' })
+    ).toHaveCount(recordCount + 1)
   }
 }
