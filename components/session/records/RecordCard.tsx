@@ -4,7 +4,6 @@ import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
-import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   useExercises,
@@ -39,38 +38,8 @@ import RenderSets from './sets/RenderSets'
 
 interface Props {
   record: Record
-  isQuickRender?: boolean
   swiperIndex: number
 }
-export default memo(function RecordCard(props: Props) {
-  const { record, swiperIndex } = props
-  // Instead of using record.exercise, we make a separate rest call to get the exercise.
-  // This ensures the exercise is up to date if the user has multiple records with the
-  // same exercise. record.exercise is only updated upon fetching the record,
-  // so if one record updated an exercise any other records would still be using the outdated exercise.
-  const exercises = useExercises()
-  const exercise = exercises.index[record.exercise?._id ?? ''] ?? null
-
-  // NOTE: If the record is null then somehow there is a recordId in the session
-  // with no corresponding record document. The backend removes a null record id
-  // from any sessions it exists in on fetch, so if this case is ever visible it
-  // should disappear on rerender.
-  if (props.isQuickRender) {
-    return (
-      <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
-    )
-  } else {
-    return (
-      <LoadedRecordCard
-        {...{
-          exercise,
-          ...props,
-        }}
-      />
-    )
-  }
-})
-
 /** Record card with loaded record data.
  *
  * Note: This is an expensive component to render. Children should be memoized
@@ -80,14 +49,18 @@ export default memo(function RecordCard(props: Props) {
  * for memo() to use the custom equality comparison function isEqual() from lodash.
  * Otherwise they'll still be rerendered because the mutation creates a new object.
  */
-function LoadedRecordCard({
+export default memo(function RecordCard({
   swiperIndex,
   record,
-  exercise,
 }: Props & {
   record: Record
-  exercise: Exercise | null
 }) {
+  // Instead of using record.exercise, we make a separate call to get the exercise.
+  // This ensures the exercise is up to date if the user has multiple records with the
+  // same exercise. record.exercise is only updated upon fetching the record,
+  // so if one record updated an exercise any other records would still be using the outdated exercise.
+  const exercises = useExercises()
+  const exercise = exercises.index[record.exercise?._id ?? ''] ?? null
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
@@ -197,4 +170,4 @@ function LoadedRecordCard({
       </Card>
     </>
   )
-}
+})

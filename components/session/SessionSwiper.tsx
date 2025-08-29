@@ -1,7 +1,6 @@
 'use client'
 import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import { useEffect, useRef, useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -13,6 +12,7 @@ import { useRecords, useSessionLog } from '../../lib/frontend/restService'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
+import LoadingSpinner from '../loading/LoadingSpinner'
 
 interface Props {
   date: string
@@ -21,13 +21,7 @@ export default function SessionSwiper({ date }: Props) {
   const theme = useTheme()
   const { data: sessionLog } = useSessionLog(date)
   const records = useRecords({ date })
-  // reduce load time for initial render by only rendering the visible RecordCards
   const [isFirstRender, setIsFirstRender] = useState(true)
-  // on large screens there are 3 visible slides, but on init the first one is centered
-  // so only 2 are actually visible
-  const initialVisibleSlides = useMediaQuery(theme.breakpoints.down('sm'))
-    ? 1
-    : 2
   const swiperElRef = useRef<SwiperRef>(null)
   const sessionHasRecords = !!sessionLog?.records.length
   const paginationClassName = 'pagination-record-cards'
@@ -115,7 +109,8 @@ export default function SessionSwiper({ date }: Props) {
       style={{ paddingBottom: '60vh' }}
     >
       {/* Keeping navigation above slides instead of inline to the left/right solves problem of 
-            how to vertically align them given variable slide height.  */}
+          how to vertically align them given variable slide height.  */}
+      {/* navbar needs to be setup on init (first render). It won't work otherwise */}
       <NavigationBar
         {...{
           navNextClassName,
@@ -125,25 +120,33 @@ export default function SessionSwiper({ date }: Props) {
           slot: 'container-start',
         }}
       />
-      {sessionLog?.records.map((id, i) =>
-        records.index[id] ? (
-          <SwiperSlide key={id}>
-            <RecordCard
-              isQuickRender={isFirstRender && i >= initialVisibleSlides}
-              record={records.index[id]}
-              swiperIndex={i}
-            />
+      {/* First render MUST be client side. The server does not contain any info about 
+          the browser window so the swiper layout is broken on first render if SSR is used. 
+          So even though the data is available immediately we must employ a loading state 
+          so that swiper can initialize properly. The loader is placed here within 
+          the swiper so the more expensive swiper parent can be setup on first render 
+          and only the slides need to be re-rendered. */}
+      {isFirstRender ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          {sessionLog?.records.map((id, i) =>
+            records.index[id] ? (
+              <SwiperSlide key={id}>
+                <RecordCard record={records.index[id]} swiperIndex={i} />
+              </SwiperSlide>
+            ) : (
+              <div key={id}>If this is visible, something went wrong...</div>
+            )
+          )}
+          <SwiperSlide>
+            <Stack spacing={2} sx={{ p: 0.5 }}>
+              <AddRecordCard />
+              {!sessionHasRecords && <CopySessionCard key={date} />}
+            </Stack>
           </SwiperSlide>
-        ) : (
-          <></>
-        )
+        </>
       )}
-      <SwiperSlide>
-        <Stack spacing={2} sx={{ p: 0.5 }}>
-          <AddRecordCard />
-          {!sessionHasRecords && <CopySessionCard key={date} />}
-        </Stack>
-      </SwiperSlide>
     </Swiper>
   )
 }
