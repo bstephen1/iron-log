@@ -15,7 +15,7 @@ test('adds bodyweight', async ({ page }) => {
 })
 
 test('loads calendar', async ({ page, sessionsPage }) => {
-  // add records (broswer stays on the last page)
+  // add records (browser stays on the last page)
   await sessionsPage.addRecord('squats', '2000-01-01')
   await sessionsPage.addRecord('squats', '2000-01-05')
 
