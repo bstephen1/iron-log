@@ -146,14 +146,14 @@ export function useSessionLog(day: Dayjs | string) {
 
   return useQuery({
     queryKey: [QUERY_KEYS.sessionLogs, date],
-    queryFn: () => fetchSessionLog(undefined, date),
+    queryFn: () => fetchSessionLog(date),
   })
 }
 
 export function useSessionLogs(query: DateRangeQuery) {
   const hook = useQuery({
     queryKey: [QUERY_KEYS.sessionLogs, query],
-    queryFn: () => fetchSessionLogs(undefined, query),
+    queryFn: () => fetchSessionLogs(query),
   })
 
   return {
@@ -184,7 +184,7 @@ export function useRecords(
 
   const hook = useQuery({
     queryKey: [QUERY_KEYS.records, query],
-    queryFn: () => fetchRecords(undefined, filter, dateFilter),
+    queryFn: () => fetchRecords(filter, dateFilter),
     enabled,
   })
 
@@ -449,7 +449,7 @@ export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
 
   const { data, ...rest } = useQuery({
     queryKey: [QUERY_KEYS.bodyweights, query],
-    queryFn: () => fetchBodyweights(undefined, filter, dateQuery),
+    queryFn: () => fetchBodyweights(filter, dateQuery),
     enabled,
   })
 
