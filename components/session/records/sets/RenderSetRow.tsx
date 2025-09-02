@@ -3,7 +3,9 @@ import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { memo, useCallback } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
-import { useRecordUpdate } from '../../../../lib/frontend/restService'
+import { updateRecordFields } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { dbUpdate } from '../../../../lib/frontend/restService'
 import { type UpdateFields } from '../../../../lib/util'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Record } from '../../../../models/Record'
@@ -56,15 +58,19 @@ export default memo(function RenderSetRow({
   ...set
 }: Props) {
   const date = useCurrentDate()
-  const updateRecord = useRecordUpdate(date)
 
   const handleSetChange: UpdateFields<Set> = useCallback(
     async (changes) => {
       const newSets = [...sets]
       newSets[index] = { ...newSets[index], ...changes }
-      updateRecord({ _id, updates: { sets: newSets } })
+      dbUpdate({
+        queryKey: [QUERY_KEYS.records, { date }],
+        id: _id,
+        updates: { sets: newSets },
+        updateFunction: updateRecordFields,
+      })
     },
-    [_id, index, sets, updateRecord]
+    [_id, date, index, sets]
   )
 
   if (!displayFields.visibleFields.length) {

@@ -7,13 +7,13 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { addRecord } from '../../lib/backend/mongoService'
+import { DATE_FORMAT, QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  useRecordAdd,
+  dbAdd,
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/frontend/util'
 import { createRecord } from '../../models/Record'
 import SessionDatePicker from './upper/SessionDatePicker'
 
@@ -29,7 +29,6 @@ export default function CopySessionCard() {
   const prevRecords = useRecords({
     date: prevDay.format(DATE_FORMAT),
   })
-  const addRecord = useRecordAdd(date)
   const [isLoading, setIsLoading] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
 
@@ -57,19 +56,19 @@ export default function CopySessionCard() {
         notes: [],
       })
 
-      addRecord(newRecord, {
-        onError: (e) =>
-          enqueueError(
-            'Previous session has a corrupt record. Could not finish copying the session.',
-            e
-          ),
+      dbAdd({
+        queryKey: [QUERY_KEYS.records, { date }],
+        newItem: newRecord,
+        addFunction: addRecord,
+        errorMessage:
+          'Previous session has a corrupt record. Could not finish copying the session.',
       })
     }
 
     swiper.update()
 
     setIsLoading(false)
-  }, [addRecord, date, prevRecords.index, prevSessionLog.data, swiper])
+  }, [date, prevRecords.index, prevSessionLog.data, swiper])
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>

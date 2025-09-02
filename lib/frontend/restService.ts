@@ -18,21 +18,15 @@ import {
   bodyweightQuerySchema,
   type BodyweightRangeQuery,
 } from '../../models/Bodyweight'
-import {
-  recordQuerySchema,
-  type Record,
-  type RecordRangeQuery,
-} from '../../models/Record'
+import { recordQuerySchema, type RecordRangeQuery } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
   addCategory,
   addExercise,
   addModifier,
-  addRecord,
   deleteCategory,
   deleteExercise,
   deleteModifier,
-  deleteRecord,
   fetchBodyweights,
   fetchCategories,
   fetchExercises,
@@ -43,11 +37,12 @@ import {
   updateCategoryFields,
   updateExerciseFields,
   updateModifierFields,
-  updateRecordFields,
   upsertBodyweight,
   upsertSessionLog,
 } from '../backend/mongoService'
+import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
+import { enqueueError } from './util'
 
 interface UseOptions {
   /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
@@ -177,49 +172,128 @@ export function useRecords(
   }
 }
 
-export function useRecordUpdate(date: string) {
-  const { mutate } = useOptimisticMutation<
-    Record[],
-    Record,
-    {
-      _id: string
-      updates: Partial<Record>
-    }
-  >({
-    mutationFn: ({ _id, updates }) => updateRecordFields(_id, updates),
-    queryKey: [QUERY_KEYS.records, { date }],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((rec) => (rec._id === _id ? { ...rec, ...updates } : rec)),
+interface SaveToDbProps {
+  dbFunction: () => Promise<unknown>
+  errorMessage?: string
+  setOptimisticData?: () => void
+  errorInvalidation?: QueryKey[]
+  queryKey: QueryKey
+}
+async function saveToDb({
+  dbFunction,
+  errorMessage,
+  setOptimisticData,
+  errorInvalidation,
+  queryKey,
+}: SaveToDbProps) {
+  const queryClient = getQueryClient()
+  await queryClient.cancelQueries({
+    queryKey,
   })
-  return mutate
+
+  setOptimisticData?.()
+
+  try {
+    await dbFunction()
+  } catch (e) {
+    enqueueError(errorMessage ?? 'could not save changes')
+    errorInvalidation?.forEach((queryKey) => {
+      queryClient.invalidateQueries({ queryKey })
+    })
+  }
 }
 
-export function useRecordAdd(date: string) {
-  const queryClient = useQueryClient()
-  const { mutate } = useOptimisticMutation<Record[], Record>({
-    mutationFn: (record: Record) => addRecord(record),
-    queryKey: [QUERY_KEYS.records, { date }],
-    updater: (prev = [], record) => {
+interface DbAddProps<P extends { _id: string }> {
+  queryKey: unknown[]
+  addFunction: (newItem: P) => Promise<P>
+  newItem: P
+  errorMessage?: string
+}
+export async function dbAdd<P extends { _id: string }>({
+  queryKey,
+  newItem,
+  addFunction,
+  errorMessage,
+}: DbAddProps<P>) {
+  const queryClient = getQueryClient()
+  // Record must also update SessionLog to show it has been added
+  const date = 'date' in newItem ? (newItem.date as string) : undefined
+
+  const setOptimisticData = () => {
+    queryClient.setQueryData<P[]>(queryKey, (prev = []) => [...prev, newItem])
+    if (date) {
       queryClient.setQueryData<SessionLog>(
         [QUERY_KEYS.sessionLogs, date],
         (prev) =>
-          createSessionLog(date, prev?.records.concat(record._id), prev?.notes)
+          createSessionLog(date, prev?.records.concat(newItem._id), prev?.notes)
       )
+    }
+  }
 
-      return [...prev, record]
-    },
-    invalidates: [QUERY_KEYS.sessionLogs],
+  saveToDb({
+    dbFunction: () => addFunction(newItem),
+    errorMessage,
+    setOptimisticData,
+    queryKey,
+    errorInvalidation: date
+      ? [queryKey, [QUERY_KEYS.sessionLogs, date]]
+      : [queryKey],
   })
-  return mutate
 }
 
-export function useRecordDelete(date: string) {
-  const queryClient = useQueryClient()
+interface DbUpdateProps<P extends { _id: string }> {
+  queryKey: unknown[]
+  updateFunction: (id: string, updates: Partial<P>) => Promise<P>
+  id: string
+  updates: Partial<P>
+  errorMessage?: string
+}
+export async function dbUpdate<P extends { _id: string }>({
+  queryKey,
+  updateFunction,
+  id,
+  updates,
+  errorMessage,
+}: DbUpdateProps<P>) {
+  const queryClient = getQueryClient()
 
-  const { mutate } = useOptimisticMutation<Record[], string>({
-    mutationFn: (id: string) => deleteRecord(id),
-    queryKey: [QUERY_KEYS.records, { date }],
-    updater: (prev, id) => {
+  const setOptimisticData = () => {
+    queryClient.setQueryData<P[]>(queryKey, (prev) =>
+      prev?.map((rec) => (rec._id === id ? { ...rec, ...updates } : rec))
+    )
+  }
+
+  saveToDb({
+    dbFunction: () => updateFunction(id, updates),
+    errorMessage,
+    setOptimisticData,
+    queryKey,
+    errorInvalidation: [queryKey],
+  })
+}
+
+interface DbDeleteProps {
+  queryKey: unknown[]
+  deleteFunction: (id: string) => Promise<string>
+  id: string
+  /** records should also include the date to update the sessionLog */
+  date?: string
+  errorMessage?: string
+}
+export async function dbDelete({
+  queryKey,
+  deleteFunction,
+  id,
+  date,
+  errorMessage,
+}: DbDeleteProps) {
+  const queryClient = getQueryClient()
+
+  const setOptimisticData = () => {
+    queryClient.setQueryData<{ _id: string }[]>(queryKey, (prev = []) =>
+      prev.filter((item) => item._id !== id)
+    )
+    if (date) {
       queryClient.setQueryData<SessionLog>(
         [QUERY_KEYS.sessionLogs, date],
         (prev) =>
@@ -230,12 +304,18 @@ export function useRecordDelete(date: string) {
               }
             : undefined
       )
+    }
+  }
 
-      return prev?.filter((item) => item._id !== id)
-    },
-    invalidates: [QUERY_KEYS.sessionLogs],
+  saveToDb({
+    dbFunction: () => deleteFunction(id),
+    errorMessage,
+    setOptimisticData,
+    queryKey,
+    errorInvalidation: date
+      ? [queryKey, [QUERY_KEYS.sessionLogs, date]]
+      : [queryKey],
   })
-  return mutate
 }
 
 //----------

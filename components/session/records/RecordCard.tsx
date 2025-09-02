@@ -4,16 +4,16 @@ import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
+import { updateRecordFields } from '../../../lib/backend/mongoService'
+import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
+  dbUpdate,
   useExercises,
   useExerciseUpdate,
-  useRecordUpdate,
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { enqueueError } from '../../../lib/frontend/util'
 import { type UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
@@ -65,7 +65,6 @@ export default memo(function RecordCard({
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const updateExercise = useExerciseUpdate()
-  const updateRecord = useRecordUpdate(date)
   const noSwipingDesktop = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
@@ -91,18 +90,16 @@ export default memo(function RecordCard({
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
     async (updates) => {
-      updateRecord(
-        { _id: record._id, updates },
-        {
-          onError: (e) =>
-            enqueueError(
-              'Could not update record to a corrupt state. Changes were not saved.',
-              e
-            ),
-        }
-      )
+      dbUpdate({
+        queryKey: [QUERY_KEYS.records, { date }],
+        id: record._id,
+        updates,
+        updateFunction: updateRecordFields,
+        errorMessage:
+          'Could not update record to a corrupt state. Changes were not saved.',
+      })
     },
-    [record._id, updateRecord]
+    [date, record._id]
   )
 
   return (
