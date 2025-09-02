@@ -96,8 +96,8 @@ export default memo(function RecordCard({
         {
           onError: (e) =>
             enqueueError(
-              e,
-              'Could not update record to a corrupt state. Changes were not saved.'
+              'Could not update record to a corrupt state. Changes were not saved.',
+              e
             ),
         }
       )

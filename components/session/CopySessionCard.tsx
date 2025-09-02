@@ -60,8 +60,8 @@ export default function CopySessionCard() {
       addRecord(newRecord, {
         onError: (e) =>
           enqueueError(
-            e,
-            'Previous session has a corrupt record. Could not finish copying the session.'
+            'Previous session has a corrupt record. Could not finish copying the session.',
+            e
           ),
       })
     }

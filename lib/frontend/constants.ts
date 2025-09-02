@@ -21,13 +21,6 @@ export const sampleLogDate = '2022-09-26'
 
 export const userGuideLink = 'https://github.com/bstephen1/iron-log/wiki'
 
-/** error messages returned from the api  */
-export const ERRORS = {
-  validationFail: 'invalid request',
-  default: 'error could not be parsed',
-  retry: 'Something went wrong. Please retry.',
-}
-
 export enum QUERY_KEYS {
   categories = 'categories',
   modifiers = 'modifiers',

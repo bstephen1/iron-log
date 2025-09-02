@@ -62,7 +62,7 @@ export default function ExerciseForm({ exercise }: Props) {
 
     addExercise(newExercise, {
       onError: (e) =>
-        enqueueError(e, `The exercise is corrupt and can't be duplicated.`),
+        enqueueError(`The exercise is corrupt and can't be duplicated.`, e),
       onSuccess: () => {
         enqueueSnackbar(`Duplicated as "${newName}"`, { severity: 'info' })
         setUrlExercise(newExercise._id, { scroll: true })
