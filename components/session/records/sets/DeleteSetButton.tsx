@@ -20,7 +20,7 @@ export default memo(function DeleteSetButton({ _id, index, sets, sx }: Props) {
 
   const handleDeleteSet = async () => {
     dbUpdate({
-      queryKey: [QUERY_KEYS.records, { date }],
+      optimisticKey: [QUERY_KEYS.records, { date }],
       id: _id,
       updates: { sets: sets.filter((_, j) => j !== index) },
       updateFunction: updateRecordFields,

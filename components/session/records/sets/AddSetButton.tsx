@@ -35,7 +35,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
     }
 
     dbUpdate({
-      queryKey: [QUERY_KEYS.records, { date }],
+      optimisticKey: [QUERY_KEYS.records, { date }],
       id: _id,
       updates: { sets: sets.concat(newSet) },
       updateFunction: updateRecordFields,

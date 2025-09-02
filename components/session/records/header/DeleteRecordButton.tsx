@@ -19,7 +19,7 @@ export default memo(function DeleteRecordButton({ _id }: Props) {
     if (!sessionLog) return
 
     dbDelete({
-      queryKey: [QUERY_KEYS.records, { date }],
+      optimisticKey: [QUERY_KEYS.records, { date }],
       date,
       id,
       deleteFunction: deleteRecord,

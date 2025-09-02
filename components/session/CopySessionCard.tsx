@@ -57,7 +57,7 @@ export default function CopySessionCard() {
       })
 
       dbAdd({
-        queryKey: [QUERY_KEYS.records, { date }],
+        optimisticKey: [QUERY_KEYS.records, { date }],
         newItem: newRecord,
         addFunction: addRecord,
         errorMessage:

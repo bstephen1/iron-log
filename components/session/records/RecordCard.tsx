@@ -91,7 +91,7 @@ export default memo(function RecordCard({
   const mutateRecordFields: UpdateFields<Record> = useCallback(
     async (updates) => {
       dbUpdate({
-        queryKey: [QUERY_KEYS.records, { date }],
+        optimisticKey: [QUERY_KEYS.records, { date }],
         id: record._id,
         updates,
         updateFunction: updateRecordFields,

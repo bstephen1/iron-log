@@ -21,7 +21,7 @@ export default function AddRecordCard() {
     if (!exercise) return
 
     await dbAdd({
-      queryKey: [QUERY_KEYS.records, { date }],
+      optimisticKey: [QUERY_KEYS.records, { date }],
       newItem: createRecord(date, { exercise }),
       addFunction: addRecord,
       errorMessage: `The exercise is corrupt and can't be used to create records.`,

@@ -3,10 +3,9 @@ import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArro
 import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
-import {
-  useSessionLog,
-  useSessionLogUpsert,
-} from '../../../../lib/frontend/restService'
+import { upsertSessionLog } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { dbAdd, useSessionLog } from '../../../../lib/frontend/restService'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
@@ -18,7 +17,6 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
   const swiper = useSwiper()
   const date = useCurrentDate()
   const { data: sessionLog } = useSessionLog(date)
-  const upsertSessionLog = useSessionLogUpsert(date)
 
   const isLeft = direction === 'left'
   const leftDisabled = !index
@@ -37,7 +35,13 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
 
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
-    upsertSessionLog({ ...sessionLog, records: newRecords })
+
+    dbAdd({
+      optimisticKey: [QUERY_KEYS.sessionLogs, date],
+      newItem: { ...sessionLog, records: newRecords },
+      addFunction: upsertSessionLog,
+    })
+
     swiper.update()
     swiper.slideTo(j, 200)
   }

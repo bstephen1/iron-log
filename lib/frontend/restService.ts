@@ -18,7 +18,11 @@ import {
   bodyweightQuerySchema,
   type BodyweightRangeQuery,
 } from '../../models/Bodyweight'
-import { recordQuerySchema, type RecordRangeQuery } from '../../models/Record'
+import {
+  isRecord,
+  recordQuerySchema,
+  type RecordRangeQuery,
+} from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
   addCategory,
@@ -37,8 +41,6 @@ import {
   updateCategoryFields,
   updateExerciseFields,
   updateModifierFields,
-  upsertBodyweight,
-  upsertSessionLog,
 } from '../backend/mongoService'
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
@@ -62,7 +64,7 @@ const toNames = (entities?: AsyncSelectorOption[]) =>
 const nameSort = <T extends { name: string }>(data?: T[]) =>
   data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
 
-type OptimisticProps<
+type OptimisticProps2<
   TQueryFnData = unknown,
   TData = unknown,
   TVariables = TData,
@@ -84,7 +86,7 @@ const useOptimisticMutation = <
   queryKey,
   updater,
   invalidates,
-}: OptimisticProps<TQueryFnData, TData, TVariables>) => {
+}: OptimisticProps2<TQueryFnData, TData, TVariables>) => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -140,15 +142,6 @@ export function useSessionLogs(query: DateRangeQuery) {
   }
 }
 
-export function useSessionLogUpsert(date: string) {
-  const { mutate } = useOptimisticMutation({
-    mutationFn: upsertSessionLog,
-    queryKey: [QUERY_KEYS.sessionLogs, date],
-    updater: (_, sessionLog) => sessionLog,
-  })
-  return mutate
-}
-
 //--------
 // RECORD
 //--------
@@ -175,51 +168,64 @@ export function useRecords(
 interface SaveToDbProps {
   dbFunction: () => Promise<unknown>
   errorMessage?: string
-  setOptimisticData?: () => void
-  errorInvalidation?: QueryKey[]
-  queryKey: QueryKey
+  optimistic?: {
+    key: QueryKey
+    mutate: () => void
+    /** Any keys in addition to the primary key to rollback on error.
+     *  Note this is an array of arrays to allow for multiple sets of query keys
+     *  to be revalidated
+     */
+    rollbackKeys?: QueryKey[]
+  }
+  invalidates?: QueryKey
 }
 async function saveToDb({
   dbFunction,
   errorMessage,
-  setOptimisticData,
-  errorInvalidation,
-  queryKey,
+  optimistic,
+  invalidates,
 }: SaveToDbProps) {
   const queryClient = getQueryClient()
-  await queryClient.cancelQueries({
-    queryKey,
-  })
+  if (optimistic) {
+    await queryClient.cancelQueries({
+      queryKey: optimistic.key,
+    })
 
-  setOptimisticData?.()
+    optimistic.mutate()
+  }
 
   try {
     await dbFunction()
   } catch (e) {
     enqueueError(errorMessage ?? 'could not save changes')
-    errorInvalidation?.forEach((queryKey) => {
-      queryClient.invalidateQueries({ queryKey })
-    })
+    if (optimistic) {
+      const keys = [...(optimistic.rollbackKeys ?? []), optimistic.key]
+      keys.forEach((queryKey) => {
+        queryClient.invalidateQueries({ queryKey })
+      })
+    }
   }
+
+  queryClient.invalidateQueries({ queryKey: invalidates })
 }
 
-interface DbAddProps<P extends { _id: string }> {
-  queryKey: unknown[]
+interface DbAddProps<P extends { _id: string }>
+  extends Pick<SaveToDbProps, 'errorMessage' | 'invalidates'> {
+  optimisticKey?: QueryKey
   addFunction: (newItem: P) => Promise<P>
   newItem: P
-  errorMessage?: string
 }
 export async function dbAdd<P extends { _id: string }>({
-  queryKey,
+  optimisticKey,
   newItem,
   addFunction,
-  errorMessage,
+  ...rest
 }: DbAddProps<P>) {
   const queryClient = getQueryClient()
   // Record must also update SessionLog to show it has been added
-  const date = 'date' in newItem ? (newItem.date as string) : undefined
+  const date = isRecord(newItem) ? newItem.date : undefined
 
-  const setOptimisticData = () => {
+  const optimisticMutate = (queryKey: QueryKey) => {
     queryClient.setQueryData<P[]>(queryKey, (prev = []) => [...prev, newItem])
     if (date) {
       queryClient.setQueryData<SessionLog>(
@@ -232,32 +238,34 @@ export async function dbAdd<P extends { _id: string }>({
 
   saveToDb({
     dbFunction: () => addFunction(newItem),
-    errorMessage,
-    setOptimisticData,
-    queryKey,
-    errorInvalidation: date
-      ? [queryKey, [QUERY_KEYS.sessionLogs, date]]
-      : [queryKey],
+    optimistic: optimisticKey
+      ? {
+          key: optimisticKey,
+          mutate: () => optimisticMutate(optimisticKey),
+          rollbackKeys: date ? [[QUERY_KEYS.sessionLogs, date]] : undefined,
+        }
+      : undefined,
+    ...rest,
   })
 }
 
-interface DbUpdateProps<P extends { _id: string }> {
-  queryKey: unknown[]
+interface DbUpdateProps<P extends { _id: string }>
+  extends Pick<SaveToDbProps, 'errorMessage' | 'invalidates'> {
+  optimisticKey?: unknown[]
   updateFunction: (id: string, updates: Partial<P>) => Promise<P>
   id: string
   updates: Partial<P>
-  errorMessage?: string
 }
 export async function dbUpdate<P extends { _id: string }>({
-  queryKey,
+  optimisticKey,
   updateFunction,
   id,
   updates,
-  errorMessage,
+  ...rest
 }: DbUpdateProps<P>) {
   const queryClient = getQueryClient()
 
-  const setOptimisticData = () => {
+  const optimisticMutate = (queryKey: QueryKey) => {
     queryClient.setQueryData<P[]>(queryKey, (prev) =>
       prev?.map((rec) => (rec._id === id ? { ...rec, ...updates } : rec))
     )
@@ -265,31 +273,34 @@ export async function dbUpdate<P extends { _id: string }>({
 
   saveToDb({
     dbFunction: () => updateFunction(id, updates),
-    errorMessage,
-    setOptimisticData,
-    queryKey,
-    errorInvalidation: [queryKey],
+    optimistic: optimisticKey
+      ? {
+          key: optimisticKey,
+          mutate: () => optimisticMutate(optimisticKey),
+        }
+      : undefined,
+    ...rest,
   })
 }
 
-interface DbDeleteProps {
-  queryKey: unknown[]
+interface DbDeleteProps
+  extends Pick<SaveToDbProps, 'errorMessage' | 'invalidates'> {
+  optimisticKey?: unknown[]
   deleteFunction: (id: string) => Promise<string>
   id: string
   /** records should also include the date to update the sessionLog */
   date?: string
-  errorMessage?: string
 }
 export async function dbDelete({
-  queryKey,
+  optimisticKey,
   deleteFunction,
   id,
   date,
-  errorMessage,
+  ...rest
 }: DbDeleteProps) {
   const queryClient = getQueryClient()
 
-  const setOptimisticData = () => {
+  const optimisticMutate = (queryKey: QueryKey) => {
     queryClient.setQueryData<{ _id: string }[]>(queryKey, (prev = []) =>
       prev.filter((item) => item._id !== id)
     )
@@ -309,12 +320,14 @@ export async function dbDelete({
 
   saveToDb({
     dbFunction: () => deleteFunction(id),
-    errorMessage,
-    setOptimisticData,
-    queryKey,
-    errorInvalidation: date
-      ? [queryKey, [QUERY_KEYS.sessionLogs, date]]
-      : [queryKey],
+    optimistic: optimisticKey
+      ? {
+          key: optimisticKey,
+          mutate: () => optimisticMutate(optimisticKey),
+          rollbackKeys: date ? [[QUERY_KEYS.sessionLogs, date]] : undefined,
+        }
+      : undefined,
+    ...rest,
   })
 }
 
@@ -509,20 +522,4 @@ export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
     data: enabled ? data : [],
     ...rest,
   }
-}
-
-export function useBodyweightUpsert() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: upsertBodyweight,
-    // make sure to _return_ the Promise from the query invalidation
-    // so that the mutation stays in `pending` state until the refetch is finished
-    onSettled: async () =>
-      await queryClient.invalidateQueries({
-        // Marks as stale any cache data that includes the queryKey (NOT exact).
-        // Could potentially tighten this to only keys with end date less than the
-        // new bw's date, but probably wouldn't make any noticeable improvement
-        queryKey: [QUERY_KEYS.bodyweights],
-      }),
-  })
 }

@@ -62,9 +62,9 @@ export async function fetchSessionLogs({
 export async function upsertSessionLog(
   // ignore the id so we don't accidentally try to update it
   { _id, ...sessionLog }: SessionLog
-): Promise<SessionLog | null> {
+): Promise<SessionLog> {
   const userId = await getUserId()
-  return await sessions.findOneAndReplace(
+  return (await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },
     { ...sessionLog, userId },
     {
@@ -72,7 +72,7 @@ export async function upsertSessionLog(
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as SessionLog
 }
 
 //--------

@@ -64,7 +64,7 @@ export default memo(function RenderSetRow({
       const newSets = [...sets]
       newSets[index] = { ...newSets[index], ...changes }
       dbUpdate({
-        queryKey: [QUERY_KEYS.records, { date }],
+        optimisticKey: [QUERY_KEYS.records, { date }],
         id: _id,
         updates: { sets: newSets },
         updateFunction: updateRecordFields,
