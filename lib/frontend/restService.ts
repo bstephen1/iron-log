@@ -47,6 +47,12 @@ interface SaveToDbProps {
   }
   invalidates?: QueryKey
 }
+/** rather than calling useMutation, we handle the optimistic cache
+ *  updates directly. This allows using a function instead of a hook,
+ *  which is more convenient and allows more fine-grained control.
+ *
+ *  Also, setting the cache is faster in the ui.
+ */
 async function saveToDb({
   dbFunction,
   errorMessage,
@@ -79,6 +85,10 @@ async function saveToDb({
   }
 
   queryClient.invalidateQueries({ queryKey: invalidates })
+  // not sure if this really makes any noticeable difference
+  if (optimistic) {
+    queryClient.invalidateQueries({ queryKey: optimistic.key })
+  }
 }
 
 export interface DbAddProps<P extends { _id: string }>
