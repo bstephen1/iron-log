@@ -1,9 +1,6 @@
 import {
-  useMutation,
   useQuery,
-  useQueryClient,
   useSuspenseQuery,
-  type MutationFunction,
   type QueryKey,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
@@ -12,7 +9,6 @@ import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   bodyweightQuerySchema,
   type BodyweightRangeQuery,
@@ -24,7 +20,6 @@ import {
 } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
-  addExercise,
   fetchBodyweights,
   fetchCategories,
   fetchExercises,
@@ -36,125 +31,6 @@ import {
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
 import { enqueueError } from './util'
-
-interface UseOptions {
-  /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
-   *  component using this option. The component will be given a promise from
-   *  the server and the Suspense boundary will render until the promise resolves.
-   */
-  suspense?: boolean
-  /** Determines whether the fetch will occur. Defaults to true.
-   *  NOTE: cannot use with useSuspenseQuery.
-   */
-  enabled?: boolean
-}
-
-const toNames = (entities?: AsyncSelectorOption[]) =>
-  entities?.map((entity) => entity.name) ?? []
-
-const nameSort = <T extends { name: string }>(data?: T[]) =>
-  data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
-
-type OptimisticProps2<
-  TQueryFnData = unknown,
-  TData = unknown,
-  TVariables = TData,
-> = {
-  mutationFn: MutationFunction<TData, TVariables>
-  queryKey: QueryKey
-  updater: (
-    input: TQueryFnData | undefined,
-    variables: TVariables
-  ) => TQueryFnData | undefined
-  invalidates?: QueryKey
-}
-const useOptimisticMutation = <
-  TQueryFnData = unknown,
-  TData = unknown,
-  TVariables = TData,
->({
-  mutationFn,
-  queryKey,
-  updater,
-  invalidates,
-}: OptimisticProps2<TQueryFnData, TData, TVariables>) => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn,
-    onMutate: async (variables) => {
-      await queryClient.cancelQueries({
-        queryKey,
-      })
-
-      const snapshot = queryClient.getQueryData(queryKey)
-
-      queryClient.setQueryData<TQueryFnData>(queryKey, (input) =>
-        updater(input, variables)
-      )
-
-      return () => {
-        queryClient.setQueryData(queryKey, snapshot)
-      }
-    },
-    onError: (_err, _variables, rollback) => {
-      rollback?.()
-    },
-    onSettled: () => {
-      return queryClient.invalidateQueries({
-        queryKey: invalidates,
-      })
-    },
-  })
-}
-
-//---------
-// SESSION
-//---------
-
-export function useSessionLog(day: Dayjs | string) {
-  const date = typeof day === 'string' ? day : day.format(DATE_FORMAT)
-
-  return useQuery({
-    queryKey: [QUERY_KEYS.sessionLogs, date],
-    queryFn: () => fetchSessionLog(date),
-  })
-}
-
-export function useSessionLogs(query: DateRangeQuery) {
-  const hook = useQuery({
-    queryKey: [QUERY_KEYS.sessionLogs, query],
-    queryFn: () => fetchSessionLogs(query),
-  })
-
-  return {
-    ...hook,
-    index: arrayToIndex('date', hook.data),
-  }
-}
-
-//--------
-// RECORD
-//--------
-
-export function useRecords(
-  query?: RecordRangeQuery & DateRangeQuery,
-  enabled = true
-) {
-  const filter = recordQuerySchema.safeParse(query).data ?? {}
-  const dateFilter = dateRangeQuerySchema.safeParse(query).data ?? {}
-
-  const hook = useQuery({
-    queryKey: [QUERY_KEYS.records, query],
-    queryFn: () => fetchRecords(filter, dateFilter),
-    enabled,
-  })
-
-  return {
-    ...hook,
-    index: arrayToIndex('_id', hook.data),
-  }
-}
 
 interface SaveToDbProps {
   dbFunction: () => Promise<unknown>
@@ -328,8 +204,66 @@ export async function dbDelete({
 }
 
 //----------
-// EXERCISE
+// FETCHING
 //----------
+
+interface UseOptions {
+  /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
+   *  component using this option. The component will be given a promise from
+   *  the server and the Suspense boundary will render until the promise resolves.
+   */
+  suspense?: boolean
+  /** Determines whether the fetch will occur. Defaults to true.
+   *  NOTE: cannot use with useSuspenseQuery.
+   */
+  enabled?: boolean
+}
+
+const toNames = (entities?: AsyncSelectorOption[]) =>
+  entities?.map((entity) => entity.name) ?? []
+
+const nameSort = <T extends { name: string }>(data?: T[]) =>
+  data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
+
+export function useSessionLog(day: Dayjs | string) {
+  const date = typeof day === 'string' ? day : day.format(DATE_FORMAT)
+
+  return useQuery({
+    queryKey: [QUERY_KEYS.sessionLogs, date],
+    queryFn: () => fetchSessionLog(date),
+  })
+}
+
+export function useSessionLogs(query: DateRangeQuery) {
+  const hook = useQuery({
+    queryKey: [QUERY_KEYS.sessionLogs, query],
+    queryFn: () => fetchSessionLogs(query),
+  })
+
+  return {
+    ...hook,
+    index: arrayToIndex('date', hook.data),
+  }
+}
+
+export function useRecords(
+  query?: RecordRangeQuery & DateRangeQuery,
+  enabled = true
+) {
+  const filter = recordQuerySchema.safeParse(query).data ?? {}
+  const dateFilter = dateRangeQuerySchema.safeParse(query).data ?? {}
+
+  const hook = useQuery({
+    queryKey: [QUERY_KEYS.records, query],
+    queryFn: () => fetchRecords(filter, dateFilter),
+    enabled,
+  })
+
+  return {
+    ...hook,
+    index: arrayToIndex('_id', hook.data),
+  }
+}
 
 export function useExercises({ suspense }: UseOptions = {}) {
   const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
@@ -345,19 +279,6 @@ export function useExercises({ suspense }: UseOptions = {}) {
   }
 }
 
-export function useExerciseAdd() {
-  const { mutate } = useOptimisticMutation<Exercise[], Exercise>({
-    mutationFn: (exercise: Exercise) => addExercise(exercise),
-    queryKey: [QUERY_KEYS.exercises],
-    updater: (prev, exercise) => prev?.concat(exercise),
-  })
-  return mutate
-}
-
-//----------
-// MODIFIER
-//----------
-
 export function useModifiers({ suspense }: UseOptions = {}) {
   const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.modifiers],
@@ -372,10 +293,6 @@ export function useModifiers({ suspense }: UseOptions = {}) {
   }
 }
 
-//----------
-// CATEGORY
-//----------
-
 export function useCategories({ suspense }: UseOptions = {}) {
   const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.categories],
@@ -389,10 +306,6 @@ export function useCategories({ suspense }: UseOptions = {}) {
     ...rest,
   }
 }
-
-//------------
-// BODYWEIGHT
-//------------
 
 export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
