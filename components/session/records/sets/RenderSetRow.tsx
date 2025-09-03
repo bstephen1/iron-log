@@ -5,7 +5,7 @@ import { memo, useCallback } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { dbUpdate } from '../../../../lib/frontend/restService'
+import { useUpdateMutation } from '../../../../lib/frontend/restService'
 import { type UpdateFields } from '../../../../lib/util'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Record } from '../../../../models/Record'
@@ -58,19 +58,18 @@ export default memo(function RenderSetRow({
   ...set
 }: Props) {
   const date = useCurrentDate()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
 
   const handleSetChange: UpdateFields<Set> = useCallback(
     async (changes) => {
       const newSets = [...sets]
       newSets[index] = { ...newSets[index], ...changes }
-      dbUpdate({
-        optimisticKey: [QUERY_KEYS.records, { date }],
-        id: _id,
-        updates: { sets: newSets },
-        updateFunction: updateRecordFields,
-      })
+      updateRecordMutate({ _id, updates: { sets: newSets } })
     },
-    [_id, date, index, sets]
+    [_id, index, sets, updateRecordMutate]
   )
 
   if (!displayFields.visibleFields.length) {

@@ -9,10 +9,14 @@ import {
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
 import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
-import { dbUpdate, useExercises } from '../../../lib/frontend/restService'
+import {
+  useExercises,
+  useUpdateMutation,
+} from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
+import { enqueueError } from '../../../lib/frontend/util'
 import { type UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
@@ -64,6 +68,14 @@ export default memo(function RecordCard({
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
+  const updateExerciseMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    updateFn: updateExerciseFields,
+  })
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes.unilateral
@@ -81,29 +93,26 @@ export default memo(function RecordCard({
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (updates) => {
-      exercise?._id &&
-        dbUpdate({
-          updateFunction: updateExerciseFields,
-          optimisticKey: [QUERY_KEYS.exercises],
-          id: exercise._id,
-          updates,
-        })
+      exercise?._id && updateExerciseMutate({ _id: exercise._id, updates })
     },
-    [exercise?._id]
+    [exercise?._id, updateExerciseMutate]
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
     async (updates) => {
-      dbUpdate({
-        optimisticKey: [QUERY_KEYS.records, { date }],
-        id: record._id,
-        updates,
-        updateFunction: updateRecordFields,
-        errorMessage:
-          'Could not update record to a corrupt state. Changes were not saved.',
-      })
+      updateRecordMutate(
+        { _id: record._id, updates },
+        {
+          onError: (e) => {
+            enqueueError(
+              'Could not update record to a corrupt state. Changes were not saved.',
+              e
+            )
+          },
+        }
+      )
     },
-    [date, record._id]
+    [record._id, updateRecordMutate]
   )
 
   return (

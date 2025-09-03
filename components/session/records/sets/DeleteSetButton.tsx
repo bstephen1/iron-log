@@ -5,7 +5,7 @@ import { memo } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { dbUpdate } from '../../../../lib/frontend/restService'
+import { useUpdateMutation } from '../../../../lib/frontend/restService'
 import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
 
@@ -17,13 +17,15 @@ interface Props extends IconButtonProps {
 }
 export default memo(function DeleteSetButton({ _id, index, sets, sx }: Props) {
   const date = useCurrentDate()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
 
   const handleDeleteSet = async () => {
-    dbUpdate({
-      optimisticKey: [QUERY_KEYS.records, { date }],
-      id: _id,
+    updateRecordMutate({
+      _id,
       updates: { sets: sets.filter((_, j) => j !== index) },
-      updateFunction: updateRecordFields,
     })
   }
 

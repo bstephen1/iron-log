@@ -4,7 +4,7 @@ import Fab from '@mui/material/Fab'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { dbUpdate } from '../../../../lib/frontend/restService'
+import { useUpdateMutation } from '../../../../lib/frontend/restService'
 import { type Set } from '../../../../models/Set'
 
 interface Props {
@@ -15,6 +15,10 @@ interface Props {
 }
 export default function AddSetButton({ sets, disabled, _id }: Props) {
   const date = useCurrentDate()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
 
   const addSet = async () => {
     const newSet = sets.at(-1)
@@ -34,12 +38,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
       newSet.side = 'L'
     }
 
-    dbUpdate({
-      optimisticKey: [QUERY_KEYS.records, { date }],
-      id: _id,
-      updates: { sets: sets.concat(newSet) },
-      updateFunction: updateRecordFields,
-    })
+    updateRecordMutate({ _id, updates: { sets: sets.concat(newSet) } })
   }
 
   return (

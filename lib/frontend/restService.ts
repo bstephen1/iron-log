@@ -1,13 +1,12 @@
 import {
-  type MutationFunction,
   useMutation,
   useQuery,
   useQueryClient,
   useSuspenseQuery,
+  type MutationFunction,
   type QueryKey,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
-import { enqueueSnackbar } from 'notistack'
 import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
@@ -33,7 +32,6 @@ import {
 } from '../backend/mongoService'
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
-import { enqueueError } from './util'
 
 type OptimisticProps<
   TQueryFnData = unknown,
@@ -175,99 +173,6 @@ export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
 
       return prev.filter((item) => item._id !== id)
     },
-  })
-}
-
-interface SaveToDbProps {
-  dbFunction: () => Promise<unknown>
-  errorMessage?: string
-  successMessage?: string
-  optimistic?: {
-    key: QueryKey
-    mutate: () => void
-    /** Any keys in addition to the primary key to rollback on error.
-     *  Note this is an array of arrays to allow for multiple sets of query keys
-     *  to be revalidated
-     */
-    rollbackKeys?: QueryKey[]
-  }
-  invalidates?: QueryKey
-}
-/** rather than calling useMutation, we handle the optimistic cache
- *  updates directly. This allows using a function instead of a hook,
- *  which is more convenient and allows more fine-grained control.
- *
- *  Also, setting the cache is faster in the ui.
- */
-async function saveToDb({
-  dbFunction,
-  errorMessage,
-  successMessage,
-  optimistic,
-  invalidates,
-}: SaveToDbProps) {
-  const queryClient = getQueryClient()
-  if (optimistic) {
-    await queryClient.cancelQueries({
-      queryKey: optimistic.key,
-    })
-
-    optimistic.mutate()
-  }
-
-  try {
-    await dbFunction()
-    if (successMessage) {
-      enqueueSnackbar(successMessage, { severity: 'success' })
-    }
-  } catch (e) {
-    enqueueError(errorMessage ?? 'could not save changes')
-    if (optimistic) {
-      const keys = [...(optimistic.rollbackKeys ?? []), optimistic.key]
-      keys.forEach((queryKey) => {
-        queryClient.invalidateQueries({ queryKey })
-      })
-    }
-  }
-
-  queryClient.invalidateQueries({ queryKey: invalidates })
-  // not sure if this really makes any noticeable difference
-  if (optimistic) {
-    queryClient.invalidateQueries({ queryKey: optimistic.key })
-  }
-}
-
-interface DbUpdateProps<P extends { _id: string }>
-  extends Omit<SaveToDbProps, 'dbFunction' | 'optimistic'> {
-  optimisticKey?: unknown[]
-  updateFunction: (id: string, updates: Partial<P>) => Promise<P>
-  id: string
-  updates: Partial<P>
-}
-export async function dbUpdate<P extends { _id: string }>({
-  optimisticKey,
-  updateFunction,
-  id,
-  updates,
-  ...rest
-}: DbUpdateProps<P>) {
-  const queryClient = getQueryClient()
-
-  const optimisticMutate = (queryKey: QueryKey) => {
-    queryClient.setQueryData<P[]>(queryKey, (prev) =>
-      prev?.map((rec) => (rec._id === id ? { ...rec, ...updates } : rec))
-    )
-  }
-
-  saveToDb({
-    dbFunction: () => updateFunction(id, updates),
-    optimistic: optimisticKey
-      ? {
-          key: optimisticKey,
-          mutate: () => optimisticMutate(optimisticKey),
-        }
-      : undefined,
-    ...rest,
   })
 }
 
