@@ -136,22 +136,20 @@ describe('input', () => {
     expect(screen.getByLabelText('Submit')).toBeVisible()
   })
 
-  it('submits and revalidates when button is clicked', async () => {
+  it('submits when button is clicked', async () => {
     vi.mocked(fetchBodyweights).mockResolvedValue([officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
 
-    // simulate the res from revalidation is different from UI value
-    const newWeight = 15
-    const newBW = createBodyweight(newWeight, 'official', date2020)
-    vi.mocked(fetchBodyweights).mockResolvedValue([newBW])
-
     await user.type(input, '{End}3')
     await user.click(screen.getByLabelText('Submit'))
 
-    // after revalidation should update to the server response
-    expect(await screen.findByDisplayValue(newWeight)).toBeVisible()
+    // input displays the typed value even tho server mock is still returning old value
+    // todo: playwright test with bw exercise where updating the weight updates weight in record sets
+    expect(
+      await screen.findByDisplayValue(officialBw2000.value + '3')
+    ).toBeVisible()
     expect(screen.getByLabelText('Reset')).not.toBeVisible()
     expect(screen.getByLabelText('Submit')).not.toBeVisible()
   })
