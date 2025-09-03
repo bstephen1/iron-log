@@ -271,54 +271,6 @@ export async function dbUpdate<P extends { _id: string }>({
   })
 }
 
-interface DbDeleteProps
-  extends Omit<SaveToDbProps, 'dbFunction' | 'optimistic'> {
-  optimisticKey?: unknown[]
-  deleteFunction: (id: string) => Promise<string>
-  id: string
-  /** records should also include the date to update the sessionLog */
-  date?: string
-}
-export async function dbDelete({
-  optimisticKey,
-  deleteFunction,
-  id,
-  date,
-  ...rest
-}: DbDeleteProps) {
-  const queryClient = getQueryClient()
-
-  const optimisticMutate = (queryKey: QueryKey) => {
-    queryClient.setQueryData<{ _id: string }[]>(queryKey, (prev = []) =>
-      prev.filter((item) => item._id !== id)
-    )
-    if (date) {
-      queryClient.setQueryData<SessionLog>(
-        [QUERY_KEYS.sessionLogs, date],
-        (prev) =>
-          prev
-            ? {
-                ...prev,
-                records: prev.records.filter((_id) => _id !== id),
-              }
-            : undefined
-      )
-    }
-  }
-
-  saveToDb({
-    dbFunction: () => deleteFunction(id),
-    optimistic: optimisticKey
-      ? {
-          key: optimisticKey,
-          mutate: () => optimisticMutate(optimisticKey),
-          rollbackKeys: date ? [[QUERY_KEYS.sessionLogs, date]] : undefined,
-        }
-      : undefined,
-    ...rest,
-  })
-}
-
 //----------
 // FETCHING
 //----------

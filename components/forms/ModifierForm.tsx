@@ -7,10 +7,10 @@ import {
 } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  dbDelete,
-  dbUpdate,
+  useDeleteMutation,
   useExercises,
   useModifiers,
+  useUpdateMutation,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
@@ -29,30 +29,29 @@ export default function ModifierForm({
   const exercises = useExercises()
   const usage = getUsage(exercises.data, 'modifiers', name)
   const [_, setUrlModifier] = useQueryState('modifier')
+  const deleteModifierMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.modifiers],
+    deleteFn: deleteModifier,
+  })
+  const updateModifierMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.modifiers],
+    updateFn: updateModifierFields,
+    invalidates: [QUERY_KEYS.exercises],
+  })
 
   const updateFields = useCallback(
     async (updates: Partial<Modifier>) => {
-      dbUpdate({
-        optimisticKey: [QUERY_KEYS.modifiers],
-        updateFunction: updateModifierFields,
-        id: _id,
-        updates,
-        invalidates: [QUERY_KEYS.exercises],
-      })
+      updateModifierMutate({ _id, updates })
     },
-    [_id]
+    [_id, updateModifierMutate]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       setUrlModifier(null)
-      dbDelete({
-        deleteFunction: deleteModifier,
-        id,
-        optimisticKey: [QUERY_KEYS.modifiers],
-      })
+      deleteModifierMutate(id)
     },
-    [setUrlModifier]
+    [deleteModifierMutate, setUrlModifier]
   )
 
   return (

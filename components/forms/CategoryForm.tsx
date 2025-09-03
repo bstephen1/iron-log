@@ -7,10 +7,10 @@ import {
 } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  dbDelete,
-  dbUpdate,
   useCategories,
+  useDeleteMutation,
   useExercises,
+  useUpdateMutation,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -26,30 +26,29 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
   const { data } = useExercises()
   const usage = getUsage(data, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')
+  const deleteCategoryMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.categories],
+    deleteFn: deleteCategory,
+  })
+  const updateCategoryMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.categories],
+    updateFn: updateCategoryFields,
+    invalidates: [QUERY_KEYS.exercises],
+  })
 
   const updateFields = useCallback(
     async (updates: Partial<Category>) => {
-      dbUpdate({
-        updateFunction: updateCategoryFields,
-        id: _id,
-        updates,
-        optimisticKey: [QUERY_KEYS.categories],
-        invalidates: [QUERY_KEYS.exercises],
-      })
+      updateCategoryMutate({ _id, updates })
     },
-    [_id]
+    [_id, updateCategoryMutate]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       setUrlCategory(null)
-      dbDelete({
-        deleteFunction: deleteCategory,
-        id,
-        optimisticKey: [QUERY_KEYS.categories],
-      })
+      deleteCategoryMutate(id)
     },
-    [setUrlCategory]
+    [deleteCategoryMutate, setUrlCategory]
   )
 
   return (

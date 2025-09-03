@@ -4,7 +4,10 @@ import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { deleteRecord } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { dbDelete, useSessionLog } from '../../../../lib/frontend/restService'
+import {
+  useDeleteMutation,
+  useSessionLog,
+} from '../../../../lib/frontend/restService'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
@@ -14,16 +17,15 @@ export default memo(function DeleteRecordButton({ _id }: Props) {
   const swiper = useSwiper()
   const date = useCurrentDate()
   const { data: sessionLog } = useSessionLog(date)
+  const deleteRecordMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    deleteFn: deleteRecord,
+  })
 
   const handleDelete = async (id: string) => {
     if (!sessionLog) return
 
-    dbDelete({
-      optimisticKey: [QUERY_KEYS.records, { date }],
-      date,
-      id,
-      deleteFunction: deleteRecord,
-    })
+    deleteRecordMutate(id)
 
     swiper.update()
     swiper.slidePrev()
