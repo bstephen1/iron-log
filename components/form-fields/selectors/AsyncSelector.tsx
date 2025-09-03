@@ -1,9 +1,9 @@
 import { createFilterOptions } from '@mui/material/Autocomplete'
+import { type UseMutateFunction } from '@tanstack/react-query'
 import { useState } from 'react'
 import AsyncAutocomplete, {
   type AsyncAutocompleteProps,
 } from '../../../components/AsyncAutocomplete'
-import { dbAdd, type DbAddProps } from '../../../lib/frontend/restService'
 import { type AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
 import { Status } from '../../../models/Status'
 
@@ -25,8 +25,10 @@ export interface AsyncSelectorProps<
   handleChange: (value: C | null) => void
   /** function to create C  */
   createOption: (name: string) => C
-  /**  Props for adding item to db. If omitted, adding new items is disabled. */
-  dbAddProps?: Omit<DbAddProps<C>, 'newItem'>
+  /**  Function to add new item to db. If omitted, adding new items is disabled.
+   *   This should be a tanstack mutate()
+   */
+  addItemMutate?: UseMutateFunction<C, Error, C>
   /** This component does not support multiple selections. */
   multiple?: false
 }
@@ -39,10 +41,10 @@ export default function AsyncSelector<
   handleChange,
   options = [],
   createOption,
-  dbAddProps,
+  addItemMutate,
   ...asyncAutocompleteProps
 }: AsyncSelectorProps<C, DisableClearable>) {
-  const addNewDisabled = !dbAddProps
+  const addNewDisabled = !addItemMutate
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic.
@@ -80,12 +82,9 @@ export default function AsyncSelector<
           // The new option's name is the visible label `Add "xxx"`.
           // We want to set the name to be the raw inputValue.
           const newItem = createOption(newValue.inputValue)
-          setInputValue(inputValue)
 
-          dbAdd({
-            newItem,
-            ...dbAddProps,
-          })
+          addItemMutate(newItem)
+          setInputValue(inputValue)
 
           handleChange(newItem)
         } else {

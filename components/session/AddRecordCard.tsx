@@ -7,7 +7,7 @@ import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import { addRecord } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
-import { dbAdd } from '../../lib/frontend/restService'
+import { useAddMutation } from '../../lib/frontend/restService'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 
@@ -16,16 +16,14 @@ export default function AddRecordCard() {
   const [category, setCategory] = useState<string | null>(null)
   const date = useCurrentDate()
   const swiper = useSwiper()
-
+  const addRecordMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    addFn: addRecord,
+  })
   const handleAdd = async () => {
     if (!exercise) return
 
-    await dbAdd({
-      optimisticKey: [QUERY_KEYS.records, { date }],
-      newItem: createRecord(date, { exercise }),
-      addFunction: addRecord,
-      errorMessage: `The exercise is corrupt and can't be used to create records.`,
-    })
+    addRecordMutate(createRecord(date, { exercise }))
 
     swiper.update()
     setExercise(null)

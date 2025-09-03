@@ -10,10 +10,11 @@ import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
 import { addRecord } from '../../lib/backend/mongoService'
 import { DATE_FORMAT, QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  dbAdd,
+  useAddMutation,
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
+import { enqueueError } from '../../lib/frontend/util'
 import { createRecord } from '../../models/Record'
 import SessionDatePicker from './upper/SessionDatePicker'
 
@@ -31,6 +32,10 @@ export default function CopySessionCard() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
+  const copyRecordMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    addFn: addRecord,
+  })
 
   const handlePrevDayChange = (newPrevDay: Dayjs) => {
     // reset this so if you tried to copy an empty session the button comes back
@@ -56,19 +61,19 @@ export default function CopySessionCard() {
         notes: [],
       })
 
-      dbAdd({
-        optimisticKey: [QUERY_KEYS.records, { date }],
-        newItem: newRecord,
-        addFunction: addRecord,
-        errorMessage:
-          'Previous session has a corrupt record. Could not finish copying the session.',
+      copyRecordMutate(newRecord, {
+        onError: (e) =>
+          enqueueError(
+            'Previous session has a corrupt record. Could not finish copying the session.',
+            e
+          ),
       })
     }
 
     swiper.update()
 
     setIsLoading(false)
-  }, [date, prevRecords.index, prevSessionLog.data, swiper])
+  }, [copyRecordMutate, date, prevRecords.index, prevSessionLog.data, swiper])
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>

@@ -6,12 +6,15 @@ import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'
+import { upsertBodyweight } from '../../../lib/backend/mongoService'
 import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
-import { dbAdd, useBodyweights } from '../../../lib/frontend/restService'
+import {
+  useAddMutation,
+  useBodyweights,
+} from '../../../lib/frontend/restService'
 import { createBodyweight, type WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
-import { upsertBodyweight } from '../../../lib/backend/mongoService'
 
 interface Props {
   day: Dayjs
@@ -27,6 +30,10 @@ export default function BodyweightInput({
     type: bodyweightType,
     sort: 'newestFirst',
   })
+  const upsertBodyweightMutate = useAddMutation({
+    addFn: upsertBodyweight,
+    invalidates: [QUERY_KEYS.bodyweights],
+  })
 
   // note: the value will be cast to a number on submit
   const schema = z.string().min(1, 'Must have a value')
@@ -35,11 +42,7 @@ export default function BodyweightInput({
   const handleSubmit = async (value: string) => {
     const newBodyweight = createBodyweight(Number(value), bodyweightType, day)
 
-    dbAdd({
-      addFunction: upsertBodyweight,
-      newItem: newBodyweight,
-      invalidates: [QUERY_KEYS.bodyweights],
-    })
+    upsertBodyweightMutate(newBodyweight)
   }
 
   const getHelperText = () => {

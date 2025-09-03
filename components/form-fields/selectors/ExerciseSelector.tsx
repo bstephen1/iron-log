@@ -3,7 +3,11 @@ import { useState } from 'react'
 import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
-import { useCategories, useExercises } from '../../../lib/frontend/restService'
+import {
+  useAddMutation,
+  useCategories,
+  useExercises,
+} from '../../../lib/frontend/restService'
 import {
   createExercise,
   type Exercise,
@@ -34,6 +38,10 @@ export default function ExerciseSelector<
 }: ExerciseSelectorProps<DisableClearable>) {
   const exercises = useExercises()
   const categories = useCategories()
+  const mutate = useAddMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    addFn: addExercise,
+  })
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
   )
@@ -64,14 +72,7 @@ export default function ExerciseSelector<
     <AsyncSelector
       {...asyncSelectorProps}
       value={exercise}
-      dbAddProps={
-        disableAddNew
-          ? undefined
-          : {
-              addFunction: addExercise,
-              optimisticKey: [QUERY_KEYS.exercises],
-            }
-      }
+      addItemMutate={disableAddNew ? undefined : mutate}
       label="Exercise"
       placeholder={`Select${!disableAddNew ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}

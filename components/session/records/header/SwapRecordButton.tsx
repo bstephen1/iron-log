@@ -5,7 +5,10 @@ import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { dbAdd, useSessionLog } from '../../../../lib/frontend/restService'
+import {
+  useAddMutation,
+  useSessionLog,
+} from '../../../../lib/frontend/restService'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
@@ -17,6 +20,10 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
   const swiper = useSwiper()
   const date = useCurrentDate()
   const { data: sessionLog } = useSessionLog(date)
+  const replaceSessionLogMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.sessionLogs, date],
+    addFn: upsertSessionLog,
+  })
 
   const isLeft = direction === 'left'
   const leftDisabled = !index
@@ -36,11 +43,7 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
 
-    dbAdd({
-      optimisticKey: [QUERY_KEYS.sessionLogs, date],
-      newItem: { ...sessionLog, records: newRecords },
-      addFunction: upsertSessionLog,
-    })
+    replaceSessionLogMutate({ ...sessionLog, records: newRecords })
 
     swiper.update()
     swiper.slideTo(j, 200)

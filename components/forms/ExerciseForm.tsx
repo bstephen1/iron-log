@@ -8,14 +8,15 @@ import {
 } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  dbAdd,
-  dbDelete,
-  dbUpdate,
+  useAddMutation,
   useCategories,
+  useDeleteMutation,
   useExercises,
   useModifiers,
   useRecords,
+  useUpdateMutation,
 } from '../../lib/frontend/restService'
+import { enqueueError, enqueueSuccess } from '../../lib/frontend/util'
 import {
   createExercise,
   type Exercise,
@@ -39,46 +40,50 @@ export default function ExerciseForm({ exercise }: Props) {
   const { data: records } = useRecords({ exercise: name })
   const exercises = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
+  const addExerciseMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    addFn: addExercise,
+  })
+  const deleteExerciseMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    deleteFn: deleteExercise,
+  })
+  const updateExerciseMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    updateFn: updateExerciseFields,
+  })
 
   // We need to avoid using "exercise" or this function will always trigger child rerenders,
   // so we isolate using it within the mutate callbacks.
   const updateFields = useCallback(
     async (updates: Partial<Exercise>) => {
-      dbUpdate({
-        updateFunction: updateExerciseFields,
-        optimisticKey: [QUERY_KEYS.exercises],
-        id: _id,
-        updates,
-      })
+      updateExerciseMutate({ _id, updates })
     },
-    [_id]
+    [_id, updateExerciseMutate]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       setUrlExercise(null)
-      dbDelete({
-        deleteFunction: deleteExercise,
-        optimisticKey: [QUERY_KEYS.exercises],
-        id,
-      })
+      deleteExerciseMutate(id)
     },
-    [setUrlExercise]
+    [setUrlExercise, deleteExerciseMutate]
   )
 
   const handleDuplicate = useCallback(async () => {
     const newName = exercise.name + ' (copy)'
     const newExercise = createExercise(newName, exercise)
 
-    dbAdd({
-      addFunction: addExercise,
-      optimisticKey: [QUERY_KEYS.exercises],
-      newItem: newExercise,
-      errorMessage: `The exercise is corrupt and can't be duplicated.`,
-      successMessage: `Duplicated as "${newName}"`,
+    addExerciseMutate(newExercise, {
+      onSuccess: () => {
+        enqueueSuccess(`Duplicated as "${newName}"`)
+      },
+      onError: (e) => {
+        enqueueError(`The exercise is corrupt and can't be duplicated.`, e)
+      },
     })
     setUrlExercise(newExercise._id)
-  }, [exercise, setUrlExercise])
+  }, [addExerciseMutate, exercise, setUrlExercise])
 
   return (
     <Grid container spacing={1} size={12}>

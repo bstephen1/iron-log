@@ -13,3 +13,10 @@ export const enqueueError = (
     persist: true,
   })
 }
+
+export const enqueueSuccess = (message: string) => {
+  enqueueSnackbar({
+    message,
+    severity: 'success',
+  })
+}

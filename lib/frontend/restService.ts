@@ -1,5 +1,8 @@
 import {
+  type MutationFunction,
+  useMutation,
   useQuery,
+  useQueryClient,
   useSuspenseQuery,
   type QueryKey,
 } from '@tanstack/react-query'
@@ -31,6 +34,149 @@ import {
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
 import { enqueueError } from './util'
+
+type OptimisticProps<
+  TQueryFnData = unknown,
+  TData = unknown,
+  TVariables = TData,
+> = {
+  mutationFn: MutationFunction<TData, TVariables>
+  /** Key to trigger optimistic data. No optimistic data will be set if omitted. */
+  queryKey?: QueryKey
+  updater: (
+    input: TQueryFnData | undefined,
+    variables: TVariables
+  ) => TQueryFnData | undefined
+  invalidates?: QueryKey
+}
+const useOptimisticMutation = <
+  TQueryFnData = unknown,
+  TData = unknown,
+  TVariables = TData,
+>({
+  mutationFn,
+  queryKey,
+  updater,
+  invalidates,
+}: OptimisticProps<TQueryFnData, TData, TVariables>) => {
+  const queryClient = useQueryClient()
+
+  const { mutate } = useMutation({
+    mutationFn,
+    onMutate: async () => {
+      console.log('ON_MUTATE CLIENT')
+      // Cancel any ongoing queries to prevent stale requests from overwriting
+      // the new optimistic data. This is kept in onMutate so it can be async.
+      // This triggers after setting optimistic data but the effect should be the same as
+      // if it was invoked beforehand.
+      await queryClient.cancelQueries({
+        queryKey,
+      })
+    },
+    onError: (_err, _variables) => {
+      // rather than saving a snapshot and rolling back, we simply invalidate and refetch
+      queryClient.invalidateQueries({ queryKey })
+    },
+    onSettled: () => {
+      return queryClient.invalidateQueries({
+        queryKey: invalidates,
+      })
+    },
+  })
+
+  return (...args: Parameters<typeof mutate>) => {
+    const [variables, _options] = args
+    const queryClient = getQueryClient()
+
+    // onMutate in the useMutation hook actually triggers AFTER an initial render with
+    // the stale data. This can cause disruptive screen flashing (especially when adding
+    // a new item on the manage screen). By setting the optimstic data BEFORE invoking
+    // mutate(), we ensure the cache is updated on the first possible render.
+    if (queryKey) {
+      queryClient.setQueryData<TQueryFnData>(queryKey, (input) =>
+        updater(input, variables)
+      )
+    }
+    mutate(...args)
+  }
+}
+
+interface AddMutationProps<T>
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  addFn: (newItem: T) => Promise<T>
+}
+export function useAddMutation<T>({ addFn, ...rest }: AddMutationProps<T>) {
+  return useOptimisticMutation<T[], T>({
+    ...rest,
+    mutationFn: (newItem) => addFn(newItem),
+    updater: (prev = [], newItem) => {
+      // Record must also update SessionLog to show it has been added
+      if (isRecord(newItem)) {
+        const { _id, date } = newItem
+        const queryClient = getQueryClient()
+        queryClient.setQueryData<SessionLog>(
+          [QUERY_KEYS.sessionLogs, date],
+          (prev) =>
+            createSessionLog(
+              date,
+              (prev?.records ?? []).concat(_id),
+              prev?.notes ?? []
+            )
+        )
+      }
+
+      return [...prev, newItem]
+    },
+  })
+}
+
+interface UpdateMutationProps<T>
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  updateFn: (id: string, updates: Partial<T>) => Promise<T>
+}
+export function useUpdateMutation<T extends { _id: string }>({
+  updateFn,
+  ...rest
+}: UpdateMutationProps<T>) {
+  return useOptimisticMutation<T[], T, { _id: string; updates: Partial<T> }>({
+    ...rest,
+    mutationFn: ({ _id, updates }) => updateFn(_id, updates),
+    // record and session don't need to sync like with Add/Delete because
+    // amount of records isn't changing
+    updater: (prev = [], { _id, updates }) =>
+      prev.map((item) => (item._id === _id ? { ...item, ...updates } : item)),
+  })
+}
+
+interface DeleteMutationProps
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  deleteFn: (id: string) => Promise<string>
+}
+export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
+  return useOptimisticMutation<{ _id: string }[], string>({
+    ...rest,
+    mutationFn: (id) => deleteFn(id),
+    updater: (prev = [], id) => {
+      const { date } = (rest.queryKey?.find(
+        (key) => !!key && typeof key === 'object' && 'date' in key
+      ) || {}) as { date: string }
+      if (date) {
+        const queryClient = getQueryClient()
+        queryClient.setQueryData<SessionLog>(
+          [QUERY_KEYS.sessionLogs, date],
+          (prev) =>
+            createSessionLog(
+              date,
+              (prev?.records ?? []).filter((_id) => _id !== id),
+              prev?.notes ?? []
+            )
+        )
+      }
+
+      return prev.filter((item) => item._id !== id)
+    },
+  })
+}
 
 interface SaveToDbProps {
   dbFunction: () => Promise<unknown>
@@ -89,46 +235,6 @@ async function saveToDb({
   if (optimistic) {
     queryClient.invalidateQueries({ queryKey: optimistic.key })
   }
-}
-
-export interface DbAddProps<P extends { _id: string }>
-  extends Omit<SaveToDbProps, 'dbFunction' | 'optimistic'> {
-  optimisticKey?: QueryKey
-  addFunction: (newItem: P) => Promise<P>
-  newItem: P
-}
-export async function dbAdd<P extends { _id: string }>({
-  optimisticKey,
-  newItem,
-  addFunction,
-  ...rest
-}: DbAddProps<P>) {
-  const queryClient = getQueryClient()
-  // Record must also update SessionLog to show it has been added
-  const date = isRecord(newItem) ? newItem.date : undefined
-
-  const optimisticMutate = (queryKey: QueryKey) => {
-    queryClient.setQueryData<P[]>(queryKey, (prev = []) => [...prev, newItem])
-    if (date) {
-      queryClient.setQueryData<SessionLog>(
-        [QUERY_KEYS.sessionLogs, date],
-        (prev) =>
-          createSessionLog(date, prev?.records.concat(newItem._id), prev?.notes)
-      )
-    }
-  }
-
-  saveToDb({
-    dbFunction: () => addFunction(newItem),
-    optimistic: optimisticKey
-      ? {
-          key: optimisticKey,
-          mutate: () => optimisticMutate(optimisticKey),
-          rollbackKeys: date ? [[QUERY_KEYS.sessionLogs, date]] : undefined,
-        }
-      : undefined,
-    ...rest,
-  })
 }
 
 interface DbUpdateProps<P extends { _id: string }>
