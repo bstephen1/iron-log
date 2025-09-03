@@ -3,6 +3,7 @@ import { useState } from 'react'
 import AsyncAutocomplete, {
   type AsyncAutocompleteProps,
 } from '../../../components/AsyncAutocomplete'
+import { dbAdd, type DbAddProps } from '../../../lib/frontend/restService'
 import { type AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
 import { Status } from '../../../models/Status'
 
@@ -24,10 +25,8 @@ export interface AsyncSelectorProps<
   handleChange: (value: C | null) => void
   /** function to create C  */
   createOption: (name: string) => C
-  /**  function to add new C to db.
-   *   If omitted, adding new items is disabled.
-   */
-  addNewItem?: (value: C) => unknown
+  /**  Props for adding item to db. If omitted, adding new items is disabled. */
+  dbAddProps?: Omit<DbAddProps<C>, 'newItem'>
   /** This component does not support multiple selections. */
   multiple?: false
 }
@@ -40,10 +39,10 @@ export default function AsyncSelector<
   handleChange,
   options = [],
   createOption,
-  addNewItem,
+  dbAddProps,
   ...asyncAutocompleteProps
 }: AsyncSelectorProps<C, DisableClearable>) {
-  const addNewDisabled = !addNewItem
+  const addNewDisabled = !dbAddProps
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic.
@@ -80,12 +79,15 @@ export default function AsyncSelector<
         if (newValue?.inputValue && !addNewDisabled) {
           // The new option's name is the visible label `Add "xxx"`.
           // We want to set the name to be the raw inputValue.
-          const newOption = createOption(newValue.inputValue)
+          const newItem = createOption(newValue.inputValue)
           setInputValue(inputValue)
 
-          addNewItem(newOption)
+          dbAdd({
+            newItem,
+            ...dbAddProps,
+          })
 
-          handleChange(newOption)
+          handleChange(newItem)
         } else {
           handleChange(newValue)
         }

@@ -7,13 +7,12 @@ import {
   type QueryKey,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
+import { enqueueSnackbar } from 'notistack'
 import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import {
   bodyweightQuerySchema,
   type BodyweightRangeQuery,
@@ -25,12 +24,7 @@ import {
 } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
-  addCategory,
   addExercise,
-  addModifier,
-  deleteCategory,
-  deleteExercise,
-  deleteModifier,
   fetchBodyweights,
   fetchCategories,
   fetchExercises,
@@ -38,9 +32,6 @@ import {
   fetchRecords,
   fetchSessionLog,
   fetchSessionLogs,
-  updateCategoryFields,
-  updateExerciseFields,
-  updateModifierFields,
 } from '../backend/mongoService'
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
@@ -168,6 +159,7 @@ export function useRecords(
 interface SaveToDbProps {
   dbFunction: () => Promise<unknown>
   errorMessage?: string
+  successMessage?: string
   optimistic?: {
     key: QueryKey
     mutate: () => void
@@ -182,6 +174,7 @@ interface SaveToDbProps {
 async function saveToDb({
   dbFunction,
   errorMessage,
+  successMessage,
   optimistic,
   invalidates,
 }: SaveToDbProps) {
@@ -196,6 +189,9 @@ async function saveToDb({
 
   try {
     await dbFunction()
+    if (successMessage) {
+      enqueueSnackbar(successMessage, { severity: 'success' })
+    }
   } catch (e) {
     enqueueError(errorMessage ?? 'could not save changes')
     if (optimistic) {
@@ -209,8 +205,8 @@ async function saveToDb({
   queryClient.invalidateQueries({ queryKey: invalidates })
 }
 
-interface DbAddProps<P extends { _id: string }>
-  extends Pick<SaveToDbProps, 'errorMessage' | 'invalidates'> {
+export interface DbAddProps<P extends { _id: string }>
+  extends Omit<SaveToDbProps, 'dbFunction' | 'optimistic'> {
   optimisticKey?: QueryKey
   addFunction: (newItem: P) => Promise<P>
   newItem: P
@@ -250,7 +246,7 @@ export async function dbAdd<P extends { _id: string }>({
 }
 
 interface DbUpdateProps<P extends { _id: string }>
-  extends Pick<SaveToDbProps, 'errorMessage' | 'invalidates'> {
+  extends Omit<SaveToDbProps, 'dbFunction' | 'optimistic'> {
   optimisticKey?: unknown[]
   updateFunction: (id: string, updates: Partial<P>) => Promise<P>
   id: string
@@ -284,7 +280,7 @@ export async function dbUpdate<P extends { _id: string }>({
 }
 
 interface DbDeleteProps
-  extends Pick<SaveToDbProps, 'errorMessage' | 'invalidates'> {
+  extends Omit<SaveToDbProps, 'dbFunction' | 'optimistic'> {
   optimisticKey?: unknown[]
   deleteFunction: (id: string) => Promise<string>
   id: string
@@ -349,23 +345,6 @@ export function useExercises({ suspense }: UseOptions = {}) {
   }
 }
 
-export function useExerciseUpdate() {
-  const { mutate } = useOptimisticMutation<
-    Exercise[],
-    Exercise,
-    {
-      _id: string
-      updates: Partial<Exercise>
-    }
-  >({
-    mutationFn: ({ _id, updates }) => updateExerciseFields(_id, updates),
-    queryKey: [QUERY_KEYS.exercises],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
-  })
-  return mutate
-}
-
 export function useExerciseAdd() {
   const { mutate } = useOptimisticMutation<Exercise[], Exercise>({
     mutationFn: (exercise: Exercise) => addExercise(exercise),
@@ -375,54 +354,9 @@ export function useExerciseAdd() {
   return mutate
 }
 
-export function useExerciseDelete() {
-  const { mutate } = useOptimisticMutation<Exercise[], string>({
-    mutationFn: (id: string) => deleteExercise(id),
-    queryKey: [QUERY_KEYS.exercises],
-    updater: (prev, id) => prev?.filter((item) => item._id !== id),
-  })
-  return mutate
-}
-
 //----------
 // MODIFIER
 //----------
-
-export function useModifierUpdate() {
-  const { mutate } = useOptimisticMutation<
-    Modifier[],
-    Modifier,
-    {
-      _id: string
-      updates: Partial<Modifier>
-    }
-  >({
-    mutationFn: ({ _id, updates }) => updateModifierFields(_id, updates),
-    queryKey: [QUERY_KEYS.modifiers],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
-    invalidates: ['exercises'],
-  })
-  return mutate
-}
-
-export function useModifierAdd() {
-  const { mutate } = useOptimisticMutation<Modifier[], Modifier>({
-    mutationFn: (modifier: Modifier) => addModifier(modifier),
-    queryKey: [QUERY_KEYS.modifiers],
-    updater: (prev, modifier) => prev?.concat(modifier),
-  })
-  return mutate
-}
-
-export function useModifierDelete() {
-  const { mutate } = useOptimisticMutation<Modifier[], string>({
-    mutationFn: (id: string) => deleteModifier(id),
-    queryKey: [QUERY_KEYS.modifiers],
-    updater: (prev, id) => prev?.filter((item) => item._id !== id),
-  })
-  return mutate
-}
 
 export function useModifiers({ suspense }: UseOptions = {}) {
   const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
@@ -441,43 +375,6 @@ export function useModifiers({ suspense }: UseOptions = {}) {
 //----------
 // CATEGORY
 //----------
-
-export function useCategoryUpdate() {
-  const { mutate } = useOptimisticMutation<
-    Category[],
-    Category,
-    {
-      _id: string
-      name: string
-      updates: Partial<Category>
-    }
-  >({
-    mutationFn: ({ _id, updates }) => updateCategoryFields(_id, updates),
-    queryKey: [QUERY_KEYS.categories],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
-    invalidates: ['exercises'],
-  })
-  return mutate
-}
-
-export function useCategoryAdd() {
-  const { mutate } = useOptimisticMutation<Category[], Category>({
-    mutationFn: (category: Category) => addCategory(category),
-    queryKey: [QUERY_KEYS.categories],
-    updater: (prev, category) => prev?.concat(category),
-  })
-  return mutate
-}
-
-export function useCategoryDelete() {
-  const { mutate } = useOptimisticMutation<Category[], string>({
-    mutationFn: (id: string) => deleteCategory(id),
-    queryKey: [QUERY_KEYS.categories],
-    updater: (prev, id) => prev?.filter((item) => item._id !== id),
-  })
-  return mutate
-}
 
 export function useCategories({ suspense }: UseOptions = {}) {
   const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({

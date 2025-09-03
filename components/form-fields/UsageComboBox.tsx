@@ -1,7 +1,9 @@
 import { type AutocompleteChangeReason } from '@mui/material/Autocomplete'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
-import { useExerciseUpdate, useExercises } from '../../lib/frontend/restService'
+import { updateExerciseFields } from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import { dbUpdate, useExercises } from '../../lib/frontend/restService'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import ComboBoxField from './ComboBoxField'
 
@@ -17,7 +19,6 @@ interface Props {
  */
 export default memo(function UsageComboBox({ field, name, usage }: Props) {
   const exercises = useExercises()
-  const updateExercise = useExerciseUpdate()
   const usageNames = usage.map((exercise) => exercise.name)
 
   const handleUpdateExercise = async (
@@ -36,7 +37,12 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
       updatedField = updatedField.filter((itemName) => name !== itemName)
     }
 
-    updateExercise({ _id: newExercise._id, updates: { [field]: updatedField } })
+    dbUpdate({
+      updateFunction: updateExerciseFields,
+      optimisticKey: [QUERY_KEYS.exercises],
+      id: newExercise._id,
+      updates: { [field]: updatedField },
+    })
   }
 
   return (

@@ -1,17 +1,21 @@
 import Grid from '@mui/material/Grid'
-import { enqueueSnackbar } from 'notistack'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
+  addExercise,
+  deleteExercise,
+  updateExerciseFields,
+} from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import {
+  dbAdd,
+  dbDelete,
+  dbUpdate,
   useCategories,
-  useExerciseAdd,
-  useExerciseDelete,
   useExercises,
-  useExerciseUpdate,
   useModifiers,
   useRecords,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/frontend/util'
 import {
   createExercise,
   type Exercise,
@@ -34,41 +38,47 @@ export default function ExerciseForm({ exercise }: Props) {
   const categories = useCategories()
   const { data: records } = useRecords({ exercise: name })
   const exercises = useExercises()
-  const updateExercise = useExerciseUpdate()
-  const deleteExercise = useExerciseDelete()
-  const addExercise = useExerciseAdd()
   const [_, setUrlExercise] = useQueryState('exercise')
 
   // We need to avoid using "exercise" or this function will always trigger child rerenders,
   // so we isolate using it within the mutate callbacks.
   const updateFields = useCallback(
     async (updates: Partial<Exercise>) => {
-      updateExercise({ _id, updates })
+      dbUpdate({
+        updateFunction: updateExerciseFields,
+        optimisticKey: [QUERY_KEYS.exercises],
+        id: _id,
+        updates,
+      })
     },
-    [_id, updateExercise]
+    [_id]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       setUrlExercise(null)
-      deleteExercise(id)
+      dbDelete({
+        deleteFunction: deleteExercise,
+        optimisticKey: [QUERY_KEYS.exercises],
+        id,
+      })
     },
-    [deleteExercise, setUrlExercise]
+    [setUrlExercise]
   )
 
   const handleDuplicate = useCallback(async () => {
     const newName = exercise.name + ' (copy)'
     const newExercise = createExercise(newName, exercise)
 
-    addExercise(newExercise, {
-      onError: (e) =>
-        enqueueError(`The exercise is corrupt and can't be duplicated.`, e),
-      onSuccess: () => {
-        enqueueSnackbar(`Duplicated as "${newName}"`, { severity: 'info' })
-        setUrlExercise(newExercise._id, { scroll: true })
-      },
+    dbAdd({
+      addFunction: addExercise,
+      optimisticKey: [QUERY_KEYS.exercises],
+      newItem: newExercise,
+      errorMessage: `The exercise is corrupt and can't be duplicated.`,
+      successMessage: `Duplicated as "${newName}"`,
     })
-  }, [addExercise, exercise, setUrlExercise])
+    setUrlExercise(newExercise._id)
+  }, [exercise, setUrlExercise])
 
   return (
     <Grid container spacing={1} size={12}>

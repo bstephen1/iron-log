@@ -2,10 +2,15 @@ import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
+  deleteModifier,
+  updateModifierFields,
+} from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import {
+  dbDelete,
+  dbUpdate,
   useExercises,
-  useModifierDelete,
   useModifiers,
-  useModifierUpdate,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
@@ -21,25 +26,33 @@ export default function ModifierForm({
   modifier: { name, weight, _id },
 }: Props) {
   const modifiers = useModifiers()
-  const updateModifier = useModifierUpdate()
-  const deleteModifier = useModifierDelete()
   const exercises = useExercises()
   const usage = getUsage(exercises.data, 'modifiers', name)
   const [_, setUrlModifier] = useQueryState('modifier')
 
   const updateFields = useCallback(
     async (updates: Partial<Modifier>) => {
-      updateModifier({ _id, updates })
+      dbUpdate({
+        optimisticKey: [QUERY_KEYS.modifiers],
+        updateFunction: updateModifierFields,
+        id: _id,
+        updates,
+        invalidates: [QUERY_KEYS.exercises],
+      })
     },
-    [_id, updateModifier]
+    [_id]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       setUrlModifier(null)
-      deleteModifier(id)
+      dbDelete({
+        deleteFunction: deleteModifier,
+        id,
+        optimisticKey: [QUERY_KEYS.modifiers],
+      })
     },
-    [deleteModifier, setUrlModifier]
+    [setUrlModifier]
   )
 
   return (

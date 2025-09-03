@@ -4,13 +4,12 @@ import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
-import { updateRecordFields } from '../../../lib/backend/mongoService'
-import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
-  dbUpdate,
-  useExercises,
-  useExerciseUpdate,
-} from '../../../lib/frontend/restService'
+  updateExerciseFields,
+  updateRecordFields,
+} from '../../../lib/backend/mongoService'
+import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
+import { dbUpdate, useExercises } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
@@ -64,7 +63,6 @@ export default memo(function RecordCard({
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
-  const updateExercise = useExerciseUpdate()
   const noSwipingDesktop = useNoSwipingDesktop()
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
@@ -83,9 +81,15 @@ export default memo(function RecordCard({
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (updates) => {
-      exercise?._id && updateExercise({ _id: exercise._id, updates })
+      exercise?._id &&
+        dbUpdate({
+          updateFunction: updateExerciseFields,
+          optimisticKey: [QUERY_KEYS.exercises],
+          id: exercise._id,
+          updates,
+        })
     },
-    [exercise?._id, updateExercise]
+    [exercise?._id]
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(

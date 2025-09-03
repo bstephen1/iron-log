@@ -1,8 +1,7 @@
 import { type Dispatch, type SetStateAction } from 'react'
-import {
-  useCategories,
-  useCategoryAdd,
-} from '../../../lib/frontend/restService'
+import { addCategory } from '../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../lib/frontend/constants'
+import { useCategories } from '../../../lib/frontend/restService'
 import {
   type Category,
   createCategory,
@@ -20,12 +19,18 @@ export default function CategorySelector({
   handleChange,
 }: Props) {
   const categories = useCategories()
-  const addCategory = useCategoryAdd()
   return (
     <AsyncSelector
       handleChange={handleChange}
       options={categories.data}
-      addNewItem={disableAddNew ? undefined : addCategory}
+      dbAddProps={
+        disableAddNew
+          ? undefined
+          : {
+              addFunction: addCategory,
+              optimisticKey: [QUERY_KEYS.categories],
+            }
+      }
       value={category}
       label="Category"
       placeholder="Select or add new category"

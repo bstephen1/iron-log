@@ -18,7 +18,9 @@ const TestSelector = (
   <AsyncSelector
     handleChange={mockHandleChange}
     createOption={createAsyncSelectorOption}
-    addNewItem={mockAddNewItem}
+    dbAddProps={{
+      addFunction: mockAddNewItem,
+    }}
     placeholder={placeholder}
     {...props}
   />
@@ -50,7 +52,7 @@ it('inits to given value name if provided', async () => {
 })
 
 it('does not show "add new" option when mutateOptions is not provided', async () => {
-  const { user } = render(<TestSelector addNewItem={undefined} />)
+  const { user } = render(<TestSelector dbAddProps={undefined} />)
 
   // type new option
   await user.click(screen.getByPlaceholderText(placeholder))
