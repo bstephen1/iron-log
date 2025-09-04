@@ -29,3 +29,8 @@ export enum QUERY_KEYS {
   sessionLogs = 'sessionLogs',
   records = 'records',
 }
+
+export enum LOCAL_STORAGE {
+  sessionRedirect = 'sessionRedirect',
+  showSaving = 'showSaving',
+}

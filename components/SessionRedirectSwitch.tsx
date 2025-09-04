@@ -7,17 +7,18 @@ import Typography from '@mui/material/Typography'
 import Link from 'next/link'
 import useLocalStorageState from 'use-local-storage-state'
 import useDarkMode from '../components/useDarkMode'
+import { LOCAL_STORAGE } from '../lib/frontend/constants'
 
 export default function SessionRedirectSwitch() {
   const [sessionRedirect, setSessionRedirect] = useLocalStorageState(
-    'sessionRedirect',
+    LOCAL_STORAGE.sessionRedirect,
     { defaultValue: true }
   )
   const theme = useTheme()
   const isDark = useDarkMode()
 
   return (
-    <FormGroup row>
+    <FormGroup>
       <FormControlLabel
         control={
           <Switch

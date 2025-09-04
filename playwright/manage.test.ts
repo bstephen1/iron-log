@@ -37,9 +37,8 @@ test('adds an exercise', async ({ page }) => {
   // wait for processing to finish -- reloading while a post request is in process
   // will abort it. This is not necessarily an issue with the app, but
   // more of an issue in automated testing which will immediately trigger
-  // the reload after making a change. Since the ui updates optimistically
-  // there is no visual feedback when the post request actually completes.
-  await page.waitForTimeout(1000)
+  // the reload after making a change.
+  await expect(page.getByLabel('Saving...')).not.toBeVisible()
 
   // confirm edits persist on reload
   await page.reload()
