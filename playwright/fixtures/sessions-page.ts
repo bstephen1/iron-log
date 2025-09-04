@@ -19,7 +19,8 @@ export class SessionsPage {
     await this.page.keyboard.press('Enter')
     await this.page.getByText('Add record').click()
 
-    // if page is refreshed before changes are saved, the changes would be aborted
+    // tried passing in the extendedPage with waitForSave, which was
+    // doable but seemed that it wasn't actually waiting
     await expect(this.page.getByLabel('Saving...')).not.toBeVisible()
   }
 }

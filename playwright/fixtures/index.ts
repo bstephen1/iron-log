@@ -2,6 +2,7 @@ import { test as baseTest } from '@playwright/test'
 import fs from 'fs'
 import { ObjectId } from 'mongodb'
 import path from 'path'
+import { ExtendedPage } from './extended-page'
 import { SessionsPage } from './sessions-page'
 
 /** Generates a userId from a unique number.
@@ -16,6 +17,7 @@ const getUserId = (uniqueNum: number) =>
 
 interface CustomFixtures {
   sessionsPage: SessionsPage
+  extendedPage: ExtendedPage
 }
 
 export * from '@playwright/test'
@@ -68,7 +70,6 @@ export const test = baseTest.extend<
     },
     { scope: 'worker' },
   ],
-  sessionsPage: async ({ page }, apply) => {
-    await apply(new SessionsPage(page))
-  },
+  sessionsPage: async ({ page }, apply) => await apply(new SessionsPage(page)),
+  extendedPage: async ({ page }, apply) => await apply(new ExtendedPage(page)),
 })
