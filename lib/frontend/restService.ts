@@ -62,7 +62,6 @@ const useOptimisticMutation = <
   const { mutate } = useMutation({
     mutationFn,
     onMutate: async () => {
-      console.log('ON_MUTATE CLIENT')
       // Cancel any ongoing queries to prevent stale requests from overwriting
       // the new optimistic data. This is kept in onMutate so it can be async.
       // This triggers after setting optimistic data but the effect should be the same as
