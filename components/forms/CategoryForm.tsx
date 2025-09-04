@@ -2,10 +2,15 @@ import Grid from '@mui/material/Grid'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
+  deleteCategory,
+  updateCategoryFields,
+} from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import {
   useCategories,
-  useCategoryDelete,
-  useCategoryUpdate,
+  useDeleteMutation,
   useExercises,
+  useUpdateMutation,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -18,25 +23,32 @@ interface Props {
 }
 export default function CategoryForm({ category: { name, _id } }: Props) {
   const categories = useCategories()
-  const updateCategory = useCategoryUpdate()
-  const deleteCategory = useCategoryDelete()
   const { data } = useExercises()
   const usage = getUsage(data, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')
+  const deleteCategoryMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.categories],
+    deleteFn: deleteCategory,
+  })
+  const updateCategoryMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.categories],
+    updateFn: updateCategoryFields,
+    invalidates: [QUERY_KEYS.exercises],
+  })
 
   const updateFields = useCallback(
     async (updates: Partial<Category>) => {
-      updateCategory({ _id, name, updates })
+      updateCategoryMutate({ _id, updates })
     },
-    [_id, name, updateCategory]
+    [_id, updateCategoryMutate]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       setUrlCategory(null)
-      deleteCategory(id)
+      deleteCategoryMutate(id)
     },
-    [deleteCategory, setUrlCategory]
+    [deleteCategoryMutate, setUrlCategory]
   )
 
   return (

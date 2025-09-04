@@ -14,6 +14,7 @@ import { useEffect, type ReactNode } from 'react'
 import { bluePalette } from '../styles/themePalettes'
 import AppSnackbar from './AppSnackbar'
 import Navbar from './Navbar'
+import SavingIndicator from './SavingIndicator'
 
 const disableNumberSpin = () => {
   if (!(document.activeElement instanceof HTMLInputElement)) return
@@ -55,6 +56,7 @@ export default function Layout({ children, session, disableNavbar }: Props) {
       <NuqsAdapter>
         <ThemeProvider theme={theme}>
           <CssBaseline /> {/* for dark mode */}
+          <SavingIndicator />
           <InitColorSchemeScript attribute="class" />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <SnackbarProvider

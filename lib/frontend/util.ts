@@ -1,19 +1,22 @@
 import { enqueueSnackbar } from 'notistack'
-import { ERRORS } from './constants'
 
 export const enqueueError = (
-  e: unknown,
-  /** message to show if the error is a validation error */
-  validationMessage: string
+  message: string,
+  /** prints to console if provided */
+  e?: unknown
 ) => {
-  const originalMessage = e instanceof Error ? e.message : ''
+  console.error(e)
 
   enqueueSnackbar({
-    message:
-      originalMessage === ERRORS.validationFail
-        ? validationMessage
-        : ERRORS.retry,
+    message,
     severity: 'error',
     persist: true,
+  })
+}
+
+export const enqueueSuccess = (message: string) => {
+  enqueueSnackbar({
+    message,
+    severity: 'success',
   })
 }

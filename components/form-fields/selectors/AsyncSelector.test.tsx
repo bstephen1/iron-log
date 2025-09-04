@@ -8,7 +8,7 @@ import { Status } from '../../../models/Status'
 import AsyncSelector, { type AsyncSelectorProps } from './AsyncSelector'
 
 const mockHandleChange = vi.fn()
-const mockAddNewItem = vi.fn()
+const mockMutate = vi.fn()
 
 const placeholder = 'placeholder'
 
@@ -18,7 +18,7 @@ const TestSelector = (
   <AsyncSelector
     handleChange={mockHandleChange}
     createOption={createAsyncSelectorOption}
-    addNewItem={mockAddNewItem}
+    addItemMutate={mockMutate}
     placeholder={placeholder}
     {...props}
   />
@@ -38,7 +38,7 @@ it('creates new record from "add new" option', async () => {
   // select new option
   await user.keyboard('[Enter]')
 
-  expect(mockAddNewItem).toHaveBeenCalled()
+  expect(mockMutate).toHaveBeenCalled()
   expect(mockHandleChange).toHaveBeenCalled()
 })
 
@@ -50,7 +50,7 @@ it('inits to given value name if provided', async () => {
 })
 
 it('does not show "add new" option when mutateOptions is not provided', async () => {
-  const { user } = render(<TestSelector addNewItem={undefined} />)
+  const { user } = render(<TestSelector addItemMutate={undefined} />)
 
   // type new option
   await user.click(screen.getByPlaceholderText(placeholder))
@@ -69,7 +69,7 @@ it('handles changing to an existing option', async () => {
   await user.click(screen.getByPlaceholderText(placeholder))
   await user.keyboard('[Enter]')
 
-  expect(mockAddNewItem).not.toHaveBeenCalled()
+  expect(mockMutate).not.toHaveBeenCalled()
   expect(mockHandleChange).toHaveBeenCalled()
 })
 

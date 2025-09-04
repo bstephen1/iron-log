@@ -14,17 +14,13 @@ export class SessionsPage {
 
     // wait for loading
     await expect(this.page.getByRole('progressbar')).toHaveCount(0)
-    const recordCount = await this.page
-      .getByRole('button', { name: 'Add new set' })
-      .count()
 
     await this.page.getByLabel('Exercise').last().fill(exercise)
     await this.page.keyboard.press('Enter')
     await this.page.getByText('Add record').click()
 
-    // if page is refreshed before changes are saved, the changes would be aborted
-    await expect(
-      this.page.getByRole('button', { name: 'Add new set' })
-    ).toHaveCount(recordCount + 1)
+    // tried passing in the extendedPage with waitForSave, which was
+    // doable but seemed that it wasn't actually waiting
+    await expect(this.page.getByLabel('Saving...')).not.toBeVisible()
   }
 }

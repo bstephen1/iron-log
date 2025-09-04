@@ -100,3 +100,6 @@ export const DEFAULT_RECORD_HISTORY_QUERY: RecordRangeQuery = {
   limit: 100,
   ...DEFAULT_SET_TYPE,
 }
+
+export const isRecord = (thing: unknown): thing is Record =>
+  !!thing && typeof thing === 'object' && 'activeModifiers' in thing

@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures'
 
-test('adds an exercise', async ({ page }) => {
+test('adds an exercise', async ({ page, extendedPage }) => {
   // should default to exercise tab
   await page.goto('/manage')
 
@@ -28,19 +28,16 @@ test('adds an exercise', async ({ page }) => {
   await page.getByText('Archived').click()
 
   await page.getByLabel('Equipment weight').fill('7.5')
+  // have to blur to trigger save due to debounce
+  await page.keyboard.press('Tab')
 
   await page.getByText('Bodyweight').click()
 
   await page.getByPlaceholder('Add note').fill('my note')
   await page.getByRole('button', { name: 'Confirm' }).click()
 
-  // wait for processing to finish -- reloading while a db save is in progress
-  // will abort it
-  // NOTE: Should fix the underlying issue that reloading aborts saving data
-  // reloading causes [Error: aborted] { code: 'ECONNRESET', digest: '4181194784' }
-  await page.waitForTimeout(1000)
-
   // confirm edits persist on reload
+  await extendedPage.waitForSave()
   await page.reload()
 
   // for no reason they all have multiple inputs now so have to call first() on everything

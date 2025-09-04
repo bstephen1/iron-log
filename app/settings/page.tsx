@@ -1,12 +1,12 @@
-import Grid from '@mui/material/Grid'
+import Stack from '@mui/material/Stack'
+import SavingIndicatorSwitch from '../../components/SavingIndicatorSwitch'
 import SessionRedirectSwitch from '../../components/SessionRedirectSwitch'
 
 export default async function SettingsPage() {
   return (
-    <Grid container spacing={2}>
-      <Grid alignItems="center" display="flex" size={12}>
-        <SessionRedirectSwitch />
-      </Grid>
-    </Grid>
+    <Stack spacing={4}>
+      <SessionRedirectSwitch />
+      <SavingIndicatorSwitch />
+    </Stack>
   )
 }

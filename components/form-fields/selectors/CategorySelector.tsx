@@ -1,7 +1,9 @@
 import { type Dispatch, type SetStateAction } from 'react'
+import { addCategory } from '../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
+  useAddMutation,
   useCategories,
-  useCategoryAdd,
 } from '../../../lib/frontend/restService'
 import {
   type Category,
@@ -20,12 +22,16 @@ export default function CategorySelector({
   handleChange,
 }: Props) {
   const categories = useCategories()
-  const addCategory = useCategoryAdd()
+  const mutate = useAddMutation({
+    queryKey: [QUERY_KEYS.categories],
+    addFn: addCategory,
+  })
+
   return (
     <AsyncSelector
       handleChange={handleChange}
       options={categories.data}
-      addNewItem={disableAddNew ? undefined : addCategory}
+      addItemMutate={disableAddNew ? undefined : mutate}
       value={category}
       label="Category"
       placeholder="Select or add new category"

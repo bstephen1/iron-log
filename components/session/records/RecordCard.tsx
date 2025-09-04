@@ -4,11 +4,14 @@ import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
+import {
+  updateExerciseFields,
+  updateRecordFields,
+} from '../../../lib/backend/mongoService'
+import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
   useExercises,
-  useExerciseUpdate,
-  useRecordUpdate,
+  useUpdateMutation,
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
@@ -64,9 +67,15 @@ export default memo(function RecordCard({
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
-  const updateExercise = useExerciseUpdate()
-  const updateRecord = useRecordUpdate(record.date)
   const noSwipingDesktop = useNoSwipingDesktop()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
+  const updateExerciseMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    updateFn: updateExerciseFields,
+  })
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes.unilateral
@@ -84,25 +93,26 @@ export default memo(function RecordCard({
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
     async (updates) => {
-      exercise?._id && updateExercise({ _id: exercise._id, updates })
+      exercise?._id && updateExerciseMutate({ _id: exercise._id, updates })
     },
-    [exercise?._id, updateExercise]
+    [exercise?._id, updateExerciseMutate]
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
     async (updates) => {
-      updateRecord(
+      updateRecordMutate(
         { _id: record._id, updates },
         {
-          onError: (e) =>
+          onError: (e) => {
             enqueueError(
-              e,
-              'Could not update record to a corrupt state. Changes were not saved.'
-            ),
+              'Could not update record to a corrupt state. Changes were not saved.',
+              e
+            )
+          },
         }
       )
     },
-    [record._id, updateRecord]
+    [record._id, updateRecordMutate]
   )
 
   return (

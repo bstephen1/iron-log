@@ -6,9 +6,11 @@ import DialogTitle from '@mui/material/DialogTitle'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
+import { upsertSessionLog } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import {
+  useAddMutation,
   useSessionLog,
-  useSessionLogUpsert,
 } from '../../../../lib/frontend/restService'
 import { type UpdateFields } from '../../../../lib/util'
 import { type Note } from '../../../../models/Note'
@@ -34,8 +36,11 @@ export default memo(function RecordNotesButton({
 }: Props) {
   const readOnly = !mutateRecordFields
   const { data: sessionLog } = useSessionLog(date)
-  const upsertSession = useSessionLogUpsert(date)
   const [open, setOpen] = useState(false)
+  const replaceSessionLogMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.sessionLogs, date],
+    addFn: upsertSessionLog,
+  })
 
   const combinedNotes = [...(sessionLog?.notes ?? []), ...notes]
   const options = ['Session', 'Record']
@@ -85,8 +90,7 @@ export default memo(function RecordNotesButton({
       mutateRecordFields({ notes: recordNotes })
     }
     if (sessionNotes.length) {
-      const newSessionLog = { ...sessionLog, notes: sessionNotes }
-      upsertSession(newSessionLog)
+      replaceSessionLogMutate({ ...sessionLog, notes: sessionNotes })
     }
   }
 

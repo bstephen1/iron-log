@@ -136,7 +136,7 @@ export default function SessionSwiper({ date }: Props) {
                 <RecordCard record={records.index[id]} swiperIndex={i} />
               </SwiperSlide>
             ) : (
-              <div key={id}>If this is visible, something went wrong...</div>
+              <></> // if record is in session but not records index, must have just been deleted
             )
           )}
           <SwiperSlide>

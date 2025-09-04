@@ -1,4 +1,5 @@
 import { createFilterOptions } from '@mui/material/Autocomplete'
+import { type UseMutateFunction } from '@tanstack/react-query'
 import { useState } from 'react'
 import AsyncAutocomplete, {
   type AsyncAutocompleteProps,
@@ -24,10 +25,10 @@ export interface AsyncSelectorProps<
   handleChange: (value: C | null) => void
   /** function to create C  */
   createOption: (name: string) => C
-  /**  function to add new C to db.
-   *   If omitted, adding new items is disabled.
+  /**  Function to add new item to db. If omitted, adding new items is disabled.
+   *   This should be a tanstack mutate()
    */
-  addNewItem?: (value: C) => unknown
+  addItemMutate?: UseMutateFunction<C, Error, C>
   /** This component does not support multiple selections. */
   multiple?: false
 }
@@ -40,10 +41,10 @@ export default function AsyncSelector<
   handleChange,
   options = [],
   createOption,
-  addNewItem,
+  addItemMutate,
   ...asyncAutocompleteProps
 }: AsyncSelectorProps<C, DisableClearable>) {
-  const addNewDisabled = !addNewItem
+  const addNewDisabled = !addItemMutate
   // This allows the autocomplete to filter options as the user types, in real time.
   // It needs to be the result of this function call, and we can't call it
   // outside the component while keeping the generic.
@@ -80,12 +81,12 @@ export default function AsyncSelector<
         if (newValue?.inputValue && !addNewDisabled) {
           // The new option's name is the visible label `Add "xxx"`.
           // We want to set the name to be the raw inputValue.
-          const newOption = createOption(newValue.inputValue)
+          const newItem = createOption(newValue.inputValue)
+
+          addItemMutate(newItem)
           setInputValue(inputValue)
 
-          addNewItem(newOption)
-
-          handleChange(newOption)
+          handleChange(newItem)
         } else {
           handleChange(newValue)
         }

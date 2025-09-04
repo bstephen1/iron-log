@@ -1,17 +1,22 @@
 import Grid from '@mui/material/Grid'
-import { enqueueSnackbar } from 'notistack'
 import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
+  addExercise,
+  deleteExercise,
+  updateExerciseFields,
+} from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import {
+  useAddMutation,
   useCategories,
-  useExerciseAdd,
-  useExerciseDelete,
+  useDeleteMutation,
   useExercises,
-  useExerciseUpdate,
   useModifiers,
   useRecords,
+  useUpdateMutation,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/frontend/util'
+import { enqueueError, enqueueSuccess } from '../../lib/frontend/util'
 import {
   createExercise,
   type Exercise,
@@ -34,41 +39,51 @@ export default function ExerciseForm({ exercise }: Props) {
   const categories = useCategories()
   const { data: records } = useRecords({ exercise: name })
   const exercises = useExercises()
-  const updateExercise = useExerciseUpdate()
-  const deleteExercise = useExerciseDelete()
-  const addExercise = useExerciseAdd()
   const [_, setUrlExercise] = useQueryState('exercise')
+  const addExerciseMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    addFn: addExercise,
+  })
+  const deleteExerciseMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    deleteFn: deleteExercise,
+  })
+  const updateExerciseMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    updateFn: updateExerciseFields,
+  })
 
   // We need to avoid using "exercise" or this function will always trigger child rerenders,
   // so we isolate using it within the mutate callbacks.
   const updateFields = useCallback(
     async (updates: Partial<Exercise>) => {
-      updateExercise({ _id, updates })
+      updateExerciseMutate({ _id, updates })
     },
-    [_id, updateExercise]
+    [_id, updateExerciseMutate]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
       setUrlExercise(null)
-      deleteExercise(id)
+      deleteExerciseMutate(id)
     },
-    [deleteExercise, setUrlExercise]
+    [setUrlExercise, deleteExerciseMutate]
   )
 
   const handleDuplicate = useCallback(async () => {
     const newName = exercise.name + ' (copy)'
     const newExercise = createExercise(newName, exercise)
 
-    addExercise(newExercise, {
-      onError: (e) =>
-        enqueueError(e, `The exercise is corrupt and can't be duplicated.`),
+    addExerciseMutate(newExercise, {
       onSuccess: () => {
-        enqueueSnackbar(`Duplicated as "${newName}"`, { severity: 'info' })
-        setUrlExercise(newExercise._id, { scroll: true })
+        enqueueSuccess(`Duplicated as "${newName}"`)
+      },
+      onError: (e) => {
+        enqueueError(`The exercise is corrupt and can't be duplicated.`, e)
       },
     })
-  }, [addExercise, exercise, setUrlExercise])
+    setUrlExercise(newExercise._id)
+  }, [addExerciseMutate, exercise, setUrlExercise])
 
   return (
     <Grid container spacing={1} size={12}>

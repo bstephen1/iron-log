@@ -7,33 +7,21 @@ import {
   type QueryKey,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
-import { stringify, type ParsedUrlQueryInput } from 'querystring'
 import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import { type Category } from '../../models/AsyncSelectorOption/Category'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import {
   bodyweightQuerySchema,
   type BodyweightRangeQuery,
 } from '../../models/Bodyweight'
 import {
+  isRecord,
   recordQuerySchema,
-  type Record,
   type RecordRangeQuery,
 } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
-  addCategory,
-  addExercise,
-  addModifier,
-  addRecord,
-  deleteCategory,
-  deleteExercise,
-  deleteModifier,
-  deleteRecord,
   fetchBodyweights,
   fetchCategories,
   fetchExercises,
@@ -41,48 +29,9 @@ import {
   fetchRecords,
   fetchSessionLog,
   fetchSessionLogs,
-  updateCategoryFields,
-  updateExerciseFields,
-  updateModifierFields,
-  updateRecordFields,
-  upsertBodyweight,
-  upsertSessionLog,
 } from '../backend/mongoService'
+import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
-
-interface UseOptions {
-  /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
-   *  component using this option. The component will be given a promise from
-   *  the server and the Suspense boundary will render until the promise resolves.
-   */
-  suspense?: boolean
-  /** Determines whether the fetch will occur. Defaults to true.
-   *  NOTE: cannot use with useSuspenseQuery.
-   */
-  enabled?: boolean
-}
-/** Parse a Query object into a rest param string. Query objects should be spread into this function. */
-export const paramify = (query: ParsedUrlQueryInput) => {
-  const parsedQuery: ParsedUrlQueryInput = {}
-  for (const [key, value] of Object.entries(query)) {
-    // stringify() adds empty strings to the url param, which can cause unintended behavior.
-    // Generally the presence of a query param indicates truthiness, whereas an empty string indicates a falsy value.
-    if (!value) continue
-
-    // note: stringify() drops empty arrays.
-    // See: https://github.com/psf/requests/issues/6557
-    parsedQuery[key] = value
-  }
-  // note that stringify doesn't add the leading '?'.
-  // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
-  return '?' + stringify(parsedQuery)
-}
-
-const toNames = (entities?: AsyncSelectorOption[]) =>
-  entities?.map((entity) => entity.name) ?? []
-
-const nameSort = <T extends { name: string }>(data?: T[]) =>
-  data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
 
 type OptimisticProps<
   TQueryFnData = unknown,
@@ -90,7 +39,8 @@ type OptimisticProps<
   TVariables = TData,
 > = {
   mutationFn: MutationFunction<TData, TVariables>
-  queryKey: QueryKey
+  /** Key to trigger optimistic data. No optimistic data will be set if omitted. */
+  queryKey?: QueryKey
   updater: (
     input: TQueryFnData | undefined,
     variables: TVariables
@@ -109,25 +59,20 @@ const useOptimisticMutation = <
 }: OptimisticProps<TQueryFnData, TData, TVariables>) => {
   const queryClient = useQueryClient()
 
-  return useMutation({
+  const { mutate } = useMutation({
     mutationFn,
-    onMutate: async (variables) => {
+    onMutate: async () => {
+      // Cancel any ongoing queries to prevent stale requests from overwriting
+      // the new optimistic data. This is kept in onMutate so it can be async.
+      // This triggers after setting optimistic data but the effect should be the same as
+      // if it was invoked beforehand.
       await queryClient.cancelQueries({
         queryKey,
       })
-
-      const snapshot = queryClient.getQueryData(queryKey)
-
-      queryClient.setQueryData<TQueryFnData>(queryKey, (input) =>
-        updater(input, variables)
-      )
-
-      return () => {
-        queryClient.setQueryData(queryKey, snapshot)
-      }
     },
-    onError: (_err, _variables, rollback) => {
-      rollback?.()
+    onError: (_err, _variables) => {
+      // rather than saving a snapshot and rolling back, we simply invalidate and refetch
+      queryClient.invalidateQueries({ queryKey })
     },
     onSettled: () => {
       return queryClient.invalidateQueries({
@@ -135,25 +80,136 @@ const useOptimisticMutation = <
       })
     },
   })
+
+  return (...args: Parameters<typeof mutate>) => {
+    const [variables, _options] = args
+    const queryClient = getQueryClient()
+
+    // onMutate in the useMutation hook actually triggers AFTER an initial render with
+    // the stale data. This can cause disruptive screen flashing (especially when adding
+    // a new item on the manage screen). By setting the optimstic data BEFORE invoking
+    // mutate(), we ensure the cache is updated on the first possible render.
+    if (queryKey) {
+      queryClient.setQueryData<TQueryFnData>(queryKey, (input) =>
+        updater(input, variables)
+      )
+    }
+    mutate(...args)
+  }
 }
 
-//---------
-// SESSION
-//---------
+interface AddMutationProps<T>
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  addFn: (newItem: T) => Promise<T>
+}
+export function useAddMutation<T>({ addFn, ...rest }: AddMutationProps<T>) {
+  return useOptimisticMutation<T[], T>({
+    ...rest,
+    mutationFn: (newItem) => addFn(newItem),
+    updater: (prev = [], newItem) => {
+      // Record must also update SessionLog to show it has been added
+      if (isRecord(newItem)) {
+        const { _id, date } = newItem
+        const queryClient = getQueryClient()
+        queryClient.setQueryData<SessionLog>(
+          [QUERY_KEYS.sessionLogs, date],
+          (prev) =>
+            createSessionLog(
+              date,
+              (prev?.records ?? []).concat(_id),
+              prev?.notes ?? []
+            )
+        )
+      }
+
+      return [...prev, newItem]
+    },
+  })
+}
+
+interface UpdateMutationProps<T>
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  updateFn: (id: string, updates: Partial<T>) => Promise<T>
+}
+export function useUpdateMutation<T extends { _id: string }>({
+  updateFn,
+  ...rest
+}: UpdateMutationProps<T>) {
+  return useOptimisticMutation<T[], T, { _id: string; updates: Partial<T> }>({
+    ...rest,
+    mutationFn: ({ _id, updates }) => updateFn(_id, updates),
+    // record and session don't need to sync like with Add/Delete because
+    // amount of records isn't changing
+    updater: (prev = [], { _id, updates }) =>
+      prev.map((item) => (item._id === _id ? { ...item, ...updates } : item)),
+  })
+}
+
+interface DeleteMutationProps
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  deleteFn: (id: string) => Promise<string>
+}
+export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
+  return useOptimisticMutation<{ _id: string }[], string>({
+    ...rest,
+    mutationFn: (id) => deleteFn(id),
+    updater: (prev = [], id) => {
+      const { date } = (rest.queryKey?.find(
+        (key) => !!key && typeof key === 'object' && 'date' in key
+      ) || {}) as { date: string }
+      if (date) {
+        const queryClient = getQueryClient()
+        queryClient.setQueryData<SessionLog>(
+          [QUERY_KEYS.sessionLogs, date],
+          (prev) =>
+            createSessionLog(
+              date,
+              (prev?.records ?? []).filter((_id) => _id !== id),
+              prev?.notes ?? []
+            )
+        )
+      }
+
+      return prev.filter((item) => item._id !== id)
+    },
+  })
+}
+
+//----------
+// FETCHING
+//----------
+
+interface UseOptions {
+  /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
+   *  component using this option. The component will be given a promise from
+   *  the server and the Suspense boundary will render until the promise resolves.
+   */
+  suspense?: boolean
+  /** Determines whether the fetch will occur. Defaults to true.
+   *  NOTE: cannot use with useSuspenseQuery.
+   */
+  enabled?: boolean
+}
+
+const toNames = (entities?: AsyncSelectorOption[]) =>
+  entities?.map((entity) => entity.name) ?? []
+
+const nameSort = <T extends { name: string }>(data?: T[]) =>
+  data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
 
 export function useSessionLog(day: Dayjs | string) {
   const date = typeof day === 'string' ? day : day.format(DATE_FORMAT)
 
   return useQuery({
     queryKey: [QUERY_KEYS.sessionLogs, date],
-    queryFn: () => fetchSessionLog(undefined, date),
+    queryFn: () => fetchSessionLog(date),
   })
 }
 
 export function useSessionLogs(query: DateRangeQuery) {
   const hook = useQuery({
     queryKey: [QUERY_KEYS.sessionLogs, query],
-    queryFn: () => fetchSessionLogs(undefined, query),
+    queryFn: () => fetchSessionLogs(query),
   })
 
   return {
@@ -161,19 +217,6 @@ export function useSessionLogs(query: DateRangeQuery) {
     index: arrayToIndex('date', hook.data),
   }
 }
-
-export function useSessionLogUpsert(date: string) {
-  const { mutate } = useOptimisticMutation({
-    mutationFn: upsertSessionLog,
-    queryKey: [QUERY_KEYS.sessionLogs, date],
-    updater: (_, sessionLog) => sessionLog,
-  })
-  return mutate
-}
-
-//--------
-// RECORD
-//--------
 
 export function useRecords(
   query?: RecordRangeQuery & DateRangeQuery,
@@ -184,7 +227,7 @@ export function useRecords(
 
   const hook = useQuery({
     queryKey: [QUERY_KEYS.records, query],
-    queryFn: () => fetchRecords(undefined, filter, dateFilter),
+    queryFn: () => fetchRecords(filter, dateFilter),
     enabled,
   })
 
@@ -193,71 +236,6 @@ export function useRecords(
     index: arrayToIndex('_id', hook.data),
   }
 }
-
-export function useRecordUpdate(date: string) {
-  const { mutate } = useOptimisticMutation<
-    Record[],
-    Record,
-    {
-      _id: string
-      updates: Partial<Record>
-    }
-  >({
-    mutationFn: ({ _id, updates }) => updateRecordFields(_id, updates),
-    queryKey: [QUERY_KEYS.records, { date }],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((rec) => (rec._id === _id ? { ...rec, ...updates } : rec)),
-  })
-  return mutate
-}
-
-export function useRecordAdd(date: string) {
-  const queryClient = useQueryClient()
-  const { mutate } = useOptimisticMutation<Record[], Record>({
-    mutationFn: (record: Record) => addRecord(record),
-    queryKey: [QUERY_KEYS.records, { date }],
-    updater: (prev = [], record) => {
-      queryClient.setQueryData<SessionLog>(
-        [QUERY_KEYS.sessionLogs, date],
-        (prev) =>
-          createSessionLog(date, prev?.records.concat(record._id), prev?.notes)
-      )
-
-      return [...prev, record]
-    },
-    invalidates: [QUERY_KEYS.sessionLogs],
-  })
-  return mutate
-}
-
-export function useRecordDelete(date: string) {
-  const queryClient = useQueryClient()
-
-  const { mutate } = useOptimisticMutation<Record[], string>({
-    mutationFn: (id: string) => deleteRecord(id),
-    queryKey: [QUERY_KEYS.records, { date }],
-    updater: (prev, id) => {
-      queryClient.setQueryData<SessionLog>(
-        [QUERY_KEYS.sessionLogs, date],
-        (prev) =>
-          prev
-            ? {
-                ...prev,
-                records: prev.records.filter((_id) => _id !== id),
-              }
-            : undefined
-      )
-
-      return prev?.filter((item) => item._id !== id)
-    },
-    invalidates: [QUERY_KEYS.sessionLogs],
-  })
-  return mutate
-}
-
-//----------
-// EXERCISE
-//----------
 
 export function useExercises({ suspense }: UseOptions = {}) {
   const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
@@ -271,81 +249,6 @@ export function useExercises({ suspense }: UseOptions = {}) {
     index: arrayToIndex('_id', data),
     ...rest,
   }
-}
-
-export function useExerciseUpdate() {
-  const { mutate } = useOptimisticMutation<
-    Exercise[],
-    Exercise,
-    {
-      _id: string
-      updates: Partial<Exercise>
-    }
-  >({
-    mutationFn: ({ _id, updates }) => updateExerciseFields(_id, updates),
-    queryKey: [QUERY_KEYS.exercises],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
-  })
-  return mutate
-}
-
-export function useExerciseAdd() {
-  const { mutate } = useOptimisticMutation<Exercise[], Exercise>({
-    mutationFn: (exercise: Exercise) => addExercise(exercise),
-    queryKey: [QUERY_KEYS.exercises],
-    updater: (prev, exercise) => prev?.concat(exercise),
-  })
-  return mutate
-}
-
-export function useExerciseDelete() {
-  const { mutate } = useOptimisticMutation<Exercise[], string>({
-    mutationFn: (id: string) => deleteExercise(id),
-    queryKey: [QUERY_KEYS.exercises],
-    updater: (prev, id) => prev?.filter((item) => item._id !== id),
-  })
-  return mutate
-}
-
-//----------
-// MODIFIER
-//----------
-
-export function useModifierUpdate() {
-  const { mutate } = useOptimisticMutation<
-    Modifier[],
-    Modifier,
-    {
-      _id: string
-      updates: Partial<Modifier>
-    }
-  >({
-    mutationFn: ({ _id, updates }) => updateModifierFields(_id, updates),
-    queryKey: [QUERY_KEYS.modifiers],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
-    invalidates: ['exercises'],
-  })
-  return mutate
-}
-
-export function useModifierAdd() {
-  const { mutate } = useOptimisticMutation<Modifier[], Modifier>({
-    mutationFn: (modifier: Modifier) => addModifier(modifier),
-    queryKey: [QUERY_KEYS.modifiers],
-    updater: (prev, modifier) => prev?.concat(modifier),
-  })
-  return mutate
-}
-
-export function useModifierDelete() {
-  const { mutate } = useOptimisticMutation<Modifier[], string>({
-    mutationFn: (id: string) => deleteModifier(id),
-    queryKey: [QUERY_KEYS.modifiers],
-    updater: (prev, id) => prev?.filter((item) => item._id !== id),
-  })
-  return mutate
 }
 
 export function useModifiers({ suspense }: UseOptions = {}) {
@@ -362,58 +265,6 @@ export function useModifiers({ suspense }: UseOptions = {}) {
   }
 }
 
-//----------
-// CATEGORY
-//----------
-
-export function useCategoryUpdate() {
-  const { mutate } = useOptimisticMutation<
-    Category[],
-    Category,
-    {
-      _id: string
-      name: string
-      updates: Partial<Category>
-    }
-  >({
-    mutationFn: ({ _id, name, updates }) => updateCategoryFields(_id, updates),
-    queryKey: [QUERY_KEYS.categories],
-    updater: (prev, { _id, updates }) =>
-      prev?.map((cat) => (cat._id === _id ? { ...cat, ...updates } : cat)),
-    invalidates: ['exercises'],
-    // todo: not working
-    // if (updates.name) {
-    //   queryClient.setQueryData<Exercise[]>(['exercises'], (prev) =>
-    //     prev?.map((ex) => ({
-    //       ...ex,
-    //       categories: ex.categories.map((cat) =>
-    //         cat === name ? (updates.name as string) : cat
-    //       ),
-    //     }))
-    //   )
-    // }
-  })
-  return mutate
-}
-
-export function useCategoryAdd() {
-  const { mutate } = useOptimisticMutation<Category[], Category>({
-    mutationFn: (category: Category) => addCategory(category),
-    queryKey: [QUERY_KEYS.categories],
-    updater: (prev, category) => prev?.concat(category),
-  })
-  return mutate
-}
-
-export function useCategoryDelete() {
-  const { mutate } = useOptimisticMutation<Category[], string>({
-    mutationFn: (id: string) => deleteCategory(id),
-    queryKey: [QUERY_KEYS.categories],
-    updater: (prev, id) => prev?.filter((item) => item._id !== id),
-  })
-  return mutate
-}
-
 export function useCategories({ suspense }: UseOptions = {}) {
   const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.categories],
@@ -427,10 +278,6 @@ export function useCategories({ suspense }: UseOptions = {}) {
     ...rest,
   }
 }
-
-//------------
-// BODYWEIGHT
-//------------
 
 export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
@@ -449,7 +296,7 @@ export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
 
   const { data, ...rest } = useQuery({
     queryKey: [QUERY_KEYS.bodyweights, query],
-    queryFn: () => fetchBodyweights(undefined, filter, dateQuery),
+    queryFn: () => fetchBodyweights(filter, dateQuery),
     enabled,
   })
 
@@ -457,20 +304,4 @@ export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
     data: enabled ? data : [],
     ...rest,
   }
-}
-
-export function useBodyweightUpsert() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: upsertBodyweight,
-    // make sure to _return_ the Promise from the query invalidation
-    // so that the mutation stays in `pending` state until the refetch is finished
-    onSettled: async () =>
-      await queryClient.invalidateQueries({
-        // Marks as stale any cache data that includes the queryKey (NOT exact).
-        // Could potentially tighten this to only keys with end date less than the
-        // new bw's date, but probably wouldn't make any noticeable improvement
-        queryKey: [QUERY_KEYS.bodyweights],
-      }),
-  })
 }

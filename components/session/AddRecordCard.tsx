@@ -5,8 +5,9 @@ import { useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import { useRecordAdd } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/frontend/util'
+import { addRecord } from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import { useAddMutation } from '../../lib/frontend/restService'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 
@@ -14,19 +15,15 @@ export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [category, setCategory] = useState<string | null>(null)
   const date = useCurrentDate()
-  const addRecord = useRecordAdd(date)
   const swiper = useSwiper()
-
+  const addRecordMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    addFn: addRecord,
+  })
   const handleAdd = async () => {
     if (!exercise) return
 
-    addRecord(createRecord(date, { exercise }), {
-      onError: (e) =>
-        enqueueError(
-          e,
-          `The exercise is corrupt and can't be used to create records.`
-        ),
-    })
+    addRecordMutate(createRecord(date, { exercise }))
 
     swiper.update()
     setExercise(null)

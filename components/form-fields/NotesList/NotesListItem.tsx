@@ -36,7 +36,7 @@ export default function NotesListItem(props: Props) {
     initialValue: note.value,
     // lower debounce causes a lot of strangeness on mobile (words duplicated on save, etc)
     // need to be very sure the user is done typing before trying to autosave
-    debounceMilliseconds: 5000,
+    debounceMilliseconds: 2500,
   })
 
   const onDelete = (index: number) => {
@@ -80,7 +80,7 @@ export default function NotesListItem(props: Props) {
       }
       sx={{ my: 1 }}
       slotProps={{
-        input: { 'aria-label': 'edit' },
+        input: { 'aria-label': `note ${index + 1}` },
       }}
     />
   )

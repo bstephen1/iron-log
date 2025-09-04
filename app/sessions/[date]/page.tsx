@@ -43,11 +43,11 @@ export default async function DatePage({ params }: Props) {
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: [QUERY_KEYS.sessionLogs, date],
-      queryFn: () => fetchSessionLog(undefined, date),
+      queryFn: () => fetchSessionLog(date),
     }),
     queryClient.prefetchQuery({
       queryKey: [QUERY_KEYS.records, { date }],
-      queryFn: () => fetchRecords(undefined, undefined, { date }),
+      queryFn: () => fetchRecords(undefined, { date }),
     }),
   ])
 

@@ -7,9 +7,10 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { useCallback, useState } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { addRecord } from '../../lib/backend/mongoService'
+import { DATE_FORMAT, QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  useRecordAdd,
+  useAddMutation,
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
@@ -29,9 +30,12 @@ export default function CopySessionCard() {
   const prevRecords = useRecords({
     date: prevDay.format(DATE_FORMAT),
   })
-  const addRecord = useRecordAdd(date)
   const [isLoading, setIsLoading] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
+  const copyRecordMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    addFn: addRecord,
+  })
 
   const handlePrevDayChange = (newPrevDay: Dayjs) => {
     // reset this so if you tried to copy an empty session the button comes back
@@ -57,11 +61,11 @@ export default function CopySessionCard() {
         notes: [],
       })
 
-      addRecord(newRecord, {
+      copyRecordMutate(newRecord, {
         onError: (e) =>
           enqueueError(
-            e,
-            'Previous session has a corrupt record. Could not finish copying the session.'
+            'Previous session has a corrupt record. Could not finish copying the session.',
+            e
           ),
       })
     }
@@ -69,7 +73,7 @@ export default function CopySessionCard() {
     swiper.update()
 
     setIsLoading(false)
-  }, [addRecord, date, prevRecords.index, prevSessionLog.data, swiper])
+  }, [copyRecordMutate, date, prevRecords.index, prevSessionLog.data, swiper])
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>

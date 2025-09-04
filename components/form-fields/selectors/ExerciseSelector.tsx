@@ -1,9 +1,11 @@
 import { type TextFieldProps } from '@mui/material/TextField'
 import { useState } from 'react'
 import CategoryFilter from '../../../components/CategoryFilter'
+import { addExercise } from '../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
+  useAddMutation,
   useCategories,
-  useExerciseAdd,
   useExercises,
 } from '../../../lib/frontend/restService'
 import {
@@ -35,8 +37,11 @@ export default function ExerciseSelector<
   ...asyncSelectorProps
 }: ExerciseSelectorProps<DisableClearable>) {
   const exercises = useExercises()
-  const addExercise = useExerciseAdd()
   const categories = useCategories()
+  const mutate = useAddMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    addFn: addExercise,
+  })
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
   )
@@ -67,7 +72,7 @@ export default function ExerciseSelector<
     <AsyncSelector
       {...asyncSelectorProps}
       value={exercise}
-      addNewItem={disableAddNew ? undefined : addExercise}
+      addItemMutate={disableAddNew ? undefined : mutate}
       label="Exercise"
       placeholder={`Select${!disableAddNew ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}

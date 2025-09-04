@@ -56,7 +56,7 @@ export default memo(function HistoryCard({
     exerciseNotes: (
       <ExerciseNotesButton key="exercise notes" notes={exercise?.notes} />
     ),
-    manage: <ManageExerciseButton key="manage" name={exercise?.name} />,
+    manage: <ManageExerciseButton key="manage" _id={exercise?._id} />,
   }
 
   const contentComponents: { [key in HistoryContent]: JSX.Element } = {

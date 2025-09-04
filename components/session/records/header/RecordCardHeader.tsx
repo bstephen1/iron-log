@@ -97,7 +97,7 @@ export default function RecordCardHeader({
       key="units"
       {...{ mutateExerciseFields, displayFields }}
     />,
-    <ManageExerciseButton key="manage" name={exercise?.name} />,
+    <ManageExerciseButton key="manage" _id={exercise?._id} />,
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
     <SwapRecordButton key="right" direction="right" index={swiperIndex} />,
     <DeleteRecordButton key="delete" _id={_id} />,

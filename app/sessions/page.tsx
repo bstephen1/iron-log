@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 import LoadingSpinner from '../../components/loading/LoadingSpinner'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { DATE_FORMAT, LOCAL_STORAGE } from '../../lib/frontend/constants'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography'
 export default function Page() {
   const router = useRouter()
   const [sessionRedirect, setSessionRedirect] = useLocalStorageState(
-    'sessionRedirect',
+    LOCAL_STORAGE.sessionRedirect,
     // serverValue is the value on the initial render from the server.
     // We needed a distinct state separate from true/false to indicate "loading".
     // We cannot use undefined because then the hook just reuses defaultValue for
