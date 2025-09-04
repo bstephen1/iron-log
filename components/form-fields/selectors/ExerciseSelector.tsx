@@ -1,8 +1,13 @@
 import { type TextFieldProps } from '@mui/material/TextField'
 import { useState } from 'react'
-import { type KeyedMutator } from 'swr'
 import CategoryFilter from '../../../components/CategoryFilter'
-import { addExercise, useCategories } from '../../../lib/frontend/restService'
+import { addExercise } from '../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../lib/frontend/constants'
+import {
+  useAddMutation,
+  useCategories,
+  useExercises,
+} from '../../../lib/frontend/restService'
 import {
   createExercise,
   type Exercise,
@@ -15,26 +20,28 @@ type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
   handleChange: (
     value: DisableClearable extends true ? Exercise : Exercise | null
   ) => void
-  /** used for autocomplete options, which are considered readonly */
-  exercises?: readonly Exercise[]
-  /** if provided, allows for creating new exercises from typed input */
-  mutate?: KeyedMutator<Exercise[]>
   variant?: TextFieldProps['variant']
   /** If this is omitted the category filter will not be rendered */
-  handleCategoryChange?: (category: string | null) => void
-  category?: string | null
+  handleCategoryFilterChange?: (category: string | null) => void
+  categoryFilter?: string | null
+  disableAddNew?: boolean
 } & Partial<AsyncSelectorProps<Exercise, DisableClearable>>
+
 export default function ExerciseSelector<
   DisableClearable extends boolean | undefined,
 >({
   exercise,
-  exercises = [],
-  mutate,
-  handleCategoryChange,
-  category = null,
+  handleCategoryFilterChange,
+  categoryFilter = null,
+  disableAddNew,
   ...asyncSelectorProps
 }: ExerciseSelectorProps<DisableClearable>) {
-  const { categoryNames } = useCategories()
+  const exercises = useExercises()
+  const categories = useCategories()
+  const mutate = useAddMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    addFn: addExercise,
+  })
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
   )
@@ -42,7 +49,7 @@ export default function ExerciseSelector<
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
     if (
-      category &&
+      categoryFilter &&
       exercise &&
       !filtered.some((item) => item.name === exercise.name)
     ) {
@@ -55,35 +62,37 @@ export default function ExerciseSelector<
   }
 
   const filterCategories = (exercise: Exercise) => {
-    return !category || exercise.categories.some((name) => name === category)
+    return (
+      !categoryFilter ||
+      exercise.categories.some((name) => name === categoryFilter)
+    )
   }
 
   return (
     <AsyncSelector
       {...asyncSelectorProps}
       value={exercise}
-      mutateOptions={mutate}
+      addItemMutate={disableAddNew ? undefined : mutate}
       label="Exercise"
-      placeholder={`Select${!!mutate ? ' or add new' : ''} exercise`}
+      placeholder={`Select${!disableAddNew ? ' or add new' : ''} exercise`}
       filterCustom={filterCategories}
       handleFilterChange={handleFilterChange}
       adornmentOpen={!!categoryAnchorEl}
       createOption={createExercise}
-      addNewItem={addExercise}
       // we have to spread because autocomplete considers the options to be readonly, and sort() mutates the array
-      options={[...exercises].sort(
+      options={[...exercises.data].sort(
         (a, b) => StatusOrder[a.status] - StatusOrder[b.status]
       )}
       groupBy={(option) => option.status}
       startAdornment={
-        handleCategoryChange && (
+        handleCategoryFilterChange && (
           <CategoryFilter
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
-              categories: categoryNames,
-              category,
-              setCategory: handleCategoryChange,
+              categories: categories.names,
+              category: categoryFilter,
+              setCategory: handleCategoryFilterChange,
               anchorEl: categoryAnchorEl,
               setAnchorEl: setCategoryAnchorEl,
             }}

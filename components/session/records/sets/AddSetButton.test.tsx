@@ -1,23 +1,21 @@
-import { beforeEach, expect, it, vi, type MockInstance } from 'vitest'
-import * as restService from '../../../../lib/frontend/restService'
+import { expect, it, vi } from 'vitest'
 import { render, screen } from '../../../../lib/testUtils'
 import { generateId } from '../../../../lib/util'
-import AddSetButton from './AddSetButton'
 import { type Set } from '../../../../models/Set'
+import AddSetButton from './AddSetButton'
+import { updateRecordFields } from '../../../../lib/backend/mongoService'
 
 const _id = generateId()
-let updateFieldsSpy: MockInstance
-
-beforeEach(() => {
-  updateFieldsSpy = vi.spyOn(restService, 'updateRecordFields')
-})
 
 it('adds initial set', async () => {
   const { user } = render(<AddSetButton sets={[]} _id={_id} />)
 
   await user.click(screen.getByLabelText(/Add/))
 
-  expect(updateFieldsSpy).toHaveBeenCalledWith(_id, { sets: [{}] })
+  expect(vi.mocked(updateRecordFields))
+  expect(vi.mocked(updateRecordFields)).toHaveBeenCalledWith(_id, {
+    sets: [{}],
+  })
 })
 
 it('adds set based on previous unilateral left set', async () => {
@@ -26,7 +24,7 @@ it('adds set based on previous unilateral left set', async () => {
 
   await user.click(screen.getByLabelText(/Add/))
 
-  expect(updateFieldsSpy).toHaveBeenCalledWith(_id, {
+  expect(vi.mocked(updateRecordFields)).toHaveBeenCalledWith(_id, {
     // does not include effort
     sets: [...initialSets, { side: 'R', time: 5 }],
   })
@@ -38,7 +36,7 @@ it('adds set based on previous unilateral right set', async () => {
 
   await user.click(screen.getByLabelText(/Add/))
 
-  expect(updateFieldsSpy).toHaveBeenCalledWith(_id, {
+  expect(vi.mocked(updateRecordFields)).toHaveBeenCalledWith(_id, {
     sets: [...initialSets, { side: 'L' }],
   })
 })

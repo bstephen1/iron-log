@@ -7,9 +7,8 @@ import {
 import { Status } from '../../../models/Status'
 import AsyncSelector, { type AsyncSelectorProps } from './AsyncSelector'
 
-const mockMutate = vi.fn()
 const mockHandleChange = vi.fn()
-const mockAddNewItem = vi.fn()
+const mockMutate = vi.fn()
 
 const placeholder = 'placeholder'
 
@@ -18,9 +17,8 @@ const TestSelector = (
 ) => (
   <AsyncSelector
     handleChange={mockHandleChange}
-    mutateOptions={mockMutate}
     createOption={createAsyncSelectorOption}
-    addNewItem={mockAddNewItem}
+    addItemMutate={mockMutate}
     placeholder={placeholder}
     {...props}
   />
@@ -52,7 +50,7 @@ it('inits to given value name if provided', async () => {
 })
 
 it('does not show "add new" option when mutateOptions is not provided', async () => {
-  const { user } = render(<TestSelector mutateOptions={undefined} />)
+  const { user } = render(<TestSelector addItemMutate={undefined} />)
 
   // type new option
   await user.click(screen.getByPlaceholderText(placeholder))

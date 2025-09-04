@@ -21,20 +21,16 @@ export const sampleLogDate = '2022-09-26'
 
 export const userGuideLink = 'https://github.com/bstephen1/iron-log/wiki'
 
-/** error messages returned from the api  */
-export const ERRORS = {
-  validationFail: 'invalid request',
-  default: 'error could not be parsed',
-  retry: 'Something went wrong. Please retry.',
+export enum QUERY_KEYS {
+  categories = 'categories',
+  modifiers = 'modifiers',
+  exercises = 'exercises',
+  bodyweights = 'bodyweights',
+  sessionLogs = 'sessionLogs',
+  records = 'records',
 }
 
-//------
-// URIS
-//------
-
-export const URI_SESSIONS = '/api/sessions/'
-export const URI_EXERCISES = '/api/exercises/'
-export const URI_MODIFIERS = '/api/modifiers/'
-export const URI_CATEGORIES = '/api/categories/'
-export const URI_RECORDS = '/api/records/'
-export const URI_BODYWEIGHT = '/api/bodyweights/'
+export enum LOCAL_STORAGE {
+  sessionRedirect = 'sessionRedirect',
+  showSaving = 'showSaving',
+}

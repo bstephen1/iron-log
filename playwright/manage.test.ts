@@ -1,10 +1,13 @@
 import { expect, test } from './fixtures'
 
-test('adds an exercise', async ({ page }) => {
+test('adds an exercise', async ({ page, extendedPage }) => {
   // should default to exercise tab
   await page.goto('/manage')
 
-  // add an exercise
+  // mui is rendering multiple inputs with the same name or something
+  // while it is hydrating so use the first and click to make sure it's loaded
+  // (even though fill() is already supposed to wait until it's interactable...)
+  await page.getByLabel('Exercise').first().click()
   await page.getByLabel('Exercise').fill('squats')
   await page.getByText('Add "squats"').click()
 
@@ -19,12 +22,14 @@ test('adds an exercise', async ({ page }) => {
   // name change should immediately update name/exercise inputs and url
   await expect(page.getByLabel('Exercise')).toHaveValue(newName)
   await expect(page.getByLabel('Name')).toHaveValue(newName)
-  await expect(page).toHaveURL(/SSB\+squats/)
+  await expect(page).toHaveURL(/exercise=/)
 
   await page.getByText('Active').click()
   await page.getByText('Archived').click()
 
   await page.getByLabel('Equipment weight').fill('7.5')
+  // have to blur to trigger save due to debounce
+  await page.keyboard.press('Tab')
 
   await page.getByText('Bodyweight').click()
 
@@ -32,15 +37,17 @@ test('adds an exercise', async ({ page }) => {
   await page.getByRole('button', { name: 'Confirm' }).click()
 
   // confirm edits persist on reload
+  await extendedPage.waitForSave()
   await page.reload()
 
-  await expect(page.getByLabel('Exercise')).toHaveValue(newName, {
+  // for no reason they all have multiple inputs now so have to call first() on everything
+  await expect(page.getByLabel('Exercise').first()).toHaveValue(newName, {
     // reload seems to frequently be the cause of test timeouts
     timeout: 15_000,
   })
-  await expect(page.getByLabel('Name')).toHaveValue(newName)
-  await expect(page.getByText('Archived')).toBeVisible()
-  await expect(page.getByLabel('Equipment weight')).toHaveValue('7.5')
-  await expect(page.getByLabel('Bodyweight')).toBeChecked()
-  await expect(page.getByText('my note')).toBeVisible()
+  await expect(page.getByLabel('Name').first()).toHaveValue(newName)
+  await expect(page.getByText('Archived').first()).toBeVisible()
+  await expect(page.getByLabel('Equipment weight').first()).toHaveValue('7.5')
+  await expect(page.getByLabel('Bodyweight').first()).toBeChecked()
+  await expect(page.getByText('my note').first()).toBeVisible()
 })

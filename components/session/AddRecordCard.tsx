@@ -1,49 +1,29 @@
-import { useState } from 'react'
-import { useSwiper } from 'swiper/react'
-import { useSWRConfig } from 'swr'
-import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
-import { addRecord, useExercises } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/util'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { createRecord } from '../../models/Record'
-import { createSessionLog } from '../../models/SessionLog'
-import useCurrentSessionLog from './useCurrentSessionLog'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
+import { useState } from 'react'
+import { useSwiper } from 'swiper/react'
+import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
+import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
+import { addRecord } from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import { useAddMutation } from '../../lib/frontend/restService'
+import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import { createRecord } from '../../models/Record'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [category, setCategory] = useState<string | null>(null)
-  const { mutate } = useSWRConfig()
-  const { exercises, mutate: mutateExercises } = useExercises()
-  const { sessionLog, date, mutate: mutateSession } = useCurrentSessionLog()
+  const date = useCurrentDate()
   const swiper = useSwiper()
-
+  const addRecordMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    addFn: addRecord,
+  })
   const handleAdd = async () => {
     if (!exercise) return
 
-    const newRecord = createRecord(date, { exercise })
-    try {
-      await addRecord(newRecord)
-    } catch (e) {
-      enqueueError(
-        e,
-        `The exercise is corrupt and can't be used to create records.`
-      )
-      return
-    }
-    const newSessionLog = sessionLog ?? createSessionLog(date)
-
-    // Add new record to swr cache so it doesn't have to be fetched.
-    mutate(`/api/records/${newRecord._id}`, newRecord, {
-      revalidate: false,
-      optimisticData: newRecord,
-    })
-    mutateSession({
-      ...newSessionLog,
-      records: newSessionLog.records.concat(newRecord._id),
-    })
+    addRecordMutate(createRecord(date, { exercise }))
 
     swiper.update()
     setExercise(null)
@@ -56,11 +36,9 @@ export default function AddRecordCard() {
           variant="standard"
           {...{
             exercise,
-            exercises,
             handleChange: (newExercise) => setExercise(newExercise),
-            mutate: mutateExercises,
-            category,
-            handleCategoryChange: setCategory,
+            categoryFilter: category,
+            handleCategoryFilterChange: setCategory,
           }}
         />
         <Button

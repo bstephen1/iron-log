@@ -14,12 +14,10 @@ test('adds bodyweight', async ({ page }) => {
   await expect(page.getByText('Using latest official weight')).toBeVisible()
 })
 
-test('loads calendar', async ({ page, api }) => {
-  const exercise = await api.addExercise('squats')
-  await api.addRecord('2000-01-01', { exercise })
-  await api.addRecord('2000-01-05', { exercise })
-
-  await page.goto('/sessions/2000-01-05')
+test('loads calendar', async ({ page, sessionsPage }) => {
+  // add records (browser stays on the last page)
+  await sessionsPage.addRecord('squats', '2000-01-01')
+  await sessionsPage.addRecord('squats', '2000-01-05')
 
   // open date picker
   await page.getByLabel('selected date is Jan 5').click()

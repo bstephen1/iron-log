@@ -1,6 +1,10 @@
 import { type Dispatch, type SetStateAction } from 'react'
-import { type KeyedMutator } from 'swr'
-import { addCategory } from '../../../lib/frontend/restService'
+import { addCategory } from '../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../lib/frontend/constants'
+import {
+  useAddMutation,
+  useCategories,
+} from '../../../lib/frontend/restService'
 import {
   type Category,
   createCategory,
@@ -8,27 +12,30 @@ import {
 import AsyncSelector from './AsyncSelector'
 
 interface Props {
-  categories?: Category[]
   category: Category | null
-  mutate: KeyedMutator<Category[]>
   handleChange: Dispatch<SetStateAction<Category | null>>
+  disableAddNew?: boolean
 }
 export default function CategorySelector({
-  categories,
   category,
-  mutate,
-  ...asyncSelectorProps
+  disableAddNew,
+  handleChange,
 }: Props) {
+  const categories = useCategories()
+  const mutate = useAddMutation({
+    queryKey: [QUERY_KEYS.categories],
+    addFn: addCategory,
+  })
+
   return (
     <AsyncSelector
-      {...asyncSelectorProps}
-      options={categories}
-      mutateOptions={mutate}
+      handleChange={handleChange}
+      options={categories.data}
+      addItemMutate={disableAddNew ? undefined : mutate}
       value={category}
       label="Category"
       placeholder="Select or add new category"
       createOption={createCategory}
-      addNewItem={addCategory}
     />
   )
 }

@@ -1,3 +1,4 @@
+'use server'
 import { StatusCodes } from 'http-status-codes'
 import { type Document, type Filter, type ObjectId } from 'mongodb'
 import type DateRangeQuery from '../../models//DateRangeQuery'
@@ -8,6 +9,7 @@ import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { type Bodyweight } from '../../models/Bodyweight'
 import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
+import { getUserId } from './auth'
 import { collections } from './mongoConnect'
 const {
   sessions,
@@ -29,20 +31,24 @@ const convertSort = (sort: DateRangeQuery['sort']) =>
 // SESSION
 //---------
 
-export async function fetchSession(
-  userId: ObjectId,
+export async function fetchSessionLog(
   date: string
 ): Promise<SessionLog | null> {
+  const userId = await getUserId()
   return await sessions.findOne({ userId, date }, { projection: { userId: 0 } })
 }
 
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchSessions(
-  userId: ObjectId,
-  { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
-): Promise<SessionLog[]> {
+export async function fetchSessionLogs({
+  limit,
+  start = '0',
+  end = '9',
+  sort = 'newestFirst',
+  date,
+}: DateRangeQuery): Promise<SessionLog[]> {
+  const userId = await getUserId()
   return await sessions
     .find(
       { userId, date: date ?? { $gte: start, $lte: end } },
@@ -53,12 +59,12 @@ export async function fetchSessions(
     .toArray()
 }
 
-export async function updateSession(
-  userId: ObjectId,
+export async function upsertSessionLog(
   // ignore the id so we don't accidentally try to update it
   { _id, ...sessionLog }: SessionLog
-): Promise<SessionLog | null> {
-  return await sessions.findOneAndReplace(
+): Promise<SessionLog> {
+  const userId = await getUserId()
+  return (await sessions.findOneAndReplace(
     { userId, date: sessionLog.date },
     { ...sessionLog, userId },
     {
@@ -66,7 +72,7 @@ export async function updateSession(
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as SessionLog
 }
 
 //--------
@@ -121,10 +127,8 @@ const recordPipeline: RecordPipeline = {
   excludeUserIds: { $project: { userId: 0, 'exercise.userId': 0 } },
 }
 
-export async function addRecord(
-  userId: ObjectId,
-  record: Record
-): Promise<Record> {
+export async function addRecord(record: Record): Promise<Record> {
+  const userId = await getUserId()
   await records.insertOne({ ...record, userId })
 
   // add the record to its session (or create new session if needed)
@@ -143,7 +147,6 @@ export async function addRecord(
 }
 
 export async function fetchRecords(
-  userId: ObjectId,
   filter: Filter<Record> = {},
   { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
 ): Promise<Record[]> {
@@ -155,6 +158,7 @@ export async function fetchRecords(
   // (instead of looking up the exercise for every record first before starting to filter),
   // and only put the filters that depend on current exercise data into post-lookup.
   const { 'exercise.name': name, activeModifiers, ...otherFilters } = filter
+  const userId = await getUserId()
 
   return await records
     .aggregate<Record>([
@@ -211,21 +215,19 @@ export async function fetchRecord(
 }
 
 export async function updateRecordFields(
-  userId: ObjectId,
   _id: string,
   updates: Partial<Record>
-): Promise<Record | null> {
-  return await records.findOneAndUpdate(
+): Promise<Record> {
+  const userId = await getUserId()
+  return (await records.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
-    { returnDocument: 'after' }
-  )
+    { returnDocument: 'after', projection: { userId: 0 } }
+  )) as Record
 }
 
-export async function deleteRecord(
-  userId: ObjectId,
-  _id: string
-): Promise<string> {
+export async function deleteRecord(_id: string): Promise<string> {
+  const userId = await getUserId()
   const record = await records.findOneAndDelete({ userId, _id })
   // remove the record from its associated session
   await sessions.updateOne(
@@ -241,46 +243,41 @@ export async function deleteRecord(
 // EXERCISE
 //----------
 
-export async function addExercise(
-  userId: ObjectId,
-  exercise: Exercise
-): Promise<Exercise> {
+export async function addExercise(exercise: Exercise): Promise<Exercise> {
+  const userId = await getUserId()
   await exercises.insertOne({ ...exercise, userId })
   return exercise
 }
 
-export async function fetchExercises(
-  userId: ObjectId,
-  filter: Filter<Exercise>
-): Promise<Exercise[]> {
+export async function fetchExercises(): Promise<Exercise[]> {
+  const userId = await getUserId()
   return await exercises
-    .find({ ...filter, userId }, { projection: { userId: 0 } })
+    .find({ userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
-export async function fetchExercise(
-  userId: ObjectId,
-  _id: string
-): Promise<Exercise | null> {
+export async function fetchExercise(_id: string): Promise<Exercise | null> {
+  const userId = await getUserId()
   return await exercises.findOne({ userId, _id }, { projection: { userId: 0 } })
 }
 
 export async function updateExerciseFields(
-  userId: ObjectId,
   _id: string,
   updates: Partial<Exercise>
-): Promise<Exercise | null> {
-  return await exercises.findOneAndUpdate(
+): Promise<Exercise> {
+  const userId = await getUserId()
+  return (await exercises.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
     {
       returnDocument: 'after',
       projection: { userId: 0 },
     }
-  )
+  )) as Exercise
 }
 
-export async function deleteExercise(userId: ObjectId, _id: string) {
+export async function deleteExercise(_id: string) {
+  const userId = await getUserId()
   const exercise = await exercises.find({ userId, _id }).next()
   // note that the content of exercises in records is not guaranteed
   // to be up to date, but the exercise _id WILL be.
@@ -303,34 +300,26 @@ export async function deleteExercise(userId: ObjectId, _id: string) {
 // MODIFIER
 //----------
 
-export async function addModifier(
-  userId: ObjectId,
-  modifier: Modifier
-): Promise<Modifier> {
+export async function addModifier(modifier: Modifier): Promise<Modifier> {
+  const userId = await getUserId()
   await modifiers.insertOne({ ...modifier, userId })
   return modifier
 }
 
-export async function fetchModifiers(userId: ObjectId): Promise<Modifier[]> {
+export async function fetchModifiers(): Promise<Modifier[]> {
+  const userId = await getUserId()
   return await modifiers
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
-export async function fetchModifier(
-  userId: ObjectId,
-  _id: string
-): Promise<Modifier | null> {
-  return await modifiers.findOne({ userId, _id }, { projection: { userId: 0 } })
-}
-
 export async function updateModifierFields(
-  userId: ObjectId,
   _id: string,
   updates: Partial<Modifier>
-): Promise<Modifier | null> {
+): Promise<Modifier> {
+  const userId = await getUserId()
+  const oldModifier = await modifiers.find({ userId, _id }).next()
   if (updates.name) {
-    const oldModifier = await modifiers.find({ userId, _id }).next()
     await exercises.updateMany(
       { userId, modifiers: oldModifier?.name },
       { $set: { 'modifiers.$': updates.name } }
@@ -350,17 +339,18 @@ export async function updateModifierFields(
       { $set: { 'activeModifiers.$': updates.name } }
     )
   }
-  return await modifiers.findOneAndUpdate(
+  return (await modifiers.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as Modifier
 }
 
-export async function deleteModifier(userId: ObjectId, _id: string) {
+export async function deleteModifier(_id: string) {
+  const userId = await getUserId()
   const modifier = await modifiers.findOne({ userId, _id })
 
   if (modifier) {
@@ -386,34 +376,26 @@ export async function deleteModifier(userId: ObjectId, _id: string) {
 // CATEGORY
 //----------
 
-export async function addCategory(
-  userId: ObjectId,
-  category: Category
-): Promise<Category> {
+export async function addCategory(category: Category): Promise<Category> {
+  const userId = await getUserId()
   await categories.insertOne({ ...category, userId })
   return category
 }
 
-export async function fetchCategories(userId: ObjectId): Promise<Category[]> {
+export async function fetchCategories(): Promise<Category[]> {
+  const userId = await getUserId()
   return await categories
     .find({ userId }, { projection: { userId: 0 } })
     .toArray()
 }
 
-export async function fetchCategory(
-  userId: ObjectId,
-  id: string
-): Promise<Category | null> {
-  return await categories.findOne({ userId, id }, { projection: { userId: 0 } })
-}
-
 export async function updateCategoryFields(
-  userId: ObjectId,
   _id: string,
   updates: Partial<Category>
-): Promise<Category | null> {
+): Promise<Category> {
+  const userId = await getUserId()
+  const oldCategory = await categories.find({ userId, _id }).next()
   if (updates.name) {
-    const oldCategory = await categories.find({ userId, _id }).next()
     await exercises.updateMany(
       { userId, categories: oldCategory?.name },
       { $set: { 'categories.$': updates.name } }
@@ -423,17 +405,19 @@ export async function updateCategoryFields(
       { $set: { category: updates.name } }
     )
   }
-  return await categories.findOneAndUpdate(
+
+  return (await categories.findOneAndUpdate(
     { userId, _id },
     { $set: updates },
     {
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as Category
 }
 
-export async function deleteCategory(userId: ObjectId, _id: string) {
+export async function deleteCategory(_id: string) {
+  const userId = await getUserId()
   const category = await categories.findOne({ userId, _id })
 
   if (category) {
@@ -463,10 +447,10 @@ export async function deleteCategory(userId: ObjectId, _id: string) {
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
 export async function fetchBodyweights(
-  userId: ObjectId,
   filter: Filter<Bodyweight>,
   { limit, start = '0', end = '9', sort, date }: DateRangeQuery
 ): Promise<Bodyweight[]> {
+  const userId = await getUserId()
   return await bodyweightHistory
     .find(
       { userId, date: date ?? { $gte: start, $lte: end }, ...filter },
@@ -482,11 +466,11 @@ export async function fetchBodyweights(
  *
  * Note: two records can exist on the same date if they are different types.
  */
-export async function updateBodyweight(
-  userId: ObjectId,
+export async function upsertBodyweight(
   newBodyweight: Bodyweight
-): Promise<Bodyweight | null> {
-  return await bodyweightHistory.findOneAndUpdate(
+): Promise<Bodyweight> {
+  const userId = await getUserId()
+  return (await bodyweightHistory.findOneAndUpdate(
     { userId, date: newBodyweight.date, type: newBodyweight.type },
     // Can't just update the doc because the new one will have a new _id.
     // setOnInsert only activates if upserting. The upsert inserts a new doc built from
@@ -501,5 +485,5 @@ export async function updateBodyweight(
       projection: { userId: 0 },
       returnDocument: 'after',
     }
-  )
+  )) as Bodyweight
 }

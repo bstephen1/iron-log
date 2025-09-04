@@ -3,8 +3,14 @@ import { useQueryState } from 'nuqs'
 import { useCallback } from 'react'
 import {
   deleteCategory,
+  updateCategoryFields,
+} from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import {
   useCategories,
+  useDeleteMutation,
   useExercises,
+  useUpdateMutation,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -14,29 +20,35 @@ import ActionItems from '../form-fields/actions/ActionItems'
 
 interface Props {
   category: Category
-  handleUpdate: (id: string, updates: Partial<Category>) => Promise<void>
 }
-export default function CategoryForm({
-  category: { name, _id },
-  handleUpdate,
-}: Props) {
-  const { categoryNames, mutate: mutateCategories } = useCategories()
-  const { exercises } = useExercises()
-  const usage = getUsage(exercises, 'categories', name)
+export default function CategoryForm({ category: { name, _id } }: Props) {
+  const categories = useCategories()
+  const { data } = useExercises()
+  const usage = getUsage(data, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')
+  const deleteCategoryMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.categories],
+    deleteFn: deleteCategory,
+  })
+  const updateCategoryMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.categories],
+    updateFn: updateCategoryFields,
+    invalidates: [QUERY_KEYS.exercises],
+  })
 
   const updateFields = useCallback(
-    (updates: Partial<Category>) => handleUpdate(_id, updates),
-    [_id, handleUpdate]
+    async (updates: Partial<Category>) => {
+      updateCategoryMutate({ _id, updates })
+    },
+    [_id, updateCategoryMutate]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
-      await deleteCategory(id)
       setUrlCategory(null)
-      mutateCategories((cur) => cur?.filter((category) => category._id !== id))
+      deleteCategoryMutate(id)
     },
-    [mutateCategories, setUrlCategory]
+    [deleteCategoryMutate, setUrlCategory]
   )
 
   return (
@@ -45,7 +57,7 @@ export default function CategoryForm({
         <NameField
           name={name}
           handleUpdate={updateFields}
-          options={categoryNames}
+          options={categories.names}
         />
       </Grid>
       <Grid size={12}>

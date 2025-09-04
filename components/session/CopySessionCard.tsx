@@ -4,39 +4,38 @@ import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import dayjs, { type Dayjs } from 'dayjs'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useSwiper } from 'swiper/react'
-import { DATE_FORMAT, URI_RECORDS } from '../../lib/frontend/constants'
+import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
+import { addRecord } from '../../lib/backend/mongoService'
+import { DATE_FORMAT, QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  addRecord,
-  updateSessionLog,
+  useAddMutation,
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/util'
+import { enqueueError } from '../../lib/frontend/util'
 import { createRecord } from '../../models/Record'
-import { createSessionLog } from '../../models/SessionLog'
 import SessionDatePicker from './upper/SessionDatePicker'
-import useCurrentSessionLog from './useCurrentSessionLog'
-import { useSWRConfig } from 'swr'
 
 /** This component should be given key={date} so it can reset its state on date change */
 export default function CopySessionCard() {
   const swiper = useSwiper()
-  const { date, mutate: mutateSession } = useCurrentSessionLog()
+  const date = useCurrentDate()
   const day = dayjs(date)
   // may want to init as current day to prevent extra fetch,
   // or optimistically fetch most recent session of the same type
   const [prevDay, setPrevDay] = useState<Dayjs>(day.add(-7, 'day'))
-  const { sessionLog: prevSessionLog, isLoading: isPrevSessionLoading } =
-    useSessionLog(prevDay)
-  const { recordsIndex, isLoading: isRecordLoading } = useRecords({
+  const prevSessionLog = useSessionLog(prevDay)
+  const prevRecords = useRecords({
     date: prevDay.format(DATE_FORMAT),
   })
-  const { mutate } = useSWRConfig()
   const [isLoading, setIsLoading] = useState(false)
-  const [isPendingCopy, setIsPendingCopy] = useState(false)
   const [isSessionEmpty, setIsSessionEmpty] = useState(false)
+  const copyRecordMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    addFn: addRecord,
+  })
 
   const handlePrevDayChange = (newPrevDay: Dayjs) => {
     // reset this so if you tried to copy an empty session the button comes back
@@ -47,73 +46,34 @@ export default function CopySessionCard() {
   const handleCopy = useCallback(async () => {
     setIsLoading(true)
 
-    if (isRecordLoading || isPrevSessionLoading) {
-      setIsPendingCopy(true)
-      return
-    }
-
-    if (!prevSessionLog) {
+    if (!prevSessionLog.data) {
       setIsSessionEmpty(true)
       setIsLoading(false)
       return
     }
 
-    const copiedRecords = []
     // We want the records to be added in sequence so they remain in order
     // See: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
-    for (const id of prevSessionLog.records) {
-      const prevRecord = recordsIndex[id]
-      // const newSets = createNewSets(prevRecord.sets, prevRecord.activeModifiers)
-      const newRecord = createRecord(day.format(DATE_FORMAT), {
+    for (const id of prevSessionLog.data.records) {
+      const prevRecord = prevRecords.index[id]
+      const newRecord = createRecord(date, {
         ...prevRecord,
         notes: [],
       })
 
-      try {
-        await addRecord(newRecord)
-        mutate(URI_RECORDS + newRecord._id, newRecord, { revalidate: false })
-        copiedRecords.push(newRecord._id)
-      } catch (e) {
-        enqueueError(
-          e,
-          'Previous session has a corrupt record. Could not finish copying the session.'
-        )
-        break
-      }
+      copyRecordMutate(newRecord, {
+        onError: (e) =>
+          enqueueError(
+            'Previous session has a corrupt record. Could not finish copying the session.',
+            e
+          ),
+      })
     }
-
-    const newSessionLog = createSessionLog(
-      day.format(DATE_FORMAT),
-      copiedRecords
-    )
-    mutateSession(updateSessionLog(newSessionLog), {
-      optimisticData: newSessionLog,
-      revalidate: false,
-    })
 
     swiper.update()
 
-    if (!newSessionLog.records.length) {
-      setIsSessionEmpty(true)
-    }
     setIsLoading(false)
-  }, [
-    day,
-    isPrevSessionLoading,
-    isRecordLoading,
-    mutate,
-    mutateSession,
-    prevSessionLog,
-    recordsIndex,
-    swiper,
-  ])
-
-  useEffect(() => {
-    if (isPendingCopy && !(isPrevSessionLoading || isRecordLoading)) {
-      setIsPendingCopy(false)
-      handleCopy()
-    }
-  }, [handleCopy, isPendingCopy, isPrevSessionLoading, isRecordLoading])
+  }, [copyRecordMutate, date, prevRecords.index, prevSessionLog.data, swiper])
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
@@ -130,7 +90,9 @@ export default function CopySessionCard() {
           <Typography> No session data to copy!</Typography>
         ) : (
           <Button
-            loading={isLoading}
+            loading={
+              isLoading || prevSessionLog.isLoading || prevRecords.isLoading
+            }
             loadingPosition="start"
             // if using loadingPosition, a startIcon is required
             startIcon={<ContentCopyIcon />}

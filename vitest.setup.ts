@@ -1,19 +1,17 @@
+import { loadEnvConfig } from '@next/env'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
-import { server } from './msw-mocks/server'
+import { afterEach, beforeAll, beforeEach, describe, it, vi } from 'vitest'
 import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  vi,
-} from 'vitest'
-import 'whatwg-fetch'
+  fetchBodyweights,
+  fetchCategories,
+  fetchExercises,
+  fetchModifiers,
+  fetchRecords,
+  fetchSessionLogs,
+} from './lib/backend/mongoService'
 import { devUserId } from './lib/frontend/constants'
-import { it } from 'node:test'
 
-/* eslint-disable no-var */
 // var is required to hoist globals
 declare global {
   var jest: typeof vi
@@ -27,6 +25,12 @@ globalThis.fit = it.only
 globalThis.xit = it.skip
 globalThis.fdescribe = describe.only
 globalThis.xdescribe = describe.skip
+
+// Ensures env vars are loaded using the same load order nextjs uses.
+// Vitest does not instantiate the nextjs server so it doesn't automatically
+// call loadEnvConfig like dev/prod do.
+const projectDir = process.cwd()
+loadEnvConfig(projectDir)
 
 // set env variables with import.meta.env
 // note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
@@ -46,11 +50,16 @@ vi.mock('./lib/backend/mongoConnect', () => ({
   collections: vi.fn(),
   client: vi.fn(),
 }))
-vi.mock('./lib/backend/mongoService')
-vi.mock('./pages/api/auth/[...nextauth].api', () => ({ authOptions: vi.fn() }))
+vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
 vi.mock('next-auth', () => ({
   getServerSession: () => ({ user: { id: devUserId } }),
 }))
+vi.mock('next/navigation', () => ({
+  useParams: () => ({
+    date: '',
+  }),
+}))
+vi.mock('./lib/backend/mongoService')
 
 // configure testing-library options
 configure({
@@ -61,7 +70,6 @@ configure({
 })
 
 beforeAll(() => {
-  server.listen()
   // @testing-library/react explicitly hardcodes "jest.advanceTimersByTime" when using fake timers,
   // causing any test using vi.useFakeTimers() to hang indefinitely when using user.click().
   // This workaround reassigns advanceTimersByTime to vitest's version.
@@ -69,14 +77,17 @@ beforeAll(() => {
   // but this must be done on a per-test basis as it will break any test not using fake timers
   // See: https://github.com/testing-library/react-testing-library/issues/1197
   globalThis.jest = vi
-  if (process.env.MSW_LOG_ALL_REQUESTS) {
-    server.events.on('request:start', ({ request }) => {
-      console.log('MSW:', request.method, request.url)
-    })
-  }
 })
-beforeEach(() => server.resetHandlers())
+beforeEach(async () => {
+  // fetch functions used by useQuery cannot return undefined
+  // (automock makes everything return undefined)
+  vi.mocked(fetchCategories).mockResolvedValue([])
+  vi.mocked(fetchExercises).mockResolvedValue([])
+  vi.mocked(fetchModifiers).mockResolvedValue([])
+  vi.mocked(fetchBodyweights).mockResolvedValue([])
+  vi.mocked(fetchRecords).mockResolvedValue([])
+  vi.mocked(fetchSessionLogs).mockResolvedValue([])
+})
 // RTL cleanup is only automatically called if vitest has globals on.
 // Without this, the DOM will leak between tests.
 afterEach(() => cleanup())
-afterAll(() => server.close())

@@ -1,5 +1,4 @@
-import DarkModeIcon from '@mui/icons-material/DarkMode'
-import LightModeIcon from '@mui/icons-material/LightMode'
+import Brightness4Icon from '@mui/icons-material/Brightness4'
 import IconButton from '@mui/material/IconButton'
 import { useColorScheme } from '@mui/material/styles'
 import Tooltip from './Tooltip'
@@ -12,7 +11,7 @@ export default function DarkModeButton() {
   return (
     <Tooltip title={`Switch to ${isDark ? 'light' : 'dark'} mode`}>
       <IconButton onClick={() => setMode(isDark ? 'light' : 'dark')}>
-        {isDark ? <DarkModeIcon /> : <LightModeIcon />}
+        <Brightness4Icon />
       </IconButton>
     </Tooltip>
   )

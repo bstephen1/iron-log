@@ -1,9 +1,15 @@
 import NotesIcon from '@mui/icons-material/Notes'
+import Badge from '@mui/material/Badge'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
+import { upsertSessionLog } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import {
-  updateSessionLog,
+  useAddMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
 import { type UpdateFields } from '../../../../lib/util'
@@ -11,10 +17,6 @@ import { type Note } from '../../../../models/Note'
 import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
 import TooltipIconButton from '../../../TooltipIconButton'
-import Badge from '@mui/material/Badge'
-import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
 
 const title = 'Record notes'
 
@@ -33,8 +35,12 @@ export default memo(function RecordNotesButton({
   date,
 }: Props) {
   const readOnly = !mutateRecordFields
-  const { sessionLog, mutate: mutateSession } = useSessionLog(date)
+  const { data: sessionLog } = useSessionLog(date)
   const [open, setOpen] = useState(false)
+  const replaceSessionLogMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.sessionLogs, date],
+    addFn: upsertSessionLog,
+  })
 
   const combinedNotes = [...(sessionLog?.notes ?? []), ...notes]
   const options = ['Session', 'Record']
@@ -80,12 +86,12 @@ export default memo(function RecordNotesButton({
       }
     }
 
-    mutateRecordFields({ notes: recordNotes })
-    const newSessionLog = { ...sessionLog, notes: sessionNotes }
-    mutateSession(updateSessionLog(newSessionLog), {
-      optimisticData: newSessionLog,
-      revalidate: false,
-    })
+    if (recordNotes.length) {
+      mutateRecordFields({ notes: recordNotes })
+    }
+    if (sessionNotes.length) {
+      replaceSessionLogMutate({ ...sessionLog, notes: sessionNotes })
+    }
   }
 
   return (

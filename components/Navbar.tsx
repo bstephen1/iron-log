@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import DarkModeButton from './DarkModeButton'
-import LoginButton from './LoginButton'
+import LogoutButton from './LogoutButton'
 import NavbarDrawer from './NavbarDrawer'
 
 export default function Navbar() {
@@ -43,7 +43,7 @@ export default function Navbar() {
           <Box flex={1} />
           <Stack direction="row" spacing={1}>
             <DarkModeButton />
-            <LoginButton />
+            <LogoutButton />
           </Stack>
         </Toolbar>
       </AppBar>

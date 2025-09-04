@@ -1,34 +1,32 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
+import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
+import { deleteRecord } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import {
+  useDeleteMutation,
+  useSessionLog,
+} from '../../../../lib/frontend/restService'
 import TooltipIconButton from '../../../TooltipIconButton'
-import useCurrentSessionLog from '../../../../components/session/useCurrentSessionLog'
-import { deleteRecord } from '../../../../lib/frontend/restService'
 
 interface Props {
   _id: string
 }
 export default memo(function DeleteRecordButton({ _id }: Props) {
   const swiper = useSwiper()
-  const { sessionLog, mutate } = useCurrentSessionLog()
+  const date = useCurrentDate()
+  const { data: sessionLog } = useSessionLog(date)
+  const deleteRecordMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    deleteFn: deleteRecord,
+  })
 
-  const handleDelete = async (recordId: string) => {
+  const handleDelete = async (id: string) => {
     if (!sessionLog) return
 
-    const newSession = {
-      ...sessionLog,
-      records: sessionLog.records.filter((id) => id !== recordId),
-    }
+    deleteRecordMutate(id)
 
-    mutate(
-      async () => {
-        await deleteRecord(recordId)
-        return newSession
-      },
-      {
-        optimisticData: newSession,
-      }
-    )
     swiper.update()
     swiper.slidePrev()
   }

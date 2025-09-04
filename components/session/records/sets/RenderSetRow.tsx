@@ -2,9 +2,10 @@ import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { memo, useCallback } from 'react'
-import { useSWRConfig } from 'swr'
-import { URI_RECORDS } from '../../../../lib/frontend/constants'
-import { updateRecordFields } from '../../../../lib/frontend/restService'
+import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
+import { updateRecordFields } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { useUpdateMutation } from '../../../../lib/frontend/restService'
 import { type UpdateFields } from '../../../../lib/util'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Record } from '../../../../models/Record'
@@ -42,6 +43,7 @@ interface Props extends Set {
   displayFields: DisplayFields
   extraWeight: number
   _id: Record['_id']
+  sets: Set[]
 }
 /** Render a set. Note the set to render must be spread into the props.
  *  This destructures the set into primitive values to avoid unecessary rerenders.
@@ -52,34 +54,22 @@ export default memo(function RenderSetRow({
   displayFields,
   extraWeight,
   _id,
+  sets,
   ...set
 }: Props) {
-  const { mutate } = useSWRConfig()
+  const date = useCurrentDate()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
 
   const handleSetChange: UpdateFields<Set> = useCallback(
     async (changes) => {
-      mutate<Record | null>(
-        URI_RECORDS + _id,
-        (cur) => {
-          if (!cur) return null
-
-          const newSets = [...cur.sets]
-          newSets[index] = { ...newSets[index], ...changes }
-          return updateRecordFields(_id, { sets: newSets })
-        },
-        {
-          optimisticData: (cur) => {
-            if (!cur) return null
-
-            const newSets = [...cur.sets]
-            newSets[index] = { ...newSets[index], ...changes }
-            return { ...cur, sets: newSets }
-          },
-          revalidate: false,
-        }
-      )
+      const newSets = [...sets]
+      newSets[index] = { ...newSets[index], ...changes }
+      updateRecordMutate({ _id, updates: { sets: newSets } })
     },
-    [_id, index, mutate]
+    [_id, index, sets, updateRecordMutate]
   )
 
   if (!displayFields.visibleFields.length) {
@@ -125,7 +115,12 @@ export default memo(function RenderSetRow({
         // insert a box for padding when clear icon is hidden
         <Box minWidth={'32px'} />
       ) : (
-        <DeleteSetButton index={index} _id={_id} sx={{ my: -pyStack }} />
+        <DeleteSetButton
+          index={index}
+          _id={_id}
+          sets={sets}
+          sx={{ my: -pyStack }}
+        />
       )}
     </Stack>
   )

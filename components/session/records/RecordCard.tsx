@@ -1,19 +1,23 @@
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
 import { memo, useCallback } from 'react'
-import { type KeyedMutator } from 'swr'
 import StyledDivider from '../../../components/StyledDivider'
-import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
-import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import {
   updateExerciseFields,
   updateRecordFields,
-  useExercise,
-  useRecord,
+} from '../../../lib/backend/mongoService'
+import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
+import {
+  useExercises,
+  useUpdateMutation,
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { enqueueError, type UpdateFields } from '../../../lib/util'
+import { enqueueError } from '../../../lib/frontend/util'
+import { type UpdateFields } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { type Record } from '../../../models/Record'
@@ -25,10 +29,6 @@ import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
 import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 
 // Note: mui icons MUST use path imports instead of named imports!
 // Otherwise in prod there will be serverless function timeout errors. Path imports also
@@ -40,89 +40,42 @@ import Typography from '@mui/material/Typography'
 // See bug: https://github.com/orgs/vercel/discussions/1657
 
 interface Props {
-  id: string
-  isQuickRender?: boolean
+  record: Record
   swiperIndex: number
 }
-export default memo(function RecordCard(props: Props) {
-  const { id, swiperIndex } = props
-  const { record, isLoadingRecord, mutate: mutateRecord } = useRecord(id)
-  // Instead of using record.exercise, we make a separate rest call to get the exercise.
-  // This ensures the exercise is up to date if the user has multiple records with the
-  // same exercise. record.exercise is only updated upon fetching the record,
-  // so if one record updated an exercise any other records would still be using the outdated exercise.
-  const {
-    exercise,
-    isLoadingExercise,
-    mutate: mutateExercise,
-  } = useExercise(record?.exercise?._id)
-
-  // NOTE: If the record is null then somehow there is a recordId in the session
-  // with no corresponding record document. The backend removes a null record id
-  // from any sessions it exists in on fetch, so if this case is ever visible it
-  // should disappear on rerender.
-  if (record === null) {
-    return (
-      <RecordCardSkeleton
-        title={`Record ${swiperIndex + 1}`}
-        Content={
-          <Typography textAlign="center">
-            Whoops! This record does not actually exist. Reload the page to
-            remove it.
-          </Typography>
-        }
-      />
-    )
-  }
-  if (isLoadingRecord || isLoadingExercise || props.isQuickRender) {
-    return (
-      <RecordCardSkeleton title={`Record ${swiperIndex + 1}`} showSetButton />
-    )
-  } else {
-    return (
-      <LoadedRecordCard
-        {...{
-          record,
-          exercise,
-          mutateRecord,
-          mutateExercise,
-          ...props,
-        }}
-      />
-    )
-  }
-})
-
 /** Record card with loaded record data.
  *
  * Note: This is an expensive component to render. Children should be memoized
- * so they only rerender when needed. With SWR, any time a given swr hook triggers
- * mutate(), any component using that hook will trigger a rerender. This means
- * children should NOT useRecord, or they will always rerender whenever any part of
- * the record is mutated. Instead, they should be passed only the props they need.
- * Context can also not be used because it works like swr -- any change to
- * the record will trigger a rerender.
+ * so they only rerender when needed.
  *
  * Memoized components without primitive props can make use of the second arg
  * for memo() to use the custom equality comparison function isEqual() from lodash.
  * Otherwise they'll still be rerendered because the mutation creates a new object.
  */
-function LoadedRecordCard({
+export default memo(function RecordCard({
   swiperIndex,
   record,
-  exercise,
-  mutateRecord,
-  mutateExercise,
 }: Props & {
   record: Record
-  exercise: Exercise | null
-  mutateRecord: KeyedMutator<Record | null>
-  mutateExercise: KeyedMutator<Exercise | null>
 }) {
+  // Instead of using record.exercise, we make a separate call to get the exercise.
+  // This ensures the exercise is up to date if the user has multiple records with the
+  // same exercise. record.exercise is only updated upon fetching the record,
+  // so if one record updated an exercise any other records would still be using the outdated exercise.
+  const exercises = useExercises()
+  const exercise = exercises.index[record.exercise?._id ?? ''] ?? null
   const { activeModifiers, _id, sets, notes, category, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
+  const updateExerciseMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    updateFn: updateExerciseFields,
+  })
 
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes.unilateral
@@ -139,36 +92,27 @@ function LoadedRecordCard({
   }
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
-    async (changes) => {
-      mutateExercise(
-        (cur) => (cur ? updateExerciseFields(cur, { ...changes }) : null),
-        {
-          optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
-          revalidate: false,
-        }
-      )
+    async (updates) => {
+      exercise?._id && updateExerciseMutate({ _id: exercise._id, updates })
     },
-    [mutateExercise]
+    [exercise?._id, updateExerciseMutate]
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
-    async (changes) => {
-      try {
-        await mutateRecord(
-          (cur) => (cur ? updateRecordFields(cur._id, { ...changes }) : null),
-          {
-            optimisticData: (cur) => (cur ? { ...cur, ...changes } : null),
-            revalidate: false,
-          }
-        )
-      } catch (e) {
-        enqueueError(
-          e,
-          'Could not update record to a corrupt state. Changes were not saved.'
-        )
-      }
+    async (updates) => {
+      updateRecordMutate(
+        { _id: record._id, updates },
+        {
+          onError: (e) => {
+            enqueueError(
+              'Could not update record to a corrupt state. Changes were not saved.',
+              e
+            )
+          },
+        }
+      )
     },
-    [mutateRecord]
+    [record._id, updateRecordMutate]
   )
 
   return (
@@ -236,4 +180,4 @@ function LoadedRecordCard({
       </Card>
     </>
   )
-}
+})

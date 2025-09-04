@@ -1,11 +1,11 @@
 import AddIcon from '@mui/icons-material/Add'
-import { useSWRConfig } from 'swr'
-import { URI_RECORDS } from '../../../../lib/frontend/constants'
-import { updateRecordFields } from '../../../../lib/frontend/restService'
-import { type Record } from '../../../../models/Record'
-import { type Set } from '../../../../models/Set'
 import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
+import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
+import { updateRecordFields } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { useUpdateMutation } from '../../../../lib/frontend/restService'
+import { type Set } from '../../../../models/Set'
 
 interface Props {
   sets: Set[]
@@ -14,7 +14,11 @@ interface Props {
   _id: string
 }
 export default function AddSetButton({ sets, disabled, _id }: Props) {
-  const { mutate } = useSWRConfig()
+  const date = useCurrentDate()
+  const updateRecordMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.records, { date }],
+    updateFn: updateRecordFields,
+  })
 
   const addSet = async () => {
     const newSet = sets.at(-1)
@@ -34,15 +38,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
       newSet.side = 'L'
     }
 
-    mutate<Record | null>(
-      URI_RECORDS + _id,
-      updateRecordFields(_id, { sets: sets.concat(newSet) }),
-      {
-        optimisticData: (cur) =>
-          cur ? { ...cur, sets: sets.concat(newSet) } : null,
-        revalidate: false,
-      }
-    )
+    updateRecordMutate({ _id, updates: { sets: sets.concat(newSet) } })
   }
 
   return (

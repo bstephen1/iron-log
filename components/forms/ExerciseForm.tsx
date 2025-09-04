@@ -4,12 +4,19 @@ import { useCallback } from 'react'
 import {
   addExercise,
   deleteExercise,
+  updateExerciseFields,
+} from '../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../lib/frontend/constants'
+import {
+  useAddMutation,
   useCategories,
+  useDeleteMutation,
   useExercises,
   useModifiers,
   useRecords,
+  useUpdateMutation,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/util'
+import { enqueueError, enqueueSuccess } from '../../lib/frontend/util'
 import {
   createExercise,
   type Exercise,
@@ -25,62 +32,58 @@ import StatusSelectField from '../form-fields/StatusSelectField'
 
 interface Props {
   exercise: Exercise
-  handleUpdate: (id: string, updates: Partial<Exercise>) => void
 }
-export default function ExerciseForm({ exercise, handleUpdate }: Props) {
-  const {
-    _id,
-    name,
-    status,
-    modifiers,
-    notes,
-    attributes,
-    categories,
-    weight,
-  } = exercise
-  const { modifierNames } = useModifiers()
-  const { categoryNames } = useCategories()
-  const { records } = useRecords({ exercise: name })
-  const { exerciseNames, mutate: mutateExercises } = useExercises()
+export default function ExerciseForm({ exercise }: Props) {
+  const { _id, name, status, notes, attributes, weight } = exercise
+  const modifiers = useModifiers()
+  const categories = useCategories()
+  const { data: records } = useRecords({ exercise: name })
+  const exercises = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
+  const addExerciseMutate = useAddMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    addFn: addExercise,
+  })
+  const deleteExerciseMutate = useDeleteMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    deleteFn: deleteExercise,
+  })
+  const updateExerciseMutate = useUpdateMutation({
+    queryKey: [QUERY_KEYS.exercises],
+    updateFn: updateExerciseFields,
+  })
 
+  // We need to avoid using "exercise" or this function will always trigger child rerenders,
+  // so we isolate using it within the mutate callbacks.
   const updateFields = useCallback(
-    (updates: Partial<Exercise>) => handleUpdate(_id, updates),
-    [_id, handleUpdate]
+    async (updates: Partial<Exercise>) => {
+      updateExerciseMutate({ _id, updates })
+    },
+    [_id, updateExerciseMutate]
   )
 
   const handleDelete = useCallback(
     async (id: string) => {
-      await deleteExercise(id)
       setUrlExercise(null)
-      mutateExercises((cur) => cur?.filter((e) => e._id !== id))
+      deleteExerciseMutate(id)
     },
-    [mutateExercises, setUrlExercise]
+    [setUrlExercise, deleteExerciseMutate]
   )
 
-  const handleDuplicate = useCallback(
-    async (id: string) => {
-      mutateExercises(async (cur = []) => {
-        const exercise = cur.find((e) => e._id === id)
+  const handleDuplicate = useCallback(async () => {
+    const newName = exercise.name + ' (copy)'
+    const newExercise = createExercise(newName, exercise)
 
-        if (!exercise) return cur
-
-        const newName = exercise.name + ' (copy)'
-        const newExercise = createExercise(newName, exercise)
-
-        try {
-          await addExercise(newExercise)
-        } catch (e) {
-          enqueueError(e, `The exercise is corrupt and can't be duplicated.`)
-          return cur
-        }
-
-        setUrlExercise(newName)
-        return [...cur, newExercise]
-      })
-    },
-    [mutateExercises, setUrlExercise]
-  )
+    addExerciseMutate(newExercise, {
+      onSuccess: () => {
+        enqueueSuccess(`Duplicated as "${newName}"`)
+      },
+      onError: (e) => {
+        enqueueError(`The exercise is corrupt and can't be duplicated.`, e)
+      },
+    })
+    setUrlExercise(newExercise._id)
+  }, [addExerciseMutate, exercise, setUrlExercise])
 
   return (
     <Grid container spacing={1} size={12}>
@@ -88,7 +91,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         <NameField
           name={name}
           handleUpdate={updateFields}
-          options={exerciseNames}
+          options={exercises.names}
         />
       </Grid>
       <Grid
@@ -110,8 +113,8 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       <Grid size={12}>
         <ComboBoxField
           label="Categories"
-          initialValue={categories}
-          options={categoryNames}
+          initialValue={exercise.categories}
+          options={categories.names}
           handleSubmit={useCallback(
             (categories: string[]) => updateFields({ categories }),
             [updateFields]
@@ -121,8 +124,8 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
       <Grid size={12}>
         <ComboBoxField
           label="Modifiers"
-          initialValue={modifiers}
-          options={modifierNames}
+          initialValue={exercise.modifiers}
+          options={modifiers.names}
           handleSubmit={useCallback(
             (modifiers: string[]) => updateFields({ modifiers }),
             [updateFields]
@@ -142,7 +145,7 @@ export default function ExerciseForm({ exercise, handleUpdate }: Props) {
         <NotesList
           label="Notes"
           notes={notes}
-          options={modifiers}
+          options={exercise.modifiers}
           handleSubmit={useCallback(
             (notes: Note[]) => updateFields({ notes }),
             [updateFields]

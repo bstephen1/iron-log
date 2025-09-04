@@ -3,17 +3,7 @@ import { ObjectId } from 'mongodb'
 import { type NextApiRequest, type NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { ApiError } from '../../../models/ApiError'
-import { authOptions } from '../../../pages/api/auth/[...nextauth].api'
-
-export type ApiHandler<T> = (
-  req: NextApiRequest,
-  userId: UserId
-) => T | null | Promise<T | null>
-
-export const methodNotAllowed = new ApiError(
-  StatusCodes.METHOD_NOT_ALLOWED,
-  'Method not allowed.'
-)
+import { authOptions } from '../../../pages/api/auth/[...nextauth]'
 
 /** userId format for backend use. The frontend will not see the userId.
  * For mongo this is an ObjectId. */

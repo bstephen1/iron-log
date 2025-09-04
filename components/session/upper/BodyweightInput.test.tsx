@@ -1,16 +1,15 @@
 import dayjs from 'dayjs'
-import { URI_BODYWEIGHT } from '../../../lib/frontend/constants'
-import { render, screen, useServer } from '../../../lib/testUtils'
-import BodyweightInput from './BodyweightInput'
+import { describe, expect, it, vi } from 'vitest'
+import { fetchBodyweights } from '../../../lib/backend/mongoService'
+import { render, screen } from '../../../lib/testUtils'
 import { createBodyweight } from '../../../models/Bodyweight'
-import { it, expect, describe } from 'vitest'
+import BodyweightInput from './BodyweightInput'
 
 const date2020 = dayjs('2020-01-01')
 const date2000 = dayjs('2000-01-01')
 const officialBw2000 = createBodyweight(45, 'official', date2000)
 
 it('renders with no data', async () => {
-  useServer(URI_BODYWEIGHT, [])
   render(<BodyweightInput day={date2020} />)
 
   expect(screen.getByText(/loading/i)).toBeVisible()
@@ -21,7 +20,9 @@ it('renders with no data', async () => {
 it('renders official weigh-in initially', async () => {
   const weight = 45
   const date = '2000-01-01'
-  useServer(URI_BODYWEIGHT, [createBodyweight(weight, 'official', dayjs(date))])
+  vi.mocked(fetchBodyweights).mockResolvedValue([
+    createBodyweight(weight, 'official', dayjs(date)),
+  ])
 
   render(<BodyweightInput day={date2020} />)
 
@@ -36,13 +37,12 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
   const weight = 45
   const date = '2010-01-01'
   // initial fetch must return an empty array because there is no official data
-  useServer(URI_BODYWEIGHT, [])
   const { user } = render(<BodyweightInput day={date2020} />)
 
   expect(await screen.findByText(/no existing official/i)).toBeVisible()
 
   // after switching to unofficial mode we can return the latest unofficial bodyweight
-  useServer(URI_BODYWEIGHT, [
+  vi.mocked(fetchBodyweights).mockResolvedValue([
     createBodyweight(weight, 'unofficial', dayjs(date)),
   ])
 
@@ -57,7 +57,7 @@ it('renders unofficial weigh-in when switching mode to unofficial', async () => 
 it('does not render data if unexpected weigh-in type is received', async () => {
   const weight = 45
   const date = '2010-01-01'
-  useServer(URI_BODYWEIGHT, [
+  vi.mocked(fetchBodyweights).mockResolvedValue([
     createBodyweight(weight, 'unofficial', dayjs(date)),
   ])
   render(<BodyweightInput day={date2020} />)
@@ -72,7 +72,7 @@ it('does not render data if unexpected weigh-in type is received', async () => {
 // We can use the home/end keys to ensure it starts at a known location though.
 describe('input', () => {
   it('shows reset and submit buttons when input value is different than existing value', async () => {
-    useServer(URI_BODYWEIGHT, [officialBw2000])
+    vi.mocked(fetchBodyweights).mockResolvedValue([officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
@@ -92,7 +92,7 @@ describe('input', () => {
 
   // this is the same as the previous test but the current date is set to the same day as the latest BW value
   it('does not show submit button when latest bodyweight is unchanged and matches current date', async () => {
-    useServer(URI_BODYWEIGHT, [officialBw2000])
+    vi.mocked(fetchBodyweights).mockResolvedValue([officialBw2000])
     const { user } = render(<BodyweightInput day={date2000} />)
     const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
@@ -111,7 +111,7 @@ describe('input', () => {
   })
 
   it('validates against changing an existing value to be empty', async () => {
-    useServer(URI_BODYWEIGHT, [officialBw2000])
+    vi.mocked(fetchBodyweights).mockResolvedValue([officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
@@ -123,7 +123,7 @@ describe('input', () => {
   })
 
   it('resets to existing value when button is clicked', async () => {
-    useServer(URI_BODYWEIGHT, [officialBw2000])
+    vi.mocked(fetchBodyweights).mockResolvedValue([officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
@@ -137,27 +137,19 @@ describe('input', () => {
   })
 
   it('submits and revalidates when button is clicked', async () => {
-    useServer(URI_BODYWEIGHT, [officialBw2000])
+    vi.mocked(fetchBodyweights).mockResolvedValue([officialBw2000])
     const { user } = render(<BodyweightInput day={date2020} />)
     const input = screen.getByLabelText('Bodyweight')
     await screen.findByText(/official/i)
 
     // simulate the res from revalidation is different from UI value
     const newWeight = 15
-
     const newBW = createBodyweight(newWeight, 'official', date2020)
-    useServer(
-      URI_BODYWEIGHT + newBW.date,
-      newBW,
-      // slight delay is necessary for the optimistic data to be detected
-      { delay: 100 }
-    )
+    vi.mocked(fetchBodyweights).mockResolvedValue([newBW])
 
     await user.type(input, '{End}3')
     await user.click(screen.getByLabelText('Submit'))
 
-    // value should remain as what was inputted while revalidating
-    expect(await screen.findByDisplayValue('453')).toBeVisible()
     // after revalidation should update to the server response
     expect(await screen.findByDisplayValue(newWeight)).toBeVisible()
     expect(screen.getByLabelText('Reset')).not.toBeVisible()

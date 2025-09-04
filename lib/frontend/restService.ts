@@ -1,332 +1,285 @@
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+  type MutationFunction,
+  type QueryKey,
+} from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
-import { type ParsedUrlQueryInput, stringify } from 'querystring'
-import useSWR from 'swr'
-import { arrayToIndex, fetchJson } from '../../lib/util'
+import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
-import { type ApiError } from '../../models/ApiError'
+import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import { type Category } from '../../models/AsyncSelectorOption/Category'
 import {
-  type Exercise,
-  type ExerciseQuery,
-} from '../../models/AsyncSelectorOption/Exercise'
-import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import {
-  type Bodyweight,
+  bodyweightQuerySchema,
   type BodyweightRangeQuery,
 } from '../../models/Bodyweight'
-import { type Record, type RecordRangeQuery } from '../../models/Record'
-import { type SessionLog } from '../../models/SessionLog'
 import {
-  DATE_FORMAT,
-  URI_BODYWEIGHT,
-  URI_CATEGORIES,
-  URI_EXERCISES,
-  URI_MODIFIERS,
-  URI_RECORDS,
-  URI_SESSIONS,
-} from './constants'
+  isRecord,
+  recordQuerySchema,
+  type RecordRangeQuery,
+} from '../../models/Record'
+import { createSessionLog, type SessionLog } from '../../models/SessionLog'
+import {
+  fetchBodyweights,
+  fetchCategories,
+  fetchExercises,
+  fetchModifiers,
+  fetchRecords,
+  fetchSessionLog,
+  fetchSessionLogs,
+} from '../backend/mongoService'
+import getQueryClient from '../getQueryClient'
+import { DATE_FORMAT, QUERY_KEYS } from './constants'
 
-// Note: make sure any fetch() functions actually return after the fetch!
-// Otherwise there's no guarantee the write will be finished before it tries to read again...
+type OptimisticProps<
+  TQueryFnData = unknown,
+  TData = unknown,
+  TVariables = TData,
+> = {
+  mutationFn: MutationFunction<TData, TVariables>
+  /** Key to trigger optimistic data. No optimistic data will be set if omitted. */
+  queryKey?: QueryKey
+  updater: (
+    input: TQueryFnData | undefined,
+    variables: TVariables
+  ) => TQueryFnData | undefined
+  invalidates?: QueryKey
+}
+const useOptimisticMutation = <
+  TQueryFnData = unknown,
+  TData = unknown,
+  TVariables = TData,
+>({
+  mutationFn,
+  queryKey,
+  updater,
+  invalidates,
+}: OptimisticProps<TQueryFnData, TData, TVariables>) => {
+  const queryClient = useQueryClient()
 
-/** Parse a Query object into a rest param string. Query objects should be spread into this function. */
-export const paramify = (query: ParsedUrlQueryInput) => {
-  const parsedQuery: ParsedUrlQueryInput = {}
-  for (const [key, value] of Object.entries(query)) {
-    // stringify() adds empty strings to the url param, which can cause unintended behavior.
-    // Generally the presence of a query param indicates truthiness, whereas an empty string indicates a falsy value.
-    if (!value) continue
+  const { mutate } = useMutation({
+    mutationFn,
+    onMutate: async () => {
+      // Cancel any ongoing queries to prevent stale requests from overwriting
+      // the new optimistic data. This is kept in onMutate so it can be async.
+      // This triggers after setting optimistic data but the effect should be the same as
+      // if it was invoked beforehand.
+      await queryClient.cancelQueries({
+        queryKey,
+      })
+    },
+    onError: (_err, _variables) => {
+      // rather than saving a snapshot and rolling back, we simply invalidate and refetch
+      queryClient.invalidateQueries({ queryKey })
+    },
+    onSettled: () => {
+      return queryClient.invalidateQueries({
+        queryKey: invalidates,
+      })
+    },
+  })
 
-    // note: stringify() drops empty arrays.
-    // See: https://github.com/psf/requests/issues/6557
-    parsedQuery[key] = value
+  return (...args: Parameters<typeof mutate>) => {
+    const [variables, _options] = args
+    const queryClient = getQueryClient()
+
+    // onMutate in the useMutation hook actually triggers AFTER an initial render with
+    // the stale data. This can cause disruptive screen flashing (especially when adding
+    // a new item on the manage screen). By setting the optimstic data BEFORE invoking
+    // mutate(), we ensure the cache is updated on the first possible render.
+    if (queryKey) {
+      queryClient.setQueryData<TQueryFnData>(queryKey, (input) =>
+        updater(input, variables)
+      )
+    }
+    mutate(...args)
   }
-  // note that stringify doesn't add the leading '?'.
-  // See documentation: https://nodejs.org/api/querystring.html#querystringstringifyobj-sep-eq-options
-  return '?' + stringify(parsedQuery)
 }
 
-/** Formats an object to a json string, converting any undefined values to null instead.
- *  Undefined is not considered a valid json value, so it gets ignored.
- *
- *  JSON.stringify() should never be used directly outside this function, or updates may not go through
- *  when calling PATCH functions.
- *
- *  Any data fields that may be undefined should also expect "null" as a value.
- */
-const toJson = (obj: object) =>
-  JSON.stringify(obj, (_, value: unknown) =>
-    typeof value === 'undefined' ? null : value
-  )
+interface AddMutationProps<T>
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  addFn: (newItem: T) => Promise<T>
+}
+export function useAddMutation<T>({ addFn, ...rest }: AddMutationProps<T>) {
+  return useOptimisticMutation<T[], T>({
+    ...rest,
+    mutationFn: (newItem) => addFn(newItem),
+    updater: (prev = [], newItem) => {
+      // Record must also update SessionLog to show it has been added
+      if (isRecord(newItem)) {
+        const { _id, date } = newItem
+        const queryClient = getQueryClient()
+        queryClient.setQueryData<SessionLog>(
+          [QUERY_KEYS.sessionLogs, date],
+          (prev) =>
+            createSessionLog(
+              date,
+              (prev?.records ?? []).concat(_id),
+              prev?.notes ?? []
+            )
+        )
+      }
+
+      return [...prev, newItem]
+    },
+  })
+}
+
+interface UpdateMutationProps<T>
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  updateFn: (id: string, updates: Partial<T>) => Promise<T>
+}
+export function useUpdateMutation<T extends { _id: string }>({
+  updateFn,
+  ...rest
+}: UpdateMutationProps<T>) {
+  return useOptimisticMutation<T[], T, { _id: string; updates: Partial<T> }>({
+    ...rest,
+    mutationFn: ({ _id, updates }) => updateFn(_id, updates),
+    // record and session don't need to sync like with Add/Delete because
+    // amount of records isn't changing
+    updater: (prev = [], { _id, updates }) =>
+      prev.map((item) => (item._id === _id ? { ...item, ...updates } : item)),
+  })
+}
+
+interface DeleteMutationProps
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  deleteFn: (id: string) => Promise<string>
+}
+export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
+  return useOptimisticMutation<{ _id: string }[], string>({
+    ...rest,
+    mutationFn: (id) => deleteFn(id),
+    updater: (prev = [], id) => {
+      const { date } = (rest.queryKey?.find(
+        (key) => !!key && typeof key === 'object' && 'date' in key
+      ) || {}) as { date: string }
+      if (date) {
+        const queryClient = getQueryClient()
+        queryClient.setQueryData<SessionLog>(
+          [QUERY_KEYS.sessionLogs, date],
+          (prev) =>
+            createSessionLog(
+              date,
+              (prev?.records ?? []).filter((_id) => _id !== id),
+              prev?.notes ?? []
+            )
+        )
+      }
+
+      return prev.filter((item) => item._id !== id)
+    },
+  })
+}
+
+//----------
+// FETCHING
+//----------
+
+interface UseOptions {
+  /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
+   *  component using this option. The component will be given a promise from
+   *  the server and the Suspense boundary will render until the promise resolves.
+   */
+  suspense?: boolean
+  /** Determines whether the fetch will occur. Defaults to true.
+   *  NOTE: cannot use with useSuspenseQuery.
+   */
+  enabled?: boolean
+}
 
 const toNames = (entities?: AsyncSelectorOption[]) =>
   entities?.map((entity) => entity.name) ?? []
 
 const nameSort = <T extends { name: string }>(data?: T[]) =>
-  data?.sort((a, b) => a.name.localeCompare(b.name))
-
-//---------
-// SESSION
-//---------
+  data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
 
 export function useSessionLog(day: Dayjs | string) {
-  const { data, isLoading, mutate } = useSWR<SessionLog | null, ApiError>(
-    URI_SESSIONS + (typeof day === 'string' ? day : day.format(DATE_FORMAT))
-  )
+  const date = typeof day === 'string' ? day : day.format(DATE_FORMAT)
 
-  return {
-    sessionLog: data,
-    isLoading,
-    mutate,
-  }
-}
-
-export function useSessionLogs(query: DateRangeQuery) {
-  const { data, isLoading, mutate } = useSWR<SessionLog[], ApiError>(
-    URI_SESSIONS + paramify({ ...query })
-  )
-
-  return {
-    sessionLogs: data,
-    sessionLogsIndex: arrayToIndex<SessionLog>('date', data),
-    isLoading,
-
-    mutate,
-  }
-}
-
-export async function updateSessionLog(
-  newSesson: SessionLog
-): Promise<SessionLog> {
-  return fetchJson(URI_SESSIONS + newSesson.date, {
-    method: 'PUT',
-    body: toJson(newSesson),
-    headers: { 'content-type': 'application/json' },
+  return useQuery({
+    queryKey: [QUERY_KEYS.sessionLogs, date],
+    queryFn: () => fetchSessionLog(date),
   })
 }
 
-//--------
-// RECORD
-//--------
-
-/** Note: whenever mutate() is used, any component using useRecord will rerender, even if they don't
- *  use the record from this hook. This can be avoided by lifting the full record to a lightweight parent
- *  component and only passing the fields actually needed as props. If the child needs access to mutate(),
- *  it can either take the mutate from this hook as another prop, or use the global mutate from useSWRConfig().
- *
- *  Note that this applies to any other useSWR hook as well.
- */
-export function useRecord(id: string) {
-  const { data, isLoading, mutate } = useSWR<Record | null, ApiError>(
-    URI_RECORDS + id
-  )
+export function useSessionLogs(query: DateRangeQuery) {
+  const hook = useQuery({
+    queryKey: [QUERY_KEYS.sessionLogs, query],
+    queryFn: () => fetchSessionLogs(query),
+  })
 
   return {
-    record: data ?? null,
-    isLoadingRecord: isLoading,
-    // todo: mutate => mutateRecord ? Hard to wrangle with multiple mutates
-    mutate,
+    ...hook,
+    index: arrayToIndex('date', hook.data),
   }
 }
 
 export function useRecords(
   query?: RecordRangeQuery & DateRangeQuery,
-  shouldFetch = true
+  enabled = true
 ) {
-  const { data, isLoading, mutate } = useSWR<Record[], ApiError>(
-    shouldFetch ? URI_RECORDS + paramify({ ...query }) : null
-  )
+  const filter = recordQuerySchema.safeParse(query).data ?? {}
+  const dateFilter = dateRangeQuerySchema.safeParse(query).data ?? {}
+
+  const hook = useQuery({
+    queryKey: [QUERY_KEYS.records, query],
+    queryFn: () => fetchRecords(filter, dateFilter),
+    enabled,
+  })
 
   return {
-    // data will be undefined forever if the fetch is null
-    records: shouldFetch ? data : [],
-    recordsIndex: shouldFetch ? arrayToIndex<Record>('_id', data) : {},
-
-    mutate,
-    isLoading,
+    ...hook,
+    index: arrayToIndex('_id', hook.data),
   }
 }
 
-export async function addRecord(newRecord: Record): Promise<Record> {
-  return fetchJson(URI_RECORDS, {
-    method: 'POST',
-    body: toJson(newRecord),
-    headers: { 'content-type': 'application/json' },
+export function useExercises({ suspense }: UseOptions = {}) {
+  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
+    queryKey: [QUERY_KEYS.exercises],
+    queryFn: fetchExercises,
   })
-}
-
-export async function updateRecordFields(
-  id: string,
-  updates: Partial<Record>
-): Promise<Record> {
-  return fetchJson(URI_RECORDS + id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteRecord(id: string): Promise<string> {
-  return fetchJson(URI_RECORDS + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-//----------
-// EXERCISE
-//----------
-
-export function useExercises(query?: ExerciseQuery) {
-  const { data, mutate } = useSWR<Exercise[], ApiError>(
-    URI_EXERCISES + paramify({ ...query })
-  )
-  const sortedData = nameSort(data)
 
   return {
-    exercises: sortedData,
-    exerciseNames: toNames(sortedData),
-
-    mutate,
-  }
-}
-export function useExercise(
-  /** fetching will be disabled if id is falsy   */
-  id?: string | null
-) {
-  const { data, isLoading, mutate } = useSWR<Exercise | null, ApiError>(
-    // Passing null to useSWR disables fetching.
-    // NOTE: when fetching is disabled useSWR returns data as undefined, not null
-    id ? URI_EXERCISES + id : null
-  )
-
-  return {
-    exercise: data ?? null,
-    isLoadingExercise: isLoading,
-    mutate,
+    data: nameSort(data),
+    names: toNames(data),
+    index: arrayToIndex('_id', data),
+    ...rest,
   }
 }
 
-export async function addExercise(newExercise: Exercise): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES, {
-    method: 'POST',
-    body: toJson(newExercise),
-    headers: { 'content-type': 'application/json' },
+export function useModifiers({ suspense }: UseOptions = {}) {
+  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
+    queryKey: [QUERY_KEYS.modifiers],
+    queryFn: fetchModifiers,
   })
-}
-
-export async function updateExerciseFields(
-  exercise: Exercise,
-  updates: Partial<Exercise>
-): Promise<Exercise> {
-  return fetchJson(URI_EXERCISES + exercise._id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteExercise(id: string): Promise<string> {
-  return fetchJson(URI_EXERCISES + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-//----------
-// MODIFIER
-//----------
-
-export function useModifiers() {
-  const { data, mutate } = useSWR<Modifier[], ApiError>(URI_MODIFIERS)
-  const sortedData = nameSort(data)
 
   return {
-    modifiers: sortedData,
-    modifiersIndex: arrayToIndex<Modifier>('name', data),
-    modifierNames: toNames(sortedData),
-
-    mutate,
+    data: nameSort(data),
+    names: toNames(data),
+    index: arrayToIndex('_id', data),
+    ...rest,
   }
 }
 
-export async function addModifier(newModifier: Modifier): Promise<Modifier> {
-  return fetchJson(URI_MODIFIERS, {
-    method: 'POST',
-    body: toJson(newModifier),
-    headers: { 'content-type': 'application/json' },
+export function useCategories({ suspense }: UseOptions = {}) {
+  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
+    queryKey: [QUERY_KEYS.categories],
+    queryFn: fetchCategories,
   })
-}
-
-export async function updateModifierFields(
-  modifier: Modifier,
-  updates: Partial<Modifier>
-): Promise<Modifier> {
-  return fetchJson(URI_MODIFIERS + modifier._id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteModifier(id: string): Promise<string> {
-  return fetchJson(URI_MODIFIERS + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-//----------
-// CATEGORY
-//----------
-
-export function useCategories() {
-  const { data, mutate } = useSWR<Category[], ApiError>(URI_CATEGORIES)
-  const sortedData = nameSort(data)
 
   return {
-    categories: sortedData,
-    categoryNames: toNames(sortedData),
-
-    mutate,
+    data: nameSort(data),
+    names: toNames(data),
+    index: arrayToIndex('_id', data),
+    ...rest,
   }
 }
 
-export async function addCategory(newCategory: Category): Promise<Category> {
-  return fetchJson(URI_CATEGORIES, {
-    method: 'POST',
-    body: toJson(newCategory),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function updateCategoryFields(
-  category: Category,
-  updates: Partial<Category>
-): Promise<Category> {
-  return fetchJson(URI_CATEGORIES + category._id, {
-    method: 'PATCH',
-    body: toJson(updates),
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-export async function deleteCategory(id: string): Promise<string> {
-  return fetchJson(URI_CATEGORIES + id, {
-    method: 'DELETE',
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-//------------
-// BODYWEIGHT
-//------------
-
-export function useBodyweights(
-  query?: BodyweightRangeQuery,
-  shouldFetch = true
-) {
+export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
   // Incrementing to 2020-04-03 will catch everything from the previous day.
@@ -335,23 +288,20 @@ export function useBodyweights(
   const start = query?.start ? addDay(query.start) : undefined
   const end = query?.end ? addDay(query.end) : undefined
 
-  const { data, mutate } = useSWR<Bodyweight[], ApiError>(
-    shouldFetch ? URI_BODYWEIGHT + paramify({ start, end, ...query }) : null
-  )
+  // todo: probably can get rid of zod now, this is cumbersome anyway.
+  // Just separate the filter and date queries?
+  const filter = bodyweightQuerySchema.safeParse(query).data ?? {}
+  const dateQuery = dateRangeQuerySchema.safeParse({ start, end, ...query })
+    .data ?? { start: dayjs().add(-6, 'months').format(DATE_FORMAT) }
+
+  const { data, ...rest } = useQuery({
+    queryKey: [QUERY_KEYS.bodyweights, query],
+    queryFn: () => fetchBodyweights(filter, dateQuery),
+    enabled,
+  })
 
   return {
-    data: shouldFetch ? data : [],
-
-    mutate,
+    data: enabled ? data : [],
+    ...rest,
   }
-}
-
-export async function updateBodyweight(
-  newBodyweight: Bodyweight
-): Promise<Bodyweight> {
-  return fetchJson(URI_BODYWEIGHT + newBodyweight.date, {
-    method: 'PUT',
-    body: toJson(newBodyweight),
-    headers: { 'content-type': 'application/json' },
-  })
 }
