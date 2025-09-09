@@ -27,7 +27,7 @@ import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 import { type UpdateState } from '../../lib/util'
 import { type Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
-import { type RecordRangeQuery } from '../../models/Record'
+import { type RecordQuery } from '../../models/Record'
 import { type Set } from '../../models/Set'
 import useDarkMode from '../useDarkMode'
 import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
@@ -67,7 +67,7 @@ const getStartIndex = (data: GraphData[], dayRange = 60) => {
   return i + 1
 }
 interface Props {
-  query?: RecordRangeQuery
+  query?: RecordQuery
   swipeToRecord: (i: number) => void
 }
 export default function HistoryGraph({ query, swipeToRecord }: Props) {

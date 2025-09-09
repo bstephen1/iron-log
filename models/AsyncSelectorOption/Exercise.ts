@@ -14,10 +14,6 @@ export interface Exercise extends AsyncSelectorOption {
   modifiers: string[]
 }
 
-// todo: make this based on the schema. Requires some thought because we
-// don't want to parse it immediately, only when sending to the api.
-// So may require a separate client model with only the fields the client can
-// edit (everything except id?)
 export const createExercise = (
   name: string,
   {

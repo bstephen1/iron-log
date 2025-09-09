@@ -19,7 +19,6 @@ export function buildMatchTypeFilter(
   array: unknown[] | undefined,
   matchType: ArrayMatchType | undefined
 ) {
-  console.log('building', array, matchType)
   // The array needs special handling if it's empty. $all and $in always return no documents for empty arrays.
   const isEmpty = !array?.length
   const sizeFilter = { $size: isEmpty ? 0 : array.length }

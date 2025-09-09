@@ -24,12 +24,12 @@ import 'swiper/css/pagination'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import NavigationBar from '../../../components/slider/NavigationBar'
 import { type DisplayFields } from '../../../models/DisplayFields'
-import { type RecordRangeQuery } from '../../../models/Record'
+import { type RecordQuery } from '../../../models/Record'
 
 interface Props {
   /** displayFields to use for each history card. If omitted, cards will use their own displayFields. */
   displayFields?: DisplayFields
-  query?: RecordRangeQuery
+  query?: RecordQuery
   /** actions to include in each history card */
   actions?: HistoryAction[]
   /** content to include in each history card */

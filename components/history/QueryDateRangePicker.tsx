@@ -1,19 +1,19 @@
+import MenuItem from '@mui/material/MenuItem'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
 import { type UpdateState } from '../../lib/util'
-import { type RecordRangeQuery } from '../../models/Record'
-import MenuItem from '@mui/material/MenuItem'
-import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
+import { type RecordQuery } from '../../models/Record'
 
 const today = dayjs()
 const todayFormatted = dayjs().format(DATE_FORMAT)
 
 interface Props {
-  query: RecordRangeQuery
-  updateQuery: UpdateState<RecordRangeQuery>
+  query: RecordQuery
+  updateQuery: UpdateState<RecordQuery>
 }
 export default function QueryDateRangePicker({ query, updateQuery }: Props) {
   const { start, end } = query

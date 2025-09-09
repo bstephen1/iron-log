@@ -9,13 +9,12 @@ import {
 import dayjs, { type Dayjs } from 'dayjs'
 import { arrayToIndex } from '../../lib/util'
 import type FetchOptions from '../../models//DateRangeQuery'
-import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import { type BodyweightFilter } from '../../models/Bodyweight'
 import {
+  buildRecordFilter,
   isRecord,
-  recordQuerySchema,
-  type RecordRangeQuery,
+  type RecordQuery,
 } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
@@ -215,16 +214,10 @@ export function useSessionLogs(query: FetchOptions) {
   }
 }
 
-export function useRecords(
-  query?: RecordRangeQuery & FetchOptions,
-  enabled = true
-) {
-  const filter = recordQuerySchema.safeParse(query).data ?? {}
-  const dateFilter = dateRangeQuerySchema.safeParse(query).data ?? {}
-
+export function useRecords(query?: RecordQuery & FetchOptions, enabled = true) {
   const hook = useQuery({
     queryKey: [QUERY_KEYS.records, query],
-    queryFn: () => fetchRecords({ ...filter, ...dateFilter }),
+    queryFn: () => fetchRecords(buildRecordFilter(query)),
     enabled,
   })
 

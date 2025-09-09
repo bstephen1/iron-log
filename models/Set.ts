@@ -1,5 +1,4 @@
-import { z } from 'zod'
-import { DB_UNITS, type Units, unitsSchema } from './Units'
+import { DB_UNITS, type Units } from './Units'
 
 /** An exercise set. */
 export type Set = {
@@ -27,16 +26,13 @@ export const setOperators = [
  * otherwise. They just won't be meaningful until/unless the operator becomes "between".
  * This allows value/min/max to be saved when switching between operators.
  */
-export interface SetType extends z.infer<typeof setTypeSchema> {}
-export const setTypeSchema = z.object({
-  field: unitsSchema.keyof(),
-  operator: z.enum(setOperators),
-  value: z.coerce.number().optional(),
-  /** used for "between" operator */
-  min: z.coerce.number().optional(),
-  /** used for "between" operator */
-  max: z.coerce.number().optional(),
-})
+export interface SetType {
+  field: keyof Units
+  operator: SetOperator
+  value?: number
+  min?: number
+  max?: number
+}
 
 export const DEFAULT_SET_TYPE: Readonly<SetType> = {
   operator: 'exactly',

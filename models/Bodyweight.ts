@@ -12,8 +12,6 @@ import type FetchOptions from './DateRangeQuery'
 export type WeighInType = (typeof weighInTypes)[number]
 export const weighInTypes = ['official', 'unofficial'] as const
 
-// we extend an empty interface so intellisense just infers it as "Bodyweight"
-// instead of listing all the properties of the schema
 export interface Bodyweight {
   _id: string
   value: number

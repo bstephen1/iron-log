@@ -1,14 +1,13 @@
 'use server'
 import { StatusCodes } from 'http-status-codes'
-import { type Document, type ObjectId } from 'mongodb'
-import { type z } from 'zod'
+import { type Filter, type Document, type ObjectId } from 'mongodb'
 import type FetchOptions from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { type Bodyweight, type BodyweightFilter } from '../../models/Bodyweight'
-import { type Record, type recordQuerySchema } from '../../models/Record'
+import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { getUserId } from './auth'
 import { collections } from './mongoConnect'
@@ -154,7 +153,7 @@ export async function fetchRecords({
   sort = 'newestFirst',
   date,
   ...filter
-}: z.output<typeof recordQuerySchema> & FetchOptions = {}): Promise<Record[]> {
+}: Omit<Filter<Record>, 'date'> & FetchOptions = {}): Promise<Record[]> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
   // So for this query anything within the "exercise" object must be
   // matched AFTER the exercises $lookup.

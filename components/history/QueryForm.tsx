@@ -9,15 +9,15 @@ import { type UpdateState } from '../../lib/util'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
-  type RecordRangeQuery,
+  type RecordQuery,
 } from '../../models/Record'
 import ModifierQueryField from './ModifierQueryField'
 import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'
 
 interface Props {
-  query?: RecordRangeQuery
-  setQuery: Dispatch<SetStateAction<RecordRangeQuery | undefined>>
+  query?: RecordQuery
+  setQuery: Dispatch<SetStateAction<RecordQuery | undefined>>
 }
 export default function QueryCard({ query, setQuery }: Props) {
   const initialQuery = query ?? DEFAULT_RECORD_HISTORY_QUERY
@@ -25,11 +25,10 @@ export default function QueryCard({ query, setQuery }: Props) {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   // reset to this exercise if reset button is clicked
   const [initialExercise, setInitialExercise] = useState(exercise)
-  const [unsavedQuery, setUnsavedQuery] =
-    useState<RecordRangeQuery>(initialQuery)
+  const [unsavedQuery, setUnsavedQuery] = useState<RecordQuery>(initialQuery)
   const displayFields = useDisplayFields(exercise)
 
-  const updateUnsavedQuery: UpdateState<RecordRangeQuery> = (changes) =>
+  const updateUnsavedQuery: UpdateState<RecordQuery> = (changes) =>
     setUnsavedQuery((prev) => ({ ...prev, ...changes }))
 
   return (

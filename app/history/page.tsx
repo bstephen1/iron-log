@@ -9,11 +9,11 @@ import HistoryGraph from '../../components/history/HistoryGraph'
 import QueryForm from '../../components/history/QueryForm'
 import HistoryCardsSwiper from '../../components/session/history/HistoryCardsSwiper'
 import StyledDivider from '../../components/StyledDivider'
-import { type RecordRangeQuery } from '../../models/Record'
+import { type RecordQuery } from '../../models/Record'
 
 export default function HistoryPage() {
   const theme = useTheme()
-  const [query, setQuery] = useState<RecordRangeQuery>()
+  const [query, setQuery] = useState<RecordQuery>()
   const swiperRef = useRef<SwiperRef>(null)
   const swiper = swiperRef.current?.swiper
 
