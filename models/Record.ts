@@ -80,10 +80,10 @@ export const DEFAULT_RECORD_HISTORY_QUERY: RecordQuery = {
   exercise: '',
   modifiers: [],
   modifierMatchType: ArrayMatchType.Partial,
+  setType: DEFAULT_SET_TYPE,
   setTypeMatchType: ArrayMatchType.Any,
   end: dayjs().format(DATE_FORMAT),
   limit: 100,
-  ...DEFAULT_SET_TYPE,
 }
 
 export const isRecord = (thing: unknown): thing is Record =>

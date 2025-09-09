@@ -23,7 +23,7 @@ export default function SetTypeQueryField({
       variant="outlined"
       handleChange={({ setType }) => updateQuery({ setType })}
       units={units}
-      setType={{ ...DEFAULT_SET_TYPE, ...query }}
+      setType={{ ...DEFAULT_SET_TYPE, ...query.setType }}
       disabled={disabled || query.setTypeMatchType === ArrayMatchType.Any}
       slotProps={{
         select: {
