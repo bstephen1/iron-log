@@ -4,24 +4,22 @@ import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId, removeUndefinedKeys } from '../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
-import { exerciseSchema } from './AsyncSelectorOption/Exercise'
+import { type Exercise } from './AsyncSelectorOption/Exercise'
 import type DateRangeQuery from './DateRangeQuery'
-import { noteSchema } from './Note'
-import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
-import { apiArraySchema, dateSchema, idSchema } from './schemas'
+import { type Note } from './Note'
+import { DEFAULT_SET_TYPE, type Set, type SetType, setTypeSchema } from './Set'
 
 // todo: add activeCategory (for programming)
-export interface Record extends z.infer<typeof recordSchema> {}
-export const recordSchema = z.object({
-  _id: idSchema,
-  date: dateSchema,
-  exercise: exerciseSchema.nullable(),
-  activeModifiers: z.array(z.string()),
-  category: z.string().nullable(),
-  notes: z.array(noteSchema).default([]),
-  setType: setTypeSchema,
-  sets: z.array(setSchema).default([]),
-})
+export interface Record {
+  _id: string
+  date: string
+  exercise?: Exercise | null
+  activeModifiers: string[]
+  category?: string | null
+  notes: Note[]
+  setType: SetType
+  sets: Set[]
+}
 
 export const createRecord = (
   date: string,
@@ -50,7 +48,7 @@ export type RecordRangeQuery = z.input<typeof recordQuerySchema> &
 export const recordQuerySchema = z
   .object({
     exercise: z.string(),
-    modifier: apiArraySchema,
+    modifiers: z.array(z.string()),
     modifierMatchType: z.nativeEnum(ArrayMatchType),
     // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
     setTypeMatchType: z.nativeEnum(ArrayMatchType),
@@ -60,7 +58,7 @@ export const recordQuerySchema = z
   .transform(
     ({
       exercise,
-      modifier,
+      modifiers,
       modifierMatchType,
       setTypeMatchType,
       field,
@@ -84,7 +82,7 @@ export const recordQuerySchema = z
         ...rest,
         ...setTypeFields,
         'exercise.name': exercise,
-        activeModifiers: buildMatchTypeFilter(modifier, modifierMatchType),
+        activeModifiers: buildMatchTypeFilter(modifiers, modifierMatchType),
       }
 
       return removeUndefinedKeys(filter)
@@ -93,7 +91,7 @@ export const recordQuerySchema = z
 
 export const DEFAULT_RECORD_HISTORY_QUERY: RecordRangeQuery = {
   exercise: '',
-  modifier: [],
+  modifiers: [],
   modifierMatchType: ArrayMatchType.Partial,
   setTypeMatchType: ArrayMatchType.Any,
   end: dayjs().format(DATE_FORMAT),

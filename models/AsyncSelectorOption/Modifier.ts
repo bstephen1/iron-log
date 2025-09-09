@@ -1,11 +1,8 @@
-import { z } from 'zod'
-import { asyncSelectorOptionSchema, createAsyncSelectorOption } from '.'
+import { type AsyncSelectorOption, createAsyncSelectorOption } from '.'
 
-export interface Modifier extends z.infer<typeof modifierSchema> {}
-
-export const modifierSchema = asyncSelectorOptionSchema.extend({
-  weight: z.number().nullish(),
-})
+export interface Modifier extends AsyncSelectorOption {
+  weight?: number | null
+}
 
 export const createModifier = (
   name: string,

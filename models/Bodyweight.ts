@@ -3,7 +3,6 @@ import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
 import type DateRangeQuery from './DateRangeQuery'
-import { dateSchema, idSchema } from './schemas'
 
 /** A weigh-in can be one of two types:
  * - Official: Used for tracking bodyweight over time. Ideally measured at the same time of day under similar conditions.
@@ -16,15 +15,13 @@ export const weighInTypes = ['official', 'unofficial'] as const
 
 // we extend an empty interface so intellisense just infers it as "Bodyweight"
 // instead of listing all the properties of the schema
-export interface Bodyweight extends z.infer<typeof bodyweightSchema> {}
-
-export const bodyweightSchema = z.object({
-  _id: idSchema,
-  value: z.number(),
-  type: z.enum(weighInTypes),
+export interface Bodyweight {
+  _id: string
+  value: number
+  type: WeighInType
   /** YYYY-MM-DD */
-  date: dateSchema,
-})
+  date: string
+}
 
 export const createBodyweight = (
   value: number,

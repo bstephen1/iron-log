@@ -1,24 +1,5 @@
-import { v6 as uuidv6 } from 'uuid'
-import { idSchema } from '../models/schemas'
-import {
-  arrayToIndex,
-  capitalize,
-  generateId,
-  removeUndefinedKeys,
-} from './util'
-import { it, describe, expect } from 'vitest'
-
-describe('validateId', () => {
-  it('throws error when id format is invalid', () => {
-    expect(() => idSchema.parse('invalid')).toThrow()
-    expect(() => idSchema.parse(uuidv6())).toThrow()
-  })
-
-  it('returns id when valid', () => {
-    const id = generateId()
-    expect(idSchema.parse(id)).toBe(id)
-  })
-})
+import { describe, expect, it } from 'vitest'
+import { arrayToIndex, capitalize, removeUndefinedKeys } from './util'
 
 describe('arrayToIndex', () => {
   interface Sample {
