@@ -34,6 +34,6 @@ export const createBodyweight = (
   date: dayjsDate.format(DATE_FORMAT),
 })
 
-export interface BodyweightFilter extends FetchOptions {
+export interface BodyweightQuery extends FetchOptions {
   type?: WeighInType
 }

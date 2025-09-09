@@ -1,12 +1,12 @@
 'use server'
 import { StatusCodes } from 'http-status-codes'
-import { type Filter, type Document, type ObjectId } from 'mongodb'
+import { type Document, type Filter, type ObjectId } from 'mongodb'
 import type FetchOptions from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { type Bodyweight, type BodyweightFilter } from '../../models/Bodyweight'
+import { type Bodyweight, type BodyweightQuery } from '../../models/Bodyweight'
 import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { getUserId } from './auth'
@@ -457,7 +457,7 @@ export async function fetchBodyweights({
   sort,
   date,
   ...filter
-}: BodyweightFilter): Promise<Bodyweight[]> {
+}: BodyweightQuery): Promise<Bodyweight[]> {
   const userId = await getUserId()
   return await bodyweightHistory
     .find(

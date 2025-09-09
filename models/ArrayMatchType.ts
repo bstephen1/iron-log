@@ -1,10 +1,3 @@
-/** An object that has keys corresponding to Partial\<T\> keys,
- * declaring the MatchTypes for a MongoQuery
- */
-export type ArrayMatchTypes<T> = {
-  [key in keyof Partial<T>]: ArrayMatchType
-}
-
 /** Contains possible api query types for array fields. */
 export enum ArrayMatchType {
   /** matches arrays that contain all the specified values, or more  */

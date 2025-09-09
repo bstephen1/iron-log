@@ -10,7 +10,7 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { arrayToIndex } from '../../lib/util'
 import type FetchOptions from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import { type BodyweightFilter } from '../../models/Bodyweight'
+import { type BodyweightQuery } from '../../models/Bodyweight'
 import {
   buildRecordFilter,
   isRecord,
@@ -269,7 +269,7 @@ export function useCategories({ suspense }: UseOptions = {}) {
   }
 }
 
-export function useBodyweights(query?: BodyweightFilter, enabled = true) {
+export function useBodyweights(query?: BodyweightQuery, enabled = true) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
   // Incrementing to 2020-04-03 will catch everything from the previous day.
