@@ -1,3 +1,5 @@
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
 import { type Dispatch, type SetStateAction, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
@@ -9,12 +11,9 @@ import {
   DEFAULT_RECORD_HISTORY_QUERY,
   type RecordRangeQuery,
 } from '../../models/Record'
-import { apiArraySchema } from '../../models/schemas'
 import ModifierQueryField from './ModifierQueryField'
 import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'
-import Button from '@mui/material/Button'
-import Stack from '@mui/material/Stack'
 
 interface Props {
   query?: RecordRangeQuery
@@ -44,11 +43,11 @@ export default function QueryCard({ query, setQuery }: Props) {
           })
           if (activeModifiers) {
             updateUnsavedQuery({
-              modifier: activeModifiers,
+              modifiers: activeModifiers,
             })
           }
         }}
-        activeModifiers={apiArraySchema.parse(unsavedQuery.modifier)}
+        activeModifiers={unsavedQuery.modifiers ?? []}
         exercise={exercise}
         category={null}
         variant="outlined"
@@ -57,7 +56,7 @@ export default function QueryCard({ query, setQuery }: Props) {
         disabled={!exercise}
         matchType={unsavedQuery.modifierMatchType}
         options={exercise?.modifiers || []}
-        initialValue={apiArraySchema.parse(unsavedQuery.modifier)}
+        initialValue={unsavedQuery.modifiers}
         updateQuery={updateUnsavedQuery}
       />
       <SetTypeQueryField

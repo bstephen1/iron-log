@@ -52,7 +52,7 @@ export const calculateTotalValue = (
 ) => {
   if (operator !== 'total' || field === 'side') return 0
 
-  sets.reduce((total, set) => total + (set[field] ?? 0), 0)
+  return sets.reduce((total, set) => total + (set[field] ?? 0), 0)
 }
 
 export const stringifySetType = (

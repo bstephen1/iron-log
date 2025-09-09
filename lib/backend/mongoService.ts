@@ -1,13 +1,14 @@
 'use server'
 import { StatusCodes } from 'http-status-codes'
-import { type Document, type Filter, type ObjectId } from 'mongodb'
+import { type Document, type ObjectId } from 'mongodb'
+import { type z } from 'zod'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { type Bodyweight } from '../../models/Bodyweight'
-import { type Record } from '../../models/Record'
+import { type BodyweightFilter, type Bodyweight } from '../../models/Bodyweight'
+import { type recordQuerySchema, type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { getUserId } from './auth'
 import { collections } from './mongoConnect'
@@ -146,10 +147,16 @@ export async function addRecord(record: Record): Promise<Record> {
   return record
 }
 
-export async function fetchRecords(
-  filter: Filter<Record> = {},
-  { limit, start = '0', end = '9', sort = 'newestFirst', date }: DateRangeQuery
-): Promise<Record[]> {
+export async function fetchRecords({
+  limit,
+  start = '0',
+  end = '9',
+  sort = 'newestFirst',
+  date,
+  ...filter
+}: z.output<typeof recordQuerySchema> & DateRangeQuery = {}): Promise<
+  Record[]
+> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
   // So for this query anything within the "exercise" object must be
   // matched AFTER the exercises $lookup.
@@ -446,10 +453,14 @@ export async function deleteCategory(_id: string) {
 /** The default start/end values compare against the first char of the date (ie, the first digit of the year).
  *  So '0' is equivalent to year 0000 and '9' is equivalent to year 9999
  */
-export async function fetchBodyweights(
-  filter: Filter<Bodyweight>,
-  { limit, start = '0', end = '9', sort, date }: DateRangeQuery
-): Promise<Bodyweight[]> {
+export async function fetchBodyweights({
+  limit,
+  start = '0',
+  end = '9',
+  sort,
+  date,
+  ...filter
+}: BodyweightFilter): Promise<Bodyweight[]> {
   const userId = await getUserId()
   return await bodyweightHistory
     .find(

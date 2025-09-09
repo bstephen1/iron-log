@@ -13,8 +13,6 @@ it('builds standard MatchType', () => {
 
 it('builds empty MatchType', () => {
   expect(buildMatchTypeFilter([], ArrayMatchType.Exact)).toEqual({ $size: 0 })
-  expect(buildMatchTypeFilter([''], ArrayMatchType.Exact)).toEqual({ $size: 0 })
 
   expect(buildMatchTypeFilter([], ArrayMatchType.Partial)).toEqual(undefined)
-  expect(buildMatchTypeFilter([''], ArrayMatchType.Partial)).toEqual(undefined)
 })

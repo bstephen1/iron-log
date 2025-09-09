@@ -11,10 +11,7 @@ import { arrayToIndex } from '../../lib/util'
 import type DateRangeQuery from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import {
-  bodyweightQuerySchema,
-  type BodyweightRangeQuery,
-} from '../../models/Bodyweight'
+import { type BodyweightFilter } from '../../models/Bodyweight'
 import {
   isRecord,
   recordQuerySchema,
@@ -227,7 +224,7 @@ export function useRecords(
 
   const hook = useQuery({
     queryKey: [QUERY_KEYS.records, query],
-    queryFn: () => fetchRecords(filter, dateFilter),
+    queryFn: () => fetchRecords({ ...filter, ...dateFilter }),
     enabled,
   })
 
@@ -279,7 +276,7 @@ export function useCategories({ suspense }: UseOptions = {}) {
   }
 }
 
-export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
+export function useBodyweights(query?: BodyweightFilter, enabled = true) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
   // Incrementing to 2020-04-03 will catch everything from the previous day.
@@ -288,15 +285,13 @@ export function useBodyweights(query?: BodyweightRangeQuery, enabled = true) {
   const start = query?.start ? addDay(query.start) : undefined
   const end = query?.end ? addDay(query.end) : undefined
 
-  // todo: probably can get rid of zod now, this is cumbersome anyway.
-  // Just separate the filter and date queries?
-  const filter = bodyweightQuerySchema.safeParse(query).data ?? {}
-  const dateQuery = dateRangeQuerySchema.safeParse({ start, end, ...query })
-    .data ?? { start: dayjs().add(-6, 'months').format(DATE_FORMAT) }
+  const formattedQuery = query
+    ? { ...query, start, end }
+    : { start: dayjs().add(-6, 'months').format(DATE_FORMAT) }
 
   const { data, ...rest } = useQuery({
-    queryKey: [QUERY_KEYS.bodyweights, query],
-    queryFn: () => fetchBodyweights(filter, dateQuery),
+    queryKey: [QUERY_KEYS.bodyweights, formattedQuery],
+    queryFn: () => fetchBodyweights(formattedQuery),
     enabled,
   })
 

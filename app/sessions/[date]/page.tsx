@@ -47,7 +47,7 @@ export default async function DatePage({ params }: Props) {
     }),
     queryClient.prefetchQuery({
       queryKey: [QUERY_KEYS.records, { date }],
-      queryFn: () => fetchRecords(undefined, { date }),
+      queryFn: () => fetchRecords({ date }),
     }),
   ])
 

@@ -6,7 +6,7 @@ import { it, expect } from 'vitest'
 it('transforms query params', () => {
   const apiQuery: ParsedUrlQuery = {
     exercise: 'exercise',
-    modifier: 'modifier',
+    modifiers: ['modifier'],
     modifierMatchType: ArrayMatchType.Exact,
     operator: 'exactly',
     field: 'reps',
@@ -15,7 +15,7 @@ it('transforms query params', () => {
     max: '8',
   }
   expect(recordQuerySchema.parse(apiQuery)).toEqual({
-    activeModifiers: { $all: [apiQuery.modifier], $size: 1 },
+    activeModifiers: { $all: apiQuery.modifiers, $size: 1 },
     'exercise.name': apiQuery.exercise,
     'setType.operator': apiQuery.operator,
     'setType.field': apiQuery.field,

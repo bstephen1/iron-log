@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
 import type DateRangeQuery from './DateRangeQuery'
@@ -37,11 +36,6 @@ export const createBodyweight = (
   date: dayjsDate.format(DATE_FORMAT),
 })
 
-export type BodyweightRangeQuery = BodyweightQuery & DateRangeQuery
-export interface BodyweightQuery
-  extends z.infer<typeof bodyweightQuerySchema> {}
-export const bodyweightQuerySchema = z
-  .object({
-    type: z.enum(weighInTypes),
-  })
-  .partial()
+export interface BodyweightFilter extends DateRangeQuery {
+  type?: WeighInType
+}

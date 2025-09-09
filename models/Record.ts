@@ -78,7 +78,7 @@ export const recordQuerySchema = z
               'setType.max': max,
             }
           : {}
-      const filter: Filter<Record> = {
+      const filter: Filter<Omit<Record, 'date'>> = {
         ...rest,
         ...setTypeFields,
         'exercise.name': exercise,
