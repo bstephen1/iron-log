@@ -1,24 +1,11 @@
-import { z } from 'zod'
-import { DB_UNITS, type Units, unitsSchema } from './Units'
+import { DB_UNITS, type Units } from './Units'
 
 /** An exercise set. */
-export interface Set extends z.infer<typeof setSchema> {}
-// tricky to define this schema since we need to change the value types to number,
-// plus overwrite "side"
-const dimensions = unitsSchema.keyof().exclude(['side']).options
-export const setSchema = z
-  .object(
-    dimensions.reduce(
-      (prev, key) => ({ ...prev, [key]: z.number().nullish() }),
-      // the key definition is the same idea as making a type from a const array
-      {} as {
-        [key in (typeof dimensions)[number]]: z.ZodOptional<
-          z.ZodNullable<z.ZodNumber>
-        >
-      }
-    )
-  )
-  .extend({ side: z.enum(['L', 'R', '']).nullish() })
+export type Set = {
+  [field in keyof Omit<Units, 'side'>]?: number
+} & {
+  side?: 'L' | 'R' | '' | null
+}
 
 export type SetOperator = (typeof setOperators)[number]
 export const setOperators = [
@@ -39,16 +26,13 @@ export const setOperators = [
  * otherwise. They just won't be meaningful until/unless the operator becomes "between".
  * This allows value/min/max to be saved when switching between operators.
  */
-export interface SetType extends z.infer<typeof setTypeSchema> {}
-export const setTypeSchema = z.object({
-  field: unitsSchema.keyof(),
-  operator: z.enum(setOperators),
-  value: z.coerce.number().optional(),
-  /** used for "between" operator */
-  min: z.coerce.number().optional(),
-  /** used for "between" operator */
-  max: z.coerce.number().optional(),
-})
+export interface SetType {
+  field: keyof Units
+  operator: SetOperator
+  value?: number
+  min?: number
+  max?: number
+}
 
 export const DEFAULT_SET_TYPE: Readonly<SetType> = {
   operator: 'exactly',
@@ -62,9 +46,9 @@ export const calculateTotalValue = (
   sets: Set[],
   { field, operator }: SetType
 ) => {
-  return operator === 'total'
-    ? sets.reduce((total, set) => total + Number(set[field] ?? 0), 0)
-    : 0
+  if (operator !== 'total' || field === 'side') return 0
+
+  return sets.reduce((total, set) => total + (set[field] ?? 0), 0)
 }
 
 export const stringifySetType = (

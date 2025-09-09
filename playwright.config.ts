@@ -42,7 +42,7 @@ export default defineConfig({
   testDir: './playwright',
   outputDir: 'playwright/test-results',
   forbidOnly: isCI,
-  retries: isCI ? 1 : 0,
+  retries: isCI ? 1 : 1,
   // Runs individual tests in each file in parallel.
   // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,

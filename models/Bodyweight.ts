@@ -1,9 +1,7 @@
 import dayjs from 'dayjs'
-import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
-import type DateRangeQuery from './DateRangeQuery'
-import { dateSchema, idSchema } from './schemas'
+import type FetchOptions from './DateRangeQuery'
 
 /** A weigh-in can be one of two types:
  * - Official: Used for tracking bodyweight over time. Ideally measured at the same time of day under similar conditions.
@@ -14,17 +12,13 @@ import { dateSchema, idSchema } from './schemas'
 export type WeighInType = (typeof weighInTypes)[number]
 export const weighInTypes = ['official', 'unofficial'] as const
 
-// we extend an empty interface so intellisense just infers it as "Bodyweight"
-// instead of listing all the properties of the schema
-export interface Bodyweight extends z.infer<typeof bodyweightSchema> {}
-
-export const bodyweightSchema = z.object({
-  _id: idSchema,
-  value: z.number(),
-  type: z.enum(weighInTypes),
+export interface Bodyweight {
+  _id: string
+  value: number
+  type: WeighInType
   /** YYYY-MM-DD */
-  date: dateSchema,
-})
+  date: string
+}
 
 export const createBodyweight = (
   value: number,
@@ -40,11 +34,6 @@ export const createBodyweight = (
   date: dayjsDate.format(DATE_FORMAT),
 })
 
-export type BodyweightRangeQuery = BodyweightQuery & DateRangeQuery
-export interface BodyweightQuery
-  extends z.infer<typeof bodyweightQuerySchema> {}
-export const bodyweightQuerySchema = z
-  .object({
-    type: z.enum(weighInTypes),
-  })
-  .partial()
+export interface BodyweightQuery extends FetchOptions {
+  type?: WeighInType
+}

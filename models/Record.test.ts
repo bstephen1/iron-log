@@ -1,36 +1,40 @@
-import { type ParsedUrlQuery } from 'querystring'
+import { expect, it } from 'vitest'
 import { ArrayMatchType } from './ArrayMatchType'
-import { recordQuerySchema } from './Record'
-import { it, expect } from 'vitest'
+import { buildRecordFilter, type RecordQuery } from './Record'
+import { type SetType } from './Set'
 
 it('transforms query params', () => {
-  const apiQuery: ParsedUrlQuery = {
-    exercise: 'exercise',
-    modifier: 'modifier',
-    modifierMatchType: ArrayMatchType.Exact,
+  const setType: SetType = {
     operator: 'exactly',
     field: 'reps',
-    value: '5',
-    min: '1',
-    max: '8',
+    value: 5,
+    min: 1,
+    max: 8,
   }
-  expect(recordQuerySchema.parse(apiQuery)).toEqual({
-    activeModifiers: { $all: [apiQuery.modifier], $size: 1 },
-    'exercise.name': apiQuery.exercise,
-    'setType.operator': apiQuery.operator,
-    'setType.field': apiQuery.field,
-    'setType.value': Number(apiQuery.value),
-    'setType.min': Number(apiQuery.min),
-    'setType.max': Number(apiQuery.max),
+  const recordQuery: RecordQuery = {
+    exercise: 'exercise',
+    modifiers: ['modifier'],
+    modifierMatchType: ArrayMatchType.Exact,
+    setType,
+  }
+
+  expect(buildRecordFilter(recordQuery)).toEqual({
+    activeModifiers: { $all: recordQuery.modifiers, $size: 1 },
+    'exercise.name': recordQuery.exercise,
+    'setType.operator': setType.operator,
+    'setType.field': setType.field,
+    'setType.value': setType.value,
+    'setType.min': setType.min,
+    'setType.max': setType.max,
   })
 })
 
 it('ignores undefined keys', () => {
-  const apiQuery: ParsedUrlQuery = {
+  const recordQuery: RecordQuery = {
     exercise: '2000-01-01',
     category: undefined,
   }
-  expect(recordQuerySchema.parse(apiQuery)).toEqual({
-    'exercise.name': apiQuery.exercise,
+  expect(buildRecordFilter(recordQuery)).toEqual({
+    'exercise.name': recordQuery.exercise,
   })
 })

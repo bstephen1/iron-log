@@ -1,22 +1,11 @@
-import { z } from 'zod'
 import { TIME_FORMAT } from '../lib/frontend/constants'
 
 /** Specifies the possible units for each field in a set.
  *  A unit with the same value as its key is considered to be unitless.
  */
-export interface Units extends z.infer<typeof unitsSchema> {}
-export const unitsSchema = z.object({
-  weight: z.enum(['kg', 'lbs']),
-  distance: z.enum(['m', 'km', 'ft', 'mi', 'cm', 'in']),
-  /** Considered having a separate HH:mm:ss and mm:ss but then the latter
-   *  would be overflow limited, so you wouldn't always be able to freely swap units.
-   *  May revisit if real usage with HH is cumbersome.
-   */
-  time: z.enum(['sec', 'min', 'hr', TIME_FORMAT]),
-  reps: z.enum(['reps']),
-  side: z.enum(['side']),
-  effort: z.enum(['rpe', 'rir']),
-})
+export type Units = {
+  [dimension in keyof typeof FACTORS]: keyof (typeof FACTORS)[dimension]
+}
 
 /** Units used to store sets in the database. No matter the units used to display
  * data on the frontend, they must be converted to these units before sending to the db.
@@ -41,14 +30,13 @@ export const DB_UNITS: Readonly<Units> = {
  * multiplication. In those cases the factors should be set to 1 and the conversion handled
  * manually in convertUnit().
  */
-const factors: {
-  readonly [dimension in keyof Units]: {
-    readonly [unit in Units[dimension]]: number
-  }
-} = {
+export const FACTORS = {
   weight: { kg: 1, lbs: 0.45359237 },
   distance: { m: 1, km: 1000, ft: 0.3048, mi: 1609.3471, cm: 0.01, in: 0.0254 },
-
+  /** Considered having a separate HH:mm:ss and mm:ss but then the latter
+   *  would be overflow limited, so you wouldn't always be able to freely swap units.
+   *  May revisit if real usage with HH is cumbersome.
+   */
   time: { sec: 1, min: 60, hr: 3600, [TIME_FORMAT]: 1 },
   reps: { reps: 1 },
   side: { side: 1 },
@@ -92,8 +80,8 @@ function convertUnitHelper<Dimension extends keyof Units>(
   // This would work if value === 0 too, but have to watch out for "effort" dimension.
   if (value === undefined) return undefined
 
-  const sourceFactor: number = factors[dimension][source]
-  const destFactor: number = factors[dimension][dest]
+  const sourceFactor = FACTORS[dimension][source] as number
+  const destFactor = FACTORS[dimension][dest] as number
 
   if (dimension === 'effort' && source !== dest) {
     // rpe = 10 - rir (factor is not used)

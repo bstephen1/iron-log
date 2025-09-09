@@ -1,27 +1,23 @@
 import dayjs from 'dayjs'
-import { type Filter } from 'mongodb'
-import { z } from 'zod'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId, removeUndefinedKeys } from '../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
-import { exerciseSchema } from './AsyncSelectorOption/Exercise'
-import type DateRangeQuery from './DateRangeQuery'
-import { noteSchema } from './Note'
-import { DEFAULT_SET_TYPE, setSchema, setTypeSchema } from './Set'
-import { apiArraySchema, dateSchema, idSchema } from './schemas'
+import { type Exercise } from './AsyncSelectorOption/Exercise'
+import type FetchOptions from './DateRangeQuery'
+import { type Note } from './Note'
+import { DEFAULT_SET_TYPE, type Set, type SetType } from './Set'
 
 // todo: add activeCategory (for programming)
-export interface Record extends z.infer<typeof recordSchema> {}
-export const recordSchema = z.object({
-  _id: idSchema,
-  date: dateSchema,
-  exercise: exerciseSchema.nullable(),
-  activeModifiers: z.array(z.string()),
-  category: z.string().nullable(),
-  notes: z.array(noteSchema).default([]),
-  setType: setTypeSchema,
-  sets: z.array(setSchema).default([]),
-})
+export interface Record {
+  _id: string
+  date: string
+  exercise?: Exercise | null
+  activeModifiers: string[]
+  category?: string | null
+  notes: Note[]
+  setType: SetType
+  sets: Set[]
+}
 
 export const createRecord = (
   date: string,
@@ -44,61 +40,50 @@ export const createRecord = (
   setType,
 })
 
-// we use a type instead of extending an interface so you can see the component queries
-export type RecordRangeQuery = z.input<typeof recordQuerySchema> &
-  DateRangeQuery
-export const recordQuerySchema = z
-  .object({
-    exercise: z.string(),
-    modifier: apiArraySchema,
-    modifierMatchType: z.nativeEnum(ArrayMatchType),
-    // todo: refactor MatchType to remove Any. Any is just "don't pass in the fields"
-    setTypeMatchType: z.nativeEnum(ArrayMatchType),
+export interface RecordQuery extends FetchOptions {
+  exercise?: string
+  category?: string
+  modifiers?: string[]
+  modifierMatchType?: ArrayMatchType
+  setType?: Partial<SetType>
+  setTypeMatchType?: ArrayMatchType
+}
+
+export const buildRecordFilter = ({
+  exercise,
+  modifiers,
+  modifierMatchType,
+  setType: { field, operator, value, min, max } = {},
+  setTypeMatchType,
+  ...rest
+}: RecordQuery = {}) => {
+  const setTypeFields =
+    setTypeMatchType !== ArrayMatchType.Any
+      ? {
+          'setType.field': field,
+          'setType.operator': operator,
+          'setType.value': value,
+          'setType.min': min,
+          'setType.max': max,
+        }
+      : {}
+
+  return removeUndefinedKeys({
+    'exercise.name': exercise,
+    activeModifiers: buildMatchTypeFilter(modifiers, modifierMatchType),
+    ...setTypeFields,
+    ...rest,
   })
-  .partial()
-  .and(setTypeSchema.partial())
-  .transform(
-    ({
-      exercise,
-      modifier,
-      modifierMatchType,
-      setTypeMatchType,
-      field,
-      operator,
-      value,
-      min,
-      max,
-      ...rest
-    }) => {
-      const setTypeFields =
-        setTypeMatchType !== ArrayMatchType.Any
-          ? {
-              'setType.field': field,
-              'setType.operator': operator,
-              'setType.value': value,
-              'setType.min': min,
-              'setType.max': max,
-            }
-          : {}
-      const filter: Filter<Record> = {
-        ...rest,
-        ...setTypeFields,
-        'exercise.name': exercise,
-        activeModifiers: buildMatchTypeFilter(modifier, modifierMatchType),
-      }
+}
 
-      return removeUndefinedKeys(filter)
-    }
-  )
-
-export const DEFAULT_RECORD_HISTORY_QUERY: RecordRangeQuery = {
+export const DEFAULT_RECORD_HISTORY_QUERY: RecordQuery = {
   exercise: '',
-  modifier: [],
+  modifiers: [],
   modifierMatchType: ArrayMatchType.Partial,
+  setType: DEFAULT_SET_TYPE,
   setTypeMatchType: ArrayMatchType.Any,
   end: dayjs().format(DATE_FORMAT),
   limit: 100,
-  ...DEFAULT_SET_TYPE,
 }
 
 export const isRecord = (thing: unknown): thing is Record =>

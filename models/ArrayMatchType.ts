@@ -1,14 +1,3 @@
-import { StatusCodes } from 'http-status-codes'
-import isEqual from 'react-fast-compare'
-import { ApiError } from './ApiError'
-
-/** An object that has keys corresponding to Partial\<T\> keys,
- * declaring the MatchTypes for a MongoQuery
- */
-export type ArrayMatchTypes<T> = {
-  [key in keyof Partial<T>]: ArrayMatchType
-}
-
 /** Contains possible api query types for array fields. */
 export enum ArrayMatchType {
   /** matches arrays that contain all the specified values, or more  */
@@ -24,7 +13,7 @@ export function buildMatchTypeFilter(
   matchType: ArrayMatchType | undefined
 ) {
   // The array needs special handling if it's empty. $all and $in always return no documents for empty arrays.
-  const isEmpty = !array?.length || isEqual(array, [''])
+  const isEmpty = !array?.length
   const sizeFilter = { $size: isEmpty ? 0 : array.length }
   const elementsFilter = { $all: array }
 
@@ -42,9 +31,6 @@ export function buildMatchTypeFilter(
       // See: https://stackoverflow.com/questions/29774032/mongodb-find-exact-array-match-but-order-doesnt-matter
       return isEmpty ? sizeFilter : { ...sizeFilter, ...elementsFilter }
     default:
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
-        `unexpected match type: ${matchType}`
-      )
+      throw new Error(`unexpected match type: ${matchType}`)
   }
 }

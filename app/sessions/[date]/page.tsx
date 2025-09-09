@@ -1,9 +1,11 @@
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import 'swiper/css'
 import 'swiper/css/pagination'
+import { z } from 'zod'
 import SessionSwiper from '../../../components/session/SessionSwiper'
 import RestTimer from '../../../components/session/upper/RestTimer'
 import TitleBar from '../../../components/session/upper/TitleBar'
@@ -14,11 +16,11 @@ import {
 } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import getQueryClient from '../../../lib/getQueryClient'
-import { dateSchema } from '../../../models/schemas'
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 interface Props {
   params: Promise<{ date: string }>
 }
+/** enforces YYYY-MM-DD format */
+const dateSchema = z.string().date()
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params
@@ -47,7 +49,7 @@ export default async function DatePage({ params }: Props) {
     }),
     queryClient.prefetchQuery({
       queryKey: [QUERY_KEYS.records, { date }],
-      queryFn: () => fetchRecords(undefined, { date }),
+      queryFn: () => fetchRecords({ date }),
     }),
   ])
 
