@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react'
 import Layout from '../components/Layout'
-// global styles must be imported from this file
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import {
   fetchCategories,
@@ -9,6 +8,7 @@ import {
 } from '../lib/backend/mongoService'
 import { QUERY_KEYS } from '../lib/frontend/constants'
 import getQueryClient from '../lib/getQueryClient'
+// global styles must be imported from this file
 import '../styles/globals.css'
 import QueryClientWrapper from './QueryClientWrapper'
 
