@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
 import { arrayToIndex } from '../../lib/util'
-import type DateRangeQuery from '../../models//DateRangeQuery'
+import type FetchOptions from '../../models//DateRangeQuery'
 import { dateRangeQuerySchema } from '../../models//DateRangeQuery'
 import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import { type BodyweightFilter } from '../../models/Bodyweight'
@@ -203,7 +203,7 @@ export function useSessionLog(day: Dayjs | string) {
   })
 }
 
-export function useSessionLogs(query: DateRangeQuery) {
+export function useSessionLogs(query: FetchOptions) {
   const hook = useQuery({
     queryKey: [QUERY_KEYS.sessionLogs, query],
     queryFn: () => fetchSessionLogs(query),
@@ -216,7 +216,7 @@ export function useSessionLogs(query: DateRangeQuery) {
 }
 
 export function useRecords(
-  query?: RecordRangeQuery & DateRangeQuery,
+  query?: RecordRangeQuery & FetchOptions,
   enabled = true
 ) {
   const filter = recordQuerySchema.safeParse(query).data ?? {}

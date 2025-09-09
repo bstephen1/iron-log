@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
-import type DateRangeQuery from './DateRangeQuery'
+import type FetchOptions from './DateRangeQuery'
 
 /** A weigh-in can be one of two types:
  * - Official: Used for tracking bodyweight over time. Ideally measured at the same time of day under similar conditions.
@@ -36,6 +36,6 @@ export const createBodyweight = (
   date: dayjsDate.format(DATE_FORMAT),
 })
 
-export interface BodyweightFilter extends DateRangeQuery {
+export interface BodyweightFilter extends FetchOptions {
   type?: WeighInType
 }

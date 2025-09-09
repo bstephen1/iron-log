@@ -5,7 +5,7 @@ import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId, removeUndefinedKeys } from '../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
 import { type Exercise } from './AsyncSelectorOption/Exercise'
-import type DateRangeQuery from './DateRangeQuery'
+import type FetchOptions from './DateRangeQuery'
 import { type Note } from './Note'
 import { DEFAULT_SET_TYPE, type Set, type SetType, setTypeSchema } from './Set'
 
@@ -43,8 +43,7 @@ export const createRecord = (
 })
 
 // we use a type instead of extending an interface so you can see the component queries
-export type RecordRangeQuery = z.input<typeof recordQuerySchema> &
-  DateRangeQuery
+export type RecordRangeQuery = z.input<typeof recordQuerySchema> & FetchOptions
 export const recordQuerySchema = z
   .object({
     exercise: z.string(),

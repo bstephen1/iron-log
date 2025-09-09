@@ -2,13 +2,13 @@
 import { StatusCodes } from 'http-status-codes'
 import { type Document, type ObjectId } from 'mongodb'
 import { type z } from 'zod'
-import type DateRangeQuery from '../../models//DateRangeQuery'
+import type FetchOptions from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { type BodyweightFilter, type Bodyweight } from '../../models/Bodyweight'
-import { type recordQuerySchema, type Record } from '../../models/Record'
+import { type Bodyweight, type BodyweightFilter } from '../../models/Bodyweight'
+import { type Record, type recordQuerySchema } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { getUserId } from './auth'
 import { collections } from './mongoConnect'
@@ -21,7 +21,7 @@ const {
   bodyweightHistory,
 } = collections
 
-const convertSort = (sort: DateRangeQuery['sort']) =>
+const convertSort = (sort: FetchOptions['sort']) =>
   sort === 'oldestFirst' ? 1 : -1
 
 // Note on ObjectId vs UserId -- the api uses UserId for types instead of ObjectId.
@@ -48,7 +48,7 @@ export async function fetchSessionLogs({
   end = '9',
   sort = 'newestFirst',
   date,
-}: DateRangeQuery): Promise<SessionLog[]> {
+}: FetchOptions): Promise<SessionLog[]> {
   const userId = await getUserId()
   return await sessions
     .find(
@@ -154,9 +154,7 @@ export async function fetchRecords({
   sort = 'newestFirst',
   date,
   ...filter
-}: z.output<typeof recordQuerySchema> & DateRangeQuery = {}): Promise<
-  Record[]
-> {
+}: z.output<typeof recordQuerySchema> & FetchOptions = {}): Promise<Record[]> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
   // So for this query anything within the "exercise" object must be
   // matched AFTER the exercises $lookup.
