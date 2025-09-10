@@ -310,4 +310,21 @@ describe('Bodyweight', () => {
 
     expect(await fetchBodyweights({ start: testDate })).toHaveLength(2)
   })
+
+  it('sorts by oldest or newest first', async () => {
+    await upsertBodyweight(createBodyweight(1, 'official', '2000-01-01'))
+    await upsertBodyweight(createBodyweight(2, 'official', '2000-02-02'))
+    await upsertBodyweight(createBodyweight(3, 'official', '2000-03-03'))
+
+    expect(await fetchBodyweights({ sort: 'newestFirst' })).toMatchObject([
+      { value: 3 },
+      { value: 2 },
+      { value: 1 },
+    ])
+    expect(await fetchBodyweights({ sort: 'oldestFirst' })).toMatchObject([
+      { value: 1 },
+      { value: 2 },
+      { value: 3 },
+    ])
+  })
 })
