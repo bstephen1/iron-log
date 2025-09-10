@@ -116,8 +116,8 @@ const recordPipeline: RecordPipeline = {
       activeModifiers: {
         $filter: {
           input: '$activeModifiers',
-          as: 'modifier',
-          cond: { $in: ['$$modifier', '$exercise.modifiers'] },
+          as: 'modifiers',
+          cond: { $in: ['$$modifiers', '$exercise.modifiers'] },
         },
       },
     },
@@ -149,7 +149,6 @@ export async function fetchRecords({
   start = '0',
   end = '9',
   sort = 'newestFirst',
-  date,
   ...filter
 }: Filter<Record> & FetchOptions = {}): Promise<Record[]> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
@@ -166,7 +165,7 @@ export async function fetchRecords({
     .aggregate<Record>([
       {
         $match: {
-          date: date ?? { $gte: start, $lte: end },
+          date: { $gte: start, $lte: end },
           ...otherFilters,
           userId,
         },
@@ -189,7 +188,7 @@ export async function fetchRecords({
     .toArray()
 }
 
-export async function fetchRecord(_id: Record['_id']): Promise<Record | null> {
+export async function fetchRecord(_id: string): Promise<Record | null> {
   const userId = await getUserId()
   const record = await records
     .aggregate<Record>([
@@ -205,10 +204,9 @@ export async function fetchRecord(_id: Record['_id']): Promise<Record | null> {
     // return just the first (there's only the one)
     .next()
 
-  // if we queried an id that doesn't exist, make sure it isn't
-  // in any sessions
+  // if we queried an id that doesn't exist, make sure it isn't in any sessions
   if (!record) {
-    sessions.updateMany({ userId }, { $pull: { records: _id } })
+    await sessions.updateMany({ userId }, { $pull: { records: _id } })
   }
 
   return record
@@ -329,10 +327,6 @@ export async function updateModifierFields(
       { userId, 'notes.tags': oldModifier?.name },
       { $set: { 'notes.$[].tags.$[tag]': updates.name } },
       { arrayFilters: [{ tag: oldModifier?.name }] }
-    )
-    await records.updateMany(
-      { userId, category: oldModifier?.name },
-      { $set: { category: updates.name } }
     )
     await records.updateMany(
       { userId, activeModifiers: oldModifier?.name },

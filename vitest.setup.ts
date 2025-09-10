@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
 import { afterEach, beforeAll, describe, it, vi } from 'vitest'
 import { devUserId } from './lib/frontend/constants'
+import { ObjectId } from 'mongodb'
 
 // var is required to hoist globals
 declare global {
@@ -58,8 +59,8 @@ vi.mock('./lib/backend/mongoService', async () => {
   )
 })
 vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
-vi.mock('next-auth', () => ({
-  getServerSession: () => ({ user: { id: devUserId } }),
+vi.mock('./lib/backend/auth', () => ({
+  getUserId: vi.fn(async () => new ObjectId(devUserId)),
 }))
 vi.mock('next/navigation', () => ({
   useParams: () => ({

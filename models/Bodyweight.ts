@@ -1,5 +1,3 @@
-import dayjs from 'dayjs'
-import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/util'
 import type FetchOptions from './DateRangeQuery'
 
@@ -23,15 +21,12 @@ export interface Bodyweight {
 export const createBodyweight = (
   value: number,
   type: WeighInType,
-  /** a dayjs() date object that will be formatted internally.
-   * This avoids the possibility of being passed an incorrectly
-   * formatted date string. */
-  dayjsDate = dayjs()
+  date: string
 ): Bodyweight => ({
   _id: generateId(),
   value,
   type,
-  date: dayjsDate.format(DATE_FORMAT),
+  date,
 })
 
 export interface BodyweightQuery extends FetchOptions {
