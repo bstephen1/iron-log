@@ -45,12 +45,11 @@ export async function fetchSessionLogs({
   start = '0',
   end = '9',
   sort = 'newestFirst',
-  date,
 }: FetchOptions): Promise<SessionLog[]> {
   const userId = await getUserId()
   return await sessions
     .find(
-      { userId, date: date ?? { $gte: start, $lte: end } },
+      { userId, date: { $gte: start, $lte: end } },
       { projection: { userId: 0 } }
     )
     .sort({ date: convertSort(sort) })
@@ -152,7 +151,7 @@ export async function fetchRecords({
   sort = 'newestFirst',
   date,
   ...filter
-}: Omit<Filter<Record>, 'date'> & FetchOptions = {}): Promise<Record[]> {
+}: Filter<Record> & FetchOptions = {}): Promise<Record[]> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
   // So for this query anything within the "exercise" object must be
   // matched AFTER the exercises $lookup.
@@ -452,13 +451,12 @@ export async function fetchBodyweights({
   start = '0',
   end = '9',
   sort,
-  date,
   ...filter
 }: BodyweightQuery): Promise<Bodyweight[]> {
   const userId = await getUserId()
   return await bodyweightHistory
     .find(
-      { userId, date: date ?? { $gte: start, $lte: end }, ...filter },
+      { userId, date: { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ date: convertSort(sort) })
