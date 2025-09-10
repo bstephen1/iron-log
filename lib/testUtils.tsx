@@ -6,6 +6,7 @@ import { Suspense, type ReactElement } from 'react'
 import { vi } from 'vitest'
 import Layout from '../components/Layout'
 import { devUserId } from './frontend/constants'
+import { useParams } from 'next/navigation'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.
@@ -28,6 +29,8 @@ const customRender = (
      */
     useFakeTimers?: boolean
     user?: Session['user']
+    /** provide the url param date. Defaults to 2000-01-01 */
+    date?: string
   }
 ) => ({
   user: userEvent.setup(
@@ -42,6 +45,11 @@ const customRender = (
       // each test must have a new queryClient to ensure isolation
       // (otherwise data will be cached and reused between tests)
       const queryClient = new QueryClient()
+
+      vi.mocked(useParams).mockReturnValue({
+        date: options?.date ?? '2000-01-01',
+      })
+
       return (
         <QueryClientProvider client={queryClient}>
           <Suspense

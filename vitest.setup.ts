@@ -62,11 +62,7 @@ vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
 vi.mock('./lib/backend/auth', () => ({
   getUserId: vi.fn(async () => new ObjectId(devUserId)),
 }))
-vi.mock('next/navigation', () => ({
-  useParams: () => ({
-    date: '',
-  }),
-}))
+vi.mock('next/navigation')
 
 // configure testing-library options
 configure({

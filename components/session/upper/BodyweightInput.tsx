@@ -2,12 +2,11 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
 import { type TextFieldProps } from '@mui/material/TextField'
-import { type Dayjs } from 'dayjs'
 import { useState } from 'react'
 import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'
 import { upsertBodyweight } from '../../../lib/backend/mongoService'
-import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
+import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
   useAddMutation,
   useBodyweights,
@@ -17,16 +16,16 @@ import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'
 
 interface Props {
-  day: Dayjs
+  date: string
 }
 export default function BodyweightInput({
-  day,
+  date,
   ...textFieldProps
 }: Props & Omit<TextFieldProps, 'slotProps'>) {
   const [bodyweightType, setBodyweightType] = useState<WeighInType>('official')
   const { data } = useBodyweights({
     limit: 1,
-    end: day.format(DATE_FORMAT),
+    end: date,
     type: bodyweightType,
     sort: 'newestFirst',
   })
@@ -40,7 +39,7 @@ export default function BodyweightInput({
   const loading = !data
 
   const handleSubmit = async (value: string) => {
-    const newBodyweight = createBodyweight(Number(value), bodyweightType, day)
+    const newBodyweight = createBodyweight(Number(value), bodyweightType, date)
 
     upsertBodyweightMutate(newBodyweight)
   }
@@ -65,7 +64,7 @@ export default function BodyweightInput({
       handleSubmit={handleSubmit}
       schema={schema}
       // allow user to update bw with same value if latest date isn't the current date
-      showSubmit={data?.[0]?.date !== day.format(DATE_FORMAT) || undefined}
+      showSubmit={data?.[0]?.date !== date || undefined}
       slotProps={{
         htmlInput: {
           inputMode: 'decimal',
