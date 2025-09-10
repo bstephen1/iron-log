@@ -1,7 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
-import { describe } from 'node:test'
-import { beforeEach, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../../models/AsyncSelectorOption/Modifier'
 import { createRecord } from '../../models/Record'
