@@ -1,6 +1,6 @@
 'use server'
 import { StatusCodes } from 'http-status-codes'
-import { type Document, type Filter, type ObjectId } from 'mongodb'
+import { type Document, type Filter } from 'mongodb'
 import type FetchOptions from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -10,15 +10,14 @@ import { type Bodyweight, type BodyweightQuery } from '../../models/Bodyweight'
 import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { getUserId } from './auth'
-import { collections } from './mongoConnect'
-const {
+import {
   sessions,
   exercises,
   modifiers,
   categories,
   records,
   bodyweightHistory,
-} = collections
+} from './mongoCollections'
 
 const convertSort = (sort: FetchOptions['sort']) =>
   sort === 'oldestFirst' ? 1 : -1
@@ -191,10 +190,8 @@ export async function fetchRecords({
     .toArray()
 }
 
-export async function fetchRecord(
-  userId: ObjectId,
-  _id: Record['_id']
-): Promise<Record | null> {
+export async function fetchRecord(_id: Record['_id']): Promise<Record | null> {
+  const userId = await getUserId()
   const record = await records
     .aggregate<Record>([
       { $match: { userId, _id } },

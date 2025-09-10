@@ -23,7 +23,8 @@ const envPath = path.resolve(__dirname, '..', '.env.development')
 dotenv.config({ path: envPath, override: true })
 
 // must wait to import until dotenv is done pulling in env vars
-const { db, collections, client } = await import('../lib/backend/mongoConnect')
+const { db, client } = await import('../lib/backend/mongoConnect')
+const collections = await import('../lib/backend/mongoCollections')
 
 const getDisplayFields = (
   names: VisibleField['name'][],

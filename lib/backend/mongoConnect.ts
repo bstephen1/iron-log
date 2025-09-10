@@ -1,14 +1,5 @@
-import { MongoClient, type ObjectId, type W } from 'mongodb'
+import { MongoClient, type W } from 'mongodb'
 import { generateId } from '../../lib/util'
-import { type Category } from '../../models/AsyncSelectorOption/Category'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { type Bodyweight } from '../../models/Bodyweight'
-import { type Record } from '../../models/Record'
-import { type SessionLog } from '../../models/SessionLog'
-
-/** add userId, an extra field only visible to mongo records */
-type WithUserId<T> = { userId: ObjectId } & T
 
 // pkFactory overwrites the default mongo _id generation
 const options = { w: 'majority' as W, pkFactory: { createPk: generateId } }
@@ -45,16 +36,6 @@ if (process.env.NODE_ENV === 'development') {
 
 const db = (await clientPromise).db(process.env.MONGODB_NAME)
 
-/** db collections with proper typing */
-const collections = {
-  sessions: db.collection<WithUserId<SessionLog>>('sessions'),
-  exercises: db.collection<WithUserId<Exercise>>('exercises'),
-  modifiers: db.collection<WithUserId<Modifier>>('modifiers'),
-  categories: db.collection<WithUserId<Category>>('categories'),
-  records: db.collection<WithUserId<Record>>('records'),
-  bodyweightHistory: db.collection<WithUserId<Bodyweight>>('bodyweightHistory'),
-}
-
 // Export a module-scoped MongoClient promise. By doing this in a
 // separate module, the client can be shared across functions.
-export { client, clientPromise, collections, db }
+export { client, clientPromise, db }
