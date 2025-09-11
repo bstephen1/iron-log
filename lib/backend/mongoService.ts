@@ -7,7 +7,6 @@ import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import { type Bodyweight, type BodyweightQuery } from '../../models/Bodyweight'
 import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
-import { getUserId } from './auth'
 import {
   bodyweightHistory,
   categories,
@@ -16,6 +15,7 @@ import {
   records,
   sessions,
 } from './mongoCollections'
+import { getUserId } from './user'
 
 const convertSort = (sort: FetchOptions['sort']) =>
   sort === 'oldestFirst' ? 1 : -1

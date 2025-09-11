@@ -113,8 +113,14 @@ const eslintConfig = [
       // we use StatusCodes enums as a list of values, sometimes relationally comparing them
       // eg statusCode > 499; statusCode === StatusCodes.INTERNAL_SERVER_ERROR
       '@typescript-eslint/no-unsafe-enum-comparison': 'off',
-      // doesn't seem to add any value
+      // no-unsafe-* rules just don't work. They'll throw a fit over things
+      // from external libs that are NOT typed as "any" (eg z.iso.date(), auth()).
+      // The project already flags explicit "any" types so these further restrictions
+      // are just tedious and don't add any value.
       '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
     },
   }),
 ]

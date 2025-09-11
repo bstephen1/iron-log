@@ -1,11 +1,13 @@
 import { MongoClient, ObjectId } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createCategory } from '../../models/AsyncSelectorOption/Category'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../../models/AsyncSelectorOption/Modifier'
+import { createBodyweight } from '../../models/Bodyweight'
+import { createNote } from '../../models/Note'
 import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
-import { getUserId } from './auth'
 import { db } from './mongoConnect'
 import {
   addCategory,
@@ -32,9 +34,7 @@ import {
   upsertBodyweight,
   upsertSessionLog,
 } from './mongoService'
-import { createNote } from '../../models/Note'
-import { createCategory } from '../../models/AsyncSelectorOption/Category'
-import { createBodyweight } from '../../models/Bodyweight'
+import { getUserId } from './user'
 
 vi.unmock('./mongoService')
 // the docs have an afterAll closing the connection but that
