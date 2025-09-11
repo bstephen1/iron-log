@@ -66,9 +66,9 @@ const useOptimisticMutation = <
         queryKey,
       })
     },
-    onError: (_err, _variables) => {
+    onError: async (_err, _variables) => {
       // rather than saving a snapshot and rolling back, we simply invalidate and refetch
-      queryClient.invalidateQueries({ queryKey })
+      await queryClient.invalidateQueries({ queryKey })
     },
     onSettled: () => {
       return queryClient.invalidateQueries({

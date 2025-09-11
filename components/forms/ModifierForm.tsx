@@ -48,8 +48,8 @@ export default function ModifierForm({
 
   const handleDelete = useCallback(
     async (id: string) => {
-      setUrlModifier(null)
       deleteModifierMutate(id)
+      await setUrlModifier(null)
     },
     [deleteModifierMutate, setUrlModifier]
   )

@@ -92,14 +92,14 @@ export default memo(function RecordCard({
   }
 
   const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
-    async (updates) => {
+    (updates) => {
       exercise?._id && updateExerciseMutate({ _id: exercise._id, updates })
     },
     [exercise?._id, updateExerciseMutate]
   )
 
   const mutateRecordFields: UpdateFields<Record> = useCallback(
-    async (updates) => {
+    (updates) => {
       updateRecordMutate(
         { _id: record._id, updates },
         {

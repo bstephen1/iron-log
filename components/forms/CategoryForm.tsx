@@ -45,8 +45,8 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
 
   const handleDelete = useCallback(
     async (id: string) => {
-      setUrlCategory(null)
       deleteCategoryMutate(id)
+      await setUrlCategory(null)
     },
     [deleteCategoryMutate, setUrlCategory]
   )

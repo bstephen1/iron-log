@@ -35,7 +35,7 @@ export const doNothing = () => {}
 export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1)
 
 /** Async partial update, intended for db updates. For non-async type use UpdateState.  */
-export type UpdateFields<T> = (changes: Partial<T>) => Promise<void>
+export type UpdateFields<T> = (changes: Partial<T>) => void
 /** Partial state update that spreads over previous state. For async type use UpdateFields.  */
 export type UpdateState<T> = (changes: Partial<T>) => void
 
