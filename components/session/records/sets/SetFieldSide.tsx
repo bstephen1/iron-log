@@ -3,13 +3,13 @@ import { type InputBaseComponentProps } from '@mui/material/InputBase'
 import { type SelectProps } from '@mui/material/Select'
 import { type ComponentProps } from 'react'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import { type UpdateFields } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type Set } from '../../../../models/Set'
 import SelectFieldAutosave from '../../../form-fields/SelectFieldAutosave'
 
 type Props = {
   value: Set['side']
-  handleSetChange: UpdateFields<Set>
+  handleSetChange: PartialUpdate<Set>
 } & Partial<ComponentProps<typeof SelectFieldAutosave<Set['side']>>>
 export default function SetFieldSide({
   value,

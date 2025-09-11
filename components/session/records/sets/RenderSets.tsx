@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import { type UpdateFields } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Record } from '../../../../models/Record'
@@ -9,7 +9,7 @@ import SetHeader from './SetHeader'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
-  mutateExerciseFields?: UpdateFields<Exercise>
+  mutateExerciseFields?: PartialUpdate<Exercise>
   /** displayFields must be given as a prop because history records use the parent's fields
    *  so they can reflect changes to the parent's display fields.
    */

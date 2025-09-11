@@ -12,7 +12,7 @@ import {
   useAddMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
-import { type UpdateFields } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type Note } from '../../../../models/Note'
 import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
@@ -24,7 +24,7 @@ interface Props {
   notes?: Note[]
   sides?: Set['side'][]
   /** considered readOnly if not provided */
-  mutateRecordFields?: UpdateFields<Record>
+  mutateRecordFields?: PartialUpdate<Record>
   /** Date of the record. Needed to retrieve session notes */
   date: string
 }

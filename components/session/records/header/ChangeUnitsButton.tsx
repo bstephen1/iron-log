@@ -11,14 +11,14 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import { type UpdateFields, type UpdateState } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { FACTORS, type Units } from '../../../../models/Units'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
-  mutateExerciseFields: UpdateFields<Exercise>
+  mutateExerciseFields: PartialUpdate<Exercise>
   displayFields: DisplayFields
 }
 export default memo(function ChangeUnitsButton({
@@ -30,7 +30,7 @@ export default memo(function ChangeUnitsButton({
   // typescript doesn't recognize that Object.keys(obj) is in fact a list of keyof obj
   const dimensions = Object.keys(units) as Array<keyof typeof units>
 
-  const handleChange: UpdateState<Units> = (changes) =>
+  const handleChange: PartialUpdate<Units> = (changes) =>
     mutateExerciseFields({
       displayFields: {
         ...displayFields,

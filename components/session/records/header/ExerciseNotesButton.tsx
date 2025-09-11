@@ -1,21 +1,21 @@
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter'
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
-import NotesList from '../../../../components/form-fields/NotesList'
-import { type UpdateFields } from '../../../../lib/util'
-import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
-import { type Note } from '../../../../models/Note'
-import TooltipIconButton from '../../../TooltipIconButton'
 import Badge from '@mui/material/Badge'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import { memo, useState } from 'react'
+import isEqual from 'react-fast-compare'
+import NotesList from '../../../../components/form-fields/NotesList'
+import { type PartialUpdate } from '../../../../lib/util'
+import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import { type Note } from '../../../../models/Note'
+import TooltipIconButton from '../../../TooltipIconButton'
 
 const title = 'Exercise notes'
 
 interface Props {
   /** considered readOnly if not provided */
-  mutateExerciseFields?: UpdateFields<Exercise>
+  mutateExerciseFields?: PartialUpdate<Exercise>
   notes?: Note[]
   /** used for note tags */
   modifiers?: string[]

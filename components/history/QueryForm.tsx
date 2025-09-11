@@ -5,7 +5,7 @@ import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
-import { type UpdateState } from '../../lib/util'
+import { type PartialUpdate } from '../../lib/util'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
@@ -28,7 +28,7 @@ export default function QueryCard({ query, setQuery }: Props) {
   const [unsavedQuery, setUnsavedQuery] = useState<RecordQuery>(initialQuery)
   const displayFields = useDisplayFields(exercise)
 
-  const updateUnsavedQuery: UpdateState<RecordQuery> = (changes) =>
+  const updateUnsavedQuery: PartialUpdate<RecordQuery> = (changes) =>
     setUnsavedQuery((prev) => ({ ...prev, ...changes }))
 
   return (

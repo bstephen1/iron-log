@@ -1,5 +1,5 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
-import { type UpdateState } from '../../lib/util'
+import { type PartialUpdate } from '../../lib/util'
 import { ArrayMatchType } from '../../models//ArrayMatchType'
 import { type RecordQuery } from '../../models/Record'
 import { DEFAULT_SET_TYPE } from '../../models/Set'
@@ -9,7 +9,7 @@ import MatchTypeSelector from './MatchTypeSelector'
 interface Props {
   units: Units
   query: RecordQuery
-  updateQuery: UpdateState<RecordQuery>
+  updateQuery: PartialUpdate<RecordQuery>
   disabled?: boolean
 }
 export default function SetTypeQueryField({

@@ -6,7 +6,7 @@ import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useUpdateMutation } from '../../../../lib/frontend/restService'
-import { type UpdateFields } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Record } from '../../../../models/Record'
 import { type Set } from '../../../../models/Set'
@@ -63,7 +63,7 @@ export default memo(function RenderSetRow({
     updateFn: updateRecordFields,
   })
 
-  const handleSetChange: UpdateFields<Set> = useCallback(
+  const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
       const newSets = [...sets]
       newSets[index] = { ...newSets[index], ...changes }

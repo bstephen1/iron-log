@@ -1,15 +1,15 @@
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import { type TextFieldProps } from '@mui/material/TextField'
 import { memo } from 'react'
 import { TIME_FORMAT } from '../../../../lib/frontend/constants'
-import { type UpdateFields } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type VisibleField } from '../../../../models/DisplayFields'
 import { type Set } from '../../../../models/Set'
 import { DB_UNITS, type Units, convertUnit } from '../../../../models/Units'
 import NumericFieldAutosave from '../../../form-fields/NumericFieldAutosave'
 import SetFieldSide from './SetFieldSide'
 import SetFieldTimeMask from './SetFieldTimeMask'
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
-import { type TextFieldProps } from '@mui/material/TextField'
 
 const delimiterWidth = '15px'
 type ComponentType = 'side' | 'time' | 'default'
@@ -17,7 +17,7 @@ type ComponentType = 'side' | 'time' | 'default'
 interface Props<S extends keyof Units>
   extends Pick<VisibleField, 'delimiter' | 'name'> {
   index: number
-  handleSetChange: UpdateFields<Set>
+  handleSetChange: PartialUpdate<Set>
   value?: Set[S]
   unit: Units[S]
   readOnly?: boolean

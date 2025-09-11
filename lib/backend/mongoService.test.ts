@@ -43,15 +43,15 @@ vi.mock('./mongoConnect', async () => {
   const server = await MongoMemoryServer.create()
   const clientPromise = MongoClient.connect(server.getUri(), {})
   const client = await clientPromise
-  const db = client.db('mock')
+  const db = client.db()
   return { client, db, clientPromise }
 })
 
 const testDate = '2000-01-01'
 const testDateNew = '2000-02-02'
 
-beforeEach(() => {
-  db.dropDatabase()
+beforeEach(async () => {
+  await db.dropDatabase()
 })
 
 describe('SessionLog', () => {

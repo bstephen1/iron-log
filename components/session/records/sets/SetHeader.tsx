@@ -1,16 +1,5 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 
-import { memo } from 'react'
-import isEqual from 'react-fast-compare'
-import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import { type UpdateFields } from '../../../../lib/util'
-import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
-import {
-  type DisplayFields,
-  ORDERED_DISPLAY_FIELDS,
-  printFieldWithUnits,
-  type VisibleField,
-} from '../../../../models/DisplayFields'
 import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import FormControl from '@mui/material/FormControl'
@@ -21,9 +10,20 @@ import MenuItem from '@mui/material/MenuItem'
 import Select, { type SelectProps } from '@mui/material/Select'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
+import { type PartialUpdate } from '../../../../lib/util'
+import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import {
+  type DisplayFields,
+  ORDERED_DISPLAY_FIELDS,
+  printFieldWithUnits,
+  type VisibleField,
+} from '../../../../models/DisplayFields'
 
 type Props = {
-  mutateExerciseFields?: UpdateFields<Exercise>
+  mutateExerciseFields?: PartialUpdate<Exercise>
   displayFields: DisplayFields
   showSplitWeight?: boolean
   showUnilateral?: boolean

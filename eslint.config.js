@@ -113,8 +113,6 @@ const eslintConfig = [
       // we use StatusCodes enums as a list of values, sometimes relationally comparing them
       // eg statusCode > 499; statusCode === StatusCodes.INTERNAL_SERVER_ERROR
       '@typescript-eslint/no-unsafe-enum-comparison': 'off',
-      // too many external pkgs use floating promises. Eg, router.push, mutate (optimistic data)
-      '@typescript-eslint/no-floating-promises': 'off',
       // doesn't seem to add any value
       '@typescript-eslint/no-unsafe-assignment': 'off',
     },

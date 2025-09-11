@@ -1,12 +1,12 @@
-import Grid from '@mui/material/Grid'
-import type RecordDisplay from '../../components/history/RecordDisplay'
-import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
-import { type UpdateState } from '../../lib/util'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
+import Grid from '@mui/material/Grid'
 import InputAdornment from '@mui/material/InputAdornment'
 import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
+import type RecordDisplay from '../../components/history/RecordDisplay'
+import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
+import { type PartialUpdate } from '../../lib/util'
 
 export interface GraphOptions {
   showBodyweight?: boolean
@@ -17,9 +17,9 @@ export interface GraphOptions {
 
 interface Props {
   graphOptions: GraphOptions
-  updateGraphOptions: UpdateState<GraphOptions>
+  updateGraphOptions: PartialUpdate<GraphOptions>
   recordDisplay: RecordDisplay
-  updateRecordDisplay: UpdateState<RecordDisplay>
+  updateRecordDisplay: PartialUpdate<RecordDisplay>
 }
 export default function GraphOptionsForm({
   graphOptions,

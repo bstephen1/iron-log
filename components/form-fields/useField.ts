@@ -77,7 +77,7 @@ export default function useField<T = string>({
   }
 
   /** validate value and return whether the value is valid (true) or not (false) */
-  const validate = async (value: T): Promise<boolean> => {
+  const validate = (value: T): boolean => {
     process.env.NEXT_PUBLIC_BROWSER_LOG_LEVEL === 'verbose' &&
       typeof value === 'string' &&
       console.log(
@@ -99,10 +99,10 @@ export default function useField<T = string>({
     return true
   }
 
-  const submit = async (newValue = value) => {
+  const submit = (newValue = value) => {
     if (!handleSubmit) return
 
-    if (await validate(newValue)) {
+    if (validate(newValue)) {
       handleSubmit(newValue)
     }
   }

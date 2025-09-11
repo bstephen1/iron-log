@@ -24,7 +24,7 @@ import {
 } from '../../lib/frontend/constants'
 import { useBodyweights, useRecords } from '../../lib/frontend/restService'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
-import { type UpdateState } from '../../lib/util'
+import { type PartialUpdate } from '../../lib/util'
 import { type Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { type RecordQuery } from '../../models/Record'
@@ -102,9 +102,9 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
   // only fetch if there is an exercise selected
   const { data: records } = useRecords(query, !!query?.exercise)
 
-  const updateRecordDisplay: UpdateState<RecordDisplay> = (changes) =>
+  const updateRecordDisplay: PartialUpdate<RecordDisplay> = (changes) =>
     setRecordDisplay((prev) => ({ ...prev, ...changes }))
-  const updateGraphOptions: UpdateState<GraphOptions> = (changes) =>
+  const updateGraphOptions: PartialUpdate<GraphOptions> = (changes) =>
     setGraphOptions((prev) => ({ ...prev, ...changes }))
 
   const isDesktop = useDesktopCheck()

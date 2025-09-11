@@ -17,9 +17,9 @@ export default function LogoutButton() {
     queryClient.clear()
   }
 
-  const handleSignout = () => {
+  const handleSignout = async () => {
     clearCache()
-    signOut()
+    await signOut()
   }
 
   return (

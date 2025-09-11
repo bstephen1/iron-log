@@ -5,7 +5,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
-import { type UpdateState } from '../../lib/util'
+import { type PartialUpdate } from '../../lib/util'
 import { type RecordQuery } from '../../models/Record'
 
 const today = dayjs()
@@ -13,7 +13,7 @@ const todayFormatted = dayjs().format(DATE_FORMAT)
 
 interface Props {
   query: RecordQuery
-  updateQuery: UpdateState<RecordQuery>
+  updateQuery: PartialUpdate<RecordQuery>
 }
 export default function QueryDateRangePicker({ query, updateQuery }: Props) {
   const { start, end } = query

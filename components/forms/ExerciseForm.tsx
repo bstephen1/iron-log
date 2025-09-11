@@ -64,8 +64,8 @@ export default function ExerciseForm({ exercise }: Props) {
 
   const handleDelete = useCallback(
     async (id: string) => {
-      setUrlExercise(null)
       deleteExerciseMutate(id)
+      await setUrlExercise(null)
     },
     [setUrlExercise, deleteExerciseMutate]
   )
@@ -82,7 +82,7 @@ export default function ExerciseForm({ exercise }: Props) {
         enqueueError(`The exercise is corrupt and can't be duplicated.`, e)
       },
     })
-    setUrlExercise(newExercise._id)
+    await setUrlExercise(newExercise._id)
   }, [addExerciseMutate, exercise, setUrlExercise])
 
   return (
