@@ -17,7 +17,7 @@ import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { enqueueError } from '../../../lib/frontend/util'
-import { type UpdateFields } from '../../../lib/util'
+import { type PartialUpdate } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { type Record } from '../../../models/Record'
@@ -91,14 +91,14 @@ export default memo(function RecordCard({
     ...setType,
   }
 
-  const mutateExerciseFields: UpdateFields<Exercise> = useCallback(
+  const mutateExerciseFields: PartialUpdate<Exercise> = useCallback(
     (updates) => {
       exercise?._id && updateExerciseMutate({ _id: exercise._id, updates })
     },
     [exercise?._id, updateExerciseMutate]
   )
 
-  const mutateRecordFields: UpdateFields<Record> = useCallback(
+  const mutateRecordFields: PartialUpdate<Record> = useCallback(
     (updates) => {
       updateRecordMutate(
         { _id: record._id, updates },

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { TIME_FORMAT } from '../../../../lib/frontend/constants'
-import { type UpdateFields } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type Set } from '../../../../models/Set'
 import InputFieldAutosave, {
   type InputFieldAutosaveProps,
@@ -10,7 +10,7 @@ import InputFieldAutosave, {
 dayjs.extend(duration)
 
 type Props = {
-  handleSetChange: UpdateFields<Set>
+  handleSetChange: PartialUpdate<Set>
   rawInitialValue?: number
 } & Partial<InputFieldAutosaveProps>
 export default function SetFieldTimeMask({

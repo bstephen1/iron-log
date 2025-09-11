@@ -3,13 +3,13 @@ import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import { type AsyncSelectorProps } from '../../../components/form-fields/selectors/AsyncSelector'
 import ExerciseSelector from '../../../components/form-fields/selectors/ExerciseSelector'
-import { type UpdateFields } from '../../../lib/util'
+import { type PartialUpdate } from '../../../lib/util'
 import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { type Record } from '../../../models/Record'
 
 type Props<DisableClearable extends boolean | undefined> = {
   exercise: DisableClearable extends true ? Exercise : Exercise | null
-  mutateRecordFields: UpdateFields<Record>
+  mutateRecordFields: PartialUpdate<Record>
   disableAddNew?: boolean
   variant?: TextFieldProps['variant']
 } & Pick<Record, 'activeModifiers' | 'category'> &

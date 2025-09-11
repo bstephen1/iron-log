@@ -34,10 +34,8 @@ export const doNothing = () => {}
  *  (eg, running ts script files from command line).   */
 export const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1)
 
-/** Async partial update, intended for db updates. For non-async type use UpdateState.  */
-export type UpdateFields<T> = (changes: Partial<T>) => void
-/** Partial state update that spreads over previous state. For async type use UpdateFields.  */
-export type UpdateState<T> = (changes: Partial<T>) => void
+/** Update some fields of an object, spreading over previous state  */
+export type PartialUpdate<T> = (changes: Partial<T>) => void
 
 /** returns the exercises the given category or modifier is used in */
 export const getUsage = (

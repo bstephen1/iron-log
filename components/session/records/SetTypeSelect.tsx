@@ -1,10 +1,19 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormLabel from '@mui/material/FormLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Stack from '@mui/material/Stack'
+import TextField, { type TextFieldProps } from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { type UpdateFields, type UpdateState } from '../../../lib/util'
+import { type PartialUpdate } from '../../../lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
@@ -16,15 +25,6 @@ import {
   stringifySetType,
 } from '../../../models/Set'
 import { type Units } from '../../../models/Units'
-import FormControl from '@mui/material/FormControl'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormLabel from '@mui/material/FormLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import Stack from '@mui/material/Stack'
-import TextField, { type TextFieldProps } from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
@@ -38,7 +38,7 @@ const valueInputStyle = { margin: 0, maxWidth: '80px' }
 
 type Props = {
   /** considered readOnly if not provided */
-  handleChange?: UpdateFields<Record> | UpdateState<Record>
+  handleChange?: PartialUpdate<Record>
   units: Units
   /** When nonzero, displays the given number as the total number of reps over all sets. */
   totalReps?: number
@@ -65,7 +65,7 @@ export default memo(function SetTypeSelect({
       : ''
   const noSwipingDesktop = useNoSwipingDesktop()
   const readOnly = !handleChange
-  const updateSetType: UpdateState<SetType> = (changes) => {
+  const updateSetType: PartialUpdate<SetType> = (changes) => {
     const newSetType = { ...setType, ...changes }
 
     handleChange?.({ setType: newSetType })

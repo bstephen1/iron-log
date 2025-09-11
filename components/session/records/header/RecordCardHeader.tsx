@@ -1,7 +1,9 @@
+import Box from '@mui/material/Box'
+import CardHeader from '@mui/material/CardHeader'
 import { useEffect } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
 import useLocalStorageState from 'use-local-storage-state'
-import { type UpdateFields } from '../../../../lib/util'
+import { type PartialUpdate } from '../../../../lib/util'
 import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { type DisplayFields } from '../../../../models/DisplayFields'
 import { type Record } from '../../../../models/Record'
@@ -12,8 +14,6 @@ import ManageExerciseButton from './ManageExerciseButton'
 import MoreActionsButton from './MoreActionsButton'
 import RecordNotesButton from './ReccordNotesButton'
 import SwapRecordButton from './SwapRecordButton'
-import Box from '@mui/material/Box'
-import CardHeader from '@mui/material/CardHeader'
 const actionButtonWidth = 40
 const minTitleWidth = 120
 
@@ -64,8 +64,8 @@ const useMaxVisibleActions = (totalActions: number) => {
 
 interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
   swiperIndex: number
-  mutateExerciseFields: UpdateFields<Exercise>
-  mutateRecordFields: UpdateFields<Record>
+  mutateExerciseFields: PartialUpdate<Exercise>
+  mutateRecordFields: PartialUpdate<Record>
   displayFields: DisplayFields
   date: string
 }
