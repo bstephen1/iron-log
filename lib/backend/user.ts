@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../pages/api/auth/[...nextauth]'
+import { authOptions } from '../../auth'
 
 export const getUserId = async () => {
   const stringId = (await getServerSession(authOptions))?.user?.id

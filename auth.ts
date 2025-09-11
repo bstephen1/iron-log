@@ -1,11 +1,10 @@
 import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import type { AuthOptions } from 'next-auth'
-import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import GitHub from 'next-auth/providers/github'
 import { z } from 'zod'
-import { clientPromise } from '../../../lib/backend/mongoConnect'
-import { devUserId, guestUserName } from '../../../lib/frontend/constants'
+import { clientPromise } from './lib/backend/mongoConnect'
+import { devUserId, guestUserName } from './lib/frontend/constants'
 
 const isProd =
   (process.env.NODE_ENV_OVERRIDE ?? process.env.NODE_ENV) === 'production'
@@ -35,7 +34,7 @@ const devProvider =
       const parsedId = objectIdSchema.safeParse(credentials.id)
 
       if (parsedId.error) {
-        console.error(parsedId.error.format(), 'given: ', credentials.id)
+        console.error(z.treeifyError(parsedId.error), 'given: ', credentials.id)
         return null
       }
 
@@ -87,6 +86,3 @@ export const authOptions: AuthOptions = {
     },
   },
 }
-
-// todo add some kind of splash screen
-export default NextAuth(authOptions)

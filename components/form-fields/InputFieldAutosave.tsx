@@ -1,10 +1,10 @@
-import { type ChangeEvent, type InputHTMLAttributes } from 'react'
-import { useIMask } from 'react-imask'
-import { type Schema } from 'zod'
-import { doNothing } from '../../lib/util'
-import useField from './useField'
 import Input, { type InputProps } from '@mui/material/Input'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
+import { type ChangeEvent, type InputHTMLAttributes } from 'react'
+import { useIMask } from 'react-imask'
+import { type ZodType } from 'zod'
+import { doNothing } from '../../lib/util'
+import useField from './useField'
 
 const numericInput: InputHTMLAttributes<HTMLInputElement> = {
   inputMode: 'decimal',
@@ -17,7 +17,7 @@ export type InputFieldAutosaveProps = {
   initialValue?: string
   defaultHelperText?: string
   handleSubmit: (value: string) => void
-  schema?: Schema
+  schema?: ZodType
   readOnly?: boolean
   /** Render an Input instead of a TextField. This will allow label / helper text to
    *  be customized outside the component.

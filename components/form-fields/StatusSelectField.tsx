@@ -18,7 +18,7 @@ export default memo(function StatusSelectField({
       initialValue={status}
       required
       fullWidth
-      schema={z.string({ message: 'Must have a status' })}
+      schema={z.string('Must have a status')}
       handleSubmit={useCallback(
         // unsure why we need to specify type Status here. Will otherwise assume it's "never"
         (status: Status) => handleUpdate({ status }),

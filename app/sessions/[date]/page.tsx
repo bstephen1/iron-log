@@ -20,7 +20,7 @@ interface Props {
   params: Promise<{ date: string }>
 }
 /** enforces YYYY-MM-DD format */
-const dateSchema = z.string().date()
+const dateSchema = z.iso.date()
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params
