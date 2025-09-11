@@ -1,7 +1,7 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
 import { useRef } from 'react'
-import { type Schema } from 'zod'
+import { type ZodType } from 'zod'
 import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
 import { type InputProps } from '@mui/material/Input'
@@ -12,7 +12,7 @@ interface Props {
   initialValue?: string
   defaultHelperText?: string
   handleSubmit: (value: string) => void
-  schema?: Schema
+  schema?: ZodType
   /** Overrides internal behavior of when to show submit button.
    *  Has no effect if undefined.
    */

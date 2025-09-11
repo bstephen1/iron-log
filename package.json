@@ -47,7 +47,7 @@
     "swiper": "^11.2.10",
     "use-local-storage-state": "^19.5.0",
     "uuid": "^11.1.0",
-    "zod": "^3.25.63"
+    "zod": "^4.1.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

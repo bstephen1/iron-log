@@ -20,7 +20,8 @@ interface Props {
   params: Promise<{ date: string }>
 }
 /** enforces YYYY-MM-DD format */
-const dateSchema = z.string().date()
+// eslint throws a fit with z.iso.date(). Forcing it as a generic schema instead
+const dateSchema = (z.iso as { date: () => z.ZodType<string> }).date()
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params

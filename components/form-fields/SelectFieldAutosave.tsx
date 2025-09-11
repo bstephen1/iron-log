@@ -1,8 +1,8 @@
-import { type ReactNode } from 'react'
-import { type Schema } from 'zod'
-import useField from './useField'
 import MenuItem from '@mui/material/MenuItem'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
+import { type ReactNode } from 'react'
+import { type ZodType } from 'zod'
+import useField from './useField'
 
 interface Props<V, O> {
   label: string
@@ -10,7 +10,7 @@ interface Props<V, O> {
   options: O[]
   defaultHelperText?: string
   handleSubmit: (value: V) => void
-  schema?: Schema
+  schema?: ZodType
   children?: ReactNode
   readOnly?: boolean
   /** label for empty option  */
