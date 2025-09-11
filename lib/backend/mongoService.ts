@@ -1,8 +1,6 @@
 'use server'
-import { StatusCodes } from 'http-status-codes'
 import { type Document, type Filter } from 'mongodb'
 import type FetchOptions from '../../models//DateRangeQuery'
-import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
 import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
@@ -11,12 +9,12 @@ import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { getUserId } from './auth'
 import {
-  sessions,
+  bodyweightHistory,
+  categories,
   exercises,
   modifiers,
-  categories,
   records,
-  bodyweightHistory,
+  sessions,
 } from './mongoCollections'
 
 const convertSort = (sort: FetchOptions['sort']) =>
@@ -284,8 +282,7 @@ export async function deleteExercise(_id: string) {
     .toArray()
 
   if (usedRecords.length) {
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
+    throw new Error(
       `Cannot delete exercise: used in one or more records on the following dates: ${usedRecords.map(({ date }) => date).join(', ')}`
     )
   }
@@ -354,8 +351,7 @@ export async function deleteModifier(_id: string) {
     )
 
     if (usedExercise) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
+      throw new Error(
         `Cannot delete modifier: used in exercise "${usedExercise.name}"`
       )
     }
@@ -421,8 +417,7 @@ export async function deleteCategory(_id: string) {
     )
 
     if (usedExercise) {
-      throw new ApiError(
-        StatusCodes.BAD_REQUEST,
+      throw new Error(
         `Cannot delete category: used in exercise "${usedExercise.name}"`
       )
     }
