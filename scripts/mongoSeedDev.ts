@@ -1,4 +1,3 @@
-import dayjs from 'dayjs'
 import dotenv from 'dotenv'
 import { ObjectId } from 'mongodb'
 import path from 'path'
@@ -23,7 +22,8 @@ const envPath = path.resolve(__dirname, '..', '.env.development')
 dotenv.config({ path: envPath, override: true })
 
 // must wait to import until dotenv is done pulling in env vars
-const { db, collections, client } = await import('../lib/backend/mongoConnect')
+const { db, client } = await import('../lib/backend/mongoConnect')
+const collections = await import('../lib/backend/mongoCollections')
 
 const getDisplayFields = (
   names: VisibleField['name'][],
@@ -242,12 +242,12 @@ const records = [
 ]
 
 const bodyweights = [
-  createBodyweight(70, 'official', dayjs('2022-09-26')),
-  createBodyweight(73, 'unofficial', dayjs('2022-09-26')),
-  createBodyweight(68, 'official', dayjs('2022-09-24')),
-  createBodyweight(67, 'official', dayjs('2022-09-23')),
-  createBodyweight(65, 'official', dayjs('2022-09-20')),
-  createBodyweight(60, 'official', dayjs('2022-09-14')),
+  createBodyweight(70, 'official', '2022-09-26'),
+  createBodyweight(73, 'unofficial', '2022-09-26'),
+  createBodyweight(68, 'official', '2022-09-24'),
+  createBodyweight(67, 'official', '2022-09-23'),
+  createBodyweight(65, 'official', '2022-09-20'),
+  createBodyweight(60, 'official', '2022-09-14'),
 ]
 
 /** maps over all records and creates the appropriate session logs */

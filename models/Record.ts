@@ -47,6 +47,7 @@ export interface RecordQuery extends FetchOptions {
   modifierMatchType?: ArrayMatchType
   setType?: Partial<SetType>
   setTypeMatchType?: ArrayMatchType
+  date?: string
 }
 
 export const buildRecordFilter = ({

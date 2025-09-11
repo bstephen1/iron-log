@@ -9,8 +9,7 @@ import SessionDatePicker from './SessionDatePicker'
 interface Props {
   date: string
 }
-export default function TitleBar(props: Props) {
-  const day = dayjs(props.date)
+export default function TitleBar({ date }: Props) {
   const router = useRouter()
 
   const handleDateChange = (newDay: Dayjs) => {
@@ -29,7 +28,7 @@ export default function TitleBar(props: Props) {
         }}
       >
         <SessionDatePicker
-          day={day}
+          day={dayjs(date)}
           handleDayChange={handleDateChange}
           textFieldProps={{ fullWidth: true }}
         />
@@ -45,7 +44,7 @@ export default function TitleBar(props: Props) {
           md: 4,
         }}
       >
-        <BodyweightInput day={day} fullWidth />
+        <BodyweightInput date={date} fullWidth />
       </Grid>
     </Grid>
   )

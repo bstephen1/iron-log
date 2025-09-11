@@ -1,16 +1,9 @@
 import { loadEnvConfig } from '@next/env'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
-import { afterEach, beforeAll, beforeEach, describe, it, vi } from 'vitest'
-import {
-  fetchBodyweights,
-  fetchCategories,
-  fetchExercises,
-  fetchModifiers,
-  fetchRecords,
-  fetchSessionLogs,
-} from './lib/backend/mongoService'
+import { afterEach, beforeAll, describe, it, vi } from 'vitest'
 import { devUserId } from './lib/frontend/constants'
+import { ObjectId } from 'mongodb'
 
 // var is required to hoist globals
 declare global {
@@ -40,26 +33,36 @@ loadEnvConfig(projectDir)
 import.meta.env.NEXTAUTH_GITHUB_ID = 'my id'
 import.meta.env.NEXTAUTH_GITHUB_SECRET = 'secret secret'
 
-// vi.mock will import the actual module and automock all exports.
+// vi.mock will import the actual module and automock all exports to return undefined.
 // If a factory is provided, it replaces the actual module with the factory.
 
 // mongoConnect must be completely replaced since it looks for env vars at the top level
 vi.mock('./lib/backend/mongoConnect', () => ({
-  clientPromise: vi.fn(),
-  db: vi.fn(),
-  collections: vi.fn(),
-  client: vi.fn(),
+  clientPromise: '',
+  // Do not need to mock mongoCollections, just stub out the db.collection call,
+  // which is automatically invoked in the imports of mongoService (since it does importActual)
+  db: { collection: () => {} },
+  client: '',
 }))
+vi.mock('./lib/backend/mongoService', async () => {
+  const actual = await vi.importActual('./lib/backend/mongoService')
+
+  // functions used by useQuery cannot return undefined
+  // (automock makes everything return undefined)
+  return Object.keys(actual).reduce(
+    (acc, fn) => ({
+      ...acc,
+      // multi fetch functions expect an array, otherwise null *should* be good?
+      [fn]: vi.fn(() => (fn.endsWith('s') ? [] : null)),
+    }),
+    {}
+  )
+})
 vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
-vi.mock('next-auth', () => ({
-  getServerSession: () => ({ user: { id: devUserId } }),
+vi.mock('./lib/backend/auth', () => ({
+  getUserId: vi.fn(async () => new ObjectId(devUserId)),
 }))
-vi.mock('next/navigation', () => ({
-  useParams: () => ({
-    date: '',
-  }),
-}))
-vi.mock('./lib/backend/mongoService')
+vi.mock('next/navigation')
 
 // configure testing-library options
 configure({
@@ -78,16 +81,7 @@ beforeAll(() => {
   // See: https://github.com/testing-library/react-testing-library/issues/1197
   globalThis.jest = vi
 })
-beforeEach(async () => {
-  // fetch functions used by useQuery cannot return undefined
-  // (automock makes everything return undefined)
-  vi.mocked(fetchCategories).mockResolvedValue([])
-  vi.mocked(fetchExercises).mockResolvedValue([])
-  vi.mocked(fetchModifiers).mockResolvedValue([])
-  vi.mocked(fetchBodyweights).mockResolvedValue([])
-  vi.mocked(fetchRecords).mockResolvedValue([])
-  vi.mocked(fetchSessionLogs).mockResolvedValue([])
-})
+
 // RTL cleanup is only automatically called if vitest has globals on.
 // Without this, the DOM will leak between tests.
 afterEach(() => cleanup())

@@ -11,7 +11,4 @@ export default interface FetchOptions {
   end?: string
   /** defaults to "newestFirst" */
   sort?: 'oldestFirst' | 'newestFirst'
-  /** YYYY-MM-DD. Use a specific date. Overrides start/end */
-  // todo: remove this or have it set start/limit to the same value
-  date?: string
 }

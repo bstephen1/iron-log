@@ -1,4 +1,3 @@
-import { renderHook } from '@testing-library/react'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_DISPLAY_FIELDS,
@@ -6,6 +5,7 @@ import {
   type DisplayFields,
 } from '../../models/DisplayFields'
 import { DB_UNITS } from '../../models/Units'
+import { renderHook } from '../testUtils'
 import useDisplayFields from './useDisplayFields'
 import { it, expect } from 'vitest'
 

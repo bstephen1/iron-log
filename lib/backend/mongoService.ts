@@ -1,6 +1,6 @@
 'use server'
 import { StatusCodes } from 'http-status-codes'
-import { type Document, type Filter, type ObjectId } from 'mongodb'
+import { type Document, type Filter } from 'mongodb'
 import type FetchOptions from '../../models//DateRangeQuery'
 import { ApiError } from '../../models/ApiError'
 import { type Category } from '../../models/AsyncSelectorOption/Category'
@@ -10,15 +10,14 @@ import { type Bodyweight, type BodyweightQuery } from '../../models/Bodyweight'
 import { type Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import { getUserId } from './auth'
-import { collections } from './mongoConnect'
-const {
+import {
   sessions,
   exercises,
   modifiers,
   categories,
   records,
   bodyweightHistory,
-} = collections
+} from './mongoCollections'
 
 const convertSort = (sort: FetchOptions['sort']) =>
   sort === 'oldestFirst' ? 1 : -1
@@ -46,12 +45,11 @@ export async function fetchSessionLogs({
   start = '0',
   end = '9',
   sort = 'newestFirst',
-  date,
 }: FetchOptions): Promise<SessionLog[]> {
   const userId = await getUserId()
   return await sessions
     .find(
-      { userId, date: date ?? { $gte: start, $lte: end } },
+      { userId, date: { $gte: start, $lte: end } },
       { projection: { userId: 0 } }
     )
     .sort({ date: convertSort(sort) })
@@ -118,8 +116,8 @@ const recordPipeline: RecordPipeline = {
       activeModifiers: {
         $filter: {
           input: '$activeModifiers',
-          as: 'modifier',
-          cond: { $in: ['$$modifier', '$exercise.modifiers'] },
+          as: 'modifiers',
+          cond: { $in: ['$$modifiers', '$exercise.modifiers'] },
         },
       },
     },
@@ -151,9 +149,8 @@ export async function fetchRecords({
   start = '0',
   end = '9',
   sort = 'newestFirst',
-  date,
   ...filter
-}: Omit<Filter<Record>, 'date'> & FetchOptions = {}): Promise<Record[]> {
+}: Filter<Record> & FetchOptions = {}): Promise<Record[]> {
   // Records do not store up-to-date exercise data; they pull in updated data on fetch.
   // So for this query anything within the "exercise" object must be
   // matched AFTER the exercises $lookup.
@@ -168,7 +165,7 @@ export async function fetchRecords({
     .aggregate<Record>([
       {
         $match: {
-          date: date ?? { $gte: start, $lte: end },
+          date: { $gte: start, $lte: end },
           ...otherFilters,
           userId,
         },
@@ -191,10 +188,8 @@ export async function fetchRecords({
     .toArray()
 }
 
-export async function fetchRecord(
-  userId: ObjectId,
-  _id: Record['_id']
-): Promise<Record | null> {
+export async function fetchRecord(_id: string): Promise<Record | null> {
+  const userId = await getUserId()
   const record = await records
     .aggregate<Record>([
       { $match: { userId, _id } },
@@ -209,10 +204,9 @@ export async function fetchRecord(
     // return just the first (there's only the one)
     .next()
 
-  // if we queried an id that doesn't exist, make sure it isn't
-  // in any sessions
+  // if we queried an id that doesn't exist, make sure it isn't in any sessions
   if (!record) {
-    sessions.updateMany({ userId }, { $pull: { records: _id } })
+    await sessions.updateMany({ userId }, { $pull: { records: _id } })
   }
 
   return record
@@ -335,10 +329,6 @@ export async function updateModifierFields(
       { arrayFilters: [{ tag: oldModifier?.name }] }
     )
     await records.updateMany(
-      { userId, category: oldModifier?.name },
-      { $set: { category: updates.name } }
-    )
-    await records.updateMany(
       { userId, activeModifiers: oldModifier?.name },
       { $set: { 'activeModifiers.$': updates.name } }
     )
@@ -455,13 +445,12 @@ export async function fetchBodyweights({
   start = '0',
   end = '9',
   sort,
-  date,
   ...filter
 }: BodyweightQuery): Promise<Bodyweight[]> {
   const userId = await getUserId()
   return await bodyweightHistory
     .find(
-      { userId, date: date ?? { $gte: start, $lte: end }, ...filter },
+      { userId, date: { $gte: start, $lte: end }, ...filter },
       { projection: { userId: 0, _id: 0 } }
     )
     .sort({ date: convertSort(sort) })
