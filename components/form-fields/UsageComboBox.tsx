@@ -1,10 +1,10 @@
-import { type AutocompleteChangeReason } from '@mui/material/Autocomplete'
+import type { AutocompleteChangeReason } from '@mui/material/Autocomplete'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import { updateExerciseFields } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import { useExercises, useUpdateMutation } from '../../lib/frontend/restService'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import ComboBoxField from './ComboBoxField'
 
 interface Props {

@@ -1,4 +1,4 @@
-import { type ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 import { expect, it, vi } from 'vitest'
 import {
   fetchCategories,

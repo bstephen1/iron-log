@@ -1,9 +1,9 @@
-import { type AsyncSelectorOption } from '.'
 import { generateId } from '../../lib/util'
-import { type Attributes } from '../Attributes'
-import { type DisplayFields } from '../DisplayFields'
-import { type Note } from '../Note'
+import type { Attributes } from '../Attributes'
+import type { DisplayFields } from '../DisplayFields'
+import type { Note } from '../Note'
 import { Status } from '../Status'
+import type { AsyncSelectorOption } from '.'
 
 export interface Exercise extends AsyncSelectorOption {
   attributes: Attributes

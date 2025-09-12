@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
-import { type TextFieldProps } from '@mui/material/TextField'
+import type { TextFieldProps } from '@mui/material/TextField'
 import { useState } from 'react'
 import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'

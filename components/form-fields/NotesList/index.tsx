@@ -1,12 +1,12 @@
+import Collapse from '@mui/material/Collapse'
+import Typography from '@mui/material/Typography'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
 import { TransitionGroup } from 'react-transition-group'
-import { type Note } from '../../../models/Note'
+import type { Note } from '../../../models/Note'
 import FormDivider from '../../forms/FormDivider'
 import AddNote from './AddNote'
 import NotesListItem from './NotesListItem'
-import { memo } from 'react'
-import isEqual from 'react-fast-compare'
-import Collapse from '@mui/material/Collapse'
-import Typography from '@mui/material/Typography'
 
 interface Props {
   label?: string

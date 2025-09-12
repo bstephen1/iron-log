@@ -1,4 +1,4 @@
-import { type SetType } from '../../models/Set'
+import type { SetType } from '../../models/Set'
 
 export default interface RecordDisplay {
   operator: RecordDisplayOperator

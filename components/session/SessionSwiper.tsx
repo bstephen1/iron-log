@@ -9,10 +9,10 @@ import { Swiper, type SwiperRef, SwiperSlide } from 'swiper/react'
 import NavigationBar from '../../components/slider/NavigationBar'
 import { noSwipingRecord } from '../../lib/frontend/constants'
 import { useRecords, useSessionLog } from '../../lib/frontend/restService'
+import LoadingSpinner from '../loading/LoadingSpinner'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
-import LoadingSpinner from '../loading/LoadingSpinner'
 
 interface Props {
   date: string

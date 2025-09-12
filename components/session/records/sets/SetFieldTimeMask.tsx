@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { TIME_FORMAT } from '../../../../lib/frontend/constants'
-import { type PartialUpdate } from '../../../../lib/util'
-import { type Set } from '../../../../models/Set'
+import type { PartialUpdate } from '../../../../lib/util'
+import type { Set } from '../../../../models/Set'
 import InputFieldAutosave, {
   type InputFieldAutosaveProps,
 } from '../../../form-fields/InputFieldAutosave'

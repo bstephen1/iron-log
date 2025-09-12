@@ -1,11 +1,11 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
+import OutlinedInput from '@mui/material/OutlinedInput'
 import { useRef, useState } from 'react'
 import TransitionIconButton from '../../../components/TransitionIconButton'
 import { createNote, type Note } from '../../../models/Note'
 import useField from '../useField'
 import TagSelect from './TagSelect'
-import OutlinedInput from '@mui/material/OutlinedInput'
 
 interface Props {
   placeholder?: string

@@ -1,4 +1,4 @@
-import { type TextFieldProps } from '@mui/material/TextField'
+import type { TextFieldProps } from '@mui/material/TextField'
 import { useState } from 'react'
 import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise } from '../../../lib/backend/mongoService'

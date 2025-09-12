@@ -5,8 +5,8 @@ import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
-import { type PartialUpdate } from '../../lib/util'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import type { PartialUpdate } from '../../lib/util'
+import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
   type RecordQuery,

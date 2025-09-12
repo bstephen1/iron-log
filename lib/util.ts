@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { type Exercise } from '../models/AsyncSelectorOption/Exercise'
+import type { Exercise } from '../models/AsyncSelectorOption/Exercise'
 
 /** Manually create a globally unique id across all tables. This should be used for ALL new records.
  We want to manually handle the IDs so that ID generation is not tied to the specific database being used,

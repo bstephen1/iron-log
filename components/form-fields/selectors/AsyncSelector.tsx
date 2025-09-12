@@ -1,10 +1,10 @@
 import { createFilterOptions } from '@mui/material/Autocomplete'
-import { type UseMutateFunction } from '@tanstack/react-query'
+import type { UseMutateFunction } from '@tanstack/react-query'
 import { useState } from 'react'
 import AsyncAutocomplete, {
   type AsyncAutocompleteProps,
 } from '../../../components/AsyncAutocomplete'
-import { type AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
+import type { AsyncSelectorOption } from '../../../models/AsyncSelectorOption'
 import { Status } from '../../../models/Status'
 
 /** The Option type is a wrapper for the generic C which adds inputValue.

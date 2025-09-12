@@ -1,11 +1,11 @@
-import { memo } from 'react'
-import isEqual from 'react-fast-compare'
-import { capitalize } from '../../lib/util'
-import { type Attributes } from '../../models/Attributes'
-import FormDivider from '../forms/FormDivider'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
+import { memo } from 'react'
+import isEqual from 'react-fast-compare'
+import { capitalize } from '../../lib/util'
+import type { Attributes } from '../../models/Attributes'
+import FormDivider from '../forms/FormDivider'
 
 interface Props {
   attributes?: Attributes

@@ -2,9 +2,9 @@ import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId, removeUndefinedKeys } from '../lib/util'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
-import { type Exercise } from './AsyncSelectorOption/Exercise'
+import type { Exercise } from './AsyncSelectorOption/Exercise'
 import type FetchOptions from './DateRangeQuery'
-import { type Note } from './Note'
+import type { Note } from './Note'
 import { DEFAULT_SET_TYPE, type Set, type SetType } from './Set'
 
 // todo: add activeCategory (for programming)

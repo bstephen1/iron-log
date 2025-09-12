@@ -1,12 +1,12 @@
-import { type JSX } from 'react'
-import StyledDivider from '../../components/StyledDivider'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Skeleton from '@mui/material/Skeleton'
-import { type SxProps } from '@mui/material/styles'
-import { type TypographyProps } from '@mui/material/Typography'
+import type { SxProps } from '@mui/material/styles'
+import type { TypographyProps } from '@mui/material/Typography'
+import type { JSX } from 'react'
+import StyledDivider from '../../components/StyledDivider'
 
 interface Props {
   title?: string

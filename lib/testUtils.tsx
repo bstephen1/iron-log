@@ -1,12 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, type RenderOptions } from '@testing-library/react'
+import { type RenderOptions, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { type Session } from 'next-auth'
-import { Suspense, type ReactElement } from 'react'
+import { useParams } from 'next/navigation'
+import type { Session } from 'next-auth'
+import { type ReactElement, Suspense } from 'react'
 import { vi } from 'vitest'
 import Layout from '../components/Layout'
 import { devUserId } from './frontend/constants'
-import { useParams } from 'next/navigation'
 
 // This file overwrites @testing-library's render and wraps it with components that
 // need to be set up for every test.

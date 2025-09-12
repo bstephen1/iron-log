@@ -5,7 +5,7 @@ import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useUpdateMutation } from '../../../../lib/frontend/restService'
-import { type Set } from '../../../../models/Set'
+import type { Set } from '../../../../models/Set'
 
 interface Props {
   sets: Set[]

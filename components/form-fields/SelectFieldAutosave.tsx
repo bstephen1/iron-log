@@ -1,7 +1,7 @@
 import MenuItem from '@mui/material/MenuItem'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
-import { type ReactNode } from 'react'
-import { type ZodType } from 'zod'
+import type { ReactNode } from 'react'
+import type { ZodType } from 'zod'
 import useField from './useField'
 
 interface Props<V, O> {

@@ -13,11 +13,11 @@ import {
   useUpdateMutation,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
-import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import ActionItems from '../form-fields/actions/ActionItems'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
 import UsageComboBox from '../form-fields/UsageComboBox'
-import ActionItems from '../form-fields/actions/ActionItems'
 
 interface Props {
   modifier: Modifier

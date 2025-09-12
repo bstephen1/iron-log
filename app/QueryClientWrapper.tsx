@@ -1,7 +1,7 @@
 'use client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import getQueryClient from '../lib/getQueryClient'
 
 // This file is based on the tanstack SSR guide:

@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest'
 import { ArrayMatchType } from './ArrayMatchType'
 import { buildRecordFilter, type RecordQuery } from './Record'
-import { type SetType } from './Set'
+import type { SetType } from './Set'
 
 it('transforms query params', () => {
   const setType: SetType = {

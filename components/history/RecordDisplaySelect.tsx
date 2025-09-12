@@ -8,12 +8,12 @@ import Stack from '@mui/material/Stack'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
-import { type PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/util'
 import { ORDERED_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import type RecordDisplay from './RecordDisplay'
 import {
-  recordDisplayOperators,
   type RecordDisplayOperator,
+  recordDisplayOperators,
 } from './RecordDisplay'
 
 const fieldOptions = ORDERED_DISPLAY_FIELDS.filter(
