@@ -20,7 +20,7 @@ import { enqueueError } from '../../../lib/frontend/util'
 import { type PartialUpdate } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
-import { type Record } from '../../../models/Record'
+import { type RecordQuery, type Record } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
@@ -80,15 +80,15 @@ export default memo(function RecordCard({
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes.unilateral
 
-  const historyQuery = {
-    modifier: activeModifiers,
+  const historyQuery: RecordQuery = {
+    modifiers: activeModifiers,
     // don't want to include the current record in its own history
     end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
     exercise: exercise?.name,
     limit: 5,
     modifierMatchType: ArrayMatchType.Exact,
     setTypeMatchType: ArrayMatchType.Exact,
-    ...setType,
+    setType,
   }
 
   const mutateExerciseFields: PartialUpdate<Exercise> = useCallback(
