@@ -1,7 +1,7 @@
+import { expect, it, vi } from 'vitest'
 import { z } from 'zod'
 import { render, screen } from '../../lib/testUtils'
 import InputField from './InputField'
-import { vi, it, expect } from 'vitest'
 
 const mockHandleSubmit = vi.fn()
 
@@ -21,7 +21,7 @@ it('calls submit/reset handlers', async () => {
   await user.type(screen.getByDisplayValue(initial), 'x')
   await user.click(screen.getByLabelText('Submit'))
 
-  expect(mockHandleSubmit).toHaveBeenCalledWith(initial + 'x')
+  expect(mockHandleSubmit).toHaveBeenCalledWith(`${initial}x`)
 
   await user.click(screen.getByLabelText('Reset'))
 

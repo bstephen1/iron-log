@@ -6,7 +6,7 @@ import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 import type RecordDisplay from '../../components/history/RecordDisplay'
 import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
-import { type PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/util'
 
 export interface GraphOptions {
   showBodyweight?: boolean
@@ -95,7 +95,7 @@ export default function GraphOptionsForm({
           disabled={!showBodyweight || !includeUnofficial}
           onChange={(e) =>
             updateGraphOptions({
-              clothingOffset: isNaN(Number(e.target.value))
+              clothingOffset: Number.isNaN(Number(e.target.value))
                 ? 0
                 : Number(e.target.value),
             })

@@ -36,5 +36,5 @@ const convertValueToNumber = (value: string) => {
     return undefined
   }
   // for some reason isNaN is requiring a number even though it casts to a number
-  return isNaN(Number(value)) ? undefined : Number(value)
+  return Number.isNaN(Number(value)) ? undefined : Number(value)
 }

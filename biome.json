@@ -1,0 +1,57 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "files": { "ignoreUnknown": false },
+  "formatter": { "enabled": true, "indentStyle": "space" },
+  "linter": {
+    "enabled": true,
+    "domains": {
+      "next": "recommended",
+      "react": "recommended",
+      "test": "recommended"
+    },
+    "rules": {
+      "suspicious": {
+        "noShadowRestrictedNames": "off"
+      },
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "@emotion/react": {
+                "importNames": ["useTheme"],
+                "message": "use @mui/material/styles for theme"
+              },
+              "node:test": "use vitest"
+            },
+            "patterns": [
+              {
+                "group": "@mui/material",
+                "message": "Barrel imports are tree-shaken in prod, but not dev/test mode. Use the named import, eg @mui/material/Box"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "trailingCommas": "es5",
+      "semicolons": "asNeeded",
+      "quoteStyle": "single"
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": { "recommended": true }
+    }
+  }
+}

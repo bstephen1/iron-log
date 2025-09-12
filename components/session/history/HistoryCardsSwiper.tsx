@@ -1,3 +1,9 @@
+import Box from '@mui/material/Box'
+import type { CardProps } from '@mui/material/Card'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import { memo, type Ref, useEffect, useState } from 'react'
+import isEqual from 'react-fast-compare'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import {
   Swiper,
@@ -10,26 +16,18 @@ import HistoryCard, {
   type HistoryAction,
   type HistoryContent,
 } from './HistoryCard'
-
-import 'swiper/css'
-import 'swiper/css/pagination'
-
-import Box from '@mui/material/Box'
-import { type CardProps } from '@mui/material/Card'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
-import { memo, type Ref, useEffect, useState } from 'react'
-import isEqual from 'react-fast-compare'
 import 'swiper/css/pagination'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import NavigationBar from '../../../components/slider/NavigationBar'
-import { type DisplayFields } from '../../../models/DisplayFields'
-import { type RecordQuery } from '../../../models/Record'
+import type { DisplayFields } from '../../../models/DisplayFields'
+import type { RecordQuery } from '../../../models/Record'
+import 'swiper/css'
+import 'swiper/css/pagination'
 
 interface Props {
   /** displayFields to use for each history card. If omitted, cards will use their own displayFields. */
   displayFields?: DisplayFields
-  query?: RecordQuery
+  query: RecordQuery
   /** actions to include in each history card */
   actions?: HistoryAction[]
   /** content to include in each history card */
@@ -63,17 +61,13 @@ export default memo(function HistoryCardsSwiper({
   const { data: historyRecords, isLoading } = useRecords(query, !!query)
 
   // each record's history needs a unique className
-  const paginationClassName = `pagination-history${_id ? '-' + _id : ''}`
-  const navPrevClassName = `nav-prev-history-${_id ? '-' + _id : ''}`
-  const navNextClassName = `nav-next-history-${_id ? '-' + _id : ''}`
+  const paginationClassName = `pagination-history${_id ? `-${_id}` : ''}`
+  const navPrevClassName = `nav-prev-history-${_id ? `-${_id}` : ''}`
+  const navNextClassName = `nav-next-history-${_id ? `-${_id}` : ''}`
 
   useEffect(() => {
     setIsFirstRender(false)
   }, [])
-
-  if (!query) {
-    return <></>
-  }
 
   if (isLoading || !historyRecords) {
     return (
@@ -113,7 +107,7 @@ export default memo(function HistoryCardsSwiper({
             type: fractionPagination ? 'custom' : 'bullets',
             // reverse order so last item (most recent) is number 1
             renderCustom: (_, current, total) =>
-              total - current + 1 + '/' + total,
+              `${total - current + 1}/${total}`,
           }}
           navigation={{
             prevEl: `.${navPrevClassName}`,
@@ -146,7 +140,7 @@ export default memo(function HistoryCardsSwiper({
                   record={historyRecord}
                   // only render first slide initially
                   // todo: potentially use virtual swiper instead. Note autoheight doesn't work.
-                  isQuickRender={isFirstRender && i ? true : false}
+                  isQuickRender={!!(isFirstRender && i)}
                   {...{ actions, content, displayFields, cardProps }}
                 />
               </SwiperSlide>

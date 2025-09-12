@@ -1,8 +1,8 @@
-import { type ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
+import { expect, it, vi } from 'vitest'
 import { render, screen } from '../../../lib/testUtils'
 import { createNote } from '../../../models/Note'
 import NotesListItem from './NotesListItem'
-import { vi, it, expect } from 'vitest'
 
 const mockHandleDelete = vi.fn()
 const mockUpdate = vi.fn()
@@ -48,7 +48,7 @@ it('submits non-empty note', async () => {
 
   expect(mockUpdate).toHaveBeenCalledWith(index, {
     ...note,
-    value: note.value + 'changes',
+    value: `${note.value}changes`,
   })
 })
 

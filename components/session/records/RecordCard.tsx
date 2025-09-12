@@ -17,17 +17,17 @@ import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import { enqueueError } from '../../../lib/frontend/util'
-import { type PartialUpdate } from '../../../lib/util'
+import type { PartialUpdate } from '../../../lib/util'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
-import { type Exercise } from '../../../models/AsyncSelectorOption/Exercise'
-import { type RecordQuery, type Record } from '../../../models/Record'
+import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
+import type { Record, RecordQuery } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
+import RecordCardHeader from './header/RecordCardHeader'
 import RecordExerciseSelector from './RecordExerciseSelector'
 import RecordModifierComboBox from './RecordModifierComboBox'
 import SetTypeSelect from './SetTypeSelect'
-import RecordCardHeader from './header/RecordCardHeader'
 import RenderSets from './sets/RenderSets'
 
 // Note: mui icons MUST use path imports instead of named imports!
@@ -116,68 +116,66 @@ export default memo(function RecordCard({
   )
 
   return (
-    <>
-      <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
-        <RecordCardHeader
-          {...{
-            mutateExerciseFields,
-            swiperIndex,
-            mutateRecordFields,
-            _id,
-            sets,
-            exercise,
-            notes,
-            displayFields,
-            date,
-          }}
-        />
-        <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
-        <CardContent sx={{ px: 1 }}>
-          <Stack spacing={2}>
-            <RecordExerciseSelector
-              // swiping causes weird behavior on desktop when combined with data input fields
-              // (eg, can't close autocompletes)
-              className={noSwipingDesktop}
-              // we can't clear it bc the recordCard presumes there is an exercise
-              disableClearable
-              {...{ mutateRecordFields, activeModifiers, exercise, category }}
-            />
-            <RecordModifierComboBox
-              className={noSwipingDesktop}
-              availableModifiers={exercise?.modifiers}
-              {...{ mutateRecordFields, activeModifiers }}
-            />
-            <SetTypeSelect
-              units={displayFields.units}
-              totalReps={calculateTotalValue(sets, setType)}
-              showRemaining
-              {...{ handleChange: mutateRecordFields, setType }}
-            />
-            <RenderSets
-              {...{
-                mutateExerciseFields,
-                displayFields,
-                sets,
-                showSplitWeight,
-                showUnilateral,
-                _id,
-                extraWeight,
-                exerciseWeight,
-              }}
-            />
-            <HistoryTitle />
-            <HistoryCardsSwiper
-              query={historyQuery}
-              actions={['recordNotes']}
-              content={['sets']}
-              {...{
-                _id,
-                displayFields,
-              }}
-            />
-          </Stack>
-        </CardContent>
-      </Card>
-    </>
+    <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
+      <RecordCardHeader
+        {...{
+          mutateExerciseFields,
+          swiperIndex,
+          mutateRecordFields,
+          _id,
+          sets,
+          exercise,
+          notes,
+          displayFields,
+          date,
+        }}
+      />
+      <StyledDivider elevation={0} sx={{ height: 2, my: 0 }} />
+      <CardContent sx={{ px: 1 }}>
+        <Stack spacing={2}>
+          <RecordExerciseSelector
+            // swiping causes weird behavior on desktop when combined with data input fields
+            // (eg, can't close autocompletes)
+            className={noSwipingDesktop}
+            // we can't clear it bc the recordCard presumes there is an exercise
+            disableClearable
+            {...{ mutateRecordFields, activeModifiers, exercise, category }}
+          />
+          <RecordModifierComboBox
+            className={noSwipingDesktop}
+            availableModifiers={exercise?.modifiers}
+            {...{ mutateRecordFields, activeModifiers }}
+          />
+          <SetTypeSelect
+            units={displayFields.units}
+            totalReps={calculateTotalValue(sets, setType)}
+            showRemaining
+            {...{ handleChange: mutateRecordFields, setType }}
+          />
+          <RenderSets
+            {...{
+              mutateExerciseFields,
+              displayFields,
+              sets,
+              showSplitWeight,
+              showUnilateral,
+              _id,
+              extraWeight,
+              exerciseWeight,
+            }}
+          />
+          <HistoryTitle />
+          <HistoryCardsSwiper
+            query={historyQuery}
+            actions={['recordNotes']}
+            content={['sets']}
+            {...{
+              _id,
+              displayFields,
+            }}
+          />
+        </Stack>
+      </CardContent>
+    </Card>
   )
 })

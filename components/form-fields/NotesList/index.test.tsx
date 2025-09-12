@@ -1,7 +1,7 @@
-import { vi, it, expect } from 'vitest'
-import NotesList from '.'
+import { expect, it, vi } from 'vitest'
 import { render, screen } from '../../../lib/testUtils'
 import { createNote } from '../../../models/Note'
+import NotesList from '.'
 
 const mockSubmit = vi.fn()
 
@@ -49,7 +49,7 @@ it('updates notes', async () => {
 
   expect(mockSubmit).toHaveBeenCalledWith([
     initialNotes[0],
-    { ...updatedNote, value: updatedNote.value + 'changes' },
+    { ...updatedNote, value: `${updatedNote.value}changes` },
     initialNotes[2],
   ])
 })

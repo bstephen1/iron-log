@@ -4,12 +4,12 @@ import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import { useRef, useState } from 'react'
-import { type SwiperRef } from 'swiper/react'
+import type { SwiperRef } from 'swiper/react'
 import HistoryGraph from '../../components/history/HistoryGraph'
 import QueryForm from '../../components/history/QueryForm'
-import HistoryCardsSwiper from '../../components/session/history/HistoryCardsSwiper'
 import StyledDivider from '../../components/StyledDivider'
-import { type RecordQuery } from '../../models/Record'
+import HistoryCardsSwiper from '../../components/session/history/HistoryCardsSwiper'
+import type { RecordQuery } from '../../models/Record'
 
 export default function HistoryPage() {
   const theme = useTheme()
@@ -32,31 +32,33 @@ export default function HistoryPage() {
       <Box pt={2}>
         <StyledDivider />
       </Box>
-      <HistoryCardsSwiper
-        swiperRef={swiperRef}
-        query={query?.exercise ? query : undefined}
-        fractionPagination
-        actions={['recordNotes', 'exerciseNotes', 'manage']}
-        content={['exercise', 'modifiers', 'setType', 'sets']}
-        cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
-        swiperProps={{
-          breakpoints: {
-            [theme.breakpoints.values.sm]: {
-              slidesPerView: 1,
+      {query?.exercise && (
+        <HistoryCardsSwiper
+          swiperRef={swiperRef}
+          query={query}
+          fractionPagination
+          actions={['recordNotes', 'exerciseNotes', 'manage']}
+          content={['exercise', 'modifiers', 'setType', 'sets']}
+          cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
+          swiperProps={{
+            breakpoints: {
+              [theme.breakpoints.values.sm]: {
+                slidesPerView: 1,
+              },
+              [theme.breakpoints.values.md]: {
+                slidesPerView: 2,
+                centeredSlides: false,
+                centerInsufficientSlides: true,
+              },
+              [theme.breakpoints.values.lg]: {
+                slidesPerView: 3,
+                centeredSlides: true,
+                centerInsufficientSlides: false,
+              },
             },
-            [theme.breakpoints.values.md]: {
-              slidesPerView: 2,
-              centeredSlides: false,
-              centerInsufficientSlides: true,
-            },
-            [theme.breakpoints.values.lg]: {
-              slidesPerView: 3,
-              centeredSlides: true,
-              centerInsufficientSlides: false,
-            },
-          },
-        }}
-      />
+          }}
+        />
+      )}
       <HistoryGraph query={query} swipeToRecord={swipeToRecord} />
     </Stack>
   )

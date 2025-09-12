@@ -13,8 +13,8 @@ import Typography from '@mui/material/Typography'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import { type PartialUpdate } from '../../../../lib/util'
-import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import type { PartialUpdate } from '../../../../lib/util'
+import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import {
   type DisplayFields,
   ORDERED_DISPLAY_FIELDS,
@@ -42,9 +42,9 @@ export default memo(function SetHeader({
 
   const options: VisibleField[] = ORDERED_DISPLAY_FIELDS.filter(
     (field) =>
-      (field.enabled?.unilateral == undefined ||
+      (field.enabled?.unilateral === undefined ||
         field.enabled.unilateral === showUnilateral) &&
-      (field.enabled?.splitWeight == undefined ||
+      (field.enabled?.splitWeight === undefined ||
         field.enabled.splitWeight === showSplitWeight)
   )
 

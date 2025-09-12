@@ -55,4 +55,4 @@ export const stringifySetType = (
   { operator, min = 0, max = 0, value = 0, field }: SetType,
   units?: Units
 ) =>
-  `${operator} ${operator === 'between' ? min + ' and ' + max : value} ${(units ?? DB_UNITS)[field]}`
+  `${operator} ${operator === 'between' ? `${min} and ${max}` : value} ${(units ?? DB_UNITS)[field]}`

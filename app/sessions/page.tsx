@@ -1,14 +1,14 @@
 'use client'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 import LoadingSpinner from '../../components/loading/LoadingSpinner'
 import { DATE_FORMAT, LOCAL_STORAGE } from '../../lib/frontend/constants'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 
 export default function Page() {
   const router = useRouter()
@@ -31,9 +31,7 @@ export default function Page() {
   }, [router, sessionRedirect])
 
   return sessionRedirect !== false ? (
-    <>
-      <LoadingSpinner />
-    </>
+    <LoadingSpinner />
   ) : (
     <Stack py={2} spacing={2}>
       <Typography variant="h6" component="h1" py={1} textAlign="center">

@@ -4,20 +4,20 @@ import PauseIcon from '@mui/icons-material/Pause'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import ReplayIcon from '@mui/icons-material/Replay'
 import StopIcon from '@mui/icons-material/Stop'
-import dayjs from 'dayjs'
-import { useCallback, useEffect, useReducer } from 'react'
-import Tooltip from '../../Tooltip'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grow from '@mui/material/Grow'
 import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import dayjs from 'dayjs'
+import { useCallback, useEffect, useReducer } from 'react'
+import Tooltip from '../../Tooltip'
 
 const formatTime = (totalSeconds: number) => {
-  const hours = ('0' + Math.floor(totalSeconds / 3600)).slice(-2)
-  const minutes = ('0' + Math.floor((totalSeconds / 60) % 60)).slice(-2)
-  const seconds = ('0' + Math.floor(totalSeconds % 60)).slice(-2)
+  const hours = `0${Math.floor(totalSeconds / 3600)}`.slice(-2)
+  const minutes = `0${Math.floor((totalSeconds / 60) % 60)}`.slice(-2)
+  const seconds = `0${Math.floor(totalSeconds % 60)}`.slice(-2)
   // tracking ms seems like overkill.
   // const totalMs = totalSeconds * 1000
   // const ms = ('0' + (totalMs - Math.floor(totalMs))).slice(-2)
@@ -157,77 +157,75 @@ export default function RestTimer() {
   )
 
   return (
-    <>
-      <Stack justifyContent="center">
-        {/* todo: better animations. mui can't really handle stuff that exiting/entering the dom. */}
-        {!enabled ? (
-          // extra box so button isn't full width
-          <Box display="flex" justifyContent="center" pb={2}>
-            <Button onClick={() => dispatch({ type: 'start' })}>
-              Start rest timer
-            </Button>
-          </Box>
-        ) : (
-          <>
-            <Grow in={!isFinished}>
-              <Typography
-                textAlign="center"
-                display={isFinished ? 'none' : 'block'}
-              >
-                Rest time
-              </Typography>
-            </Grow>
-            <Grow in={isFinished}>
-              <Typography
-                textAlign="center"
-                display={isFinished ? 'block' : 'none'}
-              >
-                Total session time
-              </Typography>
-            </Grow>
-
-            <Grow in={enabled}>
-              <Typography
-                variant="h3"
-                textAlign="center"
-                // component={isRunning ? Box : BlinkedBox}
-              >
-                {formatDeltaTime(displayValue)}
-              </Typography>
-            </Grow>
-            <Stack
-              direction="row"
-              justifyContent="center"
-              spacing={2}
-              sx={{ pb: 2 }}
+    <Stack justifyContent="center">
+      {/* todo: better animations. mui can't really handle stuff that exiting/entering the dom. */}
+      {!enabled ? (
+        // extra box so button isn't full width
+        <Box display="flex" justifyContent="center" pb={2}>
+          <Button onClick={() => dispatch({ type: 'start' })}>
+            Start rest timer
+          </Button>
+        </Box>
+      ) : (
+        <>
+          <Grow in={!isFinished}>
+            <Typography
+              textAlign="center"
+              display={isFinished ? 'none' : 'block'}
             >
-              {isRunning ? (
-                <TimerButton
-                  type="pause"
-                  Icon={PauseIcon}
-                  tooltip="Pause"
-                  isVisible={!isFinished}
-                />
-              ) : (
-                <TimerButton
-                  type="resume"
-                  Icon={PlayArrowIcon}
-                  tooltip="Resume"
-                  isVisible={!isFinished}
-                />
-              )}
-              <TimerButton type="reset" Icon={ReplayIcon} tooltip="Reset" />
-              <TimerButton type="stop" Icon={StopIcon} tooltip="Turn Off" />
+              Rest time
+            </Typography>
+          </Grow>
+          <Grow in={isFinished}>
+            <Typography
+              textAlign="center"
+              display={isFinished ? 'block' : 'none'}
+            >
+              Total session time
+            </Typography>
+          </Grow>
+
+          <Grow in={enabled}>
+            <Typography
+              variant="h3"
+              textAlign="center"
+              // component={isRunning ? Box : BlinkedBox}
+            >
+              {formatDeltaTime(displayValue)}
+            </Typography>
+          </Grow>
+          <Stack
+            direction="row"
+            justifyContent="center"
+            spacing={2}
+            sx={{ pb: 2 }}
+          >
+            {isRunning ? (
               <TimerButton
-                type="finish"
-                Icon={DoneIcon}
-                tooltip="Finish Session"
+                type="pause"
+                Icon={PauseIcon}
+                tooltip="Pause"
                 isVisible={!isFinished}
               />
-            </Stack>
-          </>
-        )}
-      </Stack>
-    </>
+            ) : (
+              <TimerButton
+                type="resume"
+                Icon={PlayArrowIcon}
+                tooltip="Resume"
+                isVisible={!isFinished}
+              />
+            )}
+            <TimerButton type="reset" Icon={ReplayIcon} tooltip="Reset" />
+            <TimerButton type="stop" Icon={StopIcon} tooltip="Turn Off" />
+            <TimerButton
+              type="finish"
+              Icon={DoneIcon}
+              tooltip="Finish Session"
+              isVisible={!isFinished}
+            />
+          </Stack>
+        </>
+      )}
+    </Stack>
   )
 }

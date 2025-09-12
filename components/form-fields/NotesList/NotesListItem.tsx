@@ -2,7 +2,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import { useRef } from 'react'
 import TransitionIconButton from '../../../components/TransitionIconButton'
-import { type Note } from '../../../models/Note'
+import type { Note } from '../../../models/Note'
 import useField from '../useField'
 import TagSelect from './TagSelect'
 
@@ -66,17 +66,15 @@ export default function NotesListItem(props: Props) {
         />
       }
       endAdornment={
-        <>
-          {!readOnly && (
-            <TransitionIconButton
-              isVisible={!isEmpty}
-              onClick={() => onDelete(index)}
-              tooltip="Delete"
-            >
-              <ClearIcon />
-            </TransitionIconButton>
-          )}
-        </>
+        !readOnly && (
+          <TransitionIconButton
+            isVisible={!isEmpty}
+            onClick={() => onDelete(index)}
+            tooltip="Delete"
+          >
+            <ClearIcon />
+          </TransitionIconButton>
+        )
       }
       sx={{ my: 1 }}
       slotProps={{
