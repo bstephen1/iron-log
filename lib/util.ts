@@ -14,8 +14,13 @@ type Index<T> = { [key: string]: T | undefined }
  *
  * eg, indexing on _id: [{_id: '1', data: 'a'}] => {'1': {_id: '1', data: 'a'}}
  */
-export const arrayToIndex = <T extends object>(index: keyof T, arr?: T[]) => {
-  return arr?.reduce<Index<T>>((acc, cur) => {
+export const arrayToIndex = <T extends object>(
+  index: keyof T,
+  arr?: T[]
+): Index<T> => {
+  if (!arr) return {}
+
+  return arr.reduce<Index<T>>((acc, cur) => {
     if (typeof cur[index] !== 'string') {
       throw new Error('Index field must be string')
     }
