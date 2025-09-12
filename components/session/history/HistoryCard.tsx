@@ -106,9 +106,8 @@ export default memo(function HistoryCard({
     ),
   }
 
-  return isQuickRender ? (
-    <></>
-  ) : (
+  // todo: remove quickrender stuff?
+  return isQuickRender ? null : (
     <Card
       elevation={0}
       {...cardProps}

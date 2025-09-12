@@ -15,15 +15,14 @@ type Index<T> = { [key: string]: T | undefined }
  * eg, indexing on _id: [{_id: '1', data: 'a'}] => {'1': {_id: '1', data: 'a'}}
  */
 export const arrayToIndex = <T extends object>(index: keyof T, arr?: T[]) => {
-  const map: Index<T> = {}
-  arr?.map((cur) => {
+  return arr?.reduce<Index<T>>((acc, cur) => {
     if (typeof cur[index] !== 'string') {
       throw new Error('Index field must be string')
     }
 
-    map[cur[index] as string] = cur
-  })
-  return map
+    acc[cur[index]] = cur
+    return acc
+  }, {})
 }
 
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
@@ -48,8 +47,10 @@ export const getUsage = (
  * Does not remove nested undefined keys, and does not remove falsy keys
  * like '' or {} */
 export const removeUndefinedKeys = <T extends object>(obj: T) =>
-  Object.entries(obj).reduce<Partial<T>>(
-    (prev, [key, value]) =>
-      value !== undefined ? { ...prev, [key]: value } : prev,
+  Object.entries(obj).reduce<Record<string, Partial<T>>>(
+    (acc, [key, value]) => {
+      if (value !== undefined) acc[key] = value
+      return acc
+    },
     {}
   )

@@ -1,7 +1,7 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { test as baseTest } from '@playwright/test'
-import fs from 'fs'
 import { ObjectId } from 'mongodb'
-import path from 'path'
 import { ExtendedPage } from './extended-page'
 import { SessionsPage } from './sessions-page'
 

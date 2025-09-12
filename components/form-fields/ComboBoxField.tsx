@@ -66,7 +66,7 @@ export default memo(function ComboBoxField<
   ) => {
     const formattedNewValue =
       typeof newValue === 'string' ? newValue.split(',') : (newValue ?? [])
-    let change
+    let change: string | undefined
     if (reason === 'selectOption') {
       change = formattedNewValue[formattedNewValue.length - 1]
     } else if (reason === 'removeOption') {

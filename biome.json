@@ -17,7 +17,8 @@
     },
     "rules": {
       "suspicious": {
-        "noShadowRestrictedNames": "off"
+        "noShadowRestrictedNames": "off",
+        "noArrayIndexKey": "off"
       },
       "style": {
         "noRestrictedImports": {

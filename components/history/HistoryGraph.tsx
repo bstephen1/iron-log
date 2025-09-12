@@ -171,7 +171,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
 
   const setReducer = useCallback(
     (prev: number, set: Set, i: number) => {
-      let reducer
+      let reducer: (...args: number[]) => number
       switch (recordDisplay.operator) {
         case 'highest':
           reducer = Math.max

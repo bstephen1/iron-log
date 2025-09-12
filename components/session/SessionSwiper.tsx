@@ -130,14 +130,13 @@ export default function SessionSwiper({ date }: Props) {
         <LoadingSpinner />
       ) : (
         <>
-          {sessionLog?.records.map((id, i) =>
-            records.index[id] ? (
-              <SwiperSlide key={id}>
-                <RecordCard record={records.index[id]} swiperIndex={i} />
-              </SwiperSlide>
-            ) : (
-              <></> // if record is in session but not records index, must have just been deleted
-            )
+          {sessionLog?.records.map(
+            (id, i) =>
+              records.index?.[id] && (
+                <SwiperSlide key={id}>
+                  <RecordCard record={records.index[id]} swiperIndex={i} />
+                </SwiperSlide>
+              )
           )}
           <SwiperSlide>
             <Stack spacing={2} sx={{ p: 0.5 }}>

@@ -48,7 +48,7 @@ export default function SelectFieldAutosave<
     console.error(
       'SelectFieldAutosave was not rendered because it was given non-string options but no children. This component only auto-renders menus for options of type string[]. '
     )
-    return <></>
+    return null
   }
 
   return (
@@ -80,14 +80,13 @@ export default function SelectFieldAutosave<
         </MenuItem>
       )}
       {children ??
-        options.map((option) =>
-          typeof option === 'string' ? (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ) : (
-            <></>
-          )
+        options.map(
+          (option) =>
+            typeof option === 'string' && (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            )
         )}
     </TextField>
   )

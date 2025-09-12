@@ -83,7 +83,7 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
 
   // Don't render if there is only one option (eg, reps or side)
   if (unitSymbols.length < 2) {
-    return <></>
+    return null
   }
 
   return (

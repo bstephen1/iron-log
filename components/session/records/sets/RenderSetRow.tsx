@@ -73,7 +73,7 @@ export default memo(function RenderSetRow({
   )
 
   if (!displayFields.visibleFields.length) {
-    return <></>
+    return null
   }
 
   return (
