@@ -1,11 +1,11 @@
 'use server'
-import { type Document, type Filter } from 'mongodb'
+import type { Document, Filter } from 'mongodb'
+import type { Category } from '../../models/AsyncSelectorOption/Category'
+import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'
+import type { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
 import type FetchOptions from '../../models//DateRangeQuery'
-import { type Category } from '../../models/AsyncSelectorOption/Category'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import { type Modifier } from '../../models/AsyncSelectorOption/Modifier'
-import { type Bodyweight, type BodyweightQuery } from '../../models/Bodyweight'
-import { type Record } from '../../models/Record'
+import type { Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {
   bodyweightHistory,

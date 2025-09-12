@@ -1,4 +1,4 @@
-import { type ObjectId } from 'mongodb'
+import type { ObjectId } from 'mongodb'
 import type { Category } from '../../models/AsyncSelectorOption/Category'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'

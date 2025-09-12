@@ -1,9 +1,9 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
-import { type PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/util'
 import { ArrayMatchType } from '../../models//ArrayMatchType'
-import { type RecordQuery } from '../../models/Record'
+import type { RecordQuery } from '../../models/Record'
 import { DEFAULT_SET_TYPE } from '../../models/Set'
-import { type Units } from '../../models/Units'
+import type { Units } from '../../models/Units'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props {

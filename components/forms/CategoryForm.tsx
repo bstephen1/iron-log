@@ -13,10 +13,10 @@ import {
   useUpdateMutation,
 } from '../../lib/frontend/restService'
 import { getUsage } from '../../lib/util'
-import { type Category } from '../../models/AsyncSelectorOption/Category'
+import type { Category } from '../../models/AsyncSelectorOption/Category'
+import ActionItems from '../form-fields/actions/ActionItems'
 import NameField from '../form-fields/NameField'
 import UsageComboBox from '../form-fields/UsageComboBox'
-import ActionItems from '../form-fields/actions/ActionItems'
 
 interface Props {
   category: Category

@@ -3,10 +3,10 @@ import CardHeader from '@mui/material/CardHeader'
 import { useEffect } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
 import useLocalStorageState from 'use-local-storage-state'
-import { type PartialUpdate } from '../../../../lib/util'
-import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
-import { type DisplayFields } from '../../../../models/DisplayFields'
-import { type Record } from '../../../../models/Record'
+import type { PartialUpdate } from '../../../../lib/util'
+import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import type { DisplayFields } from '../../../../models/DisplayFields'
+import type { Record } from '../../../../models/Record'
 import ChangeUnitsButton from './ChangeUnitsButton'
 import DeleteRecordButton from './DeleteRecordButton'
 import ExerciseNotesButton from './ExerciseNotesButton'
@@ -14,6 +14,7 @@ import ManageExerciseButton from './ManageExerciseButton'
 import MoreActionsButton from './MoreActionsButton'
 import RecordNotesButton from './ReccordNotesButton'
 import SwapRecordButton from './SwapRecordButton'
+
 const actionButtonWidth = 40
 const minTitleWidth = 120
 

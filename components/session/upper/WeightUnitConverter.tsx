@@ -1,11 +1,11 @@
 'use client'
 import SyncAltIcon from '@mui/icons-material/SyncAlt'
-import { useState } from 'react'
-import { convertUnit } from '../../../models/Units'
-import { type FilledInputProps } from '@mui/material/FilledInput'
+import type { FilledInputProps } from '@mui/material/FilledInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
+import { useState } from 'react'
+import { convertUnit } from '../../../models/Units'
 
 export default function WeightUnitConverter() {
   // the Textfield's value is a string, but it's based off kg here which is a number.

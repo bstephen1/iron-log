@@ -1,6 +1,6 @@
-import { test, expect } from './fixtures'
 import dayjs from 'dayjs'
 import { DATE_FORMAT, DATE_PICKER_FORMAT } from '../lib/frontend/constants'
+import { expect, test } from './fixtures'
 
 test(`navigates to today's session from home page`, async ({ page }) => {
   await page.goto('/')

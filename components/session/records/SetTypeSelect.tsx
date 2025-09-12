@@ -13,18 +13,18 @@ import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import { type PartialUpdate } from '../../../lib/util'
+import type { PartialUpdate } from '../../../lib/util'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
 } from '../../../models/DisplayFields'
-import { type Record } from '../../../models/Record'
+import type { Record } from '../../../models/Record'
 import {
   type SetType,
   setOperators,
   stringifySetType,
 } from '../../../models/Set'
-import { type Units } from '../../../models/Units'
+import type { Units } from '../../../models/Units'
 
 const normalFields = ORDERED_DISPLAY_FIELDS.filter(
   (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight

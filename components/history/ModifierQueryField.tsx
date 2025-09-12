@@ -1,8 +1,8 @@
-import { type ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 import ComboBoxField from '../../components/form-fields/ComboBoxField'
-import { type PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/util'
 import { ArrayMatchType } from '../../models//ArrayMatchType'
-import { type RecordQuery } from '../../models/Record'
+import type { RecordQuery } from '../../models/Record'
 import MatchTypeSelector from './MatchTypeSelector'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {

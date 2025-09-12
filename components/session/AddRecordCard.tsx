@@ -8,7 +8,7 @@ import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSel
 import { addRecord } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import { useAddMutation } from '../../lib/frontend/restService'
-import { type Exercise } from '../../models/AsyncSelectorOption/Exercise'
+import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 
 export default function AddRecordCard() {

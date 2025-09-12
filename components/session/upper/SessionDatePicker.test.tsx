@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
 import { expect, it, vi } from 'vitest'
+import { fetchSessionLogs } from '../../../lib/backend/mongoService'
 import { render, screen } from '../../../lib/testUtils'
 import { createSessionLog } from '../../../models/SessionLog'
 import SessionDatePicker from './SessionDatePicker'
-import { fetchSessionLogs } from '../../../lib/backend/mongoService'
 
 const mockHandleDateChange = vi.fn()
 

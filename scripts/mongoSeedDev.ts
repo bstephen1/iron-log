@@ -1,6 +1,6 @@
+import path from 'node:path'
 import dotenv from 'dotenv'
 import { ObjectId } from 'mongodb'
-import path from 'path'
 import { devUserId } from '../lib/frontend/constants'
 import { createCategory } from '../models/AsyncSelectorOption/Category'
 import { createExercise } from '../models/AsyncSelectorOption/Exercise'
@@ -253,10 +253,10 @@ const bodyweights = [
 /** maps over all records and creates the appropriate session logs */
 const createSessionLogs = () => {
   const sessionMap = records.reduce<{ [date: string]: string[] }>(
-    (map, record) => ({
-      ...map,
-      [record.date]: [...(map[record.date] ?? []), record._id],
-    }),
+    (map, record) => {
+      map[record.date] = [...(map[record.date] ?? []), record._id]
+      return map
+    },
     {}
   )
 

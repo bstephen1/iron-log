@@ -1,5 +1,5 @@
+import { describe, expect, it } from 'vitest'
 import { convertUnit } from './Units'
-import { it, describe, expect } from 'vitest'
 
 describe('convertUnit', () => {
   it('converts effort', () => {

@@ -1,7 +1,7 @@
+import type { InputProps } from '@mui/material/Input'
+import InputAdornment from '@mui/material/InputAdornment'
 import { memo, useCallback } from 'react'
 import NumericFieldAutosave from './NumericFieldAutosave'
-import { type InputProps } from '@mui/material/Input'
-import InputAdornment from '@mui/material/InputAdornment'
 
 const inputProps: InputProps = {
   endAdornment: <InputAdornment position="end">kg</InputAdornment>,

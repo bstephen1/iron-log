@@ -18,7 +18,9 @@ export default function SavingIndicator() {
     defaultValue: !!process.env.NEXT_PUBLIC_SHOW_SAVING,
   })
 
-  if (!showSaving) return <></>
+  // conditional rendering should return null
+  // https://react.dev/learn/conditional-rendering#conditionally-returning-nothing-with-null
+  if (!showSaving) return null
 
   return (
     <Box

@@ -9,10 +9,10 @@ import { Swiper, type SwiperRef, SwiperSlide } from 'swiper/react'
 import NavigationBar from '../../components/slider/NavigationBar'
 import { noSwipingRecord } from '../../lib/frontend/constants'
 import { useRecords, useSessionLog } from '../../lib/frontend/restService'
+import LoadingSpinner from '../loading/LoadingSpinner'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
-import LoadingSpinner from '../loading/LoadingSpinner'
 
 interface Props {
   date: string
@@ -130,14 +130,13 @@ export default function SessionSwiper({ date }: Props) {
         <LoadingSpinner />
       ) : (
         <>
-          {sessionLog?.records.map((id, i) =>
-            records.index[id] ? (
-              <SwiperSlide key={id}>
-                <RecordCard record={records.index[id]} swiperIndex={i} />
-              </SwiperSlide>
-            ) : (
-              <></> // if record is in session but not records index, must have just been deleted
-            )
+          {sessionLog?.records.map(
+            (id, i) =>
+              records.index[id] && (
+                <SwiperSlide key={id}>
+                  <RecordCard record={records.index[id]} swiperIndex={i} />
+                </SwiperSlide>
+              )
           )}
           <SwiperSlide>
             <Stack spacing={2} sx={{ p: 0.5 }}>

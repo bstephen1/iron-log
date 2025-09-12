@@ -1,11 +1,12 @@
-import { it, expect, vi } from 'vitest'
+import Button from '@mui/material/Button'
+import { expect, it, vi } from 'vitest'
 import { render, screen } from '../lib/testUtils'
 import Tooltip from './Tooltip'
 
 it('provides accessible tooltip label', () => {
   render(
     <Tooltip title="tooltip">
-      <button />
+      <Button />
     </Tooltip>
   )
 
@@ -17,7 +18,7 @@ it('does not log mui warning if button is disabled', () => {
   const consoleSpy = vi.spyOn(console, 'warn')
   render(
     <Tooltip title="tooltip">
-      <button disabled />
+      <Button disabled />
     </Tooltip>
   )
 

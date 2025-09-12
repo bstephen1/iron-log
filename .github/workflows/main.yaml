@@ -43,9 +43,8 @@ jobs:
         uses: biomejs/setup-biome@v2
         with:
           version: latest
-      # todo: enable after fixing issues
-      # - name: Run biome
-      #   run: npx biome ci
+      - name: Run biome
+        run: npx biome ci
       - name: Run vitest
         run: npm run test:once
       - name: 'Generate coverage report'

@@ -1,9 +1,9 @@
 import { loadEnvConfig } from '@next/env'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
-import { afterEach, beforeAll, describe, it, vi } from 'vitest'
-import { devUserId } from './lib/frontend/constants'
 import { ObjectId } from 'mongodb'
+import { afterEach, beforeAll, describe, it, type Mock, vi } from 'vitest'
+import { devUserId } from './lib/frontend/constants'
 
 // var is required to hoist globals
 declare global {
@@ -49,14 +49,11 @@ vi.mock('./lib/backend/mongoService', async () => {
 
   // functions used by useQuery cannot return undefined
   // (automock makes everything return undefined)
-  return Object.keys(actual).reduce(
-    (acc, fn) => ({
-      ...acc,
-      // multi fetch functions expect an array, otherwise null *should* be good?
-      [fn]: vi.fn(() => (fn.endsWith('s') ? [] : null)),
-    }),
-    {}
-  )
+  return Object.keys(actual).reduce<Record<string, Mock>>((acc, fn) => {
+    // multi fetch functions expect an array, otherwise null *should* be good?
+    acc[fn] = vi.fn(() => (fn.endsWith('s') ? [] : null))
+    return acc
+  }, {})
 })
 vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
 vi.mock('./lib/backend/user', () => ({

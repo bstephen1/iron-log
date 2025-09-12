@@ -1,16 +1,16 @@
 import {
+  type MutationFunction,
+  type QueryKey,
   useMutation,
   useQuery,
   useQueryClient,
   useSuspenseQuery,
-  type MutationFunction,
-  type QueryKey,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
 import { arrayToIndex } from '../../lib/util'
+import type { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
+import type { BodyweightQuery } from '../../models/Bodyweight'
 import type FetchOptions from '../../models//DateRangeQuery'
-import { type AsyncSelectorOption } from '../../models/AsyncSelectorOption'
-import { type BodyweightQuery } from '../../models/Bodyweight'
 import {
   buildRecordFilter,
   isRecord,

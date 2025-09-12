@@ -1,12 +1,12 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import Menu from '@mui/material/Menu'
+import type { MenuItemProps } from '@mui/material/MenuItem'
 import { memo, type ReactNode, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import TooltipIconButton, {
   IsMenuContext,
   MenuItemContext,
 } from '../../../TooltipIconButton'
-import Menu from '@mui/material/Menu'
-import { type MenuItemProps } from '@mui/material/MenuItem'
 
 interface Props {
   actions: ReactNode[]

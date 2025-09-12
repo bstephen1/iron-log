@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { type Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import 'swiper/css'
 import 'swiper/css/pagination'
@@ -16,6 +16,7 @@ import {
 } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import getQueryClient from '../../../lib/getQueryClient'
+
 interface Props {
   params: Promise<{ date: string }>
 }

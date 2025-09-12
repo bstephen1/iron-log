@@ -12,10 +12,10 @@ import {
   useAddMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
-import { type PartialUpdate } from '../../../../lib/util'
-import { type Note } from '../../../../models/Note'
-import { type Record } from '../../../../models/Record'
-import { type Set } from '../../../../models/Set'
+import type { PartialUpdate } from '../../../../lib/util'
+import type { Note } from '../../../../models/Note'
+import type { Record } from '../../../../models/Record'
+import type { Set } from '../../../../models/Set'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 const title = 'Record notes'

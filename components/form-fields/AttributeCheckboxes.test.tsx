@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import { render, screen } from '../../lib/testUtils'
-import { type Attributes } from '../../models/Attributes'
+import type { Attributes } from '../../models/Attributes'
 import AttributeCheckboxes from './AttributeCheckboxes'
 
 const mockHandleSubmit = vi.fn()

@@ -1,5 +1,5 @@
-import { type AsyncSelectorOption, createAsyncSelectorOption } from '.'
 import { Status } from '../Status'
+import { type AsyncSelectorOption, createAsyncSelectorOption } from '.'
 
 export interface Category extends AsyncSelectorOption {}
 

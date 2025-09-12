@@ -1,9 +1,9 @@
 import { expect, it, vi } from 'vitest'
+import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { render, screen } from '../../../../lib/testUtils'
 import { generateId } from '../../../../lib/util'
-import { type Set } from '../../../../models/Set'
+import type { Set } from '../../../../models/Set'
 import AddSetButton from './AddSetButton'
-import { updateRecordFields } from '../../../../lib/backend/mongoService'
 
 const _id = generateId()
 

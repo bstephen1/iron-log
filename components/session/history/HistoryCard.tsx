@@ -1,22 +1,22 @@
+import Card, { type CardProps } from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardHeader from '@mui/material/CardHeader'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import Link from 'next/link'
 import { type JSX, memo } from 'react'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
 import StyledDivider from '../../../components/StyledDivider'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
-import { type DisplayFields } from '../../../models/DisplayFields'
-import { type Record } from '../../../models/Record'
+import type { DisplayFields } from '../../../models/DisplayFields'
+import type { Record } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
 import ExerciseNotesButton from '../records/header/ExerciseNotesButton'
 import ManageExerciseButton from '../records/header/ManageExerciseButton'
 import RecordNotesButton from '../records/header/ReccordNotesButton'
-import RenderSets from '../records/sets/RenderSets'
 import SetTypeSelect from '../records/SetTypeSelect'
-import Card, { type CardProps } from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardHeader from '@mui/material/CardHeader'
-import Stack from '@mui/material/Stack'
-import TextField from '@mui/material/TextField'
+import RenderSets from '../records/sets/RenderSets'
 
 export type HistoryAction = 'recordNotes' | 'exerciseNotes' | 'manage'
 export type HistoryContent = 'sets' | 'exercise' | 'modifiers' | 'setType'
@@ -106,9 +106,8 @@ export default memo(function HistoryCard({
     ),
   }
 
-  return isQuickRender ? (
-    <></>
-  ) : (
+  // todo: remove quickrender stuff?
+  return isQuickRender ? null : (
     <Card
       elevation={0}
       {...cardProps}

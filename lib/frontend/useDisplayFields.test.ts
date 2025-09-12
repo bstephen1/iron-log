@@ -1,3 +1,4 @@
+import { expect, it } from 'vitest'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import {
   DEFAULT_DISPLAY_FIELDS,
@@ -7,7 +8,6 @@ import {
 import { DB_UNITS } from '../../models/Units'
 import { renderHook } from '../testUtils'
 import useDisplayFields from './useDisplayFields'
-import { it, expect } from 'vitest'
 
 it('returns display fields from record', () => {
   const displayFields: DisplayFields = {

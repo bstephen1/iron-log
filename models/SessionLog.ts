@@ -1,5 +1,5 @@
 import { generateId } from '../lib/util'
-import { type Note } from './Note'
+import type { Note } from './Note'
 
 // todo: add session time. start time: first set created. end time: last update to a set on the same day.
 export interface SessionLog {

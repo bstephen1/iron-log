@@ -1,13 +1,13 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
-import { type SxProps } from '@mui/material/styles'
+import type { SxProps } from '@mui/material/styles'
 import { memo } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useUpdateMutation } from '../../../../lib/frontend/restService'
-import { type Record } from '../../../../models/Record'
-import { type Set } from '../../../../models/Set'
+import type { Record } from '../../../../models/Record'
+import type { Set } from '../../../../models/Set'
 
 interface Props extends IconButtonProps {
   _id: Record['_id']

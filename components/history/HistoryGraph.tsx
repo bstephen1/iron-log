@@ -16,7 +16,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { type CategoricalChartFunc } from 'recharts/types/chart/types'
+import type { CategoricalChartFunc } from 'recharts/types/chart/types'
 import type RecordDisplay from '../../components/history/RecordDisplay'
 import {
   DATE_FORMAT,
@@ -24,11 +24,11 @@ import {
 } from '../../lib/frontend/constants'
 import { useBodyweights, useRecords } from '../../lib/frontend/restService'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
-import { type PartialUpdate } from '../../lib/util'
-import { type Bodyweight } from '../../models/Bodyweight'
+import type { PartialUpdate } from '../../lib/util'
+import type { Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
-import { type RecordQuery } from '../../models/Record'
-import { type Set } from '../../models/Set'
+import type { RecordQuery } from '../../models/Record'
+import type { Set } from '../../models/Set'
 import useDarkMode from '../useDarkMode'
 import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
 
@@ -171,7 +171,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
 
   const setReducer = useCallback(
     (prev: number, set: Set, i: number) => {
-      let reducer
+      let reducer: (...args: number[]) => number
       switch (recordDisplay.operator) {
         case 'highest':
           reducer = Math.max

@@ -1,13 +1,13 @@
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
 import HourglassDisabledIcon from '@mui/icons-material/HourglassDisabled'
 import HourglassFullIcon from '@mui/icons-material/HourglassFull'
-import { useState } from 'react'
-import TooltipIconButton from '../../components/TooltipIconButton'
-import { ArrayMatchType } from '../../models//ArrayMatchType'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import { useState } from 'react'
+import TooltipIconButton from '../../components/TooltipIconButton'
+import { ArrayMatchType } from '../../models//ArrayMatchType'
 
 type MatchTypeDescriptions = { [matchType in ArrayMatchType]: string }
 

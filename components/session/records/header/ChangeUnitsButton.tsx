@@ -11,9 +11,9 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import { type PartialUpdate } from '../../../../lib/util'
-import { type Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
-import { type DisplayFields } from '../../../../models/DisplayFields'
+import type { PartialUpdate } from '../../../../lib/util'
+import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import type { DisplayFields } from '../../../../models/DisplayFields'
 import { FACTORS, type Units } from '../../../../models/Units'
 import TooltipIconButton from '../../../TooltipIconButton'
 
@@ -83,7 +83,7 @@ function UnitDimensionRadioGroup<Dimension extends keyof Units>({
 
   // Don't render if there is only one option (eg, reps or side)
   if (unitSymbols.length < 2) {
-    return <></>
+    return null
   }
 
   return (
