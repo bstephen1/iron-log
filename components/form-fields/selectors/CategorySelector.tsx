@@ -1,4 +1,3 @@
-import { type Dispatch, type SetStateAction } from 'react'
 import { addCategory } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
@@ -13,7 +12,7 @@ import AsyncSelector from './AsyncSelector'
 
 interface Props {
   category: Category | null
-  handleChange: Dispatch<SetStateAction<Category | null>>
+  handleChange: (category: Category | null) => void
   disableAddNew?: boolean
 }
 export default function CategorySelector({

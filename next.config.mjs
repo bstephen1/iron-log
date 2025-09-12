@@ -9,17 +9,6 @@ const nextConfig = {
     config.experiments.topLevelAwait = true
     return config
   },
-  eslint: {
-    // next lint defaults to only linting ['lib', 'components', 'pages', 'app', 'src']
-    dirs: ['lib', 'components', 'pages', 'models', 'scripts'],
-  },
-  // Note: this currently breaks npx next lint
-  // experimental: {
-  //   // optimization for dev mode performance.
-  //   // Note this will not affect test speed (it's only for the next server)
-  //   // See https://nextjs.org/docs/app/guides/package-bundling#optimizing-package-imports
-  //   optimizePackageImports: true,
-  // },
 }
 
 export default nextConfig

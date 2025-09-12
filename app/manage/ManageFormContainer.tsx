@@ -1,7 +1,7 @@
 'use client'
 import Grid from '@mui/material/Grid'
 import { parseAsString, useQueryStates } from 'nuqs'
-import { type ReactNode, useState } from 'react'
+import { useState } from 'react'
 import CategorySelector from '../../components/form-fields/selectors/CategorySelector'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import ModifierSelector from '../../components/form-fields/selectors/ModifierSelector'
@@ -18,15 +18,15 @@ import {
 import { type TabValue, useQueryTab } from '../../models/TabValue'
 import ManageFormTabs from './ManageFormTabs'
 
-// todo: need to add mutate
 const getComponents = (
   tab: TabValue | null
 ): {
   field: 'modifier' | 'category' | 'exercise'
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Selector: (props: any) => ReactNode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Form: (props: any) => ReactNode
+  Selector:
+    | typeof ModifierSelector
+    | typeof CategorySelector
+    | typeof ExerciseSelector
+  Form: typeof ModifierForm | typeof CategoryForm | typeof ExerciseForm
 } => {
   switch (tab) {
     case 'modifiers':
@@ -107,7 +107,12 @@ export default function ManageFormContainer() {
         <StyledDivider />
       </Grid>
       <Grid container justifyContent="center" size={12}>
-        {!selected[field] ? <ManageWelcomeCard /> : <Form {...selected} />}
+        {!selected[field] ? (
+          <ManageWelcomeCard />
+        ) : (
+          // @ts-expect-error the type is correct but not inferrable
+          <Form {...selected} />
+        )}
       </Grid>
     </Grid>
   )

@@ -1,4 +1,3 @@
-import { type Dispatch, type SetStateAction } from 'react'
 import { addModifier } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import { useAddMutation, useModifiers } from '../../../lib/frontend/restService'
@@ -10,7 +9,7 @@ import AsyncSelector from './AsyncSelector'
 
 interface Props {
   modifier: Modifier | null
-  handleChange: Dispatch<SetStateAction<Modifier | null>>
+  handleChange: (modifier: Modifier | null) => void
   disableAddNew?: boolean
 }
 export default function ModifierSelector({
