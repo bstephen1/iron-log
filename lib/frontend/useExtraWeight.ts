@@ -1,4 +1,4 @@
-import { type Record } from '../../models/Record'
+import type { Record } from '../../models/Record'
 import { useBodyweights, useModifiers } from './restService'
 
 export default function useExtraWeight(record: Record) {
@@ -30,7 +30,7 @@ export default function useExtraWeight(record: Record) {
           bodyweightData[0].type === 'unofficial'
             ? bodyweightData[0].value
             : bodyweightData[1].value
-      case 0:
+        break
       default:
         break
     }
@@ -39,7 +39,7 @@ export default function useExtraWeight(record: Record) {
   const exerciseWeight = exercise?.weight ?? 0
 
   const modifierWeight = activeModifiers.reduce(
-    (total, name) => (total += modifiers.index[name]?.weight ?? 0),
+    (total, name) => total + (modifiers.index[name]?.weight ?? 0),
     0
   )
 

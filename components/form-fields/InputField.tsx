@@ -1,11 +1,11 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
+import type { InputProps } from '@mui/material/Input'
+import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import { useRef } from 'react'
-import { type ZodType } from 'zod'
+import type { ZodType } from 'zod'
 import TransitionIconButton from '../TransitionIconButton'
 import useField from './useField'
-import { type InputProps } from '@mui/material/Input'
-import TextField, { type TextFieldProps } from '@mui/material/TextField'
 
 interface Props {
   label: string
@@ -79,10 +79,8 @@ export default function InputField(props: Props & TextFieldProps) {
               </TransitionIconButton>
               {/* mui does not provide proper typing to fields on slotProps */}
               {
-                (
-                  (textFieldProps.slotProps?.input as InputProps | undefined) ??
-                  {}
-                ).endAdornment
+                (textFieldProps.slotProps?.input as InputProps | undefined)
+                  ?.endAdornment
               }
             </>
           ),

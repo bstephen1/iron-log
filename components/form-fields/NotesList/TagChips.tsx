@@ -25,7 +25,7 @@ export default function TagChips({ value, multiple }: Props) {
         value.map((value) => <StyledChip key={value} label={value} />)
       ) : (
         <StyledChip
-          label={'no ' + tagPluralOrSingle}
+          label={`no ${tagPluralOrSingle}`}
           color="default"
           sx={{ fontStyle: 'italic' }}
         />

@@ -21,9 +21,9 @@ import {
   createExercise,
   type Exercise,
 } from '../../models/AsyncSelectorOption/Exercise'
-import { type Note } from '../../models/Note'
-import ActionItems from '../form-fields/actions/ActionItems'
+import type { Note } from '../../models/Note'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
+import ActionItems from '../form-fields/actions/ActionItems'
 import ComboBoxField from '../form-fields/ComboBoxField'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
@@ -71,7 +71,7 @@ export default function ExerciseForm({ exercise }: Props) {
   )
 
   const handleDuplicate = useCallback(async () => {
-    const newName = exercise.name + ' (copy)'
+    const newName = `${exercise.name} (copy)`
     const newExercise = createExercise(newName, exercise)
 
     addExerciseMutate(newExercise, {

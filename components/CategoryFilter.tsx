@@ -1,13 +1,12 @@
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-
-import { type Dispatch, type SetStateAction } from 'react'
-import Tooltip from './Tooltip'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import { type SxProps } from '@mui/material/styles'
+import type { SxProps } from '@mui/material/styles'
+import type { Dispatch, SetStateAction } from 'react'
+import Tooltip from './Tooltip'
 
 interface Props {
   categories?: string[]
@@ -43,7 +42,7 @@ export default function CategoryFilter({
   return (
     <Box sx={sx}>
       <Tooltip title="Select category">
-        {!!category ? (
+        {category ? (
           <Chip
             label={category}
             onClick={handleOpen}

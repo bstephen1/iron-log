@@ -28,5 +28,5 @@ it('submits valid edits', async () => {
   // save a valid name
   await user.type(input, 'x')
   await user.click(screen.getByLabelText('Submit'))
-  expect(mockHandleUpdate).toHaveBeenCalledWith({ name: existingName + 'x' })
+  expect(mockHandleUpdate).toHaveBeenCalledWith({ name: `${existingName}x` })
 })
