@@ -24,7 +24,7 @@ jobs:
       - name: Build app
         run: |
           cp .env.test .env.production
-          bun build
+          bun run build
       - name: Run playwright tests
         env:
           # this is an arbitrary value for enabling dev user sign in
