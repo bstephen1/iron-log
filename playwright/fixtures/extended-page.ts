@@ -11,6 +11,7 @@ export class ExtendedPage {
    *  be aborted.
    */
   async waitForSave() {
-    await expect(this.page.getByText('Saving...')).not.toBeVisible()
+    await expect(this.page.getByLabel('Saving...')).toBeVisible()
+    await expect(this.page.getByLabel('Saving...')).not.toBeVisible()
   }
 }
