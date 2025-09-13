@@ -10,8 +10,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
       - name: Install deps
-        run: npm ci
+        run: bun i
       - name: Install playwright browsers
         run: npx playwright install --with-deps
       - name: Start MongoDB
@@ -22,7 +24,7 @@ jobs:
       - name: Build app
         run: |
           cp .env.test .env.production
-          npm run build
+          bun build
       - name: Run playwright tests
         env:
           # this is an arbitrary value for enabling dev user sign in
@@ -30,15 +32,17 @@ jobs:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           # renamed to AUTH_SECRET in authjs v5
           NEXTAUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-        run: npx playwright test
+        run: bunx playwright test
 
   integration:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install packages
-        run: npm ci
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        run: bun i
       - name: Setup biome
         uses: biomejs/setup-biome@v2
         with:
@@ -46,7 +50,7 @@ jobs:
       - name: Run biome
         run: npx biome ci
       - name: Run vitest
-        run: npm run test:once
+        run: bun test:once
       - name: 'Generate coverage report'
         # uncomment to generate reports if tests fail.
         # requires `reportOnFailure: true` in vite config.
@@ -61,13 +65,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install packages
-        run: npm ci
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        run: bun i
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.0
         with:
           mongodb-version: latest
       - name: Run dev data generator
-        run: npm run db:dev
+        run: bun db:dev
       - name: Run test data generator
-        run: npm run db:test
+        run: bun db:test
