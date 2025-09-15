@@ -65,7 +65,7 @@ export default function ModifierForm({
         <NameField
           name={name}
           handleUpdate={updateFields}
-          options={modifiers.names}
+          existingNames={modifiers.names}
         />
       </Grid>
       <Grid

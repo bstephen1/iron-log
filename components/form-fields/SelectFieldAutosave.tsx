@@ -1,16 +1,13 @@
 import MenuItem from '@mui/material/MenuItem'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import type { ReactNode } from 'react'
-import type { ZodType } from 'zod'
-import useField from './useField'
+import useField, { type UseFieldProps } from './useField'
 
-interface Props<V, O> {
+interface Props<V, O>
+  extends Omit<UseFieldProps<V>, 'debounceMilliseconds' | 'autoSubmit'> {
   label: string
-  initialValue: V
   options: O[]
   defaultHelperText?: string
-  handleSubmit: (value: V) => void
-  schema?: ZodType
   children?: ReactNode
   readOnly?: boolean
   /** label for empty option  */
@@ -29,7 +26,7 @@ export default function SelectFieldAutosave<
     options,
     initialValue,
     handleSubmit,
-    schema,
+    required,
     children,
     readOnly,
     emptyOption,
@@ -39,7 +36,7 @@ export default function SelectFieldAutosave<
   const { control } = useField<V>({
     handleSubmit,
     initialValue,
-    schema,
+    required,
     // select should submit as soon as a new option is picked
     debounceMilliseconds: 0,
   })

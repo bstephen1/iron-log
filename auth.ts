@@ -2,7 +2,6 @@ import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import type { AuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import GitHub from 'next-auth/providers/github'
-import { z } from 'zod'
 import { clientPromise } from './lib/backend/mongoConnect'
 import { devUserId, guestUserName } from './lib/frontend/constants'
 
@@ -22,23 +21,18 @@ const devProvider =
     },
     // Any object returned will be saved in `user` property of the JWT
     async authorize(credentials) {
+      const { id } = credentials ?? {}
       // default value
-      if (!credentials?.id) return { id: devUserId }
+      if (!id) return { id: devUserId }
 
-      const objectIdSchema = z
-        .string()
-        .length(24, 'id must be 24 characters')
-        .optional()
-        .default(devUserId)
-
-      const parsedId = objectIdSchema.safeParse(credentials.id)
-
-      if (parsedId.error) {
-        console.error(z.treeifyError(parsedId.error), 'given: ', credentials.id)
+      if (id.length !== 24) {
+        console.error(
+          `id must be 24 characters. Given: ${id} (${id.length} chars)`
+        )
         return null
       }
 
-      return { id: parsedId.data }
+      return { id }
     },
   })
 

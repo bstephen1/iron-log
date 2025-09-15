@@ -1,14 +1,17 @@
 import { memo, useCallback } from 'react'
 import isEqual from 'react-fast-compare'
-import { z } from 'zod'
 import InputField from './InputField'
 
 interface Props {
   name?: string
   handleUpdate: (updates: { name?: string }) => void
-  options: string[]
+  existingNames: string[]
 }
-export default memo(function NameField({ name, handleUpdate, options }: Props) {
+export default memo(function NameField({
+  name,
+  handleUpdate,
+  existingNames,
+}: Props) {
   return (
     <InputField
       label="Name"
@@ -16,17 +19,14 @@ export default memo(function NameField({ name, handleUpdate, options }: Props) {
       required
       fullWidth
       handleSubmit={useCallback(
-        (name) => handleUpdate({ name }),
+        (name: string) => handleUpdate({ name }),
         [handleUpdate]
       )}
-      schema={z
-        .string()
-        .min(1, 'Must have a name')
-        // todo: this is showing an error if you type and then bksp to initial name
-        .refine(
-          (name) => options.length !== new Set(options.concat(name)).size,
-          'Already exists!'
-        )}
+      handleValidate={(newName) =>
+        newName !== name && existingNames.find((n) => n === newName)
+          ? 'Already exists!'
+          : ''
+      }
     />
   )
 }, isEqual)
