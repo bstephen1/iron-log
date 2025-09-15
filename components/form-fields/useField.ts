@@ -18,6 +18,7 @@ import { ZodError, type ZodType } from 'zod'
 interface Props<T = string> {
   /** zod schema that determines whether the value is valid */
   schema?: ZodType
+  required?: boolean
   debounceMilliseconds?: number
   /** handleSubmit should be provided unless manually handling submit (eg, combobox) */
   handleSubmit?: (value: T) => void
@@ -28,6 +29,7 @@ interface Props<T = string> {
 }
 export default function useField<T = string>({
   schema,
+  required,
   debounceMilliseconds = 800,
   autoSubmit = true,
   handleSubmit,
@@ -78,12 +80,6 @@ export default function useField<T = string>({
 
   /** validate value and return whether the value is valid (true) or not (false) */
   const validate = (value: T): boolean => {
-    process.env.NEXT_PUBLIC_BROWSER_LOG_LEVEL === 'verbose' &&
-      typeof value === 'string' &&
-      console.log(
-        `validating ${value !== initialValue ? 'dirty' : 'clean'}: ${value}`
-      )
-
     if (schema) {
       try {
         schema.parse(value)
