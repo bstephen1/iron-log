@@ -1,5 +1,4 @@
 import { type ChangeEvent, useRef, useState } from 'react'
-import { ZodError, type ZodType } from 'zod'
 
 /*
  * This hook is based off the behavior of react-hook-form's useForm hook,
@@ -15,9 +14,17 @@ import { ZodError, type ZodType } from 'zod'
  *
  */
 
-interface Props<T = string> {
-  /** zod schema that determines whether the value is valid */
-  schema?: ZodType
+export interface UseFieldProps<T = string> {
+  /** Parse the value to determine whether it is valid.
+   *  Note there is also a "required" prop that can be used to validate the value
+   *  is non-empty, though that can be done with this function as well.
+   *
+   *  @returns a non-empty string to display if there is an error
+   */
+  handleValidate?: (value: T) => string | undefined
+  /** Shorthand for validating that the field is not empty.
+   *  Can use handleValidate() instead to manually control the error message.
+   */
   required?: boolean
   debounceMilliseconds?: number
   /** handleSubmit should be provided unless manually handling submit (eg, combobox) */
@@ -28,13 +35,13 @@ interface Props<T = string> {
   autoSubmit?: boolean
 }
 export default function useField<T = string>({
-  schema,
-  required,
   debounceMilliseconds = 800,
   autoSubmit = true,
+  handleValidate,
   handleSubmit,
+  required,
   ...props
-}: Props<T>) {
+}: UseFieldProps<T>) {
   const timerRef = useRef<NodeJS.Timeout>(undefined)
   const [error, setError] = useState('')
   // initialValue must be stored in state so we can determine if the prop has changed
@@ -80,19 +87,14 @@ export default function useField<T = string>({
 
   /** validate value and return whether the value is valid (true) or not (false) */
   const validate = (value: T): boolean => {
-    if (schema) {
-      try {
-        schema.parse(value)
-      } catch (e) {
-        // zod returns an array of errors, so we have to extract the actual error
-        if (e instanceof ZodError) {
-          setError(e.issues[0].message)
-        }
-        return false
-      }
+    if (required && !value) {
+      setError('Cannot be blank')
+      return false
     }
-    setError('')
-    return true
+
+    const errorMsg = handleValidate?.(value) ?? ''
+    setError(errorMsg)
+    return !errorMsg
   }
 
   const submit = (newValue = value) => {

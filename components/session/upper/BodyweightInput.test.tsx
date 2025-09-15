@@ -117,7 +117,7 @@ describe('input', () => {
 
     await user.type(input, '{End}{Backspace}{Backspace}')
 
-    expect(await screen.findByText(/must have a value/i)).toBeVisible()
+    expect(await screen.findByText('Cannot be blank')).toBeVisible()
     expect(screen.getByLabelText('Submit')).toBeDisabled()
   })
 

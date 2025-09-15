@@ -3,7 +3,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import InputAdornment from '@mui/material/InputAdornment'
 import type { TextFieldProps } from '@mui/material/TextField'
 import { useState } from 'react'
-import { z } from 'zod'
 import InputField from '../../../components/form-fields/InputField'
 import { upsertBodyweight } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
@@ -34,8 +33,6 @@ export default function BodyweightInput({
     invalidates: [QUERY_KEYS.bodyweights],
   })
 
-  // note: the value will be cast to a number on submit
-  const schema = z.string().min(1, 'Must have a value')
   const loading = !data
 
   const handleSubmit = async (value: string) => {
@@ -62,7 +59,7 @@ export default function BodyweightInput({
           : String(data[0].value)
       }
       handleSubmit={handleSubmit}
-      schema={schema}
+      required
       // allow user to update bw with same value if latest date isn't the current date
       showSubmit={data?.[0]?.date !== date || undefined}
       slotProps={{

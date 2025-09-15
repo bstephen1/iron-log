@@ -10,7 +10,7 @@ it('submits valid edits', async () => {
   const { user } = render(
     <NameField
       name={initialName}
-      options={[existingName]}
+      existingNames={[existingName]}
       handleUpdate={mockHandleUpdate}
     />
   )
@@ -19,7 +19,7 @@ it('submits valid edits', async () => {
 
   // clear out the input
   await user.clear(input)
-  expect(screen.getByText('Must have a name')).toBeVisible()
+  expect(screen.getByText('Cannot be blank')).toBeVisible()
 
   // type in an existing name
   await user.paste(existingName)
@@ -29,4 +29,23 @@ it('submits valid edits', async () => {
   await user.type(input, 'x')
   await user.click(screen.getByLabelText('Submit'))
   expect(mockHandleUpdate).toHaveBeenCalledWith({ name: `${existingName}x` })
+})
+
+it('does not count own name as an existing name', async () => {
+  const initialName = 'init'
+  const { user } = render(
+    <NameField
+      name={initialName}
+      existingNames={[initialName]}
+      handleUpdate={mockHandleUpdate}
+    />
+  )
+
+  const input = screen.getByDisplayValue(initialName)
+
+  // dirty the input
+  await user.type(input, 'x')
+  await user.type(input, '[Backspace]')
+
+  expect(screen.getByLabelText('Reset')).not.toBeVisible()
 })

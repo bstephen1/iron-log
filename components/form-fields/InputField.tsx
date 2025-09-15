@@ -3,16 +3,14 @@ import ReplayIcon from '@mui/icons-material/Replay'
 import type { InputProps } from '@mui/material/Input'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import { useRef } from 'react'
-import type { ZodType } from 'zod'
 import TransitionIconButton from '../TransitionIconButton'
-import useField from './useField'
+import useField, { type UseFieldProps } from './useField'
 
-interface Props {
+interface Props
+  extends Pick<UseFieldProps, 'required' | 'handleSubmit' | 'handleValidate'> {
   label: string
   initialValue?: string
   defaultHelperText?: string
-  handleSubmit: (value: string) => void
-  schema?: ZodType
   /** Overrides internal behavior of when to show submit button.
    *  Has no effect if undefined.
    */
@@ -24,14 +22,16 @@ export default function InputField(props: Props & TextFieldProps) {
     initialValue = '',
     defaultHelperText = ' ',
     handleSubmit,
-    schema,
+    required,
+    handleValidate,
     showSubmit,
     ...textFieldProps
   } = props
 
   const inputRef = useRef<HTMLInputElement>(undefined)
   const { control, reset, submit, isDirty, error } = useField({
-    schema,
+    required,
+    handleValidate,
     handleSubmit,
     initialValue,
     autoSubmit: false,

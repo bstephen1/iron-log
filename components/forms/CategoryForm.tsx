@@ -57,7 +57,7 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
         <NameField
           name={name}
           handleUpdate={updateFields}
-          options={categories.names}
+          existingNames={categories.names}
         />
       </Grid>
       <Grid size={12}>

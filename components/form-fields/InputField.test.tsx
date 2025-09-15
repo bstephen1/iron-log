@@ -45,19 +45,3 @@ it('submits with keypress', async () => {
   await user.type(screen.getByDisplayValue(initial), '{Enter}')
   expect(mockHandleSubmit).toHaveBeenCalledWith(initial)
 })
-
-it('enforces validation schema', async () => {
-  const initial = '1'
-  const errorMessage = '1 is the max'
-  const { user } = render(
-    <InputField
-      label="label"
-      initialValue={initial}
-      handleSubmit={mockHandleSubmit}
-      schema={z.string().max(1, errorMessage)}
-    />
-  )
-
-  await user.type(screen.getByDisplayValue(initial), '2')
-  expect(screen.getByText(errorMessage)).toBeVisible()
-})

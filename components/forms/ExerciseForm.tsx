@@ -91,7 +91,7 @@ export default function ExerciseForm({ exercise }: Props) {
         <NameField
           name={name}
           handleUpdate={updateFields}
-          options={exercises.names}
+          existingNames={exercises.names}
         />
       </Grid>
       <Grid
