@@ -50,7 +50,7 @@ jobs:
       - name: Run biome
         run: npx biome ci
       - name: Run vitest
-        run: bun test:once
+        run: bun vi:once
       - name: 'Generate coverage report'
         # uncomment to generate reports if tests fail.
         # requires `reportOnFailure: true` in vite config.
