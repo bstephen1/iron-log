@@ -15,7 +15,7 @@ jobs:
       - name: Install deps
         run: bun i
       - name: Install playwright browsers
-        run: npx playwright install --with-deps
+        run: bunx playwright install --with-deps
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.0
         with:
@@ -48,7 +48,7 @@ jobs:
         with:
           version: latest
       - name: Run biome
-        run: npx biome ci
+        run: bunx biome ci
       - name: Run vitest
         run: bun vi:once
       - name: 'Generate coverage report'

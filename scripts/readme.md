@@ -1,6 +1,6 @@
-To run a script: `npx vite-node <file>`
+To run a script: `bun <file>`
 
-Scripts may need to import polyfills.ts depending on what imports they use.
+The below were required when using `npx vite-node <file>` and may or may not still apply:
 
 Scripts require `type: module` in package.json. vite-node needs no further setup.
 
