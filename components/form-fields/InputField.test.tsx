@@ -1,5 +1,4 @@
 import { expect, it, vi } from 'vitest'
-import { z } from 'zod'
 import { render, screen } from '../../lib/testUtils'
 import InputField from './InputField'
 

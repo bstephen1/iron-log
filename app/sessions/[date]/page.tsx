@@ -5,7 +5,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { z } from 'zod'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 import SessionSwiper from '../../../components/session/SessionSwiper'
 import RestTimer from '../../../components/session/upper/RestTimer'
 import TitleBar from '../../../components/session/upper/TitleBar'
@@ -14,14 +15,10 @@ import {
   fetchRecords,
   fetchSessionLog,
 } from '../../../lib/backend/mongoService'
-import { QUERY_KEYS } from '../../../lib/frontend/constants'
+import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
 import getQueryClient from '../../../lib/getQueryClient'
 
-interface Props {
-  params: Promise<{ date: string }>
-}
-/** enforces YYYY-MM-DD format */
-const dateSchema = z.iso.date()
+dayjs.extend(customParseFormat)
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params
@@ -31,10 +28,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+interface Props {
+  params: Promise<{ date: string }>
+}
 export default async function DatePage({ params }: Props) {
-  const { data: date } = dateSchema.safeParse((await params).date)
+  const date = (await params).date
+  // customParseFormat ensures the date is exactly in DATE_FORMAT.
+  // Otherwise dayjs() will convert from any valid date string
+  const day = dayjs(date, DATE_FORMAT, true)
 
-  if (!date) {
+  if (!day.isValid()) {
     notFound()
   }
 
