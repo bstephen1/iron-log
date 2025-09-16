@@ -10,7 +10,16 @@ import { QUERY_KEYS } from '../lib/frontend/constants'
 import getQueryClient from '../lib/getQueryClient'
 // global styles must be imported from this file
 import '../styles/globals.css'
+import type { Metadata } from 'next'
 import QueryClientWrapper from './QueryClientWrapper'
+
+// child metadata is merged into the parent object,
+// so any fields defined here but not in a child will
+// retain the values from here
+export const metadata: Metadata = {
+  title: 'Iron Log',
+  description: 'An app for recording your training.',
+}
 
 export default async function RootLayout({
   children,

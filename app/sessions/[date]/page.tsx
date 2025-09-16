@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { date } = await params
 
   return {
-    title: `Iron Log - ${date}`,
+    title: `${date} - Iron Log`,
   }
 }
 
