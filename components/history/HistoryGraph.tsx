@@ -67,7 +67,7 @@ const getStartIndex = (data: GraphData[], dayRange = 60) => {
   return i + 1
 }
 interface Props {
-  query?: RecordQuery
+  query: RecordQuery
   swipeToRecord: (i: number) => void
 }
 export default function HistoryGraph({ query, swipeToRecord }: Props) {
@@ -78,14 +78,18 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
 
   // BWs and records are sorted newest first. It looks more natural in the
   // swiper to start on the right and move left vs oldest first.
-  const { data: bodyweightData } = useBodyweights(query)
+  const { data: bodyweightData } = useBodyweights({
+    limit: query.limit,
+    start: query.start,
+    end: query.end,
+  })
   const { data: earliestRecordOfficialBw } = useBodyweights({
-    end: query?.start,
+    end: query.start,
     limit: 1,
     type: 'official',
   })
   const { data: earliestRecordAnyBw } = useBodyweights({
-    end: query?.start,
+    end: query.start,
     limit: 1,
   })
   const [recordDisplay, setRecordDisplay] = useState<RecordDisplay>({
@@ -100,7 +104,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     graphOptions
   const lineType = smoothLine ? 'basis' : 'monotone'
   // only fetch if there is an exercise selected
-  const { data: records } = useRecords(query, !!query?.exercise)
+  const { data: records } = useRecords(query, !!query.exercise)
 
   const updateRecordDisplay: PartialUpdate<RecordDisplay> = (changes) =>
     setRecordDisplay((prev) => ({ ...prev, ...changes }))
@@ -126,7 +130,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     // When querying records with a set start date, there needs to be one extra bw
     // record from before the start date to associate with the first record.
     // Note: BWs are sorted newest to oldest, so it goes at the end.
-    return query?.exercise && query.start
+    return query.exercise && query.start
       ? [...baseData, ...earliestRecordBw]
       : baseData
   }, [
@@ -135,8 +139,8 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     earliestRecordOfficialBw,
     includeUnofficial,
     officialBWs,
-    query?.exercise,
-    query?.start,
+    query.exercise,
+    query.start,
   ])
 
   // to track width we want to use the size of the graph container, since that will be smaller than window width
@@ -196,7 +200,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
 
   const graphData = useMemo((): GraphData[] => {
     // when there's no exercise, just show BW data
-    if (!query?.exercise || !records) {
+    if (!query.exercise || !records) {
       return bodyweightGraphData
         .map((bw) => ({
           unixDate: dayjs(bw.date).unix(),
@@ -244,7 +248,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     bodyweightGraphData,
     clothingOffset,
     includeUnofficial,
-    query?.exercise,
+    query.exercise,
     recordDisplay.operator,
     records,
     setReducer,
@@ -303,7 +307,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                   dataKey="bodyweight"
                   type="number"
                   unit=" kg"
-                  orientation={query?.exercise ? 'right' : 'left'}
+                  orientation={query.exercise ? 'right' : 'left'}
                   stroke={bodyweightColor}
                   domain={['auto', 'auto']}
                 />
@@ -317,7 +321,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                 />
               </>
             )}
-            {query?.exercise && (
+            {query.exercise && (
               <>
                 <YAxis
                   yAxisId="exercise"

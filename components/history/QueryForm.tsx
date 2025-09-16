@@ -16,16 +16,15 @@ import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'
 
 interface Props {
-  query?: RecordQuery
-  setQuery: Dispatch<SetStateAction<RecordQuery | undefined>>
+  query: RecordQuery
+  setQuery: Dispatch<SetStateAction<RecordQuery>>
 }
 export default function QueryCard({ query, setQuery }: Props) {
-  const initialQuery = query ?? DEFAULT_RECORD_HISTORY_QUERY
   // todo: this should use exercise from query
   const [exercise, setExercise] = useState<Exercise | null>(null)
   // reset to this exercise if reset button is clicked
   const [initialExercise, setInitialExercise] = useState(exercise)
-  const [unsavedQuery, setUnsavedQuery] = useState<RecordQuery>(initialQuery)
+  const [unsavedQuery, setUnsavedQuery] = useState<RecordQuery>(query)
   const displayFields = useDisplayFields(exercise)
 
   const updateUnsavedQuery: PartialUpdate<RecordQuery> = (changes) =>
@@ -80,10 +79,9 @@ export default function QueryCard({ query, setQuery }: Props) {
       <Stack direction="row" spacing={2} display="flex" justifyContent="center">
         <Button
           variant="outlined"
-          // there is no query on init, so just disable reset
-          disabled={!query || isEqual(unsavedQuery, query)}
+          disabled={isEqual(unsavedQuery, query)}
           onClick={() => {
-            setUnsavedQuery(initialQuery)
+            setUnsavedQuery(query)
             setExercise(initialExercise)
           }}
         >
