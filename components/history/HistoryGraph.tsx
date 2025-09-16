@@ -18,6 +18,7 @@ import {
 } from 'recharts'
 import type { CategoricalChartFunc } from 'recharts/types/chart/types'
 import type RecordDisplay from '../../components/history/RecordDisplay'
+import type { RecordDisplayGrouping } from '../../components/history/RecordDisplay'
 import {
   DATE_FORMAT,
   DEFAULT_CLOTHING_OFFSET,
@@ -27,7 +28,7 @@ import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 import type { PartialUpdate } from '../../lib/util'
 import type { Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
-import type { RecordQuery } from '../../models/Record'
+import type { Record, RecordQuery } from '../../models/Record'
 import type { Set } from '../../models/Set'
 import useDarkMode from '../useDarkMode'
 import GraphOptionsForm, { type GraphOptions } from './GraphOptionsForm'
@@ -41,8 +42,19 @@ interface GraphData {
 
 const emptyBwArray: Bodyweight[] = []
 
-const convertUnixToDate = (value: number) =>
-  dayjs.unix(value).format('YYYY-MM-DD')
+const convertUnixToDate = (value: number, grouping: RecordDisplayGrouping) => {
+  const day = dayjs.unix(value)
+  switch (grouping) {
+    case 'daily':
+      return day.format(DATE_FORMAT)
+    case 'weekly': {
+      const endDate = day.endOf('week').date()
+      return day.format(`MMM DD-${endDate} YYYY`)
+    }
+    case 'monthly':
+      return day.format('MMM YYYY')
+  }
+}
 
 /** Get the earliest index within the given dayRange.
  *  There can be an arbitrary amount of data points within the range,
@@ -93,6 +105,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     limit: 1,
   })
   const [recordDisplay, setRecordDisplay] = useState<RecordDisplay>({
+    grouping: 'daily',
     field: 'weight',
     operator: 'highest',
   })
@@ -201,16 +214,53 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
   const graphData = useMemo((): GraphData[] => {
     // when there's no exercise, just show BW data
     if (!query.exercise || !records) {
-      return bodyweightGraphData
-        .map((bw) => ({
-          unixDate: dayjs(bw.date).unix(),
-          bodyweight: bw.value,
-        }))
-        .reverse() // data is sorted newest first, so we have to reverse it
+      return bodyweightGraphData.map((bw) => ({
+        unixDate: dayjs(bw.date).unix(),
+        bodyweight: bw.value,
+      }))
     }
 
     let latestBwIndex = 0
     return records
+      .reduce<Record[]>((acc, record) => {
+        const last = acc.pop()
+        if (!last) {
+          const formattedDate =
+            recordDisplay.grouping === 'weekly'
+              ? dayjs(record.date).startOf('week').format(DATE_FORMAT)
+              : record.date
+          return [{ ...record, date: formattedDate }]
+        }
+
+        switch (recordDisplay.grouping) {
+          case 'daily': {
+            return acc.concat([last, record])
+          }
+          case 'weekly': {
+            const lastDay = dayjs(last.date).startOf('week')
+            const curDay = dayjs(record.date).startOf('week')
+
+            return acc.concat(
+              lastDay.isSame(curDay)
+                ? [{ ...last, sets: last.sets.concat(record.sets) }]
+                : [last, { ...record, date: curDay.format(DATE_FORMAT) }]
+            )
+          }
+          case 'monthly': {
+            const lastDay = dayjs(last.date).startOf('month')
+            const curDay = dayjs(record.date).startOf('month')
+
+            return acc.concat(
+              lastDay.isSame(curDay)
+                ? [{ ...last, sets: last.sets.concat(record.sets) }]
+                : [last, { ...record, date: curDay.format(DATE_FORMAT) }]
+            )
+          }
+          default: {
+            throw new Error(`unsupported grouping: ${recordDisplay.grouping}`)
+          }
+        }
+      }, [])
       .map((record) => {
         const recordUnixDate = dayjs(record.date).unix()
         // add most recent bw to data. Takes advantage of api data being
@@ -243,7 +293,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
           bodyweight: bodyweight ?? 0,
         }
       })
-      .reverse()
   }, [
     bodyweightGraphData,
     clothingOffset,
@@ -252,6 +301,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     recordDisplay.operator,
     records,
     setReducer,
+    recordDisplay.grouping,
   ])
 
   return (
@@ -289,8 +339,9 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
             <XAxis
               dataKey="unixDate"
               type="number"
+              // always use monthly to keep it short and not cut off
               tickFormatter={(value: number) =>
-                dayjs.unix(value).format(DATE_FORMAT)
+                convertUnixToDate(value, 'monthly')
               }
               domain={['auto', 'auto']}
               angle={-25}
@@ -350,7 +401,9 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
             {/* todo: possible to show weigh-in type in tooltip? */}
             <Tooltip
               trigger={isDesktop ? 'hover' : 'click'}
-              labelFormatter={convertUnixToDate}
+              labelFormatter={(value) =>
+                convertUnixToDate(value, recordDisplay.grouping)
+              }
               formatter={(value, name) =>
                 // todo: add unit to RecordDisplay so it is selectzble
                 `${value.toString()} ${
@@ -364,7 +417,9 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
             <Legend verticalAlign="top" height={30} />
             <Brush
               dataKey="unixDate"
-              tickFormatter={convertUnixToDate}
+              tickFormatter={(value) =>
+                convertUnixToDate(value, recordDisplay.grouping)
+              }
               // these doesn't accept percentages...
               width={graphContainerWidth * 0.6}
               // could only eyeball this trying to get it centered.
