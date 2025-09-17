@@ -8,16 +8,14 @@ import Stack from '@mui/material/Stack'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
-import type { PartialUpdate } from '../../lib/util'
+import { capitalize, type PartialUpdate } from '../../lib/util'
 import { ORDERED_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import type RecordDisplay from './RecordDisplay'
-import {
-  type RecordDisplayOperator,
-  recordDisplayOperators,
-} from './RecordDisplay'
+import { recordDisplayGroupings, recordDisplayOperators } from './RecordDisplay'
 
-const fieldOptions = ORDERED_DISPLAY_FIELDS.filter(
-  (field) => !field.enabled?.unilateral && !field.enabled?.splitWeight
+const fieldOptions = ORDERED_DISPLAY_FIELDS.map(({ name }) => name).filter(
+  (name): name is RecordDisplay['field'] =>
+    !['side', 'plateWeight', 'totalWeight'].includes(name)
 )
 
 type Props = {
@@ -30,9 +28,9 @@ export default function RecordDisplaySelect({
   recordDisplay,
   ...textFieldProps
 }: Props) {
-  const { operator, field } = recordDisplay
+  const { grouping, operator, field } = recordDisplay
   const [open, setOpen] = useState(false)
-  const menuValue = `${operator} ${field}`
+  const menuValue = `${grouping} ${operator} ${field}`
 
   const handleClose = () => setOpen(false)
 
@@ -60,53 +58,63 @@ export default function RecordDisplaySelect({
       {/* allows menuValue to not be out of range */}
       <MenuItem value={menuValue} sx={{ display: 'none' }} />
       <Stack px={2} pt={1} direction="row" spacing={2}>
-        <FormControl>
-          <FormLabel id={`record-display-operator-radio-label`}>
-            Operator
-          </FormLabel>
-          <RadioGroup
-            aria-labelledby={`record-display-operator-radio-label`}
-            name={`record-display-operator-radio`}
-            value={operator}
-            onChange={(_, newOperator) => {
-              updateRecordDisplay({
-                operator: newOperator as RecordDisplayOperator,
-              })
-            }}
-          >
-            {recordDisplayOperators.map((graphOperators) => (
-              <FormControlLabel
-                key={graphOperators}
-                value={graphOperators}
-                control={<Radio />}
-                label={graphOperators}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
-        <FormControl>
-          <FormLabel id={`record-display-field-radio-label`}>Field</FormLabel>
-          <RadioGroup
-            aria-labelledby={`record-display-field-radio-label`}
-            name={`record-display-field-radio`}
-            value={field}
-            onChange={(_, newField) => {
-              updateRecordDisplay({
-                field: newField as typeof field,
-              })
-            }}
-          >
-            {fieldOptions.map(({ name }) => (
-              <FormControlLabel
-                key={name}
-                value={name}
-                control={<Radio />}
-                label={name}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
+        <RenderOptions
+          field="grouping"
+          value={grouping}
+          options={recordDisplayGroupings}
+          updateRecordDisplay={updateRecordDisplay}
+        />
+        <RenderOptions
+          field="operator"
+          value={operator}
+          options={recordDisplayOperators}
+          updateRecordDisplay={updateRecordDisplay}
+        />
+        <RenderOptions
+          field="field"
+          value={field}
+          options={fieldOptions}
+          updateRecordDisplay={updateRecordDisplay}
+        />
       </Stack>
     </TextField>
   )
 }
+
+interface RenderOptionsProps<T extends keyof RecordDisplay> {
+  field: T
+  value: RecordDisplay[T]
+  options: readonly RecordDisplay[T][]
+  updateRecordDisplay: Props['updateRecordDisplay']
+}
+const RenderOptions = <T extends keyof RecordDisplay>({
+  field,
+  value,
+  options,
+  updateRecordDisplay,
+}: RenderOptionsProps<T>) => (
+  <FormControl>
+    <FormLabel id={`record-display-${field}-radio-label`}>
+      {capitalize(field)}
+    </FormLabel>
+    <RadioGroup
+      aria-labelledby={`record-display-${field}-radio-label`}
+      name={`record-display-${field}-radio`}
+      value={value}
+      onChange={(_, newField) => {
+        updateRecordDisplay({
+          [field]: newField as typeof field,
+        })
+      }}
+    >
+      {options.map((option) => (
+        <FormControlLabel
+          key={option}
+          value={option}
+          control={<Radio />}
+          label={option}
+        />
+      ))}
+    </RadioGroup>
+  </FormControl>
+)

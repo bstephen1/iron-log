@@ -1,10 +1,22 @@
-import { expect, it } from 'vitest'
+import { getServerSession } from 'next-auth'
+import { expect, it, vi } from 'vitest'
+import { guestUserName } from '../lib/frontend/constants'
 import { render, screen } from '../lib/testUtils'
 import Home from './page'
 
-// testing links / routing should be done at the e2e level
-it('renders', async () => {
-  render(<Home />)
+it('renders as non-guest user', async () => {
+  // The page is an async server component, so it must be awaited in the render
+  // params can be added if applicable, eg await Home({params: {...}})
+  render(await Home())
 
-  expect(screen.getByText('Welcome')).toBeVisible()
+  expect(screen.getByText(`Today's log`)).toBeVisible()
+})
+
+it('renders as guest user', async () => {
+  vi.mocked(getServerSession).mockResolvedValue({
+    user: { name: guestUserName },
+  })
+  render(await Home())
+
+  expect(screen.getByText(/guest/)).toBeVisible()
 })

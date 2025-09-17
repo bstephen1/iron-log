@@ -1,13 +1,12 @@
-'use client'
 import Button from '@mui/material/Button'
 import MuiLink from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
-import type { NextPage } from 'next'
-import Head from 'next/head'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth'
 import {
   DATE_FORMAT,
   guestUserName,
@@ -15,18 +14,15 @@ import {
   userGuideLink,
 } from '../lib/frontend/constants'
 
-const Home: NextPage = () => {
-  const { data } = useSession()
-  const user = data?.user?.name
+export const metadata: Metadata = {
+  title: 'Home - Iron Log',
+}
+
+export default async function HomePage() {
+  const user = (await getServerSession(authOptions))?.user?.name
 
   return (
     <>
-      <Head>
-        <title>Iron Log</title>
-        <meta name="description" content="An app for recording your training" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <Stack justifyContent="center" alignItems="center" spacing={1}>
         <Typography variant="h6" sx={{ pb: 3 }}>
           Welcome
@@ -57,5 +53,3 @@ const Home: NextPage = () => {
     </>
   )
 }
-
-export default Home

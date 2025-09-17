@@ -11,6 +11,9 @@ import { DEFAULT_SET_TYPE, type Set, type SetType } from './Set'
 export interface Record {
   _id: string
   date: string
+  /** usually a record should always have an exercise, but in some cases the exercise can become null.
+   *  Eg, swapping category to a category not valid for the current exercise.
+   */
   exercise?: Exercise | null
   activeModifiers: string[]
   category?: string | null
