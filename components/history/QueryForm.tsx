@@ -7,10 +7,7 @@ import RecordExerciseSelector from '../../components/session/records/RecordExerc
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
 import type { PartialUpdate } from '../../lib/util'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
-import {
-  DEFAULT_RECORD_HISTORY_QUERY,
-  type RecordQuery,
-} from '../../models/Record'
+import type { RecordQuery } from '../../models/Record'
 import ModifierQueryField from './ModifierQueryField'
 import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'

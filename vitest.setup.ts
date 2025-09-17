@@ -56,6 +56,7 @@ vi.mock('./lib/backend/mongoService', async () => {
   }, {})
 })
 vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
+vi.mock('next-auth')
 vi.mock('./lib/backend/user', () => ({
   getUserId: vi.fn(async () => new ObjectId(devUserId)),
 }))

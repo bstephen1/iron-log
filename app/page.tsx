@@ -3,7 +3,7 @@ import MuiLink from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
-import type { Metadata, NextPage } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth'
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: 'Home - Iron Log',
 }
 
-const Home: NextPage = async () => {
+export default async function HomePage() {
   const user = (await getServerSession(authOptions))?.user?.name
 
   return (
@@ -53,5 +53,3 @@ const Home: NextPage = async () => {
     </>
   )
 }
-
-export default Home
