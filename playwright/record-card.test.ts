@@ -1,6 +1,7 @@
 import { expect, test } from './fixtures'
 
 test.describe('without hidden actions', () => {
+  // note: for some reason this test takes more than twice as long to run with webkit
   test.use({
     viewport: {
       height: 800,
@@ -40,7 +41,7 @@ test.describe('without hidden actions', () => {
 
     // change units
     await page.getByRole('button', { name: 'Change units' }).first().click()
-    await page.getByRole('radio', { name: 'lbs' }).check()
+    await page.getByRole('radio', { name: 'lbs' }).click() // do NOT use check(), it fails in CI
     await page.getByRole('radio', { name: 'lbs' }).press('Escape')
     await expect(
       page.getByLabel('Set 0').getByLabel('weight').first()
