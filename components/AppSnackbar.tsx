@@ -1,5 +1,4 @@
 import Alert, { type AlertColor } from '@mui/material/Alert'
-import Button from '@mui/material/Button'
 import Snackbar from '@mui/material/Snackbar'
 import { type CustomContentProps, closeSnackbar } from 'notistack'
 import { forwardRef } from 'react'
@@ -7,13 +6,14 @@ import { forwardRef } from 'react'
 export type AppSnackbarProps = {
   /** renders an alert of the given severity */
   severity?: AlertColor
-  action?: { text: string; onClick: () => void }
+  /** NOTE: AppSnackbar ignores this prop */
+  action?: null
 }
 const AppSnackbar = forwardRef<
   HTMLDivElement,
   AppSnackbarProps & CustomContentProps
 >(function AppSnackbar(props, ref) {
-  const { message, severity, autoHideDuration, id, action, persist } = props
+  const { message, severity, autoHideDuration, id, persist } = props
 
   // signals to the notistack wrapper to close the snackbar
   const handleClose = () => closeSnackbar(id)
@@ -34,13 +34,6 @@ const AppSnackbar = forwardRef<
       }}
       // these props only display when the child Alert is not present
       message={message}
-      action={
-        action ? (
-          <Button color="secondary" size="small" onClick={action.onClick}>
-            {action.text}
-          </Button>
-        ) : undefined
-      }
     >
       {severity ? (
         <Alert

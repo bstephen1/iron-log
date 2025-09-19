@@ -31,6 +31,8 @@ const customRender = (
     user?: Session['user']
     /** provide the url param date. Defaults to 2000-01-01 */
     date?: string
+    /** disables all layout wrappers */
+    disableLayout?: boolean
   }
 ) => ({
   user: userEvent.setup(
@@ -42,6 +44,10 @@ const customRender = (
   ),
   ...render(ui, {
     wrapper: ({ children }) => {
+      if (options?.disableLayout) {
+        return children
+      }
+
       // each test must have a new queryClient to ensure isolation
       // (otherwise data will be cached and reused between tests)
       const queryClient = new QueryClient()
