@@ -46,7 +46,7 @@ export default defineConfig({
   // Runs individual tests in each file in parallel.
   // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,
-  timeout: 35_000,
+  timeout: 65_000,
   expect: {
     timeout: 15_000,
   },

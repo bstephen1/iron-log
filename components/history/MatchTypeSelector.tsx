@@ -46,10 +46,6 @@ export default function MatchTypeSelector({
   const open = !!anchorEl
   const id = open ? 'modifier-match-type-popper' : undefined
 
-  const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(e.currentTarget)
-  }
-
   const handleClose = () => {
     setAnchorEl(null)
   }
@@ -66,7 +62,9 @@ export default function MatchTypeSelector({
       <TooltipIconButton
         title="Select match type"
         sx={{ p: '4px' }}
-        onClickButton={handleOpen}
+        onClick={(e) => {
+          setAnchorEl(e.currentTarget)
+        }}
       >
         {matchTypeOptions[matchType].Icon}
       </TooltipIconButton>
