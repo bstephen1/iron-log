@@ -4,27 +4,29 @@ import type { TooltipProps } from '@mui/material/Tooltip'
 import { createContext, type JSX, use } from 'react'
 import Tooltip from './Tooltip'
 
-/** context for TooltipIconButtons. Allows parent to determine
- *  whether to render as a menu item on a predefined component.
+/** If the IconButton is being rendered inside a menu, it will render its
+ *  own MenuItems, but it must be passed the parent menu props.
  */
-export const MenuItemContext = createContext<MenuItemProps>({})
-export const IsMenuContext = createContext(false)
+export const MenuItemContext = createContext<
+  (MenuItemProps & { closeMenu: () => void }) | null
+>(null)
 
 interface Props extends Partial<IconButtonProps> {
   title: string
   children?: JSX.Element
   tooltipProps?: Partial<TooltipProps>
-  onClick?: () => void
+  /** this onClick may be passed to either the menu or the button depending
+   *  on if MenuItemContext is provided, so uses a generic event handler.
+   */
+  onClick?: (e: { currentTarget: HTMLElement }) => void
   /** same as onClick, but includes icon button typing.
    *  If provided, this will override onClick() behavior for IconButtons.
-   *  Needed because otherwise ts throws a fit for onClick since it's used
-   *  for both MenuItem and IconButton.
+   *  Use this if you need the event handler from the button.
    */
   onClickButton?: IconButtonProps['onClick']
   /** same as onClick, but includes menu button typing.
    *  If provided, this will override onClick() behavior for MenuItems.
-   *  Needed because otherwise ts throws a fit for onClick since it's used
-   *  for both MenuItem and IconButton.
+   *  Use this if you need the event handler for the menu item.
    */
   onClickMenu?: MenuItemProps['onClick']
   disabled?: boolean
@@ -39,27 +41,37 @@ export default function TooltipIconButton({
   disabled,
   ...iconButtonProps
 }: Props) {
-  const isMenuItem = use(IsMenuContext)
   const menuItemProps = use(MenuItemContext)
 
-  return isMenuItem ? (
-    <Tooltip title={title} placement="left" {...tooltipProps}>
-      <MenuItem
-        onClick={onClickMenu ?? onClick}
-        disabled={disabled}
-        {...menuItemProps}
-      >
-        <IconButton
-          disableFocusRipple
-          disableRipple
-          disableTouchRipple
-          {...iconButtonProps}
+  if (menuItemProps) {
+    const { closeMenu, ...rest } = menuItemProps
+    return (
+      <Tooltip title={title} placement="left" {...tooltipProps}>
+        <MenuItem
+          onClick={(e) => {
+            // for SwapRecord button the menu needs to be closed BEFORE
+            // the record swap initiates and swiper tries to update itself,
+            // otherwise it majorly glitches out and gets stuck between slides.
+            closeMenu()
+            onClickMenu ? onClickMenu(e) : onClick?.(e)
+          }}
+          disabled={disabled}
+          {...rest}
         >
-          {children}
-        </IconButton>
-      </MenuItem>
-    </Tooltip>
-  ) : (
+          <IconButton
+            disableFocusRipple
+            disableRipple
+            disableTouchRipple
+            {...iconButtonProps}
+          >
+            {children}
+          </IconButton>
+        </MenuItem>
+      </Tooltip>
+    )
+  }
+
+  return (
     <Tooltip title={title} placement="bottom-end" {...tooltipProps}>
       <IconButton
         onClick={onClickButton ?? onClick}

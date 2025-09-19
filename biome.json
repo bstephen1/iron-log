@@ -23,6 +23,13 @@
         "noShadowRestrictedNames": "off",
         "noArrayIndexKey": "off"
       },
+      "correctness": {
+        "noUnusedImports": {
+          "fix": "safe",
+          "level": "warn",
+          "options": {}
+        }
+      },
       "style": {
         "noRestrictedImports": {
           "level": "error",

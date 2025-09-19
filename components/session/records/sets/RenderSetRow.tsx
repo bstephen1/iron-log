@@ -80,6 +80,7 @@ export default memo(function RenderSetRow({
     <Stack
       direction="row"
       alignItems="center"
+      aria-label={`Set ${index}`}
       // border is from TextField underline
       sx={[
         {

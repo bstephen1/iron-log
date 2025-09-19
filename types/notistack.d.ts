@@ -1,4 +1,4 @@
-import { type AppSnackbarProps } from '../components/AppSnackbar'
+import type { AppSnackbarProps } from '../components/AppSnackbar'
 
 declare module 'notistack' {
   interface VariantOverrides {

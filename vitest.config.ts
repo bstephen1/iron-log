@@ -16,6 +16,7 @@ export default defineConfig({
     setupFiles: 'vitest.setup.ts',
     // clear mock history, restore each implementation to its original, and restore original descriptors of spied-on objects
     restoreMocks: true,
+    unstubEnvs: true,
     coverage: {
       // enable coverage
       enabled: true,
