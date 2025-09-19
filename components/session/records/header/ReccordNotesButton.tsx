@@ -9,7 +9,7 @@ import NotesList from '../../../../components/form-fields/NotesList'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import {
-  useAddMutation,
+  useReplaceMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
 import type { PartialUpdate } from '../../../../lib/util'
@@ -37,9 +37,9 @@ export default memo(function RecordNotesButton({
   const readOnly = !mutateRecordFields
   const { data: sessionLog } = useSessionLog(date)
   const [open, setOpen] = useState(false)
-  const replaceSessionLogMutate = useAddMutation({
+  const replaceSessionLogMutate = useReplaceMutation({
     queryKey: [QUERY_KEYS.sessionLogs, date],
-    addFn: upsertSessionLog,
+    replaceFn: upsertSessionLog,
   })
 
   const combinedNotes = [...(sessionLog?.notes ?? []), ...notes]

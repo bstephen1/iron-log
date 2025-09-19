@@ -94,10 +94,27 @@ const useOptimisticMutation = <
   }
 }
 
+interface ReplaceMutationProps<T>
+  extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
+  replaceFn: (newItem: T) => Promise<T>
+}
+/** replace a singular record cache with its updated value */
+export function useReplaceMutation<T>({
+  replaceFn,
+  ...rest
+}: ReplaceMutationProps<T>) {
+  return useOptimisticMutation<T, T>({
+    ...rest,
+    mutationFn: (newItem) => replaceFn(newItem),
+    updater: (_, newItem) => newItem,
+  })
+}
+
 interface AddMutationProps<T>
   extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
   addFn: (newItem: T) => Promise<T>
 }
+/** Add a new record to a cache of arrays */
 export function useAddMutation<T>({ addFn, ...rest }: AddMutationProps<T>) {
   return useOptimisticMutation<T[], T>({
     ...rest,
@@ -127,6 +144,7 @@ interface UpdateMutationProps<T>
   extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
   updateFn: (id: string, updates: Partial<T>) => Promise<T>
 }
+/** Update an existing record in a cache of arrays */
 export function useUpdateMutation<T extends { _id: string }>({
   updateFn,
   ...rest
@@ -145,6 +163,7 @@ interface DeleteMutationProps
   extends Omit<OptimisticProps, 'updater' | 'mutationFn'> {
   deleteFn: (id: string) => Promise<string>
 }
+/** Delete a record from a cache of arrays */
 export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
   return useOptimisticMutation<{ _id: string }[], string>({
     ...rest,
@@ -193,6 +212,9 @@ const toNames = (entities?: AsyncSelectorOption[]) =>
 const nameSort = <T extends { name: string }>(data?: T[]) =>
   data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
 
+/** NOTE: this is a singular record so cannot use the generic useAddMutation,
+ *  which is for arrays
+ */
 export function useSessionLog(day: Dayjs | string) {
   const date = typeof day === 'string' ? day : day.format(DATE_FORMAT)
 

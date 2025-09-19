@@ -6,7 +6,7 @@ import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import {
-  useAddMutation,
+  useReplaceMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
 import TooltipIconButton from '../../../TooltipIconButton'
@@ -20,9 +20,9 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
   const swiper = useSwiper()
   const date = useCurrentDate()
   const { data: sessionLog } = useSessionLog(date)
-  const replaceSessionLogMutate = useAddMutation({
+  const replaceSessionLogMutate = useReplaceMutation({
     queryKey: [QUERY_KEYS.sessionLogs, date],
-    addFn: upsertSessionLog,
+    replaceFn: upsertSessionLog,
   })
 
   const isLeft = direction === 'left'
