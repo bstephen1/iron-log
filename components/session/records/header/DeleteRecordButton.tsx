@@ -4,10 +4,7 @@ import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { deleteRecord } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import {
-  useDeleteMutation,
-  useSessionLog,
-} from '../../../../lib/frontend/restService'
+import { useDeleteMutation } from '../../../../lib/frontend/restService'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
@@ -16,15 +13,12 @@ interface Props {
 export default memo(function DeleteRecordButton({ _id }: Props) {
   const swiper = useSwiper()
   const date = useCurrentDate()
-  const { data: sessionLog } = useSessionLog(date)
   const deleteRecordMutate = useDeleteMutation({
     queryKey: [QUERY_KEYS.records, { date }],
     deleteFn: deleteRecord,
   })
 
   const handleDelete = async (id: string) => {
-    if (!sessionLog) return
-
     deleteRecordMutate(id)
 
     swiper.update()

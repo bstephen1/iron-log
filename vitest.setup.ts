@@ -2,7 +2,15 @@ import { loadEnvConfig } from '@next/env'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
 import { ObjectId } from 'mongodb'
-import { afterEach, beforeAll, describe, it, type Mock, vi } from 'vitest'
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+  type Mock,
+  vi,
+} from 'vitest'
 import { devUserId } from './lib/frontend/constants'
 
 // var is required to hoist globals
@@ -78,6 +86,21 @@ beforeAll(() => {
   // but this must be done on a per-test basis as it will break any test not using fake timers
   // See: https://github.com/testing-library/react-testing-library/issues/1197
   globalThis.jest = vi
+})
+
+beforeEach(() => {
+  // Swiper uses a deprecated "addListener" method that is not supported by jsdom
+  // so we must manually mock it out. The spy only works if done as a beforeEach.
+  vi.spyOn(window, 'matchMedia').mockReturnValue({
+    matches: false,
+    media: '',
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })
 })
 
 // RTL cleanup is only automatically called if vitest has globals on.

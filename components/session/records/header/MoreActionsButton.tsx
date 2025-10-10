@@ -15,18 +15,11 @@ interface Props {
 }
 export default memo(function MoreActionsButton({ actions }: Props) {
   const isVisible = !!actions.length
+  const [keepMounted, setKeepMounted] = useState(false)
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
     useState<null | HTMLElement>(null)
 
-  const closeMenu = (_e?: unknown, reason?: string) => {
-    // if a child button opens a nested menu, this menu's onClose handler
-    // is triggered with an undefined reason. If this menu is closed the
-    // child will also be closed since it is mounted within.
-    // Previously keepVisible was enabled but this causes issues
-    // with the SwapRecord buttons, where after clicking the menu is invisible
-    // but still active and you have to reload the page.
-    !!reason && setMoreButtonsAnchorEl(null)
-  }
+  const closeMenu = () => setMoreButtonsAnchorEl(null)
 
   return (
     <>
@@ -43,11 +36,22 @@ export default memo(function MoreActionsButton({ actions }: Props) {
         anchorEl={moreButtonsAnchorEl}
         open={!!moreButtonsAnchorEl}
         onClose={closeMenu}
+        keepMounted={keepMounted}
       >
         {actions.map((Action) => (
           <MenuPropsInjector
             key={Action.key}
-            closeMenu={() => closeMenu({}, 'menu clicked')}
+            closeMenu={() => {
+              // If the action button is a dialog, the menu must stay mounted
+              // so the dialog doesn't immediately close. However, there is a bizarre
+              // interaction with swiper that causes the menu to stay invisibly active
+              // even after closing when keepMounted is true and swiper.update()/slideTo()
+              // is called. This occurs in SwapRecordButton (but ONLY when swapping to the right).
+              // So for non-dialogs, we have to keep the menu NOT mounted on click.
+              // Note that for this to work all dialog actions must include "dialog" in their key.
+              setKeepMounted(!!Action.key?.includes('dialog'))
+              closeMenu()
+            }}
           >
             {Action}
           </MenuPropsInjector>

@@ -12,7 +12,7 @@ import DeleteRecordButton from './DeleteRecordButton'
 import ExerciseNotesButton from './ExerciseNotesButton'
 import ManageExerciseButton from './ManageExerciseButton'
 import MoreActionsButton from './MoreActionsButton'
-import RecordNotesButton from './ReccordNotesButton'
+import RecordNotesButton from './RecordNotesButton'
 import SwapRecordButton from './SwapRecordButton'
 
 const actionButtonWidth = 40
@@ -83,19 +83,19 @@ export default function RecordCardHeader({
 }: Props) {
   const actionButtons = [
     <RecordNotesButton
-      key="record notes"
+      key="record notes dialog"
       sides={sets.map((set) => set.side)}
       {...{ notes, mutateRecordFields, date }}
     />,
     <ExerciseNotesButton
-      key="exercise notes"
+      key="exercise notes dialog"
       disabled={!exercise}
       notes={exercise?.notes}
       modifiers={exercise?.modifiers}
       mutateExerciseFields={mutateExerciseFields}
     />,
     <ChangeUnitsButton
-      key="units"
+      key="change units dialog"
       {...{ mutateExerciseFields, displayFields }}
     />,
     <ManageExerciseButton key="manage" _id={exercise?._id} />,
