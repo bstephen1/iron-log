@@ -48,7 +48,8 @@ export default function SetFieldSide({
           sx: {
             pr: '0px !important', // disable baked in padding for IconComponent
             // mui does not provide proper typing to fields on slotProps
-            ...(selectProps.slotProps?.htmlInput as InputBaseComponentProps).sx,
+            ...(selectProps.slotProps?.htmlInput as InputBaseComponentProps)
+              ?.sx,
           },
         },
       }}

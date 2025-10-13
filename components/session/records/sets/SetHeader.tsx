@@ -31,8 +31,8 @@ type Props = {
 export default memo(function SetHeader({
   mutateExerciseFields,
   displayFields,
-  showSplitWeight,
-  showUnilateral,
+  showSplitWeight = false,
+  showUnilateral = false,
   ...selectProps
 }: Props) {
   const noSwipingDesktop = useNoSwipingDesktop()
@@ -49,8 +49,6 @@ export default memo(function SetHeader({
   )
 
   const handleChange = (rawSelectedNames: string | string[]) => {
-    if (!mutateExerciseFields) return
-
     // According to MUI docs: "On autofill we get a stringified value",
     // which is the array stringified into a comma separated string.
     // Reassigning the value isn't updating the type so have to assign to a new var
@@ -68,7 +66,7 @@ export default memo(function SetHeader({
     // Make sure we aren't submitting if there aren't actually any changes.
     // Should only need to check the length because if there is a change the length must change.
     if (newVisibleFields.length !== selectedNames.length) {
-      mutateExerciseFields({
+      mutateExerciseFields?.({
         displayFields: {
           ...displayFields,
           visibleFields: newVisibleFields,

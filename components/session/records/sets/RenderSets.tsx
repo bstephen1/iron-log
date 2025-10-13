@@ -21,7 +21,7 @@ interface Props extends Pick<Record, '_id' | 'sets'> {
    *  needing to add a modifier and mess up history tracking.
    */
   exerciseWeight?: number
-  extraWeight: number
+  extraWeight?: number
 }
 export default function RenderSets({
   mutateExerciseFields,
@@ -30,7 +30,7 @@ export default function RenderSets({
   showUnilateral,
   sets,
   exerciseWeight = 0,
-  extraWeight,
+  extraWeight = 0,
   _id,
 }: Props) {
   const readOnly = !mutateExerciseFields
@@ -54,9 +54,8 @@ export default function RenderSets({
           <RenderSetRow
             key={i}
             index={i}
-            sets={sets}
             {...{
-              ...set,
+              sets,
               displayFields,
               readOnly,
               _id,

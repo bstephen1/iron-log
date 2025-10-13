@@ -37,11 +37,11 @@ const getDarkBackground = (side: Set['side']) => {
   }
 }
 
-interface Props extends Set {
+interface Props {
   readOnly?: boolean
   index: number
   displayFields: DisplayFields
-  extraWeight: number
+  extraWeight?: number
   _id: Record['_id']
   sets: Set[]
 }
@@ -52,11 +52,11 @@ export default memo(function RenderSetRow({
   readOnly = false,
   index,
   displayFields,
-  extraWeight,
+  extraWeight = 0,
   _id,
   sets,
-  ...set
 }: Props) {
+  const set = sets[index]
   const date = useCurrentDate()
   const updateRecordMutate = useUpdateMutation({
     queryKey: [QUERY_KEYS.records, { date }],
@@ -72,15 +72,11 @@ export default memo(function RenderSetRow({
     [_id, index, sets, updateRecordMutate]
   )
 
-  if (!displayFields.visibleFields.length) {
-    return null
-  }
-
   return (
     <Stack
       direction="row"
       alignItems="center"
-      aria-label={`Set ${index}`}
+      aria-label={`Set ${index + 1}`}
       // border is from TextField underline
       sx={[
         {
