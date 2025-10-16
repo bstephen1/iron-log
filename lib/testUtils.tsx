@@ -1,3 +1,4 @@
+import type { PaletteMode } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type RenderOptions, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -33,6 +34,7 @@ const customRender = (
     date?: string
     /** disables all layout wrappers */
     disableLayout?: boolean
+    paletteMode?: PaletteMode
   }
 ) => ({
   user: userEvent.setup(
@@ -73,6 +75,7 @@ const customRender = (
                   user: options?.user ?? { id: devUserId },
                   expires: '',
                 },
+                paletteMode: options?.paletteMode,
               }}
             >
               {children}

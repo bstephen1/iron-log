@@ -2,7 +2,11 @@
 import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import {
+  createTheme,
+  type PaletteMode,
+  ThemeProvider,
+} from '@mui/material/styles'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { Analytics } from '@vercel/analytics/next'
@@ -30,8 +34,15 @@ interface Props {
   session?: Session
   /** navbar should be disabled for component testing */
   disableNavbar?: boolean
+  /** set light/dark mode for testing */
+  paletteMode?: PaletteMode
 }
-export default function Layout({ children, session, disableNavbar }: Props) {
+export default function Layout({
+  children,
+  session,
+  disableNavbar,
+  paletteMode,
+}: Props) {
   // theme uses CSS variables to better support dark mode.
   // Any code changes should follow the CSS theme docs, not the normal theme docs.
   // See: https://mui.com/material-ui/customization/css-theme-variables/usage/
@@ -54,7 +65,7 @@ export default function Layout({ children, session, disableNavbar }: Props) {
   return (
     <SessionProvider session={session}>
       <NuqsAdapter>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme} defaultMode={paletteMode}>
           <CssBaseline /> {/* for dark mode */}
           <SavingIndicator />
           <InitColorSchemeScript attribute="class" />
