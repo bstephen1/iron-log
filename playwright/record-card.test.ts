@@ -35,8 +35,8 @@ test.describe('without hidden actions', () => {
     await expect(page.getByText('Record 121')).toBeVisible()
 
     // add set data
-    await page.getByLabel('Set 0').getByLabel('weight').first().fill('10')
-    await page.getByLabel('Set 0').getByLabel('reps').first().fill('6')
+    await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
+    await page.getByLabel('Set 1').getByLabel('reps').first().fill('6')
     await page.getByRole('button', { name: 'Add new set' }).first().click()
 
     // change units
@@ -44,7 +44,7 @@ test.describe('without hidden actions', () => {
     await page.getByRole('radio', { name: 'lbs' }).click() // do NOT use check(), it fails in CI
     await page.getByRole('radio', { name: 'lbs' }).press('Escape')
     await expect(
-      page.getByLabel('Set 0').getByLabel('weight').first()
+      page.getByLabel('Set 1').getByLabel('weight').first()
     ).toHaveValue('22.05')
 
     // move record
