@@ -22,7 +22,7 @@ export default defineConfig({
       enabled: true,
       // json reporters are needed for github action summary report
       reporter: ['text-summary', 'html', 'json-summary', 'json'],
-      include: ['components', 'lib', 'pages', 'models'],
+      include: ['components', 'lib', 'app', 'models'],
       // thresholdAutoUpdate: true,
       // branches: 77.48,
       // functions: 45.13,

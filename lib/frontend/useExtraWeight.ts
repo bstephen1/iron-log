@@ -7,32 +7,25 @@ export default function useExtraWeight(record: Record) {
     {
       limit: 2,
       end: record.date,
+      sort: 'newestFirst',
     },
     record.exercise?.attributes.bodyweight
   )
 
   const { activeModifiers, exercise } = record
-  const attributes = exercise?.attributes ?? {}
 
   let bodyweight = 0
-  if (attributes.bodyweight) {
-    switch (bodyweightData?.length) {
-      case 1:
-        bodyweight = bodyweightData[0].value
-        break
-      case 2:
-        // if same date use the unofficial weight.
-        if (bodyweightData[0].date !== bodyweightData[1].date) {
-          bodyweight = bodyweightData[0].value
-          break
-        }
-        bodyweight =
-          bodyweightData[0].type === 'unofficial'
-            ? bodyweightData[0].value
-            : bodyweightData[1].value
-        break
-      default:
-        break
+  if (exercise?.attributes.bodyweight && bodyweightData?.length) {
+    if (bodyweightData.length === 1) {
+      bodyweight = bodyweightData[0].value
+    } else if (bodyweightData[0].date !== bodyweightData[1].date) {
+      bodyweight = bodyweightData[0].value
+    } else {
+      // if same date use the unofficial weight.
+      bodyweight =
+        bodyweightData[0].type === 'unofficial'
+          ? bodyweightData[0].value
+          : bodyweightData[1].value
     }
   }
 

@@ -14,7 +14,7 @@ import type { Record } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
 import ExerciseNotesButton from '../records/header/ExerciseNotesButton'
 import ManageExerciseButton from '../records/header/ManageExerciseButton'
-import RecordNotesButton from '../records/header/ReccordNotesButton'
+import RecordNotesButton from '../records/header/RecordNotesButton'
 import SetTypeSelect from '../records/SetTypeSelect'
 import RenderSets from '../records/sets/RenderSets'
 

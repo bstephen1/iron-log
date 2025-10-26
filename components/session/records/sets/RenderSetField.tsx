@@ -7,7 +7,6 @@ import type { PartialUpdate } from '../../../../lib/util'
 import type { VisibleField } from '../../../../models/DisplayFields'
 import type { Set } from '../../../../models/Set'
 import { convertUnit, DB_UNITS, type Units } from '../../../../models/Units'
-import { InputFieldAutosaveProps } from '../../../form-fields/InputFieldAutosave'
 import NumericFieldAutosave from '../../../form-fields/NumericFieldAutosave'
 import SetFieldSide from './SetFieldSide'
 import SetFieldTimeMask from './SetFieldTimeMask'
@@ -16,13 +15,13 @@ const delimiterWidth = '15px'
 type ComponentType = 'side' | 'time' | 'default'
 type SharedProps = Pick<TextFieldProps, 'slotProps' | 'sx'>
 interface Props<S extends keyof Units>
-  extends Pick<VisibleField, 'delimiter' | 'name'> {
+  extends Partial<Pick<VisibleField, 'delimiter' | 'name'>> {
   index: number
   handleSetChange: PartialUpdate<Set>
   value?: Set[S]
   unit: Units[S]
   readOnly?: boolean
-  extraWeight: number
+  extraWeight?: number
   // source from VisibleField, extracted to add generic type
   source: S
 }
@@ -107,10 +106,10 @@ function SetFieldNumeric<S extends keyof Units>({
   value,
   source,
   unit,
-  name,
+  name = source,
   handleSetChange,
   readOnly,
-  extraWeight,
+  extraWeight = 0,
   sx,
   slotProps,
 }: Props<S> & SharedProps) {

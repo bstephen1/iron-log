@@ -8,7 +8,6 @@ interface Props {
 }
 export default memo(function ManageExerciseButton({ _id }: Props) {
   const router = useRouter()
-  //  todo: use nextjs prefetch when record is active: https://nextjs.org/docs/api-reference/next/router#routerprefetch  }
 
   return (
     <TooltipIconButton

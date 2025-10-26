@@ -29,16 +29,11 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
   const leftDisabled = !index
   // disable on the penultimate slide because the last is the "add record" button
   const rightDisabled = index >= swiper.slides.length - 2
-  const newIndex = isLeft ? index - 1 : index + 1
 
-  const swapRecords = async (i: number, j: number) => {
+  const swapRecords = async () => {
     if (!sessionLog) return
-
-    const length = sessionLog.records.length
-    if (i < 0 || i >= length || j < 0 || j >= length) {
-      console.error(`Tried swapping records out of range: ${i}, ${j}`)
-      return
-    }
+    const i = index
+    const j = isLeft ? index - 1 : index + 1
 
     const newRecords = [...sessionLog.records]
     ;[newRecords[j], newRecords[i]] = [newRecords[i], newRecords[j]]
@@ -53,7 +48,7 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
     <TooltipIconButton
       title={`Move current record to the ${direction}`}
       disabled={isLeft ? leftDisabled : rightDisabled}
-      onClick={() => swapRecords(index, newIndex)}
+      onClick={swapRecords}
     >
       {isLeft ? (
         <KeyboardDoubleArrowLeftIcon />
