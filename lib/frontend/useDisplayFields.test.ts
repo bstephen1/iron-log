@@ -6,7 +6,7 @@ import {
   type DisplayFields,
 } from '../../models/DisplayFields'
 import { DB_UNITS } from '../../models/Units'
-import { renderHook } from '../util/test/rtl'
+import { renderHook } from '../test/rtl'
 import useDisplayFields from './useDisplayFields'
 
 it('returns display fields from record', () => {

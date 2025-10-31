@@ -8,7 +8,7 @@ import isEqual from 'react-fast-compare'
 import AsyncAutocomplete, {
   type AsyncAutocompleteProps,
 } from '../../components/AsyncAutocomplete'
-import { doNothing } from '../../lib/util'
+import { doNothing } from '../../lib/frontend/constants'
 import useField from './useField'
 
 interface ComboBoxFieldProps<Clearable extends boolean | undefined>

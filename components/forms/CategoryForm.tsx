@@ -12,7 +12,7 @@ import {
   useExercises,
   useUpdateMutation,
 } from '../../lib/frontend/restService'
-import { getUsage } from '../../lib/util'
+import { getUsage } from '../../lib/frontend/usage'
 import type { Category } from '../../models/AsyncSelectorOption/Category'
 import ActionItems from '../form-fields/actions/ActionItems'
 import NameField from '../form-fields/NameField'

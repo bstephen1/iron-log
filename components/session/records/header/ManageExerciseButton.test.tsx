@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation'
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../../../../lib/util/test/rtl'
+import { render, screen } from '../../../../lib/test/rtl'
 import ManageExerciseButton from './ManageExerciseButton'
 
 it('links to given id', async () => {

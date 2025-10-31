@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../../../../lib/util/test/rtl'
+import { render, screen } from '../../../../lib/test/rtl'
 import SetFieldSide from './SetFieldSide'
 
 const mockMutate = vi.fn()

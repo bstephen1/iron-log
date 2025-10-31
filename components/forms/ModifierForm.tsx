@@ -12,7 +12,7 @@ import {
   useModifiers,
   useUpdateMutation,
 } from '../../lib/frontend/restService'
-import { getUsage } from '../../lib/util'
+import { getUsage } from '../../lib/frontend/usage'
 import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import ActionItems from '../form-fields/actions/ActionItems'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'

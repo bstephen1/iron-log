@@ -1,4 +1,4 @@
-import { generateId } from '../lib/util/id'
+import { generateId } from '../lib/id'
 import type { Note } from './Note'
 
 // todo: add session time. start time: first set created. end time: last update to a set on the same day.

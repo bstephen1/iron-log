@@ -25,7 +25,7 @@ import {
 } from '../../lib/frontend/constants'
 import { useBodyweights, useRecords } from '../../lib/frontend/restService'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
-import type { PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/types'
 import type { Bodyweight } from '../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import type { Record, RecordQuery } from '../../models/Record'

@@ -4,7 +4,7 @@ import {
   fetchCategories,
   fetchExercises,
 } from '../../../lib/backend/mongoService'
-import { render, screen } from '../../../lib/util/test/rtl'
+import { render, screen } from '../../../lib/test/rtl'
 import { createCategory } from '../../../models/AsyncSelectorOption/Category'
 import {
   createExercise,

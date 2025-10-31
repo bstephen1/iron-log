@@ -1,5 +1,5 @@
 import SetTypeSelect from '../../components/session/records/SetTypeSelect'
-import type { PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/types'
 import { ArrayMatchType } from '../../models//ArrayMatchType'
 import type { RecordQuery } from '../../models/Record'
 import { DEFAULT_SET_TYPE } from '../../models/Set'

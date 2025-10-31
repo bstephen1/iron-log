@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
-import { render, screen, waitFor } from '../../../../lib/util/test/rtl'
+import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import RenderSetRow from './RenderSetRow'
 

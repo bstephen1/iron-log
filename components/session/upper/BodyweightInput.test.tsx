@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fetchBodyweights } from '../../../lib/backend/mongoService'
-import { render, screen } from '../../../lib/util/test/rtl'
+import { render, screen } from '../../../lib/test/rtl'
 import { createBodyweight } from '../../../models/Bodyweight'
 import BodyweightInput from './BodyweightInput'
 

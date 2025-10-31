@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import ComboBoxField from '../../components/form-fields/ComboBoxField'
-import type { PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/types'
 import { ArrayMatchType } from '../../models//ArrayMatchType'
 import type { RecordQuery } from '../../models/Record'
 import MatchTypeSelector from './MatchTypeSelector'

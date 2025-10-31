@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import type { PartialUpdate } from '../../../../lib/util'
+import type { PartialUpdate } from '../../../../lib/types'
 import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'

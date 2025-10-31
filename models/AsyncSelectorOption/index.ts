@@ -1,4 +1,4 @@
-import { generateId } from '../../lib/util/id'
+import { generateId } from '../../lib/id'
 import { Status } from '../Status'
 
 export interface AsyncSelectorOption {

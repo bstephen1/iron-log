@@ -11,7 +11,7 @@ import {
   useReplaceMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
-import type { PartialUpdate } from '../../../../lib/util'
+import type { PartialUpdate } from '../../../../lib/types'
 import type { Note } from '../../../../models/Note'
 import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'

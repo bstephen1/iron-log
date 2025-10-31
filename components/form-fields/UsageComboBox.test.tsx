@@ -3,7 +3,7 @@ import {
   fetchExercises,
   updateExerciseFields,
 } from '../../lib/backend/mongoService'
-import { render, screen } from '../../lib/util/test/rtl'
+import { render, screen } from '../../lib/test/rtl'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import UsageComboBox from './UsageComboBox'
 

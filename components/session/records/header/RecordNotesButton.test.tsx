@@ -4,7 +4,7 @@ import {
   fetchSessionLog,
   upsertSessionLog,
 } from '../../../../lib/backend/mongoService'
-import { render, screen, waitFor } from '../../../../lib/util/test/rtl'
+import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { createNote } from '../../../../models/Note'
 import { createSessionLog } from '../../../../models/SessionLog'
 import ReccordNotesButton from './RecordNotesButton'

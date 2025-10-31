@@ -3,7 +3,7 @@ import {
   fetchSessionLog,
   upsertSessionLog,
 } from '../../../../lib/backend/mongoService'
-import { render, screen } from '../../../../lib/util/test/rtl'
+import { render, screen } from '../../../../lib/test/rtl'
 import { createSessionLog } from '../../../../models/SessionLog'
 import SwapRecordButton from './SwapRecordButton'
 

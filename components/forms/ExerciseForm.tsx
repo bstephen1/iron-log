@@ -16,7 +16,7 @@ import {
   useRecords,
   useUpdateMutation,
 } from '../../lib/frontend/restService'
-import { enqueueError, enqueueSuccess } from '../../lib/util/snackbar'
+import { enqueueError, enqueueSuccess } from '../../lib/frontend/snackbar'
 import {
   createExercise,
   type Exercise,

@@ -1,7 +1,7 @@
 import { type QueryClient, useQueryClient } from '@tanstack/react-query'
 import { signOut } from 'next-auth/react'
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../lib/util/test/rtl'
+import { render, screen } from '../lib/test/rtl'
 import LogoutButton from './LogoutButton'
 
 const mockSignOut = vi.fn(async () => undefined)

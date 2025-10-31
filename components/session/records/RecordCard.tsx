@@ -13,11 +13,11 @@ import {
   useExercises,
   useUpdateMutation,
 } from '../../../lib/frontend/restService'
+import { enqueueError } from '../../../lib/frontend/snackbar'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import type { PartialUpdate } from '../../../lib/util'
-import { enqueueError } from '../../../lib/util/snackbar'
+import type { PartialUpdate } from '../../../lib/types'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import type { Record, RecordQuery } from '../../../models/Record'

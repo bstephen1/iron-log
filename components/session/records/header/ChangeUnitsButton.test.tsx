@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '../../../../lib/util/test/rtl'
+import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import ChangeUnitsButton from './ChangeUnitsButton'
 

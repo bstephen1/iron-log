@@ -6,8 +6,8 @@ import { useParams } from 'next/navigation'
 import type { Session } from 'next-auth'
 import { type ReactElement, Suspense } from 'react'
 import { vi } from 'vitest'
-import Layout from '../../../components/Layout'
-import { devUserId } from '../../frontend/constants'
+import Layout from '../../components/Layout'
+import { devUserId } from '../frontend/constants'
 
 // This file overwrites @testing-library's render (RTL - React Testing Library)
 // and wraps it with components that need to be set up for every test.

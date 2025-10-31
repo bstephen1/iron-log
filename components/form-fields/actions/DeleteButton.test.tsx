@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { render, screen, waitFor, within } from '../../../lib/util/test/rtl'
+import { render, screen, waitFor, within } from '../../../lib/test/rtl'
 import DeleteButton from './DeleteButton'
 
 const mockDelete = vi.fn()
