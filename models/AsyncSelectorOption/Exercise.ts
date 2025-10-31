@@ -1,4 +1,4 @@
-import { generateId } from '../../lib/util'
+import { generateId } from '../../lib/util/id'
 import type { Attributes } from '../Attributes'
 import type { DisplayFields } from '../DisplayFields'
 import type { Note } from '../Note'

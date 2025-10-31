@@ -1,4 +1,4 @@
-import { generateId } from '../lib/util'
+import { generateId } from '../lib/util/id'
 
 export interface Note {
   _id: string

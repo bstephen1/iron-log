@@ -1,7 +1,7 @@
 import { expect, it, vi } from 'vitest'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { render, screen } from '../../../../lib/testUtils'
-import { generateId } from '../../../../lib/util'
+import { generateId } from '../../../../lib/util/id'
 import type { Set } from '../../../../models/Set'
 import AddSetButton from './AddSetButton'
 

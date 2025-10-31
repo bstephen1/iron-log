@@ -1,5 +1,5 @@
 import { MongoClient, type W } from 'mongodb'
-import { generateId } from '../../lib/util'
+import { generateId } from '../../lib/util/id'
 
 // pkFactory overwrites the default mongo _id generation
 const options = { w: 'majority' as W, pkFactory: { createPk: generateId } }

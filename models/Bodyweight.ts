@@ -1,4 +1,4 @@
-import { generateId } from '../lib/util'
+import { generateId } from '../lib/util/id'
 import type FetchOptions from './DateRangeQuery'
 
 /** A weigh-in can be one of two types:

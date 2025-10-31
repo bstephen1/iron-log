@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../lib/frontend/constants'
-import { generateId, removeUndefinedKeys } from '../lib/util'
+import { removeUndefinedKeys } from '../lib/util'
+import { generateId } from '../lib/util/id'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
 import type { Exercise } from './AsyncSelectorOption/Exercise'
 import type FetchOptions from './DateRangeQuery'
