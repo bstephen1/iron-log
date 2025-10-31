@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 import { Swiper } from 'swiper/react'
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../../../../lib/testUtils'
+import { render, screen } from '../../../../lib/util/test/rtl'
 import { createExercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import RecordCardHeader from './RecordCardHeader'

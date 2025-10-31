@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../../../lib/testUtils'
+import { render, screen } from '../../../lib/util/test/rtl'
 import TagSelect from './TagSelect'
 
 const mockhandleUpdate = vi.fn()

@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../../lib/testUtils'
+import { render, screen } from '../../lib/util/test/rtl'
 import ComboBoxField from './ComboBoxField'
 
 const mockHandleChange = vi.fn()

@@ -6,11 +6,11 @@ import { useParams } from 'next/navigation'
 import type { Session } from 'next-auth'
 import { type ReactElement, Suspense } from 'react'
 import { vi } from 'vitest'
-import Layout from '../components/Layout'
-import { devUserId } from './frontend/constants'
+import Layout from '../../../components/Layout'
+import { devUserId } from '../../frontend/constants'
 
-// This file overwrites @testing-library's render and wraps it with components that
-// need to be set up for every test.
+// This file overwrites @testing-library's render (RTL - React Testing Library)
+// and wraps it with components that need to be set up for every test.
 
 /** Custom render implementation that wraps the element with necessary layout components.
  *  Also returns a user object to remove the need to setup a userEvent.

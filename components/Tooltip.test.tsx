@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button'
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/util/test/rtl'
 import Tooltip from './Tooltip'
 
 it('provides accessible tooltip label', () => {

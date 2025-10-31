@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/util/test/rtl'
 import TransitionIconButton from './TransitionIconButton'
 
 it('is visible', () => {

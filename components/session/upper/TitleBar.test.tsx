@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation'
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../../../lib/testUtils'
+import { render, screen } from '../../../lib/util/test/rtl'
 import TitleBar from './TitleBar'
 
 it('updates on date change', async () => {

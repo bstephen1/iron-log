@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../../../lib/testUtils'
+import { render, screen } from '../../../lib/util/test/rtl'
 import { createNote } from '../../../models/Note'
 import NotesListItem from './NotesListItem'
 

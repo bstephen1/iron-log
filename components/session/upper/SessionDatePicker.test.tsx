@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { expect, it, vi } from 'vitest'
 import { fetchSessionLogs } from '../../../lib/backend/mongoService'
-import { render, screen } from '../../../lib/testUtils'
+import { render, screen } from '../../../lib/util/test/rtl'
 import { createSessionLog } from '../../../models/SessionLog'
 import SessionDatePicker from './SessionDatePicker'
 

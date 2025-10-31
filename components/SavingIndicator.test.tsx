@@ -1,6 +1,6 @@
 import { useIsMutating } from '@tanstack/react-query'
 import { expect, it, vi } from 'vitest'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/util/test/rtl'
 import SavingIndicator from './SavingIndicator'
 
 vi.mock('@tanstack/react-query')
