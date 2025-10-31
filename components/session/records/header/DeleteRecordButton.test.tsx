@@ -1,7 +1,7 @@
 import { Swiper } from 'swiper/react'
 import { expect, it, vi } from 'vitest'
 import { deleteRecord } from '../../../../lib/backend/mongoService'
-import { render, screen } from '../../../../lib/testUtils'
+import { render, screen } from '../../../../lib/test/rtl'
 import DeleteRecordButton from './DeleteRecordButton'
 
 it('deletes', async () => {

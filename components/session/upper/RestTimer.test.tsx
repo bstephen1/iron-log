@@ -1,6 +1,6 @@
 import dayjs, { type ManipulateType } from 'dayjs'
 import { afterAll, beforeAll, beforeEach, expect, it, vi } from 'vitest'
-import { act, render, screen } from '../../../lib/testUtils'
+import { act, render, screen } from '../../../lib/test/rtl'
 import RestTimer from './RestTimer'
 
 const initialTime = dayjs('2020-01-01T10:00:00')

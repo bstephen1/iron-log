@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
-import { render, screen } from '../../../../lib/testUtils'
+import { render, screen } from '../../../../lib/test/rtl'
 import DeleteSetButton from './DeleteSetButton'
 
 it('deletes', async () => {

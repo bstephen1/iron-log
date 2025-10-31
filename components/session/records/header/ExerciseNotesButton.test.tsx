@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '../../../../lib/testUtils'
+import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { createNote } from '../../../../models/Note'
 import ExerciseNotesButton from './ExerciseNotesButton'
 

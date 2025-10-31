@@ -14,7 +14,7 @@ import {
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/frontend/util'
+import { enqueueError } from '../../lib/frontend/snackbar'
 import { createRecord } from '../../models/Record'
 import SessionDatePicker from './upper/SessionDatePicker'
 

@@ -13,7 +13,7 @@ import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import type { PartialUpdate } from '../../../lib/util'
+import type { PartialUpdate } from '../../../lib/types'
 import {
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,

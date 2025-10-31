@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import { type Bodyweight, createBodyweight } from '../../models/Bodyweight'
 import { createRecord } from '../../models/Record'
-import { renderHook } from '../testUtils'
+import { renderHook } from '../test/rtl'
 import useExtraWeight from './useExtraWeight'
 
 const exercise = createExercise('test exercise', {

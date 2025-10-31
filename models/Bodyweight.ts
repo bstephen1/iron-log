@@ -1,5 +1,5 @@
-import { generateId } from '../lib/util'
-import type FetchOptions from './DateRangeQuery'
+import { generateId } from '../lib/id'
+import type FetchOptions from './FetchOptions'
 
 /** A weigh-in can be one of two types:
  * - Official: Used for tracking bodyweight over time. Ideally measured at the same time of day under similar conditions.

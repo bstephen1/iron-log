@@ -3,7 +3,7 @@ import type { InputBaseComponentProps } from '@mui/material/InputBase'
 import type { SelectProps } from '@mui/material/Select'
 import type { ComponentProps } from 'react'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import type { PartialUpdate } from '../../../../lib/util'
+import type { PartialUpdate } from '../../../../lib/types'
 import type { Set } from '../../../../models/Set'
 import SelectFieldAutosave from '../../../form-fields/SelectFieldAutosave'
 

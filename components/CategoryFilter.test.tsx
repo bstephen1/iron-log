@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { expect, it } from 'vitest'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/test/rtl'
 import CategoryFilter from './CategoryFilter'
 
 const TestComponent = (

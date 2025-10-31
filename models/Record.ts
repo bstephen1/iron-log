@@ -1,9 +1,10 @@
 import dayjs from 'dayjs'
 import { DATE_FORMAT } from '../lib/frontend/constants'
-import { generateId, removeUndefinedKeys } from '../lib/util'
+import { generateId } from '../lib/id'
+import { removeUndefinedKeys } from '../lib/util/object'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
 import type { Exercise } from './AsyncSelectorOption/Exercise'
-import type FetchOptions from './DateRangeQuery'
+import type FetchOptions from './FetchOptions'
 import type { Note } from './Note'
 import { DEFAULT_SET_TYPE, type Set, type SetType } from './Set'
 

@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import { fetchRecords } from '../../../lib/backend/mongoService'
-import { render, screen, waitFor } from '../../../lib/testUtils'
+import { render, screen, waitFor } from '../../../lib/test/rtl'
 import { createRecord } from '../../../models/Record'
 import UsageButton from './UsageButton'
 

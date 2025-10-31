@@ -7,10 +7,9 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
-import { arrayToIndex } from '../../lib/util'
 import type { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import type { BodyweightQuery } from '../../models/Bodyweight'
-import type FetchOptions from '../../models//DateRangeQuery'
+import type FetchOptions from '../../models/FetchOptions'
 import {
   buildRecordFilter,
   isRecord,
@@ -28,6 +27,7 @@ import {
 } from '../backend/mongoService'
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
+import { arrayToIndex } from './Index'
 
 type OptimisticProps<
   TQueryFnData = unknown,

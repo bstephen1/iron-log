@@ -2,7 +2,7 @@ import Input, { type InputProps } from '@mui/material/Input'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import type { ChangeEvent, InputHTMLAttributes } from 'react'
 import { useIMask } from 'react-imask'
-import { doNothing } from '../../lib/util'
+import { doNothing } from '../../lib/frontend/constants'
 import useField from './useField'
 
 const numericInput: InputHTMLAttributes<HTMLInputElement> = {

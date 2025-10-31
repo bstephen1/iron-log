@@ -4,7 +4,7 @@ import type { Category } from '../../models/AsyncSelectorOption/Category'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import type { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
-import type FetchOptions from '../../models//DateRangeQuery'
+import type FetchOptions from '../../models/FetchOptions'
 import type { Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
 import {

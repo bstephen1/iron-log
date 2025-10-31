@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/test/rtl'
 import AsyncAutocomplete from './AsyncAutocomplete'
 
 it('shows loading only when menu is open', async () => {

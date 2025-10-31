@@ -1,6 +1,6 @@
 import { enqueueSnackbar, SnackbarProvider } from 'notistack'
 import { expect, it } from 'vitest'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/test/rtl'
 import AppSnackbar from './AppSnackbar'
 
 const renderSnackbarAndExpectVisible = async (

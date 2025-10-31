@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { expect, it, vi } from 'vitest'
 import { guestUserName } from '../lib/frontend/constants'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/test/rtl'
 import Home from './page'
 
 it('renders as non-guest user', async () => {

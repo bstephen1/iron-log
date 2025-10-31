@@ -4,7 +4,7 @@ import {
   guestUserName,
   sampleLogDate,
 } from '../lib/frontend/constants'
-import { render, screen } from '../lib/testUtils'
+import { render, screen } from '../lib/test/rtl'
 import NavbarDrawer from './NavbarDrawer'
 
 const mocks = vi.hoisted(() => ({

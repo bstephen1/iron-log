@@ -3,7 +3,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
-import { capitalize } from '../../lib/util'
+import { capitalize } from '../../lib/util/string'
 import type { Attributes } from '../../models/Attributes'
 import FormDivider from '../forms/FormDivider'
 

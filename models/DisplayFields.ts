@@ -1,4 +1,4 @@
-import { capitalize } from '../lib/util'
+import { capitalize } from '../lib/util/string'
 import { DB_UNITS, type Units } from './Units'
 
 export interface VisibleField {

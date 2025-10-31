@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import type { PartialUpdate } from '../../../../lib/util'
+import type { PartialUpdate } from '../../../../lib/types'
 import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import {
   type DisplayFields,

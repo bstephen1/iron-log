@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { render, screen } from '../../../lib/testUtils'
+import { render, screen } from '../../../lib/test/rtl'
 import TagChips from './TagChips'
 
 it('renders single tag', () => {

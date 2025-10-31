@@ -5,7 +5,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { DATE_FORMAT } from '../../lib/frontend/constants'
-import type { PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/types'
 import type { RecordQuery } from '../../models/Record'
 
 const today = dayjs()

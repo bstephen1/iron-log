@@ -6,7 +6,7 @@ import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 import type RecordDisplay from '../../components/history/RecordDisplay'
 import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
-import type { PartialUpdate } from '../../lib/util'
+import type { PartialUpdate } from '../../lib/types'
 
 export interface GraphOptions {
   showBodyweight?: boolean
