@@ -69,6 +69,12 @@ vi.mock('./lib/backend/user', () => ({
   getUserId: vi.fn(async () => new ObjectId(devUserId)),
 }))
 vi.mock('next/navigation')
+vi.mock('react-resize-detector', () => ({
+  useResizeDetector: () => ({
+    width: undefined,
+    ref: null,
+  }),
+}))
 
 // configure testing-library options
 configure({

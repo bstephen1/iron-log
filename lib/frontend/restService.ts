@@ -28,6 +28,7 @@ import {
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
 import { arrayToIndex } from './Index'
+import { enqueueError } from './snackbar'
 
 type OptimisticProps<
   TQueryFnData = unknown,
@@ -66,9 +67,10 @@ const useOptimisticMutation = <
         queryKey,
       })
     },
-    onError: async (_err, _variables) => {
+    onError: async (e, _variables) => {
       // rather than saving a snapshot and rolling back, we simply invalidate and refetch
       await queryClient.invalidateQueries({ queryKey })
+      enqueueError('Could not save changes. Check console for details.', e)
     },
     onSettled: () => {
       return queryClient.invalidateQueries({

@@ -13,7 +13,6 @@ import {
   useExercises,
   useUpdateMutation,
 } from '../../../lib/frontend/restService'
-import { enqueueError } from '../../../lib/frontend/snackbar'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
@@ -100,17 +99,7 @@ export default memo(function RecordCard({
 
   const mutateRecordFields: PartialUpdate<Record> = useCallback(
     (updates) => {
-      updateRecordMutate(
-        { _id: record._id, updates },
-        {
-          onError: (e) => {
-            enqueueError(
-              'Could not update record to a corrupt state. Changes were not saved.',
-              e
-            )
-          },
-        }
-      )
+      updateRecordMutate({ _id: record._id, updates })
     },
     [record._id, updateRecordMutate]
   )
@@ -152,6 +141,7 @@ export default memo(function RecordCard({
             showRemaining
             {...{ handleChange: mutateRecordFields, setType }}
           />
+          {/* NOTE: sets do not use mutateRecordFields from the parent */}
           <RenderSets
             {...{
               mutateExerciseFields,
