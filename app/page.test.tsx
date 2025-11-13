@@ -1,7 +1,8 @@
 import { getServerSession } from 'next-auth'
 import { expect, it, vi } from 'vitest'
-import { guestUserName } from '../lib/frontend/constants'
-import { render, screen } from '../lib/test/rtl'
+import { devUserId, guestUserName } from '../lib/frontend/constants'
+import { baseRender, render, screen } from '../lib/test/rtl'
+import RootLayout from './layout'
 import Home from './page'
 
 it('renders as non-guest user', async () => {
@@ -19,4 +20,20 @@ it('renders as guest user', async () => {
   render(await Home())
 
   expect(screen.getByText(/guest/)).toBeVisible()
+})
+
+it('renders with full root layout', async () => {
+  vi.mocked(getServerSession).mockResolvedValue({
+    user: { name: devUserId },
+  })
+  // mock out SessionProvider fetch to /api/auth/session
+  vi.spyOn(global, 'fetch').mockResolvedValue(new Response(JSON.stringify({})))
+
+  baseRender(await RootLayout({ children: await Home() }), {
+    // By default, baseRender() wraps the given component in <div>. This is
+    // invalid here since the root layout contains a top level <html> tag.
+    container: document,
+  })
+
+  expect(screen.getByText('Iron Log')).toBeVisible()
 })
