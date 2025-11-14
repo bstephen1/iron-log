@@ -18,9 +18,9 @@ import HistoryCard, {
 } from './HistoryCard'
 import 'swiper/css/pagination'
 import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
-import NavigationBar from '../../../components/slider/NavigationBar'
 import type { DisplayFields } from '../../../models/DisplayFields'
 import type { RecordQuery } from '../../../models/Record'
+import NavigationBar from '../../swiper/NavigationBar'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
@@ -55,8 +55,7 @@ export default memo(function HistoryCardsSwiper({
   swiperRef,
   _id,
 }: Props) {
-  // isPending will be true forever if useQuery is not enabled
-  const { data: historyRecords, isLoading } = useRecords(query, !!query)
+  const { data: historyRecords, isLoading } = useRecords(query)
 
   // each record's history needs a unique className
   const paginationClassName = `pagination-history${_id ? `-${_id}` : ''}`

@@ -57,6 +57,7 @@ export default function NavigationArrow({
         className={className}
         color="primary"
         disabled={disabled}
+        aria-label={`${direction} slide`}
       >
         {direction === 'prev' ? (
           <ArrowBackIosNewIcon />

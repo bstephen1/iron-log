@@ -23,11 +23,8 @@ export default defineConfig({
       // json reporters are needed for github action summary report
       reporter: ['text-summary', 'html', 'json-summary', 'json'],
       include: ['components', 'lib', 'app', 'models'],
-      // thresholdAutoUpdate: true,
-      // branches: 77.48,
-      // functions: 45.13,
-      // lines: 31.5,
-      // statements: 31.5,
+      // swiper components can't really be tested in jsdom. Should use e2e tests instead.
+      exclude: ['**/*Swiper*.tsx', '**/swiper/**'],
     },
   },
 })
