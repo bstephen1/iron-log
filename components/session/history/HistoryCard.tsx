@@ -27,14 +27,12 @@ interface Props {
    */
   displayFields?: DisplayFields
   record: Record
-  isQuickRender?: boolean
   actions?: HistoryAction[]
   content?: HistoryContent[]
   cardProps?: CardProps
 }
 export default memo(function HistoryCard({
   record,
-  isQuickRender,
   actions,
   content,
   cardProps,
@@ -106,8 +104,7 @@ export default memo(function HistoryCard({
     ),
   }
 
-  // todo: remove quickrender stuff?
-  return isQuickRender ? null : (
+  return (
     <Card
       elevation={0}
       {...cardProps}

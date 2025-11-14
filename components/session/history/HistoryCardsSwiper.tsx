@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import type { CardProps } from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { memo, type Ref, useEffect, useState } from 'react'
+import { memo, type Ref } from 'react'
 import isEqual from 'react-fast-compare'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import {
@@ -55,8 +55,6 @@ export default memo(function HistoryCardsSwiper({
   swiperRef,
   _id,
 }: Props) {
-  const [isFirstRender, setIsFirstRender] = useState(true)
-
   // isPending will be true forever if useQuery is not enabled
   const { data: historyRecords, isLoading } = useRecords(query, !!query)
 
@@ -64,10 +62,6 @@ export default memo(function HistoryCardsSwiper({
   const paginationClassName = `pagination-history${_id ? `-${_id}` : ''}`
   const navPrevClassName = `nav-prev-history-${_id ? `-${_id}` : ''}`
   const navNextClassName = `nav-next-history-${_id ? `-${_id}` : ''}`
-
-  useEffect(() => {
-    setIsFirstRender(false)
-  }, [])
 
   if (isLoading || !historyRecords) {
     return (
@@ -138,9 +132,6 @@ export default memo(function HistoryCardsSwiper({
               >
                 <HistoryCard
                   record={historyRecord}
-                  // only render first slide initially
-                  // todo: potentially use virtual swiper instead. Note autoheight doesn't work.
-                  isQuickRender={!!(isFirstRender && i)}
                   {...{ actions, content, displayFields, cardProps }}
                 />
               </SwiperSlide>
