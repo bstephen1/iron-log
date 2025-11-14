@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles'
 import { useEffect, useRef, useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/pagination'
+import { useSearchParams } from 'next/navigation'
 import { Keyboard, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, type SwiperRef, SwiperSlide } from 'swiper/react'
 import NavigationBar from '../../components/slider/NavigationBar'
@@ -20,6 +21,7 @@ interface Props {
 export default function SessionSwiper({ date }: Props) {
   const theme = useTheme()
   const { data: sessionLog } = useSessionLog(date)
+  const searchParams = useSearchParams()
   const records = useRecords({ date })
   const [isFirstRender, setIsFirstRender] = useState(true)
   const swiperElRef = useRef<SwiperRef>(null)
@@ -30,7 +32,15 @@ export default function SessionSwiper({ date }: Props) {
 
   useEffect(() => {
     setIsFirstRender(false)
-  }, [])
+    // Updating the searchParam on every slide change is too laggy.
+    // Record id is used over slide index so we only need to know the record,
+    // not the whole sessionLog.
+    const initialRecord = searchParams.get('record')
+    if (initialRecord) {
+      const index = sessionLog?.records.indexOf(initialRecord) ?? 0
+      swiperElRef.current?.swiper.slideTo(index)
+    }
+  }, [searchParams.get, sessionLog?.records.indexOf])
 
   // todo: add blank space or something under the swiper. On the longest record
   // if you swap between history it scrolls up when a small history is selected, but won't scroll back down
