@@ -70,7 +70,7 @@ const useOptimisticMutation = <
     onError: async (e, _variables) => {
       // rather than saving a snapshot and rolling back, we simply invalidate and refetch
       await queryClient.invalidateQueries({ queryKey })
-      enqueueError('Could not save changes. Check console for details.', e)
+      enqueueError('Something went wrong! Changes were not saved.', e)
     },
     onSettled: () => {
       return queryClient.invalidateQueries({

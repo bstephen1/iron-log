@@ -10,14 +10,6 @@ import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../../models/Record'
 import RecordCard from './RecordCard'
 
-vi.mock('swiper/react', () => ({
-  useSwiper: () => ({
-    update: vi.fn(),
-    slideTo: vi.fn(),
-    slides: ['one', 'add record'],
-  }),
-}))
-
 const exercise = createExercise('finger curls')
 
 it('mutates', async () => {
@@ -55,5 +47,5 @@ it('displays error when update fails', async () => {
 
   expect(updateRecordFields).toHaveBeenCalled()
 
-  await screen.findByText(/Could not save/)
+  await screen.findByText(/not saved/)
 })

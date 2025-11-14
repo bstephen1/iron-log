@@ -21,8 +21,6 @@ export default function AddRecordCard() {
     addFn: addRecord,
   })
   const handleAdd = async () => {
-    if (!exercise) return
-
     addRecordMutate(createRecord(date, { exercise }))
 
     swiper.update()
@@ -47,7 +45,7 @@ export default function AddRecordCard() {
           onClick={handleAdd}
           disabled={!exercise}
         >
-          Add Record
+          Add record
         </Button>
       </Stack>
     </Paper>

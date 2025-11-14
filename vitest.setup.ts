@@ -75,6 +75,19 @@ vi.mock('react-resize-detector', () => ({
     ref: null,
   }),
 }))
+vi.mock('swiper/react', async () => {
+  const actual = await vi.importActual('swiper/react')
+
+  return {
+    ...actual,
+    useSwiper: () => ({
+      update: vi.fn(),
+      slideTo: vi.fn(),
+      slidePrev: vi.fn(),
+      slides: [],
+    }),
+  }
+})
 
 // configure testing-library options
 configure({
