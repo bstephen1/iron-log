@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
 import { useState } from 'react'
-import { DATE_FORMAT } from '../../lib/frontend/constants'
+import { DATE_FORMAT, DATE_PICKER_FORMAT } from '../../lib/frontend/constants'
 import type { PartialUpdate } from '../../lib/types'
 import type { RecordQuery } from '../../models/Record'
 
@@ -81,12 +81,13 @@ function QueryDatePicker({ date, upDate, label }: QueryDatePickerProps) {
       label={label}
       showDaysOutsideCurrentMonth
       value={dayjs(date)}
+      format={DATE_PICKER_FORMAT}
       onChange={(newDay) => {
-        // Only update the query when the value is valid, or null.
+        // Only update the query when the value is valid.
         // Otherwise it immediately updates the query to undefined which triggers
         // a rerender and resets DatePicker to dayjs(undefined), which returns the current date.
-        if (!newDay || newDay.isValid()) {
-          upDate(newDay ? newDay.format(DATE_FORMAT) : undefined)
+        if (newDay?.isValid()) {
+          upDate(newDay.format(DATE_FORMAT))
         }
       }}
       slotProps={{ textField: { fullWidth: true } }}
