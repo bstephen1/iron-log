@@ -4,6 +4,7 @@ import { type Dispatch, type SetStateAction, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
+import { useExercises } from '../../lib/frontend/restService'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
 import type { PartialUpdate } from '../../lib/types'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
@@ -17,10 +18,12 @@ interface Props {
   setQuery: Dispatch<SetStateAction<RecordQuery>>
 }
 export default function QueryCard({ query, setQuery }: Props) {
-  // todo: this should use exercise from query
-  const [exercise, setExercise] = useState<Exercise | null>(null)
+  const { data: exercises } = useExercises()
+  const queryExercise =
+    exercises.find((exercise) => exercise.name === query.exercise) ?? null
+  const [exercise, setExercise] = useState<Exercise | null>(queryExercise)
   // reset to this exercise if reset button is clicked
-  const [initialExercise, setInitialExercise] = useState(exercise)
+  const [initialExercise, setInitialExercise] = useState(queryExercise)
   const [unsavedQuery, setUnsavedQuery] = useState<RecordQuery>(query)
   const displayFields = useDisplayFields(exercise)
 
