@@ -88,6 +88,9 @@ vi.mock('swiper/react', async () => {
     }),
   }
 })
+vi.mock('nuqs', () => ({
+  useQueryState: vi.fn(() => [null, vi.fn()]),
+}))
 
 // configure testing-library options
 configure({

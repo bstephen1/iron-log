@@ -16,7 +16,7 @@ import {
   useRecords,
   useUpdateMutation,
 } from '../../lib/frontend/restService'
-import { enqueueError, enqueueSuccess } from '../../lib/frontend/snackbar'
+import { enqueueSuccess } from '../../lib/frontend/snackbar'
 import {
   createExercise,
   type Exercise,
@@ -77,9 +77,6 @@ export default function ExerciseForm({ exercise }: Props) {
     addExerciseMutate(newExercise, {
       onSuccess: () => {
         enqueueSuccess(`Duplicated as "${newName}"`)
-      },
-      onError: (e) => {
-        enqueueError(`The exercise is corrupt and can't be duplicated.`, e)
       },
     })
     await setUrlExercise(newExercise._id)

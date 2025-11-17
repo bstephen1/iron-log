@@ -1,7 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createCategory } from '../../models/AsyncSelectorOption/Category'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../../models/AsyncSelectorOption/Modifier'
 import { createBodyweight } from '../../models/Bodyweight'
@@ -253,7 +252,7 @@ describe('Modifier', () => {
 
 describe('Category', () => {
   it('performs crud operations', async () => {
-    const category = createCategory('biceps')
+    const category = createModifier('biceps')
 
     await addCategory(category)
     expect(await fetchCategories()).toHaveLength(1)
@@ -268,7 +267,7 @@ describe('Category', () => {
   })
 
   it('updates exercises and records on name change', async () => {
-    const category = await addCategory(createCategory('belt'))
+    const category = await addCategory(createModifier('belt'))
     const exercise = await addExercise(
       createExercise('squats', {
         categories: [category.name],
@@ -294,7 +293,7 @@ describe('Category', () => {
   })
 
   it('prevents deleting category used in an exercise', async () => {
-    const category = await addCategory(createCategory('belt'))
+    const category = await addCategory(createModifier('belt'))
     await addExercise(createExercise('squats', { categories: [category.name] }))
 
     await expect(deleteCategory(category._id)).rejects.toThrow()
