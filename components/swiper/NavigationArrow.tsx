@@ -1,4 +1,4 @@
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIos'
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
@@ -45,21 +45,19 @@ export default function NavigationArrow({
     handleDisabledCheck(swiper)
   })
 
-  // todo: nav button ripples are elongated
   return (
-    <Box
-      display={isLocked || isHidden ? 'none' : 'flex'}
-      width="auto"
-      alignItems="center"
-    >
+    <Box display={isLocked || isHidden ? 'none' : 'flex'} alignItems="center">
       <IconButton
-        sx={{ display: isDesktop ? 'block' : 'none' }}
+        sx={{
+          display: isDesktop ? 'flex' : 'none',
+        }}
         className={className}
         color="primary"
         disabled={disabled}
         aria-label={`${direction} slide`}
       >
         {direction === 'prev' ? (
+          // ArrowBackIosNew fixes the original which is not centered
           <ArrowBackIosNewIcon />
         ) : (
           <ArrowForwardIosIcon />
