@@ -10,8 +10,6 @@ const blink = keyframes`
   50% { opacity: 0.1; }
 `
 
-// todo: could add a "pending" state for debounced saves to show data has not yet
-// attempted to save
 export default function SavingIndicator() {
   const currentMutations = useIsMutating()
   const [showSaving] = useLocalStorageState(LOCAL_STORAGE.showSaving, {

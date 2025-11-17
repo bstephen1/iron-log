@@ -60,8 +60,6 @@ export default function useField<T = string>({
     }
   }
 
-  // todo: there's some weird behavior right after validating an error (debounce stops working)
-
   // initial we tracked isTouched but that behavior isn't fluid with an autosaving field.
   // The only benefit of onBlur is that we can immediately submit rather than wait for the debounce
   const onBlur = () => {

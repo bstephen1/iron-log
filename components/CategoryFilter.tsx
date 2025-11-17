@@ -36,9 +36,6 @@ export default function CategoryFilter({
     setAnchorEl(null)
   }
 
-  // todo: onClose without selection: don't focus ExerciseSelector input
-  // todo: use the TagSelect from notes list? add category to db?
-
   return (
     <Box sx={sx}>
       <Tooltip title="Select category">
@@ -64,6 +61,15 @@ export default function CategoryFilter({
           horizontal: 'left',
         }}
       >
+        <MenuItem
+          value=""
+          onClick={() => {
+            setCategory(null)
+            handleClose()
+          }}
+        >
+          <em>No category</em>
+        </MenuItem>
         {!!categories &&
           categories.map((newCategory) => (
             <MenuItem

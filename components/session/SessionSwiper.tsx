@@ -42,9 +42,6 @@ export default function SessionSwiper({ date }: Props) {
     }
   }, [searchParams.get, sessionLog?.records.indexOf])
 
-  // todo: add blank space or something under the swiper. On the longest record
-  // if you swap between history it scrolls up when a small history is selected, but won't scroll back down
-  // when a bigger one appears.
   return (
     // Note: after making code changes to the swiper component the page needs to be reloaded
     <Swiper

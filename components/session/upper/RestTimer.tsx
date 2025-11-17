@@ -18,9 +18,6 @@ const formatTime = (totalSeconds: number) => {
   const hours = `0${Math.floor(totalSeconds / 3600)}`.slice(-2)
   const minutes = `0${Math.floor((totalSeconds / 60) % 60)}`.slice(-2)
   const seconds = `0${Math.floor(totalSeconds % 60)}`.slice(-2)
-  // tracking ms seems like overkill.
-  // const totalMs = totalSeconds * 1000
-  // const ms = ('0' + (totalMs - Math.floor(totalMs))).slice(-2)
 
   return `${hours}:${minutes}:${seconds}`
 }
@@ -101,16 +98,6 @@ function clockReducer(state: State, action: Action): State {
   }
 }
 
-// todo: blink on pause?
-// const blink = keyframes`
-//   from { opacity: 0; }
-//   to { opacity: 1; }
-// `
-
-// const BlinkedBox = styled('div')({
-//   animation: `${blink} 1s linear infinite`,
-// })
-
 export default function RestTimer() {
   const [state, dispatch] = useReducer(clockReducer, initialTimerState)
   const { isRunning, displayValue, enabled, isFinished } = state
@@ -158,7 +145,6 @@ export default function RestTimer() {
 
   return (
     <Stack justifyContent="center">
-      {/* todo: better animations. mui can't really handle stuff that exiting/entering the dom. */}
       {!enabled ? (
         // extra box so button isn't full width
         <Box display="flex" justifyContent="center" pb={2}>
@@ -186,11 +172,7 @@ export default function RestTimer() {
           </Grow>
 
           <Grow in={enabled}>
-            <Typography
-              variant="h3"
-              textAlign="center"
-              // component={isRunning ? Box : BlinkedBox}
-            >
+            <Typography variant="h3" textAlign="center">
               {formatDeltaTime(displayValue)}
             </Typography>
           </Grow>
