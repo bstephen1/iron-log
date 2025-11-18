@@ -3,7 +3,13 @@ import { green, grey } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
 import dayjs from 'dayjs'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  type ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useResizeDetector } from 'react-resize-detector'
 import {
   Brush,
@@ -11,8 +17,7 @@ import {
   Legend,
   Line,
   LineChart,
-  ResponsiveContainer,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
 } from 'recharts'
@@ -39,6 +44,18 @@ interface GraphData {
   value?: number
   bodyweight?: number
 }
+
+/** LineChart props only applied in test mode for jsdom tests,
+ *  which does not support window resizing properties
+ */
+const testLineChartProps: ComponentProps<typeof LineChart> =
+  process.env.NODE_ENV === 'test'
+    ? {
+        responsive: false,
+        height: 800,
+        width: 800,
+      }
+    : {}
 
 const emptyBwArray: Bodyweight[] = []
 
@@ -165,13 +182,11 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
   const [windowHeight, setWindowHeight] = useState(0)
   useEffect(() => {
     setWindowHeight(window.innerHeight)
-    const handleWindowResize = () => {
-      setWindowHeight(window.innerHeight)
-    }
+    const handleWindowResize = () => setWindowHeight(window.innerHeight)
 
     window.addEventListener('resize', handleWindowResize)
     // supposedly removing eventListener on return prevents memory leaks
-    return window.removeEventListener('resize', handleWindowResize)
+    return () => window.removeEventListener('resize', handleWindowResize)
   }, [])
 
   const handleGraphClick: CategoricalChartFunc = ({
@@ -305,7 +320,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
   ])
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={3}>
       <GraphOptionsForm
         {...{
           graphOptions,
@@ -314,121 +329,116 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
           updateRecordDisplay,
         }}
       />
+      <Box ref={graphContainerRef} width="100%">
+        <LineChart
+          margin={{
+            top: 20,
+            right: 5,
+            left: 15,
+            bottom: 10,
+          }}
+          // redraw chart when window size changes
+          responsive
+          // todo: scroll to card
+          onClick={handleGraphClick}
+          data={graphData}
+          // needs a height but not a width apparently
+          height={windowHeight}
+          {...testLineChartProps}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="unixDate"
+            type="number"
+            // always use monthly to keep it short and not cut off
+            tickFormatter={(value: number) =>
+              convertUnixToDate(value, 'monthly')
+            }
+            domain={['auto', 'auto']}
+            angle={-25}
+            scale="time"
+            textAnchor="end"
+            tickMargin={10}
+            height={80}
+          />
+          {showBodyweight && (
+            <>
+              <YAxis
+                yAxisId="bodyweight"
+                name="bodyweight"
+                dataKey="bodyweight"
+                type="number"
+                unit=" kg"
+                orientation={query.exercise ? 'right' : 'left'}
+                stroke={bodyweightColor}
+                domain={['auto', 'auto']}
+              />
+              <Line
+                yAxisId="bodyweight"
+                name="bodyweight"
+                dataKey="bodyweight"
+                type={lineType}
+                stroke={bodyweightColor}
+                dot={false}
+              />
+            </>
+          )}
+          {query.exercise && (
+            <>
+              <YAxis
+                yAxisId="exercise"
+                name={recordDisplay.field}
+                dataKey="value"
+                type="number"
+                // todo: get units from exercise
+                // note the whitespace!
+                unit={` ${DEFAULT_DISPLAY_FIELDS.units[recordDisplay.field]}`}
+                orientation="left"
+                // line color
+                stroke={exerciseColor}
+                domain={['auto', 'auto']}
+              />
 
-      <Box height="100%" flex="1 1 auto"></Box>
-      <Box
-        ref={graphContainerRef}
-        width="100%"
-        height="100%"
-        justifyContent="center"
-      >
-        {/* need to specify a height or the grid and container will both defer to each other and result in zero height */}
-        <ResponsiveContainer height={windowHeight}>
-          <LineChart
-            margin={{
-              top: 20,
-              right: 5,
-              left: 15,
-              bottom: 10,
-            }}
-            // todo: scroll to card
-            onClick={handleGraphClick}
-            data={graphData}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="unixDate"
-              type="number"
-              // always use monthly to keep it short and not cut off
-              tickFormatter={(value: number) =>
-                convertUnixToDate(value, 'monthly')
-              }
-              domain={['auto', 'auto']}
-              angle={-25}
-              scale="time"
-              textAnchor="end"
-              tickMargin={10}
-              height={80}
-            />
-            {showBodyweight && (
-              <>
-                <YAxis
-                  yAxisId="bodyweight"
-                  name="bodyweight"
-                  dataKey="bodyweight"
-                  type="number"
-                  unit=" kg"
-                  orientation={query.exercise ? 'right' : 'left'}
-                  stroke={bodyweightColor}
-                  domain={['auto', 'auto']}
-                />
-                <Line
-                  yAxisId="bodyweight"
-                  name="bodyweight"
-                  dataKey="bodyweight"
-                  type={lineType}
-                  stroke={bodyweightColor}
-                  dot={false}
-                />
-              </>
-            )}
-            {query.exercise && (
-              <>
-                <YAxis
-                  yAxisId="exercise"
-                  name={recordDisplay.field}
-                  dataKey="value"
-                  type="number"
-                  // todo: get units from exercise
-                  // note the whitespace!
-                  unit={` ${DEFAULT_DISPLAY_FIELDS.units[recordDisplay.field]}`}
-                  orientation="left"
-                  // line color
-                  stroke={exerciseColor}
-                  domain={['auto', 'auto']}
-                />
-
-                <Line
-                  yAxisId="exercise"
-                  name={query.exercise}
-                  dataKey="value"
-                  stroke={exerciseColor}
-                  type={lineType}
-                  dot={false}
-                />
-              </>
-            )}
-            {/* todo: possible to show weigh-in type in tooltip? */}
-            <Tooltip
-              trigger={isDesktop ? 'hover' : 'click'}
-              labelFormatter={(value) =>
-                convertUnixToDate(value, recordDisplay.grouping)
-              }
-              formatter={(value, name) =>
-                // todo: add unit to RecordDisplay so it is selectzble
-                `${value.toString()} ${
-                  DEFAULT_DISPLAY_FIELDS.units[
-                    name === 'bodyweight' ? 'weight' : recordDisplay.field
-                  ]
-                }`
-              }
-              contentStyle={isDark ? { backgroundColor: grey[800] } : undefined}
-            />
-            <Legend verticalAlign="top" height={30} />
-            <Brush
-              dataKey="unixDate"
-              tickFormatter={(value) =>
-                convertUnixToDate(value, recordDisplay.grouping)
-              }
-              // these doesn't accept percentages...
-              width={graphContainerWidth * 0.6}
-              // could only eyeball this trying to get it centered.
-              x={graphContainerWidth * 0.2}
-              startIndex={getStartIndex(graphData)}
-              {...(isDark ? { fill: grey[900], stroke: '#fff' } : {})}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+              <Line
+                yAxisId="exercise"
+                name={query.exercise}
+                dataKey="value"
+                stroke={exerciseColor}
+                type={lineType}
+                dot={false}
+              />
+            </>
+          )}
+          {/* todo: possible to show weigh-in type in tooltip? */}
+          <RechartsTooltip
+            trigger={isDesktop ? 'hover' : 'click'}
+            labelFormatter={(value) =>
+              convertUnixToDate(value, recordDisplay.grouping)
+            }
+            formatter={(value, name) =>
+              // todo: add unit to RecordDisplay so it is selectzble
+              `${value.toString()} ${
+                DEFAULT_DISPLAY_FIELDS.units[
+                  name === 'bodyweight' ? 'weight' : recordDisplay.field
+                ]
+              }`
+            }
+            contentStyle={isDark ? { backgroundColor: grey[800] } : undefined}
+          />
+          <Legend verticalAlign="top" height={30} />
+          <Brush
+            dataKey="unixDate"
+            tickFormatter={(value) =>
+              convertUnixToDate(value, recordDisplay.grouping)
+            }
+            // these don't accept percentages...
+            width={graphContainerWidth * 0.6}
+            // could only eyeball this trying to get it centered.
+            x={graphContainerWidth * 0.2}
+            startIndex={getStartIndex(graphData)}
+            {...(isDark ? { fill: grey[900], stroke: '#fff' } : {})}
+          />
+        </LineChart>
       </Box>
     </Stack>
   )
