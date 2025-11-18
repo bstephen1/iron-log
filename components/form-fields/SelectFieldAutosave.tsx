@@ -3,7 +3,7 @@ import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import type { ReactNode } from 'react'
 import useField, { type UseFieldProps } from './useField'
 
-interface Props<V, O>
+interface Props<V extends string | undefined | null, O>
   extends Omit<UseFieldProps<V>, 'debounceMilliseconds' | 'autoSubmit'> {
   label: string
   options: O[]
@@ -40,13 +40,6 @@ export default function SelectFieldAutosave<
     // select should submit as soon as a new option is picked
     debounceMilliseconds: 0,
   })
-
-  if (!children && typeof options[0] !== 'string') {
-    console.error(
-      'SelectFieldAutosave was not rendered because it was given non-string options but no children. This component only auto-renders menus for options of type string[]. '
-    )
-    return null
-  }
 
   return (
     <TextField
