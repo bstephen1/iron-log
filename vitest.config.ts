@@ -23,8 +23,15 @@ export default defineConfig({
       // json reporters are needed for github action summary report
       reporter: ['text-summary', 'html', 'json-summary', 'json'],
       include: ['components', 'lib', 'app', 'models'],
-      // swiper components can't really be tested in jsdom. Should use e2e tests instead.
-      exclude: ['**/*Swiper*.tsx', '**/swiper/**'],
+      exclude: [
+        // swiper components can't really be tested in jsdom. Should use e2e tests instead.
+        '**/*Swiper*.tsx',
+        '**/swiper/**',
+        // recharts can't be meaningfully tested in vitest.
+        // jsdom basically can't render svg graphs at all. There's no
+        // way to get any info about the graph state.
+        '**/HistoryGraph.tsx',
+      ],
     },
   },
 })

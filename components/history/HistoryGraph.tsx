@@ -293,7 +293,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
             : undefined
         const bodyweight =
           includeUnofficial && latestBw?.type === 'official'
-            ? latestBw.value + clothingOffset
+            ? latestBw.value + (clothingOffset ?? 0)
             : latestBw?.value
 
         const value = record.sets.reduce(
