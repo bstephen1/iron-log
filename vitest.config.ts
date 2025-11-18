@@ -31,6 +31,19 @@ export default defineConfig({
         // jsdom basically can't render svg graphs at all. There's no
         // way to get any info about the graph state.
         '**/HistoryGraph.tsx',
+        // app router files are mostly scaffolding; should only test if actually needed
+        '**/page.tsx',
+        '**/layout.tsx',
+        '**/auth/**',
+        // behavior is based on queryState; not testable in jsdom
+        '**/app/manage/**',
+        '**/models/TabValue.ts',
+        // nothing to meaningful test
+        '**/getQueryClient.ts',
+        '**/mongoConnect.ts',
+        '**/user.ts',
+        '**/LoadingSpinner.tsx',
+        '**/ManageWelcomeCard.tsx',
       ],
     },
   },
