@@ -1,10 +1,9 @@
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
-import { type Dispatch, type SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
-import { useExercises } from '../../lib/frontend/restService'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
 import type { PartialUpdate } from '../../lib/types'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
@@ -15,15 +14,12 @@ import SetTypeQueryField from './SetTypeQueryField'
 
 interface Props {
   query: RecordQuery
-  setQuery: Dispatch<SetStateAction<RecordQuery>>
+  updateQuery: (newQuery: RecordQuery) => void
 }
-export default function QueryCard({ query, setQuery }: Props) {
-  const { data: exercises } = useExercises()
-  const queryExercise =
-    exercises.find((exercise) => exercise.name === query.exercise) ?? null
-  const [exercise, setExercise] = useState<Exercise | null>(queryExercise)
+export default function QueryForm({ query, updateQuery }: Props) {
+  const [exercise, setExercise] = useState<Exercise | null>(null)
   // reset to this exercise if reset button is clicked
-  const [initialExercise, setInitialExercise] = useState(queryExercise)
+  const [initialExercise, setInitialExercise] = useState(exercise)
   const [unsavedQuery, setUnsavedQuery] = useState<RecordQuery>(query)
   const displayFields = useDisplayFields(exercise)
 
@@ -92,10 +88,10 @@ export default function QueryCard({ query, setQuery }: Props) {
           disabled={isEqual(unsavedQuery, query)}
           onClick={() => {
             setInitialExercise(exercise)
-            setQuery(unsavedQuery)
+            updateQuery(unsavedQuery)
           }}
         >
-          Update Filter
+          Update filter
         </Button>
       </Stack>
     </Stack>

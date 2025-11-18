@@ -3,7 +3,6 @@ import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import dayjs from 'dayjs'
-import { useState } from 'react'
 import { DATE_FORMAT, DATE_PICKER_FORMAT } from '../../lib/frontend/constants'
 import type { PartialUpdate } from '../../lib/types'
 import type { RecordQuery } from '../../models/Record'
@@ -11,27 +10,27 @@ import type { RecordQuery } from '../../models/Record'
 const today = dayjs()
 const todayFormatted = dayjs().format(DATE_FORMAT)
 
+const getQuickPick = (months: number) =>
+  today.add(-months, 'months').format(DATE_FORMAT)
 interface Props {
   query: RecordQuery
   updateQuery: PartialUpdate<RecordQuery>
 }
 export default function QueryDateRangePicker({ query, updateQuery }: Props) {
   const { start, end } = query
-  const [quickMonthRange, setQuickMonthRange] = useState('-1')
-  const isCustom = !quickMonthRange
+  const isCustom = start && end
+  const value = isCustom ? 'custom' : (query.start ?? 'none')
 
-  const handleQuickMonthChange = (monthsString: string) => {
-    const monthsNum = +monthsString
-
-    setQuickMonthRange(monthsString)
-    if (monthsNum > 0) {
-      updateQuery({
-        start: today.add(-monthsNum, 'months').format(DATE_FORMAT),
-        end: todayFormatted,
-      })
-    } else if (monthsNum < 0) {
-      // a negative month amount is considered "no filter"
+  const handleQuickMonthChange = (option: string) => {
+    if (option === 'custom') {
+      updateQuery({ start: todayFormatted, end: todayFormatted })
+    } else if (option === 'none') {
       updateQuery({ start: undefined, end: undefined })
+    } else {
+      updateQuery({
+        start: option,
+        end: undefined,
+      })
     }
   }
   return (
@@ -39,18 +38,18 @@ export default function QueryDateRangePicker({ query, updateQuery }: Props) {
       <TextField
         label="Date range"
         select
-        value={quickMonthRange}
+        value={value}
         onChange={(e) => handleQuickMonthChange(e.target.value)}
         slotProps={{
           select: { displayEmpty: true },
           inputLabel: { shrink: true },
         }}
       >
-        <MenuItem value="3">Last 3 months</MenuItem>
-        <MenuItem value="6">Last 6 months</MenuItem>
-        <MenuItem value="12">Last year</MenuItem>
-        <MenuItem value="-1">No filter</MenuItem>
-        <MenuItem value="">Custom</MenuItem>
+        <MenuItem value={getQuickPick(3)}>Last 3 months</MenuItem>
+        <MenuItem value={getQuickPick(6)}>Last 6 months</MenuItem>
+        <MenuItem value={getQuickPick(12)}>Last year</MenuItem>
+        <MenuItem value="none">No filter</MenuItem>
+        <MenuItem value="custom">Custom</MenuItem>
       </TextField>
       {isCustom && (
         <Stack direction="row" spacing={2}>
