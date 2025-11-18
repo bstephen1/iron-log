@@ -27,6 +27,9 @@ export default defineConfig({
         // swiper components can't really be tested in jsdom. Should use e2e tests instead.
         '**/*Swiper*.tsx',
         '**/swiper/**',
+        '**/useNoSwipingDesktop.ts',
+        // tested implicitly
+        '**/restService.ts',
         // recharts can't be meaningfully tested in vitest.
         // jsdom basically can't render svg graphs at all. There's no
         // way to get any info about the graph state.
@@ -38,12 +41,14 @@ export default defineConfig({
         // behavior is based on queryState; not testable in jsdom
         '**/app/manage/**',
         '**/models/TabValue.ts',
-        // nothing to meaningful test
+        // nothing to meaningfully test or cannot test in jsdom
         '**/getQueryClient.ts',
         '**/mongoConnect.ts',
         '**/user.ts',
         '**/LoadingSpinner.tsx',
         '**/ManageWelcomeCard.tsx',
+        '**/Layout.tsx',
+        '**/Navbar.tsx',
       ],
     },
   },

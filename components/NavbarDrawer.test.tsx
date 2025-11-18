@@ -4,7 +4,7 @@ import {
   guestUserName,
   sampleLogDate,
 } from '../lib/frontend/constants'
-import { render, screen } from '../lib/test/rtl'
+import { render, screen, waitFor } from '../lib/test/rtl'
 import NavbarDrawer from './NavbarDrawer'
 
 const mocks = vi.hoisted(() => ({
@@ -27,6 +27,12 @@ it('renders with sample session link', async () => {
     'href',
     `/sessions/${sampleLogDate}`
   )
+
+  // closes
+  await user.click(screen.getByText('Home'))
+  await waitFor(() => {
+    expect(screen.queryByText('Home')).not.toBeInTheDocument()
+  })
 })
 
 it(`renders with today's session link`, async () => {
