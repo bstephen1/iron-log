@@ -59,12 +59,12 @@ export function convertUnit<Dimension extends keyof Units>(
   // we want to show extraValue if it exists and value is undefined
   if (!value && !extraValue) return value // value could be 0 or undefined
 
-  const convertedValue = convertUnitHelper(value, dimension, source, dest) ?? 0
+  const convertedValue = convertUnitHelper(value ?? 0, dimension, source, dest)
 
-  // only convert if it exists
-  const convertedExtraValue = extraValue
-    ? (convertUnitHelper(extraValue, dimension, DB_UNITS[dimension], dest) ?? 0)
-    : 0
+  const convertedExtraValue =
+    dimension !== 'effort'
+      ? convertUnitHelper(extraValue, dimension, DB_UNITS[dimension], dest)
+      : 0
 
   const sum = convertedValue + convertedExtraValue
   // the "+" converts it from a string to a number, and removes excess zeros
@@ -72,14 +72,11 @@ export function convertUnit<Dimension extends keyof Units>(
 }
 
 function convertUnitHelper<Dimension extends keyof Units>(
-  value: number | undefined,
+  value: number,
   dimension: Dimension,
   source: Units[Dimension],
   dest: Units[Dimension]
 ) {
-  // This would work if value === 0 too, but have to watch out for "effort" dimension.
-  if (value === undefined) return undefined
-
   const sourceFactor = FACTORS[dimension][source] as number
   const destFactor = FACTORS[dimension][dest] as number
 

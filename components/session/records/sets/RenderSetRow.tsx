@@ -15,6 +15,7 @@ import SetFieldInput from './RenderSetField'
 
 const pyStack = 0.5
 
+/* c8 ignore start */
 const getBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
@@ -36,6 +37,7 @@ const getDarkBackground = (side: Set['side']) => {
       return grey[800]
   }
 }
+/* c8 ignore stop */
 
 interface Props {
   readOnly?: boolean

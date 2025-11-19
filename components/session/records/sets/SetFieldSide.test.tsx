@@ -7,7 +7,7 @@ const mockMutate = vi.fn()
 it('updates', async () => {
   const { user } = render(
     <SetFieldSide
-      value=""
+      value={undefined}
       handleSetChange={mockMutate}
       // just for coverage
       slotProps={{

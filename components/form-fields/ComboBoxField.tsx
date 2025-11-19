@@ -2,7 +2,10 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import Checkbox from '@mui/material/Checkbox'
 import type { TextFieldProps } from '@mui/material/TextField'
-import type { AutocompleteChangeReason } from '@mui/material/useAutocomplete'
+import type {
+  AutocompleteChangeDetails,
+  AutocompleteChangeReason,
+} from '@mui/material/useAutocomplete'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import AsyncAutocomplete, {
@@ -24,7 +27,7 @@ interface ComboBoxFieldProps<Clearable extends boolean | undefined>
   /** Called on any change to the value array. Provides only the changed value,
    *  and the reason for the change (whether the value was added or removed). */
   handleChange?: (
-    changedValue: string | undefined,
+    changedValue: string,
     reason: AutocompleteChangeReason
   ) => void
   /** Behavior to follow when adding new items to the value array.
@@ -61,25 +64,17 @@ export default memo(function ComboBoxField<
   })
 
   const onChange = (
-    newValue: string[] | string | null,
+    newValue: string[],
+    change: string,
     reason: AutocompleteChangeReason
   ) => {
-    const formattedNewValue =
-      typeof newValue === 'string' ? newValue.split(',') : (newValue ?? [])
-    let change: string | undefined
-    if (reason === 'selectOption') {
-      change = formattedNewValue[formattedNewValue.length - 1]
-    } else if (reason === 'removeOption') {
-      change = value.find((item) => !formattedNewValue.includes(item))
-    }
-
     setValue(
       changeBehavior === 'filter'
-        ? options.filter((option) => formattedNewValue.includes(option))
-        : formattedNewValue
+        ? options.filter((option) => newValue.includes(option))
+        : newValue
     )
     handleChange(change, reason)
-    handleSubmit(formattedNewValue)
+    handleSubmit(newValue)
   }
 
   // This needs to be controlled due to complex behavior between the inner input and Chips.
@@ -88,7 +83,14 @@ export default memo(function ComboBoxField<
     <AsyncAutocomplete
       {...control()}
       placeholder={value.length ? '' : emptyPlaceholder}
-      onChange={(_, value, reason) => onChange(value, reason)}
+      onChange={(_, value, reason, details) => {
+        onChange(
+          value,
+          // details is typed as undefinable but it actually isn't
+          (details as AutocompleteChangeDetails<string>).option,
+          reason
+        )
+      }}
       fullWidth
       multiple
       options={options}

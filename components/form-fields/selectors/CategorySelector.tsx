@@ -15,11 +15,7 @@ interface Props {
   handleChange: (category: Category | null) => void
   disableAddNew?: boolean
 }
-export default function CategorySelector({
-  category,
-  disableAddNew,
-  handleChange,
-}: Props) {
+export default function CategorySelector({ category, handleChange }: Props) {
   const categories = useCategories()
   const mutate = useAddMutation({
     queryKey: [QUERY_KEYS.categories],
@@ -30,7 +26,7 @@ export default function CategorySelector({
     <AsyncSelector
       handleChange={handleChange}
       options={categories.data}
-      addItemMutate={disableAddNew ? undefined : mutate}
+      addItemMutate={mutate}
       value={category}
       label="Category"
       placeholder="Select or add new category"

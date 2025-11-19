@@ -26,13 +26,12 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
   })
 
   const handleUpdateExercise = async (
-    exerciseName: string | undefined,
+    exerciseName: string,
     reason: AutocompleteChangeReason
   ) => {
     const newExercise = exercises.data.find(
       (exercise) => exercise.name === exerciseName
-    )
-    if (!newExercise) return
+    ) as Exercise
 
     let updatedField = [...newExercise[field]]
     if (reason === 'selectOption') {

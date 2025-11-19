@@ -72,6 +72,7 @@ vi.mock('next/navigation')
 vi.mock('react-resize-detector', () => ({
   useResizeDetector: () => ({
     width: undefined,
+    height: undefined,
     ref: null,
   }),
 }))

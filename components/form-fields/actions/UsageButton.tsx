@@ -58,7 +58,7 @@ export default function UsageButton({ name, buttonProps }: Props) {
               ?.slice(0, maxRecords)
               .map(({ date, setType, sets, exercise, _id }) => (
                 // Note: this is Nextjs Link, not mui
-                <Link key={date} href={`/sessions/${date}?record=${_id}`}>
+                <Link key={_id} href={`/sessions/${date}?record=${_id}`}>
                   <ListItem disablePadding>
                     <ListItemButton sx={{ p: 0 }}>
                       <ListItemText

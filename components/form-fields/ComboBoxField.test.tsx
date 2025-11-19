@@ -29,6 +29,7 @@ it('calls handlers on add', async () => {
       // without setting an initialValue tests cause infinite rerenders, unsure why
       initialValue={[]}
       options={options}
+      changeBehavior="filter"
       handleChange={mockHandleChange}
       handleSubmit={mockHandleSubmit}
     />

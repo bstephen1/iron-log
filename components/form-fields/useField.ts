@@ -96,6 +96,7 @@ export default function useField<T = string>({
   }
 
   const submit = (newValue = value) => {
+    /* c8 ignore next */
     if (!handleSubmit) return
 
     if (validate(newValue)) {

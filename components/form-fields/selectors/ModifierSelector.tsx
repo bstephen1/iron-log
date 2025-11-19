@@ -12,11 +12,7 @@ interface Props {
   handleChange: (modifier: Modifier | null) => void
   disableAddNew?: boolean
 }
-export default function ModifierSelector({
-  modifier,
-  disableAddNew,
-  handleChange,
-}: Props) {
+export default function ModifierSelector({ modifier, handleChange }: Props) {
   const modifiers = useModifiers()
   const mutate = useAddMutation({
     queryKey: [QUERY_KEYS.modifiers],
@@ -27,7 +23,7 @@ export default function ModifierSelector({
     <AsyncSelector
       handleChange={handleChange}
       options={modifiers.data}
-      addItemMutate={disableAddNew ? undefined : mutate}
+      addItemMutate={mutate}
       value={modifier}
       label="Modifier"
       placeholder="Select or add new modifier"

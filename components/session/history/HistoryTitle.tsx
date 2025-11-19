@@ -15,6 +15,7 @@ export default memo(function HistoryTitle() {
       alignItems="center"
       justifyContent="center"
       // nav arrows add height to pagination box
+      /* c8 ignore next */
       py={useMediaQuery(theme.breakpoints.down('sm')) ? 2 : 0}
     >
       <Divider

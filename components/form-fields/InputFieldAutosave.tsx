@@ -84,6 +84,12 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
 
   const htmlInput = isNumeric ? numericInput : {}
 
+  const handleFocus = (e: { target: { select: () => void } }) => {
+    if (disableAutoSelect) return
+
+    e.target.select()
+  }
+
   return renderAsInput ? (
     <Input
       id={id}
@@ -91,7 +97,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       {...sharedProps}
       onChange={handleChange}
       readOnly={readOnly}
-      onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
+      onFocus={handleFocus}
       slotProps={{
         // @ts-expect-error spreading htmlInput is not an error
         input: {
@@ -106,7 +112,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       {...control}
       onChange={handleChange}
       // autoselect on focus highlights input for easy overwriting
-      onFocus={disableAutoSelect ? doNothing : (e) => e.target.select()}
+      onFocus={handleFocus}
       helperText={error || defaultHelperText}
       {...textFieldProps}
       slotProps={{

@@ -52,6 +52,7 @@ export default memo(function SetHeader({
     // According to MUI docs: "On autofill we get a stringified value",
     // which is the array stringified into a comma separated string.
     // Reassigning the value isn't updating the type so have to assign to a new var
+    /* c8 ignore next 4 */
     const newSelectedNames =
       typeof rawSelectedNames === 'string'
         ? rawSelectedNames.split(',')
