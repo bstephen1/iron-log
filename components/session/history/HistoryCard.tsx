@@ -27,14 +27,12 @@ interface Props {
    */
   displayFields?: DisplayFields
   record: Record
-  isQuickRender?: boolean
   actions?: HistoryAction[]
   content?: HistoryContent[]
   cardProps?: CardProps
 }
 export default memo(function HistoryCard({
   record,
-  isQuickRender,
   actions,
   content,
   cardProps,
@@ -106,8 +104,7 @@ export default memo(function HistoryCard({
     ),
   }
 
-  // todo: remove quickrender stuff?
-  return isQuickRender ? null : (
+  return (
     <Card
       elevation={0}
       {...cardProps}
@@ -118,13 +115,7 @@ export default memo(function HistoryCard({
     >
       <CardHeader
         title={
-          <Link
-            // todo: Could add the record number so swiper can directly link to the record.
-            // May not be worth the effort tho.
-            href={`/sessions/${date}`}
-          >
-            {date}
-          </Link>
+          <Link href={`/sessions/${date}?record=${record._id}`}>{date}</Link>
         }
         slotProps={{
           title: { variant: 'h6' },

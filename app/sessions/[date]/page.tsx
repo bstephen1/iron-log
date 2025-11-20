@@ -82,7 +82,7 @@ export default async function DatePage({ params }: Props) {
         </Grid>
       </Grid>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        {/* resetting key on date change ensures quickRender resets */}
+        {/* resetting key on date change ensures state resets */}
         <SessionSwiper key={date} date={date} />
       </HydrationBoundary>
     </Stack>

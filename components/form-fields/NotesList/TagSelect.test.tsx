@@ -14,6 +14,9 @@ it('shows checkboxes if multiple is enabled', async () => {
 
   expect(screen.getByText(tag)).toBeVisible()
   expect(screen.getByTestId('CheckBoxOutlineBlankIcon')).toBeVisible()
+
+  await user.click(screen.getByText(tag))
+  expect(mockhandleUpdate).toHaveBeenCalledWith([tag])
 })
 
 it('does not show checkboxes if multiple is disabled', async () => {
@@ -27,4 +30,7 @@ it('does not show checkboxes if multiple is disabled', async () => {
   expect(
     screen.queryByTestId('CheckBoxOutlineBlankIcon')
   ).not.toBeInTheDocument()
+
+  await user.click(screen.getByText(tag))
+  expect(mockhandleUpdate).toHaveBeenCalledWith([tag])
 })

@@ -1,7 +1,9 @@
 import { expect, it, vi } from 'vitest'
 import { fetchRecords } from '../../../lib/backend/mongoService'
 import { render, screen, waitFor } from '../../../lib/test/rtl'
+import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../../models/Record'
+import { DB_UNITS } from '../../../models/Units'
 import UsageButton from './UsageButton'
 
 it('displays usage when clicked', async () => {
@@ -36,9 +38,18 @@ it('displays usage when clicked', async () => {
 
 it('shows singular label', async () => {
   const date = '2020-02-02'
-  const record = createRecord(date)
+  const record = createRecord(date, {
+    setType: { operator: 'at least', value: 10, field: 'weight' },
+    exercise: createExercise('squats', {
+      displayFields: {
+        visibleFields: [],
+        units: { ...DB_UNITS, weight: 'lbs' },
+      },
+    }),
+  })
   vi.mocked(fetchRecords).mockResolvedValue([record])
-  render(<UsageButton name="name" />)
+  const { user } = render(<UsageButton name="name" />)
 
-  expect(await screen.findByLabelText('used in 1 record')).toBeVisible()
+  await user.click(await screen.findByLabelText('used in 1 record'))
+  expect(screen.getByText(/at least 10 lbs/)).toBeVisible()
 })

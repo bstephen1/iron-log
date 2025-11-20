@@ -3,7 +3,7 @@ import { render, screen } from '../lib/test/rtl'
 import SessionRedirectSwitch from './SessionRedirectSwitch'
 
 it('reads value from local storage', async () => {
-  const { user } = render(<SessionRedirectSwitch />)
+  const { user } = render(<SessionRedirectSwitch />, { paletteMode: 'dark' })
 
   const switchEl = screen.getByRole('switch')
   expect(switchEl).toBeChecked()

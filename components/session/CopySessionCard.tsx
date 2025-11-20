@@ -14,7 +14,6 @@ import {
   useRecords,
   useSessionLog,
 } from '../../lib/frontend/restService'
-import { enqueueError } from '../../lib/frontend/snackbar'
 import { createRecord } from '../../models/Record'
 import SessionDatePicker from './upper/SessionDatePicker'
 
@@ -61,13 +60,7 @@ export default function CopySessionCard() {
         notes: [],
       })
 
-      copyRecordMutate(newRecord, {
-        onError: (e) =>
-          enqueueError(
-            'Previous session has a corrupt record. Could not finish copying the session.',
-            e
-          ),
-      })
+      copyRecordMutate(newRecord)
     }
 
     swiper.update()

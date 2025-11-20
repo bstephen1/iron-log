@@ -38,3 +38,13 @@ it('ignores undefined keys', () => {
     'exercise.name': recordQuery.exercise,
   })
 })
+
+it('ignores setType when set to any', () => {
+  const recordQuery: RecordQuery = {
+    exercise: '2000-01-01',
+    setTypeMatchType: ArrayMatchType.Any,
+  }
+  expect(buildRecordFilter(recordQuery)).toEqual({
+    'exercise.name': recordQuery.exercise,
+  })
+})

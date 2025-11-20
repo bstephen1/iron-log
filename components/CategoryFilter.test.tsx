@@ -24,8 +24,18 @@ it('selects a category', async () => {
   await user.click(screen.getByText('cat'))
 
   expect(screen.queryByText('other')).not.toBeInTheDocument()
-  expect(screen.getByText('cat')).toBeVisible()
+
+  await user.click(screen.getByText('cat'))
+  await user.click(screen.getByText('No category'))
+  expect(screen.queryByText('cat')).not.toBeInTheDocument()
+})
+
+it('deletes a category chip', async () => {
+  const { user } = render(
+    <TestComponent categories={['other']} category="other" />
+  )
 
   await user.click(screen.getByTestId('CancelIcon'))
-  expect(screen.queryByText('cat')).not.toBeInTheDocument()
+
+  expect(screen.queryByText('other')).not.toBeInTheDocument()
 })

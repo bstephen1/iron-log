@@ -9,9 +9,11 @@ export default function LogoutButton() {
   // Clearing cache on sign in/out ensures there isn't leftover data from local storage
   // if the user switches to a different account
 
-  // todo: delete on sign in/out events? Currently it will only be cleared when clicking the sign out button.
-  // [...next-auth] has "events" (setup like "callbacks") for signIn/signOut
-  // which may be better since it's possible to sign in via api, not just this button.
+  // Note: you can sign out via /api/auth/signout, which will not trigger this.
+  // Nextauth has "events.signout" available for authOptions but we cannot access
+  // the existing browser queryClient there so there's no way to reset it.
+  // In practice it seems like data is refreshed anyway. Could not force it
+  // to leak data from another user.
 
   const clearCache = () => {
     queryClient.clear()

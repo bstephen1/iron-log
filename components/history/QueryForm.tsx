@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
-import { type Dispatch, type SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
 import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
@@ -14,10 +14,9 @@ import SetTypeQueryField from './SetTypeQueryField'
 
 interface Props {
   query: RecordQuery
-  setQuery: Dispatch<SetStateAction<RecordQuery>>
+  updateQuery: (newQuery: RecordQuery) => void
 }
-export default function QueryCard({ query, setQuery }: Props) {
-  // todo: this should use exercise from query
+export default function QueryForm({ query, updateQuery }: Props) {
   const [exercise, setExercise] = useState<Exercise | null>(null)
   // reset to this exercise if reset button is clicked
   const [initialExercise, setInitialExercise] = useState(exercise)
@@ -89,10 +88,10 @@ export default function QueryCard({ query, setQuery }: Props) {
           disabled={isEqual(unsavedQuery, query)}
           onClick={() => {
             setInitialExercise(exercise)
-            setQuery(unsavedQuery)
+            updateQuery(unsavedQuery)
           }}
         >
-          Update Filter
+          Update filter
         </Button>
       </Stack>
     </Stack>

@@ -6,23 +6,24 @@ import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 import type RecordDisplay from '../../components/history/RecordDisplay'
 import RecordDisplaySelect from '../../components/history/RecordDisplaySelect'
+import { DEFAULT_CLOTHING_OFFSET } from '../../lib/frontend/constants'
 import type { PartialUpdate } from '../../lib/types'
 
 export interface GraphOptions {
   showBodyweight?: boolean
   includeUnofficial?: boolean
   smoothLine?: boolean
-  clothingOffset: number
+  clothingOffset?: number
 }
 
 interface Props {
-  graphOptions: GraphOptions
+  graphOptions?: GraphOptions
   updateGraphOptions: PartialUpdate<GraphOptions>
   recordDisplay: RecordDisplay
   updateRecordDisplay: PartialUpdate<RecordDisplay>
 }
 export default function GraphOptionsForm({
-  graphOptions,
+  graphOptions = { clothingOffset: DEFAULT_CLOTHING_OFFSET },
   updateGraphOptions,
   recordDisplay,
   updateRecordDisplay,
@@ -88,23 +89,20 @@ export default function GraphOptionsForm({
       >
         <TextField
           label="Clothing offset"
-          type="number"
           autoComplete="off"
           fullWidth
           value={clothingOffset}
           disabled={!showBodyweight || !includeUnofficial}
           onChange={(e) =>
             updateGraphOptions({
-              clothingOffset: Number.isNaN(Number(e.target.value))
-                ? 0
-                : Number(e.target.value),
+              clothingOffset: Number(e.target.value) || undefined,
             })
           }
           slotProps={{
             input: {
               endAdornment: <InputAdornment position="end">kg</InputAdornment>,
             },
-            htmlInput: { inputMode: 'decimal' },
+            htmlInput: { inputMode: 'decimal', type: 'number' },
           }}
         />
       </Grid>

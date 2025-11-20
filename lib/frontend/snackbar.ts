@@ -5,7 +5,9 @@ export const enqueueError = (
   /** prints to console if provided */
   e?: unknown
 ) => {
-  console.error(e)
+  if (e) {
+    console.error(e)
+  }
 
   enqueueSnackbar({
     message,

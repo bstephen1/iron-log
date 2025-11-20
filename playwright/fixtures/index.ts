@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { test as baseTest } from '@playwright/test'
 import { ObjectId } from 'mongodb'
+import { baseURL } from '../../playwright.config'
 import { ExtendedPage } from './extended-page'
 import { SessionsPage } from './sessions-page'
 
@@ -56,13 +57,12 @@ export const test = baseTest.extend<
       const userId = getUserId(id)
 
       // Perform authentication steps.
-      // todo: can we reuse baseUrl to not have to repeat it here?
-      await page.goto('http://localhost:7357/api/auth/signin')
+      await page.goto(`${baseURL}/api/auth/signin`)
       await page.getByRole('textbox', { name: 'user id' }).fill(userId)
       await page.getByRole('button', { name: 'dev user' }).click()
 
       // Wait until sign-in is complete
-      await page.waitForURL('http://localhost:7357')
+      await page.waitForURL(baseURL)
 
       await page.context().storageState({ path: fileName })
       await page.close()

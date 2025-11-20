@@ -69,6 +69,29 @@ vi.mock('./lib/backend/user', () => ({
   getUserId: vi.fn(async () => new ObjectId(devUserId)),
 }))
 vi.mock('next/navigation')
+vi.mock('react-resize-detector', () => ({
+  useResizeDetector: () => ({
+    width: undefined,
+    height: undefined,
+    ref: null,
+  }),
+}))
+vi.mock('swiper/react', async () => {
+  const actual = await vi.importActual('swiper/react')
+
+  return {
+    ...actual,
+    useSwiper: () => ({
+      update: vi.fn(),
+      slideTo: vi.fn(),
+      slidePrev: vi.fn(),
+      slides: [],
+    }),
+  }
+})
+vi.mock('nuqs', () => ({
+  useQueryState: vi.fn(() => [null, vi.fn()]),
+}))
 
 // configure testing-library options
 configure({

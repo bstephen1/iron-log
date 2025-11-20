@@ -9,13 +9,6 @@ import RecordCardHeader from './RecordCardHeader'
 const storageKey = 'cardHeaderActions'
 const totalActions = 7
 
-vi.mock('react-resize-detector', () => ({
-  useResizeDetector: () => ({
-    width: undefined,
-    ref: null,
-  }),
-}))
-
 const TestWrapper = (
   props: Partial<ComponentProps<typeof RecordCardHeader>>
 ) => (

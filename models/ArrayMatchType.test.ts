@@ -16,3 +16,8 @@ it('builds empty MatchType', () => {
 
   expect(buildMatchTypeFilter([], ArrayMatchType.Partial)).toEqual(undefined)
 })
+
+it('throws error on unexpected MatchType', () => {
+  // @ts-expect-error
+  expect(() => buildMatchTypeFilter([], 'new type')).toThrow()
+})

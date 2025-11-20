@@ -60,7 +60,7 @@ export default function MatchTypeSelector({
   return (
     <>
       <TooltipIconButton
-        title="Select match type"
+        title={`Select match type. Current match type is "${matchTypeOptions[matchType].name}"`}
         sx={{ p: '4px' }}
         onClick={(e) => {
           setAnchorEl(e.currentTarget)

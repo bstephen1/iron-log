@@ -30,7 +30,7 @@ export default function HistoryPage() {
       <Typography variant="h5" mb={2} display="flex" justifyContent="center">
         History
       </Typography>
-      <QueryForm {...{ query, setQuery }} />
+      <QueryForm {...{ query, updateQuery: setQuery }} />
 
       <Box pt={2}>
         <StyledDivider />

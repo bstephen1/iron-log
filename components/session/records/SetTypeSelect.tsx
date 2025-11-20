@@ -9,7 +9,7 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
@@ -55,6 +55,9 @@ export default memo(function SetTypeSelect({
   ...textFieldProps
 }: Props) {
   const { field, value = 0, operator, min = 0, max = 0 } = setType
+  const [nonTimeField, setNonTimeField] = useState<typeof field>(
+    operator !== 'rest' ? field : 'time'
+  )
   const variant = textFieldProps.variant ?? 'standard'
   const fieldOptions = operator === 'rest' ? timeField : normalFields
   const remaining = value - totalReps
@@ -66,6 +69,13 @@ export default memo(function SetTypeSelect({
   const noSwipingDesktop = useNoSwipingDesktop()
   const readOnly = !handleChange
   const updateSetType: PartialUpdate<SetType> = (changes) => {
+    if (changes.operator === 'rest') {
+      changes.field = 'time'
+      setNonTimeField(field)
+    }
+    if (operator === 'rest' && !!changes.operator) {
+      changes.field = nonTimeField
+    }
     const newSetType = { ...setType, ...changes }
 
     handleChange?.({ setType: newSetType })
@@ -73,7 +83,6 @@ export default memo(function SetTypeSelect({
 
   const menuValue = stringifySetType(setType, units)
 
-  // todo: maybe store prev operator so when switching back from rest it changes back from "time" to whatever you had before
   return (
     <TextField
       select

@@ -16,21 +16,26 @@ import {
   DATE_PICKER_FORMAT,
 } from '../../../lib/frontend/constants'
 import { useSessionLogs } from '../../../lib/frontend/restService'
+import type FetchOptions from '../../../models/FetchOptions'
 import TransitionIconButton from '../../TransitionIconButton'
 
 // The query gets data for the current month +/- 1 month so that
 // data for daysOutsideCurrentMonth is still visible on the current month
-const buildSessionLogQuery = (relativeMonth: number, day: Dayjs) => ({
+const buildSessionLogQuery = (
+  relativeMonth: number,
+  day: Dayjs
+): FetchOptions => ({
   limit: 0,
   start: day
-    .startOf('month')
     .add(relativeMonth - 1, 'month')
+    .startOf('month')
     .format(DATE_FORMAT),
   end: day
-    .endOf('month')
     .add(relativeMonth + 1, 'month')
+    .endOf('month')
     .format(DATE_FORMAT),
 })
+
 interface Props {
   day: Dayjs
   /** Triggered when the picker value changes to a new date.
@@ -60,8 +65,6 @@ function SessionDatePickerInner({
   const [visibleMonth, setVisibleMonth] = useState(day)
   const sessionLogs = useSessionLogs(buildSessionLogQuery(0, visibleMonth))
   // preload adjacent months -- do each separately to keep a reusable cache key
-  // todo: it still frequently goes into a loading state flipping through months
-  // despite the cache saying thedata is loaded
   useSessionLogs(buildSessionLogQuery(-1, visibleMonth))
   useSessionLogs(buildSessionLogQuery(1, visibleMonth))
 
@@ -153,6 +156,7 @@ function SessionDatePickerInner({
         setVisibleMonth(newMonth)
       }}
       loading={sessionLogs.isLoading}
+      /* c8 ignore next */
       renderLoading={() => <DayCalendarSkeleton />}
       // apparently this needs PickersDayProps' type defined to infer types for the other args
       slots={{

@@ -32,9 +32,9 @@ export default function NumericFieldAutosave({
 const convertValueToNumber = (value: string) => {
   value = value.trim()
   // have to explicitly handle an empty string because isNaN treats it as zero
-  if (!value) {
+  if (!value || Number.isNaN(Number(value))) {
     return undefined
   }
-  // for some reason isNaN is requiring a number even though it casts to a number
-  return Number.isNaN(Number(value)) ? undefined : Number(value)
+
+  return Number(value)
 }

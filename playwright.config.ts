@@ -36,6 +36,7 @@ const CIProjects: PlaywrightTestConfig['projects'] = [
 ]
 
 const isCI = !!process.env.CI
+export const baseURL = 'http://localhost:7357'
 
 // See: https://playwright.dev/docs/test-configuration.
 export default defineConfig({
@@ -59,7 +60,7 @@ export default defineConfig({
   // Shared settings for all the projects below.
   // See: https://playwright.dev/docs/api/class-testoptions.
   use: {
-    baseURL: 'http://localhost:7357',
+    baseURL,
     // Traces show a ui view of what made the test fail.
     // Local tests can use --ui to automatically create traces.
     //  See: https://playwright.dev/docs/trace-viewer
@@ -69,7 +70,7 @@ export default defineConfig({
   projects: localProjects.concat(isCI ? CIProjects : []),
   webServer: {
     command: isCI ? 'npm run start:test' : 'npm run dev:test',
-    url: 'http://localhost:7357',
+    url: baseURL,
     // NOTE: in dev mode it's much more stable to run the test server separately.
     // Playwright can spin up the server on its own but it frequently causes flakiness.
     reuseExistingServer: !isCI,
