@@ -1,7 +1,6 @@
 import { expect, test } from './fixtures'
 
 test.describe('without hidden actions', () => {
-  // note: for some reason this test takes more than twice as long to run with webkit
   test.use({
     viewport: {
       height: 800,
