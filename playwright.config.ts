@@ -4,6 +4,14 @@ import {
   type PlaywrightTestConfig,
 } from '@playwright/test'
 
+// NOTE: webkit (safari) tests seem to just be inherently slower than
+// chrome / firefox. There are multiple github issues remarking on this
+// but playwright doesn't even recognize it as an issue. Timing is slow
+// for every action so it compounds over especially long tests and can
+// lead to timeout failures. It's probably not vital to run on webkit
+// so our solution is to just not bother.
+// See: https://github.com/microsoft/playwright/issues/18119
+
 /** limited project list to run locally  */
 const localProjects: PlaywrightTestConfig['projects'] = [
   {
@@ -13,9 +21,8 @@ const localProjects: PlaywrightTestConfig['projects'] = [
     },
   },
   {
-    name: 'Mobile Safari',
-
-    use: { ...devices['iPhone 12'] },
+    name: 'Mobile Chrome',
+    use: { ...devices['Pixel 5'] },
   },
 ]
 
@@ -24,14 +31,6 @@ const CIProjects: PlaywrightTestConfig['projects'] = [
   {
     name: 'firefox',
     use: { ...devices['Desktop Firefox'] },
-  },
-  {
-    name: 'webkit',
-    use: { ...devices['Desktop Safari'] },
-  },
-  {
-    name: 'Mobile Chrome',
-    use: { ...devices['Pixel 5'] },
   },
 ]
 
@@ -43,7 +42,7 @@ export default defineConfig({
   testDir: './playwright',
   outputDir: 'playwright/test-results',
   forbidOnly: isCI,
-  retries: isCI ? 1 : 1,
+  retries: 1,
   // Runs individual tests in each file in parallel.
   // Has proven to be too unstable to use; causes a lot of flakiness.
   fullyParallel: false,
@@ -64,8 +63,8 @@ export default defineConfig({
     // Traces show a ui view of what made the test fail.
     // Local tests can use --ui to automatically create traces.
     //  See: https://playwright.dev/docs/trace-viewer
-    trace: isCI ? 'off' : 'retain-on-failure',
-    screenshot: isCI ? 'off' : 'only-on-failure',
+    trace: isCI ? 'off' : 'on-first-retry',
+    screenshot: isCI ? 'off' : 'on-first-failure',
   },
   projects: localProjects.concat(isCI ? CIProjects : []),
   webServer: {
