@@ -48,6 +48,9 @@ export default memo(function HistoryCard({
   const showSplitWeight = displayFields.visibleFields.some((field) =>
     ['plateWeight', 'totalWeight'].includes(field.name)
   )
+  const showUnilateral = displayFields.visibleFields.some(
+    (field) => field.name === 'side'
+  )
 
   const actionComponents: { [key in HistoryAction]: JSX.Element } = {
     recordNotes: <RecordNotesButton key="record notes" {...{ notes, date }} />,
@@ -95,6 +98,7 @@ export default memo(function HistoryCard({
         {...{
           displayFields,
           showSplitWeight,
+          showUnilateral,
           sets,
           _id,
           extraWeight,
