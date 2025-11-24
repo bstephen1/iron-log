@@ -189,16 +189,11 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
     return () => window.removeEventListener('resize', handleWindowResize)
   }, [])
 
-  const handleGraphClick: CategoricalChartFunc = ({
-    activeLabel: unixDate,
-  }) => {
-    if (!records || !unixDate) return
-
-    const date = dayjs.unix(+unixDate).format(DATE_FORMAT)
-    const index = records.findIndex((record) => record.date === date)
+  const handleGraphClick: CategoricalChartFunc = ({ activeTooltipIndex }) => {
+    if (!records) return
 
     // have to reverse the index since swiper is also reversed
-    swipeToRecord(records.length - 1 - index)
+    swipeToRecord(records.length - 1 - Number(activeTooltipIndex))
   }
 
   const setReducer = useCallback(
@@ -339,7 +334,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
           }}
           // redraw chart when window size changes
           responsive
-          // todo: scroll to card
           onClick={handleGraphClick}
           data={graphData}
           // needs a height but not a width apparently
