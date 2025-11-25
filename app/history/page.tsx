@@ -9,6 +9,7 @@ import HistoryGraph from '../../components/history/HistoryGraph'
 import QueryForm from '../../components/history/QueryForm'
 import StyledDivider from '../../components/StyledDivider'
 import HistoryCardsSwiper from '../../components/session/history/HistoryCardsSwiper'
+import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import {
   DEFAULT_RECORD_HISTORY_QUERY,
   type RecordQuery,
@@ -39,6 +40,7 @@ export default function HistoryPage() {
         <HistoryCardsSwiper
           swiperRef={swiperRef}
           query={query}
+          displayFields={{ units: DEFAULT_DISPLAY_FIELDS.units }}
           fractionPagination
           actions={['recordNotes', 'exerciseNotes', 'manage']}
           content={['exercise', 'modifiers', 'setType', 'sets']}

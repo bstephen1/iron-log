@@ -26,7 +26,7 @@ import 'swiper/css/pagination'
 
 interface Props {
   /** displayFields to use for each history card. If omitted, cards will use their own displayFields. */
-  displayFields?: DisplayFields
+  displayFields?: Partial<DisplayFields>
   query: RecordQuery
   /** actions to include in each history card */
   actions?: HistoryAction[]

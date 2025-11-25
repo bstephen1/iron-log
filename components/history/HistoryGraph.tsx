@@ -384,7 +384,6 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
                 name={recordDisplay.field}
                 dataKey="value"
                 type="number"
-                // todo: get units from exercise
                 // note the whitespace!
                 unit={` ${DEFAULT_DISPLAY_FIELDS.units[recordDisplay.field]}`}
                 orientation="left"
@@ -403,14 +402,12 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
               />
             </>
           )}
-          {/* todo: possible to show weigh-in type in tooltip? */}
           <RechartsTooltip
             trigger={isDesktop ? 'hover' : 'click'}
             labelFormatter={(value) =>
               convertUnixToDate(value, recordDisplay.grouping)
             }
             formatter={(value, name) =>
-              // todo: add unit to RecordDisplay so it is selectzble
               `${value.toString()} ${
                 DEFAULT_DISPLAY_FIELDS.units[
                   name === 'bodyweight' ? 'weight' : recordDisplay.field
