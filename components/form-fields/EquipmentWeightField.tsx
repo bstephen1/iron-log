@@ -1,11 +1,8 @@
-import type { InputProps } from '@mui/material/Input'
 import InputAdornment from '@mui/material/InputAdornment'
 import { memo, useCallback } from 'react'
+import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
+import { convertUnit, DB_UNITS } from '../../models/Units'
 import NumericFieldAutosave from './NumericFieldAutosave'
-
-const inputProps: InputProps = {
-  endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-}
 
 interface Props {
   weight?: number | null
@@ -15,20 +12,35 @@ export default memo(function EquipmentWeightField({
   weight,
   handleUpdate,
 }: Props) {
+  const weightUnit = DEFAULT_DISPLAY_FIELDS.units.weight
   return (
     <NumericFieldAutosave
       label="Equipment weight"
-      initialValue={weight}
+      initialValue={convertUnit(
+        weight ?? undefined,
+        'weight',
+        DB_UNITS.weight,
+        weightUnit,
+        0,
+        2
+      )}
       handleSubmit={useCallback(
-        (weight) => handleUpdate({ weight }),
-        [handleUpdate]
+        (weight) => {
+          handleUpdate({
+            weight: convertUnit(weight, 'weight', weightUnit, DB_UNITS.weight),
+          })
+        },
+        [handleUpdate, weightUnit]
       )}
       fullWidth
       variant="outlined"
       defaultHelperText=" "
-      // todo: might want to make this selectable between lbs/kg
       slotProps={{
-        input: inputProps,
+        input: {
+          endAdornment: (
+            <InputAdornment position="end">{weightUnit}</InputAdornment>
+          ),
+        },
       }}
     />
   )
