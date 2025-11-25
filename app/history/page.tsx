@@ -19,12 +19,9 @@ export default function HistoryPage() {
   const theme = useTheme()
   const [query, setQuery] = useState<RecordQuery>(DEFAULT_RECORD_HISTORY_QUERY)
   const swiperRef = useRef<SwiperRef>(null)
-  const swiper = swiperRef.current?.swiper
 
-  const swipeToRecord = (index: number) => {
-    if (!swiper) return
-    swiper.slideTo(index)
-  }
+  const swipeToRecord = (index: number) =>
+    swiperRef.current?.swiper?.slideTo(index)
 
   return (
     <Stack spacing={2}>
