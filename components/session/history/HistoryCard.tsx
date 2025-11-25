@@ -25,7 +25,7 @@ interface Props {
   /** Must use the displayFields of the parent record when used within a RecordCard.
    * The history record's displayFields will be stale if the parent's fields change.
    */
-  displayFields?: DisplayFields
+  displayFields?: Partial<DisplayFields>
   record: Record
   actions?: HistoryAction[]
   content?: HistoryContent[]
@@ -42,11 +42,14 @@ export default memo(function HistoryCard({
   const recordDisplayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
 
-  const displayFields = props.displayFields ?? recordDisplayFields
+  const displayFields = { ...recordDisplayFields, ...props.displayFields }
 
   // use splitWeight if parent record is using it
   const showSplitWeight = displayFields.visibleFields.some((field) =>
     ['plateWeight', 'totalWeight'].includes(field.name)
+  )
+  const showUnilateral = displayFields.visibleFields.some(
+    (field) => field.name === 'side'
   )
 
   const actionComponents: { [key in HistoryAction]: JSX.Element } = {
@@ -95,6 +98,7 @@ export default memo(function HistoryCard({
         {...{
           displayFields,
           showSplitWeight,
+          showUnilateral,
           sets,
           _id,
           extraWeight,

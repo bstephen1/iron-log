@@ -19,7 +19,6 @@ export default function TitleBar({ date }: Props) {
 
   return (
     <Grid container spacing={2} justifyContent="space-between">
-      {/* todo: change this to a data type which is user defined per program, or freestyle/unstructured type*/}
       <Grid
         size={{
           xs: 12,
@@ -33,10 +32,6 @@ export default function TitleBar({ date }: Props) {
           textFieldProps={{ fullWidth: true }}
         />
       </Grid>
-      {/* todo: session type */}
-      {/* todo: customize to show days that have a record; possibly show title; 
-            possibly give days a 'type' instead of title, with an associated icon;
-            could also highlight different programs / meso cycles */}
       <Grid
         size={{
           xs: 12,
