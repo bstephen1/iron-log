@@ -32,7 +32,6 @@ export default function TitleBar({ date }: Props) {
           textFieldProps={{ fullWidth: true }}
         />
       </Grid>
-      {/* todo: session type: user defined per program, or freestyle/unstructured type */}
       <Grid
         size={{
           xs: 12,

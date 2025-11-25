@@ -85,7 +85,6 @@ function SessionDatePickerInner({
 
   const toggleOpen = () => setOpen(!open)
 
-  // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
   return (
     <DatePicker
       showDaysOutsideCurrentMonth

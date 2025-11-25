@@ -77,8 +77,6 @@ export default function CopySessionCard() {
           handleDayChange={handlePrevDayChange}
           textFieldProps={{ variant: 'standard', fullWidth: true }}
         />
-        {/* todo: assign session types to records, and add a selector here
-         for latest X session */}
         {isSessionEmpty ? (
           <Typography> No session data to copy!</Typography>
         ) : (
