@@ -85,7 +85,6 @@ function SessionDatePickerInner({
 
   const toggleOpen = () => setOpen(!open)
 
-  // todo: If using arrow keys while picker is open it should stop propagation so the underlying swiper doesn't move too.
   // todo: can add background colors for meso cycles: https://mui.com/x/react-date-pickers/date-picker/#customized-day-rendering
   return (
     <DatePicker
@@ -98,6 +97,12 @@ function SessionDatePickerInner({
       value={pickerValue}
       onChange={handleChange}
       slotProps={{
+        popper: {
+          // prevent swiper from swiping when selecting dates with arrow keys
+          /* c8 ignore next */
+          onKeyDown: (e) => e.key.match(/Arrow/) && e.stopPropagation(),
+        },
+
         textField: {
           ...textFieldProps,
           onKeyDown: ({ key }) => {
@@ -163,7 +168,6 @@ function SessionDatePickerInner({
         day: (DayComponentProps) => {
           const day = DayComponentProps.day.format(DATE_FORMAT)
           const isBadgeVisible = sessionLogs.index[day]?.records.length
-          // todo: can populate this with more info, like session type (after that's implemented)
           return (
             <Badge
               key={day}
