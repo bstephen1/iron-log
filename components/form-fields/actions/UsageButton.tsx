@@ -14,62 +14,83 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRecords } from '../../../lib/frontend/restService'
 import { stringifySetType } from '../../../models/Set'
+import LoadingSpinner from '../../loading/LoadingSpinner'
+import TooltipIconButton from '../../TooltipIconButton'
 
 const maxRecords = 10
 
 interface Props {
-  name: string
+  exercise?: string
   buttonProps?: ButtonProps
+  type: 'text' | 'icon'
 }
-export default function UsageButton({ name, buttonProps }: Props) {
+export default function UsageButton({ exercise, type, buttonProps }: Props) {
   const [open, setOpen] = useState(false)
+  const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
-  const { data: records, isLoading } = useRecords({
-    exercise: name,
-    limit: maxRecords + 1,
-  })
+  const { data: records, isLoading } = useRecords(
+    {
+      exercise,
+      limit: maxRecords + 1,
+    },
+    !!exercise && (open || type === 'text')
+  )
 
   return (
     <>
-      <Button
-        onClick={() => setOpen(true)}
-        startIcon={
-          <Badge
-            badgeContent={records?.length}
-            max={maxRecords}
-            color="primary"
-            aria-label={`used in ${records?.length ?? 0} record${records?.length !== 1 ? 's' : ''}`}
-          >
-            <ListIcon />
-          </Badge>
-        }
-        disabled={!records?.length}
-        loading={isLoading}
-        loadingPosition="start"
-        {...buttonProps}
-      >
-        Usage
-      </Button>
+      {type === 'text' ? (
+        <Button
+          onClick={handleOpen}
+          startIcon={
+            <Badge
+              badgeContent={records?.length}
+              max={maxRecords}
+              color="primary"
+              aria-label={`used in ${records?.length ?? 0} record${records?.length !== 1 ? 's' : ''}`}
+            >
+              <ListIcon />
+            </Badge>
+          }
+          disabled={!records?.length}
+          loading={isLoading}
+          loadingPosition="start"
+          {...buttonProps}
+        >
+          Usage
+        </Button>
+      ) : (
+        <TooltipIconButton
+          title="Recent usage"
+          onClick={handleOpen}
+          disabled={!exercise}
+        >
+          <ListIcon />
+        </TooltipIconButton>
+      )}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Usage for {name}</DialogTitle>
+        <DialogTitle>Usage for {exercise}</DialogTitle>
         <DialogContent sx={{ py: 0 }}>
-          <List disablePadding>
-            {records
-              ?.slice(0, maxRecords)
-              .map(({ date, setType, sets, exercise, _id }) => (
-                // Note: this is Nextjs Link, not mui
-                <Link key={_id} href={`/sessions/${date}?record=${_id}`}>
-                  <ListItem disablePadding>
-                    <ListItemButton sx={{ p: 0 }}>
-                      <ListItemText
-                        primary={date}
-                        secondary={`${sets.length} set${sets.length === 1 ? '' : 's'} of ${stringifySetType(setType, exercise?.displayFields?.units)}`}
-                      />
-                    </ListItemButton>
-                  </ListItem>
-                </Link>
-              ))}
-          </List>
+          {!records ? (
+            <LoadingSpinner />
+          ) : (
+            <List disablePadding>
+              {records
+                .slice(0, maxRecords)
+                .map(({ date, setType, sets, exercise, _id }) => (
+                  // Note: this is Nextjs Link, not mui
+                  <Link key={_id} href={`/sessions/${date}?record=${_id}`}>
+                    <ListItem disablePadding>
+                      <ListItemButton sx={{ p: 0 }}>
+                        <ListItemText
+                          primary={date}
+                          secondary={`${sets.length} set${sets.length === 1 ? '' : 's'} of ${stringifySetType(setType, exercise?.displayFields?.units)}`}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  </Link>
+                ))}
+            </List>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Close</Button>

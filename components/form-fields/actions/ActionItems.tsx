@@ -43,7 +43,7 @@ export default memo(function ActionItems({
       {type === 'exercise' && (
         <ActionItem
           description="View the most recent dates when this exercise has been used."
-          button={<UsageButton name={name} />}
+          button={<UsageButton exercise={name} type="text" />}
         />
       )}
       {handleDelete && (
