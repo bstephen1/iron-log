@@ -7,6 +7,7 @@ import type { PartialUpdate } from '../../../../lib/types'
 import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
+import UsageButton from '../../../form-fields/actions/UsageButton'
 import ChangeUnitsButton from './ChangeUnitsButton'
 import DeleteRecordButton from './DeleteRecordButton'
 import ExerciseNotesButton from './ExerciseNotesButton'
@@ -94,11 +95,12 @@ export default function RecordCardHeader({
       modifiers={exercise?.modifiers}
       mutateExerciseFields={mutateExerciseFields}
     />,
+    <UsageButton key="usage" exercise={exercise?.name} type="icon" />,
+    <ManageExerciseButton key="manage" _id={exercise?._id} />,
     <ChangeUnitsButton
       key="change units dialog"
       {...{ mutateExerciseFields, displayFields }}
     />,
-    <ManageExerciseButton key="manage" _id={exercise?._id} />,
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
     <SwapRecordButton key="right" direction="right" index={swiperIndex} />,
     <DeleteRecordButton key="delete" _id={_id} />,

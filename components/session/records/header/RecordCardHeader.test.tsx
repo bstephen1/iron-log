@@ -7,7 +7,7 @@ import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import RecordCardHeader from './RecordCardHeader'
 
 const storageKey = 'cardHeaderActions'
-const totalActions = 7
+const totalActions = 8
 
 const TestWrapper = (
   props: Partial<ComponentProps<typeof RecordCardHeader>>
