@@ -1,7 +1,16 @@
 import dayjs, { type ManipulateType } from 'dayjs'
-import { afterAll, beforeAll, beforeEach, expect, it, vi } from 'vitest'
-import { act, render, screen } from '../../../lib/test/rtl'
-import RestTimer from './RestTimer'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
+import { LOCAL_STORAGE } from '../../../lib/frontend/constants'
+import { act, render, screen, waitFor } from '../../../lib/test/rtl'
+import RestTimer, { type IntervalSettings } from './RestTimer'
 
 const initialTime = dayjs('2020-01-01T10:00:00')
 
@@ -52,21 +61,6 @@ it('resets timer', async () => {
   expect(screen.getByText('00:00:00')).toBeVisible()
 })
 
-it('pauses and resumes timer', async () => {
-  const { user } = await renderAndStartTimer()
-
-  addSystemTime(1, 'hour')
-  await user.click(screen.getByLabelText(/pause/i))
-  addSystemTime(1, 'hour')
-
-  expect(screen.getByText('01:00:00')).toBeVisible()
-
-  await user.click(screen.getByLabelText(/resume/i))
-  addSystemTime(1, 'hour')
-
-  expect(screen.getByText('02:00:00')).toBeVisible()
-})
-
 it('stops timer', async () => {
   const { user } = await renderAndStartTimer()
 
@@ -110,13 +104,88 @@ it('maintains total time when resetting after finishing session', async () => {
   expect(screen.getByText('01:30:00')).toBeVisible()
 })
 
-it('unpauses timer when resetting', async () => {
-  const { user } = await renderAndStartTimer()
+describe('interval timer', () => {
+  const setIntervalSettings = (settings: IntervalSettings) =>
+    localStorage.setItem(LOCAL_STORAGE.intervalTimer, JSON.stringify(settings))
 
-  await user.click(screen.getByLabelText(/pause/i))
-  addSystemTime(1, 'hour')
-  await user.click(screen.getByLabelText(/reset/i))
-  addSystemTime(30, 'minute')
+  it('opens settings dialog when local storage is empty', async () => {
+    const { user } = await renderAndStartTimer()
 
-  expect(screen.getByText('00:30:00')).toBeVisible()
+    await user.click(screen.getByLabelText(/interval/))
+
+    expect(screen.getByText('Interval settings')).toBeVisible()
+  })
+
+  it('iterates through interval modes properly', async () => {
+    setIntervalSettings({ delay: 10, work: 5, rest: 7 })
+    const { user } = await renderAndStartTimer()
+
+    await user.click(screen.getByLabelText(/interval/))
+
+    expect(screen.getByText('Delay')).toBeVisible()
+    expect(screen.getByText('00:00:10')).toBeVisible()
+
+    addSystemTime(10, 'second')
+    expect(screen.getByText('Work')).toBeVisible()
+    expect(screen.getByText('00:00:05')).toBeVisible()
+
+    addSystemTime(5, 'second')
+    expect(screen.getByText('Rest')).toBeVisible()
+    expect(screen.getByText('00:00:07')).toBeVisible()
+  })
+
+  it('edits stored interval settings', async () => {
+    setIntervalSettings({ delay: 6, work: 5, rest: 5 })
+    const { user } = await renderAndStartTimer()
+
+    // go through a few rounds
+    addSystemTime(30, 'second')
+
+    // change delay
+    await user.click(screen.getByLabelText(/interval/))
+    await user.click(screen.getByLabelText(/Change interval settings/))
+    await user.type(screen.getByLabelText('Delay'), '2')
+    await user.click(screen.getByText('Confirm'))
+
+    // resets timer
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    })
+    expect(screen.getByText('Delay')).toBeVisible()
+    expect(screen.getByText('00:00:02')).toBeVisible()
+  })
+
+  it('resets rest timer after stopping interval timer', async () => {
+    setIntervalSettings({ delay: 1, work: 1, rest: 1 })
+    const { user } = await renderAndStartTimer()
+
+    // increment rest timer
+    addSystemTime(30, 'second')
+
+    // start and stop interval
+    await user.click(screen.getByLabelText(/interval/))
+    await user.click(screen.getByLabelText(/Stop interval/))
+
+    // resets rest timer
+    expect(screen.queryByText('Delay')).not.toBeInTheDocument()
+    expect(screen.getByText('00:00:00')).toBeVisible()
+  })
+
+  it('shows rep count after finishing', async () => {
+    setIntervalSettings({ delay: 0, work: 1, rest: 2 })
+    const { user } = await renderAndStartTimer()
+
+    await user.click(screen.getByLabelText(/interval/))
+    // need to do separate calls so the component can rerender
+    addSystemTime(1, 'second') // work 1
+    addSystemTime(2, 'second')
+    addSystemTime(1, 'second') // work 2
+    addSystemTime(2, 'second')
+    addSystemTime(1, 'second') // work 3
+
+    await user.click(screen.getByLabelText(/Stop interval/))
+
+    // snackbar appears
+    expect(await screen.findByText(/completed 3 reps/)).toBeVisible()
+  })
 })

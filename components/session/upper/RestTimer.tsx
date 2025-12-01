@@ -1,7 +1,9 @@
 'use client'
+import AlarmIcon from '@mui/icons-material/Alarm'
+import AlarmOffIcon from '@mui/icons-material/AlarmOff'
 import DoneIcon from '@mui/icons-material/Done'
-import PauseIcon from '@mui/icons-material/Pause'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import EditIcon from '@mui/icons-material/Edit'
+import type PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import ReplayIcon from '@mui/icons-material/Replay'
 import StopIcon from '@mui/icons-material/Stop'
 import Box from '@mui/material/Box'
@@ -11,10 +13,19 @@ import IconButton from '@mui/material/IconButton'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
-import { useCallback, useEffect, useReducer } from 'react'
+import { enqueueSnackbar } from 'notistack'
+import { useCallback, useEffect, useState } from 'react'
+import useLocalStorageState from 'use-local-storage-state'
+import { LOCAL_STORAGE } from '../../../lib/frontend/constants'
+import { capitalize } from '../../../lib/util/string'
 import Tooltip from '../../Tooltip'
+import IntervalSettingsDialog from './IntervalSettingsDialog'
+import useClockReducer from './useClockReducer'
 
-const formatTime = (totalSeconds: number) => {
+const formatSecTime = (totalSeconds: number, hideZero?: boolean) => {
+  // counting down to zero can produce a few quick glitchy frames, should just keep at 1 sec
+  if (hideZero && !Math.floor(totalSeconds)) return '00:00:01'
+
   const hours = `0${Math.floor(totalSeconds / 3600)}`.slice(-2)
   const minutes = `0${Math.floor((totalSeconds / 60) % 60)}`.slice(-2)
   const seconds = `0${Math.floor(totalSeconds % 60)}`.slice(-2)
@@ -22,89 +33,73 @@ const formatTime = (totalSeconds: number) => {
   return `${hours}:${minutes}:${seconds}`
 }
 
-interface State {
-  enabled: boolean
-  isRunning: boolean
-  /** When the session is marked as finished the timer will show the total session time. */
-  isFinished: boolean
-  /** Value displayed, in ms */
-  displayValue: number
-  /** When the timer was initially started. Used to calculate total time. Total time cannot be paused or reset. */
-  startTime: number
-  /** When the timer was started / resumed. */
-  resumeTime: number
-  /** Delta time between current and resume time is added here when timer is paused */
-  accumulatedTime: number
+const formatMsTime = (ms: number) => formatSecTime(ms / 1000)
+// this needs to be <1000 so the rest time can tick out of sync with the total time
+const millisecondsPerInterval = 100
+
+export interface IntervalSettings {
+  /** one time delay before first work rep starts, seconds. Must be greater than or equal to 0 */
+  delay: number
+  /** working time, seconds. Must be greater than 0 */
+  work: number
+  /** rest time between working reps, seconds. Must be greater than 0 */
+  rest: number
 }
 
-interface Action {
-  type: 'start' | 'stop' | 'reset' | 'tick' | 'pause' | 'resume' | 'finish'
-}
-
-const initialTimerState: State = {
-  enabled: false,
-  isRunning: false,
-  isFinished: false,
-  startTime: 0,
-  resumeTime: 0,
-  displayValue: 0,
-  accumulatedTime: 0,
-}
-
-// this is essentially a stopwatch with limited functionality (we probably don't want/need a full stopwatch here)
-function clockReducer(state: State, action: Action): State {
-  const now = dayjs().valueOf()
-  const deltaTime = state.isRunning ? now - state.resumeTime : 0
-  switch (action.type) {
-    case 'start':
-      return {
-        ...state,
-        startTime: now,
-        resumeTime: now,
-        isRunning: true,
-        enabled: true,
-      }
-    case 'stop':
-      return initialTimerState
-    case 'finish':
-      return {
-        ...state,
-        isRunning: false,
-        isFinished: true,
-        displayValue: now - state.startTime,
-      }
-    case 'reset':
-      return {
-        ...state,
-        resumeTime: dayjs().valueOf(),
-        isRunning: true,
-        accumulatedTime: 0,
-        displayValue: 0,
-        isFinished: false,
-      }
-    case 'pause':
-      return {
-        ...state,
-        isRunning: false,
-        accumulatedTime: state.accumulatedTime + deltaTime,
-      }
-    case 'resume':
-      return { ...state, isRunning: true, resumeTime: now, startTime: now }
-    case 'tick':
-      return {
-        ...state,
-        displayValue: deltaTime + state.accumulatedTime,
-      }
-  }
+interface IntervalTimer extends IntervalSettings {
+  mode: 'delay' | 'work' | 'rest'
+  /** timestamp of when the last mode switch happened, ms */
+  modeStart: number
+  /** reps of working intervals completed */
+  reps: number
 }
 
 export default function RestTimer() {
-  const [state, dispatch] = useReducer(clockReducer, initialTimerState)
+  const [state, dispatch] = useClockReducer()
   const { isRunning, displayValue, enabled, isFinished } = state
-  // this needs to be <1000 so the rest time can tick out of sync with the total time
-  const millisecondsPerInterval = 100
+  const [intervalTimer, setIntervalTimer] = useState<
+    IntervalTimer | undefined
+  >()
+  const [intervalSettings] = useLocalStorageState<IntervalSettings>(
+    LOCAL_STORAGE.intervalTimer
+  )
+  const [intervalSettingsOpen, setIntervalSettingsOpen] = useState(false)
 
-  const formatDeltaTime = (ms: number) => formatTime(ms / 1000)
+  const intervalRemaining = intervalTimer
+    ? Math.ceil(
+        intervalTimer[intervalTimer.mode] -
+          (dayjs().valueOf() - intervalTimer.modeStart) / 1000
+      )
+    : 0
+
+  const startIntervalTimer = (settings: IntervalSettings) =>
+    setIntervalTimer({
+      ...settings,
+      mode: 'delay',
+      modeStart: dayjs().valueOf(),
+      reps: 0,
+    })
+
+  useEffect(() => {
+    if (!intervalTimer || intervalRemaining > 0) return
+
+    setIntervalTimer((prev) => {
+      /* c8 ignore next -- prev cannot be undefined */
+      if (!prev) return prev
+      const modeStart = dayjs().valueOf()
+
+      if (prev.mode === 'delay') {
+        return { ...prev, mode: 'work', modeStart }
+      } else {
+        return {
+          ...prev,
+          mode: prev.mode === 'work' ? 'rest' : 'work',
+          modeStart: dayjs().valueOf(),
+          reps: prev.mode === 'work' ? prev.reps + 1 : prev.reps,
+        }
+      }
+    })
+  }, [intervalRemaining, intervalTimer])
 
   useEffect(() => {
     if (!isRunning) return
@@ -116,31 +111,38 @@ export default function RestTimer() {
     }, millisecondsPerInterval)
 
     return () => clearInterval(interval)
-  }, [isRunning])
+  }, [isRunning, dispatch])
 
   // this needs to be in a useCallback, or outside the parent component. Will not trigger
   // clicks consistently otherwise.
   const TimerButton = useCallback(
     ({
-      type,
+      action,
       Icon,
       tooltip = '',
       isVisible = true,
     }: {
-      type: Action['type']
+      action: Parameters<typeof dispatch>[0]['type'] | (() => void)
       Icon: typeof PlayArrowIcon
       tooltip?: string
       isVisible?: boolean
     }) => (
       <Tooltip title={tooltip}>
         <Grow in={isVisible}>
-          <IconButton onClick={() => dispatch({ type })} color="primary">
+          <IconButton
+            onClick={
+              typeof action === 'function'
+                ? action
+                : () => dispatch({ type: action })
+            }
+            color="primary"
+          >
             <Icon />
           </IconButton>
         </Grow>
       </Tooltip>
     ),
-    []
+    [dispatch]
   )
 
   return (
@@ -154,12 +156,17 @@ export default function RestTimer() {
         </Box>
       ) : (
         <>
+          <IntervalSettingsDialog
+            open={intervalSettingsOpen}
+            setOpen={setIntervalSettingsOpen}
+            handleSubmit={(settings) => startIntervalTimer(settings)}
+          />
           <Grow in={!isFinished}>
             <Typography
               textAlign="center"
               display={isFinished ? 'none' : 'block'}
             >
-              Rest time
+              {intervalTimer ? capitalize(intervalTimer.mode) : 'Rest time'}
             </Typography>
           </Grow>
           <Grow in={isFinished}>
@@ -173,7 +180,9 @@ export default function RestTimer() {
 
           <Grow in={enabled}>
             <Typography variant="h3" textAlign="center">
-              {formatDeltaTime(displayValue)}
+              {intervalTimer
+                ? formatSecTime(intervalRemaining, true)
+                : formatMsTime(displayValue)}
             </Typography>
           </Grow>
           <Stack
@@ -182,29 +191,50 @@ export default function RestTimer() {
             spacing={2}
             sx={{ pb: 2 }}
           >
-            {isRunning ? (
-              <TimerButton
-                type="pause"
-                Icon={PauseIcon}
-                tooltip="Pause"
-                isVisible={!isFinished}
-              />
+            {!intervalTimer ? (
+              <>
+                <TimerButton
+                  action={() => {
+                    intervalSettings
+                      ? startIntervalTimer(intervalSettings)
+                      : setIntervalSettingsOpen(true)
+                  }}
+                  Icon={AlarmIcon}
+                  tooltip="Start interval timer"
+                  isVisible={!isFinished}
+                />
+                <TimerButton action="reset" Icon={ReplayIcon} tooltip="Reset" />
+                <TimerButton action="stop" Icon={StopIcon} tooltip="Turn Off" />
+                <TimerButton
+                  action="finish"
+                  Icon={DoneIcon}
+                  tooltip="Finish Session"
+                  isVisible={!isFinished}
+                />
+              </>
             ) : (
-              <TimerButton
-                type="resume"
-                Icon={PlayArrowIcon}
-                tooltip="Resume"
-                isVisible={!isFinished}
-              />
+              <>
+                <TimerButton
+                  action={() => {
+                    setIntervalTimer(undefined)
+                    dispatch({ type: 'reset' })
+                    enqueueSnackbar({
+                      message: `completed ${intervalTimer.reps} reps`,
+                      severity: 'info',
+                    })
+                  }}
+                  Icon={AlarmOffIcon}
+                  tooltip="Stop interval timer"
+                />
+                <TimerButton
+                  action={() => {
+                    setIntervalSettingsOpen(true)
+                  }}
+                  Icon={EditIcon}
+                  tooltip="Change interval settings"
+                />
+              </>
             )}
-            <TimerButton type="reset" Icon={ReplayIcon} tooltip="Reset" />
-            <TimerButton type="stop" Icon={StopIcon} tooltip="Turn Off" />
-            <TimerButton
-              type="finish"
-              Icon={DoneIcon}
-              tooltip="Finish Session"
-              isVisible={!isFinished}
-            />
           </Stack>
         </>
       )}

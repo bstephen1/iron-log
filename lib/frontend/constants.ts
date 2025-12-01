@@ -33,6 +33,7 @@ export enum QUERY_KEYS {
 export enum LOCAL_STORAGE {
   sessionRedirect = 'sessionRedirect',
   showSaving = 'showSaving',
+  intervalTimer = 'intervalTimer',
 }
 
 // Fun fact: after naming this, found out mui date picker internals has an identical function.
