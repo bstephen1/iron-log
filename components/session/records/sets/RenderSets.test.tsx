@@ -25,3 +25,17 @@ it('renders readonly sets', () => {
 
   expect(screen.queryByLabelText('Add new set')).not.toBeInTheDocument()
 })
+
+it('does not render delete button if there are no display fields', () => {
+  render(
+    <RenderSets
+      mutateExerciseFields={vi.fn()}
+      displayFields={{ ...DEFAULT_DISPLAY_FIELDS, visibleFields: [] }}
+      sets={[{ reps: 1, weight: 1 }]}
+      _id="1"
+    />
+  )
+
+  expect(screen.getByLabelText('Set 1')).toBeVisible()
+  expect(screen.queryByLabelText('Delete set 1')).not.toBeInTheDocument()
+})
