@@ -88,3 +88,19 @@ it('does not submit if sessionLog is loading', async () => {
 
   expect(mockMutate).not.toHaveBeenCalled()
 })
+
+it('can delete last note', async () => {
+  const sessionNote = createNote('session note', ['Session'])
+  const { user } = render(<TestWrapper notes={[sessionNote]} />)
+
+  await user.click(screen.getByRole('button'))
+  await user.click(screen.getByLabelText('Delete'))
+
+  expect(mockMutate).toHaveBeenCalledWith({
+    notes: [],
+  })
+  expect(upsertSessionLog).toHaveBeenCalledWith({
+    ...sessionLog,
+    notes: [],
+  })
+})
