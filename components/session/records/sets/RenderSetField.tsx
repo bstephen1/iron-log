@@ -11,7 +11,8 @@ import NumericFieldAutosave from '../../../form-fields/NumericFieldAutosave'
 import SetFieldSide from './SetFieldSide'
 import SetFieldTimeMask from './SetFieldTimeMask'
 
-const delimiterWidth = '15px'
+export const delimiterWidth = '15px'
+
 type ComponentType = 'side' | 'time' | 'default'
 type SharedProps = Pick<TextFieldProps, 'slotProps' | 'sx'>
 interface Props<S extends keyof Units>
@@ -40,19 +41,19 @@ export default memo(function RenderSetField<S extends keyof Units>(
       sx={{
         display: 'flex',
         justifyContent: 'center',
+        alignItems: 'center',
         flexGrow: 1,
         flexBasis: 0,
       }}
     >
-      {/* extra mt to visually align delimiters with setInput values. They're slightly off center otherwise.  */}
-      {index > 0 && (
-        <Box width={delimiterWidth} mt={0.5}>
-          {delimiter ?? '/'}
-        </Box>
-      )}
+      <Box
+        minWidth={delimiterWidth}
+        sx={{ display: 'flex', justifyContent: 'center' }}
+      >
+        {index > 0 ? (delimiter ?? '/') : ''}
+      </Box>
+
       <SetFieldComponent {...{ ...props, componentType }} />
-      {/* pad the right side to be equal to the left side */}
-      {index > 0 && <Box minWidth={delimiterWidth}></Box>}
     </Stack>
   )
 })
@@ -72,7 +73,7 @@ function SetFieldComponent<S extends keyof Units>({
   const sharedProps: SharedProps = {
     slotProps: {
       htmlInput: { sx: { textAlign: 'center' }, 'aria-label': source },
-      input: { disableUnderline: true },
+      input: { disableUnderline: true, multiline: true },
     },
     sx: { flexGrow: 1, flexBasis: 0 },
   }

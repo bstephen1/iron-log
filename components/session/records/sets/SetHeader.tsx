@@ -21,6 +21,7 @@ import {
   printFieldWithUnits,
   type VisibleField,
 } from '../../../../models/DisplayFields'
+import { delimiterWidth } from './RenderSetField'
 
 type Props = {
   mutateExerciseFields?: PartialUpdate<Exercise>
@@ -92,24 +93,25 @@ export default memo(function SetHeader({
         value={selectedNames}
         onChange={(e) => handleChange(e.target.value)}
         input={<Input />}
-        IconComponent={(props) => (
-          <ArrowDropDownIcon
-            {...props}
-            // override absolute positioning that shifts it off center
-            sx={{ right: '0 !important' }}
-          />
-        )}
+        // Remove the dropdown icon and padding, which messes up the
+        // precise formatting desired to align with set rows.
+        // Instead, we render the icon in renderValue for better style control.
+        IconComponent={() => null}
+        sx={{
+          '& .MuiInput-input': {
+            paddingRight: '0px !important',
+          },
+        }}
         renderValue={() => (
           <Stack
             direction="row"
             alignItems="center"
             sx={{
-              px: 1,
               role: 'button',
             }}
           >
             {!selectedNames.length ? (
-              <Typography sx={{ opacity: 0.5 }}>
+              <Typography sx={{ opacity: 0.5, width: '100%' }}>
                 <em>No display fields selected</em>
               </Typography>
             ) : (
@@ -126,9 +128,7 @@ export default memo(function SetHeader({
                       // flexBasis makes it so flexGrow is based on the full element width, not just the extra space
                       flexBasis="0"
                       justifyContent="center"
-                      textOverflow="ellipsis"
-                      // todo: this will clip HH:MM:SS if using a lot of fields on a small screen
-                      overflow="clip"
+                      pl={delimiterWidth}
                     >
                       {field.unitPrefix ?? ''}
                       {displayFields.units[field.source]}
@@ -136,6 +136,14 @@ export default memo(function SetHeader({
                   )
                 })
             )}
+            <Box
+              minWidth="40px"
+              display="flex"
+              alignItems="center"
+              justifyContent="right"
+            >
+              <ArrowDropDownIcon />
+            </Box>
           </Stack>
         )}
         {...selectProps}
@@ -149,6 +157,7 @@ export default memo(function SetHeader({
           <MenuItem key={field.name} value={field.name}>
             <Checkbox
               checked={selectedNames.some((name) => name === field.name)}
+              disableRipple
             />
             <ListItemText
               primary={printFieldWithUnits(field, displayFields.units)}

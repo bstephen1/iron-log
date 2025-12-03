@@ -6,6 +6,7 @@ import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useUpdateMutation } from '../../../../lib/frontend/restService'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
@@ -14,6 +15,7 @@ import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './RenderSetField'
 
 const pyStack = 0.5
+const deleteButtonHeight = '32px'
 
 /* c8 ignore start */
 const getBackground = (side: Set['side']) => {
@@ -60,6 +62,7 @@ export default memo(function RenderSetRow({
 }: Props) {
   const set = sets[index]
   const date = useCurrentDate()
+  const noSwipingDesktop = useNoSwipingDesktop()
   const updateRecordMutate = useUpdateMutation({
     queryKey: [QUERY_KEYS.records, { date }],
     updateFn: updateRecordFields,
@@ -79,13 +82,14 @@ export default memo(function RenderSetRow({
       direction="row"
       alignItems="center"
       aria-label={`Set ${index + 1}`}
+      className={noSwipingDesktop}
       // border is from TextField underline
       sx={[
         {
           borderBottom: '1px solid rgba(0, 0, 0, .42)',
           background: getBackground(set.side),
           py: pyStack,
-          pl: 1,
+          height: deleteButtonHeight,
         },
         (theme) =>
           theme.applyStyles('dark', {
@@ -112,7 +116,7 @@ export default memo(function RenderSetRow({
       ))}
       {readOnly ? (
         // insert a box for padding when clear icon is hidden
-        <Box minWidth={'32px'} />
+        <Box minWidth={deleteButtonHeight} />
       ) : (
         <DeleteSetButton
           index={index}

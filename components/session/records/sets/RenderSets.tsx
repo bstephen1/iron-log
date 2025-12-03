@@ -37,6 +37,7 @@ export default function RenderSets({
 
   // todo: clean up passing around the full sets to every set.
   // Possibly have an updateSets() in mongoService to limit component scope.
+  const hasVisibleFields = !!displayFields.visibleFields.length
 
   return (
     <Box>
@@ -57,7 +58,7 @@ export default function RenderSets({
             {...{
               sets,
               displayFields,
-              readOnly,
+              readOnly: readOnly || !hasVisibleFields,
               _id,
               // exerciseWeight represents eg a dip belt.
               // When there is no extra plate weight, you wouldn't be using the belt.
@@ -67,10 +68,7 @@ export default function RenderSets({
         ))}
       </Box>
       {!readOnly && (
-        <AddSetButton
-          disabled={!displayFields.visibleFields.length}
-          {...{ sets, _id }}
-        />
+        <AddSetButton disabled={!hasVisibleFields} {...{ sets, _id }} />
       )}
     </Box>
   )

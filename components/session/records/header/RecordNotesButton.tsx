@@ -77,6 +77,12 @@ export default memo(function RecordNotesButton({
 
     const sessionNotes = []
     const recordNotes = []
+
+    if (!notes.length) {
+      mutateRecordFields({ notes: [] })
+      replaceSessionLogMutate({ ...sessionLog, notes: [] })
+    }
+
     for (const note of notes) {
       // for record notes, each note should only have a single tag
       if (note.tags.includes('Session')) {
