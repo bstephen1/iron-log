@@ -30,6 +30,9 @@ export default function PaginationBullets({
             isDesktop ? desktopSize : mobileSize
           }px`,
           pb: isDesktop ? 0 : 1,
+          '& .swiper-pagination-bullet': {
+            cursor: 'pointer',
+          },
         },
         (theme) =>
           theme.applyStyles('dark', {
