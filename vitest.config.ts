@@ -15,7 +15,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: 'vitest.setup.ts',
     // clear mock history, restore each implementation to its original, and restore original descriptors of spied-on objects
-    restoreMocks: true,
+    mockReset: true,
     unstubEnvs: true,
     coverage: {
       // enable coverage
