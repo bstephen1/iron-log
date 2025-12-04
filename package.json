@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:test": "NODE_ENV=test next dev -p 7357",
-    "build": "next build --no-lint",
+    "build": "next build",
     "start": "next start",
     "start:test": "next start -p 7357",
     "lint": "biome check --reporter=summary",
