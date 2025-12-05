@@ -1,7 +1,6 @@
 import { generateId } from '../lib/id'
 import type { Note } from './Note'
 
-// todo: add session time. start time: first set created. end time: last update to a set on the same day.
 export interface SessionLog {
   _id: string
   /** YYYY-MM-DD */

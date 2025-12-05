@@ -106,6 +106,7 @@ export default memo(function ComboBoxField<
               checkedIcon={<CheckBoxIcon />}
               style={{ marginRight: 8 }}
               checked={selected}
+              disableRipple
             />
             {modifierName}
           </li>

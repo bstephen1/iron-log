@@ -274,16 +274,11 @@ export async function updateExerciseFields(
 
 export async function deleteExercise(_id: string) {
   const userId = await getUserId()
-  const exercise = await exercises.find({ userId, _id }).next()
-  // note that the content of exercises in records is not guaranteed
-  // to be up to date, but the exercise _id WILL be.
-  const usedRecords = await records
-    .find({ userId, 'exercise._id': exercise?._id })
-    .toArray()
+  const used = await records.findOne({ userId, 'exercise._id': _id })
 
-  if (usedRecords.length) {
+  if (used) {
     throw new Error(
-      `Cannot delete exercise: used in one or more records on the following dates: ${usedRecords.map(({ date }) => date).join(', ')}`
+      `user ${userId} cannot delete exercise ${_id} used in record ${used._id}`
     )
   }
 
@@ -345,14 +340,11 @@ export async function deleteModifier(_id: string) {
   const modifier = await modifiers.findOne({ userId, _id })
 
   if (modifier) {
-    const userExercises = await exercises.find({ userId }).toArray()
-    const usedExercise = userExercises.find((exercise) =>
-      exercise.modifiers.includes(modifier.name)
-    )
+    const used = await exercises.findOne({ userId, modifiers: modifier.name })
 
-    if (usedExercise) {
+    if (used) {
       throw new Error(
-        `Cannot delete modifier: used in exercise "${usedExercise.name}"`
+        `user ${userId} cannot delete modifier "${modifier.name}" used in exercise "${used.name}"`
       )
     }
 
@@ -411,14 +403,11 @@ export async function deleteCategory(_id: string) {
   const category = await categories.findOne({ userId, _id })
 
   if (category) {
-    const userExercises = await exercises.find({ userId }).toArray()
-    const usedExercise = userExercises.find((exercise) =>
-      exercise.categories.includes(category.name)
-    )
+    const used = await exercises.findOne({ userId, categories: category.name })
 
-    if (usedExercise) {
+    if (used) {
       throw new Error(
-        `Cannot delete category: used in exercise "${usedExercise.name}"`
+        `user ${userId} cannot delete category "${category.name}" used in exercise "${used.name}"`
       )
     }
 

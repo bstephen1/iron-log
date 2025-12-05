@@ -1,14 +1,10 @@
 import { enqueueSnackbar } from 'notistack'
 
-export const enqueueError = (
-  message: string,
-  /** prints to console if provided */
-  e?: unknown
-) => {
-  if (e) {
-    console.error(e)
-  }
-
+/** we cannot print the error to console because
+ *  for server functions react obfuscates the error in
+ *  production to "avoid potential sensitive details".
+ */
+export const enqueueError = (message: string) => {
   enqueueSnackbar({
     message,
     severity: 'error',
