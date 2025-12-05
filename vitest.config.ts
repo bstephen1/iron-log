@@ -42,6 +42,7 @@ export default defineConfig({
         '**/app/manage/**',
         '**/models/TabValue.ts',
         // nothing to meaningfully test or cannot test in jsdom
+        '**/ClientLayout.tsx',
         '**/getQueryClient.ts',
         '**/mongoConnect.ts',
         '**/user.ts',

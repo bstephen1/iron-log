@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation'
 import type { Session } from 'next-auth'
 import { type ReactElement, Suspense } from 'react'
 import { vi } from 'vitest'
-import Layout from '../../components/Layout'
+import ClientLayout from '../../components/ClientLayout'
 import { devUserId } from '../frontend/constants'
 
 // This file overwrites @testing-library's render (RTL - React Testing Library)
@@ -68,7 +68,7 @@ const customRender = (
               </div>
             }
           >
-            <Layout
+            <ClientLayout
               {...{
                 disableNavbar: true,
                 session: {
@@ -79,7 +79,7 @@ const customRender = (
               }}
             >
               {children}
-            </Layout>
+            </ClientLayout>
           </Suspense>
         </QueryClientProvider>
       )

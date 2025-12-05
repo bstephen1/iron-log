@@ -37,7 +37,7 @@ interface Props {
   /** set light/dark mode for testing */
   paletteMode?: PaletteMode
 }
-export default function Layout({
+export default function ClientLayout({
   children,
   session,
   disableNavbar,
