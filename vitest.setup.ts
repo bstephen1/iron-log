@@ -101,18 +101,6 @@ beforeAll(() => {
   // but this must be done on a per-test basis as it will break any test not using fake timers
   // See: https://github.com/testing-library/react-testing-library/issues/1197
   globalThis.jest = vi
-  // Swiper uses a deprecated "addListener" method that is not available in jsdom,
-  // so we must manually stub it out.
-  vi.stubGlobal('matchMedia', () => ({
-    matches: false,
-    media: '',
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  }))
 })
 
 // RTL cleanup is only automatically called if vitest has globals on.

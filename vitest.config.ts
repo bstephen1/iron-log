@@ -12,7 +12,7 @@ export default defineConfig({
     outputFile: {
       html: 'vitest/html/index.html',
     },
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: 'vitest.setup.ts',
     // clear mock history, restore each implementation to its original, and restore original descriptors of spied-on objects
     mockReset: true,
@@ -24,21 +24,20 @@ export default defineConfig({
       reporter: ['text-summary', 'html', 'json-summary', 'json'],
       include: ['components', 'lib', 'app', 'models'],
       exclude: [
-        // swiper components can't really be tested in jsdom. Should use e2e tests instead.
+        // swiper components can't really be tested in the dom. Should use e2e tests instead.
         '**/*Swiper*.tsx',
         '**/swiper/**',
         '**/useNoSwipingDesktop.ts',
         // tested implicitly
         '**/restService.ts',
         // recharts can't be meaningfully tested in vitest.
-        // jsdom basically can't render svg graphs at all. There's no
-        // way to get any info about the graph state.
+        // There's no way to get any info about the svg graph state from the dom.
         '**/HistoryGraph.tsx',
         // app router files are mostly scaffolding; should only test if actually needed
         '**/page.tsx',
         '**/layout.tsx',
         '**/auth/**',
-        // behavior is based on queryState; not testable in jsdom
+        // behavior is based on queryState; not testable in the dom
         '**/app/manage/**',
         '**/models/TabValue.ts',
         // nothing to meaningfully test or cannot test in jsdom

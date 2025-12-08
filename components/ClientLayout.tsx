@@ -82,7 +82,8 @@ export default function ClientLayout({
               }}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-              <Analytics />
+              {/* prints console warnings in happy-dom */}
+              {!(process.env.NODE_ENV === 'test') && <Analytics />}
               {!disableNavbar && <Navbar />}
               <main>
                 <Container maxWidth="lg">{children}</Container>
