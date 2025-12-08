@@ -17,7 +17,7 @@ import SetFieldInput from './RenderSetField'
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
 
-/* c8 ignore start */
+/* v8 ignore next */
 const getBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
@@ -29,6 +29,7 @@ const getBackground = (side: Set['side']) => {
   }
 }
 
+/* v8 ignore next */
 const getDarkBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
@@ -39,7 +40,6 @@ const getDarkBackground = (side: Set['side']) => {
       return grey[800]
   }
 }
-/* c8 ignore stop */
 
 interface Props {
   readOnly?: boolean

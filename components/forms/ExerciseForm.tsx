@@ -132,10 +132,7 @@ export default function ExerciseForm({ exercise }: Props) {
       <Grid size={12}>
         <AttributeCheckboxes
           attributes={attributes}
-          handleSubmit={useCallback(
-            (attributes) => updateFields({ attributes }),
-            [updateFields]
-          )}
+          handleUpdate={updateFields}
         />
       </Grid>
       <Grid size={12}>

@@ -7,6 +7,9 @@ import { memo } from 'react'
 
 export default memo(function HistoryTitle() {
   const theme = useTheme()
+  // nav arrows add height to pagination box
+  /* v8 ignore next */
+  const py = useMediaQuery(theme.breakpoints.down('sm')) ? 2 : 0
 
   return (
     <Box
@@ -14,9 +17,7 @@ export default memo(function HistoryTitle() {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      // nav arrows add height to pagination box
-      /* c8 ignore next */
-      py={useMediaQuery(theme.breakpoints.down('sm')) ? 2 : 0}
+      py={py}
     >
       <Divider
         sx={{

@@ -7,15 +7,31 @@ import { render, screen, within } from '../../lib/test/rtl'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import ExerciseForm from './ExerciseForm'
 
-const exercise = createExercise('squats')
+const exercise = createExercise('squats', {
+  modifiers: ['mod'],
+  categories: ['cat'],
+})
 
 it('updates', async () => {
   const { user } = render(<ExerciseForm exercise={exercise} />)
 
-  await user.type(screen.getByLabelText('Name'), 'x')
-  await user.click(screen.getByLabelText('Submit'))
+  // notes
+  await user.type(screen.getByPlaceholderText('Add note'), 'x')
+  await user.click(screen.getByLabelText('Confirm'))
+  expect(updateExerciseFields).toHaveBeenLastCalledWith(exercise._id, {
+    notes: [expect.objectContaining({ value: 'x' })],
+  })
 
-  expect(updateExerciseFields).toHaveBeenCalled()
+  // categories / modifiers
+  const [categories, modifiers] = screen.getAllByTestId('CancelIcon')
+  await user.click(categories)
+  expect(updateExerciseFields).toHaveBeenLastCalledWith(exercise._id, {
+    categories: [],
+  })
+  await user.click(modifiers)
+  expect(updateExerciseFields).toHaveBeenLastCalledWith(exercise._id, {
+    modifiers: [],
+  })
 })
 
 it('deletes', async () => {

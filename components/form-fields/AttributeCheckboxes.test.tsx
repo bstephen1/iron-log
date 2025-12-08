@@ -3,7 +3,7 @@ import { render, screen } from '../../lib/test/rtl'
 import type { Attributes } from '../../models/Attributes'
 import AttributeCheckboxes from './AttributeCheckboxes'
 
-const mockHandleSubmit = vi.fn()
+const mockHandleUpdate = vi.fn()
 
 it('calls submit handler on change', async () => {
   const defaults: Attributes = { bodyweight: true }
@@ -11,7 +11,7 @@ it('calls submit handler on change', async () => {
   const { user } = render(
     <AttributeCheckboxes
       attributes={defaults}
-      handleSubmit={mockHandleSubmit}
+      handleUpdate={mockHandleUpdate}
     />
   )
 
@@ -22,8 +22,10 @@ it('calls submit handler on change', async () => {
   // mark as checked
   await user.click(screen.getByText('Unilateral'))
 
-  expect(mockHandleSubmit).toHaveBeenCalledWith({
-    unilateral: true,
-    bodyweight: true,
+  expect(mockHandleUpdate).toHaveBeenCalledWith({
+    attributes: {
+      unilateral: true,
+      bodyweight: true,
+    },
   })
 })

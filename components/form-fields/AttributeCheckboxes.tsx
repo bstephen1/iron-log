@@ -9,11 +9,11 @@ import FormDivider from '../forms/FormDivider'
 
 interface Props {
   attributes?: Attributes
-  handleSubmit: (attributes: Attributes) => void
+  handleUpdate: (updates: { attributes: Attributes }) => void
 }
 export default memo(function AttributeCheckboxes({
   attributes = {},
-  handleSubmit,
+  handleUpdate,
 }: Props) {
   const AttributeCheckbox = ({ field }: { field: keyof Attributes }) => (
     <FormControlLabel
@@ -21,7 +21,7 @@ export default memo(function AttributeCheckboxes({
         <Checkbox
           checked={attributes[field]}
           onChange={(_, checked) =>
-            handleSubmit({ ...attributes, [field]: checked })
+            handleUpdate({ attributes: { ...attributes, [field]: checked } })
           }
         />
       }
