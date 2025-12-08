@@ -1,13 +1,6 @@
 
-# prettier specific files
-
 yarn.lock
 package-lock.json
-
-
-
-
-# gitignore files
 
 # dependencies
 /node_modules
