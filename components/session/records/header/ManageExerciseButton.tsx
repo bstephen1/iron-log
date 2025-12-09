@@ -1,12 +1,11 @@
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useRouter } from 'next/navigation'
-import { memo } from 'react'
 import TooltipIconButton from '../../../../components/TooltipIconButton'
 
 interface Props {
   _id?: string
 }
-export default memo(function ManageExerciseButton({ _id }: Props) {
+export default function ManageExerciseButton({ _id }: Props) {
   const router = useRouter()
 
   return (
@@ -19,4 +18,4 @@ export default memo(function ManageExerciseButton({ _id }: Props) {
       <SettingsIcon />
     </TooltipIconButton>
   )
-})
+}

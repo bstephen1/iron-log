@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import type { TextFieldProps } from '@mui/material/TextField'
-import { memo } from 'react'
 import { TIME_FORMAT } from '../../../../lib/frontend/constants'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { VisibleField } from '../../../../models/DisplayFields'
@@ -27,9 +26,7 @@ interface Props<S extends keyof Units>
   source: S
 }
 /** chooses which set field type to render, and renders delimiter */
-export default memo(function RenderSetField<S extends keyof Units>(
-  props: Props<S>
-) {
+export default function RenderSetField<S extends keyof Units>(props: Props<S>) {
   const { index, unit, delimiter, source } = props
 
   const componentType: ComponentType =
@@ -56,7 +53,7 @@ export default memo(function RenderSetField<S extends keyof Units>(
       <SetFieldComponent {...{ ...props, componentType }} />
     </Stack>
   )
-})
+}
 
 /** Choose which component to use for the set field.
  *  This is extracted out of the main component to prevent unecessary rerenders.

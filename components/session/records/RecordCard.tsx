@@ -2,7 +2,7 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
 import {
   updateExerciseFields,
@@ -51,7 +51,7 @@ interface Props {
  * for memo() to use the custom equality comparison function isEqual() from lodash.
  * Otherwise they'll still be rerendered because the mutation creates a new object.
  */
-export default memo(function RecordCard({
+export default function RecordCard({
   swiperIndex,
   record,
 }: Props & {
@@ -168,4 +168,4 @@ export default memo(function RecordCard({
       </CardContent>
     </Card>
   )
-})
+}

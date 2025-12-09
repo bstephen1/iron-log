@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
@@ -52,7 +52,7 @@ interface Props {
 /** Render a set. Note the set to render must be spread into the props.
  *  This destructures the set into primitive values to avoid unecessary rerenders.
  */
-export default memo(function RenderSetRow({
+export default function RenderSetRow({
   readOnly = false,
   index,
   displayFields,
@@ -127,4 +127,4 @@ export default memo(function RenderSetRow({
       )}
     </Stack>
   )
-})
+}

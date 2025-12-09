@@ -1,7 +1,6 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 import type { SxProps } from '@mui/material/styles'
-import { memo } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateRecordFields } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
@@ -15,7 +14,7 @@ interface Props extends IconButtonProps {
   sets: Set[]
   sx?: SxProps
 }
-export default memo(function DeleteSetButton({ _id, index, sets, sx }: Props) {
+export default function DeleteSetButton({ _id, index, sets, sx }: Props) {
   const date = useCurrentDate()
   const updateRecordMutate = useUpdateMutation({
     queryKey: [QUERY_KEYS.records, { date }],
@@ -46,4 +45,4 @@ export default memo(function DeleteSetButton({ _id, index, sets, sx }: Props) {
       <ClearIcon />
     </IconButton>
   )
-})
+}

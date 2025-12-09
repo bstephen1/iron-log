@@ -3,9 +3,8 @@ import Divider from '@mui/material/Divider'
 import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { memo } from 'react'
 
-export default memo(function HistoryTitle() {
+export default function HistoryTitle() {
   const theme = useTheme()
   // nav arrows add height to pagination box
   /* v8 ignore next */
@@ -34,4 +33,4 @@ export default memo(function HistoryTitle() {
       </Divider>
     </Box>
   )
-})
+}

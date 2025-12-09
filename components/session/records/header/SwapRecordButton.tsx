@@ -1,6 +1,5 @@
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
-import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
@@ -15,7 +14,7 @@ interface Props {
   direction: 'left' | 'right'
   index: number
 }
-export default memo(function SwapRecordButton({ direction, index }: Props) {
+export default function SwapRecordButton({ direction, index }: Props) {
   // not extracting everything so it's easier to see what comes from swiper
   const swiper = useSwiper()
   const date = useCurrentDate()
@@ -57,4 +56,4 @@ export default memo(function SwapRecordButton({ direction, index }: Props) {
       )}
     </TooltipIconButton>
   )
-})
+}
