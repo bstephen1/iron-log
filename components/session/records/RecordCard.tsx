@@ -51,12 +51,7 @@ interface Props {
  * for memo() to use the custom equality comparison function isEqual() from lodash.
  * Otherwise they'll still be rerendered because the mutation creates a new object.
  */
-export default function RecordCard({
-  swiperIndex,
-  record,
-}: Props & {
-  record: Record
-}) {
+export default function RecordCard({ swiperIndex, record }: Props) {
   // Instead of using record.exercise, we make a separate call to get the exercise.
   // This ensures the exercise is up to date if the user has multiple records with the
   // same exercise. record.exercise is only updated upon fetching the record,
