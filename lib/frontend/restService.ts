@@ -13,9 +13,11 @@ import type FetchOptions from '../../models/FetchOptions'
 import {
   buildRecordFilter,
   isRecord,
+  type Record,
   type RecordQuery,
 } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
+import { type Status, StatusOrder } from '../../models/Status'
 import {
   fetchBodyweights,
   fetchCategories,
@@ -213,8 +215,13 @@ interface UseOptions {
 const toNames = (entities?: AsyncSelectorOption[]) =>
   entities?.map((entity) => entity.name) ?? []
 
-const nameSort = <T extends { name: string }>(data?: T[]) =>
-  data?.sort((a, b) => a.name.localeCompare(b.name)) ?? []
+/** sorts first by status, then by name */
+const dataSort = <T extends { name: string; status: Status }>(data?: T[]) =>
+  data?.sort((a, b) => {
+    const status = StatusOrder[a.status] - StatusOrder[b.status]
+
+    return status || a.name.localeCompare(b.name)
+  }) ?? []
 
 /** NOTE: this is a singular record so cannot use the generic useAddMutation,
  *  which is for arrays
@@ -229,70 +236,117 @@ export function useSessionLog(day: Dayjs | string) {
 }
 
 export function useSessionLogs(query: FetchOptions) {
-  const hook = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.sessionLogs, query],
     queryFn: () => fetchSessionLogs(query),
   })
 
   return {
-    ...hook,
-    index: arrayToIndex('date', hook.data),
+    data,
+    isLoading,
+    index: arrayToIndex('date', data),
   }
 }
 
 export function useRecords(query?: RecordQuery & FetchOptions, enabled = true) {
-  const hook = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.records, query],
     queryFn: () => fetchRecords(buildRecordFilter(query)),
     enabled,
+    select: (data) => data,
   })
 
   return {
-    ...hook,
-    index: arrayToIndex('_id', hook.data),
+    data,
+    isLoading,
+    index: arrayToIndex('_id', data),
   }
+}
+
+/** Use record plucked from already fetched useRecords array.
+ *  A valid id is assumed.
+ */
+export function useRecord(id: string, date: string) {
+  const { data: record } = useSuspenseQuery({
+    queryKey: [QUERY_KEYS.records, { date }],
+    queryFn: () => fetchRecords(buildRecordFilter({ date })),
+    select: (data) => data.find((r) => r._id === id),
+  })
+
+  return record as Record
 }
 
 export function useExercises({ suspense }: UseOptions = {}) {
-  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
+  const { data } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.exercises],
     queryFn: fetchExercises,
+    select: (data) => data,
   })
 
   return {
-    data: nameSort(data),
+    data: dataSort(data),
     names: toNames(data),
     index: arrayToIndex('_id', data),
-    ...rest,
   }
 }
 
+export function useExercisesNew() {
+  const { data: exercises } = useQuery({
+    queryKey: [QUERY_KEYS.exercises],
+    queryFn: fetchExercises,
+    select: dataSort,
+  })
+
+  return exercises ?? []
+}
+
+export function useExercise(id?: string) {
+  const { data: exercise } = useQuery({
+    queryKey: [QUERY_KEYS.exercises],
+    queryFn: fetchExercises,
+    select: (data) => data.find((e) => e._id === id),
+    enabled: !!id,
+  })
+
+  return exercise ?? null
+}
+
 export function useModifiers({ suspense }: UseOptions = {}) {
-  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
+  const { data } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.modifiers],
     queryFn: fetchModifiers,
+    select: (data) => data,
   })
 
   return {
-    data: nameSort(data),
+    data: dataSort(data),
     names: toNames(data),
     index: arrayToIndex('_id', data),
-    ...rest,
   }
 }
 
 export function useCategories({ suspense }: UseOptions = {}) {
-  const { data, ...rest } = (suspense ? useSuspenseQuery : useQuery)({
+  const { data } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.categories],
     queryFn: fetchCategories,
+    select: (data) => data,
   })
 
   return {
-    data: nameSort(data),
+    data: dataSort(data),
     names: toNames(data),
     index: arrayToIndex('_id', data),
-    ...rest,
   }
+}
+
+export function useCategoryNames({ suspense }: UseOptions = {}) {
+  const { data } = (suspense ? useSuspenseQuery : useQuery)({
+    queryKey: [QUERY_KEYS.categories],
+    queryFn: fetchCategories,
+    select: toNames,
+  })
+
+  return data
 }
 
 export function useBodyweights(query?: BodyweightQuery, enabled = true) {
@@ -308,14 +362,14 @@ export function useBodyweights(query?: BodyweightQuery, enabled = true) {
     ? { ...query, start, end }
     : { start: dayjs().add(-6, 'months').format(DATE_FORMAT) }
 
-  const { data, ...rest } = useQuery({
+  const { data } = useQuery({
     queryKey: [QUERY_KEYS.bodyweights, formattedQuery],
     queryFn: () => fetchBodyweights(formattedQuery),
+    select: (data) => data,
     enabled,
   })
 
   return {
     data: enabled ? data : [],
-    ...rest,
   }
 }

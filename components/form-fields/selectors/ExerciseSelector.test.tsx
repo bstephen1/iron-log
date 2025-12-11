@@ -100,9 +100,10 @@ it('unselects exercise if it is not valid for selected category', async () => {
   await user.click(await screen.findByLabelText('Select category'))
   await user.click(screen.getByText(testCategoryName))
 
-  // autocomplete has reset
-  expect(screen.getByPlaceholderText(autocompletePlaceholder)).toBeVisible()
-  expect(mockHandleChange).toHaveBeenCalledWith(null)
+  // input has cleared
+  expect(
+    screen.queryByDisplayValue(unmatchedExercise.name)
+  ).not.toBeInTheDocument()
 })
 
 it('sorts exercises by status', async () => {

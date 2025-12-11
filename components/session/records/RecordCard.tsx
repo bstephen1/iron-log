@@ -2,7 +2,7 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
-import { useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
 import {
   updateExerciseFields,
@@ -10,7 +10,8 @@ import {
 } from '../../../lib/backend/mongoService'
 import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
 import {
-  useExercises,
+  useExercise,
+  useRecord,
   useUpdateMutation,
 } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
@@ -21,6 +22,7 @@ import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import type { Record, RecordQuery } from '../../../models/Record'
 import { calculateTotalValue } from '../../../models/Set'
+import type { HistoryAction, HistoryContent } from '../history/HistoryCard'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
 import RecordCardHeader from './header/RecordCardHeader'
@@ -38,9 +40,13 @@ import RenderSets from './sets/RenderSets'
 // See difference between path/named import: https://mui.com/material-ui/guides/minimizing-bundle-size/#option-one-use-path-imports
 // See bug: https://github.com/orgs/vercel/discussions/1657
 
+const historyActions: HistoryAction[] = ['recordNotes']
+const historyContent: HistoryContent[] = ['sets']
+
 interface Props {
-  record: Record
+  id: string
   swiperIndex: number
+  date: string
 }
 /** Record card with loaded record data.
  *
@@ -48,22 +54,22 @@ interface Props {
  * so they only rerender when needed.
  *
  * Memoized components without primitive props can make use of the second arg
- * for memo() to use the custom equality comparison function isEqual() from lodash.
+ * for memo() to use the custom equality comparison function isEqual().
  * Otherwise they'll still be rerendered because the mutation creates a new object.
  */
-export default function RecordCard({ swiperIndex, record }: Props) {
+export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
   // Instead of using record.exercise, we make a separate call to get the exercise.
   // This ensures the exercise is up to date if the user has multiple records with the
   // same exercise. record.exercise is only updated upon fetching the record,
   // so if one record updated an exercise any other records would still be using the outdated exercise.
-  const exercises = useExercises()
-  const exercise = exercises.index[record.exercise?._id ?? ''] ?? null
-  const { activeModifiers, _id, sets, notes, setType, date } = record
+  const record = useRecord(id, date)
+  const exercise = useExercise(record.exercise?._id)
+  const { activeModifiers, _id, sets, notes, setType } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
   const updateRecordMutate = useUpdateMutation({
-    queryKey: [QUERY_KEYS.records, { date }],
+    queryKey: [QUERY_KEYS.records, id],
     updateFn: updateRecordFields,
   })
   const updateExerciseMutate = useUpdateMutation({
@@ -74,16 +80,19 @@ export default function RecordCard({ swiperIndex, record }: Props) {
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes.unilateral
 
-  const historyQuery: RecordQuery = {
-    modifiers: activeModifiers,
-    // don't want to include the current record in its own history
-    end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
-    exercise: exercise?.name,
-    limit: 5,
-    modifierMatchType: ArrayMatchType.Exact,
-    setTypeMatchType: ArrayMatchType.Exact,
-    setType,
-  }
+  const historyQuery: RecordQuery = useMemo(
+    () => ({
+      modifiers: activeModifiers,
+      // don't want to include the current record in its own history
+      end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
+      exercise: exercise?.name,
+      limit: 5,
+      modifierMatchType: ArrayMatchType.Exact,
+      setTypeMatchType: ArrayMatchType.Exact,
+      setType,
+    }),
+    [activeModifiers, date, exercise?.name, setType]
+  )
 
   const mutateExerciseFields: PartialUpdate<Exercise> = useCallback(
     (updates) => {
@@ -121,8 +130,10 @@ export default function RecordCard({ swiperIndex, record }: Props) {
             // swiping causes weird behavior on desktop when combined with data input fields
             // (eg, can't close autocompletes)
             className={noSwipingDesktop}
-            // we can't clear it bc the recordCard presumes there is an exercise
-            disableClearable
+            // disableClearable prevents null from ever being allowed.
+            // There should always be an exercise in actual usage, but some test envs
+            // may init without one selected.
+            disableClearable={!!exercise}
             {...{ mutateRecordFields, activeModifiers, exercise }}
           />
           <RecordModifierComboBox
@@ -152,8 +163,8 @@ export default function RecordCard({ swiperIndex, record }: Props) {
           <HistoryTitle />
           <HistoryCardsSwiper
             query={historyQuery}
-            actions={['recordNotes']}
-            content={['sets']}
+            actions={historyActions}
+            content={historyContent}
             {...{
               _id,
               displayFields,
@@ -163,4 +174,4 @@ export default function RecordCard({ swiperIndex, record }: Props) {
       </CardContent>
     </Card>
   )
-}
+})

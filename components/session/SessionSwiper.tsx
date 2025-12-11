@@ -141,7 +141,7 @@ export default function SessionSwiper({ date }: Props) {
             (id, i) =>
               records.index[id] && (
                 <SwiperSlide key={id}>
-                  <RecordCard record={records.index[id]} swiperIndex={i} />
+                  <RecordCard id={id} swiperIndex={i} date={date} />
                 </SwiperSlide>
               )
           )}

@@ -1,6 +1,5 @@
 import type { TextFieldProps } from '@mui/material/TextField'
-import { type ComponentProps, memo } from 'react'
-import isEqual from 'react-fast-compare'
+import type { ComponentProps } from 'react'
 import ExerciseSelector from '../../../components/form-fields/selectors/ExerciseSelector'
 import type { PartialUpdate } from '../../../lib/types'
 import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
@@ -15,7 +14,7 @@ type Props<DisableClearable extends boolean | undefined> = {
   'handleChange'
 >
 
-export default memo(function RecordExerciseSelector<
+export default function RecordExerciseSelector<
   DisableClearable extends boolean | undefined,
 >({
   mutateRecordFields,
@@ -44,4 +43,4 @@ export default memo(function RecordExerciseSelector<
       {...exerciseSelectorProps}
     />
   )
-}, isEqual)
+}
