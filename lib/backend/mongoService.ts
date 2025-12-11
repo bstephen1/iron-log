@@ -382,10 +382,6 @@ export async function updateCategoryFields(
       { userId, categories: oldCategory?.name },
       { $set: { 'categories.$': updates.name } }
     )
-    await records.updateMany(
-      { userId, category: oldCategory?.name },
-      { $set: { category: updates.name } }
-    )
   }
 
   return (await categories.findOneAndUpdate(

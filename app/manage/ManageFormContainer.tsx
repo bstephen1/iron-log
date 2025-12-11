@@ -1,7 +1,6 @@
 'use client'
 import Grid from '@mui/material/Grid'
 import { parseAsString, useQueryStates } from 'nuqs'
-import { useState } from 'react'
 import CategorySelector from '../../components/form-fields/selectors/CategorySelector'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import ModifierSelector from '../../components/form-fields/selectors/ModifierSelector'
@@ -52,7 +51,6 @@ const getComponents = (
 
 export default function ManageFormContainer() {
   const [urlTab] = useQueryTab()
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
   const [queryState, setQueryState] = useQueryStates({
     exercise: parseAsString,
     category: parseAsString,
@@ -61,10 +59,6 @@ export default function ManageFormContainer() {
   const categories = useCategories({ suspense: true })
   const exercises = useExercises({ suspense: true })
   const modifiers = useModifiers({ suspense: true })
-
-  const unfilteredExercise =
-    exercises.data.find((exercise) => exercise._id === queryState.exercise) ??
-    null
 
   const selected = {
     category:
@@ -75,9 +69,8 @@ export default function ManageFormContainer() {
       modifiers.data.find((modifier) => modifier._id === queryState.modifier) ??
       null,
     exercise:
-      categoryFilter && !unfilteredExercise?.categories.includes(categoryFilter)
-        ? null
-        : unfilteredExercise,
+      exercises.data.find((exercise) => exercise._id === queryState.exercise) ??
+      null,
   }
 
   const updateQueryState = (
@@ -98,8 +91,6 @@ export default function ManageFormContainer() {
           {...{
             handleChange: (obj: { _id: string } | null) =>
               updateQueryState(obj, field),
-            categoryFilter,
-            handleCategoryFilterChange: setCategoryFilter,
           }}
         />
       </Grid>

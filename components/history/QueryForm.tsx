@@ -43,7 +43,6 @@ export default function QueryForm({ query, updateQuery }: Props) {
         }}
         activeModifiers={unsavedQuery.modifiers ?? []}
         exercise={exercise}
-        category={null}
         variant="outlined"
       />
       <ModifierQueryField

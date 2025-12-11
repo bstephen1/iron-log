@@ -266,17 +266,11 @@ describe('Category', () => {
     expect(await fetchCategories()).toHaveLength(0)
   })
 
-  it('updates exercises and records on name change', async () => {
+  it('updates exercises on name change', async () => {
     const category = await addCategory(createModifier('belt'))
     const exercise = await addExercise(
       createExercise('squats', {
         categories: [category.name],
-      })
-    )
-    const record = await addRecord(
-      createRecord(testDate, {
-        exercise,
-        category: category.name,
       })
     )
 
@@ -286,9 +280,6 @@ describe('Category', () => {
 
     expect(await fetchExercise(exercise._id)).toMatchObject({
       categories: [updated.name],
-    })
-    expect(await fetchRecord(record._id)).toMatchObject({
-      category: updated.name,
     })
   })
 

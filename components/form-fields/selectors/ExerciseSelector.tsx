@@ -1,5 +1,5 @@
 import type { TextFieldProps } from '@mui/material/TextField'
-import { useState } from 'react'
+import { Activity, useState } from 'react'
 import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
@@ -21,9 +21,8 @@ type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
     value: DisableClearable extends true ? Exercise : Exercise | null
   ) => void
   variant?: TextFieldProps['variant']
-  /** If this is omitted the category filter will not be rendered */
-  handleCategoryFilterChange?: (category: string | null) => void
-  categoryFilter?: string | null
+  hideCategoryFilter?: boolean
+  initialCategory?: string
   disableAddNew?: boolean
 } & Partial<AsyncSelectorProps<Exercise, DisableClearable>>
 
@@ -31,8 +30,8 @@ export default function ExerciseSelector<
   DisableClearable extends boolean | undefined,
 >({
   exercise,
-  handleCategoryFilterChange,
-  categoryFilter = null,
+  hideCategoryFilter,
+  initialCategory,
   disableAddNew,
   ...asyncSelectorProps
 }: ExerciseSelectorProps<DisableClearable>) {
@@ -45,6 +44,7 @@ export default function ExerciseSelector<
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
   )
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory ?? null)
 
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
@@ -85,19 +85,19 @@ export default function ExerciseSelector<
       )}
       groupBy={(option) => option.status}
       startAdornment={
-        handleCategoryFilterChange && (
+        <Activity mode={hideCategoryFilter ? 'hidden' : 'visible'}>
           <CategoryFilter
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
               categories: categories.names,
               category: categoryFilter,
-              setCategory: handleCategoryFilterChange,
+              setCategory: setCategoryFilter,
               anchorEl: categoryAnchorEl,
               setAnchorEl: setCategoryAnchorEl,
             }}
           />
-        )
+        </Activity>
       }
     />
   )

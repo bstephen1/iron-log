@@ -58,7 +58,7 @@ export default function RecordCard({ swiperIndex, record }: Props) {
   // so if one record updated an exercise any other records would still be using the outdated exercise.
   const exercises = useExercises()
   const exercise = exercises.index[record.exercise?._id ?? ''] ?? null
-  const { activeModifiers, _id, sets, notes, category, setType, date } = record
+  const { activeModifiers, _id, sets, notes, setType, date } = record
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
@@ -123,7 +123,7 @@ export default function RecordCard({ swiperIndex, record }: Props) {
             className={noSwipingDesktop}
             // we can't clear it bc the recordCard presumes there is an exercise
             disableClearable
-            {...{ mutateRecordFields, activeModifiers, exercise, category }}
+            {...{ mutateRecordFields, activeModifiers, exercise }}
           />
           <RecordModifierComboBox
             className={noSwipingDesktop}

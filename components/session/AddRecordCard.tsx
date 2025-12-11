@@ -13,7 +13,6 @@ import { createRecord } from '../../models/Record'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const [category, setCategory] = useState<string | null>(null)
   const date = useCurrentDate()
   const swiper = useSwiper()
   const addRecordMutate = useAddMutation({
@@ -35,8 +34,6 @@ export default function AddRecordCard() {
           {...{
             exercise,
             handleChange: (newExercise) => setExercise(newExercise),
-            categoryFilter: category,
-            handleCategoryFilterChange: setCategory,
           }}
         />
         <Button

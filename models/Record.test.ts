@@ -32,7 +32,7 @@ it('transforms query params', () => {
 it('ignores undefined keys', () => {
   const recordQuery: RecordQuery = {
     exercise: '2000-01-01',
-    category: undefined,
+    date: undefined,
   }
   expect(buildRecordFilter(recordQuery)).toEqual({
     'exercise.name': recordQuery.exercise,

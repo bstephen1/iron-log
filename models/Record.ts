@@ -16,7 +16,6 @@ export interface Record {
    */
   exercise?: Exercise | null
   activeModifiers: string[]
-  category?: string | null
   notes: Note[]
   setType: SetType
   sets: Set[]
@@ -27,7 +26,6 @@ export const createRecord = (
   {
     exercise = null,
     activeModifiers = [],
-    category = null,
     notes = [],
     sets = [{}],
     setType = DEFAULT_SET_TYPE,
@@ -37,7 +35,6 @@ export const createRecord = (
   date,
   exercise,
   activeModifiers,
-  category,
   notes,
   sets,
   setType,
@@ -45,7 +42,6 @@ export const createRecord = (
 
 export interface RecordQuery extends FetchOptions {
   exercise?: string
-  category?: string
   modifiers?: string[]
   modifierMatchType?: ArrayMatchType
   setType?: Partial<SetType>
