@@ -2,15 +2,12 @@ import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { useCallback } from 'react'
-import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
-import { updateRecordFields } from '../../../../lib/backend/mongoService'
-import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { useUpdateMutation } from '../../../../lib/frontend/restService'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
+import useRecordUpdate from '../useRecordUpdate'
 import DeleteSetButton from './DeleteSetButton'
 import SetFieldInput from './RenderSetField'
 
@@ -61,20 +58,16 @@ export default function RenderSetRow({
   sets,
 }: Props) {
   const set = sets[index]
-  const date = useCurrentDate()
   const noSwipingDesktop = useNoSwipingDesktop()
-  const updateRecordMutate = useUpdateMutation({
-    queryKey: [QUERY_KEYS.records, { date }],
-    updateFn: updateRecordFields,
-  })
+  const updateRecord = useRecordUpdate(_id)
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
       const newSets = [...sets]
       newSets[index] = { ...newSets[index], ...changes }
-      updateRecordMutate({ _id, updates: { sets: newSets } })
+      updateRecord({ sets: newSets })
     },
-    [_id, index, sets, updateRecordMutate]
+    [index, sets, updateRecord]
   )
 
   return (
