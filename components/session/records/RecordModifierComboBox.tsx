@@ -1,20 +1,21 @@
 import { type ComponentProps, memo } from 'react'
 import isEqual from 'react-fast-compare'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
-import type { PartialUpdate } from '../../../lib/types'
-import type { Record } from '../../../models/Record'
+import useRecordUpdate from './useRecordUpdate'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
-  mutateRecordFields: PartialUpdate<Record>
+  _id: string
   availableModifiers?: string[]
   activeModifiers: string[]
 }
 export default memo(function RecordModifierComboBox({
-  mutateRecordFields,
   activeModifiers,
   availableModifiers,
+  _id,
   ...comboBoxFieldProps
 }: Props) {
+  const updateRecord = useRecordUpdate(_id)
+
   return (
     <ComboBoxField
       label="Modifiers"
@@ -23,7 +24,7 @@ export default memo(function RecordModifierComboBox({
       variant="standard"
       helperText=""
       handleSubmit={(value: string[]) =>
-        mutateRecordFields({ activeModifiers: value })
+        updateRecord({ activeModifiers: value })
       }
       {...comboBoxFieldProps}
     />

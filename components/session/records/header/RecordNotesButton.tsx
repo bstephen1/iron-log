@@ -11,12 +11,11 @@ import {
   useReplaceMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
-import type { PartialUpdate } from '../../../../lib/types'
 import type { Note } from '../../../../models/Note'
-import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
 import NotesList from '../../../form-fields/NotesList'
 import TooltipIconButton from '../../../TooltipIconButton'
+import useRecordUpdate from '../useRecordUpdate'
 
 const title = 'Record notes'
 
@@ -24,18 +23,19 @@ interface Props {
   notes?: Note[]
   sides?: Set['side'][]
   /** considered readOnly if not provided */
-  mutateRecordFields?: PartialUpdate<Record>
+  _id?: string
   /** Date of the record. Needed to retrieve session notes */
   date: string
 }
 export default memo(function RecordNotesButton({
   notes = [],
   sides = [],
-  mutateRecordFields,
+  _id,
   date,
 }: Props) {
-  const readOnly = !mutateRecordFields
+  const readOnly = !_id
   const { data: sessionLog } = useSessionLog(date)
+  const updateRecord = useRecordUpdate(_id ?? '')
   const [open, setOpen] = useState(false)
   const replaceSessionLogMutate = useReplaceMutation({
     queryKey: [QUERY_KEYS.sessionLogs, date],
@@ -79,7 +79,7 @@ export default memo(function RecordNotesButton({
     const recordNotes = []
 
     if (!notes.length) {
-      mutateRecordFields({ notes: [] })
+      updateRecord({ notes: [] })
       replaceSessionLogMutate({ ...sessionLog, notes: [] })
     }
 
@@ -93,7 +93,7 @@ export default memo(function RecordNotesButton({
     }
 
     if (recordNotes.length) {
-      mutateRecordFields({ notes: recordNotes })
+      updateRecord({ notes: recordNotes })
     }
     if (sessionNotes.length) {
       replaceSessionLogMutate({ ...sessionLog, notes: sessionNotes })

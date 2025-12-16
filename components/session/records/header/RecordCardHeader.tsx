@@ -67,14 +67,12 @@ const useMaxVisibleActions = (totalActions: number) => {
 interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
   swiperIndex: number
   mutateExerciseFields: PartialUpdate<Exercise>
-  mutateRecordFields: PartialUpdate<Record>
   displayFields: DisplayFields
   date: string
 }
 export default function RecordCardHeader({
   swiperIndex,
   mutateExerciseFields,
-  mutateRecordFields,
   notes,
   sets,
   _id,
@@ -86,7 +84,7 @@ export default function RecordCardHeader({
     <RecordNotesButton
       key="record notes dialog"
       sides={sets.map((set) => set.side)}
-      {...{ notes, mutateRecordFields, date }}
+      {...{ _id, notes, date }}
     />,
     <ExerciseNotesButton
       key="exercise notes dialog"

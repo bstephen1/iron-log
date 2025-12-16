@@ -20,15 +20,14 @@ import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../lib/types'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
 import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
-import type { Record, RecordQuery } from '../../../models/Record'
-import { calculateTotalValue } from '../../../models/Set'
+import type { RecordQuery } from '../../../models/Record'
 import type { HistoryAction, HistoryContent } from '../history/HistoryCard'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
 import HistoryTitle from '../history/HistoryTitle'
 import RecordCardHeader from './header/RecordCardHeader'
 import RecordExerciseSelector from './RecordExerciseSelector'
 import RecordModifierComboBox from './RecordModifierComboBox'
-import SetTypeSelect from './SetTypeSelect'
+import RecordSetTypeSelect from './RecordSetTypeSelect'
 import RenderSets from './sets/RenderSets'
 
 // Note: mui icons MUST use path imports instead of named imports!
@@ -68,12 +67,12 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
-  const updateRecordMutate = useUpdateMutation({
+  const _updateRecordMutate = useUpdateMutation({
     queryKey: [QUERY_KEYS.records, id],
     updateFn: updateRecordFields,
   })
   const updateExerciseMutate = useUpdateMutation({
-    queryKey: [QUERY_KEYS.exercises],
+    queryKey: useMemo(() => [QUERY_KEYS.exercises], []),
     updateFn: updateExerciseFields,
   })
 
@@ -101,20 +100,12 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
     [exercise?._id, updateExerciseMutate]
   )
 
-  const mutateRecordFields: PartialUpdate<Record> = useCallback(
-    (updates) => {
-      updateRecordMutate({ _id: record._id, updates })
-    },
-    [record._id, updateRecordMutate]
-  )
-
   return (
     <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
       <RecordCardHeader
         {...{
           mutateExerciseFields,
           swiperIndex,
-          mutateRecordFields,
           _id,
           sets,
           exercise,
@@ -134,20 +125,14 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
             // There should always be an exercise in actual usage, but some test envs
             // may init without one selected.
             disableClearable={!!exercise}
-            {...{ mutateRecordFields, activeModifiers, exercise }}
+            {...{ _id, date, activeModifiers, exercise }}
           />
           <RecordModifierComboBox
             className={noSwipingDesktop}
             availableModifiers={exercise?.modifiers}
-            {...{ mutateRecordFields, activeModifiers }}
+            {...{ _id, activeModifiers }}
           />
-          <SetTypeSelect
-            units={displayFields.units}
-            totalReps={calculateTotalValue(sets, setType)}
-            showRemaining
-            {...{ handleChange: mutateRecordFields, setType }}
-          />
-          {/* NOTE: sets do not use mutateRecordFields from the parent */}
+          <RecordSetTypeSelect {...{ _id, date }} />
           <RenderSets
             {...{
               mutateExerciseFields,
