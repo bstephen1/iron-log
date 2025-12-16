@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
 import useLocalStorageState from 'use-local-storage-state'
 import type { DisplayFields } from '../../../../models/DisplayFields'
-import type { Record } from '../../../../models/Record'
+import type { Note } from '../../../../models/Note'
 import UsageButton from '../../../form-fields/actions/UsageButton'
 import ChangeUnitsButton from './ChangeUnitsButton'
 import DeleteRecordButton from './DeleteRecordButton'
@@ -62,33 +62,39 @@ const useMaxVisibleActions = (totalActions: number) => {
   }
 }
 
-interface Props extends Pick<Record, 'notes' | '_id' | 'exercise'> {
+interface Props {
+  _id: string
+  notes: Note[]
   swiperIndex: number
   displayFields: DisplayFields
   date: string
+  exerciseId?: string
+  exerciseName?: string
+  exerciseNotes?: Note[]
 }
 export default function RecordCardHeader({
   swiperIndex,
   notes,
   _id,
-  exercise,
   displayFields,
   date,
+  exerciseId,
+  exerciseName,
+  exerciseNotes,
 }: Props) {
   const actionButtons = [
     <RecordNotesButton key="record notes dialog" {...{ _id, notes, date }} />,
     <ExerciseNotesButton
       key="exercise notes dialog"
-      disabled={!exercise}
-      notes={exercise?.notes}
-      modifiers={exercise?.modifiers}
-      _id={exercise?._id}
+      disabled={!exerciseId}
+      notes={exerciseNotes}
+      _id={exerciseId}
     />,
-    <UsageButton key="usage" exercise={exercise?.name} type="icon" />,
-    <ManageExerciseButton key="manage" _id={exercise?._id} />,
+    <UsageButton key="usage" exercise={exerciseName} type="icon" />,
+    <ManageExerciseButton key="manage" _id={exerciseId} />,
     <ChangeUnitsButton
       key="change units dialog"
-      _id={exercise?._id}
+      _id={exerciseId}
       {...{ displayFields }}
     />,
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,

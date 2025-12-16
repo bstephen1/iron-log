@@ -7,6 +7,7 @@ import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
 import { useExerciseUpdate } from '../../../../hooks/mutation'
+import { useExerciseModifiers } from '../../../../lib/frontend/restService'
 import type { Note } from '../../../../models/Note'
 import TooltipIconButton from '../../../TooltipIconButton'
 
@@ -16,20 +17,18 @@ interface Props {
   /** considered readOnly if not provided */
   _id?: string
   notes?: Note[]
-  /** used for note tags */
-  modifiers?: string[]
   disabled?: boolean
 }
 /** Show notes from the record's selected exercise. */
 export default memo(function ExerciseNotesButton({
   _id,
   notes = [],
-  modifiers = [],
   disabled,
 }: Props) {
   const readOnly = !_id
   const [open, setOpen] = useState(false)
   const updateExercise = useExerciseUpdate(_id)
+  const modifiers = useExerciseModifiers(_id)
 
   const handleSubmit = (notes: Note[]) => updateExercise({ notes })
 

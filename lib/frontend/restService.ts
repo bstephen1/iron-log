@@ -277,7 +277,7 @@ export function useRecord(id: string, date: string) {
 }
 
 export function useRecordSides(id = '', date: string) {
-  const { data: sides } = useSuspenseQuery({
+  const { data: sides } = useQuery({
     queryKey: [QUERY_KEYS.records, { date }],
     queryFn: () => fetchRecords(buildRecordFilter({ date })),
     select: (data) =>
@@ -320,6 +320,17 @@ export function useExercise(id?: string) {
   })
 
   return exercise ?? null
+}
+
+export function useExerciseModifiers(id?: string) {
+  const { data: modifiers } = useQuery({
+    queryKey: [QUERY_KEYS.exercises],
+    queryFn: fetchExercises,
+    select: (data) => data.find((e) => e._id === id)?.modifiers,
+    enabled: !!id,
+  })
+
+  return modifiers ?? []
 }
 
 export function useModifiers({ suspense }: UseOptions = {}) {

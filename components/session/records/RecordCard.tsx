@@ -77,10 +77,12 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
   return (
     <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
       <RecordCardHeader
+        exerciseId={exercise?._id}
+        exerciseName={exercise?.name}
+        exerciseNotes={exercise?.notes}
         {...{
           swiperIndex,
           _id,
-          exercise,
           notes,
           displayFields,
           date,
