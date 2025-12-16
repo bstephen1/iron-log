@@ -1,4 +1,4 @@
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
 import { render, screen } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import RenderSets from './RenderSets'
@@ -6,7 +6,7 @@ import RenderSets from './RenderSets'
 it('renders editable sets', () => {
   render(
     <RenderSets
-      mutateExerciseFields={vi.fn()}
+      exerciseId="ex1"
       displayFields={DEFAULT_DISPLAY_FIELDS}
       sets={[{ reps: 1, weight: 5 }, { reps: 2 }]}
       _id="1"
@@ -29,7 +29,7 @@ it('renders readonly sets', () => {
 it('does not render delete button if there are no display fields', () => {
   render(
     <RenderSets
-      mutateExerciseFields={vi.fn()}
+      exerciseId="ex1"
       displayFields={{ ...DEFAULT_DISPLAY_FIELDS, visibleFields: [] }}
       sets={[{ reps: 1, weight: 1 }]}
       _id="1"

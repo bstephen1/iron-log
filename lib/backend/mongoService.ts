@@ -223,7 +223,7 @@ export async function updateRecordFields(
   )) as Record
 }
 
-export async function replaceSet(
+export async function updateSet(
   _id: string,
   set: Set,
   index: number

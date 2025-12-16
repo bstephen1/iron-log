@@ -1,5 +1,6 @@
 import { expect, it, vi } from 'vitest'
 import {
+  addSet,
   fetchExercises,
   fetchRecords,
   updateExerciseFields,
@@ -41,18 +42,22 @@ it('mutates', async () => {
 })
 
 it('displays error when update fails', async () => {
-  const record = createRecord('2000-01-01')
+  const squats = createExercise('squats')
+  const record = createRecord('2000-01-01', {
+    exercise: squats,
+  })
   vi.mocked(fetchRecords).mockResolvedValue([record])
+  vi.mocked(fetchExercises).mockResolvedValue([squats])
   const { user } = render(
     <RecordCard id={record._id} date={record.date} swiperIndex={0} />
   )
 
   // update record
-  vi.mocked(updateRecordFields).mockRejectedValue(new Error('error'))
+  vi.mocked(addSet).mockRejectedValue(new Error('error'))
   ignoreConsoleErrorOnce()
   await user.click(await screen.findByLabelText('Add new set'))
 
-  expect(updateRecordFields).toHaveBeenCalled()
+  expect(addSet).toHaveBeenCalled()
 
   await screen.findByText(/not saved/)
 })

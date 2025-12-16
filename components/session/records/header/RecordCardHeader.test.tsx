@@ -1,8 +1,7 @@
 import type { ComponentProps } from 'react'
 import { Swiper } from 'swiper/react'
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
 import { render, screen } from '../../../../lib/test/rtl'
-import { createExercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import RecordCardHeader from './RecordCardHeader'
 
@@ -15,14 +14,13 @@ const TestWrapper = (
   <Swiper>
     <RecordCardHeader
       swiperIndex={0}
-      mutateExerciseFields={vi.fn()}
-      mutateRecordFields={vi.fn()}
       displayFields={DEFAULT_DISPLAY_FIELDS}
       date="2000-01-01"
       notes={[]}
-      sets={[]}
       _id="1"
-      exercise={createExercise('dips')}
+      exerciseId="ex1"
+      exerciseName="dips"
+      exerciseNotes={[]}
       {...props}
     />
   </Swiper>

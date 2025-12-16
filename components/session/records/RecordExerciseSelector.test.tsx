@@ -1,13 +1,14 @@
 import { expect, it, vi } from 'vitest'
-import { fetchExercises } from '../../../lib/backend/mongoService'
+import {
+  fetchExercises,
+  updateRecordFields,
+} from '../../../lib/backend/mongoService'
 import { render, screen } from '../../../lib/test/rtl'
 import {
   createExercise,
   type Exercise,
 } from '../../../models/AsyncSelectorOption/Exercise'
 import RecordExerciseSelector from './RecordExerciseSelector'
-
-const mockMutate = vi.fn()
 
 it('filters modifiers to match the new exercise on switch', async () => {
   const all = createExercise('all', {
@@ -19,7 +20,8 @@ it('filters modifiers to match the new exercise on switch', async () => {
   const { user } = render(
     <RecordExerciseSelector
       exercise={all}
-      mutateRecordFields={mockMutate}
+      _id="1"
+      date="2000-01-01"
       activeModifiers={all.modifiers}
     />
   )
@@ -27,7 +29,7 @@ it('filters modifiers to match the new exercise on switch', async () => {
   await user.click(screen.getByDisplayValue(all.name))
   await user.click(screen.getByText(some.name))
 
-  expect(mockMutate).toHaveBeenCalledWith({
+  expect(updateRecordFields).toHaveBeenCalledWith('1', {
     exercise: some,
     activeModifiers: some.modifiers,
   })

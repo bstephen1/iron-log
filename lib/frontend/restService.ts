@@ -30,7 +30,7 @@ import {
   fetchRecords,
   fetchSessionLog,
   fetchSessionLogs,
-  replaceSet,
+  updateSet,
 } from '../backend/mongoService'
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
@@ -205,7 +205,7 @@ export function useSetReplace(_id = '', index: number) {
   const date = useCurrentDate()
   return useOptimisticMutation<Record[], Record, { set: Set }>({
     queryKey: [QUERY_KEYS.records, { date }],
-    mutationFn: ({ set }) => replaceSet(_id, set, index),
+    mutationFn: ({ set }) => updateSet(_id, set, index),
     updater: (prev = [], { set }) =>
       prev.map((record) =>
         record._id === _id

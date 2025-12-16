@@ -1,13 +1,12 @@
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
+import { updateRecordFields } from '../../../lib/backend/mongoService'
 import { render, screen } from '../../../lib/test/rtl'
 import RecordModifierComboBox from './RecordModifierComboBox'
-
-const mockMutate = vi.fn()
 
 it('mutates', async () => {
   const { user } = render(
     <RecordModifierComboBox
-      mutateRecordFields={mockMutate}
+      _id="1"
       availableModifiers={['one', 'two']}
       activeModifiers={['one']}
     />
@@ -16,5 +15,7 @@ it('mutates', async () => {
   await user.click(screen.getByText('one'))
   await user.click(screen.getByText('two'))
 
-  expect(mockMutate).toHaveBeenCalledWith({ activeModifiers: ['one', 'two'] })
+  expect(updateRecordFields).toHaveBeenCalledWith('1', {
+    activeModifiers: ['one', 'two'],
+  })
 })
