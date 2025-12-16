@@ -1,9 +1,9 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 import type { SxProps } from '@mui/material/styles'
+import { useRecordUpdate } from '../../../../hooks/mutation'
 import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
-import useRecordUpdate from '../useRecordUpdate'
 
 interface Props extends IconButtonProps {
   _id: Record['_id']

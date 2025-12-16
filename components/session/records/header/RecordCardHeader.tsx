@@ -3,8 +3,6 @@ import CardHeader from '@mui/material/CardHeader'
 import { useEffect } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
 import useLocalStorageState from 'use-local-storage-state'
-import type { PartialUpdate } from '../../../../lib/types'
-import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
 import UsageButton from '../../../form-fields/actions/UsageButton'
@@ -66,13 +64,11 @@ const useMaxVisibleActions = (totalActions: number) => {
 
 interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
   swiperIndex: number
-  mutateExerciseFields: PartialUpdate<Exercise>
   displayFields: DisplayFields
   date: string
 }
 export default function RecordCardHeader({
   swiperIndex,
-  mutateExerciseFields,
   notes,
   sets,
   _id,
@@ -91,13 +87,14 @@ export default function RecordCardHeader({
       disabled={!exercise}
       notes={exercise?.notes}
       modifiers={exercise?.modifiers}
-      mutateExerciseFields={mutateExerciseFields}
+      _id={exercise?._id}
     />,
     <UsageButton key="usage" exercise={exercise?.name} type="icon" />,
     <ManageExerciseButton key="manage" _id={exercise?._id} />,
     <ChangeUnitsButton
       key="change units dialog"
-      {...{ mutateExerciseFields, displayFields }}
+      _id={exercise?._id}
+      {...{ displayFields }}
     />,
     <SwapRecordButton key="left" direction="left" index={swiperIndex} />,
     <SwapRecordButton key="right" direction="right" index={swiperIndex} />,

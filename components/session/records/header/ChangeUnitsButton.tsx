@@ -11,27 +11,26 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
+import { useExerciseUpdate } from '../../../../hooks/mutation'
 import type { PartialUpdate } from '../../../../lib/types'
-import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import { FACTORS, type Units } from '../../../../models/Units'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
-  mutateExerciseFields: PartialUpdate<Exercise>
+  /** disabled if not provided */
+  _id?: string
   displayFields: DisplayFields
 }
-export default memo(function ChangeUnitsButton({
-  mutateExerciseFields,
-  displayFields,
-}: Props) {
+export default memo(function ChangeUnitsButton({ _id, displayFields }: Props) {
   const [open, setOpen] = useState(false)
+  const updateExercise = useExerciseUpdate(_id)
   const { units } = displayFields
   // typescript doesn't recognize that Object.keys(obj) is in fact a list of keyof obj
   const dimensions = Object.keys(units) as Array<keyof typeof units>
 
   const handleChange: PartialUpdate<Units> = (changes) =>
-    mutateExerciseFields({
+    updateExercise({
       displayFields: {
         ...displayFields,
         units: { ...displayFields.units, ...changes },
@@ -40,7 +39,11 @@ export default memo(function ChangeUnitsButton({
 
   return (
     <>
-      <TooltipIconButton title="Change units" onClick={() => setOpen(true)}>
+      <TooltipIconButton
+        title="Change units"
+        disabled={!_id}
+        onClick={() => setOpen(true)}
+      >
         {/* it's proven pretty difficult to find a good "change units" icon...  */}
         <DesignServicesIcon />
       </TooltipIconButton>

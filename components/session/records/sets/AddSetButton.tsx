@@ -1,8 +1,8 @@
 import AddIcon from '@mui/icons-material/Add'
 import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
+import { useRecordUpdate } from '../../../../hooks/mutation'
 import type { Set } from '../../../../models/Set'
-import useRecordUpdate from '../useRecordUpdate'
 
 interface Props {
   sets: Set[]

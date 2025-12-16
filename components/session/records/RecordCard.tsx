@@ -2,24 +2,14 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
-import {
-  updateExerciseFields,
-  updateRecordFields,
-} from '../../../lib/backend/mongoService'
-import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
-import {
-  useExercise,
-  useRecord,
-  useUpdateMutation,
-} from '../../../lib/frontend/restService'
+import { DATE_FORMAT } from '../../../lib/frontend/constants'
+import { useExercise, useRecord } from '../../../lib/frontend/restService'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
-import type { PartialUpdate } from '../../../lib/types'
 import { ArrayMatchType } from '../../../models//ArrayMatchType'
-import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
 import type { RecordQuery } from '../../../models/Record'
 import type { HistoryAction, HistoryContent } from '../history/HistoryCard'
 import HistoryCardsSwiper from '../history/HistoryCardsSwiper'
@@ -67,15 +57,6 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
-  const _updateRecordMutate = useUpdateMutation({
-    queryKey: [QUERY_KEYS.records, id],
-    updateFn: updateRecordFields,
-  })
-  const updateExerciseMutate = useUpdateMutation({
-    queryKey: useMemo(() => [QUERY_KEYS.exercises], []),
-    updateFn: updateExerciseFields,
-  })
-
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes.unilateral
 
@@ -93,18 +74,10 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
     [activeModifiers, date, exercise?.name, setType]
   )
 
-  const mutateExerciseFields: PartialUpdate<Exercise> = useCallback(
-    (updates) => {
-      exercise?._id && updateExerciseMutate({ _id: exercise._id, updates })
-    },
-    [exercise?._id, updateExerciseMutate]
-  )
-
   return (
     <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
       <RecordCardHeader
         {...{
-          mutateExerciseFields,
           swiperIndex,
           _id,
           sets,
@@ -134,8 +107,8 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
           />
           <RecordSetTypeSelect {...{ _id, date }} />
           <RenderSets
+            exerciseId={exercise?._id}
             {...{
-              mutateExerciseFields,
               displayFields,
               sets,
               showSplitWeight,

@@ -5,6 +5,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
+import { useRecordUpdate } from '../../../../hooks/mutation'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import {
@@ -15,7 +16,6 @@ import type { Note } from '../../../../models/Note'
 import type { Set } from '../../../../models/Set'
 import NotesList from '../../../form-fields/NotesList'
 import TooltipIconButton from '../../../TooltipIconButton'
-import useRecordUpdate from '../useRecordUpdate'
 
 const title = 'Record notes'
 
@@ -35,7 +35,7 @@ export default memo(function RecordNotesButton({
 }: Props) {
   const readOnly = !_id
   const { data: sessionLog } = useSessionLog(date)
-  const updateRecord = useRecordUpdate(_id ?? '')
+  const updateRecord = useRecordUpdate(_id)
   const [open, setOpen] = useState(false)
   const replaceSessionLogMutate = useReplaceMutation({
     queryKey: [QUERY_KEYS.sessionLogs, date],

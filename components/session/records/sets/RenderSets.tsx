@@ -1,6 +1,4 @@
 import Box from '@mui/material/Box'
-import type { PartialUpdate } from '../../../../lib/types'
-import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
 import AddSetButton from './AddSetButton'
@@ -9,7 +7,7 @@ import SetHeader from './SetHeader'
 
 interface Props extends Pick<Record, '_id' | 'sets'> {
   /** if omitted, sets are treated as readOnly */
-  mutateExerciseFields?: PartialUpdate<Exercise>
+  exerciseId?: string
   /** displayFields must be given as a prop because history records use the parent's fields
    *  so they can reflect changes to the parent's display fields.
    */
@@ -24,7 +22,7 @@ interface Props extends Pick<Record, '_id' | 'sets'> {
   extraWeight?: number
 }
 export default function RenderSets({
-  mutateExerciseFields,
+  exerciseId,
   displayFields,
   showSplitWeight,
   showUnilateral,
@@ -33,7 +31,7 @@ export default function RenderSets({
   extraWeight = 0,
   _id,
 }: Props) {
-  const readOnly = !mutateExerciseFields
+  const readOnly = !exerciseId
 
   // todo: clean up passing around the full sets to every set.
   // Possibly have an updateSets() in mongoService to limit component scope.
@@ -44,7 +42,7 @@ export default function RenderSets({
       <SetHeader
         {...{
           displayFields,
-          mutateExerciseFields,
+          exerciseId,
           readOnly,
           showSplitWeight,
           showUnilateral,

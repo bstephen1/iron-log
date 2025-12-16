@@ -6,8 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
-import type { PartialUpdate } from '../../../../lib/types'
-import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import { useExerciseUpdate } from '../../../../hooks/mutation'
 import type { Note } from '../../../../models/Note'
 import TooltipIconButton from '../../../TooltipIconButton'
 
@@ -15,7 +14,7 @@ const title = 'Exercise notes'
 
 interface Props {
   /** considered readOnly if not provided */
-  mutateExerciseFields?: PartialUpdate<Exercise>
+  _id?: string
   notes?: Note[]
   /** used for note tags */
   modifiers?: string[]
@@ -23,15 +22,16 @@ interface Props {
 }
 /** Show notes from the record's selected exercise. */
 export default memo(function ExerciseNotesButton({
-  mutateExerciseFields,
+  _id,
   notes = [],
   modifiers = [],
   disabled,
 }: Props) {
-  const readOnly = !mutateExerciseFields
+  const readOnly = !_id
   const [open, setOpen] = useState(false)
+  const updateExercise = useExerciseUpdate(_id)
 
-  const handleSubmit = (notes: Note[]) => mutateExerciseFields?.({ notes })
+  const handleSubmit = (notes: Note[]) => updateExercise({ notes })
 
   return (
     <>
