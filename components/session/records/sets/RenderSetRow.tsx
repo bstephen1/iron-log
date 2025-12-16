@@ -2,7 +2,11 @@ import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { useCallback } from 'react'
-import { useRecordUpdate } from '../../../../hooks/mutation'
+import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
+import {
+  useRecordSet,
+  useSetReplace,
+} from '../../../../lib/frontend/restService'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
@@ -44,7 +48,6 @@ interface Props {
   displayFields: DisplayFields
   extraWeight?: number
   _id: Record['_id']
-  sets: Set[]
 }
 /** Render a set. Note the set to render must be spread into the props.
  *  This destructures the set into primitive values to avoid unecessary rerenders.
@@ -55,19 +58,17 @@ export default function RenderSetRow({
   displayFields,
   extraWeight = 0,
   _id,
-  sets,
 }: Props) {
-  const set = sets[index]
+  const date = useCurrentDate()
+  const set = useRecordSet(_id, date, index)
+  const replaceSet = useSetReplace(_id, index)
   const noSwipingDesktop = useNoSwipingDesktop()
-  const updateRecord = useRecordUpdate(_id)
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
-      const newSets = [...sets]
-      newSets[index] = { ...newSets[index], ...changes }
-      updateRecord({ sets: newSets })
+      replaceSet({ set: { ...set, ...changes } })
     },
-    [index, sets, updateRecord]
+    [set, replaceSet]
   )
 
   return (
@@ -111,12 +112,7 @@ export default function RenderSetRow({
         // insert a box for padding when clear icon is hidden
         <Box minWidth={deleteButtonHeight} />
       ) : (
-        <DeleteSetButton
-          index={index}
-          _id={_id}
-          sets={sets}
-          sx={{ my: -pyStack }}
-        />
+        <DeleteSetButton index={index} _id={_id} sx={{ my: -pyStack }} />
       )}
     </Stack>
   )

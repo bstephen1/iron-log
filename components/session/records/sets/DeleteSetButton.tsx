@@ -1,27 +1,20 @@
 import ClearIcon from '@mui/icons-material/Clear'
 import IconButton, { type IconButtonProps } from '@mui/material/IconButton'
 import type { SxProps } from '@mui/material/styles'
-import { useRecordUpdate } from '../../../../hooks/mutation'
-import type { Record } from '../../../../models/Record'
-import type { Set } from '../../../../models/Set'
+import { useSetDelete } from '../../../../lib/frontend/restService'
 
 interface Props extends IconButtonProps {
-  _id: Record['_id']
+  _id: string
   index: number
-  sets: Set[]
   sx?: SxProps
 }
-export default function DeleteSetButton({ _id, index, sets, sx }: Props) {
-  const updateRecord = useRecordUpdate(_id)
-
-  const handleDeleteSet = async () => {
-    updateRecord({ sets: sets.filter((_, j) => j !== index) })
-  }
+export default function DeleteSetButton({ _id, index, sx }: Props) {
+  const deleteSet = useSetDelete(_id, index)
 
   return (
     <IconButton
       size="small"
-      onClick={handleDeleteSet}
+      onClick={deleteSet}
       aria-label={`Delete set ${index + 1}`}
       sx={{
         ...sx,

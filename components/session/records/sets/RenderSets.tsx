@@ -32,9 +32,6 @@ export default function RenderSets({
   _id,
 }: Props) {
   const readOnly = !exerciseId
-
-  // todo: clean up passing around the full sets to every set.
-  // Possibly have an updateSets() in mongoService to limit component scope.
   const hasVisibleFields = !!displayFields.visibleFields.length
 
   return (
@@ -54,7 +51,6 @@ export default function RenderSets({
             key={i}
             index={i}
             {...{
-              sets,
               displayFields,
               readOnly: readOnly || !hasVisibleFields,
               _id,
@@ -66,7 +62,10 @@ export default function RenderSets({
         ))}
       </Box>
       {!readOnly && (
-        <AddSetButton disabled={!hasVisibleFields} {...{ sets, _id }} />
+        <AddSetButton
+          disabled={!hasVisibleFields}
+          {...{ _id, ...sets[sets.length - 1] }}
+        />
       )}
     </Box>
   )

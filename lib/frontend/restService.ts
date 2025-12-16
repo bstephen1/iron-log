@@ -7,6 +7,7 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query'
 import dayjs, { type Dayjs } from 'dayjs'
+import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
 import type { AsyncSelectorOption } from '../../models/AsyncSelectorOption'
 import type { BodyweightQuery } from '../../models/Bodyweight'
 import type FetchOptions from '../../models/FetchOptions'
@@ -17,8 +18,11 @@ import {
   type RecordQuery,
 } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
+import type { Set } from '../../models/Set'
 import { type Status, StatusOrder } from '../../models/Status'
 import {
+  addSet,
+  deleteSet,
   fetchBodyweights,
   fetchCategories,
   fetchExercises,
@@ -26,6 +30,7 @@ import {
   fetchRecords,
   fetchSessionLog,
   fetchSessionLogs,
+  replaceSet,
 } from '../backend/mongoService'
 import getQueryClient from '../getQueryClient'
 import { DATE_FORMAT, QUERY_KEYS } from './constants'
@@ -196,6 +201,63 @@ export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
   })
 }
 
+export function useSetReplace(_id = '', index: number) {
+  const date = useCurrentDate()
+  return useOptimisticMutation<Record[], Record, { set: Set }>({
+    queryKey: [QUERY_KEYS.records, { date }],
+    mutationFn: ({ set }) => replaceSet(_id, set, index),
+    updater: (prev = [], { set }) =>
+      prev.map((record) =>
+        record._id === _id
+          ? {
+              ...record,
+              sets: record.sets.map((oldSet, i) =>
+                i === index ? set : oldSet
+              ),
+            }
+          : record
+      ),
+  })
+}
+
+export function useSetAdd(_id = '') {
+  const date = useCurrentDate()
+  return useOptimisticMutation<Record[], Record, { set: Set }>({
+    queryKey: [QUERY_KEYS.records, { date }],
+    mutationFn: ({ set }) => addSet(_id, set),
+    updater: (prev = [], { set }) =>
+      prev.map((record) =>
+        record._id === _id
+          ? {
+              ...record,
+              sets: record.sets.concat(set),
+            }
+          : record
+      ),
+  })
+}
+
+export function useSetDelete(_id = '', index: number) {
+  const date = useCurrentDate()
+  const mutate = useOptimisticMutation<Record[], Record, undefined>({
+    queryKey: [QUERY_KEYS.records, { date }],
+    mutationFn: () => deleteSet(_id, index),
+    updater: (prev = []) =>
+      prev.map((record) =>
+        record._id === _id
+          ? {
+              ...record,
+              sets: [
+                ...record.sets.slice(0, index),
+                ...record.sets.slice(index + 1),
+              ],
+            }
+          : record
+      ),
+  })
+  return () => mutate(undefined)
+}
+
 //----------
 // FETCHING
 //----------
@@ -285,6 +347,16 @@ export function useRecordSides(id = '', date: string) {
   })
 
   return sides ?? []
+}
+
+export function useRecordSet(id = '', date: string, index: number) {
+  const { data: set } = useQuery({
+    queryKey: [QUERY_KEYS.records, { date }],
+    queryFn: () => fetchRecords(buildRecordFilter({ date })),
+    select: (data) => data.find((r) => r._id === id)?.sets[index],
+  })
+
+  return set ?? {}
 }
 
 export function useExercises({ suspense }: UseOptions = {}) {
