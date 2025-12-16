@@ -9,11 +9,11 @@ import { useRecordUpdate } from '../../../../hooks/mutation'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import {
+  useRecordSides,
   useReplaceMutation,
   useSessionLog,
 } from '../../../../lib/frontend/restService'
 import type { Note } from '../../../../models/Note'
-import type { Set } from '../../../../models/Set'
 import NotesList from '../../../form-fields/NotesList'
 import TooltipIconButton from '../../../TooltipIconButton'
 
@@ -21,7 +21,6 @@ const title = 'Record notes'
 
 interface Props {
   notes?: Note[]
-  sides?: Set['side'][]
   /** considered readOnly if not provided */
   _id?: string
   /** Date of the record. Needed to retrieve session notes */
@@ -29,12 +28,12 @@ interface Props {
 }
 export default memo(function RecordNotesButton({
   notes = [],
-  sides = [],
   _id,
   date,
 }: Props) {
   const readOnly = !_id
   const { data: sessionLog } = useSessionLog(date)
+  const sides = useRecordSides(_id, date)
   const updateRecord = useRecordUpdate(_id)
   const [open, setOpen] = useState(false)
   const replaceSessionLogMutate = useReplaceMutation({

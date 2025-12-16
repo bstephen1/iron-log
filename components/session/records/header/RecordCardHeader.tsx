@@ -62,7 +62,7 @@ const useMaxVisibleActions = (totalActions: number) => {
   }
 }
 
-interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
+interface Props extends Pick<Record, 'notes' | '_id' | 'exercise'> {
   swiperIndex: number
   displayFields: DisplayFields
   date: string
@@ -70,18 +70,13 @@ interface Props extends Pick<Record, 'notes' | 'sets' | '_id' | 'exercise'> {
 export default function RecordCardHeader({
   swiperIndex,
   notes,
-  sets,
   _id,
   exercise,
   displayFields,
   date,
 }: Props) {
   const actionButtons = [
-    <RecordNotesButton
-      key="record notes dialog"
-      sides={sets.map((set) => set.side)}
-      {...{ _id, notes, date }}
-    />,
+    <RecordNotesButton key="record notes dialog" {...{ _id, notes, date }} />,
     <ExerciseNotesButton
       key="exercise notes dialog"
       disabled={!exercise}

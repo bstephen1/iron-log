@@ -80,7 +80,6 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
         {...{
           swiperIndex,
           _id,
-          sets,
           exercise,
           notes,
           displayFields,

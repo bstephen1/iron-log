@@ -276,6 +276,17 @@ export function useRecord(id: string, date: string) {
   return record as Record
 }
 
+export function useRecordSides(id = '', date: string) {
+  const { data: sides } = useSuspenseQuery({
+    queryKey: [QUERY_KEYS.records, { date }],
+    queryFn: () => fetchRecords(buildRecordFilter({ date })),
+    select: (data) =>
+      data.find((r) => r._id === id)?.sets.map((set) => set.side),
+  })
+
+  return sides ?? []
+}
+
 export function useExercises({ suspense }: UseOptions = {}) {
   const { data } = (suspense ? useSuspenseQuery : useQuery)({
     queryKey: [QUERY_KEYS.exercises],
