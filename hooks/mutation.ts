@@ -1,3 +1,4 @@
+import { useCurrentDate } from '../app/sessions/[date]/useCurrentDate'
 import {
   updateExerciseFields,
   updateRecordFields,
@@ -8,8 +9,9 @@ import type { Exercise } from '../models/AsyncSelectorOption/Exercise'
 import type { Record } from '../models/Record'
 
 export function useRecordUpdate(_id = '') {
+  const date = useCurrentDate()
   const mutate = useUpdateMutation({
-    queryKey: [QUERY_KEYS.records, _id],
+    queryKey: [QUERY_KEYS.records, { date }],
     updateFn: updateRecordFields,
   })
 
