@@ -6,10 +6,10 @@ import DialogTitle from '@mui/material/DialogTitle'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NotesList from '../../../../components/form-fields/NotesList'
-import { useExerciseUpdate } from '../../../../hooks/mutation'
-import { useExerciseModifiers } from '../../../../lib/frontend/restService'
+import { useExerciseModifiers } from '../../../../lib/frontend/data/useQuery'
 import type { Note } from '../../../../models/Note'
 import TooltipIconButton from '../../../TooltipIconButton'
+import { useExerciseUpdate } from '../useRecordUpdate'
 
 const title = 'Exercise notes'
 

@@ -11,11 +11,11 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import { useExerciseUpdate } from '../../../../hooks/mutation'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import { FACTORS, type Units } from '../../../../models/Units'
 import TooltipIconButton from '../../../TooltipIconButton'
+import { useExerciseUpdate } from '../useRecordUpdate'
 
 interface Props {
   /** disabled if not provided */

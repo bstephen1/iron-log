@@ -1,8 +1,8 @@
-import { useRecordUpdate } from '../../../hooks/mutation'
-import { useExercise, useRecord } from '../../../lib/frontend/restService'
+import { useExercise, useRecord } from '../../../lib/frontend/data/useQuery'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import { calculateTotalValue } from '../../../models/Set'
 import SetTypeSelect from './SetTypeSelect'
+import { useRecordUpdate } from './useRecordUpdate'
 
 interface Props {
   _id: string

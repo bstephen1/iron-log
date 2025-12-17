@@ -2,8 +2,8 @@ import type { TextFieldProps } from '@mui/material/TextField'
 import { type ComponentProps, memo } from 'react'
 import isEqual from 'react-fast-compare'
 import ExerciseSelector from '../../../components/form-fields/selectors/ExerciseSelector'
-import { useRecordUpdate } from '../../../hooks/mutation'
 import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
+import { useRecordUpdate } from './useRecordUpdate'
 
 type Props<DisableClearable extends boolean | undefined> = {
   _id: string

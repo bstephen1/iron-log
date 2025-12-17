@@ -1,9 +1,7 @@
 import { addCategory } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
-import {
-  useAddMutation,
-  useCategories,
-} from '../../../lib/frontend/restService'
+import { useAddMutation } from '../../../lib/frontend/data/useMutation'
+import { useCategories } from '../../../lib/frontend/data/useQuery'
 import {
   type Category,
   createCategory,

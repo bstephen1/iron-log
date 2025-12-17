@@ -3,10 +3,10 @@ import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { useCallback } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
-import {
-  useRecordSet,
-  useSetReplace,
-} from '../../../../lib/frontend/restService'
+import { updateSet } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
+import { useRecordSet } from '../../../../lib/frontend/data/useQuery'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
@@ -116,4 +116,23 @@ export default function RenderSetRow({
       )}
     </Stack>
   )
+}
+
+function useSetReplace(_id = '', index: number) {
+  const date = useCurrentDate()
+  return useOptimisticMutation<Record[], Record, { set: Set }>({
+    queryKey: [QUERY_KEYS.records, { date }],
+    mutationFn: ({ set }) => updateSet(_id, set, index),
+    updater: (prev = [], { set }) =>
+      prev.map((record) =>
+        record._id === _id
+          ? {
+              ...record,
+              sets: record.sets.map((oldSet, i) =>
+                i === index ? set : oldSet
+              ),
+            }
+          : record
+      ),
+  })
 }

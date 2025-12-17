@@ -4,10 +4,8 @@ import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import {
-  useReplaceMutation,
-  useSessionLog,
-} from '../../../../lib/frontend/restService'
+import { useReplaceMutation } from '../../../../lib/frontend/data/useMutation'
+import { useSessionLog } from '../../../../lib/frontend/data/useQuery'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {

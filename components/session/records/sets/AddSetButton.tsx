@@ -1,7 +1,11 @@
 import AddIcon from '@mui/icons-material/Add'
 import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
-import { useSetAdd } from '../../../../lib/frontend/restService'
+import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
+import { addSet } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
+import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
 
 interface Props extends Set {
@@ -53,4 +57,21 @@ export default function AddSetButton({ disabled, _id, ...prevSet }: Props) {
       </Fab>
     </Box>
   )
+}
+
+function useSetAdd(_id = '') {
+  const date = useCurrentDate()
+  return useOptimisticMutation<Record[], Record, { set: Set }>({
+    queryKey: [QUERY_KEYS.records, { date }],
+    mutationFn: ({ set }) => addSet(_id, set),
+    updater: (prev = [], { set }) =>
+      prev.map((record) =>
+        record._id === _id
+          ? {
+              ...record,
+              sets: record.sets.concat(set),
+            }
+          : record
+      ),
+  })
 }

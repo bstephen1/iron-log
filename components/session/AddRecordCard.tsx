@@ -7,7 +7,7 @@ import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import { addRecord } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
-import { useAddMutation } from '../../lib/frontend/restService'
+import { useAddMutation } from '../../lib/frontend/data/useMutation'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 

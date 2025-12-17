@@ -15,7 +15,7 @@ import {
   DATE_FORMAT,
   DATE_PICKER_FORMAT,
 } from '../../../lib/frontend/constants'
-import { useSessionLogs } from '../../../lib/frontend/restService'
+import { useSessionLogs } from '../../../lib/frontend/data/useQuery'
 import type FetchOptions from '../../../models/FetchOptions'
 import TransitionIconButton from '../../TransitionIconButton'
 

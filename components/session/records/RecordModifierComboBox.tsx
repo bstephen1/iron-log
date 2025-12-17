@@ -1,7 +1,7 @@
 import { type ComponentProps, memo } from 'react'
 import isEqual from 'react-fast-compare'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
-import { useRecordUpdate } from '../../../hooks/mutation'
+import { useRecordUpdate } from './useRecordUpdate'
 
 interface Props extends Partial<ComponentProps<typeof ComboBoxField>> {
   _id: string

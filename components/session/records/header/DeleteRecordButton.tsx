@@ -3,7 +3,7 @@ import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { deleteRecord } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { useDeleteMutation } from '../../../../lib/frontend/restService'
+import { useDeleteMutation } from '../../../../lib/frontend/data/useMutation'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {

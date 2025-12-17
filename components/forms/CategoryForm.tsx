@@ -7,11 +7,10 @@ import {
 } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
-  useCategories,
   useDeleteMutation,
-  useExercises,
   useUpdateMutation,
-} from '../../lib/frontend/restService'
+} from '../../lib/frontend/data/useMutation'
+import { useCategories, useExercises } from '../../lib/frontend/data/useQuery'
 import { getUsage } from '../../lib/frontend/usage'
 import type { Category } from '../../models/AsyncSelectorOption/Category'
 import ActionItems from '../form-fields/actions/ActionItems'

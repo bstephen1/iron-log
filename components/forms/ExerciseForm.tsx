@@ -9,13 +9,15 @@ import {
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
   useAddMutation,
-  useCategories,
   useDeleteMutation,
+  useUpdateMutation,
+} from '../../lib/frontend/data/useMutation'
+import {
+  useCategories,
   useExercises,
   useModifiers,
   useRecords,
-  useUpdateMutation,
-} from '../../lib/frontend/restService'
+} from '../../lib/frontend/data/useQuery'
 import { enqueueSuccess } from '../../lib/frontend/snackbar'
 import {
   createExercise,

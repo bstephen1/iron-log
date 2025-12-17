@@ -3,11 +3,11 @@ import { Activity, useState } from 'react'
 import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
+import { useAddMutation } from '../../../lib/frontend/data/useMutation'
 import {
-  useAddMutation,
   useCategoryNames,
   useExercisesNew,
-} from '../../../lib/frontend/restService'
+} from '../../../lib/frontend/data/useQuery'
 import {
   createExercise,
   type Exercise,

@@ -5,17 +5,17 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import { memo, useState } from 'react'
 import isEqual from 'react-fast-compare'
-import { useRecordUpdate } from '../../../../hooks/mutation'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { useReplaceMutation } from '../../../../lib/frontend/data/useMutation'
 import {
   useRecordSides,
-  useReplaceMutation,
   useSessionLog,
-} from '../../../../lib/frontend/restService'
+} from '../../../../lib/frontend/data/useQuery'
 import type { Note } from '../../../../models/Note'
 import NotesList from '../../../form-fields/NotesList'
 import TooltipIconButton from '../../../TooltipIconButton'
+import { useRecordUpdate } from '../useRecordUpdate'
 
 const title = 'Record notes'
 

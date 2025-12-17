@@ -8,10 +8,9 @@ import {
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
   useDeleteMutation,
-  useExercises,
-  useModifiers,
   useUpdateMutation,
-} from '../../lib/frontend/restService'
+} from '../../lib/frontend/data/useMutation'
+import { useExercises, useModifiers } from '../../lib/frontend/data/useQuery'
 import { getUsage } from '../../lib/frontend/usage'
 import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import ActionItems from '../form-fields/actions/ActionItems'

@@ -1,5 +1,5 @@
 import type { Record } from '../../models/Record'
-import { useBodyweights, useModifiers } from './restService'
+import { useBodyweights, useModifiers } from './data/useQuery'
 
 export default function useExtraWeight(record: Record) {
   const modifiers = useModifiers()

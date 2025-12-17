@@ -1,12 +1,12 @@
-import { useCurrentDate } from '../app/sessions/[date]/useCurrentDate'
+import { useCurrentDate } from '../../../app/sessions/[date]/useCurrentDate'
 import {
   updateExerciseFields,
   updateRecordFields,
-} from '../lib/backend/mongoService'
-import { QUERY_KEYS } from '../lib/frontend/constants'
-import { useUpdateMutation } from '../lib/frontend/restService'
-import type { Exercise } from '../models/AsyncSelectorOption/Exercise'
-import type { Record } from '../models/Record'
+} from '../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../lib/frontend/constants'
+import { useUpdateMutation } from '../../../lib/frontend/data/useMutation'
+import type { Exercise } from '../../../models/AsyncSelectorOption/Exercise'
+import type { Record } from '../../../models/Record'
 
 export function useRecordUpdate(_id = '') {
   const date = useCurrentDate()

@@ -28,7 +28,7 @@ import {
   DATE_FORMAT,
   DEFAULT_CLOTHING_OFFSET,
 } from '../../lib/frontend/constants'
-import { useBodyweights, useRecords } from '../../lib/frontend/restService'
+import { useBodyweights, useRecords } from '../../lib/frontend/data/useQuery'
 import useDesktopCheck from '../../lib/frontend/useDesktopCheck'
 import type { PartialUpdate } from '../../lib/types'
 import type { Bodyweight } from '../../models/Bodyweight'

@@ -12,7 +12,6 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { memo } from 'react'
 import isEqual from 'react-fast-compare'
-import { useExerciseUpdate } from '../../../../hooks/mutation'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import {
   type DisplayFields,
@@ -20,6 +19,7 @@ import {
   printFieldWithUnits,
   type VisibleField,
 } from '../../../../models/DisplayFields'
+import { useExerciseUpdate } from '../useRecordUpdate'
 import { delimiterWidth } from './RenderSetField'
 
 type Props = {

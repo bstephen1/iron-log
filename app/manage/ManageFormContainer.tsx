@@ -13,7 +13,7 @@ import {
   useCategories,
   useExercises,
   useModifiers,
-} from '../../lib/frontend/restService'
+} from '../../lib/frontend/data/useQuery'
 import { type TabValue, useQueryTab } from '../../models/TabValue'
 import ManageFormTabs from './ManageFormTabs'
 

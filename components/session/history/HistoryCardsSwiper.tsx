@@ -10,7 +10,7 @@ import {
   type SwiperRef,
   SwiperSlide,
 } from 'swiper/react'
-import { useRecords } from '../../../lib/frontend/restService'
+import { useRecords } from '../../../lib/frontend/data/useQuery'
 import HistoryCard, {
   type HistoryAction,
   type HistoryContent,

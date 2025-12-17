@@ -9,11 +9,8 @@ import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
 import { addRecord } from '../../lib/backend/mongoService'
 import { DATE_FORMAT, QUERY_KEYS } from '../../lib/frontend/constants'
-import {
-  useAddMutation,
-  useRecords,
-  useSessionLog,
-} from '../../lib/frontend/restService'
+import { useAddMutation } from '../../lib/frontend/data/useMutation'
+import { useRecords, useSessionLog } from '../../lib/frontend/data/useQuery'
 import { createRecord } from '../../models/Record'
 import SessionDatePicker from './upper/SessionDatePicker'
 
