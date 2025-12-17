@@ -21,20 +21,8 @@ import {
 import { DATE_FORMAT, QUERY_KEYS } from '../constants'
 import { arrayToIndex } from '../Index'
 
-interface UseOptions {
-  /** Use useSuspenseQuery. Must have a Suspense boundary wrapped around the
-   *  component using this option. The component will be given a promise from
-   *  the server and the Suspense boundary will render until the promise resolves.
-   */
-  suspense?: boolean
-  /** Determines whether the fetch will occur. Defaults to true.
-   *  NOTE: cannot use with useSuspenseQuery.
-   */
-  enabled?: boolean
-}
-
-const toNames = (entities?: AsyncSelectorOption[]) =>
-  entities?.map((entity) => entity.name) ?? []
+const toNames = (options?: AsyncSelectorOption[]) =>
+  options?.map((option) => option.name) ?? []
 
 /** sorts first by status, then by name */
 const dataSort = <T extends { name: string; status: Status }>(data?: T[]) =>
@@ -44,8 +32,84 @@ const dataSort = <T extends { name: string; status: Status }>(data?: T[]) =>
     return status || a.name.localeCompare(b.name)
   }) ?? []
 
+// ---------------
+// PREFETCHED HOOKS
+// ---------------
+
+// These queries are used very often so they are prefetched in the root app layout.
+// This means they will *never* be undefined. Their data is included in the first render.
+// Because of this, they can useSuspenseQuery to guarantee type safety.
+// For useSuspenseQuery, the loading state is caught by a <Suspense> wrapper.
+// One should be placed in the root app layout as a failsafe, but the prefetches should
+// prevent it from ever being triggered. NOTE: cannot use "enabled" with useSuspenseQuery
+
+// However, we useQuery instead. The data will still never be undefined, but
+// undefined is still in the type signature. There is no change to the app,
+// but useQuery is easier to create unit tests for (useSuspenseQuery results
+// in an initial undefiend response since the prefetch isn't loaded in the test env).
+
+export function useExercises() {
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.exercises],
+    queryFn: fetchExercises,
+    select: dataSort,
+  })
+
+  return data ?? []
+}
+
+export function useExerciseNames() {
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.exercises],
+    queryFn: fetchExercises,
+    select: toNames,
+  })
+
+  return data ?? []
+}
+
+export function useModifiers() {
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.modifiers],
+    queryFn: fetchModifiers,
+    select: dataSort,
+  })
+
+  return data ?? []
+}
+
+export function useModifierNames() {
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.modifiers],
+    queryFn: fetchModifiers,
+    select: toNames,
+  })
+
+  return data ?? []
+}
+
+export function useCategories() {
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.categories],
+    queryFn: fetchCategories,
+    select: dataSort,
+  })
+
+  return data ?? []
+}
+
+export function useCategoryNames() {
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.categories],
+    queryFn: fetchCategories,
+    select: toNames,
+  })
+
+  return data ?? []
+}
+
 // ----------------
-// ROOT QUERIES
+// STANDARD HOOKS
 // ----------------
 
 // These queries have their own query keys. Anything
@@ -88,59 +152,6 @@ export function useRecords(query?: RecordQuery & FetchOptions, enabled = true) {
   }
 }
 
-export function useExercises({ suspense }: UseOptions = {}) {
-  const { data } = (suspense ? useSuspenseQuery : useQuery)({
-    queryKey: [QUERY_KEYS.exercises],
-    queryFn: fetchExercises,
-    select: (data) => data,
-  })
-
-  return {
-    data: dataSort(data),
-    names: toNames(data),
-    index: arrayToIndex('_id', data),
-  }
-}
-
-// todo
-export function useExercisesNew() {
-  const { data: exercises } = useQuery({
-    queryKey: [QUERY_KEYS.exercises],
-    queryFn: fetchExercises,
-    select: dataSort,
-  })
-
-  return exercises ?? []
-}
-
-export function useModifiers({ suspense }: UseOptions = {}) {
-  const { data } = (suspense ? useSuspenseQuery : useQuery)({
-    queryKey: [QUERY_KEYS.modifiers],
-    queryFn: fetchModifiers,
-    select: (data) => data,
-  })
-
-  return {
-    data: dataSort(data),
-    names: toNames(data),
-    index: arrayToIndex('_id', data),
-  }
-}
-
-export function useCategories({ suspense }: UseOptions = {}) {
-  const { data } = (suspense ? useSuspenseQuery : useQuery)({
-    queryKey: [QUERY_KEYS.categories],
-    queryFn: fetchCategories,
-    select: (data) => data,
-  })
-
-  return {
-    data: dataSort(data),
-    names: toNames(data),
-    index: arrayToIndex('_id', data),
-  }
-}
-
 export function useBodyweights(query?: BodyweightQuery, enabled = true) {
   // bodyweight history is stored as ISO8601, so we need to add a day.
   // 2020-04-02 sorts as less than 2020-04-02T08:02:17-05:00 since there are less chars.
@@ -176,6 +187,10 @@ export function useBodyweights(query?: BodyweightQuery, enabled = true) {
 // not trigger a rerender. This allows reusing the cache instead of performing
 // extra fetches without the penalty of triggering rerenders whenever any element
 // in an array changes.
+
+// It is also important to only pull out fields from the useQuery return that are
+// desired (typically data and isLoading). Unneeded fields can trigger extra rerenders
+// when they change, but if they aren't accessed they will not trigger anything.
 
 const findFromId = <T extends { _id: string }>(data: T[], id?: string) =>
   data.find((thing) => thing._id === id)
@@ -230,14 +245,4 @@ export function useExerciseModifiers(id?: string) {
   })
 
   return modifiers ?? []
-}
-
-export function useCategoryNames({ suspense }: UseOptions = {}) {
-  const { data } = (suspense ? useSuspenseQuery : useQuery)({
-    queryKey: [QUERY_KEYS.categories],
-    queryFn: fetchCategories,
-    select: toNames,
-  })
-
-  return data
 }

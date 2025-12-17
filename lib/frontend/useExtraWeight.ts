@@ -1,8 +1,10 @@
 import type { Record } from '../../models/Record'
 import { useBodyweights, useModifiers } from './data/useQuery'
+import { arrayToIndex } from './Index'
 
 export default function useExtraWeight(record: Record) {
   const modifiers = useModifiers()
+  const modifierIndex = arrayToIndex('name', modifiers)
   const { data: bodyweightData } = useBodyweights(
     {
       limit: 2,
@@ -32,7 +34,7 @@ export default function useExtraWeight(record: Record) {
   const exerciseWeight = exercise?.weight ?? 0
 
   const modifierWeight = activeModifiers.reduce(
-    (total, name) => total + (modifiers.index[name]?.weight ?? 0),
+    (total, name) => total + (modifierIndex[name]?.weight ?? 0),
     0
   )
 

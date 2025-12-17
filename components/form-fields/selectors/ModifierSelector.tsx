@@ -23,7 +23,7 @@ export default function ModifierSelector({ modifier, handleChange }: Props) {
   return (
     <AsyncSelector
       handleChange={handleChange}
-      options={modifiers.data}
+      options={modifiers}
       addItemMutate={mutate}
       value={modifier}
       label="Modifier"

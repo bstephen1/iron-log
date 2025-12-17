@@ -10,7 +10,10 @@ import {
   useDeleteMutation,
   useUpdateMutation,
 } from '../../lib/frontend/data/useMutation'
-import { useCategories, useExercises } from '../../lib/frontend/data/useQuery'
+import {
+  useCategoryNames,
+  useExercises,
+} from '../../lib/frontend/data/useQuery'
 import { getUsage } from '../../lib/frontend/usage'
 import type { Category } from '../../models/AsyncSelectorOption/Category'
 import ActionItems from '../form-fields/actions/ActionItems'
@@ -21,9 +24,9 @@ interface Props {
   category: Category
 }
 export default function CategoryForm({ category: { name, _id } }: Props) {
-  const categories = useCategories()
-  const { data } = useExercises()
-  const usage = getUsage(data, 'categories', name)
+  const categoryNames = useCategoryNames()
+  const exercises = useExercises()
+  const usage = getUsage(exercises, 'categories', name)
   const [_, setUrlCategory] = useQueryState('category')
   const deleteCategoryMutate = useDeleteMutation({
     queryKey: [QUERY_KEYS.categories],
@@ -56,7 +59,7 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
         <NameField
           name={name}
           handleUpdate={updateFields}
-          existingNames={categories.names}
+          existingNames={categoryNames}
         />
       </Grid>
       <Grid size={12}>

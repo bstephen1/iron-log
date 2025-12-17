@@ -39,18 +39,20 @@ export default async function RootLayout({
   // Could potentially optimize these prefetches by wrapping them closer to where
   // they are actually used. Would need to see if existing client components can
   // be refactored to server.
-  queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.exercises],
-    queryFn: fetchExercises,
-  })
-  queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.categories],
-    queryFn: fetchCategories,
-  })
-  queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.modifiers],
-    queryFn: fetchModifiers,
-  })
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: [QUERY_KEYS.exercises],
+      queryFn: fetchExercises,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: [QUERY_KEYS.categories],
+      queryFn: fetchCategories,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: [QUERY_KEYS.modifiers],
+      queryFn: fetchModifiers,
+    }),
+  ])
 
   // client vs server components:
   // if a component is defined in a module without the "use client" directive,

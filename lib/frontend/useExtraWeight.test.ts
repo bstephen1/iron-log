@@ -18,17 +18,18 @@ const bwRecord = {
 }
 
 const mocks = vi.hoisted(() => ({
-  modifierIndex: { light: { weight: 10 }, heavy: { weight: 25 } },
+  modifiers: [
+    { name: 'light', weight: 10 },
+    { name: 'heavy', weight: 25 },
+  ],
   bodyweights: [] as Bodyweight[],
 }))
 
 const unofficialBw = createBodyweight(82.3, 'unofficial', '2000-01-01')
 const officialBw = createBodyweight(76.4, 'official', '2000-01-01')
 
-vi.mock('./restService', () => ({
-  useModifiers: () => ({
-    index: mocks.modifierIndex,
-  }),
+vi.mock('./data/useQuery', () => ({
+  useModifiers: () => mocks.modifiers,
   useBodyweights: () => ({ data: mocks.bodyweights }),
 }))
 
@@ -48,8 +49,10 @@ it('returns zero when nothing is using extra weight', () => {
 })
 
 it('returns extra weight when enabled', () => {
-  const modifierWeight =
-    mocks.modifierIndex.light.weight + mocks.modifierIndex.heavy.weight
+  const modifierWeight = mocks.modifiers.reduce(
+    (sum, cur) => (cur.weight ?? 0) + sum,
+    0
+  )
   const exerciseWeight = 7.5
   const bodyweight = 82.3
   mocks.bodyweights = [unofficialBw]

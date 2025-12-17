@@ -23,7 +23,7 @@ export default function CategorySelector({ category, handleChange }: Props) {
   return (
     <AsyncSelector
       handleChange={handleChange}
-      options={categories.data}
+      options={categories}
       addItemMutate={mutate}
       value={category}
       label="Category"

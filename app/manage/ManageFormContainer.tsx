@@ -56,20 +56,19 @@ export default function ManageFormContainer() {
     category: parseAsString,
     modifier: parseAsString,
   })
-  const categories = useCategories({ suspense: true })
-  const exercises = useExercises({ suspense: true })
-  const modifiers = useModifiers({ suspense: true })
+  const categories = useCategories()
+  const exercises = useExercises()
+  const modifiers = useModifiers()
 
   const selected = {
     category:
-      categories.data.find(
-        (category) => category._id === queryState.category
-      ) ?? null,
+      categories.find((category) => category._id === queryState.category) ??
+      null,
     modifier:
-      modifiers.data.find((modifier) => modifier._id === queryState.modifier) ??
+      modifiers.find((modifier) => modifier._id === queryState.modifier) ??
       null,
     exercise:
-      exercises.data.find((exercise) => exercise._id === queryState.exercise) ??
+      exercises.find((exercise) => exercise._id === queryState.exercise) ??
       null,
   }
 

@@ -6,7 +6,7 @@ import { QUERY_KEYS } from '../../../lib/frontend/constants'
 import { useAddMutation } from '../../../lib/frontend/data/useMutation'
 import {
   useCategoryNames,
-  useExercisesNew,
+  useExercises,
 } from '../../../lib/frontend/data/useQuery'
 import {
   createExercise,
@@ -34,7 +34,7 @@ export default function ExerciseSelector<
   disableAddNew,
   ...asyncSelectorProps
 }: ExerciseSelectorProps<DisableClearable>) {
-  const exercises = useExercisesNew()
+  const exercises = useExercises()
   const categoryNames = useCategoryNames()
   const mutate = useAddMutation({
     queryKey: [QUERY_KEYS.exercises],

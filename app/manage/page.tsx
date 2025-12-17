@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import ManageFormContainer from './ManageFormContainer'
 
 export const metadata: Metadata = {
@@ -7,9 +6,5 @@ export const metadata: Metadata = {
 }
 
 export default function ManagePage() {
-  return (
-    <Suspense>
-      <ManageFormContainer />
-    </Suspense>
-  )
+  return <ManageFormContainer />
 }

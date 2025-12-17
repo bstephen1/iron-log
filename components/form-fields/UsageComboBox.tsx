@@ -21,6 +21,7 @@ interface Props {
 export default memo(function UsageComboBox({ field, name, usage }: Props) {
   const exercises = useExercises()
   const usageNames = usage.map((exercise) => exercise.name)
+  const exerciseNames = exercises.map((exercise) => exercise.name)
   const updateExerciseMutate = useUpdateMutation({
     queryKey: [QUERY_KEYS.exercises],
     updateFn: updateExerciseFields,
@@ -30,7 +31,7 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
     exerciseName: string,
     reason: AutocompleteChangeReason
   ) => {
-    const newExercise = exercises.data.find(
+    const newExercise = exercises.find(
       (exercise) => exercise.name === exerciseName
     ) as Exercise
 
@@ -51,7 +52,7 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
     <ComboBoxField
       label="Exercises"
       initialValue={usageNames}
-      options={exercises.names}
+      options={exerciseNames}
       fullWidth
       handleChange={handleUpdateExercise}
       disableClearable
