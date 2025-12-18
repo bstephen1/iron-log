@@ -10,7 +10,7 @@ it('updates time mask', async () => {
   const seconds = 40
   const { user } = render(<SetFieldTimeMask handleSetChange={mockMutate} />)
 
-  // basically impossible to detect, but when clicking the input in jsdom
+  // basically impossible to detect, but when clicking the input in the dom
   // the cursor will be all the way on the right, so you need to
   // manually move it back or the mask will ignore any input
   await user.click(screen.getByDisplayValue('00:00:00'))

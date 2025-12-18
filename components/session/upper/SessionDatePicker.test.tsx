@@ -38,6 +38,7 @@ it('updates date from picker', async () => {
   await user.click(screen.getByLabelText(/Choose date/))
 
   // click a new day
+  await user.keyboard('{LeftArrow}') // for coverage
   await user.click(screen.getByText('15'))
 
   // automatically submits

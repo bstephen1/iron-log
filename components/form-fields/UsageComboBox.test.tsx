@@ -25,7 +25,7 @@ it('adds category to exercise', async () => {
 
 it('removes modifier from exercise', async () => {
   const modifier = 'my modifier'
-  const exercise = createExercise('my exercise')
+  const exercise = createExercise('my exercise', { modifiers: [modifier] })
   vi.mocked(fetchExercises).mockResolvedValue([exercise])
   const { user } = render(
     <UsageComboBox field="modifiers" name={modifier} usage={[exercise]} />

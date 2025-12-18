@@ -45,8 +45,8 @@ interface GraphData {
   bodyweight?: number
 }
 
-/** LineChart props only applied in test mode for jsdom tests,
- *  which does not support window resizing properties
+/** LineChart props only applied in test mode for vitest tests,
+ *  where the dom does not support window resizing properties
  */
 const testLineChartProps: ComponentProps<typeof LineChart> =
   process.env.NODE_ENV === 'test'

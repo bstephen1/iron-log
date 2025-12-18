@@ -36,6 +36,9 @@ const buildSessionLogQuery = (
     .format(DATE_FORMAT),
 })
 
+/* v8 ignore next */
+const LoadingSkeleton = () => <DayCalendarSkeleton />
+
 interface Props {
   day: Dayjs
   /** Triggered when the picker value changes to a new date.
@@ -98,7 +101,7 @@ function SessionDatePickerInner({
       slotProps={{
         popper: {
           // prevent swiper from swiping when selecting dates with arrow keys
-          /* c8 ignore next */
+          /* v8 ignore next */
           onKeyDown: (e) => e.key.match(/Arrow/) && e.stopPropagation(),
         },
 
@@ -160,8 +163,7 @@ function SessionDatePickerInner({
         setVisibleMonth(newMonth)
       }}
       loading={sessionLogs.isLoading}
-      /* c8 ignore next */
-      renderLoading={() => <DayCalendarSkeleton />}
+      renderLoading={LoadingSkeleton}
       // apparently this needs PickersDayProps' type defined to infer types for the other args
       slots={{
         day: (DayComponentProps) => {
