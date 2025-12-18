@@ -8,7 +8,6 @@ import type FetchOptions from './FetchOptions'
 import type { Note } from './Note'
 import { DEFAULT_SET_TYPE, type Set, type SetType } from './Set'
 
-// todo: add activeCategory (for programming)
 export interface Record {
   _id: string
   date: string

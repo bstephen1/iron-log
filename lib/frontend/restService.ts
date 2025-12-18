@@ -67,10 +67,12 @@ const useOptimisticMutation = <
         queryKey,
       })
     },
-    onError: async (e, _variables) => {
+    onError: async () => {
       // rather than saving a snapshot and rolling back, we simply invalidate and refetch
       await queryClient.invalidateQueries({ queryKey })
-      enqueueError('Something went wrong! Changes were not saved.', e)
+      enqueueError(
+        'Something went wrong! Changes were not saved. Try reloading the page.'
+      )
     },
     onSettled: () => {
       return queryClient.invalidateQueries({
