@@ -24,6 +24,7 @@ import {
 import type { Note } from '../../models/Note'
 import AttributeCheckboxes from '../form-fields/AttributeCheckboxes'
 import ActionItems from '../form-fields/actions/ActionItems'
+import { usageLimit } from '../form-fields/actions/UsageButton'
 import ComboBoxField from '../form-fields/ComboBoxField'
 import EquipmentWeightField from '../form-fields/EquipmentWeightField'
 import NameField from '../form-fields/NameField'
@@ -37,7 +38,9 @@ export default function ExerciseForm({ exercise }: Props) {
   const { _id, name, status, notes, attributes, weight } = exercise
   const modifiers = useModifiers()
   const categories = useCategories()
-  const { data: records } = useRecords({ exercise: name })
+  // Match the query from UsageButton to reuse the same key.
+  // This is only used in this component to determine if "delete" is disabled.
+  const { data: records } = useRecords({ exercise: name, limit: usageLimit })
   const exercises = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
   const addExerciseMutate = useAddMutation({

@@ -17,7 +17,7 @@ import { stringifySetType } from '../../../models/Set'
 import LoadingSpinner from '../../loading/LoadingSpinner'
 import TooltipIconButton from '../../TooltipIconButton'
 
-const maxRecords = 10
+export const usageLimit = 11
 
 interface Props {
   exercise?: string
@@ -31,7 +31,7 @@ export default function UsageButton({ exercise, type, buttonProps }: Props) {
   const { data: records, isLoading } = useRecords(
     {
       exercise,
-      limit: maxRecords + 1,
+      limit: usageLimit,
     },
     !!exercise && (open || type === 'text')
   )
@@ -44,7 +44,7 @@ export default function UsageButton({ exercise, type, buttonProps }: Props) {
           startIcon={
             <Badge
               badgeContent={records?.length}
-              max={maxRecords}
+              max={usageLimit}
               color="primary"
               aria-label={`used in ${records?.length ?? 0} record${records?.length !== 1 ? 's' : ''}`}
             >
@@ -75,7 +75,7 @@ export default function UsageButton({ exercise, type, buttonProps }: Props) {
           ) : (
             <List disablePadding>
               {records
-                .slice(0, maxRecords)
+                .slice(0, usageLimit)
                 .map(({ date, setType, sets, exercise, _id }) => (
                   // Note: this is Nextjs Link, not mui
                   <Link key={_id} href={`/sessions/${date}?record=${_id}`}>
