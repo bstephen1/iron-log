@@ -1,16 +1,28 @@
-import { expect, it } from 'vitest'
-import { addSet } from '../../../../lib/backend/mongoService'
-import { generateId } from '../../../../lib/id'
+import { expect, it, vi } from 'vitest'
+import { addSet, fetchRecords } from '../../../../lib/backend/mongoService'
+import { useRecords } from '../../../../lib/frontend/data/useQuery'
+import { testDate } from '../../../../lib/test/data'
 import { render, screen } from '../../../../lib/test/rtl'
+import { createRecord } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
 import AddSetButton from './AddSetButton'
 
-const _id = generateId()
+const record = createRecord(testDate)
+const _id = record._id
 
-it('adds initial set', async () => {
-  const { user } = render(<AddSetButton _id={_id} />)
+it('adds set to record', async () => {
+  const record2 = createRecord(testDate)
+  vi.mocked(fetchRecords).mockResolvedValue([record, record2])
+  // this component has no way to visibly wait for the data, so need a wrapper
+  const LoadedButton = () => {
+    const { isLoading } = useRecords({ date: testDate })
 
-  await user.click(screen.getByLabelText(/Add/))
+    return isLoading ? <div>loading</div> : <AddSetButton _id={record._id} />
+  }
+
+  const { user } = render(<LoadedButton />)
+
+  await user.click(await screen.findByLabelText(/Add/))
 
   expect(addSet).toHaveBeenCalledWith(_id, {})
 })

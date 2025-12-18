@@ -29,7 +29,8 @@ export default defineConfig({
         '**/swiper/**',
         '**/useNoSwipingDesktop.ts',
         // tested implicitly
-        '**/restService.ts',
+        '**/useMutation.ts',
+        '**/useQuery.ts',
         // recharts can't be meaningfully tested in vitest.
         // There's no way to get any info about the svg graph state from the dom.
         '**/HistoryGraph.tsx',

@@ -61,7 +61,7 @@ export default function RenderSetRow({
 }: Props) {
   const date = useCurrentDate()
   const set = useRecordSet(_id, date, index)
-  const replaceSet = useSetReplace(_id, index)
+  const replaceSet = useSetReplace(_id, date, index)
   const noSwipingDesktop = useNoSwipingDesktop()
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
@@ -118,8 +118,7 @@ export default function RenderSetRow({
   )
 }
 
-function useSetReplace(_id = '', index: number) {
-  const date = useCurrentDate()
+function useSetReplace(_id = '', date: string, index: number) {
   return useOptimisticMutation<Record[], Record, { set: Set }>({
     queryKey: [QUERY_KEYS.records, { date }],
     mutationFn: ({ set }) => updateSet(_id, set, index),

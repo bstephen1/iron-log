@@ -6,7 +6,6 @@ import {
 } from '@tanstack/react-query'
 import { isRecord } from '../../../models/Record'
 import { createSessionLog, type SessionLog } from '../../../models/SessionLog'
-import getQueryClient from '../../getQueryClient'
 import { QUERY_KEYS } from '../constants'
 import { enqueueError } from '../snackbar'
 
@@ -61,7 +60,6 @@ export const useOptimisticMutation = <
 
   return (...args: Parameters<typeof mutate>) => {
     const [variables, _options] = args
-    const queryClient = getQueryClient()
 
     // onMutate in the useMutation hook actually triggers AFTER an initial render with
     // the stale data. This can cause disruptive screen flashing (especially when adding
@@ -98,6 +96,8 @@ interface AddMutationProps<T>
 }
 /** Add a new record to a cache of arrays */
 export function useAddMutation<T>({ addFn, ...rest }: AddMutationProps<T>) {
+  const queryClient = useQueryClient()
+
   return useOptimisticMutation<T[], T>({
     ...rest,
     mutationFn: (newItem) => addFn(newItem),
@@ -105,7 +105,6 @@ export function useAddMutation<T>({ addFn, ...rest }: AddMutationProps<T>) {
       // Record must also update SessionLog to show it has been added
       if (isRecord(newItem)) {
         const { _id, date } = newItem
-        const queryClient = getQueryClient()
         queryClient.setQueryData<SessionLog>(
           [QUERY_KEYS.sessionLogs, date],
           (prev) =>
@@ -147,6 +146,8 @@ interface DeleteMutationProps
 }
 /** Delete a record from a cache of arrays */
 export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
+  const queryClient = useQueryClient()
+
   return useOptimisticMutation<{ _id: string }[], string>({
     ...rest,
     mutationFn: (id) => deleteFn(id),
@@ -155,7 +156,6 @@ export function useDeleteMutation({ deleteFn, ...rest }: DeleteMutationProps) {
         (key) => !!key && typeof key === 'object' && 'date' in key
       ) || {}) as { date: string }
       if (date) {
-        const queryClient = getQueryClient()
         queryClient.setQueryData<SessionLog>(
           [QUERY_KEYS.sessionLogs, date],
           (prev) =>

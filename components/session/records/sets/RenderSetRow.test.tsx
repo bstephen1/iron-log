@@ -1,18 +1,17 @@
 import { expect, it, vi } from 'vitest'
 import { fetchRecords, updateSet } from '../../../../lib/backend/mongoService'
+import { testDate } from '../../../../lib/test/data'
 import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import { createRecord } from '../../../../models/Record'
 import RenderSetRow from './RenderSetRow'
 
 it('renders correct set', async () => {
-  const record = createRecord('2000-01-01', {
+  const record = createRecord(testDate, {
     sets: [{ reps: 1 }, { reps: 2 }],
   })
-  vi.mocked(fetchRecords).mockResolvedValue([
-    createRecord('2000-01-01'),
-    record,
-  ])
+  vi.mocked(fetchRecords).mockResolvedValue([createRecord(testDate), record])
+
   const { user } = render(
     <RenderSetRow
       displayFields={DEFAULT_DISPLAY_FIELDS}
