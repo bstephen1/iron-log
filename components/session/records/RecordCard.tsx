@@ -2,7 +2,7 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Stack from '@mui/material/Stack'
 import dayjs from 'dayjs'
-import { memo, useMemo } from 'react'
+import { useMemo } from 'react'
 import StyledDivider from '../../../components/StyledDivider'
 import { DATE_FORMAT } from '../../../lib/frontend/constants'
 import { useExercise, useRecord } from '../../../lib/frontend/data/useQuery'
@@ -46,7 +46,7 @@ interface Props {
  * for memo() to use the custom equality comparison function isEqual().
  * Otherwise they'll still be rerendered because the mutation creates a new object.
  */
-export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
+export default function RecordCard({ swiperIndex, id, date }: Props) {
   // Instead of using record.exercise, we make a separate call to get the exercise.
   // This ensures the exercise is up to date if the user has multiple records with the
   // same exercise. record.exercise is only updated upon fetching the record,
@@ -133,4 +133,4 @@ export default memo(function RecordCard({ swiperIndex, id, date }: Props) {
       </CardContent>
     </Card>
   )
-})
+}

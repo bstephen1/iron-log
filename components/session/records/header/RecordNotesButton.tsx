@@ -3,8 +3,7 @@ import Badge from '@mui/material/Badge'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
+import { useState } from 'react'
 import { upsertSessionLog } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useReplaceMutation } from '../../../../lib/frontend/data/useMutation'
@@ -26,11 +25,7 @@ interface Props {
   /** Date of the record. Needed to retrieve session notes */
   date: string
 }
-export default memo(function RecordNotesButton({
-  notes = [],
-  _id,
-  date,
-}: Props) {
+export default function RecordNotesButton({ notes = [], _id, date }: Props) {
   const readOnly = !_id
   const { data: sessionLog } = useSessionLog(date)
   const sides = useRecordSides(_id, date)
@@ -122,4 +117,4 @@ export default memo(function RecordNotesButton({
       </Dialog>
     </>
   )
-}, isEqual)
+}

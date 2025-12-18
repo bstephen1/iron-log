@@ -9,8 +9,7 @@ import FormLabel from '@mui/material/FormLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
+import { useState } from 'react'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import { FACTORS, type Units } from '../../../../models/Units'
@@ -22,7 +21,7 @@ interface Props {
   _id?: string
   displayFields: DisplayFields
 }
-export default memo(function ChangeUnitsButton({ _id, displayFields }: Props) {
+export default function ChangeUnitsButton({ _id, displayFields }: Props) {
   const [open, setOpen] = useState(false)
   const updateExercise = useExerciseUpdate(_id)
   const { units } = displayFields
@@ -70,7 +69,7 @@ export default memo(function ChangeUnitsButton({ _id, displayFields }: Props) {
       </Dialog>
     </>
   )
-}, isEqual)
+}
 
 interface UnitDimensionRadioGroupProps<Dimension extends keyof Units> {
   dimension: Dimension

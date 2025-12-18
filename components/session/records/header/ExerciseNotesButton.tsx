@@ -3,8 +3,7 @@ import Badge from '@mui/material/Badge'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
+import { useState } from 'react'
 import NotesList from '../../../../components/form-fields/NotesList'
 import { useExerciseModifiers } from '../../../../lib/frontend/data/useQuery'
 import type { Note } from '../../../../models/Note'
@@ -20,7 +19,7 @@ interface Props {
   disabled?: boolean
 }
 /** Show notes from the record's selected exercise. */
-export default memo(function ExerciseNotesButton({
+export default function ExerciseNotesButton({
   _id,
   notes = [],
   disabled,
@@ -59,4 +58,4 @@ export default memo(function ExerciseNotesButton({
       </Dialog>
     </>
   )
-}, isEqual)
+}

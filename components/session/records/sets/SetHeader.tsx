@@ -10,8 +10,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Select, { type SelectProps } from '@mui/material/Select'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { memo } from 'react'
-import isEqual from 'react-fast-compare'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import {
   type DisplayFields,
@@ -28,7 +26,7 @@ type Props = {
   showSplitWeight?: boolean
   showUnilateral?: boolean
 } & Partial<SelectProps<string[]>>
-export default memo(function SetHeader({
+export default function SetHeader({
   exerciseId,
   displayFields,
   showSplitWeight = false,
@@ -167,4 +165,4 @@ export default memo(function SetHeader({
       </Select>
     </FormControl>
   )
-}, isEqual)
+}
