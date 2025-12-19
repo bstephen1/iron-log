@@ -24,7 +24,12 @@ export default function EquipmentWeightField({ weight, handleUpdate }: Props) {
       handleSubmit={useCallback(
         (weight) => {
           handleUpdate({
-            weight: convertUnit(weight, 'weight', weightUnit, DB_UNITS.weight),
+            weight: convertUnit(
+              weight ?? null,
+              'weight',
+              weightUnit,
+              DB_UNITS.weight
+            ),
           })
         },
         [handleUpdate, weightUnit]

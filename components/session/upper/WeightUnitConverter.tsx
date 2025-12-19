@@ -10,7 +10,7 @@ import { convertUnit } from '../../../models/Units'
 export default function WeightUnitConverter() {
   // the Textfield's value is a string, but it's based off kg here which is a number.
   // We need to make sure any cases of undefined in value/onChange get mapped to an empty string.
-  const [kg, setKg] = useState<number>()
+  const [kg, setKg] = useState<number | null>()
 
   return (
     <Stack direction="row" sx={{ justifyContent: 'center' }}>

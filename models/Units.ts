@@ -46,7 +46,7 @@ export const FACTORS = {
 
 /** Convert a unit from source to dest type. */
 export function convertUnit<Dimension extends keyof Units>(
-  value: number | undefined,
+  value: number | undefined | null,
   dimension: Dimension,
   source: Units[Dimension],
   dest: Units[Dimension],
@@ -55,7 +55,7 @@ export function convertUnit<Dimension extends keyof Units>(
   extraValue = 0,
   /** number of decimals to round to */
   roundedDecimals?: number
-): number | undefined {
+): number | undefined | null {
   // we want to show extraValue if it exists and value is undefined
   if (!value && !extraValue) return value // value could be 0 or undefined
 
