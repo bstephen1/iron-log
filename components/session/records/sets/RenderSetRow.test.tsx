@@ -17,6 +17,7 @@ it('renders correct set', async () => {
       displayFields={DEFAULT_DISPLAY_FIELDS}
       _id={record._id}
       index={1}
+      date={testDate}
     />
   )
 
@@ -41,6 +42,7 @@ it('renders readonly set', async () => {
       _id={record._id}
       index={0}
       readOnly
+      date={testDate}
     />
   )
 

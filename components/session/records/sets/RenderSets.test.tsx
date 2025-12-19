@@ -1,4 +1,5 @@
 import { expect, it } from 'vitest'
+import { testDate } from '../../../../lib/test/data'
 import { render, screen } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import RenderSets from './RenderSets'
@@ -10,6 +11,7 @@ it('renders editable sets', () => {
       displayFields={DEFAULT_DISPLAY_FIELDS}
       sets={[{ reps: 1, weight: 5 }, { reps: 2 }]}
       _id="1"
+      date={testDate}
     />
   )
 
@@ -20,7 +22,12 @@ it('renders editable sets', () => {
 
 it('renders readonly sets', () => {
   render(
-    <RenderSets displayFields={DEFAULT_DISPLAY_FIELDS} sets={[]} _id="1" />
+    <RenderSets
+      displayFields={DEFAULT_DISPLAY_FIELDS}
+      sets={[]}
+      _id="1"
+      date={testDate}
+    />
   )
 
   expect(screen.queryByLabelText('Add new set')).not.toBeInTheDocument()
@@ -33,6 +40,7 @@ it('does not render delete button if there are no display fields', () => {
       displayFields={{ ...DEFAULT_DISPLAY_FIELDS, visibleFields: [] }}
       sets={[{ reps: 1, weight: 1 }]}
       _id="1"
+      date={testDate}
     />
   )
 

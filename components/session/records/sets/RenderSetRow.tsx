@@ -2,7 +2,6 @@ import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { useCallback } from 'react'
-import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { updateSet } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
@@ -45,6 +44,7 @@ const getDarkBackground = (side: Set['side']) => {
 interface Props {
   readOnly?: boolean
   index: number
+  date: string
   displayFields: DisplayFields
   extraWeight?: number
   _id: Record['_id']
@@ -55,11 +55,11 @@ interface Props {
 export default function RenderSetRow({
   readOnly = false,
   index,
+  date,
   displayFields,
   extraWeight = 0,
   _id,
 }: Props) {
-  const date = useCurrentDate()
   const set = useRecordSet(_id, date, index)
   const replaceSet = useSetReplace(_id, date, index)
   const noSwipingDesktop = useNoSwipingDesktop()

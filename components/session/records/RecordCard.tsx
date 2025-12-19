@@ -110,6 +110,7 @@ export default function RecordCard({ swiperIndex, id, date }: Props) {
           <RenderSets
             exerciseId={exercise?._id}
             {...{
+              date,
               displayFields,
               sets,
               showSplitWeight,
