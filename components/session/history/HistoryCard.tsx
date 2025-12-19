@@ -95,6 +95,7 @@ export default function HistoryCard({
     sets: (
       <RenderSets
         key="sets"
+        date={date}
         {...{
           displayFields,
           showSplitWeight,

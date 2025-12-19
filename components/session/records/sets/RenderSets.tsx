@@ -12,6 +12,7 @@ interface Props extends Pick<Record, '_id' | 'sets'> {
    *  so they can reflect changes to the parent's display fields.
    */
   displayFields: DisplayFields
+  date: string
   showSplitWeight?: boolean
   showUnilateral?: boolean
   /** Exercise weight is ignored if the record is computed to be a bodyweight exercise
@@ -24,6 +25,7 @@ interface Props extends Pick<Record, '_id' | 'sets'> {
 export default function RenderSets({
   exerciseId,
   displayFields,
+  date,
   showSplitWeight,
   showUnilateral,
   sets,
@@ -51,6 +53,7 @@ export default function RenderSets({
             key={i}
             index={i}
             {...{
+              date,
               displayFields,
               readOnly: readOnly || !hasVisibleFields,
               _id,
