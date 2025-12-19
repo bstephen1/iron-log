@@ -21,6 +21,23 @@ it('calls update handler', async () => {
   expect(mockHandleUpdate).toHaveBeenCalledWith({ weight: 5 })
 })
 
+it('clears out existing weight', async () => {
+  const { user } = render(
+    <>
+      <div>other</div>
+      <EquipmentWeightField handleUpdate={mockHandleUpdate} weight={5} />
+    </>
+  )
+
+  await user.clear(screen.getByDisplayValue('5'))
+  // trigger save on blur
+  await user.click(screen.getByText('other'))
+
+  // this cannot be called with "undefined" because it gets jsonified when being
+  // passed to the backend, which strips undefined values
+  expect(mockHandleUpdate).toHaveBeenCalledWith({ weight: null })
+})
+
 it('handles changing units', async () => {
   DEFAULT_DISPLAY_FIELDS.units = { ...DB_UNITS, weight: 'lbs' }
   const { user } = render(
