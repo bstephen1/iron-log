@@ -1,5 +1,5 @@
 import InputAdornment from '@mui/material/InputAdornment'
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { DEFAULT_DISPLAY_FIELDS } from '../../models/DisplayFields'
 import { convertUnit, DB_UNITS } from '../../models/Units'
 import NumericFieldAutosave from './NumericFieldAutosave'
@@ -8,10 +8,7 @@ interface Props {
   weight?: number | null
   handleUpdate: (updates: { weight?: number | null }) => void
 }
-export default memo(function EquipmentWeightField({
-  weight,
-  handleUpdate,
-}: Props) {
+export default function EquipmentWeightField({ weight, handleUpdate }: Props) {
   const weightUnit = DEFAULT_DISPLAY_FIELDS.units.weight
   return (
     <NumericFieldAutosave
@@ -44,4 +41,4 @@ export default memo(function EquipmentWeightField({
       }}
     />
   )
-})
+}

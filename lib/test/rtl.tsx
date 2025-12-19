@@ -63,8 +63,9 @@ const customRender = (
           <Suspense
             fallback={
               <div>
-                Component is loading due to react-query prefetching. Use a
-                screen.findByXXX query.
+                Component is loading due to useSuspenseQuery. Use a
+                screen.findByXXX query or set initial query data in the custom
+                render.
               </div>
             }
           >

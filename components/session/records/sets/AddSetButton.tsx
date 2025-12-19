@@ -2,28 +2,25 @@ import AddIcon from '@mui/icons-material/Add'
 import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
-import { updateRecordFields } from '../../../../lib/backend/mongoService'
+import { addSet } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { useUpdateMutation } from '../../../../lib/frontend/restService'
+import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
+import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
 
-interface Props {
-  sets: Set[]
+interface Props extends Set {
   disabled?: boolean
   /** record id to add the set to */
   _id: string
 }
-export default function AddSetButton({ sets, disabled, _id }: Props) {
-  const date = useCurrentDate()
-  const updateRecordMutate = useUpdateMutation({
-    queryKey: [QUERY_KEYS.records, { date }],
-    updateFn: updateRecordFields,
-  })
+/** This component also takes in fields from the previous Set,
+ *  which will be passed along to the new Set
+ */
+export default function AddSetButton({ disabled, _id, ...prevSet }: Props) {
+  const addSet = useSetAdd(_id)
 
-  const addSet = async () => {
-    const newSet = sets.at(-1)
-      ? { ...sets.at(-1), effort: undefined }
-      : ({} as Set)
+  const handleAdd = async () => {
+    const newSet = { ...prevSet, effort: undefined }
 
     // Behavior is a bit up for debate. We've decided to only add a single new set
     // rather than automatically add an L and R set with values from the latest L and R
@@ -38,7 +35,7 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
       newSet.side = 'L'
     }
 
-    updateRecordMutate({ _id, updates: { sets: sets.concat(newSet) } })
+    addSet({ set: newSet })
   }
 
   return (
@@ -53,11 +50,28 @@ export default function AddSetButton({ sets, disabled, _id }: Props) {
         color="primary"
         size="medium"
         disabled={disabled}
-        onClick={addSet}
+        onClick={handleAdd}
         aria-label="Add new set"
       >
         <AddIcon />
       </Fab>
     </Box>
   )
+}
+
+function useSetAdd(_id = '') {
+  const date = useCurrentDate()
+  return useOptimisticMutation<Record[], Record, { set: Set }>({
+    queryKey: [QUERY_KEYS.records, { date }],
+    mutationFn: ({ set }) => addSet(_id, set),
+    updater: (prev = [], { set }) =>
+      prev.map((record) =>
+        record._id === _id
+          ? {
+              ...record,
+              sets: record.sets.concat(set),
+            }
+          : record
+      ),
+  })
 }

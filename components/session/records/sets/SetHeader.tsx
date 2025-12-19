@@ -10,33 +10,31 @@ import MenuItem from '@mui/material/MenuItem'
 import Select, { type SelectProps } from '@mui/material/Select'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { memo } from 'react'
-import isEqual from 'react-fast-compare'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
-import type { PartialUpdate } from '../../../../lib/types'
-import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
 import {
   type DisplayFields,
   ORDERED_DISPLAY_FIELDS,
   printFieldWithUnits,
   type VisibleField,
 } from '../../../../models/DisplayFields'
+import { useExerciseUpdate } from '../useRecordUpdate'
 import { delimiterWidth } from './RenderSetField'
 
 type Props = {
-  mutateExerciseFields?: PartialUpdate<Exercise>
+  exerciseId?: string
   displayFields: DisplayFields
   showSplitWeight?: boolean
   showUnilateral?: boolean
 } & Partial<SelectProps<string[]>>
-export default memo(function SetHeader({
-  mutateExerciseFields,
+export default function SetHeader({
+  exerciseId,
   displayFields,
   showSplitWeight = false,
   showUnilateral = false,
   ...selectProps
 }: Props) {
   const noSwipingDesktop = useNoSwipingDesktop()
+  const updateExercise = useExerciseUpdate(exerciseId)
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
   const selectedNames = displayFields.visibleFields.map((field) => field.name)
@@ -68,7 +66,7 @@ export default memo(function SetHeader({
     // Make sure we aren't submitting if there aren't actually any changes.
     // Should only need to check the length because if there is a change the length must change.
     if (newVisibleFields.length !== selectedNames.length) {
-      mutateExerciseFields?.({
+      updateExercise({
         displayFields: {
           ...displayFields,
           visibleFields: newVisibleFields,
@@ -167,4 +165,4 @@ export default memo(function SetHeader({
       </Select>
     </FormControl>
   )
-}, isEqual)
+}

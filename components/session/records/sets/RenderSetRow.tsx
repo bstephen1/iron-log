@@ -1,11 +1,12 @@
 import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
-import { updateRecordFields } from '../../../../lib/backend/mongoService'
+import { updateSet } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { useUpdateMutation } from '../../../../lib/frontend/restService'
+import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
+import { useRecordSet } from '../../../../lib/frontend/data/useQuery'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
@@ -47,34 +48,27 @@ interface Props {
   displayFields: DisplayFields
   extraWeight?: number
   _id: Record['_id']
-  sets: Set[]
 }
 /** Render a set. Note the set to render must be spread into the props.
  *  This destructures the set into primitive values to avoid unecessary rerenders.
  */
-export default memo(function RenderSetRow({
+export default function RenderSetRow({
   readOnly = false,
   index,
   displayFields,
   extraWeight = 0,
   _id,
-  sets,
 }: Props) {
-  const set = sets[index]
   const date = useCurrentDate()
+  const set = useRecordSet(_id, date, index)
+  const replaceSet = useSetReplace(_id, date, index)
   const noSwipingDesktop = useNoSwipingDesktop()
-  const updateRecordMutate = useUpdateMutation({
-    queryKey: [QUERY_KEYS.records, { date }],
-    updateFn: updateRecordFields,
-  })
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
-      const newSets = [...sets]
-      newSets[index] = { ...newSets[index], ...changes }
-      updateRecordMutate({ _id, updates: { sets: newSets } })
+      replaceSet({ set: { ...set, ...changes } })
     },
-    [_id, index, sets, updateRecordMutate]
+    [set, replaceSet]
   )
 
   return (
@@ -118,13 +112,26 @@ export default memo(function RenderSetRow({
         // insert a box for padding when clear icon is hidden
         <Box minWidth={deleteButtonHeight} />
       ) : (
-        <DeleteSetButton
-          index={index}
-          _id={_id}
-          sets={sets}
-          sx={{ my: -pyStack }}
-        />
+        <DeleteSetButton index={index} _id={_id} sx={{ my: -pyStack }} />
       )}
     </Stack>
   )
-})
+}
+
+function useSetReplace(_id = '', date: string, index: number) {
+  return useOptimisticMutation<Record[], Record, { set: Set }>({
+    queryKey: [QUERY_KEYS.records, { date }],
+    mutationFn: ({ set }) => updateSet(_id, set, index),
+    updater: (prev = [], { set }) =>
+      prev.map((record) =>
+        record._id === _id
+          ? {
+              ...record,
+              sets: record.sets.map((oldSet, i) =>
+                i === index ? set : oldSet
+              ),
+            }
+          : record
+      ),
+  })
+}

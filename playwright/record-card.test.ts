@@ -46,7 +46,7 @@ test.describe('without hidden actions', () => {
       page.getByLabel('Set 1').getByLabel('weight').first()
     ).toHaveValue('22.05')
 
-    // move record
+    // move record -- second num is record notes, third is exercise notes
     await page
       .getByText('Record 121')
       .getByLabel('Move current record to the right')
@@ -58,6 +58,6 @@ test.describe('without hidden actions', () => {
 
     // delete -- other record has the session note
     await page.getByText('Record 121').getByLabel('Delete record').click()
-    await expect(page.getByText('Record 110')).toBeVisible()
+    await expect(page.getByText('Record 11')).toBeVisible()
   })
 })

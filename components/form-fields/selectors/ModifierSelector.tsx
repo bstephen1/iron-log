@@ -1,6 +1,7 @@
 import { addModifier } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
-import { useAddMutation, useModifiers } from '../../../lib/frontend/restService'
+import { useAddMutation } from '../../../lib/frontend/data/useMutation'
+import { useModifiers } from '../../../lib/frontend/data/useQuery'
 import {
   createModifier,
   type Modifier,
@@ -22,7 +23,7 @@ export default function ModifierSelector({ modifier, handleChange }: Props) {
   return (
     <AsyncSelector
       handleChange={handleChange}
-      options={modifiers.data}
+      options={modifiers}
       addItemMutate={mutate}
       value={modifier}
       label="Modifier"

@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
+import { type ReactNode, Suspense } from 'react'
 import ClientLayout from '../components/ClientLayout'
 import {
   fetchCategories,
@@ -39,18 +39,20 @@ export default async function RootLayout({
   // Could potentially optimize these prefetches by wrapping them closer to where
   // they are actually used. Would need to see if existing client components can
   // be refactored to server.
-  queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.exercises],
-    queryFn: fetchExercises,
-  })
-  queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.categories],
-    queryFn: fetchCategories,
-  })
-  queryClient.prefetchQuery({
-    queryKey: [QUERY_KEYS.modifiers],
-    queryFn: fetchModifiers,
-  })
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: [QUERY_KEYS.exercises],
+      queryFn: fetchExercises,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: [QUERY_KEYS.categories],
+      queryFn: fetchCategories,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: [QUERY_KEYS.modifiers],
+      queryFn: fetchModifiers,
+    }),
+  ])
 
   // client vs server components:
   // if a component is defined in a module without the "use client" directive,
@@ -68,7 +70,9 @@ export default async function RootLayout({
         <QueryClientWrapper>
           {/* HydrationBoundary is a Client Component, so hydration will happen there. */}
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <ClientLayout>{children}</ClientLayout>
+            <Suspense>
+              <ClientLayout>{children}</ClientLayout>
+            </Suspense>
           </HydrationBoundary>
         </QueryClientWrapper>
       </body>

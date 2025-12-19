@@ -7,13 +7,12 @@ import { useCurrentDate } from '../../app/sessions/[date]/useCurrentDate'
 import ExerciseSelector from '../../components/form-fields/selectors/ExerciseSelector'
 import { addRecord } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
-import { useAddMutation } from '../../lib/frontend/restService'
+import { useAddMutation } from '../../lib/frontend/data/useMutation'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createRecord } from '../../models/Record'
 
 export default function AddRecordCard() {
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const [category, setCategory] = useState<string | null>(null)
   const date = useCurrentDate()
   const swiper = useSwiper()
   const addRecordMutate = useAddMutation({
@@ -35,8 +34,6 @@ export default function AddRecordCard() {
           {...{
             exercise,
             handleChange: (newExercise) => setExercise(newExercise),
-            categoryFilter: category,
-            handleCategoryFilterChange: setCategory,
           }}
         />
         <Button

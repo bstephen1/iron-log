@@ -1,17 +1,20 @@
 import type { ComponentProps } from 'react'
 import { beforeEach, expect, it, vi } from 'vitest'
 import {
+  fetchRecords,
   fetchSessionLog,
+  updateRecordFields,
   upsertSessionLog,
 } from '../../../../lib/backend/mongoService'
 import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { createNote } from '../../../../models/Note'
+import { createRecord } from '../../../../models/Record'
 import { createSessionLog } from '../../../../models/SessionLog'
 import ReccordNotesButton from './RecordNotesButton'
 
-const mockMutate = vi.fn()
 const sessionLog = createSessionLog('2000-01-01')
 const note = createNote('note')
+const record = createRecord('2000-01-01')
 
 const TestWrapper = (
   props: Partial<ComponentProps<typeof ReccordNotesButton>>
@@ -19,7 +22,7 @@ const TestWrapper = (
   <ReccordNotesButton
     date={sessionLog.date}
     notes={[note]}
-    mutateRecordFields={mockMutate}
+    _id={record._id}
     {...props}
   />
 )
@@ -36,7 +39,7 @@ it('submits notes', async () => {
   await user.type(screen.getByPlaceholderText(/Add/), 'x')
   await user.click(screen.getByLabelText('Confirm'))
 
-  expect(mockMutate).toHaveBeenCalledWith({
+  expect(updateRecordFields).toHaveBeenCalledWith(record._id, {
     notes: [expect.objectContaining({ value: 'x' })],
   })
   expect(upsertSessionLog).toHaveBeenCalledWith({
@@ -52,9 +55,21 @@ it('submits notes', async () => {
 })
 
 it('shows tags for sets', async () => {
-  const { user } = render(
-    <TestWrapper sides={['', 'L', 'R', '', 'L', 'L', 'R']} />
-  )
+  vi.mocked(fetchRecords).mockResolvedValue([
+    {
+      ...record,
+      sets: [
+        { side: '' },
+        { side: 'L' },
+        { side: 'R' },
+        { side: '' },
+        { side: 'L' },
+        { side: 'L' },
+        { side: 'R' },
+      ],
+    },
+  ])
+  const { user } = render(<TestWrapper />)
 
   await user.click(screen.getByRole('button'))
   await user.click(screen.getByText('Record')) // open tag menu
@@ -70,7 +85,7 @@ it('shows tags for sets', async () => {
 })
 
 it('renders as readonly', async () => {
-  const { user } = render(<TestWrapper mutateRecordFields={undefined} />)
+  const { user } = render(<TestWrapper _id={undefined} />)
 
   await user.click(screen.getByRole('button'))
 
@@ -86,7 +101,7 @@ it('does not submit if sessionLog is loading', async () => {
   await user.type(screen.getByPlaceholderText(/Add/), 'x')
   await user.click(screen.getByLabelText('Confirm'))
 
-  expect(mockMutate).not.toHaveBeenCalled()
+  expect(updateRecordFields).not.toHaveBeenCalled()
 })
 
 it('can delete last note', async () => {
@@ -96,7 +111,7 @@ it('can delete last note', async () => {
   await user.click(screen.getByRole('button'))
   await user.click(screen.getByLabelText('Delete'))
 
-  expect(mockMutate).toHaveBeenCalledWith({
+  expect(updateRecordFields).toHaveBeenCalledWith(record._id, {
     notes: [],
   })
   expect(upsertSessionLog).toHaveBeenCalledWith({

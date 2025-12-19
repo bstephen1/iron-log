@@ -1,19 +1,12 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Menu from '@mui/material/Menu'
-import {
-  type ComponentProps,
-  type JSX,
-  memo,
-  type ReactNode,
-  useState,
-} from 'react'
-import isEqual from 'react-fast-compare'
+import { type ComponentProps, type JSX, type ReactNode, useState } from 'react'
 import TooltipIconButton, { MenuItemContext } from '../../../TooltipIconButton'
 
 interface Props {
   actions: JSX.Element[]
 }
-export default memo(function MoreActionsButton({ actions }: Props) {
+export default function MoreActionsButton({ actions }: Props) {
   const isVisible = !!actions.length
   const [keepMounted, setKeepMounted] = useState(false)
   const [moreButtonsAnchorEl, setMoreButtonsAnchorEl] =
@@ -59,7 +52,7 @@ export default memo(function MoreActionsButton({ actions }: Props) {
       </Menu>
     </>
   )
-}, isEqual)
+}
 
 /** Menu injects hidden props into MenuItems to handle keyboard selection.
  *  We have to intercept those props and pass them along to the MenuItem.

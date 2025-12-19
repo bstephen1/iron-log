@@ -7,6 +7,7 @@ import type { Bodyweight, BodyweightQuery } from '../../models/Bodyweight'
 import type FetchOptions from '../../models/FetchOptions'
 import type { Record } from '../../models/Record'
 import { createSessionLog, type SessionLog } from '../../models/SessionLog'
+import type { Set } from '../../models/Set'
 import {
   bodyweightHistory,
   categories,
@@ -222,6 +223,19 @@ export async function updateRecordFields(
   )) as Record
 }
 
+export async function updateSet(
+  _id: string,
+  set: Set,
+  index: number
+): Promise<Record> {
+  const userId = await getUserId()
+  return (await records.findOneAndUpdate(
+    { userId, _id },
+    { $set: { [`sets.${index}`]: set } },
+    { returnDocument: 'after', projection: { userId: 0 } }
+  )) as Record
+}
+
 export async function deleteRecord(_id: string): Promise<string> {
   const userId = await getUserId()
   const record = await records.findOneAndDelete({ userId, _id })
@@ -233,6 +247,35 @@ export async function deleteRecord(_id: string): Promise<string> {
   )
 
   return _id
+}
+
+export async function deleteSet(_id: string, index: number): Promise<Record> {
+  const userId = await getUserId()
+  return (await records.findOneAndUpdate(
+    { userId, _id },
+    [
+      {
+        $set: {
+          sets: {
+            $concatArrays: [
+              { $slice: ['$sets', index] },
+              { $slice: ['$sets', { $add: [1, index] }, { $size: '$sets' }] },
+            ],
+          },
+        },
+      },
+    ],
+    { returnDocument: 'after', projection: { userId: 0 } }
+  )) as Record
+}
+
+export async function addSet(_id: string, set: Set): Promise<Record> {
+  const userId = await getUserId()
+  return (await records.findOneAndUpdate(
+    { userId, _id },
+    { $push: { sets: set } },
+    { returnDocument: 'after', projection: { userId: 0 } }
+  )) as Record
 }
 
 //----------
@@ -381,10 +424,6 @@ export async function updateCategoryFields(
     await exercises.updateMany(
       { userId, categories: oldCategory?.name },
       { $set: { 'categories.$': updates.name } }
-    )
-    await records.updateMany(
-      { userId, category: oldCategory?.name },
-      { $set: { category: updates.name } }
     )
   }
 

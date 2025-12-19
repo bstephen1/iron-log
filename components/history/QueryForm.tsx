@@ -3,11 +3,11 @@ import Stack from '@mui/material/Stack'
 import { useState } from 'react'
 import isEqual from 'react-fast-compare'
 import NumericFieldAutosave from '../../components/form-fields/NumericFieldAutosave'
-import RecordExerciseSelector from '../../components/session/records/RecordExerciseSelector'
 import useDisplayFields from '../../lib/frontend/useDisplayFields'
 import type { PartialUpdate } from '../../lib/types'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import type { RecordQuery } from '../../models/Record'
+import ExerciseSelector from '../form-fields/selectors/ExerciseSelector'
 import ModifierQueryField from './ModifierQueryField'
 import QueryDateRangePicker from './QueryDateRangePicker'
 import SetTypeQueryField from './SetTypeQueryField'
@@ -28,22 +28,20 @@ export default function QueryForm({ query, updateQuery }: Props) {
 
   return (
     <Stack spacing={2}>
-      <RecordExerciseSelector
+      <ExerciseSelector
         disableAddNew
-        mutateRecordFields={async ({ exercise, activeModifiers }) => {
-          setExercise(exercise ?? null)
+        handleChange={(exercise) => {
+          setExercise(exercise)
+
+          const remainingModifiers = unsavedQuery.modifiers?.filter(
+            (modifier) => exercise?.modifiers.some((ex) => ex === modifier)
+          )
           updateUnsavedQuery({
             exercise: exercise?.name ?? '',
+            modifiers: remainingModifiers,
           })
-          if (activeModifiers) {
-            updateUnsavedQuery({
-              modifiers: activeModifiers,
-            })
-          }
         }}
-        activeModifiers={unsavedQuery.modifiers ?? []}
         exercise={exercise}
-        category={null}
         variant="outlined"
       />
       <ModifierQueryField

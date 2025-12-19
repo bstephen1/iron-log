@@ -1,15 +1,16 @@
 'use client'
 import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import { useSearchParams } from 'next/navigation'
 import { Keyboard, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, type SwiperRef, SwiperSlide } from 'swiper/react'
 import { noSwipingRecord } from '../../lib/frontend/constants'
-import { useRecords, useSessionLog } from '../../lib/frontend/restService'
+import { useRecords, useSessionLog } from '../../lib/frontend/data/useQuery'
 import LoadingSpinner from '../loading/LoadingSpinner'
+import RecordCardSkeleton from '../loading/RecordCardSkeleton'
 import NavigationBar from '../swiper/NavigationBar'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
@@ -141,7 +142,16 @@ export default function SessionSwiper({ date }: Props) {
             (id, i) =>
               records.index[id] && (
                 <SwiperSlide key={id}>
-                  <RecordCard record={records.index[id]} swiperIndex={i} />
+                  <Suspense
+                    fallback={
+                      <RecordCardSkeleton
+                        title={`Record ${i + 1}`}
+                        showSetButton
+                      />
+                    }
+                  >
+                    <RecordCard id={id} swiperIndex={i} date={date} />
+                  </Suspense>
                 </SwiperSlide>
               )
           )}

@@ -6,10 +6,8 @@ import { useState } from 'react'
 import InputField from '../../../components/form-fields/InputField'
 import { upsertBodyweight } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
-import {
-  useAddMutation,
-  useBodyweights,
-} from '../../../lib/frontend/restService'
+import { useAddMutation } from '../../../lib/frontend/data/useMutation'
+import { useBodyweights } from '../../../lib/frontend/data/useQuery'
 import { createBodyweight, type WeighInType } from '../../../models/Bodyweight'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../models/DisplayFields'
 import BodyweightInputToggle from './BodyweightInputToggle'

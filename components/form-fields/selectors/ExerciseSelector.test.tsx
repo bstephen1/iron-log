@@ -14,13 +14,13 @@ import { Status } from '../../../models/Status'
 import ExerciseSelector from './ExerciseSelector'
 
 const mockHandleChange = vi.fn()
-const mockHandleCategoryChange = vi.fn()
 
 const testCategoryName = 'test category'
 const testCategory = createCategory(testCategoryName)
-const matchingExercise = createExercise('blah')
+const matchingExercise = createExercise('blah', {
+  categories: [testCategoryName],
+})
 const unmatchedExercise = createExercise('yah')
-matchingExercise.categories = [testCategoryName]
 
 const autocompletePlaceholder = /add new exercise/i
 const categoryLabel = /select category/i
@@ -31,8 +31,6 @@ const TestSelector = (
   <ExerciseSelector
     exercise={null}
     handleChange={mockHandleChange}
-    handleCategoryFilterChange={mockHandleCategoryChange}
-    categoryFilter={null}
     {...props}
   />
 )
@@ -74,7 +72,7 @@ it('filters exercises based on category filter', async () => {
     matchingExercise,
     unmatchedExercise,
   ])
-  const { user } = render(<TestSelector categoryFilter={testCategoryName} />)
+  const { user } = render(<TestSelector initialCategory={testCategoryName} />)
 
   // open autocomplete
   await user.click(await screen.findByPlaceholderText(autocompletePlaceholder))
@@ -84,27 +82,28 @@ it('filters exercises based on category filter', async () => {
 })
 
 it('unselects exercise if it is not valid for selected category', async () => {
+  // Note: for this to have full coverage the category we switch to must
+  // have at least one matching exercise.
+  // When the component checks "filtered.some(...)", if filtered is an
+  // empty array the condition is short circuited.
   const otherCategoryName = 'other'
   vi.mocked(fetchCategories).mockResolvedValue([
     testCategory,
     createCategory(otherCategoryName),
   ])
-  vi.mocked(fetchExercises).mockResolvedValue([unmatchedExercise])
-  const { user } = render(
-    <TestSelector
-      categoryFilter={testCategoryName}
-      exercise={unmatchedExercise}
-    />
-  )
+  vi.mocked(fetchExercises).mockResolvedValue([
+    unmatchedExercise,
+    matchingExercise,
+  ])
+  const { user } = render(<TestSelector exercise={unmatchedExercise} />)
 
-  // A category is already selected. We just need to trigger a category change
-  // (which won't do anything because handleCategoryChange is being mocked)
-  await user.click(await screen.findByLabelText(categoryLabel))
-  await user.click(screen.getByText(otherCategoryName))
+  await user.click(await screen.findByLabelText('Select category'))
+  await user.click(screen.getByText(testCategoryName))
 
-  // autocomplete has reset
-  expect(screen.getByPlaceholderText(autocompletePlaceholder)).toBeVisible()
-  expect(mockHandleChange).toHaveBeenCalledWith(null)
+  // input has cleared
+  expect(
+    screen.queryByDisplayValue(unmatchedExercise.name)
+  ).not.toBeInTheDocument()
 })
 
 it('sorts exercises by status', async () => {
@@ -128,4 +127,21 @@ it('sorts exercises by status', async () => {
   // The new option should be appended to the end of the active exercises.
   expect(screen.getByText(Status.active)).toBeVisible()
   expect(screen.getByText(Status.archived)).toBeVisible()
+})
+
+it('disables bonus features', async () => {
+  const unsortedExercises: Exercise[] = [
+    createExercise('option 1'),
+    createExercise('option 2', { status: Status.archived }),
+    createExercise('option 3'),
+    createExercise('option 4', { status: Status.archived }),
+  ]
+  vi.mocked(fetchExercises).mockResolvedValue(unsortedExercises)
+  render(
+    <TestSelector disableAddNew hideCategoryFilter initialCategory="cat" />
+  )
+
+  expect(screen.queryByPlaceholderText(/or add new/)).not.toBeInTheDocument()
+  // category filter is still in the dom, just hidden
+  expect(screen.getByText('cat')).not.toBeVisible()
 })

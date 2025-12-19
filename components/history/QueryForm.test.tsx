@@ -74,3 +74,18 @@ it('clears exercise', async () => {
 
   expect(screen.getByLabelText('Exercise')).toHaveDisplayValue('')
 })
+
+it('keeps possible modifiers after swapping exercise', async () => {
+  vi.mocked(fetchExercises).mockResolvedValue([
+    createExercise('squats', { modifiers: ['belt', 'band'] }),
+    createExercise('bench', { modifiers: ['belt', 'slow'] }),
+  ])
+  const { user } = render(
+    <TestWrapper query={{ exercise: 'squats', modifiers: ['belt', 'band'] }} />
+  )
+
+  await user.click(screen.getByLabelText('Exercise'))
+  await user.click(screen.getByText('bench'))
+
+  expect(screen.getByText('belt')).toBeVisible()
+})

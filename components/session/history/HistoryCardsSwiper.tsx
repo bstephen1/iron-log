@@ -2,8 +2,7 @@ import Box from '@mui/material/Box'
 import type { CardProps } from '@mui/material/Card'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { memo, type Ref } from 'react'
-import isEqual from 'react-fast-compare'
+import type { Ref } from 'react'
 import { Navigation, Pagination, Virtual } from 'swiper/modules'
 import {
   Swiper,
@@ -11,7 +10,7 @@ import {
   type SwiperRef,
   SwiperSlide,
 } from 'swiper/react'
-import { useRecords } from '../../../lib/frontend/restService'
+import { useRecords } from '../../../lib/frontend/data/useQuery'
 import HistoryCard, {
   type HistoryAction,
   type HistoryContent,
@@ -43,7 +42,7 @@ interface Props {
   virtual?: boolean
   swiperRef?: Ref<SwiperRef>
 }
-export default memo(function HistoryCardsSwiper({
+export default function HistoryCardsSwiper({
   displayFields,
   query,
   actions,
@@ -142,4 +141,4 @@ export default memo(function HistoryCardsSwiper({
       </Box>
     </Stack>
   )
-}, isEqual)
+}

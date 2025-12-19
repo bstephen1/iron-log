@@ -3,35 +3,33 @@ import Badge from '@mui/material/Badge'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
+import { useState } from 'react'
 import NotesList from '../../../../components/form-fields/NotesList'
-import type { PartialUpdate } from '../../../../lib/types'
-import type { Exercise } from '../../../../models/AsyncSelectorOption/Exercise'
+import { useExerciseModifiers } from '../../../../lib/frontend/data/useQuery'
 import type { Note } from '../../../../models/Note'
 import TooltipIconButton from '../../../TooltipIconButton'
+import { useExerciseUpdate } from '../useRecordUpdate'
 
 const title = 'Exercise notes'
 
 interface Props {
   /** considered readOnly if not provided */
-  mutateExerciseFields?: PartialUpdate<Exercise>
+  _id?: string
   notes?: Note[]
-  /** used for note tags */
-  modifiers?: string[]
   disabled?: boolean
 }
 /** Show notes from the record's selected exercise. */
-export default memo(function ExerciseNotesButton({
-  mutateExerciseFields,
+export default function ExerciseNotesButton({
+  _id,
   notes = [],
-  modifiers = [],
   disabled,
 }: Props) {
-  const readOnly = !mutateExerciseFields
+  const readOnly = !_id
   const [open, setOpen] = useState(false)
+  const updateExercise = useExerciseUpdate(_id)
+  const modifiers = useExerciseModifiers(_id)
 
-  const handleSubmit = (notes: Note[]) => mutateExerciseFields?.({ notes })
+  const handleSubmit = (notes: Note[]) => updateExercise({ notes })
 
   return (
     <>
@@ -60,4 +58,4 @@ export default memo(function ExerciseNotesButton({
       </Dialog>
     </>
   )
-}, isEqual)
+}

@@ -3,7 +3,8 @@ import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import { updateExerciseFields } from '../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../lib/frontend/constants'
-import { useExercises, useUpdateMutation } from '../../lib/frontend/restService'
+import { useUpdateMutation } from '../../lib/frontend/data/useMutation'
+import { useExercises } from '../../lib/frontend/data/useQuery'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import ComboBoxField from './ComboBoxField'
 
@@ -20,6 +21,7 @@ interface Props {
 export default memo(function UsageComboBox({ field, name, usage }: Props) {
   const exercises = useExercises()
   const usageNames = usage.map((exercise) => exercise.name)
+  const exerciseNames = exercises.map((exercise) => exercise.name)
   const updateExerciseMutate = useUpdateMutation({
     queryKey: [QUERY_KEYS.exercises],
     updateFn: updateExerciseFields,
@@ -29,7 +31,7 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
     exerciseName: string,
     reason: AutocompleteChangeReason
   ) => {
-    const newExercise = exercises.data.find(
+    const newExercise = exercises.find(
       (exercise) => exercise.name === exerciseName
     ) as Exercise
 
@@ -50,7 +52,7 @@ export default memo(function UsageComboBox({ field, name, usage }: Props) {
     <ComboBoxField
       label="Exercises"
       initialValue={usageNames}
-      options={exercises.names}
+      options={exerciseNames}
       fullWidth
       handleChange={handleUpdateExercise}
       disableClearable

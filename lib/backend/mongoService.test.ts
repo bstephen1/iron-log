@@ -13,10 +13,12 @@ import {
   addExercise,
   addModifier,
   addRecord,
+  addSet,
   deleteCategory,
   deleteExercise,
   deleteModifier,
   deleteRecord,
+  deleteSet,
   fetchBodyweights,
   fetchCategories,
   fetchExercise,
@@ -30,6 +32,7 @@ import {
   updateExerciseFields,
   updateModifierFields,
   updateRecordFields,
+  updateSet,
   upsertBodyweight,
   upsertSessionLog,
 } from './mongoService'
@@ -172,6 +175,39 @@ describe('Record', () => {
     })
     expect(updatedRecord.sets).toHaveLength(1)
   })
+
+  describe('Sets', () => {
+    it('adds set', async () => {
+      const record = createRecord(testDate, { sets: [] })
+      await addRecord(record)
+
+      expect(await addSet(record._id, { weight: 1 })).toMatchObject({
+        sets: [{ weight: 1 }],
+      })
+    })
+
+    it('updates set', async () => {
+      const record = createRecord(testDate, {
+        sets: [{ distance: 1 }, { reps: 2 }, { weight: 3 }],
+      })
+      await addRecord(record)
+
+      expect(await updateSet(record._id, { effort: 5 }, 1)).toMatchObject({
+        sets: [{ distance: 1 }, { effort: 5 }, { weight: 3 }],
+      })
+    })
+
+    it('deletes set', async () => {
+      const record = createRecord(testDate, {
+        sets: [{ distance: 1 }, { reps: 2 }, { weight: 3 }],
+      })
+      await addRecord(record)
+
+      expect(await deleteSet(record._id, 1)).toMatchObject({
+        sets: [{ distance: 1 }, { weight: 3 }],
+      })
+    })
+  })
 })
 
 describe('Exercise', () => {
@@ -266,17 +302,11 @@ describe('Category', () => {
     expect(await fetchCategories()).toHaveLength(0)
   })
 
-  it('updates exercises and records on name change', async () => {
+  it('updates exercises on name change', async () => {
     const category = await addCategory(createModifier('belt'))
     const exercise = await addExercise(
       createExercise('squats', {
         categories: [category.name],
-      })
-    )
-    const record = await addRecord(
-      createRecord(testDate, {
-        exercise,
-        category: category.name,
       })
     )
 
@@ -286,9 +316,6 @@ describe('Category', () => {
 
     expect(await fetchExercise(exercise._id)).toMatchObject({
       categories: [updated.name],
-    })
-    expect(await fetchRecord(record._id)).toMatchObject({
-      category: updated.name,
     })
   })
 

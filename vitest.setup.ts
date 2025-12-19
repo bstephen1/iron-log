@@ -78,6 +78,7 @@ vi.mock('swiper/react', async () => {
       slideTo: vi.fn(),
       slidePrev: vi.fn(),
       slides: [],
+      on: vi.fn(),
     }),
   }
 })

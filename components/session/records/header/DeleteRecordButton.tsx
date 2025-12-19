@@ -1,16 +1,15 @@
 import DeleteIcon from '@mui/icons-material/Delete'
-import { memo } from 'react'
 import { useSwiper } from 'swiper/react'
 import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
 import { deleteRecord } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
-import { useDeleteMutation } from '../../../../lib/frontend/restService'
+import { useDeleteMutation } from '../../../../lib/frontend/data/useMutation'
 import TooltipIconButton from '../../../TooltipIconButton'
 
 interface Props {
   _id: string
 }
-export default memo(function DeleteRecordButton({ _id }: Props) {
+export default function DeleteRecordButton({ _id }: Props) {
   const swiper = useSwiper()
   const date = useCurrentDate()
   const deleteRecordMutate = useDeleteMutation({
@@ -34,4 +33,4 @@ export default memo(function DeleteRecordButton({ _id }: Props) {
       <DeleteIcon />
     </TooltipIconButton>
   )
-})
+}

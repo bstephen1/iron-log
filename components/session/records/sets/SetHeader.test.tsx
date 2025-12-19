@@ -1,14 +1,13 @@
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
+import { updateExerciseFields } from '../../../../lib/backend/mongoService'
 import { render, screen } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import SetHeader from './SetHeader'
 
-const mockMutate = vi.fn()
-
 it('switches display fields', async () => {
   const { user } = render(
     <SetHeader
-      mutateExerciseFields={mockMutate}
+      exerciseId="1"
       displayFields={{
         ...DEFAULT_DISPLAY_FIELDS,
         units: { ...DEFAULT_DISPLAY_FIELDS.units, weight: 'lbs' },
@@ -19,13 +18,13 @@ it('switches display fields', async () => {
   await user.click(screen.getByRole('combobox'))
   await user.click(screen.getByText('Weight (lbs)'))
 
-  expect(mockMutate).toHaveBeenCalled()
+  expect(updateExerciseFields).toHaveBeenCalled()
 })
 
 it('shows special fields', async () => {
   const { user } = render(
     <SetHeader
-      mutateExerciseFields={mockMutate}
+      exerciseId="1"
       displayFields={DEFAULT_DISPLAY_FIELDS}
       showSplitWeight
       showUnilateral
@@ -41,7 +40,7 @@ it('shows special fields', async () => {
 it('handles no fields selected', async () => {
   render(
     <SetHeader
-      mutateExerciseFields={mockMutate}
+      exerciseId="1"
       displayFields={{ visibleFields: [], units: DEFAULT_DISPLAY_FIELDS.units }}
     />
   )

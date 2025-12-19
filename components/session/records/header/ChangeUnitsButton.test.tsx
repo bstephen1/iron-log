@@ -1,22 +1,18 @@
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
+import { updateExerciseFields } from '../../../../lib/backend/mongoService'
 import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
 import ChangeUnitsButton from './ChangeUnitsButton'
 
-const mockMutate = vi.fn()
-
 it('updates units', async () => {
   const { user } = render(
-    <ChangeUnitsButton
-      mutateExerciseFields={mockMutate}
-      displayFields={DEFAULT_DISPLAY_FIELDS}
-    />
+    <ChangeUnitsButton _id="1" displayFields={DEFAULT_DISPLAY_FIELDS} />
   )
 
   await user.click(screen.getByLabelText('Change units'))
   await user.click(screen.getByText('lbs'))
 
-  expect(mockMutate).toHaveBeenCalled()
+  expect(updateExerciseFields).toHaveBeenCalled()
 
   // does not show units with only one option
   expect(screen.queryByText('reps')).not.toBeInTheDocument()
@@ -26,4 +22,10 @@ it('updates units', async () => {
   await waitFor(() => {
     expect(screen.queryByText('lbs')).not.toBeInTheDocument()
   })
+})
+
+it('disables when id is missing', async () => {
+  render(<ChangeUnitsButton displayFields={DEFAULT_DISPLAY_FIELDS} />)
+
+  expect(screen.getByLabelText('Change units')).toBeDisabled()
 })

@@ -9,8 +9,7 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Stack from '@mui/material/Stack'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { memo, useState } from 'react'
-import isEqual from 'react-fast-compare'
+import { useState } from 'react'
 import NumericFieldAutosave from '../../../components/form-fields/NumericFieldAutosave'
 import useNoSwipingDesktop from '../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../lib/types'
@@ -46,7 +45,7 @@ type Props = {
   /** shows remaining field value needed to reach total when "total" operator is active */
   showRemaining?: boolean
 } & Partial<TextFieldProps>
-export default memo(function SetTypeSelect({
+export default function SetTypeSelect({
   handleChange,
   totalReps = 0,
   units,
@@ -208,4 +207,4 @@ export default memo(function SetTypeSelect({
       </Stack>
     </TextField>
   )
-}, isEqual)
+}

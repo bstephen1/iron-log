@@ -8,10 +8,12 @@ import {
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
   useDeleteMutation,
-  useExercises,
-  useModifiers,
   useUpdateMutation,
-} from '../../lib/frontend/restService'
+} from '../../lib/frontend/data/useMutation'
+import {
+  useExercises,
+  useModifierNames,
+} from '../../lib/frontend/data/useQuery'
 import { getUsage } from '../../lib/frontend/usage'
 import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'
 import ActionItems from '../form-fields/actions/ActionItems'
@@ -25,9 +27,9 @@ interface Props {
 export default function ModifierForm({
   modifier: { name, weight, _id },
 }: Props) {
-  const modifiers = useModifiers()
+  const modifierNames = useModifierNames()
   const exercises = useExercises()
-  const usage = getUsage(exercises.data, 'modifiers', name)
+  const usage = getUsage(exercises, 'modifiers', name)
   const [_, setUrlModifier] = useQueryState('modifier')
   const deleteModifierMutate = useDeleteMutation({
     queryKey: [QUERY_KEYS.modifiers],
@@ -65,7 +67,7 @@ export default function ModifierForm({
         <NameField
           name={name}
           handleUpdate={updateFields}
-          existingNames={modifiers.names}
+          existingNames={modifierNames}
         />
       </Grid>
       <Grid

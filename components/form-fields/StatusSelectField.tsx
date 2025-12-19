@@ -1,4 +1,4 @@
-import { memo, useCallback } from 'react'
+import { useCallback } from 'react'
 import { Status } from '../../models/Status'
 import SelectFieldAutosave from './SelectFieldAutosave'
 
@@ -6,10 +6,7 @@ interface Props {
   status: Status
   handleUpdate: (updates: { status: Status }) => void
 }
-export default memo(function StatusSelectField({
-  status,
-  handleUpdate,
-}: Props) {
+export default function StatusSelectField({ status, handleUpdate }: Props) {
   return (
     <SelectFieldAutosave
       label="Status"
@@ -24,4 +21,4 @@ export default memo(function StatusSelectField({
       )}
     />
   )
-})
+}

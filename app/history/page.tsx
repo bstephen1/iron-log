@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-import { useRef, useState } from 'react'
+import { type ComponentProps, useRef, useState } from 'react'
 import type { SwiperRef } from 'swiper/react'
 import HistoryGraph from '../../components/history/HistoryGraph'
 import QueryForm from '../../components/history/QueryForm'
@@ -14,6 +14,14 @@ import {
   DEFAULT_RECORD_HISTORY_QUERY,
   type RecordQuery,
 } from '../../models/Record'
+
+const staticProps: Partial<ComponentProps<typeof HistoryCardsSwiper>> = {
+  displayFields: { units: DEFAULT_DISPLAY_FIELDS.units },
+  actions: ['recordNotes', 'exerciseNotes', 'manage'],
+  content: ['exercise', 'modifiers', 'setType', 'sets'],
+  cardProps: { elevation: 3, sx: { m: 0.5, px: 1 } },
+  fractionPagination: true,
+}
 
 export default function HistoryPage() {
   const theme = useTheme()
@@ -37,11 +45,6 @@ export default function HistoryPage() {
         <HistoryCardsSwiper
           swiperRef={swiperRef}
           query={query}
-          displayFields={{ units: DEFAULT_DISPLAY_FIELDS.units }}
-          fractionPagination
-          actions={['recordNotes', 'exerciseNotes', 'manage']}
-          content={['exercise', 'modifiers', 'setType', 'sets']}
-          cardProps={{ elevation: 3, sx: { m: 0.5, px: 1 } }}
           swiperProps={{
             breakpoints: {
               [theme.breakpoints.values.sm]: {
@@ -59,6 +62,7 @@ export default function HistoryPage() {
               },
             },
           }}
+          {...staticProps}
         />
       )}
       <HistoryGraph query={query} swipeToRecord={swipeToRecord} />

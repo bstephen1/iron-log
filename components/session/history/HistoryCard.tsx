@@ -4,7 +4,7 @@ import CardHeader from '@mui/material/CardHeader'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Link from 'next/link'
-import { type JSX, memo } from 'react'
+import type { JSX } from 'react'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
 import StyledDivider from '../../../components/StyledDivider'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
@@ -31,7 +31,7 @@ interface Props {
   content?: HistoryContent[]
   cardProps?: CardProps
 }
-export default memo(function HistoryCard({
+export default function HistoryCard({
   record,
   actions,
   content,
@@ -136,4 +136,4 @@ export default memo(function HistoryCard({
       </CardContent>
     </Card>
   )
-})
+}

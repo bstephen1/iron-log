@@ -1,9 +1,7 @@
 import { addCategory } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
-import {
-  useAddMutation,
-  useCategories,
-} from '../../../lib/frontend/restService'
+import { useAddMutation } from '../../../lib/frontend/data/useMutation'
+import { useCategories } from '../../../lib/frontend/data/useQuery'
 import {
   type Category,
   createCategory,
@@ -25,7 +23,7 @@ export default function CategorySelector({ category, handleChange }: Props) {
   return (
     <AsyncSelector
       handleChange={handleChange}
-      options={categories.data}
+      options={categories}
       addItemMutate={mutate}
       value={category}
       label="Category"

@@ -9,13 +9,15 @@ import {
 import { QUERY_KEYS } from '../../lib/frontend/constants'
 import {
   useAddMutation,
-  useCategories,
   useDeleteMutation,
-  useExercises,
-  useModifiers,
-  useRecords,
   useUpdateMutation,
-} from '../../lib/frontend/restService'
+} from '../../lib/frontend/data/useMutation'
+import {
+  useCategoryNames,
+  useExerciseNames,
+  useModifierNames,
+  useRecords,
+} from '../../lib/frontend/data/useQuery'
 import { enqueueSuccess } from '../../lib/frontend/snackbar'
 import {
   createExercise,
@@ -36,12 +38,12 @@ interface Props {
 }
 export default function ExerciseForm({ exercise }: Props) {
   const { _id, name, status, notes, attributes, weight } = exercise
-  const modifiers = useModifiers()
-  const categories = useCategories()
+  const modifierNames = useModifierNames()
+  const categoryNames = useCategoryNames()
+  const exerciseNames = useExerciseNames()
   // Match the query from UsageButton to reuse the same key.
   // This is only used in this component to determine if "delete" is disabled.
   const { data: records } = useRecords({ exercise: name, limit: usageLimit })
-  const exercises = useExercises()
   const [_, setUrlExercise] = useQueryState('exercise')
   const addExerciseMutate = useAddMutation({
     queryKey: [QUERY_KEYS.exercises],
@@ -91,7 +93,7 @@ export default function ExerciseForm({ exercise }: Props) {
         <NameField
           name={name}
           handleUpdate={updateFields}
-          existingNames={exercises.names}
+          existingNames={exerciseNames}
         />
       </Grid>
       <Grid
@@ -114,7 +116,7 @@ export default function ExerciseForm({ exercise }: Props) {
         <ComboBoxField
           label="Categories"
           initialValue={exercise.categories}
-          options={categories.names}
+          options={categoryNames}
           handleSubmit={useCallback(
             (categories: string[]) => updateFields({ categories }),
             [updateFields]
@@ -125,7 +127,7 @@ export default function ExerciseForm({ exercise }: Props) {
         <ComboBoxField
           label="Modifiers"
           initialValue={exercise.modifiers}
-          options={modifiers.names}
+          options={modifierNames}
           handleSubmit={useCallback(
             (modifiers: string[]) => updateFields({ modifiers }),
             [updateFields]

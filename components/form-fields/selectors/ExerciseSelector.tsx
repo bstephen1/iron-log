@@ -1,18 +1,17 @@
 import type { TextFieldProps } from '@mui/material/TextField'
-import { useState } from 'react'
+import { Activity, useState } from 'react'
 import CategoryFilter from '../../../components/CategoryFilter'
 import { addExercise } from '../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../lib/frontend/constants'
+import { useAddMutation } from '../../../lib/frontend/data/useMutation'
 import {
-  useAddMutation,
-  useCategories,
+  useCategoryNames,
   useExercises,
-} from '../../../lib/frontend/restService'
+} from '../../../lib/frontend/data/useQuery'
 import {
   createExercise,
   type Exercise,
 } from '../../../models/AsyncSelectorOption/Exercise'
-import { StatusOrder } from '../../../models/Status'
 import AsyncSelector, { type AsyncSelectorProps } from './AsyncSelector'
 
 type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
@@ -21,9 +20,8 @@ type ExerciseSelectorProps<DisableClearable extends boolean | undefined> = {
     value: DisableClearable extends true ? Exercise : Exercise | null
   ) => void
   variant?: TextFieldProps['variant']
-  /** If this is omitted the category filter will not be rendered */
-  handleCategoryFilterChange?: (category: string | null) => void
-  categoryFilter?: string | null
+  hideCategoryFilter?: boolean
+  initialCategory?: string
   disableAddNew?: boolean
 } & Partial<AsyncSelectorProps<Exercise, DisableClearable>>
 
@@ -31,13 +29,13 @@ export default function ExerciseSelector<
   DisableClearable extends boolean | undefined,
 >({
   exercise,
-  handleCategoryFilterChange,
-  categoryFilter = null,
+  hideCategoryFilter,
+  initialCategory,
   disableAddNew,
   ...asyncSelectorProps
 }: ExerciseSelectorProps<DisableClearable>) {
   const exercises = useExercises()
-  const categories = useCategories()
+  const categoryNames = useCategoryNames()
   const mutate = useAddMutation({
     queryKey: [QUERY_KEYS.exercises],
     addFn: addExercise,
@@ -45,6 +43,8 @@ export default function ExerciseSelector<
   const [categoryAnchorEl, setCategoryAnchorEl] = useState<HTMLElement | null>(
     null
   )
+  const [categoryFilter, setCategoryFilter] = useState(initialCategory ?? null)
+  const [inputValue, setInputValue] = useState(exercise?.name ?? '')
 
   const handleFilterChange = (filtered: Exercise[]) => {
     // if a category is selected and the existing exercise is not in that category, erase the input value.
@@ -57,7 +57,7 @@ export default function ExerciseSelector<
       // rendering a different component.
       // Not sure why but wrapping it in a setTimeout() fixes it.
       // See: https://stackoverflow.com/a/69236626
-      setTimeout(() => asyncSelectorProps.handleChange(null), 0)
+      setTimeout(() => setInputValue(''), 0)
     }
   }
 
@@ -72,6 +72,8 @@ export default function ExerciseSelector<
     <AsyncSelector
       {...asyncSelectorProps}
       value={exercise}
+      inputValue={inputValue}
+      onInputChange={(_, newValue) => setInputValue(newValue)}
       addItemMutate={disableAddNew ? undefined : mutate}
       label="Exercise"
       placeholder={`Select${!disableAddNew ? ' or add new' : ''} exercise`}
@@ -79,25 +81,22 @@ export default function ExerciseSelector<
       handleFilterChange={handleFilterChange}
       adornmentOpen={!!categoryAnchorEl}
       createOption={createExercise}
-      // we have to spread because autocomplete considers the options to be readonly, and sort() mutates the array
-      options={[...exercises.data].sort(
-        (a, b) => StatusOrder[a.status] - StatusOrder[b.status]
-      )}
+      options={exercises}
       groupBy={(option) => option.status}
       startAdornment={
-        handleCategoryFilterChange && (
+        <Activity mode={hideCategoryFilter ? 'hidden' : 'visible'}>
           <CategoryFilter
             // standard variant bizzarely removes left input padding. Easier to add it back to Category filter
             sx={{ pr: asyncSelectorProps.variant === 'standard' ? 1 : 0 }}
             {...{
-              categories: categories.names,
+              categories: categoryNames,
               category: categoryFilter,
-              setCategory: handleCategoryFilterChange,
+              setCategory: setCategoryFilter,
               anchorEl: categoryAnchorEl,
               setAnchorEl: setCategoryAnchorEl,
             }}
           />
-        )
+        </Activity>
       }
     />
   )

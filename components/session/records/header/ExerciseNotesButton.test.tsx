@@ -1,20 +1,17 @@
-import { expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
+import { updateExerciseFields } from '../../../../lib/backend/mongoService'
 import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { createNote } from '../../../../models/Note'
 import ExerciseNotesButton from './ExerciseNotesButton'
 
-const mockMutate = vi.fn()
-
 it('submits notes', async () => {
-  const { user } = render(
-    <ExerciseNotesButton mutateExerciseFields={mockMutate} />
-  )
+  const { user } = render(<ExerciseNotesButton _id="1" />)
 
   await user.click(screen.getByRole('button'))
   await user.type(screen.getByPlaceholderText(/Add/), 'x')
   await user.click(screen.getByLabelText('Confirm'))
 
-  expect(mockMutate).toHaveBeenCalled()
+  expect(updateExerciseFields).toHaveBeenCalled()
 
   // close dialog
   await user.keyboard('[Escape]')
