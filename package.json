@@ -62,8 +62,8 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/coverage-v8": "^4.0.15",
-    "@vitest/ui": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
     "babel-plugin-react-compiler": "^1.0.0",
     "happy-dom": "^20.0.11",
     "husky": "^9.1.7",
@@ -73,7 +73,7 @@
     "react-dom": "^19.2.1",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.16"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@latest"
