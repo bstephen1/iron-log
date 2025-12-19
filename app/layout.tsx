@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
+import { type ReactNode, Suspense } from 'react'
 import ClientLayout from '../components/ClientLayout'
 import {
   fetchCategories,
@@ -70,7 +70,9 @@ export default async function RootLayout({
         <QueryClientWrapper>
           {/* HydrationBoundary is a Client Component, so hydration will happen there. */}
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <ClientLayout>{children}</ClientLayout>
+            <Suspense>
+              <ClientLayout>{children}</ClientLayout>
+            </Suspense>
           </HydrationBoundary>
         </QueryClientWrapper>
       </body>
