@@ -12,7 +12,7 @@ import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
 import DeleteSetButton from './DeleteSetButton'
-import SetFieldInput from './RenderSetField'
+import RenderSetField from './RenderSetField'
 
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
@@ -84,6 +84,7 @@ export default function RenderSetRow({
           background: getBackground(set.side),
           py: pyStack,
           height: deleteButtonHeight,
+          pl: '24px', // match delete button
         },
         (theme) =>
           theme.applyStyles('dark', {
@@ -93,7 +94,7 @@ export default function RenderSetRow({
       ]}
     >
       {displayFields.visibleFields.map(({ delimiter, name, source }, i) => (
-        <SetFieldInput
+        <RenderSetField
           key={i}
           index={i}
           unit={displayFields.units[source]}
