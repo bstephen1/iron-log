@@ -90,7 +90,7 @@ export default function RecordCardHeader({
       notes={exerciseNotes}
       _id={exerciseId}
     />,
-    <UsageButton key="usage" exercise={exerciseName} type="icon" />,
+    <UsageButton key="usage dialog" exercise={exerciseName} type="icon" />,
     <ManageExerciseButton key="manage" _id={exerciseId} />,
     <ChangeUnitsButton
       key="change units dialog"
