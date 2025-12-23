@@ -48,7 +48,7 @@ export default defineConfig({
   // the file will NOT be isolated between tests. However, even enabling it
   // does not seem to always create a new isolated worker for each test, so it
   // just ends up marginally increasing run time.
-  fullyParallel: false,
+  fullyParallel: true,
   timeout: 65_000,
   expect: {
     timeout: 15_000,

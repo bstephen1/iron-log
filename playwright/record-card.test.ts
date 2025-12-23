@@ -1,5 +1,9 @@
 import { expect, test } from './fixtures'
 
+// WARNING: since the tests in this file are creating records, they need to
+// use different dates and exercises. Tests in the same file use the same worker so the data
+// is NOT isolated.
+
 test.describe('without hidden actions', () => {
   test.use({
     viewport: {
@@ -9,8 +13,8 @@ test.describe('without hidden actions', () => {
   })
 
   test('handles header action buttons', async ({ page, sessionsPage }) => {
-    await sessionsPage.addRecord('squats', '2000-01-01')
-    await sessionsPage.addRecord('curls')
+    await sessionsPage.addRecord('bench ', '2000-01-01')
+    await sessionsPage.addRecord('deadlift')
 
     // add record note
     await page.getByRole('button', { name: 'Record notes' }).first().click()
@@ -113,9 +117,6 @@ test.describe('history', () => {
       width: 800,
     },
   })
-  // WARNING: since the tests in this file are creating records, they need to
-  // use different dates. Tests in the same file use the same worker so the data
-  // is NOT isolated.
   test('shows history', async ({ page, extendedPage, sessionsPage }) => {
     await sessionsPage.addRecord('pullups', '2000-03-01')
     await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
