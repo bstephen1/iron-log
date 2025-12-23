@@ -70,8 +70,12 @@ test.describe('with hidden actions', () => {
     },
   })
 
-  test('handles header action buttons', async ({ page, sessionsPage }) => {
-    await sessionsPage.addRecord('squats', '2000-01-01')
+  test('handles header action buttons', async ({
+    page,
+    extendedPage,
+    sessionsPage,
+  }) => {
+    await sessionsPage.addRecord('squats', '2000-02-01')
     await sessionsPage.addRecord('curls')
 
     // change units
@@ -88,29 +92,39 @@ test.describe('with hidden actions', () => {
     await page.getByRole('button', { name: 'More...' }).first().click()
     await page.getByLabel('Move current record to the right').click()
     await expect(page.getByLabel('Exercise').first()).toHaveValue('curls')
-
-    await page.getByRole('button', { name: 'More...' }).last().click()
-    await page.getByLabel('Move current record to the left').click()
-    await expect(page.getByLabel('Exercise').first()).toHaveValue('squats')
+    await extendedPage.waitForSave()
 
     // delete
+    await page.keyboard.press('ArrowLeft') // have to swipe back to first card
     await page.getByRole('button', { name: 'More...' }).first().click()
     await page.getByLabel('Delete record').click()
 
     await expect(page.getByText('Record 2')).not.toBeVisible()
-    await expect(page.getByLabel('Exercise').first()).toHaveValue('curls')
+    await expect(page.getByLabel('Exercise').first()).toHaveValue('squats')
   })
 })
 
-test('shows history', async ({ page, sessionsPage }) => {
-  await sessionsPage.addRecord('squats', '2000-01-01')
-  await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
-  await page.getByLabel('Sets').click() // click away to save change
-  await expect(page.getByLabel('Saving...')).not.toBeVisible()
+test.describe('history', () => {
+  test.use({
+    viewport: {
+      // must ensure viewport is tall enough to show history or test may fail due
+      // to elements being outside the viewport not being considered visible
+      height: 1500,
+      width: 800,
+    },
+  })
+  // WARNING: since the tests in this file are creating records, they need to
+  // use different dates. Tests in the same file use the same worker so the data
+  // is NOT isolated.
+  test('shows history', async ({ page, extendedPage, sessionsPage }) => {
+    await sessionsPage.addRecord('pullups', '2000-03-01')
+    await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
+    await extendedPage.waitForSave()
 
-  await sessionsPage.addRecord('squats', '2000-01-02')
+    await sessionsPage.addRecord('pullups', '2000-03-02')
 
-  expect(page.getByText('No history found')).not.toBeVisible()
-  expect(page.getByText('2000-01-01')).toBeVisible()
-  expect(page.getByText('10')).toBeVisible()
+    expect(page.getByText('No history found')).not.toBeVisible()
+    expect(page.getByText('2000-03-01')).toBeVisible()
+    expect(page.getByText('10')).toBeVisible()
+  })
 })

@@ -44,7 +44,10 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: 1,
   // Runs individual tests in each file in parallel.
-  // Has proven to be too unstable to use; causes a lot of flakiness.
+  // Without this, each file is run with a single worker, so test data within
+  // the file will NOT be isolated between tests. However, even enabling it
+  // does not seem to always create a new isolated worker for each test, so it
+  // just ends up marginally increasing run time.
   fullyParallel: false,
   timeout: 65_000,
   expect: {
@@ -62,9 +65,12 @@ export default defineConfig({
     baseURL,
     // Traces show a ui view of what made the test fail.
     // Local tests can use --ui to automatically create traces.
-    //  See: https://playwright.dev/docs/trace-viewer
-    trace: isCI ? 'off' : 'on-first-retry',
-    screenshot: isCI ? 'off' : 'on-first-failure',
+    // See: https://playwright.dev/docs/trace-viewer
+    // NOTE: traces can actually cause tests that would otherwise fail to pass
+    // due to slowing down pw to create the trace. Probably better to leave them
+    // disabled for consistency.
+    trace: 'off',
+    screenshot: isCI ? 'off' : 'only-on-failure',
   },
   projects: localProjects.concat(isCI ? CIProjects : []),
   webServer: {
