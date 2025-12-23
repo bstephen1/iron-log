@@ -61,3 +61,52 @@ test.describe('without hidden actions', () => {
     await expect(page.getByText('Record 11')).toBeVisible()
   })
 })
+
+test.describe('with hidden actions', () => {
+  test.use({
+    viewport: {
+      height: 800,
+      width: 275,
+    },
+  })
+
+  test('handles header action buttons', async ({ page, sessionsPage }) => {
+    await sessionsPage.addRecord('squats', '2000-01-01')
+    await sessionsPage.addRecord('curls')
+
+    // change units
+    await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
+    await page.getByRole('button', { name: 'More...' }).first().click()
+    await page.getByLabel('Change units').click()
+    await page.getByRole('radio', { name: 'lbs' }).click() // do NOT use check(), it fails in CI
+    await page.getByRole('radio', { name: 'lbs' }).press('Escape')
+    await expect(
+      page.getByLabel('Set 1').getByLabel('weight').first()
+    ).toHaveValue('22.05')
+
+    // move record
+    await page.getByRole('button', { name: 'More...' }).first().click()
+    await page.getByLabel('Move current record to the right').click()
+    await expect(page.getByLabel('Exercise').first()).toHaveValue('curls')
+    await expect(page.getByLabel('Saving...')).not.toBeVisible()
+
+    // delete
+    await page.getByRole('button', { name: 'More...' }).last().click()
+    await page.getByLabel('Delete record').click()
+
+    await expect(page.getByText('Record 2')).not.toBeVisible()
+  })
+})
+
+test('shows history', async ({ page, sessionsPage }) => {
+  await sessionsPage.addRecord('squats', '2000-01-01')
+  await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
+  await page.getByLabel('Modifiers').first().click() // click away to save change
+  await expect(page.getByLabel('Saving...')).not.toBeVisible()
+
+  await sessionsPage.addRecord('squats', '2000-01-02')
+
+  expect(page.getByText('No history found')).not.toBeVisible()
+  expect(page.getByText('2000-01-01')).toBeVisible()
+  expect(page.getByText('10')).toBeVisible()
+})
