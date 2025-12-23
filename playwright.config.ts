@@ -54,7 +54,7 @@ export default defineConfig({
     timeout: 15_000,
   },
   // too many workers cause intense flakiness
-  workers: 2,
+  workers: '50%',
   // See: https://playwright.dev/docs/test-reporters
   reporter: isCI
     ? 'github'
