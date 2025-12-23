@@ -118,9 +118,16 @@ test.describe('history', () => {
     },
   })
   test('shows history', async ({ page, extendedPage, sessionsPage }) => {
+    page.on('console', (msg) => {
+      const txt = msg.text()
+      if (txt.match(/DEBUG/)) {
+        console.log('BROWSER CONSOLE:', msg.type(), msg.text())
+      }
+    })
     await sessionsPage.addRecord('pullups', '2000-03-01')
     await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
     await extendedPage.waitForSave()
+    expect(page.getByText('10')).toBeVisible()
 
     await sessionsPage.addRecord('pullups', '2000-03-02')
 

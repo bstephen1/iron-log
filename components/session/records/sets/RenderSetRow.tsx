@@ -5,7 +5,10 @@ import { useCallback } from 'react'
 import { updateSet } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
-import { useRecordSet } from '../../../../lib/frontend/data/useQuery'
+import {
+  useRecordSet,
+  useRecords,
+} from '../../../../lib/frontend/data/useQuery'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
@@ -61,12 +64,16 @@ export default function RenderSetRow({
   _id,
 }: Props) {
   const set = useRecordSet(_id, date, index)
+  console.log('DEBUG retrieved set', set)
+  const records = useRecords({ date })
+  console.log('DEBUG all records', JSON.stringify(records.data))
   const replaceSet = useSetReplace(_id, date, index)
   const noSwipingDesktop = useNoSwipingDesktop()
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
       replaceSet({ set: { ...set, ...changes } })
+      console.log('DEBUG handleSetChange', changes)
     },
     [set, replaceSet]
   )

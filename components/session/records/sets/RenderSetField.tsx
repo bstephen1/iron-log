@@ -123,8 +123,9 @@ function SetFieldNumeric<S extends keyof Units>({
         name === 'totalWeight' ? extraWeight : 0,
         2
       )}
-      handleSubmit={(value) =>
-        handleSetChange({
+      handleSubmit={(value) => {
+        console.log('DEBUG submit', source, value, unit, name)
+        return handleSetChange({
           [source]: convertUnit(
             value,
             source,
@@ -133,7 +134,7 @@ function SetFieldNumeric<S extends keyof Units>({
             name === 'totalWeight' ? -extraWeight : 0
           ),
         })
-      }
+      }}
       sx={sx}
       slotProps={{
         ...slotProps,
