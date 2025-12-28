@@ -106,6 +106,7 @@ export default function SetHeader({
             alignItems="center"
             sx={{
               role: 'button',
+              pl: '24px', // line up with set row padding
             }}
           >
             {!selectedNames.length ? (
