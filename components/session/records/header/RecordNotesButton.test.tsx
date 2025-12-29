@@ -6,15 +6,15 @@ import {
   updateRecordFields,
   upsertSessionLog,
 } from '../../../../lib/backend/mongoService'
+import { createTestRecord } from '../../../../lib/test/data'
 import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { createNote } from '../../../../models/Note'
-import { createRecord } from '../../../../models/Record'
 import { createSessionLog } from '../../../../models/SessionLog'
 import ReccordNotesButton from './RecordNotesButton'
 
 const sessionLog = createSessionLog('2000-01-01')
 const note = createNote('note')
-const record = createRecord('2000-01-01')
+const record = createTestRecord()
 
 const TestWrapper = (
   props: Partial<ComponentProps<typeof ReccordNotesButton>>

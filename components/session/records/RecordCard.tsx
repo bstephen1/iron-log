@@ -52,8 +52,8 @@ export default function RecordCard({ swiperIndex, id, date }: Props) {
   // same exercise. record.exercise is only updated upon fetching the record,
   // so if one record updated an exercise any other records would still be using the outdated exercise.
   const record = useRecord(id, date)
-  const exercise = useExercise(record.exercise?._id)
-  const { activeModifiers, _id, sets, notes, setType } = record
+  const { activeModifiers, _id, sets, notes, setType, exerciseId } = record
+  const exercise = useExercise(exerciseId)
   const displayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
   const noSwipingDesktop = useNoSwipingDesktop()
@@ -65,20 +65,19 @@ export default function RecordCard({ swiperIndex, id, date }: Props) {
       modifiers: activeModifiers,
       // don't want to include the current record in its own history
       end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
-      exercise: exercise?.name,
+      exerciseId: exerciseId,
       limit: 5,
       modifierMatchType: ArrayMatchType.Exact,
       setTypeMatchType: ArrayMatchType.Exact,
       setType,
     }),
-    [activeModifiers, date, exercise?.name, setType]
+    [activeModifiers, date, exerciseId, setType]
   )
 
   return (
     <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
       <RecordCardHeader
         exerciseId={exercise?._id}
-        exerciseName={exercise?.name}
         exerciseNotes={exercise?.notes}
         {...{
           swiperIndex,
@@ -106,7 +105,7 @@ export default function RecordCard({ swiperIndex, id, date }: Props) {
             availableModifiers={exercise?.modifiers}
             {...{ _id, activeModifiers }}
           />
-          <RecordSetTypeSelect {...{ _id, date }} />
+          <RecordSetTypeSelect {...{ _id, date, units: displayFields.units }} />
           <RenderSets
             exerciseId={exercise?._id}
             {...{

@@ -1,5 +1,5 @@
 'use server'
-import type { Document, Filter } from 'mongodb'
+import type { Filter } from 'mongodb'
 import type { Category } from '../../models/AsyncSelectorOption/Category'
 import type { Exercise } from '../../models/AsyncSelectorOption/Exercise'
 import type { Modifier } from '../../models/AsyncSelectorOption/Modifier'
@@ -76,54 +76,6 @@ export async function upsertSessionLog(
 // RECORD
 //--------
 
-interface RecordPipeline {
-  // Unwind returns a record for every item in the array (we only have one or zero items).
-  /** $lookup the exercise based on the exercise _id to ensure we have the current data.
-   * This returns an array so we need to unwind it. */
-  lookupExercise: Document
-  /** $unwind the exercise array returned by $lookup. This produces a new document for every
-   *  element in the array. Eeach record can only have zero or one exercise.
-   *  We must enable preserveNullAndEmptyArrays or records without an exercise would just
-   *  be returned as "null".
-   */
-  unwindExercise: Document
-  /** $set activeModifiers to only contain elements that exist in exercise.modifiers.
-   *  This addresses if the user removes a modifier from an exercise --
-   *  the modifier should no longer appear in records. We maintain the data though,
-   *  in case the user re-adds the modifier in the future. This stage should be invoked
-   *  after $unwinding the exercise.
-   */
-  setActiveModifiers: Document
-  /** $project to exclude userId in the record and exercise */
-  excludeUserIds: Document
-}
-/** Shared aggregation stages for record fetches. */
-const recordPipeline: RecordPipeline = {
-  lookupExercise: {
-    $lookup: {
-      from: 'exercises',
-      localField: 'exercise._id',
-      foreignField: '_id',
-      as: 'exercise',
-    },
-  },
-  unwindExercise: {
-    $unwind: { path: '$exercise', preserveNullAndEmptyArrays: true },
-  },
-  setActiveModifiers: {
-    $set: {
-      activeModifiers: {
-        $filter: {
-          input: '$activeModifiers',
-          as: 'modifiers',
-          cond: { $in: ['$$modifiers', '$exercise.modifiers'] },
-        },
-      },
-    },
-  },
-  excludeUserIds: { $project: { userId: 0, 'exercise.userId': 0 } },
-}
-
 export async function addRecord(record: Record): Promise<Record> {
   const userId = await getUserId()
   await records.insertOne({ ...record, userId })
@@ -150,35 +102,17 @@ export async function fetchRecords({
   sort = 'newestFirst',
   ...filter
 }: Filter<Record> & FetchOptions = {}): Promise<Record[]> {
-  // Records do not store up-to-date exercise data; they pull in updated data on fetch.
-  // So for this query anything within the "exercise" object must be
-  // matched AFTER the exercises $lookup.
-  // For better efficiency we can split the filter into pre and post $lookup matches.
-  // We put as much as possible in pre-lookup to reduce the amount of exercise lookup
-  // (instead of looking up the exercise for every record first before starting to filter),
-  // and only put the filters that depend on current exercise data into post-lookup.
-  const { 'exercise.name': name, activeModifiers, ...otherFilters } = filter
   const userId = await getUserId()
 
   return await records
-    .aggregate<Record>([
+    .find<Record>(
       {
-        $match: {
-          date: { $gte: start, $lte: end },
-          ...otherFilters,
-          userId,
-        },
+        date: { $gte: start, $lte: end },
+        ...filter,
+        userId,
       },
-      recordPipeline.lookupExercise,
-      {
-        $match: name ? { 'exercise.name': name } : {},
-      },
-      recordPipeline.unwindExercise,
-      recordPipeline.setActiveModifiers,
-      // have to match modifiers after we set the corrected activeModifiers
-      { $match: activeModifiers ? { activeModifiers } : {} },
-      recordPipeline.excludeUserIds,
-    ])
+      { projection: { userId: 0 } }
+    )
     .sort({ date: convertSort(sort) })
     // Mongo docs say passing limit of 0 is equivalent to no limit,
     // but that actually results in an error saying limit must be a positive 64 bit int.
@@ -190,16 +124,7 @@ export async function fetchRecords({
 export async function fetchRecord(_id: string): Promise<Record | null> {
   const userId = await getUserId()
   const record = await records
-    .aggregate<Record>([
-      { $match: { userId, _id } },
-
-      recordPipeline.lookupExercise,
-
-      recordPipeline.unwindExercise,
-
-      recordPipeline.setActiveModifiers,
-      recordPipeline.excludeUserIds,
-    ])
+    .find<Record>({ userId, _id }, { projection: { userId: 0 } })
     // return just the first (there's only the one)
     .next()
 
@@ -317,7 +242,7 @@ export async function updateExerciseFields(
 
 export async function deleteExercise(_id: string) {
   const userId = await getUserId()
-  const used = await records.findOne({ userId, 'exercise._id': _id })
+  const used = await records.findOne({ userId, exerciseId: _id })
 
   if (used) {
     throw new Error(

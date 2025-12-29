@@ -43,7 +43,7 @@ export default function ExerciseForm({ exercise }: Props) {
   const exerciseNames = useExerciseNames()
   // Match the query from UsageButton to reuse the same key.
   // This is only used in this component to determine if "delete" is disabled.
-  const { data: records } = useRecords({ exercise: name, limit: usageLimit })
+  const { data: records } = useRecords({ exerciseId: _id, limit: usageLimit })
   const [_, setUrlExercise] = useQueryState('exercise')
   const addExerciseMutate = useAddMutation({
     queryKey: [QUERY_KEYS.exercises],

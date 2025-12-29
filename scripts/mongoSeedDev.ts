@@ -145,8 +145,7 @@ const exercises = {
 }
 
 const records = [
-  createRecord('2022-09-20', {
-    exercise: exercises.squats,
+  createRecord('2022-09-20', exercises.squats._id, {
     activeModifiers: ['belt'],
     notes: [createNote('Very tired today', ['Session'])],
     setType: { operator: 'exactly', value: 6, field: 'reps' },
@@ -156,8 +155,7 @@ const records = [
       { reps: 6, effort: 9, weight: 100 },
     ],
   }),
-  createRecord('2022-09-22', {
-    exercise: exercises.squats,
+  createRecord('2022-09-22', exercises.squats._id, {
     activeModifiers: ['belt'],
     setType: { operator: 'exactly', value: 6, field: 'reps' },
     sets: [
@@ -166,8 +164,7 @@ const records = [
       { reps: 6, effort: 9, weight: 110 },
     ],
   }),
-  createRecord('2022-09-24', {
-    exercise: exercises.squats,
+  createRecord('2022-09-24', exercises.squats._id, {
     activeModifiers: ['belt'],
     setType: { operator: 'exactly', value: 6, field: 'reps' },
     sets: [
@@ -176,8 +173,7 @@ const records = [
       { reps: 6, effort: 10, weight: 110 },
     ],
   }),
-  createRecord('2022-09-26', {
-    exercise: exercises.squats,
+  createRecord('2022-09-26', exercises.squats._id, {
     activeModifiers: ['belt'],
     notes: [
       createNote('felt great', ['Set 1']),
@@ -190,8 +186,7 @@ const records = [
       { reps: 6, effort: 10, weight: 120 },
     ],
   }),
-  createRecord('2022-09-26', {
-    exercise: exercises.curls,
+  createRecord('2022-09-26', exercises.curls._id, {
     activeModifiers: [modifiers.dumbbell.name],
     notes: [createNote('felt great', ['Record'])],
     setType: { operator: 'between', min: 10, max: 15, field: 'reps' },
@@ -202,8 +197,7 @@ const records = [
       { reps: 10, weight: 30 },
     ],
   }),
-  createRecord('2022-09-26', {
-    exercise: exercises.sprints,
+  createRecord('2022-09-26', exercises.sprints._id, {
     setType: { operator: 'exactly', value: 50, field: 'distance' },
     sets: [
       { distance: 50, time: 10 },
@@ -211,18 +205,15 @@ const records = [
       { distance: 50, time: 8.33 },
     ],
   }),
-  createRecord('2022-09-26', {
-    exercise: exercises.running,
+  createRecord('2022-09-26', exercises.running._id, {
     setType: { operator: 'exactly', value: 5, field: 'distance' },
     sets: [{ distance: 5000, time: 900 }],
   }),
-  createRecord('2022-09-26', {
-    exercise: exercises.yoke,
+  createRecord('2022-09-26', exercises.yoke._id, {
     setType: { operator: 'exactly', value: 50, field: 'distance' },
     sets: [{ weight: 500, distance: 50, time: 8.5, effort: 9 }],
   }),
-  createRecord('2022-09-26', {
-    exercise: exercises.uprightRow,
+  createRecord('2022-09-26', exercises.uprightRow._id, {
     setType: { operator: 'at most', value: 20, field: 'reps' },
     sets: [
       { weight: 20, reps: 20 },
@@ -230,8 +221,7 @@ const records = [
       { weight: 20, reps: 17 },
     ],
   }),
-  createRecord('2022-09-26', {
-    exercise: exercises.chinUps,
+  createRecord('2022-09-26', exercises.chinUps._id, {
     setType: { operator: 'exactly', value: 6, field: 'reps' },
     sets: [
       { weight: 15, reps: 6 },

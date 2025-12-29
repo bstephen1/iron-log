@@ -41,7 +41,7 @@ export default function HistoryPage() {
       <Box pt={2}>
         <StyledDivider />
       </Box>
-      {query?.exercise && (
+      {query?.exerciseId && (
         <HistoryCardsSwiper
           swiperRef={swiperRef}
           query={query}

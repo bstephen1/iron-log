@@ -1,21 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
+import {
+  createExercise,
+  type Exercise,
+} from '../../models/AsyncSelectorOption/Exercise'
 import { type Bodyweight, createBodyweight } from '../../models/Bodyweight'
-import { createRecord } from '../../models/Record'
+import { createTestRecord } from '../test/data'
 import { renderHook } from '../test/rtl'
 import useExtraWeight from './useExtraWeight'
 
 const exercise = createExercise('test exercise', {
   modifiers: ['light', 'heavy'],
 })
-const record = createRecord('2000-01-01', { exercise })
-const bwRecord = {
-  ...record,
-  exercise: {
-    ...exercise,
-    attributes: { bodyweight: true },
-  },
+const bwExercise = {
+  ...exercise,
+  attributes: { bodyweight: true },
 }
+const record = createTestRecord({ exerciseId: exercise._id })
 
 const mocks = vi.hoisted(() => ({
   modifiers: [
@@ -23,6 +23,7 @@ const mocks = vi.hoisted(() => ({
     { name: 'heavy', weight: 25 },
   ],
   bodyweights: [] as Bodyweight[],
+  exercise: null as Exercise | null,
 }))
 
 const unofficialBw = createBodyweight(82.3, 'unofficial', '2000-01-01')
@@ -31,10 +32,12 @@ const officialBw = createBodyweight(76.4, 'official', '2000-01-01')
 vi.mock('./data/useQuery', () => ({
   useModifiers: () => mocks.modifiers,
   useBodyweights: () => ({ data: mocks.bodyweights }),
+  useExercise: () => mocks.exercise,
 }))
 
 beforeEach(() => {
   mocks.bodyweights = []
+  mocks.exercise = null
 })
 
 it('returns zero when nothing is using extra weight', () => {
@@ -56,15 +59,16 @@ it('returns extra weight when enabled', () => {
   const exerciseWeight = 7.5
   const bodyweight = 82.3
   mocks.bodyweights = [unofficialBw]
+  mocks.exercise = {
+    ...exercise,
+    weight: exerciseWeight,
+    attributes: { bodyweight: true },
+  }
+
   const { result } = renderHook(() =>
     useExtraWeight({
       ...record,
       activeModifiers: ['light', 'heavy'],
-      exercise: {
-        ...exercise,
-        weight: exerciseWeight,
-        attributes: { bodyweight: true },
-      },
     })
   )
 
@@ -91,11 +95,14 @@ it('handles unknown modifier', () => {
 })
 
 describe('bodyweight', () => {
+  beforeEach(() => {
+    mocks.exercise = bwExercise
+  })
+
   it('uses latest bw if latest two bws are different days', () => {
     // data is sorted newest first
     mocks.bodyweights = [{ ...officialBw, date: '2000-02-02' }, unofficialBw]
-
-    const { result } = renderHook(() => useExtraWeight(bwRecord))
+    const { result } = renderHook(() => useExtraWeight(record))
 
     expect(result.current).toMatchObject({
       bodyweight: officialBw.value,
@@ -106,7 +113,7 @@ describe('bodyweight', () => {
   it('uses unofficial weight if latest two bws are the same day', () => {
     // unofficial first
     mocks.bodyweights = [unofficialBw, officialBw]
-    const { result, rerender } = renderHook(() => useExtraWeight(bwRecord))
+    const { result, rerender } = renderHook(() => useExtraWeight(record))
 
     expect(result.current).toMatchObject({
       bodyweight: unofficialBw.value,
@@ -126,7 +133,7 @@ describe('bodyweight', () => {
   it('handles no bodyweight data', () => {
     mocks.bodyweights = []
 
-    const { result } = renderHook(() => useExtraWeight(bwRecord))
+    const { result } = renderHook(() => useExtraWeight(record))
 
     expect(result.current).toMatchObject({
       bodyweight: 0,

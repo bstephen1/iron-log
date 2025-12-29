@@ -6,22 +6,18 @@ import {
   updateExerciseFields,
   updateRecordFields,
 } from '../../../lib/backend/mongoService'
+import { createTestRecord, testExercise } from '../../../lib/test/data'
 import { render, screen } from '../../../lib/test/rtl'
 import { ignoreConsoleErrorOnce } from '../../../lib/util/test/console'
 import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
-import { createRecord } from '../../../models/Record'
 import RecordCard from './RecordCard'
-
-const exercise = createExercise('finger curls')
 
 it('mutates', async () => {
   localStorage.setItem('cardHeaderActions', '10') // avoid needing to click "More..."
-  const record = createRecord('2000-01-01', {
-    exercise,
-  })
+  const record = createTestRecord()
   vi.mocked(fetchRecords).mockResolvedValue([record])
   vi.mocked(fetchExercises).mockResolvedValue([
-    exercise,
+    testExercise,
     createExercise('other'),
   ])
   const { user } = render(
@@ -42,12 +38,9 @@ it('mutates', async () => {
 })
 
 it('displays error when update fails', async () => {
-  const squats = createExercise('squats')
-  const record = createRecord('2000-01-01', {
-    exercise: squats,
-  })
+  const record = createTestRecord()
   vi.mocked(fetchRecords).mockResolvedValue([record])
-  vi.mocked(fetchExercises).mockResolvedValue([squats])
+  vi.mocked(fetchExercises).mockResolvedValue([testExercise])
   const { user } = render(
     <RecordCard id={record._id} date={record.date} swiperIndex={0} />
   )

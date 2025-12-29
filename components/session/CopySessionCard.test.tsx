@@ -10,7 +10,7 @@ import { createSessionLog } from '../../models/SessionLog'
 import CopySessionCard from './CopySessionCard'
 
 it('copies session', async () => {
-  const prevRecord = createRecord('2000-01-01')
+  const prevRecord = createRecord('2000-01-01', '1')
   vi.mocked(fetchSessionLog).mockResolvedValue(
     createSessionLog('2000-01-01', [prevRecord._id])
   )
