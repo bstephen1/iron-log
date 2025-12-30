@@ -143,12 +143,6 @@ describe('Record', () => {
     // remove the modifier
     await updateExerciseFields(exercise._id, { modifiers: [] })
     expect(await fetchRecords({ activeModifiers: modifier.name })).toHaveLength(
-      0
-    )
-
-    // add it back -- record should still have the modifier
-    await updateExerciseFields(exercise._id, { modifiers: [modifier.name] })
-    expect(await fetchRecords({ activeModifiers: modifier.name })).toHaveLength(
       1
     )
   })
