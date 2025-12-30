@@ -22,7 +22,6 @@ export default function NumericFieldAutosave({
       initialValue={String(initialValue ?? '')}
       handleSubmit={(str) => handleNumberSubmit(convertValueToNumber(str))}
       variant="standard"
-      defaultHelperText=""
       isNumeric
       {...inputFieldAutosaveProps}
     />

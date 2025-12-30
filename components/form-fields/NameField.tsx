@@ -22,6 +22,7 @@ export default memo(function NameField({
         (name: string) => handleUpdate({ name }),
         [handleUpdate]
       )}
+      useErrorTransition
       handleValidate={(newName) =>
         newName !== name && existingNames.find((n) => n === newName)
           ? 'Already exists!'

@@ -37,7 +37,6 @@ export default function SetFieldTimeMask({
       }}
       variant="standard"
       disableAutoSelect
-      defaultHelperText=""
       maskOptions={{ mask: '00:00:00', overwrite: true }}
       {...inputFieldProps}
     />

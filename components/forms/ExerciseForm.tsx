@@ -88,7 +88,7 @@ export default function ExerciseForm({ exercise }: Props) {
   }, [addExerciseMutate, exercise, setUrlExercise])
 
   return (
-    <Grid container spacing={1} size={12}>
+    <Grid container spacing={2} size={12}>
       <Grid size={12}>
         <NameField
           name={name}

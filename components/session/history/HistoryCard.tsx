@@ -82,7 +82,6 @@ export default function HistoryCard({
         options={activeModifiers}
         initialValue={activeModifiers}
         variant="standard"
-        helperText=""
         readOnly
       />
     ),

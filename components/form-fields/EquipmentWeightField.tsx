@@ -36,7 +36,6 @@ export default function EquipmentWeightField({ weight, handleUpdate }: Props) {
       )}
       fullWidth
       variant="outlined"
-      defaultHelperText=" "
       slotProps={{
         input: {
           endAdornment: (

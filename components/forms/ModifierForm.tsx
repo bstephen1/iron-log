@@ -57,7 +57,7 @@ export default function ModifierForm({
   )
 
   return (
-    <Grid container spacing={1} size={12}>
+    <Grid container spacing={2} size={12}>
       <Grid
         size={{
           xs: 12,

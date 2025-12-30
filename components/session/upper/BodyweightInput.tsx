@@ -89,7 +89,7 @@ export default function BodyweightInput({
           ),
         },
       }}
-      defaultHelperText={getHelperText()}
+      helperText={getHelperText()}
     />
   )
 }

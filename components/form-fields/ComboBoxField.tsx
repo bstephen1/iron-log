@@ -37,10 +37,6 @@ interface ComboBoxFieldProps<Clearable extends boolean | undefined>
    */
   changeBehavior?: 'append' | 'filter'
   textFieldProps?: Partial<TextFieldProps>
-  /** Helper text defaults to a single whitespace to provide padding.
-   *  To disable, set to an empty string.
-   */
-  helperText?: string
 }
 /** This component is setup for memoization. For memoization to work any functions passed in
  *  must be wrapped in useCallback(). Eg, handleSubmit().
@@ -55,7 +51,6 @@ export default memo(function ComboBoxField<
   handleChange = doNothing,
   changeBehavior = 'append',
   textFieldProps,
-  helperText = ' ',
   ...asyncAutocompleteProps
 }: ComboBoxFieldProps<Clearable>) {
   const { control, value, setValue } = useField<string[]>({
@@ -112,10 +107,7 @@ export default memo(function ComboBoxField<
           </li>
         )
       }}
-      textFieldProps={{
-        helperText,
-        ...textFieldProps,
-      }}
+      textFieldProps={textFieldProps}
       {...asyncAutocompleteProps}
     />
   )

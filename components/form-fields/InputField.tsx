@@ -1,5 +1,6 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ReplayIcon from '@mui/icons-material/Replay'
+import Collapse from '@mui/material/Collapse'
 import type { InputProps } from '@mui/material/Input'
 import TextField, { type TextFieldProps } from '@mui/material/TextField'
 import { useRef } from 'react'
@@ -10,21 +11,21 @@ interface Props
   extends Pick<UseFieldProps, 'required' | 'handleSubmit' | 'handleValidate'> {
   label: string
   initialValue?: string
-  defaultHelperText?: string
   /** Overrides internal behavior of when to show submit button.
    *  Has no effect if undefined.
    */
   showSubmit?: boolean
+  useErrorTransition?: boolean
 }
 export default function InputField(props: Props & TextFieldProps) {
   const {
     label,
     initialValue = '',
-    defaultHelperText = ' ',
     handleSubmit,
     required,
     handleValidate,
     showSubmit,
+    useErrorTransition,
     ...textFieldProps
   } = props
 
@@ -42,13 +43,21 @@ export default function InputField(props: Props & TextFieldProps) {
     inputRef.current?.focus()
   }
 
+  const displayedError = useErrorTransition ? (
+    <Collapse in={!!error}>
+      <span>{error}</span>
+    </Collapse>
+  ) : (
+    error
+  )
+
   return (
     <TextField
       {...textFieldProps}
       {...control(label)}
-      error={!!error}
       autoComplete="off"
-      helperText={error || defaultHelperText}
+      error={!!error}
+      helperText={displayedError || textFieldProps.helperText}
       onKeyDown={(e) => {
         if (e.code === 'Enter') {
           submit()
@@ -58,6 +67,10 @@ export default function InputField(props: Props & TextFieldProps) {
       inputRef={inputRef}
       slotProps={{
         ...textFieldProps.slotProps,
+        formHelperText: {
+          // default <p> cannot contain any children
+          component: 'div',
+        },
         input: {
           ...textFieldProps.slotProps?.input,
           endAdornment: (
