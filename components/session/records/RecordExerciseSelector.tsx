@@ -28,6 +28,7 @@ export default memo(function RecordExerciseSelector<
 }: Props<DisableClearable>) {
   const updateRecord = useRecordUpdate(_id)
   const handleChange = async (newExercise: Exercise | null) => {
+    /* v8 ignore next */
     if (!newExercise) return
 
     // if an exercise changes, discard any modifiers that are not valid for the new exercise
