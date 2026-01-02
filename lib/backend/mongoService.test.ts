@@ -5,8 +5,8 @@ import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../../models/AsyncSelectorOption/Modifier'
 import { createBodyweight } from '../../models/Bodyweight'
 import { createNote } from '../../models/Note'
-import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
+import { createTestRecord, testDate, testExercise } from '../test/data'
 import { db } from './mongoConnect'
 import {
   addCategory,
@@ -49,7 +49,6 @@ vi.mock('./mongoConnect', async () => {
   return { client, db, clientPromise }
 })
 
-const testDate = '2000-01-01'
 const testDateNew = '2000-02-02'
 
 beforeEach(async () => {
@@ -58,7 +57,7 @@ beforeEach(async () => {
 
 describe('SessionLog', () => {
   it('fetches session logs for given user only', async () => {
-    await addRecord(createRecord(testDate))
+    await addRecord(createTestRecord())
     await upsertSessionLog(createSessionLog(testDateNew))
 
     vi.mocked(getUserId).mockResolvedValueOnce(new ObjectId())
@@ -70,7 +69,7 @@ describe('SessionLog', () => {
 
 describe('Record', () => {
   it('excludes userId', async () => {
-    const record = createRecord(testDate)
+    const record = createTestRecord()
     await addRecord(record)
 
     expect(await fetchRecord(record._id)).not.toMatchObject({
@@ -79,7 +78,7 @@ describe('Record', () => {
   })
 
   it('adds record and adds to session', async () => {
-    const record = createRecord(testDate)
+    const record = createTestRecord()
     await addRecord(record)
 
     // creates session
@@ -88,7 +87,7 @@ describe('Record', () => {
       records: [record._id],
     })
 
-    const record2 = createRecord(testDate)
+    const record2 = createTestRecord()
     await addRecord(record2)
 
     // updates existing session
@@ -98,9 +97,9 @@ describe('Record', () => {
   })
 
   it('deletes record and removes from session', async () => {
-    const record1 = await addRecord(createRecord(testDate))
-    const record2 = await addRecord(createRecord(testDate))
-    const record3 = await addRecord(createRecord(testDate))
+    const record1 = await addRecord(createTestRecord())
+    const record2 = await addRecord(createTestRecord())
+    const record3 = await addRecord(createTestRecord())
 
     await deleteRecord(record2._id)
 
@@ -115,14 +114,15 @@ describe('Record', () => {
       createExercise('squats', { modifiers: [modifier.name] })
     )
     await addRecord(
-      createRecord(testDate, { exercise, activeModifiers: [modifier.name] })
+      createTestRecord({
+        exerciseId: exercise._id,
+        activeModifiers: [modifier.name],
+      })
     )
-    await addRecord(createRecord(testDate, { exercise }))
-    await addRecord(createRecord(testDate))
+    await addRecord(createTestRecord({ exerciseId: exercise._id }))
+    await addRecord(createTestRecord())
 
-    expect(await fetchRecords({ 'exercise.name': exercise.name })).toHaveLength(
-      2
-    )
+    expect(await fetchRecords({ exerciseId: exercise._id })).toHaveLength(2)
     expect(await fetchRecords({ activeModifiers: modifier.name })).toHaveLength(
       1
     )
@@ -134,24 +134,21 @@ describe('Record', () => {
       createExercise('squats', { modifiers: [modifier.name] })
     )
     await addRecord(
-      createRecord(testDate, { exercise, activeModifiers: [modifier.name] })
+      createTestRecord({
+        exerciseId: exercise._id,
+        activeModifiers: [modifier.name],
+      })
     )
 
     // remove the modifier
     await updateExerciseFields(exercise._id, { modifiers: [] })
-    expect(await fetchRecords({ activeModifiers: modifier.name })).toHaveLength(
-      0
-    )
-
-    // add it back -- record should still have the modifier
-    await updateExerciseFields(exercise._id, { modifiers: [modifier.name] })
     expect(await fetchRecords({ activeModifiers: modifier.name })).toHaveLength(
       1
     )
   })
 
   it('overrides start/end with date', async () => {
-    await addRecord(createRecord(testDate))
+    await addRecord(createTestRecord())
 
     expect(
       await fetchRecords({ start: testDate, date: testDateNew })
@@ -168,7 +165,7 @@ describe('Record', () => {
   })
 
   it('returns updates record after modification', async () => {
-    const record = await addRecord(createRecord(testDate))
+    const record = await addRecord(createTestRecord())
 
     const updatedRecord = await updateRecordFields(record._id, {
       sets: [{ reps: 5 }],
@@ -178,7 +175,7 @@ describe('Record', () => {
 
   describe('Sets', () => {
     it('adds set', async () => {
-      const record = createRecord(testDate, { sets: [] })
+      const record = createTestRecord()
       await addRecord(record)
 
       expect(await addSet(record._id, { weight: 1 })).toMatchObject({
@@ -187,7 +184,7 @@ describe('Record', () => {
     })
 
     it('updates set', async () => {
-      const record = createRecord(testDate, {
+      const record = createTestRecord({
         sets: [{ distance: 1 }, { reps: 2 }, { weight: 3 }],
       })
       await addRecord(record)
@@ -198,7 +195,7 @@ describe('Record', () => {
     })
 
     it('deletes set', async () => {
-      const record = createRecord(testDate, {
+      const record = createTestRecord({
         sets: [{ distance: 1 }, { reps: 2 }, { weight: 3 }],
       })
       await addRecord(record)
@@ -227,8 +224,8 @@ describe('Exercise', () => {
   })
 
   it('prevents deleting exercise used in a record', async () => {
-    const exercise = await addExercise(createExercise('squats'))
-    await addRecord(createRecord(testDate, { exercise }))
+    const exercise = await addExercise(testExercise)
+    await addRecord(createTestRecord())
 
     await expect(deleteExercise(exercise._id)).rejects.toThrow()
   })
@@ -259,8 +256,8 @@ describe('Modifier', () => {
       })
     )
     const record = await addRecord(
-      createRecord(testDate, {
-        exercise,
+      createTestRecord({
+        exerciseId: exercise._id,
         activeModifiers: [modifier.name],
       })
     )

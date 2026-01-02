@@ -69,7 +69,6 @@ interface Props {
   displayFields: DisplayFields
   date: string
   exerciseId?: string
-  exerciseName?: string
   exerciseNotes?: Note[]
 }
 export default function RecordCardHeader({
@@ -79,7 +78,6 @@ export default function RecordCardHeader({
   displayFields,
   date,
   exerciseId,
-  exerciseName,
   exerciseNotes,
 }: Props) {
   const actionButtons = [
@@ -90,7 +88,7 @@ export default function RecordCardHeader({
       notes={exerciseNotes}
       _id={exerciseId}
     />,
-    <UsageButton key="usage dialog" exercise={exerciseName} type="icon" />,
+    <UsageButton key="usage dialog" exerciseId={exerciseId} type="icon" />,
     <ManageExerciseButton key="manage" _id={exerciseId} />,
     <ChangeUnitsButton
       key="change units dialog"

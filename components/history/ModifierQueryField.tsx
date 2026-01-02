@@ -25,7 +25,6 @@ export default function ModifierQueryField({
       options={options || []}
       initialValue={initialValue || []}
       handleSubmit={(modifiers) => updateQuery({ modifiers })}
-      helperText=""
       startAdornment={
         <MatchTypeSelector
           matchType={matchType}

@@ -12,7 +12,7 @@ import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useRecords } from '../../../lib/frontend/data/useQuery'
+import { useExercise, useRecords } from '../../../lib/frontend/data/useQuery'
 import { stringifySetType } from '../../../models/Set'
 import LoadingSpinner from '../../loading/LoadingSpinner'
 import TooltipIconButton from '../../TooltipIconButton'
@@ -20,20 +20,21 @@ import TooltipIconButton from '../../TooltipIconButton'
 export const usageLimit = 11
 
 interface Props {
-  exercise?: string
+  exerciseId?: string
   buttonProps?: ButtonProps
   type: 'text' | 'icon'
 }
-export default function UsageButton({ exercise, type, buttonProps }: Props) {
+export default function UsageButton({ exerciseId, type, buttonProps }: Props) {
+  const exercise = useExercise(exerciseId)
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const { data: records, isLoading } = useRecords(
     {
-      exercise,
+      exerciseId,
       limit: usageLimit,
     },
-    !!exercise && (open || type === 'text')
+    !!exerciseId && (open || type === 'text')
   )
 
   return (
@@ -62,13 +63,13 @@ export default function UsageButton({ exercise, type, buttonProps }: Props) {
         <TooltipIconButton
           title="Recent usage"
           onClick={handleOpen}
-          disabled={!exercise}
+          disabled={!exerciseId}
         >
           <ListIcon />
         </TooltipIconButton>
       )}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Usage for {exercise}</DialogTitle>
+        <DialogTitle>Usage for {exercise?.name}</DialogTitle>
         <DialogContent sx={{ py: 0 }}>
           {!records ? (
             <LoadingSpinner />
@@ -76,7 +77,7 @@ export default function UsageButton({ exercise, type, buttonProps }: Props) {
             <List disablePadding>
               {records
                 .slice(0, usageLimit)
-                .map(({ date, setType, sets, exercise, _id }) => (
+                .map(({ date, setType, sets, _id }) => (
                   // Note: this is Nextjs Link, not mui
                   <Link key={_id} href={`/sessions/${date}?record=${_id}`}>
                     <ListItem disablePadding>

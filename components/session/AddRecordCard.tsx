@@ -20,7 +20,10 @@ export default function AddRecordCard() {
     addFn: addRecord,
   })
   const handleAdd = async () => {
-    addRecordMutate(createRecord(date, { exercise }))
+    /* v8 ignore next */
+    if (!exercise) return
+
+    addRecordMutate(createRecord(date, exercise._id))
 
     swiper.update()
     setExercise(null)

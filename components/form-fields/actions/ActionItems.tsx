@@ -43,7 +43,7 @@ export default function ActionItems({
       {type === 'exercise' && (
         <ActionItem
           description="View the most recent dates when this exercise has been used."
-          button={<UsageButton exercise={name} type="text" />}
+          button={<UsageButton exerciseId={id} type="text" />}
         />
       )}
       {handleDelete && (

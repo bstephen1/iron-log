@@ -12,15 +12,15 @@ it('transforms query params', () => {
     max: 8,
   }
   const recordQuery: RecordQuery = {
-    exercise: 'exercise',
+    exerciseId: 'ex1',
     modifiers: ['modifier'],
     modifierMatchType: ArrayMatchType.Exact,
     setType,
   }
 
   expect(buildRecordFilter(recordQuery)).toEqual({
+    exerciseId: 'ex1',
     activeModifiers: { $all: recordQuery.modifiers, $size: 1 },
-    'exercise.name': recordQuery.exercise,
     'setType.operator': setType.operator,
     'setType.field': setType.field,
     'setType.value': setType.value,
@@ -31,20 +31,20 @@ it('transforms query params', () => {
 
 it('ignores undefined keys', () => {
   const recordQuery: RecordQuery = {
-    exercise: '2000-01-01',
-    date: undefined,
+    date: '2000-01-01',
+    exerciseId: undefined,
   }
   expect(buildRecordFilter(recordQuery)).toEqual({
-    'exercise.name': recordQuery.exercise,
+    date: recordQuery.date,
   })
 })
 
 it('ignores setType when set to any', () => {
   const recordQuery: RecordQuery = {
-    exercise: '2000-01-01',
+    exerciseId: 'ex1',
     setTypeMatchType: ArrayMatchType.Any,
   }
   expect(buildRecordFilter(recordQuery)).toEqual({
-    'exercise.name': recordQuery.exercise,
+    exerciseId: recordQuery.exerciseId,
   })
 })

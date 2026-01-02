@@ -1,22 +1,21 @@
-import { useExercise, useRecord } from '../../../lib/frontend/data/useQuery'
-import useDisplayFields from '../../../lib/frontend/useDisplayFields'
+import { useRecord } from '../../../lib/frontend/data/useQuery'
 import { calculateTotalValue } from '../../../models/Set'
+import type { Units } from '../../../models/Units'
 import SetTypeSelect from './SetTypeSelect'
 import { useRecordUpdate } from './useRecordUpdate'
 
 interface Props {
   _id: string
   date: string
+  units: Units
 }
-export default function RecordSetTypeSelect({ _id, date }: Props) {
+export default function RecordSetTypeSelect({ _id, date, units }: Props) {
   const updateRecord = useRecordUpdate(_id)
-  const { setType, sets, ...record } = useRecord(_id, date)
-  const exercise = useExercise(record.exercise?._id)
-  const displayFields = useDisplayFields(exercise)
+  const { setType, sets } = useRecord(_id, date)
 
   return (
     <SetTypeSelect
-      units={displayFields.units}
+      units={units}
       totalReps={calculateTotalValue(sets, setType)}
       showRemaining
       handleChange={updateRecord}

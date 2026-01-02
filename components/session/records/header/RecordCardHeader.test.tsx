@@ -19,7 +19,6 @@ const TestWrapper = (
       notes={[]}
       _id="1"
       exerciseId="ex1"
-      exerciseName="dips"
       exerciseNotes={[]}
       {...props}
     />

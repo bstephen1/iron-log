@@ -54,7 +54,7 @@ export default function CategoryForm({ category: { name, _id } }: Props) {
   )
 
   return (
-    <Grid container spacing={1} size={12}>
+    <Grid container spacing={2} size={12}>
       <Grid size={12}>
         <NameField
           name={name}

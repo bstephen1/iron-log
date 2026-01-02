@@ -30,7 +30,7 @@ it('filters modifiers to match the new exercise on switch', async () => {
   await user.click(screen.getByText(some.name))
 
   expect(updateRecordFields).toHaveBeenCalledWith('1', {
-    exercise: some,
+    exerciseId: some._id,
     activeModifiers: some.modifiers,
   })
 })

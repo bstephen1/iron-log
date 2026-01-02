@@ -7,6 +7,7 @@ import Link from 'next/link'
 import type { JSX } from 'react'
 import ComboBoxField from '../../../components/form-fields/ComboBoxField'
 import StyledDivider from '../../../components/StyledDivider'
+import { useExercise } from '../../../lib/frontend/data/useQuery'
 import useDisplayFields from '../../../lib/frontend/useDisplayFields'
 import useExtraWeight from '../../../lib/frontend/useExtraWeight'
 import type { DisplayFields } from '../../../models/DisplayFields'
@@ -38,7 +39,9 @@ export default function HistoryCard({
   cardProps,
   ...props
 }: Props) {
-  const { sets, _id, notes, date, exercise, activeModifiers, setType } = record
+  const { sets, _id, notes, date, exerciseId, activeModifiers, setType } =
+    record
+  const exercise = useExercise(exerciseId)
   const recordDisplayFields = useDisplayFields(exercise)
   const { extraWeight, exerciseWeight } = useExtraWeight(record)
 
@@ -57,7 +60,7 @@ export default function HistoryCard({
     exerciseNotes: (
       <ExerciseNotesButton key="exercise notes" notes={exercise?.notes} />
     ),
-    manage: <ManageExerciseButton key="manage" _id={exercise?._id} />,
+    manage: <ManageExerciseButton key="manage" _id={exerciseId} />,
   }
 
   const contentComponents: { [key in HistoryContent]: JSX.Element } = {
@@ -66,7 +69,7 @@ export default function HistoryCard({
         key="exercise"
         label="Exercise"
         variant="standard"
-        value={exercise?.name}
+        value={exercise?.name ?? ''}
         slotProps={{
           input: { readOnly: true },
         }}
@@ -79,7 +82,6 @@ export default function HistoryCard({
         options={activeModifiers}
         initialValue={activeModifiers}
         variant="standard"
-        helperText=""
         readOnly
       />
     ),

@@ -1,14 +1,13 @@
 import { expect, it, vi } from 'vitest'
 import { deleteSet, fetchRecords } from '../../../../lib/backend/mongoService'
 import { useRecords } from '../../../../lib/frontend/data/useQuery'
-import { testDate } from '../../../../lib/test/data'
+import { createTestRecord, testDate } from '../../../../lib/test/data'
 import { render, screen } from '../../../../lib/test/rtl'
-import { createRecord } from '../../../../models/Record'
 import DeleteSetButton from './DeleteSetButton'
 
 it('deletes', async () => {
-  const record = createRecord(testDate, { sets: [{}, {}] })
-  const record2 = createRecord(testDate)
+  const record = createTestRecord({ sets: [{}, {}] })
+  const record2 = createTestRecord()
   vi.mocked(fetchRecords).mockResolvedValue([record, record2])
   // this component has no way to visibly wait for the data, so need a wrapper
   const LoadedButton = () => {

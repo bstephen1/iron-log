@@ -7,7 +7,6 @@ interface Props<V extends string | undefined | null, O>
   extends Omit<UseFieldProps<V>, 'debounceMilliseconds' | 'autoSubmit'> {
   label: string
   options: O[]
-  defaultHelperText?: string
   children?: ReactNode
   readOnly?: boolean
   /** label for empty option  */
@@ -22,7 +21,6 @@ export default function SelectFieldAutosave<
 >(props: Props<V, O> & Omit<TextFieldProps, 'SelectProps'>) {
   const {
     label,
-    defaultHelperText = ' ',
     options,
     initialValue,
     handleSubmit,
@@ -45,7 +43,6 @@ export default function SelectFieldAutosave<
     <TextField
       {...control(label)}
       select
-      helperText={defaultHelperText}
       {...textFieldProps}
       slotProps={{
         ...textFieldProps.slotProps,

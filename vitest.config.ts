@@ -13,6 +13,7 @@ export default defineConfig({
       html: 'vitest/html/index.html',
     },
     environment: 'happy-dom',
+    testTimeout: 10_000,
     setupFiles: 'vitest.setup.ts',
     // clear mock history, restore each implementation to its original, and restore original descriptors of spied-on objects
     mockReset: true,

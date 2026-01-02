@@ -76,12 +76,15 @@ it('clears exercise', async () => {
 })
 
 it('keeps possible modifiers after swapping exercise', async () => {
+  const squats = createExercise('squats', { modifiers: ['belt', 'band'] })
   vi.mocked(fetchExercises).mockResolvedValue([
-    createExercise('squats', { modifiers: ['belt', 'band'] }),
+    squats,
     createExercise('bench', { modifiers: ['belt', 'slow'] }),
   ])
   const { user } = render(
-    <TestWrapper query={{ exercise: 'squats', modifiers: ['belt', 'band'] }} />
+    <TestWrapper
+      query={{ exerciseId: squats._id, modifiers: ['belt', 'band'] }}
+    />
   )
 
   await user.click(screen.getByLabelText('Exercise'))

@@ -37,7 +37,7 @@ export default function QueryForm({ query, updateQuery }: Props) {
             (modifier) => exercise?.modifiers.some((ex) => ex === modifier)
           )
           updateUnsavedQuery({
-            exercise: exercise?.name ?? '',
+            exerciseId: exercise?._id,
             modifiers: remainingModifiers,
           })
         }}

@@ -1,20 +1,21 @@
 import type { Record } from '../../models/Record'
-import { useBodyweights, useModifiers } from './data/useQuery'
+import { useBodyweights, useExercise, useModifiers } from './data/useQuery'
 import { arrayToIndex } from './Index'
 
 export default function useExtraWeight(record: Record) {
   const modifiers = useModifiers()
   const modifierIndex = arrayToIndex('name', modifiers)
+  const exercise = useExercise(record.exerciseId)
   const { data: bodyweightData } = useBodyweights(
     {
       limit: 2,
       end: record.date,
       sort: 'newestFirst',
     },
-    record.exercise?.attributes.bodyweight
+    exercise?.attributes.bodyweight
   )
 
-  const { activeModifiers, exercise } = record
+  const { activeModifiers } = record
 
   let bodyweight = 0
   if (exercise?.attributes.bodyweight && bodyweightData?.length) {

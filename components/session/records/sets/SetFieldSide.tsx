@@ -24,7 +24,6 @@ export default function SetFieldSide({
       className={noSwipingClassName}
       variant="standard"
       label=""
-      helperText=""
       initialValue={value}
       options={['L', 'R']}
       emptyOption="Both"

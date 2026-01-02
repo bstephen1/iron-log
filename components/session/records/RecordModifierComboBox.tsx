@@ -21,7 +21,6 @@ export default function RecordModifierComboBox({
       options={availableModifiers?.sort()}
       initialValue={activeModifiers}
       variant="standard"
-      helperText=""
       handleSubmit={(value: string[]) =>
         updateRecord({ activeModifiers: value })
       }

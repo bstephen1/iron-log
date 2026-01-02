@@ -14,7 +14,6 @@ const numericInput: InputHTMLAttributes<HTMLInputElement> = {
 export type InputFieldAutosaveProps = {
   label?: string
   initialValue?: string
-  defaultHelperText?: string
   handleSubmit: (value: string) => void
   readOnly?: boolean
   /** Render an Input instead of a TextField. This will allow label / helper text to
@@ -43,7 +42,6 @@ export type InputFieldAutosaveProps = {
 export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
   const {
     label,
-    defaultHelperText = ' ',
     initialValue = '',
     handleSubmit,
     readOnly,
@@ -113,7 +111,7 @@ export default function InputFieldAutosave(props: InputFieldAutosaveProps) {
       onChange={handleChange}
       // autoselect on focus highlights input for easy overwriting
       onFocus={handleFocus}
-      helperText={error || defaultHelperText}
+      helperText={error}
       {...textFieldProps}
       slotProps={{
         ...textFieldProps.slotProps,

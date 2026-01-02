@@ -3,7 +3,6 @@ import { DATE_FORMAT } from '../lib/frontend/constants'
 import { generateId } from '../lib/id'
 import { removeUndefinedKeys } from '../lib/util/object'
 import { ArrayMatchType, buildMatchTypeFilter } from './ArrayMatchType'
-import type { Exercise } from './AsyncSelectorOption/Exercise'
 import type FetchOptions from './FetchOptions'
 import type { Note } from './Note'
 import { DEFAULT_SET_TYPE, type Set, type SetType } from './Set'
@@ -11,10 +10,7 @@ import { DEFAULT_SET_TYPE, type Set, type SetType } from './Set'
 export interface Record {
   _id: string
   date: string
-  /** usually a record should always have an exercise, but in some cases the exercise can become null.
-   *  Eg, swapping category to a category not valid for the current exercise.
-   */
-  exercise?: Exercise | null
+  exerciseId: string
   activeModifiers: string[]
   notes: Note[]
   setType: SetType
@@ -23,8 +19,8 @@ export interface Record {
 
 export const createRecord = (
   date: string,
+  exerciseId: string,
   {
-    exercise = null,
     activeModifiers = [],
     notes = [],
     sets = [{}],
@@ -33,7 +29,7 @@ export const createRecord = (
 ): Record => ({
   _id: generateId(),
   date,
-  exercise,
+  exerciseId,
   activeModifiers,
   notes,
   sets,
@@ -41,7 +37,7 @@ export const createRecord = (
 })
 
 export interface RecordQuery extends FetchOptions {
-  exercise?: string
+  exerciseId?: string
   modifiers?: string[]
   modifierMatchType?: ArrayMatchType
   setType?: Partial<SetType>
@@ -50,7 +46,6 @@ export interface RecordQuery extends FetchOptions {
 }
 
 export const buildRecordFilter = ({
-  exercise,
   modifiers,
   modifierMatchType,
   setType: { field, operator, value, min, max } = {},
@@ -69,7 +64,6 @@ export const buildRecordFilter = ({
       : {}
 
   return removeUndefinedKeys({
-    'exercise.name': exercise,
     activeModifiers: buildMatchTypeFilter(modifiers, modifierMatchType),
     ...setTypeFields,
     ...rest,
@@ -77,7 +71,6 @@ export const buildRecordFilter = ({
 }
 
 export const DEFAULT_RECORD_HISTORY_QUERY: RecordQuery = {
-  exercise: '',
   modifiers: [],
   modifierMatchType: ArrayMatchType.Partial,
   setType: DEFAULT_SET_TYPE,
