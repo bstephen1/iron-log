@@ -53,3 +53,20 @@ test(`follows session redirect setting`, async ({ page }) => {
   // redirects
   await expect(page.getByText('Copy session')).toBeVisible()
 })
+
+test(`enables rest and interval timers`, async ({ page }) => {
+  await page.goto('/sessions')
+
+  await page.getByRole('button', { name: 'Start rest timer' }).click()
+  // rest timer ticks
+  await expect(page.getByText('00:00:01')).toBeVisible()
+
+  // start interval timer
+  await page.getByRole('button', { name: 'Start interval timer' }).click()
+  await page.getByRole('button', { name: 'Confirm' }).click()
+  await expect(page.getByText('Interval settings')).not.toBeVisible()
+
+  // interval timer ticks
+  await expect(page.getByText('Work')).toBeVisible()
+  await expect(page.getByText('Rest')).toBeVisible()
+})

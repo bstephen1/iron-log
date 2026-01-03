@@ -55,6 +55,8 @@ interface IntervalTimer extends IntervalSettings {
 }
 
 export default function RestTimer() {
+  // memo breaks interval timer
+  'use no memo'
   const [state, dispatch] = useClockReducer()
   const { isRunning, displayValue, enabled, isFinished } = state
   const [intervalTimer, setIntervalTimer] = useState<
