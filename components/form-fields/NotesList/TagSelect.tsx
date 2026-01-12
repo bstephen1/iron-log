@@ -45,7 +45,6 @@ export default function TagSelect({
       input={<Input disableUnderline />}
       IconComponent={() => null}
       renderValue={(value) => <TagChips {...{ value, multiple }} />}
-      sx={{ pr: 2 }}
       slotProps={{
         input: { sx: { pr: '0px !important' } },
       }}
@@ -59,6 +58,7 @@ export default function TagSelect({
               checkedIcon={<CheckBoxIcon />}
               style={{ marginRight: 8 }}
               checked={selectedTags.includes(option)}
+              disableRipple
             />
           )}
           <ListItemText primary={option} />

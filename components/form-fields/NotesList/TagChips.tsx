@@ -16,11 +16,11 @@ export default function TagChips({ value, multiple }: Props) {
   }
 
   const StyledChip = (props: ChipProps) => (
-    <Chip {...props} sx={{ cursor: 'inherit', ...props.sx }} />
+    <Chip {...props} size="small" sx={{ cursor: 'inherit', ...props.sx }} />
   )
 
   return (
-    <Stack spacing={0.5}>
+    <Stack direction="row" spacing={0.5}>
       {value.length ? (
         value.map((value) => <StyledChip key={value} label={value} />)
       ) : (

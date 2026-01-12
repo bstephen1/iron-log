@@ -1,10 +1,10 @@
-import ClearIcon from '@mui/icons-material/Clear'
-import OutlinedInput from '@mui/material/OutlinedInput'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import Input from '@mui/material/Input'
 import { useRef } from 'react'
-import TransitionIconButton from '../../../components/TransitionIconButton'
 import type { Note } from '../../../models/Note'
 import useField from '../useField'
-import TagSelect from './TagSelect'
+import NoteHeader from './NoteHeader'
 
 interface Props {
   note: Note
@@ -46,40 +46,43 @@ export default function NotesListItem(props: Props) {
   }
 
   return (
-    <OutlinedInput
-      {...control()}
-      multiline
-      size="small"
-      fullWidth
-      onBlur={(e) => (isEmpty ? onDelete(index) : handleSubmit(e.target.value))}
-      placeholder={placeholder}
-      autoComplete="off"
-      readOnly={readOnly}
-      inputRef={inputRef}
-      startAdornment={
-        <TagSelect
-          handleUpdate={(newTags) =>
-            handleUpdate(index, { ...note, tags: newTags })
-          }
-          selectedTags={note.tags}
-          {...{ options, multiple, readOnly }}
-        />
-      }
-      endAdornment={
-        !readOnly && (
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={() => onDelete(index)}
-            tooltip="Delete"
-          >
-            <ClearIcon />
-          </TransitionIconButton>
-        )
-      }
-      sx={{ my: 1 }}
-      slotProps={{
-        input: { 'aria-label': `note ${index + 1}` },
+    <Card
+      elevation={3}
+      sx={{
+        mt: 2,
       }}
-    />
+    >
+      <NoteHeader
+        isEmpty={isEmpty}
+        handleDelete={() => onDelete(index)}
+        tagSelectProps={{
+          handleUpdate: (newTags) =>
+            handleUpdate(index, { ...note, tags: newTags }),
+          selectedTags: note.tags,
+          options,
+          multiple,
+          readOnly,
+        }}
+      />
+      <Input
+        {...control()}
+        multiline
+        size="small"
+        fullWidth
+        onBlur={(e) =>
+          isEmpty ? onDelete(index) : handleSubmit(e.target.value)
+        }
+        placeholder={placeholder}
+        autoComplete="off"
+        readOnly={readOnly}
+        inputRef={inputRef}
+        // for padding while still allowing underline to span full width
+        startAdornment={<Box px={0.5} />}
+        endAdornment={<Box px={0.5} />}
+        slotProps={{
+          input: { 'aria-label': `note ${index + 1}` },
+        }}
+      />
+    </Card>
   )
 }

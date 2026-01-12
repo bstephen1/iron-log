@@ -1,11 +1,10 @@
-import CheckIcon from '@mui/icons-material/Check'
-import ClearIcon from '@mui/icons-material/Clear'
-import OutlinedInput from '@mui/material/OutlinedInput'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import Input from '@mui/material/Input'
 import { useRef, useState } from 'react'
-import TransitionIconButton from '../../../components/TransitionIconButton'
 import { createNote, type Note } from '../../../models/Note'
 import useField from '../useField'
-import TagSelect from './TagSelect'
+import NoteHeader from './NoteHeader'
 
 interface Props {
   placeholder?: string
@@ -43,39 +42,31 @@ export default function AddNote({
   })
 
   return (
-    <OutlinedInput
-      {...control()}
-      multiline
-      size="small"
-      fullWidth
-      placeholder={placeholder}
-      disabled={disabled}
-      inputRef={inputRef}
-      startAdornment={
-        <TagSelect
-          handleUpdate={setTags}
-          {...{ selectedTags: tags, options, multiple }}
-        />
-      }
-      endAdornment={
-        <>
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={() => submit()}
-            tooltip="Confirm"
-          >
-            <CheckIcon />
-          </TransitionIconButton>
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={onReset}
-            tooltip="Clear"
-          >
-            <ClearIcon />
-          </TransitionIconButton>
-        </>
-      }
-      sx={{ my: 1 }}
-    />
+    <Card elevation={3} sx={{ mt: 1 }}>
+      <NoteHeader
+        isEmpty={isEmpty}
+        // have to explicitly submit with no arg
+        handleAdd={() => submit()}
+        handleDelete={onReset}
+        tagSelectProps={{
+          handleUpdate: setTags,
+          selectedTags: tags,
+          options,
+          multiple,
+        }}
+      />
+      <Input
+        {...control()}
+        multiline
+        size="small"
+        fullWidth
+        placeholder={placeholder}
+        disabled={disabled}
+        // for padding while still allowing underline to span full width
+        startAdornment={<Box px={0.5} />}
+        endAdornment={<Box px={0.5} />}
+        inputRef={inputRef}
+      />
+    </Card>
   )
 }
