@@ -6,8 +6,8 @@ import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import Link from 'next/link'
 import useLocalStorageState from 'use-local-storage-state'
-import useDarkMode from '../components/useDarkMode'
-import { LOCAL_STORAGE } from '../lib/frontend/constants'
+import useDarkMode from '../../components/useDarkMode'
+import { LOCAL_STORAGE } from '../../lib/frontend/constants'
 
 export default function SessionRedirectSwitch() {
   const [sessionRedirect, setSessionRedirect] = useLocalStorageState(

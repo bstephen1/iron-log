@@ -4,7 +4,7 @@ import FormGroup from '@mui/material/FormGroup'
 import Switch from '@mui/material/Switch'
 import Typography from '@mui/material/Typography'
 import useLocalStorageState from 'use-local-storage-state'
-import { LOCAL_STORAGE } from '../lib/frontend/constants'
+import { LOCAL_STORAGE } from '../../lib/frontend/constants'
 
 export default function SavingIndicatorSwitch() {
   const [showSaving, setShowSaving] = useLocalStorageState(
