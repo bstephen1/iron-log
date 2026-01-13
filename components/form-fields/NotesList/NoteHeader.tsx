@@ -21,30 +21,36 @@ export default function NoteHeader({
   const showDelete = !tagSelectProps.readOnly && !!handleDelete
   const showAdd = !tagSelectProps.readOnly && !!handleAdd
   return (
-    <Box display="flex" justifyContent="space-between" sx={{ pl: 0.5 }}>
+    <Stack direction="row" sx={{ pl: 0.5 }}>
       <TagSelect {...tagSelectProps} />
+      <Box flex="1 1 auto" />
       <Stack direction="row">
+        {/* div wrappers allow icons to keep a square shape if tags become multiline */}
         {showAdd && (
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={handleAdd}
-            tooltip="Confirm"
-            size="small"
-          >
-            <CheckIcon />
-          </TransitionIconButton>
+          <div>
+            <TransitionIconButton
+              isVisible={!isEmpty}
+              onClick={handleAdd}
+              tooltip="Confirm"
+              size="small"
+            >
+              <CheckIcon />
+            </TransitionIconButton>
+          </div>
         )}
         {showDelete && (
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={handleDelete}
-            tooltip={handleAdd ? 'Clear' : 'Delete'}
-            size="small"
-          >
-            <ClearIcon />
-          </TransitionIconButton>
+          <div>
+            <TransitionIconButton
+              isVisible={!isEmpty}
+              onClick={handleDelete}
+              tooltip={handleAdd ? 'Clear' : 'Delete'}
+              size="small"
+            >
+              <ClearIcon />
+            </TransitionIconButton>
+          </div>
         )}
       </Stack>
-    </Box>
+    </Stack>
   )
 }
