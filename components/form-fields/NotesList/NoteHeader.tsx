@@ -3,6 +3,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import type { ComponentProps } from 'react'
+import useDesktopCheck from '../../../lib/frontend/useDesktopCheck'
 import TransitionIconButton from '../../TransitionIconButton'
 import TagSelect from './TagSelect'
 
@@ -18,7 +19,8 @@ export default function NoteHeader({
   handleAdd,
   tagSelectProps,
 }: Props) {
-  const showDelete = !tagSelectProps.readOnly && !!handleDelete
+  const isDesktop = useDesktopCheck()
+  const showDelete = !tagSelectProps.readOnly && !!handleDelete && isDesktop
   const showAdd = !tagSelectProps.readOnly && !!handleAdd
   return (
     <Stack direction="row" sx={{ pl: 0.5 }}>
