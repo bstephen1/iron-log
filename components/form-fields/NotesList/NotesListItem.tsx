@@ -1,6 +1,6 @@
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
 import Input from '@mui/material/Input'
+import Paper from '@mui/material/Paper'
+import { useColorScheme } from '@mui/material/styles'
 import { useRef } from 'react'
 import type { Note } from '../../../models/Note'
 import useField from '../useField'
@@ -29,6 +29,7 @@ export default function NotesListItem(props: Props) {
   } = props
 
   const inputRef = useRef<HTMLInputElement>(undefined)
+  const { mode } = useColorScheme()
   const handleSubmit = (value: string) =>
     handleUpdate(index, { ...note, value })
   const { control, isEmpty, reset } = useField({
@@ -46,11 +47,9 @@ export default function NotesListItem(props: Props) {
   }
 
   return (
-    <Card
-      elevation={3}
-      sx={{
-        mt: 2,
-      }}
+    <Paper
+      variant={mode === 'dark' ? 'elevation' : 'outlined'}
+      sx={{ mt: 2, p: 1 }}
     >
       <NoteHeader
         isEmpty={isEmpty}
@@ -69,6 +68,7 @@ export default function NotesListItem(props: Props) {
         multiline
         size="small"
         fullWidth
+        disableUnderline
         onBlur={(e) =>
           isEmpty ? onDelete(index) : handleSubmit(e.target.value)
         }
@@ -76,13 +76,11 @@ export default function NotesListItem(props: Props) {
         autoComplete="off"
         readOnly={readOnly}
         inputRef={inputRef}
-        // for padding while still allowing underline to span full width
-        startAdornment={<Box px={0.5} />}
-        endAdornment={<Box px={0.5} />}
         slotProps={{
           input: { 'aria-label': `note ${index + 1}` },
         }}
+        sx={{ px: 1 }}
       />
-    </Card>
+    </Paper>
   )
 }

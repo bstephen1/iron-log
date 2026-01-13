@@ -21,7 +21,7 @@ export default function NoteHeader({
   const showDelete = !tagSelectProps.readOnly && !!handleDelete
   const showAdd = !tagSelectProps.readOnly && !!handleAdd
   return (
-    <Box display="flex" justifyContent="space-between" pt={0.5} pr={0.5} pl={1}>
+    <Box display="flex" justifyContent="space-between" sx={{ pl: 0.5 }}>
       <TagSelect {...tagSelectProps} />
       <Stack direction="row">
         {showAdd && (

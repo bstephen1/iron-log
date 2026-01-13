@@ -1,6 +1,6 @@
-import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Input from '@mui/material/Input'
+import { useColorScheme } from '@mui/material/styles'
 import { useRef, useState } from 'react'
 import { createNote, type Note } from '../../../models/Note'
 import useField from '../useField'
@@ -25,6 +25,7 @@ export default function AddNote({
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(undefined)
   const [tags, setTags] = useState<Note['tags']>(initialTags)
+  const { mode } = useColorScheme()
   const handleSubmit = (value: string) => {
     handleAdd(createNote(value.trim(), tags))
     onReset()
@@ -42,7 +43,10 @@ export default function AddNote({
   })
 
   return (
-    <Card elevation={3} sx={{ mt: 1 }}>
+    <Card
+      variant={mode === 'dark' ? 'elevation' : 'outlined'}
+      sx={{ mt: 1, p: 1 }}
+    >
       <NoteHeader
         isEmpty={isEmpty}
         // have to explicitly submit with no arg
@@ -60,12 +64,11 @@ export default function AddNote({
         multiline
         size="small"
         fullWidth
+        disableUnderline
         placeholder={placeholder}
         disabled={disabled}
-        // for padding while still allowing underline to span full width
-        startAdornment={<Box px={0.5} />}
-        endAdornment={<Box px={0.5} />}
         inputRef={inputRef}
+        sx={{ px: 1 }}
       />
     </Card>
   )
