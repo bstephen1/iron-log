@@ -10,7 +10,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Select, { type SelectProps } from '@mui/material/Select'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import useDesktopCheck from '../../../../lib/frontend/useDesktopCheck'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import {
   type DisplayFields,
@@ -49,7 +48,6 @@ export default function SetHeader({
   ...selectProps
 }: Props) {
   const noSwipingDesktop = useNoSwipingDesktop()
-  const isDesktop = useDesktopCheck()
   const updateExercise = useExerciseUpdate(exerciseId)
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
@@ -150,7 +148,7 @@ export default function SetHeader({
                   )
                 })
             )}
-            <PaddingBox showArrow={!selectProps.readOnly && isDesktop} />
+            <PaddingBox showArrow={!selectProps.readOnly} />
           </Stack>
         )}
         {...selectProps}

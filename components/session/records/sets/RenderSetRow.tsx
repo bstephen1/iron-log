@@ -2,23 +2,20 @@ import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
 import { useCallback } from 'react'
-import { useCurrentDate } from '../../../../app/sessions/[date]/useCurrentDate'
-import { deleteSet, updateSet } from '../../../../lib/backend/mongoService'
-import { noSwipingRecord, QUERY_KEYS } from '../../../../lib/frontend/constants'
+import { updateSet } from '../../../../lib/backend/mongoService'
+import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
 import { useRecordSet } from '../../../../lib/frontend/data/useQuery'
-import useDesktopCheck from '../../../../lib/frontend/useDesktopCheck'
+import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
-import SwipeToDelete from '../../../SwipeToDelete'
 import DeleteSetButton from './DeleteSetButton'
 import RenderSetField, { delimiterWidth } from './RenderSetField'
 
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
-const childHeight = 41 // deleteButtonHeight + pyStack
 
 /* v8 ignore next */
 const getBackground = (side: Set['side']) => {
@@ -63,11 +60,9 @@ export default function RenderSetRow({
   extraWeight = 0,
   _id,
 }: Props) {
+  const noSwipingDesktop = useNoSwipingDesktop()
   const set = useRecordSet(_id, date, index)
   const replaceSet = useSetReplace(_id, date, index)
-  const deleteSet = useSetDelete(_id, index)
-  const isDesktop = useDesktopCheck()
-  const hideDeleteButton = readOnly || !isDesktop
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
@@ -77,58 +72,48 @@ export default function RenderSetRow({
   )
 
   return (
-    <SwipeToDelete
-      onDelete={deleteSet}
-      childHeight={childHeight}
-      disabled={readOnly || isDesktop}
+    <Stack
+      direction="row"
+      alignItems="center"
+      aria-label={`Set ${index + 1}`}
+      className={noSwipingDesktop}
+      // border is from TextField underline
+      sx={[
+        {
+          borderBottom: '1px solid rgba(0, 0, 0, .42)',
+          background: getBackground(set.side),
+          py: pyStack,
+          height: deleteButtonHeight,
+        },
+        (theme) =>
+          theme.applyStyles('dark', {
+            borderBottom: '1px solid rgba(255, 255, 255, 0.60)',
+            backgroundColor: getDarkBackground(set.side),
+          }),
+      ]}
     >
-      <Stack
-        direction="row"
-        alignItems="center"
-        aria-label={`Set ${index + 1}`}
-        className={noSwipingRecord}
-        // border is from TextField underline
-        sx={[
-          {
-            borderBottom: '1px solid rgba(0, 0, 0, .42)',
-            background: getBackground(set.side),
-            py: pyStack,
-            height: deleteButtonHeight,
-          },
-          (theme) =>
-            theme.applyStyles('dark', {
-              borderBottom: '1px solid rgba(255, 255, 255, 0.60)',
-              backgroundColor: getDarkBackground(set.side),
-            }),
-        ]}
-      >
-        {displayFields.visibleFields.map(({ delimiter, name, source }, i) => (
-          <RenderSetField
-            key={i}
-            index={i}
-            unit={displayFields.units[source]}
-            value={set[source]}
-            {...{
-              handleSetChange,
-              extraWeight,
-              delimiter,
-              name,
-              source,
-              readOnly,
-            }}
-          />
-        ))}
-        {hideDeleteButton ? (
-          <Box minWidth={delimiterWidth} />
-        ) : (
-          <DeleteSetButton
-            index={index}
-            deleteSet={deleteSet}
-            sx={{ my: -pyStack }}
-          />
-        )}
-      </Stack>
-    </SwipeToDelete>
+      {displayFields.visibleFields.map(({ delimiter, name, source }, i) => (
+        <RenderSetField
+          key={i}
+          index={i}
+          unit={displayFields.units[source]}
+          value={set[source]}
+          {...{
+            handleSetChange,
+            extraWeight,
+            delimiter,
+            name,
+            source,
+            readOnly,
+          }}
+        />
+      ))}
+      {readOnly ? (
+        <Box minWidth={delimiterWidth} />
+      ) : (
+        <DeleteSetButton _id={_id} index={index} sx={{ my: -pyStack }} />
+      )}
+    </Stack>
   )
 }
 
@@ -148,25 +133,4 @@ function useSetReplace(_id = '', date: string, index: number) {
           : record
       ),
   })
-}
-
-function useSetDelete(_id = '', index: number) {
-  const date = useCurrentDate()
-  const mutate = useOptimisticMutation<Record[], Record, undefined>({
-    queryKey: [QUERY_KEYS.records, { date }],
-    mutationFn: () => deleteSet(_id, index),
-    updater: (prev = []) =>
-      prev.map((record) =>
-        record._id === _id
-          ? {
-              ...record,
-              sets: [
-                ...record.sets.slice(0, index),
-                ...record.sets.slice(index + 1),
-              ],
-            }
-          : record
-      ),
-  })
-  return () => mutate(undefined)
 }

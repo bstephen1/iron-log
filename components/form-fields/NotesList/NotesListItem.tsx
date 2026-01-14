@@ -8,8 +8,6 @@ import useField from '../useField'
 import NoteHeader from './NoteHeader'
 import 'swiper/css'
 import ClearIcon from '@mui/icons-material/Clear'
-import useDesktopCheck from '../../../lib/frontend/useDesktopCheck'
-import SwipeToDelete from '../../SwipeToDelete'
 
 interface Props {
   note: Note
@@ -35,7 +33,6 @@ export default function NotesListItem(props: Props) {
 
   const inputRef = useRef<HTMLInputElement>(undefined)
   const { mode } = useColorScheme()
-  const isDesktop = useDesktopCheck()
 
   const handleSubmit = (value: string) =>
     handleUpdate(index, { ...note, value })
@@ -56,49 +53,44 @@ export default function NotesListItem(props: Props) {
 
   return (
     <Box sx={{ mt: 2 }}>
-      <SwipeToDelete onDelete={deleteSelf} disabled={readOnly || isDesktop}>
-        <Paper
-          variant={mode === 'dark' ? 'elevation' : 'outlined'}
-          sx={{ p: 1 }}
-        >
-          <NoteHeader
-            tagSelectProps={{
-              handleUpdate: (newTags) =>
-                handleUpdate(index, { ...note, tags: newTags }),
-              selectedTags: note.tags,
-              options,
-              multiple,
-              readOnly,
-            }}
-            actions={[
-              {
-                label: 'Delete',
-                Icon: <ClearIcon />,
-                onClick: deleteSelf,
-                isHidden: readOnly || !isDesktop,
-              },
-            ]}
-          />
-          <Input
-            {...control()}
-            multiline
-            size="small"
-            fullWidth
-            disableUnderline
-            onBlur={(e) =>
-              isEmpty ? onDelete(index) : handleSubmit(e.target.value)
-            }
-            placeholder={placeholder}
-            autoComplete="off"
-            readOnly={readOnly}
-            inputRef={inputRef}
-            slotProps={{
-              input: { 'aria-label': `note ${index + 1}` },
-            }}
-            sx={{ px: 1 }}
-          />
-        </Paper>
-      </SwipeToDelete>
+      <Paper variant={mode === 'dark' ? 'elevation' : 'outlined'} sx={{ p: 1 }}>
+        <NoteHeader
+          tagSelectProps={{
+            handleUpdate: (newTags) =>
+              handleUpdate(index, { ...note, tags: newTags }),
+            selectedTags: note.tags,
+            options,
+            multiple,
+            readOnly,
+          }}
+          actions={[
+            {
+              label: 'Delete',
+              Icon: <ClearIcon />,
+              onClick: deleteSelf,
+              isHidden: readOnly,
+            },
+          ]}
+        />
+        <Input
+          {...control()}
+          multiline
+          size="small"
+          fullWidth
+          disableUnderline
+          onBlur={(e) =>
+            isEmpty ? onDelete(index) : handleSubmit(e.target.value)
+          }
+          placeholder={placeholder}
+          autoComplete="off"
+          readOnly={readOnly}
+          inputRef={inputRef}
+          slotProps={{
+            input: { 'aria-label': `note ${index + 1}` },
+          }}
+          sx={{ px: 1 }}
+        />
+      </Paper>
     </Box>
   )
 }

@@ -10,6 +10,9 @@ import NumericFieldAutosave from '../../../form-fields/NumericFieldAutosave'
 import SetFieldSide from './SetFieldSide'
 import SetFieldTimeMask from './SetFieldTimeMask'
 
+/** Width of the standard "/" delimiter. Note that other delimiters
+ *  may be larger (eg, "@" is slightly wider)
+ */
 export const delimiterWidth = '15px'
 
 type ComponentType = 'side' | 'time' | 'default'
