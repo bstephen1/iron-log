@@ -7,6 +7,7 @@ import type { Note } from '../../../models/Note'
 import useField from '../useField'
 import NoteHeader from './NoteHeader'
 import 'swiper/css'
+import ClearIcon from '@mui/icons-material/Clear'
 import useDesktopCheck from '../../../lib/frontend/useDesktopCheck'
 import SwipeToDelete from '../../SwipeToDelete'
 
@@ -60,8 +61,6 @@ export default function NotesListItem(props: Props) {
           sx={{ p: 1 }}
         >
           <NoteHeader
-            isEmpty={isEmpty}
-            handleDelete={() => onDelete(index)}
             tagSelectProps={{
               handleUpdate: (newTags) =>
                 handleUpdate(index, { ...note, tags: newTags }),
@@ -70,6 +69,14 @@ export default function NotesListItem(props: Props) {
               multiple,
               readOnly,
             }}
+            actions={[
+              {
+                label: 'Delete',
+                Icon: <ClearIcon />,
+                onClick: () => onDelete(index),
+                isHidden: !isDesktop,
+              },
+            ]}
           />
           <Input
             {...control()}

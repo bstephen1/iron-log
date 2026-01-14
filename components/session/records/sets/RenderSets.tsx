@@ -1,4 +1,6 @@
 import Box from '@mui/material/Box'
+import Collapse from '@mui/material/Collapse'
+import { TransitionGroup } from 'react-transition-group'
 import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
 import AddSetButton from './AddSetButton'
@@ -48,21 +50,25 @@ export default function RenderSets({
         }}
       />
       <Box>
-        {sets.map((set, i) => (
-          <RenderSetRow
-            key={i}
-            index={i}
-            {...{
-              date,
-              displayFields,
-              readOnly: readOnly || !hasVisibleFields,
-              _id,
-              // exerciseWeight represents eg a dip belt.
-              // When there is no extra plate weight, you wouldn't be using the belt.
-              extraWeight: extraWeight - (set.weight ? 0 : exerciseWeight),
-            }}
-          />
-        ))}
+        <TransitionGroup>
+          {sets.map((set, i) => (
+            <Collapse key={i}>
+              <RenderSetRow
+                key={i}
+                index={i}
+                {...{
+                  date,
+                  displayFields,
+                  readOnly: readOnly || !hasVisibleFields,
+                  _id,
+                  // exerciseWeight represents eg a dip belt.
+                  // When there is no extra plate weight, you wouldn't be using the belt.
+                  extraWeight: extraWeight - (set.weight ? 0 : exerciseWeight),
+                }}
+              />
+            </Collapse>
+          ))}
+        </TransitionGroup>
       </Box>
       {!readOnly && (
         <AddSetButton

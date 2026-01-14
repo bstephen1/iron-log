@@ -1,3 +1,5 @@
+import CheckIcon from '@mui/icons-material/Check'
+import ClearIcon from '@mui/icons-material/Clear'
 import Card from '@mui/material/Card'
 import Input from '@mui/material/Input'
 import { useColorScheme } from '@mui/material/styles'
@@ -29,6 +31,7 @@ export default function AddNote({
   const handleSubmit = (value: string) => {
     handleAdd(createNote(value.trim(), tags))
     onReset()
+    setTags(initialTags)
   }
   const onReset = () => {
     // we only reset the input; tags are left as-is
@@ -48,16 +51,30 @@ export default function AddNote({
       sx={{ mt: 1, p: 1 }}
     >
       <NoteHeader
-        isEmpty={isEmpty}
-        // have to explicitly submit with no arg
-        handleAdd={() => submit()}
-        handleDelete={onReset}
         tagSelectProps={{
           handleUpdate: setTags,
           selectedTags: tags,
           options,
           multiple,
         }}
+        actions={[
+          {
+            label: 'Confirm',
+            Icon: <CheckIcon />,
+            // have to explicitly submit with no arg
+            onClick: () => submit(),
+            isHidden: isEmpty,
+          },
+          {
+            label: 'Clear',
+            Icon: <ClearIcon />,
+            onClick: () => {
+              onReset()
+              setTags(initialTags)
+            },
+            isHidden: isEmpty && !tags.length,
+          },
+        ]}
       />
       <Input
         {...control()}
