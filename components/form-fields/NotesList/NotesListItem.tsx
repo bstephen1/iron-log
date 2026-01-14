@@ -1,10 +1,12 @@
 import ClearIcon from '@mui/icons-material/Clear'
-import OutlinedInput from '@mui/material/OutlinedInput'
+import Box from '@mui/material/Box'
+import Input from '@mui/material/Input'
+import Paper from '@mui/material/Paper'
+import { useColorScheme } from '@mui/material/styles'
 import { useRef } from 'react'
-import TransitionIconButton from '../../../components/TransitionIconButton'
 import type { Note } from '../../../models/Note'
 import useField from '../useField'
-import TagSelect from './TagSelect'
+import NoteHeader from './NoteHeader'
 
 interface Props {
   note: Note
@@ -29,6 +31,8 @@ export default function NotesListItem(props: Props) {
   } = props
 
   const inputRef = useRef<HTMLInputElement>(undefined)
+  const { mode } = useColorScheme()
+
   const handleSubmit = (value: string) =>
     handleUpdate(index, { ...note, value })
   const { control, isEmpty, reset } = useField({
@@ -46,40 +50,45 @@ export default function NotesListItem(props: Props) {
   }
 
   return (
-    <OutlinedInput
-      {...control()}
-      multiline
-      size="small"
-      fullWidth
-      onBlur={(e) => (isEmpty ? onDelete(index) : handleSubmit(e.target.value))}
-      placeholder={placeholder}
-      autoComplete="off"
-      readOnly={readOnly}
-      inputRef={inputRef}
-      startAdornment={
-        <TagSelect
-          handleUpdate={(newTags) =>
-            handleUpdate(index, { ...note, tags: newTags })
-          }
-          selectedTags={note.tags}
-          {...{ options, multiple, readOnly }}
+    <Box sx={{ mt: 2 }}>
+      <Paper variant={mode === 'dark' ? 'elevation' : 'outlined'} sx={{ p: 1 }}>
+        <NoteHeader
+          tagSelectProps={{
+            handleUpdate: (newTags) =>
+              handleUpdate(index, { ...note, tags: newTags }),
+            selectedTags: note.tags,
+            options,
+            multiple,
+            readOnly,
+          }}
+          hideActions={readOnly}
+          actions={[
+            {
+              label: 'Delete',
+              Icon: <ClearIcon />,
+              onClick: () => onDelete(index),
+            },
+          ]}
         />
-      }
-      endAdornment={
-        !readOnly && (
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={() => onDelete(index)}
-            tooltip="Delete"
-          >
-            <ClearIcon />
-          </TransitionIconButton>
-        )
-      }
-      sx={{ my: 1 }}
-      slotProps={{
-        input: { 'aria-label': `note ${index + 1}` },
-      }}
-    />
+        <Input
+          {...control()}
+          multiline
+          size="small"
+          fullWidth
+          disableUnderline
+          onBlur={(e) =>
+            isEmpty ? onDelete(index) : handleSubmit(e.target.value)
+          }
+          placeholder={placeholder}
+          autoComplete="off"
+          readOnly={readOnly}
+          inputRef={inputRef}
+          slotProps={{
+            input: { 'aria-label': `note ${index + 1}` },
+          }}
+          sx={{ px: 1 }}
+        />
+      </Paper>
+    </Box>
   )
 }

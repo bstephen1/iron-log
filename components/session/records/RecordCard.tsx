@@ -75,7 +75,7 @@ export default function RecordCard({ swiperIndex, id, date }: Props) {
   )
 
   return (
-    <Card elevation={3} sx={{ px: 1, m: 0.5 }}>
+    <Card elevation={5} sx={{ px: 1, m: 0.5 }}>
       <RecordCardHeader
         exerciseId={exercise?._id}
         exerciseNotes={exercise?.notes}

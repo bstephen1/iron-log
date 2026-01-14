@@ -24,19 +24,17 @@ interface Props {
 /** This component is setup for memoization. For memoization to work any functions passed in
  *  must be wrapped in useCallback(). Eg, handleSubmit().
  */
-export default memo(function NotesList(props: Props) {
-  const {
-    label,
-    notes,
-    options = [],
-    addItemPlaceholder,
-    listItemPlaceholder,
-    initialTags,
-    handleSubmit,
-    multiple,
-    readOnly,
-  } = props
-
+export default memo(function NotesList({
+  label,
+  notes,
+  options = [],
+  addItemPlaceholder,
+  listItemPlaceholder,
+  initialTags,
+  handleSubmit,
+  multiple,
+  readOnly,
+}: Props) {
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
   const handleAdd = (newNote: Note) => handleSubmit?.([newNote, ...notes])
@@ -74,7 +72,7 @@ export default memo(function NotesList(props: Props) {
                 note,
                 index,
                 multiple,
-                readOnly,
+                readOnly: readOnly,
               }}
             />
           </Collapse>

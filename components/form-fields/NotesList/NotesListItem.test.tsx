@@ -63,7 +63,7 @@ it('updates tags', async () => {
 })
 
 it('renders in readonly mode', () => {
-  render(<NotesListItem {...defaultProps} readOnly />)
+  render(<NotesListItem {...defaultProps} readOnly />, { paletteMode: 'dark' })
 
-  expect(screen.queryByLabelText(/delete/i)).not.toBeInTheDocument()
+  expect(screen.getByLabelText(/delete/i)).not.toBeVisible()
 })

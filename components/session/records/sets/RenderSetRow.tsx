@@ -12,7 +12,7 @@ import type { DisplayFields } from '../../../../models/DisplayFields'
 import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
 import DeleteSetButton from './DeleteSetButton'
-import RenderSetField from './RenderSetField'
+import RenderSetField, { delimiterWidth } from './RenderSetField'
 
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
@@ -60,9 +60,9 @@ export default function RenderSetRow({
   extraWeight = 0,
   _id,
 }: Props) {
+  const noSwipingDesktop = useNoSwipingDesktop()
   const set = useRecordSet(_id, date, index)
   const replaceSet = useSetReplace(_id, date, index)
-  const noSwipingDesktop = useNoSwipingDesktop()
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
@@ -84,7 +84,6 @@ export default function RenderSetRow({
           background: getBackground(set.side),
           py: pyStack,
           height: deleteButtonHeight,
-          pl: '24px', // match delete button
         },
         (theme) =>
           theme.applyStyles('dark', {
@@ -110,8 +109,7 @@ export default function RenderSetRow({
         />
       ))}
       {readOnly ? (
-        // insert a box for padding when clear icon is hidden
-        <Box minWidth={deleteButtonHeight} />
+        <Box minWidth={delimiterWidth} />
       ) : (
         <DeleteSetButton index={index} _id={_id} sx={{ my: -pyStack }} />
       )}

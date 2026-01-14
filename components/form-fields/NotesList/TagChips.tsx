@@ -1,5 +1,5 @@
+import Box from '@mui/material/Box'
 import Chip, { type ChipProps } from '@mui/material/Chip'
-import Stack from '@mui/material/Stack'
 
 interface Props {
   value: string | string[]
@@ -16,11 +16,11 @@ export default function TagChips({ value, multiple }: Props) {
   }
 
   const StyledChip = (props: ChipProps) => (
-    <Chip {...props} sx={{ cursor: 'inherit', ...props.sx }} />
+    <Chip {...props} size="small" sx={{ cursor: 'inherit', ...props.sx }} />
   )
 
   return (
-    <Stack spacing={0.5}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
       {value.length ? (
         value.map((value) => <StyledChip key={value} label={value} />)
       ) : (
@@ -30,6 +30,6 @@ export default function TagChips({ value, multiple }: Props) {
           sx={{ fontStyle: 'italic' }}
         />
       )}
-    </Stack>
+    </Box>
   )
 }

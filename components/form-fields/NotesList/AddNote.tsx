@@ -1,11 +1,12 @@
 import CheckIcon from '@mui/icons-material/Check'
 import ClearIcon from '@mui/icons-material/Clear'
-import OutlinedInput from '@mui/material/OutlinedInput'
+import Card from '@mui/material/Card'
+import Input from '@mui/material/Input'
+import { useColorScheme } from '@mui/material/styles'
 import { useRef, useState } from 'react'
-import TransitionIconButton from '../../../components/TransitionIconButton'
 import { createNote, type Note } from '../../../models/Note'
 import useField from '../useField'
-import TagSelect from './TagSelect'
+import NoteHeader from './NoteHeader'
 
 interface Props {
   placeholder?: string
@@ -26,6 +27,7 @@ export default function AddNote({
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(undefined)
   const [tags, setTags] = useState<Note['tags']>(initialTags)
+  const { mode } = useColorScheme()
   const handleSubmit = (value: string) => {
     handleAdd(createNote(value.trim(), tags))
     onReset()
@@ -43,39 +45,46 @@ export default function AddNote({
   })
 
   return (
-    <OutlinedInput
-      {...control()}
-      multiline
-      size="small"
-      fullWidth
-      placeholder={placeholder}
-      disabled={disabled}
-      inputRef={inputRef}
-      startAdornment={
-        <TagSelect
-          handleUpdate={setTags}
-          {...{ selectedTags: tags, options, multiple }}
-        />
-      }
-      endAdornment={
-        <>
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={() => submit()}
-            tooltip="Confirm"
-          >
-            <CheckIcon />
-          </TransitionIconButton>
-          <TransitionIconButton
-            isVisible={!isEmpty}
-            onClick={onReset}
-            tooltip="Clear"
-          >
-            <ClearIcon />
-          </TransitionIconButton>
-        </>
-      }
-      sx={{ my: 1 }}
-    />
+    <Card
+      variant={mode === 'dark' ? 'elevation' : 'outlined'}
+      sx={{ mt: 1, p: 1 }}
+    >
+      <NoteHeader
+        tagSelectProps={{
+          handleUpdate: setTags,
+          selectedTags: tags,
+          options,
+          multiple,
+        }}
+        hideActions={isEmpty}
+        actions={[
+          {
+            label: 'Confirm',
+            Icon: <CheckIcon />,
+            // have to explicitly submit with no arg
+            onClick: () => submit(),
+          },
+          {
+            label: 'Clear',
+            Icon: <ClearIcon />,
+            onClick: () => {
+              onReset()
+              setTags(initialTags)
+            },
+          },
+        ]}
+      />
+      <Input
+        {...control()}
+        multiline
+        size="small"
+        fullWidth
+        disableUnderline
+        placeholder={placeholder}
+        disabled={disabled}
+        inputRef={inputRef}
+        sx={{ px: 1 }}
+      />
+    </Card>
   )
 }

@@ -1,7 +1,7 @@
 import Stack from '@mui/material/Stack'
 import type { Metadata } from 'next'
-import SavingIndicatorSwitch from '../../components/SavingIndicatorSwitch'
-import SessionRedirectSwitch from '../../components/SessionRedirectSwitch'
+import SavingIndicatorSwitch from './SavingIndicatorSwitch'
+import SessionRedirectSwitch from './SessionRedirectSwitch'
 
 export const metadata: Metadata = {
   title: 'Settings - Iron Log',

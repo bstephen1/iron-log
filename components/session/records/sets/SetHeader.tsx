@@ -20,6 +20,20 @@ import {
 import { useExerciseUpdate } from '../useRecordUpdate'
 import { delimiterWidth } from './RenderSetField'
 
+const PaddingBox = ({ showArrow }: { showArrow?: boolean }) =>
+  showArrow ? (
+    <Box
+      minWidth="40px" // match delete button width plus padding
+      display="flex"
+      alignItems="center"
+      justifyContent="right"
+    >
+      <ArrowDropDownIcon />
+    </Box>
+  ) : (
+    <Box minWidth={delimiterWidth} />
+  )
+
 type Props = {
   exerciseId?: string
   displayFields: DisplayFields
@@ -106,7 +120,6 @@ export default function SetHeader({
             alignItems="center"
             sx={{
               role: 'button',
-              pl: '24px', // line up with set row padding
             }}
           >
             {!selectedNames.length ? (
@@ -135,14 +148,7 @@ export default function SetHeader({
                   )
                 })
             )}
-            <Box
-              minWidth="40px"
-              display="flex"
-              alignItems="center"
-              justifyContent="right"
-            >
-              <ArrowDropDownIcon />
-            </Box>
+            <PaddingBox showArrow={!selectProps.readOnly} />
           </Stack>
         )}
         {...selectProps}
