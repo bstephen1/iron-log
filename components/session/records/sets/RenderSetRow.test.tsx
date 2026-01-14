@@ -1,5 +1,10 @@
 import { expect, it, vi } from 'vitest'
-import { fetchRecords, updateSet } from '../../../../lib/backend/mongoService'
+import {
+  deleteSet,
+  fetchRecords,
+  updateSet,
+} from '../../../../lib/backend/mongoService'
+import { useRecords } from '../../../../lib/frontend/data/useQuery'
 import { createTestRecord, testDate } from '../../../../lib/test/data'
 import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
@@ -55,4 +60,31 @@ it('renders readonly set', async () => {
   // no delete button
   expect(await screen.findByDisplayValue('1')).toBeVisible()
   expect(screen.queryByLabelText(/delete/i)).not.toBeInTheDocument()
+})
+
+it('deletes set', async () => {
+  const record = createTestRecord({ sets: [{}, {}] })
+  const record2 = createTestRecord()
+  vi.mocked(fetchRecords).mockResolvedValue([record, record2])
+  // this component has no way to visibly wait for the data, so need a wrapper
+  const LoadedButton = () => {
+    const { isLoading } = useRecords({ date: testDate })
+
+    return isLoading ? (
+      <div>loading</div>
+    ) : (
+      <RenderSetRow
+        displayFields={DEFAULT_DISPLAY_FIELDS}
+        _id={record._id}
+        index={1}
+        date={testDate}
+      />
+    )
+  }
+
+  const { user } = render(<LoadedButton />)
+
+  await user.click(await screen.findByRole('button'))
+
+  expect(deleteSet).toHaveBeenCalledWith(record._id, 1)
 })

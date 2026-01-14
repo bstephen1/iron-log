@@ -29,7 +29,7 @@ export default function SessionRedirectSwitch() {
         label="Session redirect"
       />
       <Typography variant="body2">
-        Redirects to today's session when when navigating to the{' '}
+        Redirect to today's session when when navigating to the{' '}
         <Link
           href="/sessions"
           style={{

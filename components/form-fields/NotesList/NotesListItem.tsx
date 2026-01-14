@@ -52,10 +52,11 @@ export default function NotesListItem(props: Props) {
     reset()
     handleDelete(index)
   }
+  const deleteSelf = () => onDelete(index)
 
   return (
     <Box sx={{ mt: 2 }}>
-      <SwipeToDelete onDelete={() => onDelete(index)} disabled={isDesktop}>
+      <SwipeToDelete onDelete={deleteSelf} disabled={readOnly || isDesktop}>
         <Paper
           variant={mode === 'dark' ? 'elevation' : 'outlined'}
           sx={{ p: 1 }}
@@ -73,8 +74,8 @@ export default function NotesListItem(props: Props) {
               {
                 label: 'Delete',
                 Icon: <ClearIcon />,
-                onClick: () => onDelete(index),
-                isHidden: !isDesktop,
+                onClick: deleteSelf,
+                isHidden: readOnly || !isDesktop,
               },
             ]}
           />

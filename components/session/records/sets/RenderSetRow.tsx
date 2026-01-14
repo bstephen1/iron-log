@@ -18,6 +18,7 @@ import RenderSetField from './RenderSetField'
 
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
+const childHeight = 41 // deleteButtonHeight + pyStack
 
 /* v8 ignore next */
 const getBackground = (side: Set['side']) => {
@@ -75,7 +76,11 @@ export default function RenderSetRow({
   )
 
   return (
-    <SwipeToDelete onDelete={deleteSet} disabled={isDesktop}>
+    <SwipeToDelete
+      onDelete={deleteSet}
+      childHeight={childHeight}
+      disabled={readOnly || isDesktop}
+    >
       <Stack
         direction="row"
         alignItems="center"

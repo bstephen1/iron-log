@@ -34,6 +34,7 @@ export default function SwipeToDelete({
       initialSlide={1}
       onSlideChange={({ activeIndex }) => {
         if (activeIndex !== 1) {
+          /* v8 ignore next -- cannot swipe in simulated dom */
           onDelete()
         }
       }}

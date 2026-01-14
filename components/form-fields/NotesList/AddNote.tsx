@@ -31,7 +31,6 @@ export default function AddNote({
   const handleSubmit = (value: string) => {
     handleAdd(createNote(value.trim(), tags))
     onReset()
-    setTags(initialTags)
   }
   const onReset = () => {
     // we only reset the input; tags are left as-is
@@ -72,7 +71,7 @@ export default function AddNote({
               onReset()
               setTags(initialTags)
             },
-            isHidden: isEmpty && !tags.length,
+            isHidden: isEmpty,
           },
         ]}
       />

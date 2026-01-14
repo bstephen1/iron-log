@@ -25,8 +25,8 @@ export default function SavingIndicatorSwitch() {
         label="Show saving indicator"
       />
       <Typography variant="body2">
-        Shows a saving indicator on the screen when data is being saved to the
-        database
+        Show a saving indicator on the screen when data is being saved to the
+        database.
       </Typography>
     </FormGroup>
   )
