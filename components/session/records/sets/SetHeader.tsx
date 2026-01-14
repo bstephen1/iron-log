@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Select, { type SelectProps } from '@mui/material/Select'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import useDesktopCheck from '../../../../lib/frontend/useDesktopCheck'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import {
   type DisplayFields,
@@ -19,6 +20,20 @@ import {
 } from '../../../../models/DisplayFields'
 import { useExerciseUpdate } from '../useRecordUpdate'
 import { delimiterWidth } from './RenderSetField'
+
+const PaddingBox = ({ showArrow }: { showArrow?: boolean }) =>
+  showArrow ? (
+    <Box
+      minWidth="40px" // match delete button width plus padding
+      display="flex"
+      alignItems="center"
+      justifyContent="right"
+    >
+      <ArrowDropDownIcon />
+    </Box>
+  ) : (
+    <Box minWidth={delimiterWidth} />
+  )
 
 type Props = {
   exerciseId?: string
@@ -34,6 +49,7 @@ export default function SetHeader({
   ...selectProps
 }: Props) {
   const noSwipingDesktop = useNoSwipingDesktop()
+  const isDesktop = useDesktopCheck()
   const updateExercise = useExerciseUpdate(exerciseId)
   // Note that other records may need to update when the current record updates.
   // Eg, multiple RecordCards with the same exercise, or history cards.
@@ -106,7 +122,6 @@ export default function SetHeader({
             alignItems="center"
             sx={{
               role: 'button',
-              pl: '24px', // line up with set row padding
             }}
           >
             {!selectedNames.length ? (
@@ -135,14 +150,7 @@ export default function SetHeader({
                   )
                 })
             )}
-            <Box
-              minWidth="40px"
-              display="flex"
-              alignItems="center"
-              justifyContent="right"
-            >
-              <ArrowDropDownIcon />
-            </Box>
+            <PaddingBox showArrow={!selectProps.readOnly && isDesktop} />
           </Stack>
         )}
         {...selectProps}

@@ -14,7 +14,7 @@ import type { Record } from '../../../../models/Record'
 import type { Set } from '../../../../models/Set'
 import SwipeToDelete from '../../../SwipeToDelete'
 import DeleteSetButton from './DeleteSetButton'
-import RenderSetField from './RenderSetField'
+import RenderSetField, { delimiterWidth } from './RenderSetField'
 
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
@@ -67,6 +67,7 @@ export default function RenderSetRow({
   const replaceSet = useSetReplace(_id, date, index)
   const deleteSet = useSetDelete(_id, index)
   const isDesktop = useDesktopCheck()
+  const hideDeleteButton = readOnly || !isDesktop
 
   const handleSetChange: PartialUpdate<Set> = useCallback(
     async (changes) => {
@@ -93,7 +94,6 @@ export default function RenderSetRow({
             background: getBackground(set.side),
             py: pyStack,
             height: deleteButtonHeight,
-            pl: '24px', // match delete button
           },
           (theme) =>
             theme.applyStyles('dark', {
@@ -118,9 +118,8 @@ export default function RenderSetRow({
             }}
           />
         ))}
-        {readOnly || !isDesktop ? (
-          // insert a box for padding when clear icon is hidden
-          <Box minWidth={deleteButtonHeight} />
+        {hideDeleteButton ? (
+          <Box minWidth={delimiterWidth} />
         ) : (
           <DeleteSetButton
             index={index}
