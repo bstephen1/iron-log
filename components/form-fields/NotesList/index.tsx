@@ -1,6 +1,6 @@
 import Collapse from '@mui/material/Collapse'
 import Typography from '@mui/material/Typography'
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 import isEqual from 'react-fast-compare'
 import { TransitionGroup } from 'react-transition-group'
 import type { Note } from '../../../models/Note'
@@ -35,8 +35,6 @@ export default memo(function NotesList({
   multiple,
   readOnly,
 }: Props) {
-  const [isFirstRender, setIsFirstRender] = useState(true)
-
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
   const handleAdd = (newNote: Note) => handleSubmit?.([newNote, ...notes])
@@ -51,12 +49,6 @@ export default memo(function NotesList({
         .concat(notes.slice(i + 1))
     )
   }
-
-  // on manage exercise page the initial server render doesn't have swiper loaded
-  // so it looks terrible. This hides the swiper component on first render.
-  useEffect(() => {
-    setIsFirstRender(false)
-  }, [])
 
   return (
     <>
@@ -80,7 +72,7 @@ export default memo(function NotesList({
                 note,
                 index,
                 multiple,
-                readOnly: readOnly || isFirstRender,
+                readOnly: readOnly,
               }}
             />
           </Collapse>

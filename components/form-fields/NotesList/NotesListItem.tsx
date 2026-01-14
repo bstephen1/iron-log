@@ -1,3 +1,4 @@
+import ClearIcon from '@mui/icons-material/Clear'
 import Box from '@mui/material/Box'
 import Input from '@mui/material/Input'
 import Paper from '@mui/material/Paper'
@@ -6,8 +7,6 @@ import { useRef } from 'react'
 import type { Note } from '../../../models/Note'
 import useField from '../useField'
 import NoteHeader from './NoteHeader'
-import 'swiper/css'
-import ClearIcon from '@mui/icons-material/Clear'
 
 interface Props {
   note: Note
@@ -49,7 +48,6 @@ export default function NotesListItem(props: Props) {
     reset()
     handleDelete(index)
   }
-  const deleteSelf = () => onDelete(index)
 
   return (
     <Box sx={{ mt: 2 }}>
@@ -63,12 +61,12 @@ export default function NotesListItem(props: Props) {
             multiple,
             readOnly,
           }}
+          hideActions={readOnly}
           actions={[
             {
               label: 'Delete',
               Icon: <ClearIcon />,
-              onClick: deleteSelf,
-              isHidden: readOnly,
+              onClick: () => onDelete(index),
             },
           ]}
         />

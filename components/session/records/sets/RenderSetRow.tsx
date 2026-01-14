@@ -111,7 +111,7 @@ export default function RenderSetRow({
       {readOnly ? (
         <Box minWidth={delimiterWidth} />
       ) : (
-        <DeleteSetButton _id={_id} index={index} sx={{ my: -pyStack }} />
+        <DeleteSetButton index={index} _id={_id} sx={{ my: -pyStack }} />
       )}
     </Stack>
   )

@@ -56,13 +56,13 @@ export default function AddNote({
           options,
           multiple,
         }}
+        hideActions={isEmpty}
         actions={[
           {
             label: 'Confirm',
             Icon: <CheckIcon />,
             // have to explicitly submit with no arg
             onClick: () => submit(),
-            isHidden: isEmpty,
           },
           {
             label: 'Clear',
@@ -71,7 +71,6 @@ export default function AddNote({
               onReset()
               setTags(initialTags)
             },
-            isHidden: isEmpty,
           },
         ]}
       />

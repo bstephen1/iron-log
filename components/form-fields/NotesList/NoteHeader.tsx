@@ -6,24 +6,28 @@ import TagSelect from './TagSelect'
 
 interface Props {
   tagSelectProps: ComponentProps<typeof TagSelect>
+  hideActions?: boolean
   actions?: {
     label: string
     Icon: JSX.Element
     onClick: () => void
-    isHidden?: boolean
   }[]
 }
-export default function NoteHeader({ tagSelectProps, actions }: Props) {
+export default function NoteHeader({
+  tagSelectProps,
+  hideActions,
+  actions,
+}: Props) {
   return (
     <Stack direction="row" sx={{ pl: 0.5 }}>
       <TagSelect {...tagSelectProps} />
       <Box flex="1 1 auto" />
       <Stack direction="row">
-        {actions?.map(({ label, Icon, onClick, isHidden }) => (
+        {actions?.map(({ label, Icon, onClick }) => (
           // div wrappers allow icons to keep a square shape if tags become multiline
           <div key={label}>
             <TransitionIconButton
-              isVisible={!isHidden}
+              isVisible={!hideActions}
               onClick={onClick}
               tooltip={label}
               size="small"
