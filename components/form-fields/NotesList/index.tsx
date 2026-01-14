@@ -1,6 +1,6 @@
 import Collapse from '@mui/material/Collapse'
 import Typography from '@mui/material/Typography'
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
 import isEqual from 'react-fast-compare'
 import { TransitionGroup } from 'react-transition-group'
 import type { Note } from '../../../models/Note'
@@ -24,18 +24,18 @@ interface Props {
 /** This component is setup for memoization. For memoization to work any functions passed in
  *  must be wrapped in useCallback(). Eg, handleSubmit().
  */
-export default memo(function NotesList(props: Props) {
-  const {
-    label,
-    notes,
-    options = [],
-    addItemPlaceholder,
-    listItemPlaceholder,
-    initialTags,
-    handleSubmit,
-    multiple,
-    readOnly,
-  } = props
+export default memo(function NotesList({
+  label,
+  notes,
+  options = [],
+  addItemPlaceholder,
+  listItemPlaceholder,
+  initialTags,
+  handleSubmit,
+  multiple,
+  readOnly,
+}: Props) {
+  const [isFirstRender, setIsFirstRender] = useState(true)
 
   // we need to save these as functions in the parent component
   // or the list won't be able to properly rerender on change
@@ -51,6 +51,12 @@ export default memo(function NotesList(props: Props) {
         .concat(notes.slice(i + 1))
     )
   }
+
+  // on manage exercise page the initial server render doesn't have swiper loaded
+  // so it looks terrible. This hides the swiper component on first render.
+  useEffect(() => {
+    setIsFirstRender(false)
+  }, [])
 
   return (
     <>
@@ -74,7 +80,7 @@ export default memo(function NotesList(props: Props) {
                 note,
                 index,
                 multiple,
-                readOnly,
+                readOnly: readOnly || isFirstRender,
               }}
             />
           </Collapse>
