@@ -53,7 +53,6 @@ export default memo(function NotesList({
   return (
     <>
       {label && <FormDivider title={label} />}
-      {/* todo: drag n drop? */}
       {!readOnly && (
         <AddNote
           placeholder={addItemPlaceholder}
