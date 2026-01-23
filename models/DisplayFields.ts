@@ -31,7 +31,6 @@ export interface DisplayFields {
   units: Units
 }
 
-// todo: dnd this? user pref? per exercise?
 export const ORDERED_DISPLAY_FIELDS: readonly VisibleField[] = [
   { name: 'side', source: 'side', enabled: { unilateral: true } },
   { name: 'weight', source: 'weight', enabled: { splitWeight: false } },

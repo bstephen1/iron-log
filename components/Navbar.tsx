@@ -12,15 +12,30 @@ import NavbarDrawer from './NavbarDrawer'
 
 export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true)
+  const [lowPoint, setLowPoint] = useState(100)
+  const [highPoint, setHighPoint] = useState(0)
 
   // mui has a "useScrollTrigger" hook that it recommends using for this situation,
   // but it's very functionally limited and can't be modified much.
   useEffect(() => {
-    // This is a simple static Y value. May want to expand it such that
-    // when scrolling down y1 relative pixels it hides, and when scrolling up y2
-    // relative pixels it unhides.
     const handleScroll = () => {
-      setIsVisible(window.scrollY < 200)
+      const height = window.scrollY
+
+      if (isVisible) {
+        if (height - highPoint > 30) {
+          setIsVisible(false)
+          setLowPoint(height)
+        } else if (height < highPoint) {
+          setHighPoint(height)
+        }
+      } else {
+        if (lowPoint - height > 50) {
+          setIsVisible(true)
+          setHighPoint(height)
+        } else if (height > lowPoint) {
+          setLowPoint(height)
+        }
+      }
     }
 
     // adding "passive" is supposed to increase performance for scrolling. See:
@@ -30,7 +45,7 @@ export default function Navbar() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [lowPoint, highPoint, isVisible])
 
   return (
     <Slide appear={false} direction="down" in={isVisible}>
