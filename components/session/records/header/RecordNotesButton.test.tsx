@@ -119,3 +119,20 @@ it('can delete last note', async () => {
     notes: [],
   })
 })
+
+it('handles swapping tags between session and record', async () => {
+  const note = createNote('note', ['Record'])
+  const { user } = render(<TestWrapper notes={[note]} />)
+
+  await user.click(screen.getByRole('button'))
+  await user.click(screen.getAllByText('Record')[1])
+  await user.click(screen.getByText('Session'))
+
+  expect(updateRecordFields).toHaveBeenCalledWith(record._id, {
+    notes: [],
+  })
+  expect(upsertSessionLog).toHaveBeenCalledWith({
+    ...sessionLog,
+    notes: [{ ...note, tags: ['Session'] }],
+  })
+})
