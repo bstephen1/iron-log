@@ -84,7 +84,7 @@ export default function NotesListItem(props: Props) {
           readOnly={readOnly}
           inputRef={inputRef}
           slotProps={{
-            input: { 'aria-label': `note ${index + 1}` },
+            input: { 'aria-label': `Note ${index + 1} content` },
           }}
           sx={{ px: 1 }}
         />

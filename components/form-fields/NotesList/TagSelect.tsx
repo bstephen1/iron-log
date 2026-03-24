@@ -48,6 +48,7 @@ export default function TagSelect({
       slotProps={{
         input: { sx: { pr: '0px !important' } },
       }}
+      aria-label={'Note tags'}
       {...selectProps}
     >
       {options.map((option) => (

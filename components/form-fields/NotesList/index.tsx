@@ -61,7 +61,7 @@ export default memo(function NotesList({
       )}
       <TransitionGroup>
         {notes.map((note, index) => (
-          <Collapse key={note._id}>
+          <Collapse key={note._id} aria-label={`Note ${index + 1}`}>
             <NotesListItem
               placeholder={listItemPlaceholder}
               {...{

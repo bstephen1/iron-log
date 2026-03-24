@@ -86,12 +86,8 @@ export default function RecordNotesButton({ notes = [], _id, date }: Props) {
       }
     }
 
-    if (recordNotes.length) {
-      updateRecord({ notes: recordNotes })
-    }
-    if (sessionNotes.length) {
-      replaceSessionLogMutate({ ...sessionLog, notes: sessionNotes })
-    }
+    updateRecord({ notes: recordNotes })
+    replaceSessionLogMutate({ ...sessionLog, notes: sessionNotes })
   }
 
   return (

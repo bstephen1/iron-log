@@ -1,20 +1,26 @@
 import Alert, { type AlertColor } from '@mui/material/Alert'
 import Snackbar from '@mui/material/Snackbar'
 import { type CustomContentProps, closeSnackbar } from 'notistack'
-import { forwardRef } from 'react'
+import type { Ref } from 'react'
 
 export type AppSnackbarProps = {
   /** renders an alert of the given severity */
   severity?: AlertColor
   /** NOTE: AppSnackbar ignores this prop */
   action?: null
+  /** Required by notistack. Does not need to manually be passed in. */
+  ref?: Ref<HTMLDivElement>
 }
-const AppSnackbar = forwardRef<
-  HTMLDivElement,
-  AppSnackbarProps & CustomContentProps
->(function AppSnackbar(props, ref) {
-  const { message, severity, autoHideDuration, id, persist } = props
 
+export default function AppSnackbar({
+  message,
+  severity,
+  autoHideDuration,
+  id,
+  persist,
+  ref,
+}: AppSnackbarProps & CustomContentProps) {
+  console.log(ref)
   // signals to the notistack wrapper to close the snackbar
   const handleClose = () => closeSnackbar(id)
 
@@ -51,6 +57,4 @@ const AppSnackbar = forwardRef<
       ) : undefined}
     </Snackbar>
   )
-})
-
-export default AppSnackbar
+}
