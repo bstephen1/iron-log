@@ -21,6 +21,9 @@ export default defineConfig({
     coverage: {
       // enable coverage
       enabled: true,
+      thresholds: {
+        100: true,
+      },
       // json reporters are needed for github action summary report
       reporter: ['text-summary', 'html', 'json-summary', 'json'],
       include: ['components', 'lib', 'app', 'models'],

@@ -1,14 +1,12 @@
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
-import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 export default function HistoryTitle() {
-  const theme = useTheme()
   // nav arrows add height to pagination box
   /* v8 ignore next */
-  const py = useMediaQuery(theme.breakpoints.down('sm')) ? 2 : 0
+  const py = useMediaQuery((theme) => theme.breakpoints.down('sm')) ? 2 : 0
 
   return (
     <Box
@@ -23,7 +21,7 @@ export default function HistoryTitle() {
           fontSize: 12,
           width: '80%',
           '&::before, &::after': {
-            borderColor: theme.palette.primary.light,
+            borderColor: (theme) => theme.palette.primary.light,
           },
         }}
       >
