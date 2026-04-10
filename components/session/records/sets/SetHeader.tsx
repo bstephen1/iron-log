@@ -65,7 +65,7 @@ export default function SetHeader({
     // According to MUI docs: "On autofill we get a stringified value",
     // which is the array stringified into a comma separated string.
     // Reassigning the value isn't updating the type so have to assign to a new var
-    /* v8 ignore next */
+    /* v8 ignore next @preserve */
     const newSelectedNames =
       typeof rawSelectedNames === 'string'
         ? rawSelectedNames.split(',')
@@ -77,16 +77,12 @@ export default function SetHeader({
       newSelectedNames.some((name) => name === optionField.name)
     )
 
-    // Make sure we aren't submitting if there aren't actually any changes.
-    // Should only need to check the length because if there is a change the length must change.
-    if (newVisibleFields.length !== selectedNames.length) {
-      updateExercise({
-        displayFields: {
-          ...displayFields,
-          visibleFields: newVisibleFields,
-        },
-      })
-    }
+    updateExercise({
+      displayFields: {
+        ...displayFields,
+        visibleFields: newVisibleFields,
+      },
+    })
   }
 
   return (

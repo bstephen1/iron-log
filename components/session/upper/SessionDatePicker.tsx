@@ -36,7 +36,7 @@ const buildSessionLogQuery = (
     .format(DATE_FORMAT),
 })
 
-/* v8 ignore next */
+/* v8 ignore next @preserve */
 const LoadingSkeleton = () => <DayCalendarSkeleton />
 
 interface Props {
@@ -101,7 +101,7 @@ function SessionDatePickerInner({
       slotProps={{
         popper: {
           // prevent swiper from swiping when selecting dates with arrow keys
-          /* v8 ignore next */
+          /* v8 ignore next @preserve */
           onKeyDown: (e) => e.key.match(/Arrow/) && e.stopPropagation(),
         },
 

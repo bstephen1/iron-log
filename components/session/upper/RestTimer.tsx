@@ -86,7 +86,7 @@ export default function RestTimer() {
     if (!intervalTimer || intervalRemaining > 0) return
 
     setIntervalTimer((prev) => {
-      /* v8 ignore next -- prev cannot be undefined */
+      /* v8 ignore next @preserve  prev cannot be undefined */
       if (!prev) return prev
       const modeStart = dayjs().valueOf()
 

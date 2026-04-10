@@ -17,7 +17,7 @@ import RenderSetField, { delimiterWidth } from './RenderSetField'
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
 
-/* v8 ignore next */
+/* v8 ignore next @preserve */
 const getBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
@@ -29,7 +29,7 @@ const getBackground = (side: Set['side']) => {
   }
 }
 
-/* v8 ignore next */
+/* v8 ignore next @preserve */
 const getDarkBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':

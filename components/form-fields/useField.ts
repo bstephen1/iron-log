@@ -96,12 +96,7 @@ export default function useField<T = string>({
   }
 
   const submit = (newValue = value) => {
-    /* v8 ignore next */
-    if (!handleSubmit) return
-
-    if (validate(newValue)) {
-      handleSubmit(newValue)
-    }
+    validate(newValue) && handleSubmit?.(newValue)
   }
 
   const reset = (value = initialValue) => {
