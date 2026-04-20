@@ -1,10 +1,8 @@
 'use client'
 import Stack from '@mui/material/Stack'
 import { useTheme } from '@mui/material/styles'
-import { Suspense, useEffect, useRef, useState } from 'react'
-import 'swiper/css'
-import 'swiper/css/pagination'
 import { useSearchParams } from 'next/navigation'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Keyboard, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, type SwiperRef, SwiperSlide } from 'swiper/react'
 import { noSwipingRecord } from '../../lib/frontend/constants'
@@ -15,6 +13,7 @@ import NavigationBar from '../swiper/NavigationBar'
 import AddRecordCard from './AddRecordCard'
 import CopySessionCard from './CopySessionCard'
 import RecordCard from './records/RecordCard'
+import '../../styles/swiper.css'
 
 interface Props {
   date: string

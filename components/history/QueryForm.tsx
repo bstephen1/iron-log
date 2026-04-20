@@ -70,7 +70,14 @@ export default function QueryForm({ query, updateQuery }: Props) {
         query={unsavedQuery}
         updateQuery={updateUnsavedQuery}
       />
-      <Stack direction="row" spacing={2} display="flex" justifyContent="center">
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
         <Button
           variant="outlined"
           disabled={isEqual(unsavedQuery, query)}

@@ -23,7 +23,13 @@ export default async function HomePage() {
 
   return (
     <>
-      <Stack justifyContent="center" alignItems="center" spacing={1}>
+      <Stack
+        spacing={1}
+        sx={{
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <Typography variant="h6" sx={{ pb: 3 }}>
           Welcome
         </Typography>
@@ -44,8 +50,13 @@ export default async function HomePage() {
         )}
       </Stack>
       <Typography
-        textAlign="center"
-        sx={{ width: '100%', position: 'absolute', bottom: 25, left: 0 }}
+        sx={{
+          textAlign: 'center',
+          width: '100%',
+          position: 'absolute',
+          bottom: 25,
+          left: 0,
+        }}
       >
         Need help? Check out the{' '}
         <MuiLink href={userGuideLink}>user guide</MuiLink>

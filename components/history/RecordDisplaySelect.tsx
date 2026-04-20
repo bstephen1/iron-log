@@ -58,7 +58,14 @@ export default function RecordDisplaySelect({
     >
       {/* allows menuValue to not be out of range */}
       <MenuItem value={menuValue} sx={{ display: 'none' }} />
-      <Stack px={2} pt={1} direction="row" spacing={2}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          px: 2,
+          pt: 1,
+        }}
+      >
         <RenderOptions
           field="grouping"
           value={grouping}

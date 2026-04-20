@@ -23,15 +23,21 @@ import { delimiterWidth } from './RenderSetField'
 const PaddingBox = ({ showArrow }: { showArrow?: boolean }) =>
   showArrow ? (
     <Box
-      minWidth="40px" // match delete button width plus padding
-      display="flex"
-      alignItems="center"
-      justifyContent="right"
+      sx={{
+        minWidth: '40px', // match delete button width plus padding
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'right',
+      }}
     >
       <ArrowDropDownIcon />
     </Box>
   ) : (
-    <Box minWidth={delimiterWidth} />
+    <Box
+      sx={{
+        minWidth: delimiterWidth,
+      }}
+    />
   )
 
 type Props = {
@@ -113,8 +119,8 @@ export default function SetHeader({
         renderValue={() => (
           <Stack
             direction="row"
-            alignItems="center"
             sx={{
+              alignItems: 'center',
               role: 'button',
             }}
           >
@@ -131,12 +137,14 @@ export default function SetHeader({
                   return (
                     <Box
                       key={field.name}
-                      display="flex"
-                      flexGrow="1"
-                      // flexBasis makes it so flexGrow is based on the full element width, not just the extra space
-                      flexBasis="0"
-                      justifyContent="center"
-                      pl={delimiterWidth}
+                      sx={{
+                        display: 'flex',
+                        flexGrow: '1',
+                        // flexBasis makes it so flexGrow is based on the full element width, not just the extra space
+                        flexBasis: '0',
+                        justifyContent: 'center',
+                        pl: delimiterWidth,
+                      }}
                     >
                       {field.unitPrefix ?? ''}
                       {displayFields.units[field.source]}

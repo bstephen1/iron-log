@@ -55,7 +55,11 @@ export default function Navbar() {
           <Typography variant="h5">
             <Link href={'/'}>Iron Log</Link>
           </Typography>
-          <Box flex={1} />
+          <Box
+            sx={{
+              flex: 1,
+            }}
+          />
           <Stack direction="row" spacing={1}>
             <DarkModeButton />
             <LogoutButton />

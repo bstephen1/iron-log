@@ -28,7 +28,12 @@ export default function AddRecordCard() {
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
-      <Stack spacing={2} alignItems="center">
+      <Stack
+        spacing={2}
+        sx={{
+          alignItems: 'center',
+        }}
+      >
         <ExerciseSelector
           variant="standard"
           {...{

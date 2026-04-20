@@ -1,0 +1,3 @@
+/* swiper imports now throw an error in tsx files so we have to import from a css file */
+@import "swiper/css/pagination";
+@import "swiper/css";

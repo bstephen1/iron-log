@@ -97,18 +97,19 @@ export default function AsyncAutocomplete<
           variant={variant}
           disabled={!hydrated}
           slotProps={{
+            ...params.slotProps,
             input: {
-              ...params.InputProps,
+              ...params.slotProps.input,
               startAdornment: (
                 <>
                   {startAdornment}
-                  {params.InputProps.startAdornment}
+                  {params.slotProps.input.startAdornment}
                 </>
               ),
               endAdornment: (
                 <>
                   {loading && <CircularProgress color="inherit" size={20} />}
-                  {params.InputProps.endAdornment}
+                  {params.slotProps.input.endAdornment}
                 </>
               ),
             },

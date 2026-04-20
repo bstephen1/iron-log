@@ -148,10 +148,20 @@ export default function RestTimer() {
   )
 
   return (
-    <Stack justifyContent="center">
+    <Stack
+      sx={{
+        justifyContent: 'center',
+      }}
+    >
       {!enabled ? (
         // extra box so button isn't full width
-        <Box display="flex" justifyContent="center" pb={2}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            pb: 2,
+          }}
+        >
           <Button onClick={() => dispatch({ type: 'start' })}>
             Start rest timer
           </Button>
@@ -165,23 +175,32 @@ export default function RestTimer() {
           />
           <Grow in={!isFinished}>
             <Typography
-              textAlign="center"
-              display={isFinished ? 'none' : 'block'}
+              sx={{
+                textAlign: 'center',
+                display: isFinished ? 'none' : 'block',
+              }}
             >
               {intervalTimer ? capitalize(intervalTimer.mode) : 'Rest time'}
             </Typography>
           </Grow>
           <Grow in={isFinished}>
             <Typography
-              textAlign="center"
-              display={isFinished ? 'block' : 'none'}
+              sx={{
+                textAlign: 'center',
+                display: isFinished ? 'block' : 'none',
+              }}
             >
               Total session time
             </Typography>
           </Grow>
 
           <Grow in={enabled}>
-            <Typography variant="h3" textAlign="center">
+            <Typography
+              variant="h3"
+              sx={{
+                textAlign: 'center',
+              }}
+            >
               {intervalTimer
                 ? formatSecTime(intervalRemaining, true)
                 : formatMsTime(displayValue)}
@@ -189,9 +208,11 @@ export default function RestTimer() {
           </Grow>
           <Stack
             direction="row"
-            justifyContent="center"
             spacing={2}
-            sx={{ pb: 2 }}
+            sx={{
+              justifyContent: 'center',
+              pb: 2,
+            }}
           >
             {!intervalTimer ? (
               <>

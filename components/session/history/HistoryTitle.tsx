@@ -10,11 +10,13 @@ export default function HistoryTitle() {
 
   return (
     <Box
-      width="100%"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      py={py}
+      sx={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        py,
+      }}
     >
       <Divider
         sx={{

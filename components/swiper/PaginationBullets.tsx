@@ -21,10 +21,12 @@ export default function PaginationBullets({
   return (
     <Box
       className={className}
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
       sx={[
+        {
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
         {
           '--swiper-pagination-bullet-size': `${
             isDesktop ? desktopSize : mobileSize

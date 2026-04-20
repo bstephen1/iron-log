@@ -47,12 +47,14 @@ export default function RenderSetField<S extends keyof Units>(props: Props<S>) {
       }}
     >
       <Box
-        minWidth={delimiterWidth}
-        sx={{ display: 'flex', justifyContent: 'center' }}
+        sx={{
+          minWidth: delimiterWidth,
+          display: 'flex',
+          justifyContent: 'center',
+        }}
       >
         {index > 0 ? (delimiter ?? '/') : ''}
       </Box>
-
       <SetFieldComponent {...{ ...props, componentType }} />
     </Stack>
   )

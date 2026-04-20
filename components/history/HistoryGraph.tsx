@@ -329,7 +329,12 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
           updateRecordDisplay,
         }}
       />
-      <Box ref={graphContainerRef} width="100%">
+      <Box
+        ref={graphContainerRef}
+        sx={{
+          width: '100%',
+        }}
+      >
         <LineChart
           margin={{
             top: 20,
@@ -413,7 +418,7 @@ export default function HistoryGraph({ query, swipeToRecord }: Props) {
               convertUnixToDate(value, recordDisplay.grouping)
             }
             formatter={(value, name) =>
-              `${value.toString()} ${
+              `${value?.toString()} ${
                 DEFAULT_DISPLAY_FIELDS.units[
                   name === 'bodyweight' ? 'weight' : recordDisplay.field
                 ]

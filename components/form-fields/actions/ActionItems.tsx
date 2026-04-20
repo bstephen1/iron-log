@@ -78,11 +78,21 @@ function ActionItem({ button, description }: ActionItemProps) {
         my: 2,
       }}
     >
-      <Typography display="flex" alignItems="center">
+      <Typography
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
         {description}
       </Typography>
       {/* weirdly, this only needs display flex to become centered */}
-      <Box px={2} display="flex">
+      <Box
+        sx={{
+          px: 2,
+          display: 'flex',
+        }}
+      >
         {button}
       </Box>
     </Paper>

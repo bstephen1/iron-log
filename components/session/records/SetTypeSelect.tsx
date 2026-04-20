@@ -120,7 +120,14 @@ export default function SetTypeSelect({
     >
       {/* allows menuValue to not be out of range */}
       <MenuItem value={menuValue} sx={{ display: 'none' }} />
-      <Stack px={2} pt={1} direction="row" spacing={2}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          px: 2,
+          pt: 1,
+        }}
+      >
         <FormControl>
           <FormLabel id={`set-type-operator-radio-label`}>Operator</FormLabel>
           <RadioGroup

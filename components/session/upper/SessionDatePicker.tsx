@@ -115,8 +115,13 @@ function SessionDatePickerInner({
           slotProps: {
             input: {
               endAdornment: (
-                // -12px is the margin for the default icon
-                <Stack direction="row" mr="-12px">
+                <Stack
+                  direction="row"
+                  sx={{
+                    // -12px is the margin for the default icon
+                    mr: '-12px',
+                  }}
+                >
                   {isChangingDay ? (
                     <InputAdornment
                       position="end"

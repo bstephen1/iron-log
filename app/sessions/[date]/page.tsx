@@ -1,12 +1,10 @@
 import Grid from '@mui/material/Grid'
 import Stack from '@mui/material/Stack'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import 'swiper/css'
-import 'swiper/css/pagination'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import SessionSwiper from '../../../components/session/SessionSwiper'
 import RestTimer from '../../../components/session/upper/RestTimer'
 import TitleBar from '../../../components/session/upper/TitleBar'
@@ -17,6 +15,7 @@ import {
 } from '../../../lib/backend/mongoService'
 import { DATE_FORMAT, QUERY_KEYS } from '../../../lib/frontend/constants'
 import getQueryClient from '../../../lib/getQueryClient'
+import '../../../styles/swiper.css'
 
 dayjs.extend(customParseFormat)
 
@@ -70,12 +69,14 @@ export default async function DatePage({ params }: Props) {
           <RestTimer />
         </Grid>
         <Grid
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
           size={{
             xs: 12,
             md: 6,
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <WeightUnitConverter />

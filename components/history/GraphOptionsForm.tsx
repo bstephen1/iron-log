@@ -38,11 +38,13 @@ export default function GraphOptionsForm({
   return (
     <Grid container spacing={2}>
       <Grid
-        alignItems="center"
-        display="flex"
         size={{
           xs: 12,
           md: 9,
+        }}
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
         }}
       >
         <FormGroup row>

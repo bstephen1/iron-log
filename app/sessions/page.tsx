@@ -33,24 +33,54 @@ export default function Page() {
   return sessionRedirect !== false ? (
     <LoadingSpinner />
   ) : (
-    <Stack py={2} spacing={2}>
-      <Typography variant="h6" component="h1" py={1} textAlign="center">
+    <Stack
+      spacing={2}
+      sx={{
+        py: 2,
+      }}
+    >
+      <Typography
+        variant="h6"
+        component="h1"
+        sx={{
+          py: 1,
+          textAlign: 'center',
+        }}
+      >
         No Session
       </Typography>
-      <Typography textAlign="center">
+      <Typography
+        sx={{
+          textAlign: 'center',
+        }}
+      >
         Normally coming here would redirect to the page for today's session, but
         the redirect has been disabled.
       </Typography>
       <div></div>
-      <Typography textAlign="center">
+      <Typography
+        sx={{
+          textAlign: 'center',
+        }}
+      >
         Typically you might want to turn off the redirect temporarily to
         bookmark this page.
       </Typography>
-      <Typography textAlign="center">
+      <Typography
+        sx={{
+          textAlign: 'center',
+        }}
+      >
         You can re-enable the redirect through settings, or by clicking the
         button below.
       </Typography>
-      <Box display="flex" justifyContent="center" py={1}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          py: 1,
+        }}
+      >
         <Button onClick={() => setSessionRedirect(true)} variant="contained">
           Enable redirect
         </Button>

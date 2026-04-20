@@ -33,12 +33,22 @@ export default function HistoryPage() {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="h5" mb={2} display="flex" justifyContent="center">
+      <Typography
+        variant="h5"
+        sx={{
+          mb: 2,
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
         History
       </Typography>
       <QueryForm {...{ query, updateQuery: setQuery }} />
-
-      <Box pt={2}>
+      <Box
+        sx={{
+          pt: 2,
+        }}
+      >
         <StyledDivider />
       </Box>
       {query?.exerciseId && (
