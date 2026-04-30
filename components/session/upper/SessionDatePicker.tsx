@@ -5,10 +5,10 @@ import CircularProgress from '@mui/material/CircularProgress'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Stack from '@mui/material/Stack'
-import type { TextFieldProps } from '@mui/material/TextField'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton'
-import { PickersDay } from '@mui/x-date-pickers/PickersDay'
+import { PickerDay } from '@mui/x-date-pickers/PickerDay'
+import type { PickersTextFieldProps } from '@mui/x-date-pickers/PickersTextField'
 import type { Dayjs } from 'dayjs'
 import { useState } from 'react'
 import {
@@ -36,7 +36,7 @@ const buildSessionLogQuery = (
     .format(DATE_FORMAT),
 })
 
-/* v8 ignore next */
+/* v8 ignore next @preserve */
 const LoadingSkeleton = () => <DayCalendarSkeleton />
 
 interface Props {
@@ -46,7 +46,7 @@ interface Props {
    */
   handleDayChange: (day: Dayjs) => void
   label?: string
-  textFieldProps?: TextFieldProps
+  textFieldProps?: Partial<PickersTextFieldProps>
 }
 export default function SessionDatePicker(props: Props) {
   return (
@@ -101,7 +101,7 @@ function SessionDatePickerInner({
       slotProps={{
         popper: {
           // prevent swiper from swiping when selecting dates with arrow keys
-          /* v8 ignore next */
+          /* v8 ignore next @preserve */
           onKeyDown: (e) => e.key.match(/Arrow/) && e.stopPropagation(),
         },
 
@@ -112,47 +112,54 @@ function SessionDatePickerInner({
               pickerValue && handleSubmit(pickerValue)
             }
           },
-          InputProps: {
-            endAdornment: (
-              // -12px is the margin for the default icon
-              <Stack direction="row" mr="-12px">
-                {isChangingDay ? (
-                  <InputAdornment
-                    position="end"
-                    sx={{ width: '32px', mt: '4px' }}
-                  >
-                    <CircularProgress color="inherit" size={20} />
-                  </InputAdornment>
-                ) : (
-                  <TransitionIconButton
-                    isVisible={
-                      pickerValue?.format(DATE_FORMAT) !==
-                      day.format(DATE_FORMAT)
-                    }
-                    disabled={!pickerValue?.isValid()}
-                    onClick={() => pickerValue && handleSubmit(pickerValue)}
-                    aria-label="Confirm"
-                    sx={{ pr: 0.5 }}
-                  >
-                    <CheckIcon />
-                  </TransitionIconButton>
-                )}
-                {/* we have to reimplement the behavior of the default button.
+          slotProps: {
+            input: {
+              endAdornment: (
+                <Stack
+                  direction="row"
+                  sx={{
+                    // -12px is the margin for the default icon
+                    mr: '-12px',
+                  }}
+                >
+                  {isChangingDay ? (
+                    <InputAdornment
+                      position="end"
+                      sx={{ width: '32px', mt: '4px' }}
+                    >
+                      <CircularProgress color="inherit" size={20} />
+                    </InputAdornment>
+                  ) : (
+                    <TransitionIconButton
+                      isVisible={
+                        pickerValue?.format(DATE_FORMAT) !==
+                        day.format(DATE_FORMAT)
+                      }
+                      disabled={!pickerValue?.isValid()}
+                      onClick={() => pickerValue && handleSubmit(pickerValue)}
+                      aria-label="Confirm"
+                      sx={{ pr: 0.5 }}
+                    >
+                      <CheckIcon />
+                    </TransitionIconButton>
+                  )}
+                  {/* we have to reimplement the behavior of the default button.
                     Alternatively could move the calendar to a startAdornment with
                     the "field" slotProp */}
-                <IconButton
-                  onClick={toggleOpen}
-                  aria-label={
-                    'Choose date' +
-                    (pickerValue
-                      ? `, selected date is ${pickerValue.format('MMM D, YYYY')}`
-                      : '')
-                  }
-                >
-                  <CalendarIcon />
-                </IconButton>
-              </Stack>
-            ),
+                  <IconButton
+                    onClick={toggleOpen}
+                    aria-label={
+                      'Choose date' +
+                      (pickerValue
+                        ? `, selected date is ${pickerValue.format('MMM D, YYYY')}`
+                        : '')
+                    }
+                  >
+                    <CalendarIcon />
+                  </IconButton>
+                </Stack>
+              ),
+            },
           },
         },
       }}
@@ -180,7 +187,7 @@ function SessionDatePickerInner({
               }`}
               invisible={!isBadgeVisible}
             >
-              <PickersDay {...DayComponentProps} />
+              <PickerDay {...DayComponentProps} />
             </Badge>
           )
         },

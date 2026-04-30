@@ -46,7 +46,12 @@ export default function NavigationArrow({
   })
 
   return (
-    <Box display={isLocked || isHidden ? 'none' : 'flex'} alignItems="center">
+    <Box
+      sx={{
+        display: isLocked || isHidden ? 'none' : 'flex',
+        alignItems: 'center',
+      }}
+    >
       <IconButton
         sx={{
           display: isDesktop ? 'flex' : 'none',

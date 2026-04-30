@@ -20,10 +20,7 @@ export default function AddRecordCard() {
     addFn: addRecord,
   })
   const handleAdd = async () => {
-    /* v8 ignore next */
-    if (!exercise) return
-
-    addRecordMutate(createRecord(date, exercise._id))
+    exercise && addRecordMutate(createRecord(date, exercise._id))
 
     swiper.update()
     setExercise(null)
@@ -31,7 +28,12 @@ export default function AddRecordCard() {
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
-      <Stack spacing={2} alignItems="center">
+      <Stack
+        spacing={2}
+        sx={{
+          alignItems: 'center',
+        }}
+      >
         <ExerciseSelector
           variant="standard"
           {...{

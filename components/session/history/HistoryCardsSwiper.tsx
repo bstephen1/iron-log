@@ -10,18 +10,16 @@ import {
   type SwiperRef,
   SwiperSlide,
 } from 'swiper/react'
+import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
 import { useRecords } from '../../../lib/frontend/data/useQuery'
+import type { DisplayFields } from '../../../models/DisplayFields'
+import type { RecordQuery } from '../../../models/Record'
+import NavigationBar from '../../swiper/NavigationBar'
 import HistoryCard, {
   type HistoryAction,
   type HistoryContent,
 } from './HistoryCard'
-import 'swiper/css/pagination'
-import RecordCardSkeleton from '../../../components/loading/RecordCardSkeleton'
-import type { DisplayFields } from '../../../models/DisplayFields'
-import type { RecordQuery } from '../../../models/Record'
-import NavigationBar from '../../swiper/NavigationBar'
-import 'swiper/css'
-import 'swiper/css/pagination'
+import '../../../styles/swiper.css'
 
 interface Props {
   /** displayFields to use for each history card. If omitted, cards will use their own displayFields. */
@@ -64,7 +62,7 @@ export default function HistoryCardsSwiper({
   if (isLoading || !historyRecords) {
     return (
       <RecordCardSkeleton
-        titleTypographyProps={{ textAlign: 'center' }}
+        titleTypographyProps={{ sx: { textAlign: 'center' } }}
         elevation={0}
         sx={{ px: 0, m: 0 }}
       />
@@ -74,16 +72,29 @@ export default function HistoryCardsSwiper({
   // assumes query has end date set to the current record's date (so will exclude it)
   if (!historyRecords.length) {
     return (
-      <Typography textAlign="center" pb={2}>
+      <Typography
+        sx={{
+          textAlign: 'center',
+          pb: 2,
+        }}
+      >
         No history found for this exercise.
       </Typography>
     )
   }
 
   return (
-    <Stack alignItems="center">
+    <Stack
+      sx={{
+        alignItems: 'center',
+      }}
+    >
       {/* this box prevents Swiper from having infinite width. Width is required when the stack has alignItems centered */}
-      <Box width="100%">
+      <Box
+        sx={{
+          width: '100%',
+        }}
+      >
         <Swiper
           ref={swiperRef}
           spaceBetween={20}

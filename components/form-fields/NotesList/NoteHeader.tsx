@@ -21,7 +21,11 @@ export default function NoteHeader({
   return (
     <Stack direction="row" sx={{ pl: 0.5 }}>
       <TagSelect {...tagSelectProps} />
-      <Box flex="1 1 auto" />
+      <Box
+        sx={{
+          flex: '1 1 auto',
+        }}
+      />
       <Stack direction="row">
         {actions?.map(({ label, Icon, onClick }) => (
           // div wrappers allow icons to keep a square shape if tags become multiline

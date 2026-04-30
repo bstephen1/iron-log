@@ -18,7 +18,13 @@ export default function TitleBar({ date }: Props) {
   }
 
   return (
-    <Grid container spacing={2} justifyContent="space-between">
+    <Grid
+      container
+      spacing={2}
+      sx={{
+        justifyContent: 'space-between',
+      }}
+    >
       <Grid
         size={{
           xs: 12,

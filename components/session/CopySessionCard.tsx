@@ -52,7 +52,7 @@ export default function CopySessionCard() {
     // See: https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
     for (const id of prevSessionLog.data.records) {
       const prevRecord = prevRecords.index[id]
-      /* v8 ignore next */
+      /* v8 ignore next @preserve */
       if (!prevRecord) continue
 
       const newRecord = createRecord(date, prevRecord.exerciseId, {
@@ -70,7 +70,12 @@ export default function CopySessionCard() {
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
-      <Stack spacing={2} alignItems="center">
+      <Stack
+        spacing={2}
+        sx={{
+          alignItems: 'center',
+        }}
+      >
         <SessionDatePicker
           label="Previous session"
           day={prevDay}

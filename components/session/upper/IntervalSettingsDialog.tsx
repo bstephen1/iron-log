@@ -47,7 +47,12 @@ export default function IntervalSettingsDialog({
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Interval settings</DialogTitle>
       <DialogContent>
-        <Stack spacing={2} pt={2}>
+        <Stack
+          spacing={2}
+          sx={{
+            pt: 2,
+          }}
+        >
           <SettingsField
             label="Delay"
             value={dirty.delay}

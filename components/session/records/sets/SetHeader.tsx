@@ -23,15 +23,21 @@ import { delimiterWidth } from './RenderSetField'
 const PaddingBox = ({ showArrow }: { showArrow?: boolean }) =>
   showArrow ? (
     <Box
-      minWidth="40px" // match delete button width plus padding
-      display="flex"
-      alignItems="center"
-      justifyContent="right"
+      sx={{
+        minWidth: '40px', // match delete button width plus padding
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'right',
+      }}
     >
       <ArrowDropDownIcon />
     </Box>
   ) : (
-    <Box minWidth={delimiterWidth} />
+    <Box
+      sx={{
+        minWidth: delimiterWidth,
+      }}
+    />
   )
 
 type Props = {
@@ -65,7 +71,7 @@ export default function SetHeader({
     // According to MUI docs: "On autofill we get a stringified value",
     // which is the array stringified into a comma separated string.
     // Reassigning the value isn't updating the type so have to assign to a new var
-    /* v8 ignore next */
+    /* v8 ignore next @preserve */
     const newSelectedNames =
       typeof rawSelectedNames === 'string'
         ? rawSelectedNames.split(',')
@@ -77,16 +83,12 @@ export default function SetHeader({
       newSelectedNames.some((name) => name === optionField.name)
     )
 
-    // Make sure we aren't submitting if there aren't actually any changes.
-    // Should only need to check the length because if there is a change the length must change.
-    if (newVisibleFields.length !== selectedNames.length) {
-      updateExercise({
-        displayFields: {
-          ...displayFields,
-          visibleFields: newVisibleFields,
-        },
-      })
-    }
+    updateExercise({
+      displayFields: {
+        ...displayFields,
+        visibleFields: newVisibleFields,
+      },
+    })
   }
 
   return (
@@ -117,8 +119,8 @@ export default function SetHeader({
         renderValue={() => (
           <Stack
             direction="row"
-            alignItems="center"
             sx={{
+              alignItems: 'center',
               role: 'button',
             }}
           >
@@ -135,12 +137,14 @@ export default function SetHeader({
                   return (
                     <Box
                       key={field.name}
-                      display="flex"
-                      flexGrow="1"
-                      // flexBasis makes it so flexGrow is based on the full element width, not just the extra space
-                      flexBasis="0"
-                      justifyContent="center"
-                      pl={delimiterWidth}
+                      sx={{
+                        display: 'flex',
+                        flexGrow: '1',
+                        // flexBasis makes it so flexGrow is based on the full element width, not just the extra space
+                        flexBasis: '0',
+                        justifyContent: 'center',
+                        pl: delimiterWidth,
+                      }}
                     >
                       {field.unitPrefix ?? ''}
                       {displayFields.units[field.source]}

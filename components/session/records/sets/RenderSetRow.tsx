@@ -17,7 +17,7 @@ import RenderSetField, { delimiterWidth } from './RenderSetField'
 const pyStack = 0.5
 const deleteButtonHeight = '32px'
 
-/* v8 ignore next */
+/* v8 ignore next @preserve */
 const getBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
@@ -29,7 +29,7 @@ const getBackground = (side: Set['side']) => {
   }
 }
 
-/* v8 ignore next */
+/* v8 ignore next @preserve */
 const getDarkBackground = (side: Set['side']) => {
   switch (side) {
     case 'L':
@@ -74,16 +74,16 @@ export default function RenderSetRow({
   return (
     <Stack
       direction="row"
-      alignItems="center"
       aria-label={`Set ${index + 1}`}
       className={noSwipingDesktop}
-      // border is from TextField underline
       sx={[
         {
+          // border is from TextField underline
           borderBottom: '1px solid rgba(0, 0, 0, .42)',
           background: getBackground(set.side),
           py: pyStack,
           height: deleteButtonHeight,
+          alignItems: 'center',
         },
         (theme) =>
           theme.applyStyles('dark', {
@@ -109,7 +109,11 @@ export default function RenderSetRow({
         />
       ))}
       {readOnly ? (
-        <Box minWidth={delimiterWidth} />
+        <Box
+          sx={{
+            minWidth: delimiterWidth,
+          }}
+        />
       ) : (
         <DeleteSetButton index={index} _id={_id} sx={{ my: -pyStack }} />
       )}

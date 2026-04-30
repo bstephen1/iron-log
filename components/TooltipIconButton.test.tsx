@@ -1,3 +1,4 @@
+import Menu from '@mui/material/Menu'
 import { expect, it, vi } from 'vitest'
 import { render, screen } from '../lib/test/rtl'
 import TooltipIconButton, { MenuItemContext } from './TooltipIconButton'
@@ -36,9 +37,11 @@ it('prioritizes onClickButton for normal button', async () => {
 
 it('renders menu button with onClick', async () => {
   const { user } = render(
-    <MenuItemContext value={{ closeMenu: mockCloseMenu }}>
-      <TooltipIconButton title="my button" onClick={mockClick} />
-    </MenuItemContext>
+    <Menu open>
+      <MenuItemContext value={{ closeMenu: mockCloseMenu }}>
+        <TooltipIconButton title="my button" onClick={mockClick} />
+      </MenuItemContext>
+    </Menu>
   )
 
   await user.click(screen.getByRole('menuitem'))
@@ -48,14 +51,16 @@ it('renders menu button with onClick', async () => {
 
 it('prioritizes onClickMenu for menu item', async () => {
   const { user } = render(
-    <MenuItemContext value={{ closeMenu: mockCloseMenu }}>
-      <TooltipIconButton
-        title="my button"
-        onClick={mockClick}
-        onClickMenu={mockClickMenu}
-        onClickButton={mockClickButton}
-      />
-    </MenuItemContext>
+    <Menu open>
+      <MenuItemContext value={{ closeMenu: mockCloseMenu }}>
+        <TooltipIconButton
+          title="my button"
+          onClick={mockClick}
+          onClickMenu={mockClickMenu}
+          onClickButton={mockClickButton}
+        />
+      </MenuItemContext>
+    </Menu>
   )
 
   await user.click(screen.getByRole('menuitem'))

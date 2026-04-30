@@ -96,7 +96,13 @@ export default function ManageFormContainer() {
       <Grid size={12}>
         <StyledDivider />
       </Grid>
-      <Grid container justifyContent="center" size={12}>
+      <Grid
+        container
+        size={12}
+        sx={{
+          justifyContent: 'center',
+        }}
+      >
         {!selected[field] ? (
           <ManageWelcomeCard />
         ) : (

@@ -6,6 +6,7 @@ import { createModifier } from '../../models/AsyncSelectorOption/Modifier'
 import { createBodyweight } from '../../models/Bodyweight'
 import { createNote } from '../../models/Note'
 import { createSessionLog } from '../../models/SessionLog'
+import { Status } from '../../models/Status'
 import { createTestRecord, testDate, testExercise } from '../test/data'
 import { db } from './mongoConnect'
 import {
@@ -239,9 +240,9 @@ describe('Modifier', () => {
     expect(await fetchModifiers()).toHaveLength(1)
 
     const updated = await updateModifierFields(modifier._id, {
-      name: 'updated',
+      weight: 5,
     })
-    expect(updated.name).toBe('updated')
+    expect(updated.weight).toBe(5)
 
     await deleteModifier(modifier._id)
     expect(await fetchModifiers()).toHaveLength(0)
@@ -281,6 +282,10 @@ describe('Modifier', () => {
 
     await expect(deleteModifier(modifier._id)).rejects.toThrow()
   })
+
+  it('ignores deleting a modifier that does not exist', async () => {
+    expect(await deleteModifier('1')).toBe('1')
+  })
 })
 
 describe('Category', () => {
@@ -291,9 +296,9 @@ describe('Category', () => {
     expect(await fetchCategories()).toHaveLength(1)
 
     const updated = await updateCategoryFields(category._id, {
-      name: 'updated',
+      status: Status.archived,
     })
-    expect(updated.name).toBe('updated')
+    expect(updated.status).toBe(Status.archived)
 
     await deleteCategory(category._id)
     expect(await fetchCategories()).toHaveLength(0)
@@ -321,6 +326,10 @@ describe('Category', () => {
     await addExercise(createExercise('squats', { categories: [category.name] }))
 
     await expect(deleteCategory(category._id)).rejects.toThrow()
+  })
+
+  it('ignores deleting a category that does not exist', async () => {
+    expect(await deleteCategory('1')).toBe('1')
   })
 })
 

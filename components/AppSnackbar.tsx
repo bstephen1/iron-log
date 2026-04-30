@@ -20,7 +20,6 @@ export default function AppSnackbar({
   persist,
   ref,
 }: AppSnackbarProps & CustomContentProps) {
-  console.log(ref)
   // signals to the notistack wrapper to close the snackbar
   const handleClose = () => closeSnackbar(id)
 
