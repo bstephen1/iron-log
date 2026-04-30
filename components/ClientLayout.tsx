@@ -7,6 +7,7 @@ import {
   type PaletteMode,
   ThemeProvider,
 } from '@mui/material/styles'
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { Analytics } from '@vercel/analytics/next'
@@ -64,34 +65,38 @@ export default function ClientLayout({
 
   return (
     <SessionProvider session={session}>
-      <NuqsAdapter>
-        <ThemeProvider theme={theme} defaultMode={paletteMode}>
-          <CssBaseline /> {/* for dark mode */}
-          <SavingIndicator />
-          <InitColorSchemeScript attribute="class" />
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <SnackbarProvider
-              maxSnack={1}
-              // notistack requires you to assign a snackbar to each variant.
-              // This means we would have to assign the same snackbar to each key
-              // (success, error, etc). Instead we override the default variant,
-              // turn off all other variants, and add a "severity" prop.
-              // See notistack.d.ts for type definitions
-              Components={{
-                default: AppSnackbar,
-              }}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-              {/* prints console warnings in happy-dom */}
-              {!(process.env.NODE_ENV === 'test') && <Analytics />}
-              {!disableNavbar && <Navbar />}
-              <main>
-                <Container maxWidth="lg">{children}</Container>
-              </main>
-            </SnackbarProvider>
-          </LocalizationProvider>
-        </ThemeProvider>
-      </NuqsAdapter>
+      {/* mui css styling integration with nextjs. Note: this only worked in a client component.
+          See: https://mui.com/material-ui/integrations/nextjs/#configuration */}
+      <AppRouterCacheProvider>
+        <NuqsAdapter>
+          <ThemeProvider theme={theme} defaultMode={paletteMode}>
+            <CssBaseline /> {/* for dark mode */}
+            <SavingIndicator />
+            <InitColorSchemeScript attribute="class" />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <SnackbarProvider
+                maxSnack={1}
+                // notistack requires you to assign a snackbar to each variant.
+                // This means we would have to assign the same snackbar to each key
+                // (success, error, etc). Instead we override the default variant,
+                // turn off all other variants, and add a "severity" prop.
+                // See notistack.d.ts for type definitions
+                Components={{
+                  default: AppSnackbar,
+                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              >
+                {/* prints console warnings in happy-dom */}
+                {!(process.env.NODE_ENV === 'test') && <Analytics />}
+                {!disableNavbar && <Navbar />}
+                <main>
+                  <Container maxWidth="lg">{children}</Container>
+                </main>
+              </SnackbarProvider>
+            </LocalizationProvider>
+          </ThemeProvider>
+        </NuqsAdapter>
+      </AppRouterCacheProvider>
     </SessionProvider>
   )
 }
