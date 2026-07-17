@@ -1,3 +1,5 @@
+import type { ComponentProps } from 'react'
+import { Swiper } from 'swiper/react'
 import { expect, it, vi } from 'vitest'
 import {
   addSet,
@@ -12,6 +14,12 @@ import { ignoreConsoleErrorOnce } from '../../../lib/util/test/console'
 import { createExercise } from '../../../models/AsyncSelectorOption/Exercise'
 import RecordCard from './RecordCard'
 
+const TestWrapper = (props: ComponentProps<typeof RecordCard>) => (
+  <Swiper>
+    <RecordCard {...props} />
+  </Swiper>
+)
+
 it('mutates', async () => {
   localStorage.setItem('cardHeaderActions', '10') // avoid needing to click "More..."
   const record = createTestRecord()
@@ -21,7 +29,7 @@ it('mutates', async () => {
     createExercise('other'),
   ])
   const { user } = render(
-    <RecordCard id={record._id} date={record.date} swiperIndex={0} />
+    <TestWrapper id={record._id} date={record.date} swiperIndex={0} />
   )
 
   // update record exercise
@@ -42,7 +50,7 @@ it('displays error when update fails', async () => {
   vi.mocked(fetchRecords).mockResolvedValue([record])
   vi.mocked(fetchExercises).mockResolvedValue([testExercise])
   const { user } = render(
-    <RecordCard id={record._id} date={record.date} swiperIndex={0} />
+    <TestWrapper id={record._id} date={record.date} swiperIndex={0} />
   )
 
   // update record

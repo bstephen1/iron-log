@@ -1,3 +1,4 @@
+import { Swiper } from 'swiper/react'
 import { expect, it, vi } from 'vitest'
 import {
   addRecord,
@@ -9,13 +10,19 @@ import { createRecord } from '../../models/Record'
 import { createSessionLog } from '../../models/SessionLog'
 import CopySessionCard from './CopySessionCard'
 
+const TestWrapper = () => (
+  <Swiper>
+    <CopySessionCard />
+  </Swiper>
+)
+
 it('copies session', async () => {
   const prevRecord = createRecord('2000-01-01', '1')
   vi.mocked(fetchSessionLog).mockResolvedValue(
     createSessionLog('2000-01-01', [prevRecord._id])
   )
   vi.mocked(fetchRecords).mockResolvedValue([prevRecord])
-  const { user } = render(<CopySessionCard />)
+  const { user } = render(<TestWrapper />)
 
   await waitFor(() => {
     expect(screen.getByText('Copy session')).toBeEnabled()
@@ -26,7 +33,7 @@ it('copies session', async () => {
 })
 
 it('ignores empty sessions', async () => {
-  const { user } = render(<CopySessionCard />)
+  const { user } = render(<TestWrapper />)
 
   await waitFor(() => {
     expect(screen.getByText('Copy session')).toBeEnabled()

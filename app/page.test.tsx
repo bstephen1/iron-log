@@ -5,6 +5,8 @@ import { baseRender, render, screen } from '../lib/test/rtl'
 import RootLayout from './layout'
 import Home from './page'
 
+vi.mock('next-auth')
+
 it('renders as non-guest user', async () => {
   // The page is an async server component, so it must be awaited in the render
   // params can be added if applicable, eg await Home({params: {...}})

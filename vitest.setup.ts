@@ -1,9 +1,9 @@
-import { loadEnvConfig } from '@next/env'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
-import { ObjectId } from 'mongodb'
 import { afterEach, beforeAll, describe, it, type Mock, vi } from 'vitest'
-import { devUserId } from './lib/frontend/constants'
+
+// NOTE: This setup is run before every test file.
+// It should avoid heavy operations that would be expensive to execute many times.
 
 // var is required to hoist globals
 declare global {
@@ -19,20 +19,6 @@ globalThis.xit = it.skip
 globalThis.fdescribe = describe.only
 globalThis.xdescribe = describe.skip
 
-// Ensures env vars are loaded using the same load order nextjs uses.
-// Vitest does not instantiate the nextjs server so it doesn't automatically
-// call loadEnvConfig like dev/prod do.
-const projectDir = process.cwd()
-loadEnvConfig(projectDir)
-
-// set env variables with import.meta.env
-// note: for ts to recognize this, set compilerOptions: {types: ["vite/client"]} in tsconfig.json
-// note: node only supports string vars. See: https://vitest.dev/api/vi.html#vi-stubenv
-
-// typing is from vite/client in tsconfig
-import.meta.env.NEXTAUTH_GITHUB_ID = 'my id'
-import.meta.env.NEXTAUTH_GITHUB_SECRET = 'secret secret'
-
 // vi.mock will import the actual module and automock all exports to return undefined.
 // If a factory is provided, it replaces the actual module with the factory.
 
@@ -45,6 +31,7 @@ vi.mock('./lib/backend/mongoConnect', () => ({
   client: '',
 }))
 vi.mock('./lib/backend/mongoService', async () => {
+  // importActual means every test will transitively import everything mongoService imports
   const actual = await vi.importActual('./lib/backend/mongoService')
 
   // functions used by useQuery cannot return undefined
@@ -55,36 +42,7 @@ vi.mock('./lib/backend/mongoService', async () => {
     return acc
   }, {})
 })
-vi.mock('./pages/api/auth/[...nextauth]', () => ({ authOptions: vi.fn() }))
-vi.mock('next-auth')
-vi.mock('./lib/backend/user', () => ({
-  getUserId: vi.fn(async () => new ObjectId(devUserId)),
-}))
 vi.mock('next/navigation')
-vi.mock('react-resize-detector', () => ({
-  useResizeDetector: () => ({
-    width: undefined,
-    height: undefined,
-    ref: null,
-  }),
-}))
-vi.mock('swiper/react', async () => {
-  const actual = await vi.importActual('swiper/react')
-
-  return {
-    ...actual,
-    useSwiper: () => ({
-      update: vi.fn(),
-      slideTo: vi.fn(),
-      slidePrev: vi.fn(),
-      slides: [],
-      on: vi.fn(),
-    }),
-  }
-})
-vi.mock('nuqs', () => ({
-  useQueryState: vi.fn(() => [null, vi.fn()]),
-}))
 
 // configure testing-library options
 configure({
