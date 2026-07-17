@@ -1,9 +1,13 @@
 import { useIsMutating } from '@tanstack/react-query'
-import { expect, it, vi } from 'vitest'
+import { beforeEach, expect, it, vi } from 'vitest'
 import { render, screen } from '../lib/test/rtl'
 import SavingIndicator from './SavingIndicator'
 
 vi.mock('@tanstack/react-query')
+
+beforeEach(() => {
+  vi.stubEnv('NEXT_PUBLIC_SHOW_SAVING', 'true')
+})
 
 it('is visible when saving', () => {
   vi.mocked(useIsMutating).mockReturnValue(1)

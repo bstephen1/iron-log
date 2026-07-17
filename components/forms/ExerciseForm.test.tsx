@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest'
+import { expect, it, vi } from 'vitest'
 import {
   deleteExercise,
   updateExerciseFields,
@@ -6,6 +6,8 @@ import {
 import { render, screen, within } from '../../lib/test/rtl'
 import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import ExerciseForm from './ExerciseForm'
+
+vi.mock('nuqs')
 
 const exercise = createExercise('squats', {
   modifiers: ['mod'],

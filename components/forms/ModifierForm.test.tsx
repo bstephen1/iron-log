@@ -9,6 +9,8 @@ import { createExercise } from '../../models/AsyncSelectorOption/Exercise'
 import { createModifier } from '../../models/AsyncSelectorOption/Modifier'
 import ModifierForm from './ModifierForm'
 
+vi.mock('nuqs')
+
 const modifier = createModifier('belt')
 
 it('updates', async () => {

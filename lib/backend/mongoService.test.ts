@@ -7,6 +7,7 @@ import { createBodyweight } from '../../models/Bodyweight'
 import { createNote } from '../../models/Note'
 import { createSessionLog } from '../../models/SessionLog'
 import { Status } from '../../models/Status'
+import { devUserId } from '../frontend/constants'
 import { createTestRecord, testDate, testExercise } from '../test/data'
 import { db } from './mongoConnect'
 import {
@@ -49,6 +50,9 @@ vi.mock('./mongoConnect', async () => {
   const db = client.db()
   return { client, db, clientPromise }
 })
+vi.mock('./user', () => ({
+  getUserId: vi.fn(async () => new ObjectId(devUserId)),
+}))
 
 const testDateNew = '2000-02-02'
 

@@ -1,3 +1,4 @@
+import { Swiper } from 'swiper/react'
 import { expect, it, vi } from 'vitest'
 import { addRecord, fetchExercises } from '../../lib/backend/mongoService'
 import { render, screen } from '../../lib/test/rtl'
@@ -6,7 +7,11 @@ import AddRecordCard from './AddRecordCard'
 
 it('adds record', async () => {
   vi.mocked(fetchExercises).mockResolvedValue([createExercise('squats')])
-  const { user } = render(<AddRecordCard />)
+  const { user } = render(
+    <Swiper>
+      <AddRecordCard />
+    </Swiper>
+  )
 
   await user.click(screen.getByLabelText('Exercise'))
   await user.click(screen.getByText('squats'))

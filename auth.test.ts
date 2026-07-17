@@ -1,10 +1,17 @@
 import type { Session } from 'next-auth/core/types'
 import type { JWT } from 'next-auth/jwt'
 import { expect, it, vi } from 'vitest'
-import { authOptions } from './auth'
 import { devUserId } from './lib/frontend/constants'
 
 vi.mock('next-auth')
+const githubId = 'my id'
+const githubSecret = 'secret secret'
+vi.stubEnv('NEXTAUTH_GITHUB_ID', githubId)
+vi.stubEnv('NEXTAUTH_GITHUB_SECRET', githubSecret)
+
+// authOptions must be imported after the env var stubs are set up
+// since it is a static object created at import
+const { authOptions } = await import('./auth')
 
 it('builds guest provider', async () => {
   const guestProvider = authOptions.providers.find(
@@ -37,11 +44,8 @@ it('builds github provider', async () => {
   // github's options have a different structure than dev/guest
   expect(await githubProvider?.options).toMatchObject({
     id: 'github',
-    // these are defined in env vars in vitest.setup.ts
-    // could not get changes to stick editing the env vars in this file.
-    // There is vi.stubEnv() but it was not working
-    clientId: 'my id',
-    clientSecret: 'secret secret',
+    clientId: githubId,
+    clientSecret: githubSecret,
   })
 })
 
