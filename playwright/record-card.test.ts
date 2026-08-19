@@ -1,3 +1,5 @@
+import { createExercise } from '../models/AsyncSelectorOption/Exercise'
+import { createRecord } from '../models/Record'
 import { expect, test } from './fixtures'
 
 // WARNING: since the tests in this file are creating records, they need to
@@ -117,12 +119,70 @@ test.describe('history', () => {
       width: 800,
     },
   })
-  test('shows history', async ({ page, extendedPage, sessionsPage }) => {
-    await sessionsPage.addRecord('pullups', '2000-03-01')
-    await page.getByLabel('Set 1').getByLabel('weight').first().fill('10')
-    await extendedPage.waitForSave()
+  test('shows history for single value set type', async ({
+    page,
+    api,
+    sessionsPage,
+  }) => {
+    const pullups = await api.addData(createExercise('pullups'))
+    await api.addData(
+      createRecord('2000-03-01', pullups._id, {
+        sets: [{ weight: 10 }],
+        setType: {
+          operator: 'exactly',
+          field: 'reps',
+          value: 8,
+          // leftover fields from other operator
+          min: 3,
+          max: 6,
+        },
+      })
+    )
+    await api.addData(
+      createRecord('2000-03-02', pullups._id, {
+        setType: { operator: 'exactly', field: 'reps', value: 8 },
+      })
+    )
 
     await sessionsPage.addRecord('pullups', '2000-03-02')
+
+    await expect(page.getByText('No history found')).not.toBeVisible()
+    await expect(page.getByText('2000-03-01')).toBeVisible()
+    await expect(page.getByText('10')).toBeVisible()
+  })
+
+  test.use({
+    viewport: {
+      height: 1500,
+      width: 800,
+    },
+  })
+  test('shows history for min/max set type', async ({
+    page,
+    sessionsPage,
+    api,
+  }) => {
+    const pullups = await api.addData(createExercise('pullups'))
+    await api.addData(
+      createRecord('2000-03-01', pullups._id, {
+        sets: [{ weight: 10 }],
+        setType: {
+          operator: 'between',
+          field: 'reps',
+          min: 3,
+          max: 6,
+          // leftover field from other operator
+          value: 8,
+        },
+      })
+    )
+    await api.addData(
+      createRecord('2000-03-02', pullups._id, {
+        setType: { operator: 'between', field: 'reps', min: 3, max: 6 },
+      })
+    )
+
+    await sessionsPage.goto('2000-03-02')
 
     await expect(page.getByText('No history found')).not.toBeVisible()
     await expect(page.getByText('2000-03-01')).toBeVisible()
