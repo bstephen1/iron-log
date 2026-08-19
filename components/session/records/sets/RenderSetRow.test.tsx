@@ -1,26 +1,18 @@
-import { expect, it, vi } from 'vitest'
-import { fetchRecords, updateSet } from '../../../../lib/backend/mongoService'
-import { createTestRecord, testDate } from '../../../../lib/test/data'
+import { expect, it } from 'vitest'
+import { updateSet } from '../../../../lib/backend/mongoService'
+import { testDate } from '../../../../lib/test/data'
 import { render, screen, waitFor } from '../../../../lib/test/rtl'
 import { DEFAULT_DISPLAY_FIELDS } from '../../../../models/DisplayFields'
-import { createRecord } from '../../../../models/Record'
 import RenderSetRow from './RenderSetRow'
 
 it('renders correct set', async () => {
-  const record = createTestRecord({
-    sets: [{ reps: 1 }, { reps: 2 }],
-  })
-  vi.mocked(fetchRecords).mockResolvedValue([
-    createRecord(testDate, 'ex1'),
-    record,
-  ])
-
   const { user } = render(
     <RenderSetRow
       displayFields={DEFAULT_DISPLAY_FIELDS}
-      _id={record._id}
+      _id="1"
       index={1}
       date={testDate}
+      reps={2}
     />
   )
 
@@ -37,18 +29,14 @@ it('renders correct set', async () => {
 })
 
 it('renders readonly set', async () => {
-  const record = createTestRecord({
-    _id: '1',
-    sets: [{ reps: 1 }],
-  })
-  vi.mocked(fetchRecords).mockResolvedValue([record])
   render(
     <RenderSetRow
       displayFields={DEFAULT_DISPLAY_FIELDS}
-      _id={record._id}
+      _id="1"
       index={0}
       readOnly
       date={testDate}
+      reps={1}
     />
   )
 

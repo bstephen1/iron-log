@@ -64,6 +64,7 @@ export default function RenderSets({
                   // exerciseWeight represents eg a dip belt.
                   // When there is no extra plate weight, you wouldn't be using the belt.
                   extraWeight: extraWeight - (set.weight ? 0 : exerciseWeight),
+                  ...set,
                 }}
               />
             </Collapse>

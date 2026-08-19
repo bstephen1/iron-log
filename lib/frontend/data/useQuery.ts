@@ -215,16 +215,6 @@ export function useRecordSides(id = '', date: string) {
   return sides ?? []
 }
 
-export function useRecordSet(id = '', date: string, index: number) {
-  const { data: set } = useQuery({
-    queryKey: [QUERY_KEYS.records, { date }],
-    queryFn: () => fetchRecords(buildRecordFilter({ date })),
-    select: (data) => findFromId(data, id)?.sets[index],
-  })
-
-  return set ?? {}
-}
-
 export function useExercise(id?: string) {
   const { data: exercise } = useQuery({
     queryKey: [QUERY_KEYS.exercises],

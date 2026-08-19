@@ -1,11 +1,9 @@
 import Box from '@mui/material/Box'
 import { grey, lightBlue, lightGreen } from '@mui/material/colors'
 import Stack from '@mui/material/Stack'
-import { useCallback } from 'react'
 import { updateSet } from '../../../../lib/backend/mongoService'
 import { QUERY_KEYS } from '../../../../lib/frontend/constants'
 import { useOptimisticMutation } from '../../../../lib/frontend/data/useMutation'
-import { useRecordSet } from '../../../../lib/frontend/data/useQuery'
 import useNoSwipingDesktop from '../../../../lib/frontend/useNoSwipingDesktop'
 import type { PartialUpdate } from '../../../../lib/types'
 import type { DisplayFields } from '../../../../models/DisplayFields'
@@ -41,7 +39,7 @@ const getDarkBackground = (side: Set['side']) => {
   }
 }
 
-interface Props {
+interface Props extends Set {
   readOnly?: boolean
   index: number
   date: string
@@ -59,17 +57,14 @@ export default function RenderSetRow({
   displayFields,
   extraWeight = 0,
   _id,
+  ...set
 }: Props) {
   const noSwipingDesktop = useNoSwipingDesktop()
-  const set = useRecordSet(_id, date, index)
   const replaceSet = useSetReplace(_id, date, index)
 
-  const handleSetChange: PartialUpdate<Set> = useCallback(
-    async (changes) => {
-      replaceSet({ set: { ...set, ...changes } })
-    },
-    [set, replaceSet]
-  )
+  const handleSetChange: PartialUpdate<Set> = async (changes) => {
+    replaceSet({ set: { ...set, ...changes } })
+  }
 
   return (
     <Stack
@@ -121,6 +116,7 @@ export default function RenderSetRow({
   )
 }
 
+/* v8 ignore next @preserve */
 function useSetReplace(_id = '', date: string, index: number) {
   return useOptimisticMutation<Record[], Record, { set: Set }>({
     queryKey: [QUERY_KEYS.records, { date }],

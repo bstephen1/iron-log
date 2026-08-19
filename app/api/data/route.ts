@@ -20,8 +20,6 @@ export const POST = async (req: NextRequest) => {
 
   const data = await req.json()
 
-  console.log(data)
-  console.log(isModifier(data))
   if (isRecord(data)) {
     return Response.json(await addRecord(data))
   } else if (isExercise(data)) {
