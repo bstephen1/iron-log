@@ -144,7 +144,7 @@ test.describe('history', () => {
       })
     )
 
-    await sessionsPage.addRecord('pullups', '2000-03-02')
+    await sessionsPage.goto('2000-03-02')
 
     await expect(page.getByText('No history found')).not.toBeVisible()
     await expect(page.getByText('2000-03-01')).toBeVisible()
@@ -157,14 +157,15 @@ test.describe('history', () => {
       width: 800,
     },
   })
+
   test('shows history for min/max set type', async ({
     page,
     sessionsPage,
     api,
   }) => {
-    const pullups = await api.addData(createExercise('pullups'))
+    const squats = await api.addData(createExercise('squats'))
     await api.addData(
-      createRecord('2000-03-01', pullups._id, {
+      createRecord('2000-02-01', squats._id, {
         sets: [{ weight: 10 }],
         setType: {
           operator: 'between',
@@ -177,15 +178,15 @@ test.describe('history', () => {
       })
     )
     await api.addData(
-      createRecord('2000-03-02', pullups._id, {
+      createRecord('2000-02-02', squats._id, {
         setType: { operator: 'between', field: 'reps', min: 3, max: 6 },
       })
     )
 
-    await sessionsPage.goto('2000-03-02')
+    await sessionsPage.goto('2000-02-02')
 
     await expect(page.getByText('No history found')).not.toBeVisible()
-    await expect(page.getByText('2000-03-01')).toBeVisible()
+    await expect(page.getByText('2000-02-01')).toBeVisible()
     await expect(page.getByText('10')).toBeVisible()
   })
 })
