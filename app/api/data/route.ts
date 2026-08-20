@@ -11,7 +11,7 @@ import { isModifier } from '../../../models/AsyncSelectorOption/Modifier'
 import { isRecord } from '../../../models/Record'
 
 export const POST = async (req: NextRequest) => {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' && !process.env.CI) {
     return Response.json(
       { statusCode: 403, message: 'This route is not available in production' },
       { status: 403 }

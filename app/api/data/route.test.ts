@@ -20,9 +20,18 @@ const createReq = (body = {}) =>
 
 it('is disabled in production mode', async () => {
   vi.stubEnv('NODE_ENV', 'production')
+  vi.stubEnv('CI', undefined)
   const res = await POST(createReq())
 
   expect(res.status).toBe(403)
+})
+
+it('is not disabled in CI', async () => {
+  vi.stubEnv('NODE_ENV', 'production')
+  vi.stubEnv('CI', 'true')
+  const res = await POST(createReq(createCategory('quads')))
+
+  expect(res.status).toBe(200)
 })
 
 it('returns error if invalid data is given', async () => {
