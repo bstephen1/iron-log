@@ -36,3 +36,6 @@ export const createExercise = (
   modifiers,
   status,
 })
+
+export const isExercise = (thing: unknown): thing is Exercise =>
+  !!thing && typeof thing === 'object' && 'attributes' in thing

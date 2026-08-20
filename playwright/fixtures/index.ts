@@ -3,6 +3,7 @@ import path from 'node:path'
 import { test as baseTest } from '@playwright/test'
 import { ObjectId } from 'mongodb'
 import { baseURL } from '../../playwright.config'
+import { Api } from './Api'
 import { ExtendedPage } from './extended-page'
 import { SessionsPage } from './sessions-page'
 
@@ -19,6 +20,7 @@ const getUserId = (uniqueNum: number) =>
 interface CustomFixtures {
   sessionsPage: SessionsPage
   extendedPage: ExtendedPage
+  api: Api
 }
 
 export * from '@playwright/test'
@@ -72,4 +74,5 @@ export const test = baseTest.extend<
   ],
   sessionsPage: async ({ page }, apply) => await apply(new SessionsPage(page)),
   extendedPage: async ({ page }, apply) => await apply(new ExtendedPage(page)),
+  api: async ({ request, page }, apply) => apply(new Api(request, page)),
 })

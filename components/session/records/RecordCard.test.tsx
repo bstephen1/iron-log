@@ -46,7 +46,9 @@ it('mutates', async () => {
 })
 
 it('displays error when update fails', async () => {
-  const record = createTestRecord()
+  const record = createTestRecord({
+    setType: { operator: 'between', field: 'reps' },
+  })
   vi.mocked(fetchRecords).mockResolvedValue([record])
   vi.mocked(fetchExercises).mockResolvedValue([testExercise])
   const { user } = render(

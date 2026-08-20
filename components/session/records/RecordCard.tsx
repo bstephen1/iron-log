@@ -59,6 +59,7 @@ export default function RecordCard({ swiperIndex, id, date }: Props) {
   const noSwipingDesktop = useNoSwipingDesktop()
   const showSplitWeight = exercise?.attributes.bodyweight || !!extraWeight
   const showUnilateral = exercise?.attributes.unilateral
+  const { field, operator, value, min, max } = setType
 
   const historyQuery: RecordQuery = useMemo(
     () => ({
@@ -67,11 +68,14 @@ export default function RecordCard({ swiperIndex, id, date }: Props) {
       end: dayjs(date).add(-1, 'day').format(DATE_FORMAT),
       exerciseId: exerciseId,
       limit: 5,
-      modifierMatchType: ArrayMatchType.Exact,
-      setTypeMatchType: ArrayMatchType.Exact,
-      setType,
+      modifierMatchType: ArrayMatchType.Partial,
+      setTypeMatchType: ArrayMatchType.Partial,
+      setType:
+        operator === 'between'
+          ? { field, operator, min, max }
+          : { field, operator, value },
     }),
-    [activeModifiers, date, exerciseId, setType]
+    [activeModifiers, date, exerciseId, field, operator, value, min, max]
   )
 
   return (
